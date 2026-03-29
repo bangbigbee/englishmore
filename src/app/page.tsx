@@ -53,9 +53,11 @@ export default function Home() {
           <section className="mb-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
               <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Khóa học đang mở đăng ký</h2>
-              <Link href="/courses" className="text-sm font-semibold text-amber-700 hover:underline">
-                Xem tất cả
-              </Link>
+              {availableCourses.length > 0 && (
+                <Link href="/courses" className="text-sm font-semibold text-amber-700 hover:underline">
+                  Xem tất cả
+                </Link>
+              )}
             </div>
 
             {loadingCourses ? (
@@ -85,7 +87,6 @@ export default function Home() {
 
         <section className="grid gap-8 md:grid-cols-2 md:items-center">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-amber-700">Welcome to EnglishMore</p>
             <h1 className="text-4xl font-extrabold leading-tight text-slate-900 sm:text-6xl">
               Master English with <span className="text-[#14532d]">English</span><span className="text-amber-500">More</span>
             </h1>
@@ -120,7 +121,7 @@ export default function Home() {
                 href="/register"
                 className="brand-cta brand-cta-outline"
               >
-                <span>Đăng ký</span>
+                <span>Đăng Ký Học</span>
                 <span aria-hidden="true" className="brand-cta-arrow">→</span>
               </Link>
             </div>

@@ -1,0 +1,6 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="256" cy="256" r="256" fill="#14532d"/>
+  <text x="256" y="380" font-size="120" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial, sans-serif">B</text>
+  <circle cx="220" cy="140" r="35" fill="white"/>
+  <path d="M 180 160 Q 160 180 170 210 Q 180 190 200 180" fill="white"/>
+</svg>

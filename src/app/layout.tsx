@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "English Teaching Platform",
-  description: "Platform for students to register and submit assignments",
+  title: "EnglishMore - Khóa Học Tiếng Anh",
+  description: "Platform dành cho học viên đăng ký khóa học, nộp bài tập và theo dõi tiến độ",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
