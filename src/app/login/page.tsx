@@ -43,7 +43,7 @@ export default function Login() {
     setError('')
     setMessage('')
     try {
-      await signIn('google', { redirect: false })
+      await signIn('google', { callbackUrl: '/login' })
     } catch (err) {
       setError('Google sign in failed')
       setGoogleLoading(false)
