@@ -118,7 +118,7 @@ export default function Home() {
                 </div>
               )}
               <Link
-                href="/register"
+                href={session ? "/courses" : "/register"}
                 className="brand-cta brand-cta-outline"
               >
                 <span>Đăng Ký Học</span>
