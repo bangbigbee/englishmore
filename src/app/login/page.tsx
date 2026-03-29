@@ -30,7 +30,7 @@ export default function Login() {
     if (status === 'authenticated' && session?.user?.role) {
       if (session.user.role === 'admin') {
         router.push('/admin')
-      } else if (session.user.role === 'student') {
+      } else if (session.user.role === 'member' || session.user.role === 'student') {
         router.push('/dashboard')
       } else {
         router.push('/')

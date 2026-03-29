@@ -40,10 +40,20 @@ export default function Dashboard() {
     if (status === 'unauthenticated') {
       router.push('/login')
     } else if (status === 'authenticated') {
+      if (session?.user?.role === 'admin') {
+        router.push('/admin')
+        return
+      }
+
+      if (session?.user?.role === 'user') {
+        router.push('/')
+        return
+      }
+
       fetchCourses()
       fetchEnrollments()
     }
-  }, [status, router])
+  }, [status, router, session?.user?.role])
 
   const fetchCourses = async () => {
     try {
@@ -183,16 +193,18 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-xl font-semibold mb-2">Bài Tập</h2>
-            <p className="text-gray-600 mb-4">Nộp bài tập và xem tiến độ của bạn</p>
-            <Link
-              href="/submit"
-              className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] inline-block"
-            >
-              Nộp Bài Tập
-            </Link>
-          </div>
+          {session.user?.role === 'member' && (
+            <div className="bg-white p-6 rounded shadow-md">
+              <h2 className="text-xl font-semibold mb-2">Bài Tập</h2>
+              <p className="text-gray-600 mb-4">Nộp bài tập và xem tiến độ của bạn</p>
+              <Link
+                href="/submit"
+                className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] inline-block"
+              >
+                Nộp Bài Tập
+              </Link>
+            </div>
+          )}
 
           {session.user?.role === 'admin' && (
             <div className="bg-[#14532d]/10 border border-[#14532d]/25 p-6 rounded shadow-md">

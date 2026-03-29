@@ -93,7 +93,7 @@ export default function Home() {
               A dedicated platform for students to practice, submit assignments, and track progress. Teachers can manage materials and provide personalized feedback.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              {session ? (
+              {session?.user?.role === 'member' ? (
                 <Link
                   href="/submit"
                   className="rounded-lg bg-[#14532d] px-6 py-3 text-base font-semibold text-white shadow hover:bg-[#166534]"

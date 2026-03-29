@@ -50,12 +50,6 @@ export default function TopNav() {
 
           {session ? (
             <>
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 border border-amber-300 bg-amber-50 text-amber-700 rounded transition hover:bg-amber-100"
-              >
-                Dashboard
-              </Link>
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="px-4 py-2 border border-slate-300 bg-white text-slate-700 rounded transition hover:bg-slate-100"
