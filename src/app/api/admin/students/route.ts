@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     // Fetch all users with their assignment count
     const students = await prisma.user.findMany({
       where: {
-        role: 'student' // Only get actual students
+        role: 'member' // Only get actual members/students
       },
       select: {
         id: true,

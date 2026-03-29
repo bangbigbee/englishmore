@@ -64,17 +64,21 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     jwt: async ({ token, user }) => {
-      if (user && user.id) {
+      if (user?.id) {
         token.sub = user.id
-        // Fetch user role from database
+      }
+
+      // Always refresh role from database to avoid stale role in JWT/session
+      if (token.sub) {
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
+          where: { id: token.sub },
           select: { role: true }
         })
         if (dbUser) {
           token.role = dbUser.role
         }
       }
+
       return token
     },
     redirect: async ({ url, baseUrl }) => {

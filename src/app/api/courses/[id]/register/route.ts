@@ -44,10 +44,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     }
   })
 
-  // Update user role to student if they were a member
+  // Promote user to member after course registration
   await prisma.user.updateMany({
-    where: { id: session.user?.id as string, role: 'member' },
-    data: { role: 'student' }
+    where: { id: session.user?.id as string, role: 'user' },
+    data: { role: 'member' }
   })
 
   return NextResponse.json({ message: 'Đăng ký thành công. Vui lòng chuyển khoản 4,000,000 VND vào TK Techcombank Nguyễn Trí Bằng', enrollment })
