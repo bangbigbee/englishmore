@@ -32,8 +32,8 @@ export default function Register() {
       if (!res.ok) {
         setError(data.error || 'Đăng ký thất bại')
       } else {
-        setSuccess('Đăng ký thành công! Đang chuyển đến trang đăng nhập...')
-        setTimeout(() => router.push('/login'), 1200)
+        setSuccess('Đăng ký thành công! Đang chuyển đến trang chủ...')
+        setTimeout(() => router.push('/'), 1200)
       }
     } catch {
       setError('Lỗi máy chủ, thử lại sau.')

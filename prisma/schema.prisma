@@ -11,6 +11,13 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum UserRole {
+  member  // Người dùng mới đăng ký, chưa có khóa học
+  student // Học viên đã đăng ký khóa học
+  admin   // Quản trị viên
+}
+
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -45,7 +52,7 @@ model User {
   image         String?
   password      String?
   method        String?      // PPF, Beyond, Contrast
-  role          String       @default("user") // user or admin
+  role          UserRole     @default(member) // member, student, or admin
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @default(now())
   accounts      Account[]

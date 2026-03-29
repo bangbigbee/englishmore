@@ -1,7 +1,8 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function Login() {
@@ -11,6 +12,8 @@ export default function Login() {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+  const router = useRouter()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -22,12 +25,25 @@ export default function Login() {
     }
   }, [])
 
+  // Redirect based on role after successful login
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.role) {
+      if (session.user.role === 'admin') {
+        router.push('/admin')
+      } else if (session.user.role === 'student') {
+        router.push('/dashboard')
+      } else {
+        router.push('/')
+      }
+    }
+  }, [status, session, router])
+
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true)
     setError('')
     setMessage('')
     try {
-      await signIn('google', { callbackUrl: '/dashboard' })
+      await signIn('google', { redirect: false })
     } catch (err) {
       setError('Google sign in failed')
       setGoogleLoading(false)
@@ -52,8 +68,6 @@ export default function Login() {
       setMessage('Email hoặc mật khẩu không đúng.')
       return
     }
-
-    window.location.href = '/dashboard'
   }
 
   const handleClearError = () => {
