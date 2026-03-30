@@ -269,8 +269,8 @@ export default function Home() {
                     ))}
                   </ul>
                 )}
-                <Link href="/dashboard?homework=1" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
-                  Nộp bài ngay
+                <Link href="/my-homework" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
+                  Go to Homework
                 </Link>
               </>
             )}
