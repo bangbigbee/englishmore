@@ -82,6 +82,27 @@ interface HomeworkItem {
   _count: { submissions: number }
 }
 
+interface HomeworkSubmissionItem {
+  id: string
+  note: string | null
+  teacherComment: string | null
+  submittedAt: string
+  user: {
+    id: string
+    name: string | null
+    phone: string | null
+    email: string
+  }
+  homework: {
+    id: string
+    title: string
+    courseId: string
+    course: {
+      title: string
+    }
+  }
+}
+
 interface ExerciseQuestionItem {
   id: string
   order: number
@@ -252,6 +273,11 @@ export default function AdminDashboard() {
   const [editHomeworkDescription, setEditHomeworkDescription] = useState('')
   const [editHomeworkDueDate, setEditHomeworkDueDate] = useState('')
   const [savingHomeworkId, setSavingHomeworkId] = useState<string | null>(null)
+  const [homeworkSubmissions, setHomeworkSubmissions] = useState<HomeworkSubmissionItem[]>([])
+  const [homeworkSubmissionCourseFilter, setHomeworkSubmissionCourseFilter] = useState('')
+  const [homeworkSubmissionHomeworkFilter, setHomeworkSubmissionHomeworkFilter] = useState('')
+  const [homeworkTeacherComments, setHomeworkTeacherComments] = useState<Record<string, string>>({})
+  const [savingHomeworkCommentId, setSavingHomeworkCommentId] = useState<string | null>(null)
   const [rejectingUserId, setRejectingUserId] = useState<string | null>(null)
   const [exercises, setExercises] = useState<ExerciseItem[]>([])
   const [newExerciseCourseId, setNewExerciseCourseId] = useState('')
@@ -393,10 +419,36 @@ export default function AdminDashboard() {
       if (!newHomeworkCourseId && Array.isArray(data.courses) && data.courses.length > 0) {
         setNewHomeworkCourseId(data.courses[0].id)
       }
+      if (!homeworkSubmissionCourseFilter && Array.isArray(data.courses) && data.courses.length > 0) {
+        setHomeworkSubmissionCourseFilter(data.courses[0].id)
+      }
     } catch (err) {
       console.error(err)
     }
-  }, [newHomeworkCourseId])
+  }, [newHomeworkCourseId, homeworkSubmissionCourseFilter])
+
+  const fetchHomeworkSubmissions = useCallback(async () => {
+    try {
+      const params = new URLSearchParams()
+      if (homeworkSubmissionCourseFilter) params.set('courseId', homeworkSubmissionCourseFilter)
+      if (homeworkSubmissionHomeworkFilter) params.set('homeworkId', homeworkSubmissionHomeworkFilter)
+
+      const query = params.toString()
+      const res = await fetch(`/api/admin/homework/submissions${query ? `?${query}` : ''}`)
+      if (!res.ok) throw new Error('Failed to fetch homework submissions')
+      const data = await res.json()
+      const submissions = data.submissions || []
+      setHomeworkSubmissions(submissions)
+      setHomeworkTeacherComments(
+        Object.fromEntries(
+          submissions.map((submission: HomeworkSubmissionItem) => [submission.id, submission.teacherComment || ''])
+        )
+      )
+      setHomeworkError('')
+    } catch (err) {
+      setHomeworkError(err instanceof Error ? err.message : 'Không thể tải bài nộp của học viên')
+    }
+  }, [homeworkSubmissionCourseFilter, homeworkSubmissionHomeworkFilter])
 
   const fetchExerciseData = useCallback(async () => {
     try {
@@ -454,6 +506,12 @@ export default function AdminDashboard() {
       fetchLectureNotes(selectedLectureNoteCourseId)
     }
   }, [activeSection, selectedLectureNoteCourseId, fetchLectureNotes])
+
+  useEffect(() => {
+    if (activeSection === 'homework') {
+      fetchHomeworkSubmissions()
+    }
+  }, [activeSection, fetchHomeworkSubmissions])
 
   const updateNewExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
     setNewExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
@@ -691,6 +749,28 @@ export default function AdminDashboard() {
       setHomeworkSuccess('')
     } finally {
       setSavingHomeworkId(null)
+    }
+  }
+
+  const saveHomeworkTeacherComment = async (submissionId: string) => {
+    try {
+      setSavingHomeworkCommentId(submissionId)
+      const res = await fetch(`/api/admin/homework/submissions/${submissionId}/comment`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teacherComment: homeworkTeacherComments[submissionId] || '' })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể lưu nhận xét')
+
+      setHomeworkSuccess('Đã lưu nhận xét cho bài tập học viên')
+      setHomeworkError('')
+      fetchHomeworkSubmissions()
+    } catch (err) {
+      setHomeworkError(err instanceof Error ? err.message : 'Không thể lưu nhận xét')
+      setHomeworkSuccess('')
+    } finally {
+      setSavingHomeworkCommentId(null)
     }
   }
 
@@ -1220,6 +1300,95 @@ export default function AdminDashboard() {
                 {homeworks.length === 0 && (
                   <tr>
                     <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có bài tập nào</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Bài nộp của học viên và nhận xét giáo viên</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <select
+              value={homeworkSubmissionCourseFilter}
+              onChange={(e) => {
+                setHomeworkSubmissionCourseFilter(e.target.value)
+                setHomeworkSubmissionHomeworkFilter('')
+              }}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Tất cả khóa học</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+
+            <select
+              value={homeworkSubmissionHomeworkFilter}
+              onChange={(e) => setHomeworkSubmissionHomeworkFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Tất cả bài tập</option>
+              {homeworks
+                .filter((homework) => !homeworkSubmissionCourseFilter || homework.courseId === homeworkSubmissionCourseFilter)
+                .map((homework) => (
+                  <option key={homework.id} value={homework.id}>{homework.title}</option>
+                ))}
+            </select>
+
+            <button
+              onClick={fetchHomeworkSubmissions}
+              className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+            >
+              Làm mới danh sách nộp bài
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài làm học viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày nộp</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nhận xét giáo viên</th>
+                </tr>
+              </thead>
+              <tbody>
+                {homeworkSubmissions.map((submission) => (
+                  <tr key={submission.id} className="border-b align-top">
+                    <td className="px-4 py-3 text-sm text-gray-900">{submission.user.name || submission.user.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{submission.user.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.course.title}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.title}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-pre-wrap">{submission.note || 'Không có nội dung'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(submission.submittedAt).toLocaleString('vi-VN')}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <textarea
+                        value={homeworkTeacherComments[submission.id] || ''}
+                        onChange={(e) => setHomeworkTeacherComments((current) => ({ ...current, [submission.id]: e.target.value }))}
+                        rows={3}
+                        placeholder="Nhập nhận xét cho học viên"
+                        className="w-72 max-w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <button
+                        onClick={() => saveHomeworkTeacherComment(submission.id)}
+                        disabled={savingHomeworkCommentId === submission.id}
+                        className="mt-2 block px-3 py-1.5 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
+                      >
+                        {savingHomeworkCommentId === submission.id ? 'Đang lưu...' : 'Lưu nhận xét'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {homeworkSubmissions.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có bài nộp nào theo bộ lọc hiện tại</td>
                   </tr>
                 )}
               </tbody>
