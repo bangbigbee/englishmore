@@ -142,6 +142,136 @@ export default function Home() {
     })
   }, [memberHomework])
 
+  const completedSessions = memberHomework?.completedSessions ?? 0
+  const totalSessions = Math.max(1, memberHomework?.totalSessions ?? 30)
+  const progressPercent = Math.round((Math.min(totalSessions, Math.max(0, completedSessions)) / totalSessions) * 100)
+  const submittedHomework = memberHomework?.submittedHomework ?? 0
+  const totalHomework = memberHomework?.totalHomework ?? 0
+  const wordsLearnedEstimate = submittedHomework * 30
+  const displayName = session?.user?.name || 'Member'
+  const initials = displayName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || '')
+    .join('') || 'M'
+
+  if (session?.user?.role === 'member') {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900">
+        <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+          <div className="grid gap-6 lg:grid-cols-[220px_1fr] lg:items-start">
+            <aside className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-6">
+              <div className="rounded-xl bg-[#14532d]/8 p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#14532d] text-base font-bold text-white">
+                    {initials}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">{displayName}</p>
+                    <p className="text-xs text-slate-500">{memberEnrollment?.course?.title || 'EnglishMore Member'}</p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
+                    <span>Progress</span>
+                    <span className="font-semibold text-slate-800">{progressPercent}%</span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                    <div className="h-full rounded-full bg-[#4db463]" style={{ width: `${progressPercent}%` }} />
+                  </div>
+                </div>
+              </div>
+
+              <nav className="mt-4 space-y-1 text-sm">
+                <Link href="/dashboard" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Dashboard</Link>
+                <Link href="/my-homework" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Homework</Link>
+                <Link href="/dashboard" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Exercise</Link>
+                <Link href="/lecture-notes" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Lecture Notes</Link>
+                <span className="block rounded-lg bg-[#14532d] px-3 py-2 font-semibold text-white">Progress</span>
+              </nav>
+            </aside>
+
+            <section>
+              <h1 className="text-4xl font-bold text-slate-800">My Progress</h1>
+              <p className="mt-2 text-lg text-slate-500">Track your learning achievements and weekly activity</p>
+
+              <div className="mt-6 grid gap-6 xl:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                  <h2 className="text-3xl font-semibold text-slate-800">Overall Progress</h2>
+
+                  <div className="mt-6 flex justify-center">
+                    <div
+                      className="grid h-36 w-36 place-items-center rounded-full"
+                      style={{
+                        background: `conic-gradient(#6366f1 ${progressPercent * 3.6}deg, #d5d7db ${progressPercent * 3.6}deg)`
+                      }}
+                    >
+                      <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-4xl font-semibold text-slate-700">
+                        {progressPercent}%
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="mt-3 text-center text-xl text-slate-600">Course Completion</p>
+
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-xl bg-indigo-50 px-4 py-4 text-center">
+                      <p className="text-4xl font-semibold text-indigo-600">{completedSessions}</p>
+                      <p className="mt-1 text-sm text-slate-600">Lessons Completed</p>
+                    </div>
+                    <div className="rounded-xl bg-emerald-50 px-4 py-4 text-center">
+                      <p className="text-4xl font-semibold text-emerald-600">{wordsLearnedEstimate}</p>
+                      <p className="mt-1 text-sm text-slate-600">Words Learned</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                  <h2 className="text-3xl font-semibold text-slate-800">Weekly Activity</h2>
+                  <div className="mt-6 space-y-4">
+                    {weeklyActivityRows.map((item) => (
+                      <div key={item.day} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 sm:gap-4">
+                        <span className="text-lg text-slate-600">{item.day}</span>
+                        <div className="h-3 w-28 overflow-hidden rounded-full bg-slate-200 sm:w-36">
+                          <div
+                            className={`h-full rounded-full ${item.barClass} transition-all duration-500`}
+                            style={{ width: `${item.widthPercent}%` }}
+                          />
+                        </div>
+                        <span className="w-18 text-right text-xl font-medium text-slate-700">{item.minutes} min</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                <h3 className="text-2xl font-semibold text-slate-800">Homework Snapshot</h3>
+                <p className="mt-2 text-slate-600">
+                  Bạn đã nộp <span className="font-semibold text-slate-900">{submittedHomework}</span> / <span className="font-semibold text-slate-900">{totalHomework}</span> bài tập.
+                </p>
+                {memberHomework?.pendingHomework?.length ? (
+                  <ul className="mt-4 space-y-2 text-sm text-slate-700">
+                    {memberHomework.pendingHomework.slice(0, 3).map((homework) => (
+                      <li key={homework.id} className="rounded border border-amber-200 bg-amber-50 px-3 py-2">
+                        {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-4 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">
+                    Tốt lắm, hiện tại bạn không có bài tập tồn đọng.
+                  </p>
+                )}
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
