@@ -188,6 +188,15 @@ export default function Home() {
                   </span>
                 </div>
               )}
+              {session?.user?.role === 'member' && (
+                <Link
+                  href="/lecture-notes"
+                  className="brand-cta brand-cta-outline"
+                >
+                  <span>Lecture Notes</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                </Link>
+              )}
               <Link
                 href={session?.user?.role === 'member' ? '/dashboard' : session ? '/courses' : '/register'}
                 className={session?.user?.role === 'member' ? 'brand-cta brand-cta-filled' : 'brand-cta brand-cta-outline'}
