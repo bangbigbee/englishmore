@@ -39,7 +39,7 @@ export async function GET() {
     include: {
       submissions: {
         where: { userId: session.user.id },
-        select: { submittedAt: true, note: true }
+        select: { submittedAt: true, note: true, teacherComment: true }
       }
     },
     orderBy: { dueDate: 'asc' }
@@ -68,7 +68,8 @@ export async function GET() {
       dueDate: homework.dueDate,
       submitted: homework.submissions.length > 0,
       submittedAt: homework.submissions[0]?.submittedAt || null,
-      note: homework.submissions[0]?.note || ''
+      note: homework.submissions[0]?.note || '',
+      teacherComment: homework.submissions[0]?.teacherComment || ''
     }))
   })
 }

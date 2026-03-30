@@ -13,6 +13,7 @@ interface HomeworkRow {
   submitted: boolean
   submittedAt: string | null
   note: string
+  teacherComment: string
 }
 
 interface HomeworkSummaryResponse {
@@ -206,6 +207,10 @@ export default function MyHomeworkPage() {
                   <article key={item.id} className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
                     <p className="mt-1 text-sm text-slate-600">Nộp lúc: {item.submittedAt ? new Date(item.submittedAt).toLocaleString('vi-VN') : 'N/A'}</p>
+                    <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+                      <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Nhận xét từ giảng viên</p>
+                      <p className="mt-1 text-sm text-blue-900 whitespace-pre-wrap">{item.teacherComment || 'Giảng viên chưa để lại nhận xét cho bài này.'}</p>
+                    </div>
                     <label className="mt-3 block text-sm font-semibold text-slate-700">Ghi chú đã nộp (có thể chỉnh sửa)</label>
                     <textarea
                       value={notesByHomework[item.id] || ''}
