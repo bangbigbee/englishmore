@@ -18,7 +18,7 @@ export async function GET() {
     where: { userId: session.user.id, status: 'active' },
     include: {
       course: {
-        select: { id: true, title: true }
+        select: { id: true, title: true, completedSessions: true }
       }
     },
     orderBy: { createdAt: 'desc' }
@@ -28,6 +28,8 @@ export async function GET() {
     return NextResponse.json({
       hasActiveCourse: false,
       courseTitle: '',
+      completedSessions: 0,
+      totalSessions: 30,
       totalHomework: 0,
       submittedHomework: 0,
       pendingHomework: []
@@ -58,6 +60,8 @@ export async function GET() {
     hasActiveCourse: true,
     courseId: activeEnrollment.course.id,
     courseTitle: activeEnrollment.course.title,
+    completedSessions: activeEnrollment.course.completedSessions,
+    totalSessions: 30,
     totalHomework: homeworks.length,
     submittedHomework: homeworks.length - pendingHomework.length,
     pendingHomework,

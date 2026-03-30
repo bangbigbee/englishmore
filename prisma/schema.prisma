@@ -121,6 +121,7 @@ model Course {
   
   // Thông tin khóa học
   totalLessons         Int          @default(0)
+  completedSessions    Int          @default(0) // Số buổi đã dạy xong (0-30)
   maxStudents          Int          @default(10)
   method               String?      // PPF, Beyond, Contrast
   teacher              String?      // Tên giáo viên

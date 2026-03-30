@@ -20,6 +20,7 @@ interface CourseItem {
   description: string | null
   registrationDeadline: string
   maxStudents: number
+  completedSessions: number
   isPublished: boolean
   enrollments?: Array<{ status: string }>
 }
@@ -255,6 +256,7 @@ export default function AdminDashboard() {
   const [editCourseDescription, setEditCourseDescription] = useState('')
   const [editCourseDeadline, setEditCourseDeadline] = useState('')
   const [editCourseMaxStudents, setEditCourseMaxStudents] = useState(10)
+  const [editCourseCompletedSessions, setEditCourseCompletedSessions] = useState(0)
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
   const [summary, setSummary] = useState<DashboardSummary>({ totalUsers: 0, totalStudents: 0 })
@@ -854,6 +856,7 @@ export default function AdminDashboard() {
     setEditCourseDescription(course.description || '')
     setEditCourseDeadline(formatDateToDdMmYyyy(course.registrationDeadline))
     setEditCourseMaxStudents(course.maxStudents || 10)
+    setEditCourseCompletedSessions(course.completedSessions || 0)
     setCourseError('')
   }
 
@@ -875,6 +878,11 @@ export default function AdminDashboard() {
       return
     }
 
+    if (!Number.isInteger(editCourseCompletedSessions) || editCourseCompletedSessions < 0 || editCourseCompletedSessions > 30) {
+      setCourseError('Tiến độ khóa học phải từ 0 đến 30 buổi')
+      return
+    }
+
     try {
       setSavingCourseId(editingCourse.id)
       const res = await fetch(`/api/admin/courses/${editingCourse.id}`, {
@@ -884,7 +892,8 @@ export default function AdminDashboard() {
           title: editCourseTitle,
           description: editCourseDescription,
           registrationDeadline: parsedEditDeadline,
-          maxStudents: editCourseMaxStudents
+          maxStudents: editCourseMaxStudents,
+          completedSessions: editCourseCompletedSessions
         })
       })
 
@@ -2022,6 +2031,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hạn đăng ký</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số chỗ</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tiến độ khóa học</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái công khai</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thành công</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chờ chuyển khoản</th>
@@ -2038,6 +2048,20 @@ export default function AdminDashboard() {
                       {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">{course.maxStudents}/10</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      <div className="w-40">
+                        <div className="mb-1 flex items-center justify-between text-xs text-gray-600">
+                          <span>{course.completedSessions}/30 buổi</span>
+                          <span>{Math.round((Math.min(30, Math.max(0, course.completedSessions)) / 30) * 100)}%</span>
+                        </div>
+                        <div className="h-2 w-full overflow-hidden rounded bg-gray-200">
+                          <div
+                            className="h-full bg-amber-500 transition-all"
+                            style={{ width: `${(Math.min(30, Math.max(0, course.completedSessions)) / 30) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-medium ${
                         course.isPublished ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-gray-200 text-gray-700'
@@ -2075,7 +2099,7 @@ export default function AdminDashboard() {
                 ))}
                 {courses.length === 0 && (
                   <tr>
-                    <td colSpan={9} className="px-4 py-3 text-center text-gray-500">
+                    <td colSpan={10} className="px-4 py-3 text-center text-gray-500">
                       Chưa có khóa học nào
                     </td>
                   </tr>
@@ -2122,6 +2146,18 @@ export default function AdminDashboard() {
                     value={editCourseMaxStudents}
                     onChange={(e) => setEditCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                     placeholder="Từ 1 đến 10"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-gray-700">Số buổi đã hoàn thành (0-30)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={30}
+                    value={editCourseCompletedSessions}
+                    onChange={(e) => setEditCourseCompletedSessions(Math.min(30, Math.max(0, Number(e.target.value) || 0)))}
+                    placeholder="Từ 0 đến 30"
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   />
                 </label>

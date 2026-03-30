@@ -23,6 +23,8 @@ interface MemberEnrollment {
 interface MemberHomeworkSummary {
   hasActiveCourse: boolean
   courseTitle: string
+  completedSessions: number
+  totalSessions: number
   totalHomework: number
   submittedHomework: number
   pendingHomework: Array<{
@@ -232,6 +234,29 @@ export default function Home() {
             </a>
           </div>
         </section>
+
+        {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
+          <section className="mt-8 rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-xl font-bold text-slate-900">Tiến độ khóa học</h2>
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800">
+                {memberHomework.completedSessions}/{memberHomework.totalSessions} buổi
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-slate-600">{memberHomework.courseTitle}</p>
+            <div className="mt-4 h-4 w-full overflow-hidden rounded-full bg-slate-200">
+              <div
+                className="h-full rounded-full bg-linear-to-r from-amber-400 to-amber-500 transition-all duration-500"
+                style={{
+                  width: `${(Math.min(memberHomework.totalSessions || 30, Math.max(0, memberHomework.completedSessions)) / Math.max(1, memberHomework.totalSessions || 30)) * 100}%`
+                }}
+              />
+            </div>
+            <p className="mt-3 text-sm font-medium text-slate-700">
+              {Math.round((Math.min(memberHomework.totalSessions || 30, Math.max(0, memberHomework.completedSessions)) / Math.max(1, memberHomework.totalSessions || 30)) * 100)}% lộ trình đã hoàn thành.
+            </p>
+          </section>
+        )}
 
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
           <section className="mt-8 rounded-2xl border border-[#14532d]/25 bg-white p-6 shadow-sm">

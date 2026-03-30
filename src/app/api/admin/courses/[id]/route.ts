@@ -23,7 +23,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { title, description, registrationDeadline, isPublished, maxStudents } = body
+  const { title, description, registrationDeadline, isPublished, maxStudents, completedSessions } = body
 
   const data: {
     title?: string
@@ -31,6 +31,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     registrationDeadline?: Date
     isPublished?: boolean
     maxStudents?: number
+    completedSessions?: number
   } = {}
 
   if (title !== undefined) {
@@ -67,6 +68,14 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       return NextResponse.json({ error: 'Số lượng chỗ phải là số nguyên từ 1 đến 10' }, { status: 400 })
     }
     data.maxStudents = parsedMaxStudents
+  }
+
+  if (completedSessions !== undefined) {
+    const parsedCompletedSessions = Number(completedSessions)
+    if (!Number.isInteger(parsedCompletedSessions) || parsedCompletedSessions < 0 || parsedCompletedSessions > 30) {
+      return NextResponse.json({ error: 'Tiến độ khóa học phải là số nguyên từ 0 đến 30' }, { status: 400 })
+    }
+    data.completedSessions = parsedCompletedSessions
   }
 
   if (Object.keys(data).length === 0) {
