@@ -69,3 +69,21 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     return NextResponse.json({ error: 'Homework not found' }, { status: 404 })
   }
 }
+
+export async function DELETE(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const auth = await requireAdmin()
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.status === 401 ? 'Unauthorized' : 'Forbidden' }, { status: auth.status })
+  }
+
+  const { id } = await context.params
+
+  try {
+    await prisma.courseHomework.delete({
+      where: { id }
+    })
+    return NextResponse.json({ success: true })
+  } catch {
+    return NextResponse.json({ error: 'Homework not found' }, { status: 404 })
+  }
+}

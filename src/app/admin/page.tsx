@@ -273,6 +273,7 @@ export default function AdminDashboard() {
   const [editHomeworkDescription, setEditHomeworkDescription] = useState('')
   const [editHomeworkDueDate, setEditHomeworkDueDate] = useState('')
   const [savingHomeworkId, setSavingHomeworkId] = useState<string | null>(null)
+  const [deletingHomeworkId, setDeletingHomeworkId] = useState<string | null>(null)
   const [homeworkSubmissions, setHomeworkSubmissions] = useState<HomeworkSubmissionItem[]>([])
   const [homeworkSubmissionCourseFilter, setHomeworkSubmissionCourseFilter] = useState('')
   const [homeworkSubmissionHomeworkFilter, setHomeworkSubmissionHomeworkFilter] = useState('')
@@ -749,6 +750,34 @@ export default function AdminDashboard() {
       setHomeworkSuccess('')
     } finally {
       setSavingHomeworkId(null)
+    }
+  }
+
+  const deleteHomework = async (homework: HomeworkItem) => {
+    const confirmed = window.confirm(`Bạn có chắc chắn muốn xóa bài tập "${homework.title}"?`)
+    if (!confirmed) return
+
+    try {
+      setDeletingHomeworkId(homework.id)
+      const res = await fetch(`/api/admin/homework/${homework.id}`, {
+        method: 'DELETE'
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể xóa bài tập')
+
+      setHomeworkSuccess('Đã xóa bài tập')
+      setHomeworkError('')
+      if (editingHomework?.id === homework.id) {
+        setEditingHomework(null)
+      }
+      fetchHomeworkData()
+      fetchHomeworkSubmissions()
+      fetchMemberOverview()
+    } catch (err) {
+      setHomeworkError(err instanceof Error ? err.message : 'Không thể xóa bài tập')
+      setHomeworkSuccess('')
+    } finally {
+      setDeletingHomeworkId(null)
     }
   }
 
@@ -1293,7 +1322,16 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-900">{new Date(homework.dueDate).toLocaleDateString('vi-VN')}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{homework._count.submissions}</td>
                     <td className="px-4 py-3 text-sm">
-                      <button onClick={() => openEditHomework(homework)} className="text-[#14532d] hover:underline">Sửa</button>
+                      <div className="flex items-center gap-3">
+                        <button onClick={() => openEditHomework(homework)} className="text-[#14532d] hover:underline">Sửa</button>
+                        <button
+                          onClick={() => deleteHomework(homework)}
+                          disabled={deletingHomeworkId === homework.id}
+                          className="text-red-600 hover:underline disabled:opacity-50"
+                        >
+                          {deletingHomeworkId === homework.id ? 'Đang xóa...' : 'Xóa'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
