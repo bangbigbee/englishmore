@@ -499,42 +499,57 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <input
-              type="text"
-              placeholder="Tên khóa học"
-              value={newCourseTitle}
-              onChange={(e) => setNewCourseTitle(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-            />
-            <textarea
-              placeholder="Mô tả khóa học"
-              value={newCourseDescription}
-              onChange={(e) => setNewCourseDescription(e.target.value)}
-              rows={2}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-            />
-            <input
-              type="date"
-              value={newDeadline}
-              onChange={(e) => setNewDeadline(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-            />
-            <input
-              type="number"
-              min={1}
-              max={10}
-              placeholder="Số chỗ tối đa"
-              value={newCourseMaxStudents}
-              onChange={(e) => setNewCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-            />
-            <button
-              onClick={publishCourse}
-              className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
-            >
-              Xuất bản Khóa học
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Tên khóa học</span>
+              <input
+                type="text"
+                placeholder="Tên khóa học"
+                value={newCourseTitle}
+                onChange={(e) => setNewCourseTitle(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Mô tả khóa học</span>
+              <textarea
+                placeholder="Mô tả khóa học"
+                value={newCourseDescription}
+                onChange={(e) => setNewCourseDescription(e.target.value)}
+                rows={2}
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Hạn đăng ký</span>
+              <input
+                type="date"
+                value={newDeadline}
+                onChange={(e) => setNewDeadline(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Số lượng học viên tối đa</span>
+              <input
+                type="number"
+                min={1}
+                max={10}
+                placeholder="Từ 1 đến 10"
+                value={newCourseMaxStudents}
+                onChange={(e) => setNewCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              />
+              <span className="text-xs text-gray-500">Mỗi khóa học tối đa 10 học viên.</span>
+            </label>
+            <div className="flex items-end">
+              <button
+                onClick={publishCourse}
+                className="w-full px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+              >
+                Xuất bản Khóa học
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -634,15 +649,18 @@ export default function AdminDashboard() {
                   onChange={(e) => setEditCourseDeadline(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
-                <input
-                  type="number"
-                  min={1}
-                  max={10}
-                  value={editCourseMaxStudents}
-                  onChange={(e) => setEditCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
-                  placeholder="Số chỗ tối đa"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-gray-700">Số lượng học viên tối đa</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={editCourseMaxStudents}
+                    onChange={(e) => setEditCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
+                    placeholder="Từ 1 đến 10"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                </label>
               </div>
 
               <div className="mt-6 flex justify-end gap-3">
