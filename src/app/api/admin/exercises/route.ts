@@ -49,9 +49,59 @@ export async function GET() {
       orderBy: { createdAt: 'desc' }
     }),
     prisma.courseExercise.findMany({
-      include: {
+      select: {
+        id: true,
+        courseId: true,
+        order: true,
         course: { select: { title: true } },
-        questions: { orderBy: { order: 'asc' } }
+        questions: {
+          select: {
+            id: true,
+            order: true,
+            question: true,
+            optionA: true,
+            optionB: true,
+            optionC: true,
+            correctOption: true
+          },
+          orderBy: { order: 'asc' }
+        },
+        submissions: {
+          select: {
+            id: true,
+            score: true,
+            totalQuestions: true,
+            submittedAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            },
+            answers: {
+              select: {
+                id: true,
+                selectedOption: true,
+                isCorrect: true,
+                question: {
+                  select: {
+                    id: true,
+                    order: true,
+                    question: true,
+                    correctOption: true
+                  }
+                }
+              },
+              orderBy: {
+                question: {
+                  order: 'asc'
+                }
+              }
+            }
+          },
+          orderBy: { submittedAt: 'desc' }
+        }
       },
       orderBy: [{ courseId: 'asc' }, { order: 'asc' }]
     })

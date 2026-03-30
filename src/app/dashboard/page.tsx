@@ -16,6 +16,17 @@ interface HomeworkItem {
 interface ExerciseItem {
   id: string
   order: number
+  submission: {
+    id: string
+    score: number
+    totalQuestions: number
+    submittedAt: string
+    answers: Array<{
+      questionId: string
+      selectedOption: string
+      isCorrect: boolean
+    }>
+  } | null
   questions: Array<{
     id: string
     order: number
@@ -40,6 +51,9 @@ export default function Dashboard() {
   const [homeworkLoading, setHomeworkLoading] = useState(false)
   const [homeworkSuccess, setHomeworkSuccess] = useState('')
   const [homeworkError, setHomeworkError] = useState('')
+  const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, Record<string, string>>>({})
+  const [exerciseFeedback, setExerciseFeedback] = useState<Record<string, { type: 'success' | 'error'; message: string }>>({})
+  const [submittingExerciseId, setSubmittingExerciseId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -94,7 +108,20 @@ export default function Dashboard() {
       const res = await fetch('/api/member/exercises')
       if (!res.ok) throw new Error('Failed to fetch exercises')
       const data = await res.json()
-      setExercises(data.exercises || [])
+      const nextExercises = data.exercises || []
+      setExercises(nextExercises)
+      setExerciseAnswers((current) => {
+        const mapped = Object.fromEntries(
+          nextExercises.map((exercise: ExerciseItem) => [
+            exercise.id,
+            exercise.submission
+              ? Object.fromEntries(exercise.submission.answers.map((answer) => [answer.questionId, answer.selectedOption]))
+              : current[exercise.id] || {}
+          ])
+        )
+
+        return mapped
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không thể tải exercises')
     } finally {
@@ -150,6 +177,74 @@ export default function Dashboard() {
     }
   }
 
+  const updateExerciseAnswer = (exerciseId: string, questionId: string, selectedOption: string) => {
+    setExerciseAnswers((current) => ({
+      ...current,
+      [exerciseId]: {
+        ...(current[exerciseId] || {}),
+        [questionId]: selectedOption
+      }
+    }))
+    setExerciseFeedback((current) => {
+      const next = { ...current }
+      delete next[exerciseId]
+      return next
+    })
+  }
+
+  const submitExercise = async (exercise: ExerciseItem) => {
+    const selectedAnswers = exerciseAnswers[exercise.id] || {}
+    const missingQuestion = exercise.questions.find((question) => !selectedAnswers[question.id])
+
+    if (missingQuestion) {
+      setExerciseFeedback((current) => ({
+        ...current,
+        [exercise.id]: {
+          type: 'error',
+          message: `Bạn cần chọn đáp án cho câu ${missingQuestion.order} trước khi nộp bài.`
+        }
+      }))
+      return
+    }
+
+    try {
+      setSubmittingExerciseId(exercise.id)
+      const res = await fetch(`/api/member/exercises/${exercise.id}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          answers: exercise.questions.map((question) => ({
+            questionId: question.id,
+            selectedOption: selectedAnswers[question.id]
+          }))
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Không thể nộp exercise')
+      }
+
+      setExerciseFeedback((current) => ({
+        ...current,
+        [exercise.id]: {
+          type: 'success',
+          message: `Đã nộp bài. Kết quả hiện tại: ${data.submission.score}/${data.submission.totalQuestions}.`
+        }
+      }))
+      await fetchExercises()
+    } catch (err) {
+      setExerciseFeedback((current) => ({
+        ...current,
+        [exercise.id]: {
+          type: 'error',
+          message: err instanceof Error ? err.message : 'Không thể nộp exercise'
+        }
+      }))
+    } finally {
+      setSubmittingExerciseId(null)
+    }
+  }
+
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
@@ -163,7 +258,7 @@ export default function Dashboard() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Practice Arena</h1>
+            <h1 className="text-3xl font-bold mb-2">Practice Zone</h1>
             <p className="text-lg">Xin chào, <span className="font-semibold">{session.user.name || session.user.email}</span></p>
           </div>
         </div>
@@ -186,18 +281,77 @@ export default function Dashboard() {
                 <div className="space-y-6">
                   {exercises.map((exercise) => (
                     <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
-                      <h3 className="text-lg font-bold text-[#14532d] mb-4">Exercise {exercise.order}</h3>
+                      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                          <h3 className="text-lg font-bold text-[#14532d]">Exercise {exercise.order}</h3>
+                          <p className="text-sm text-gray-500">
+                            {Object.keys(exerciseAnswers[exercise.id] || {}).length}/{exercise.questions.length} câu đã chọn đáp án
+                          </p>
+                        </div>
+                        {exercise.submission ? (
+                          <div className="rounded-lg bg-[#14532d]/10 px-4 py-3 text-sm text-[#14532d]">
+                            <p className="font-semibold">Điểm gần nhất: {exercise.submission.score}/{exercise.submission.totalQuestions}</p>
+                            <p>Nộp lúc: {new Date(exercise.submission.submittedAt).toLocaleString('vi-VN')}</p>
+                          </div>
+                        ) : (
+                          <span className="inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">Chưa nộp bài</span>
+                        )}
+                      </div>
+
+                      {exerciseFeedback[exercise.id] && (
+                        <div className={`mb-4 rounded-lg border px-4 py-3 text-sm ${
+                          exerciseFeedback[exercise.id]?.type === 'success'
+                            ? 'border-[#14532d]/30 bg-[#14532d]/10 text-[#14532d]'
+                            : 'border-red-300 bg-red-50 text-red-700'
+                        }`}>
+                          {exerciseFeedback[exercise.id]?.message}
+                        </div>
+                      )}
+
                       <div className="space-y-4">
                         {exercise.questions.map((question) => (
                           <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
                             <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
-                            <div className="mt-3 space-y-2 text-sm text-gray-700">
-                              <p>A. {question.optionA}</p>
-                              <p>B. {question.optionB}</p>
-                              <p>C. {question.optionC}</p>
+                            <div className="mt-3 grid gap-2 md:grid-cols-3">
+                              {[
+                                { key: 'A', text: question.optionA },
+                                { key: 'B', text: question.optionB },
+                                { key: 'C', text: question.optionC }
+                              ].map((option) => {
+                                const selectedOption = exerciseAnswers[exercise.id]?.[question.id]
+                                const isSelected = selectedOption === option.key
+
+                                return (
+                                  <button
+                                    key={`${question.id}-${option.key}`}
+                                    type="button"
+                                    onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
+                                    className={`rounded-lg border px-4 py-3 text-left text-sm transition ${
+                                      isSelected
+                                        ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
+                                        : 'border-gray-200 bg-white text-gray-700 hover:border-[#14532d]/40'
+                                    }`}
+                                  >
+                                    <span className="mb-1 block font-semibold">{option.key}.</span>
+                                    <span>{option.text}</span>
+                                  </button>
+                                )
+                              })}
                             </div>
                           </div>
                         ))}
+                      </div>
+
+                      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-sm text-gray-500">Bạn có thể cập nhật đáp án rồi nộp lại nếu muốn cải thiện kết quả.</p>
+                        <button
+                          type="button"
+                          onClick={() => submitExercise(exercise)}
+                          disabled={submittingExerciseId === exercise.id}
+                          className="rounded-lg bg-[#14532d] px-5 py-3 font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                        >
+                          {submittingExerciseId === exercise.id ? 'Đang nộp bài...' : exercise.submission ? 'Nộp lại Exercise' : 'Submit Exercise'}
+                        </button>
                       </div>
                     </div>
                   ))}

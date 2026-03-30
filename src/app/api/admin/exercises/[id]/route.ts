@@ -54,6 +54,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   try {
     const exercise = await prisma.$transaction(async (tx) => {
+      await tx.exerciseSubmission.deleteMany({ where: { exerciseId: id } })
       await tx.exerciseQuestion.deleteMany({ where: { exerciseId: id } })
 
       return tx.courseExercise.update({

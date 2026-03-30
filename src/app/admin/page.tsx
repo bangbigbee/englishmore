@@ -88,12 +88,38 @@ interface ExerciseQuestionItem {
   correctOption: string
 }
 
+interface ExerciseSubmissionAnswerItem {
+  id: string
+  selectedOption: string
+  isCorrect: boolean
+  question: {
+    id: string
+    order: number
+    question: string
+    correctOption: string
+  }
+}
+
+interface ExerciseSubmissionItem {
+  id: string
+  score: number
+  totalQuestions: number
+  submittedAt: string
+  user: {
+    id: string
+    name: string | null
+    email: string
+  }
+  answers: ExerciseSubmissionAnswerItem[]
+}
+
 interface ExerciseItem {
   id: string
   courseId: string
   order: number
   course: { title: string }
   questions: ExerciseQuestionItem[]
+  submissions: ExerciseSubmissionItem[]
 }
 
 interface ExerciseQuestionForm {
@@ -112,6 +138,17 @@ const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
     optionC: '',
     correctOption: 'A'
   }))
+
+const buildExerciseResults = (items: ExerciseItem[]) =>
+  items
+    .flatMap((exercise) =>
+      exercise.submissions.map((submission) => ({
+        ...submission,
+        exerciseOrder: exercise.order,
+        courseTitle: exercise.course.title
+      }))
+    )
+    .sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -165,6 +202,7 @@ export default function AdminDashboard() {
   const [editingExercise, setEditingExercise] = useState<ExerciseItem | null>(null)
   const [editExerciseQuestions, setEditExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
   const [savingExerciseId, setSavingExerciseId] = useState<string | null>(null)
+  const [selectedExerciseResult, setSelectedExerciseResult] = useState<(ExerciseSubmissionItem & { exerciseOrder: number; courseTitle: string }) | null>(null)
 
   const fetchStudents = async () => {
     try {
@@ -636,6 +674,8 @@ export default function AdminDashboard() {
     return null
   }
 
+  const exerciseResults = buildExerciseResults(exercises)
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -939,6 +979,44 @@ export default function AdminDashboard() {
                 {exercises.length === 0 && (
                   <tr>
                     <td colSpan={4} className="px-4 py-3 text-center text-gray-500">Chưa có exercise nào</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="bg-white rounded shadow p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Kết quả Exercise của học viên</h2>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Điểm</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian nộp</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chi tiết</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exerciseResults.map((result) => (
+                  <tr key={result.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900">{result.user.name || result.user.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{result.courseTitle}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">Exercise {result.exerciseOrder}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{result.score}/{result.totalQuestions}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(result.submittedAt).toLocaleString('vi-VN')}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <button onClick={() => setSelectedExerciseResult(result)} className="text-[#14532d] hover:underline">Xem bài làm</button>
+                    </td>
+                  </tr>
+                ))}
+                {exerciseResults.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có học viên nào nộp exercise</td>
                   </tr>
                 )}
               </tbody>
@@ -1381,6 +1459,42 @@ export default function AdminDashboard() {
                 >
                   {savingExerciseId === editingExercise.id ? 'Đang lưu...' : 'Lưu thay đổi'}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedExerciseResult && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded shadow-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="mb-6 flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Bài làm Exercise {selectedExerciseResult.exerciseOrder}</h3>
+                  <p className="text-sm text-gray-600">{selectedExerciseResult.user.name || selectedExerciseResult.user.email} - {selectedExerciseResult.courseTitle}</p>
+                  <p className="mt-1 text-sm font-semibold text-[#14532d]">Điểm: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedExerciseResult(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {selectedExerciseResult.answers.map((answer) => (
+                  <div key={answer.id} className="rounded-xl border border-gray-200 p-4">
+                    <p className="font-semibold text-gray-900">{answer.question.order}. {answer.question.question}</p>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div className={`rounded-lg px-4 py-3 text-sm ${answer.isCorrect ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-red-50 text-red-700'}`}>
+                        Học viên chọn: {answer.selectedOption}
+                      </div>
+                      <div className="rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-700">
+                        Đáp án đúng: {answer.question.correctOption}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

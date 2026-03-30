@@ -28,8 +28,37 @@ export async function GET() {
 
   const exercises = await prisma.courseExercise.findMany({
     where: { courseId: activeEnrollment.courseId },
-    include: {
-      questions: { orderBy: { order: 'asc' } }
+    select: {
+      id: true,
+      order: true,
+      questions: {
+        select: {
+          id: true,
+          order: true,
+          question: true,
+          optionA: true,
+          optionB: true,
+          optionC: true
+        },
+        orderBy: { order: 'asc' }
+      },
+      submissions: {
+        where: { userId: session.user.id },
+        select: {
+          id: true,
+          score: true,
+          totalQuestions: true,
+          submittedAt: true,
+          answers: {
+            select: {
+              questionId: true,
+              selectedOption: true,
+              isCorrect: true
+            }
+          }
+        },
+        take: 1
+      }
     },
     orderBy: { order: 'asc' }
   })
@@ -37,6 +66,11 @@ export async function GET() {
   return NextResponse.json({
     hasActiveCourse: true,
     courseTitle: activeEnrollment.course.title,
-    exercises
+    exercises: exercises.map((exercise) => ({
+      id: exercise.id,
+      order: exercise.order,
+      questions: exercise.questions,
+      submission: exercise.submissions[0] || null
+    }))
   })
 }
