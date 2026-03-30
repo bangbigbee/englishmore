@@ -39,7 +39,7 @@ async function seed() {
         true,
         true,
         'COURSE_001',
-        2000000,
+        3800000,
         'VND',
         '2026-04-01T00:00:00.000Z'::TIMESTAMP,
         '2026-06-30T23:59:59.999Z'::TIMESTAMP,
@@ -62,7 +62,7 @@ async function seed() {
         true,
         true,
         'COURSE_002',
-        1500000,
+        3800000,
         'VND',
         '2026-04-05T00:00:00.000Z'::TIMESTAMP,
         '2026-07-05T23:59:59.999Z'::TIMESTAMP,
@@ -75,8 +75,8 @@ async function seed() {
     `)
 
     console.log('\n✅ Sample courses created!')
-    console.log(`📚 Course 1: TOEFL Preparation (COURSE_001) - 2.000.000đ`)
-    console.log(`📚 Course 2: English Conversation (COURSE_002) - 1.500.000đ`)
+    console.log(`📚 Course 1: TOEFL Preparation (COURSE_001) - 3.800.000đ`)
+    console.log(`📚 Course 2: English Conversation (COURSE_002) - 3.800.000đ`)
 
     // Show all data in database
     const users = await prisma.user.findMany({

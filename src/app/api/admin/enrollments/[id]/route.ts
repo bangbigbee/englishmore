@@ -49,7 +49,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       await tx.payment.upsert({
         where: { referenceCode },
         update: {
-          amount: updated.course.price,
+          amount: 3800000,
           status: 'verified',
           paymentMethod: 'bank_transfer',
           bankReference: bankReference || null,
@@ -59,7 +59,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
         create: {
           enrollmentId: enrollmentId,
           referenceCode,
-          amount: updated.course.price,
+          amount: 3800000,
           status: 'verified',
           paymentMethod: 'bank_transfer',
           bankReference: bankReference || null,

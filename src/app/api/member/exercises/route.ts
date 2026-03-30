@@ -31,6 +31,7 @@ export async function GET() {
     select: {
       id: true,
       order: true,
+      description: true,
       questions: {
         select: {
           id: true,
@@ -69,6 +70,7 @@ export async function GET() {
     exercises: exercises.map((exercise) => ({
       id: exercise.id,
       order: exercise.order,
+      description: exercise.description,
       questions: exercise.questions,
       submission: exercise.submissions[0] || null
     }))

@@ -45,7 +45,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { questions } = body as { questions?: ExerciseQuestionInput[] }
+  const { description, questions } = body as { description?: string; questions?: ExerciseQuestionInput[] }
 
   const questionError = validateQuestions(questions || [])
   if (questionError) {
@@ -60,6 +60,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       return tx.courseExercise.update({
         where: { id },
         data: {
+          description: String(description || '').trim() || null,
           questions: {
             create: questions!.map((item, index) => ({
               order: index + 1,

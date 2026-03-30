@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { courseId, questions } = body as { courseId?: string; questions?: ExerciseQuestionInput[] }
+  const { courseId, description, questions } = body as { courseId?: string; description?: string; questions?: ExerciseQuestionInput[] }
 
   if (!courseId) {
     return NextResponse.json({ error: 'courseId is required' }, { status: 400 })
@@ -138,6 +138,7 @@ export async function POST(request: NextRequest) {
     data: {
       courseId,
       order: (latestExercise?.order || 0) + 1,
+      description: String(description || '').trim() || null,
       questions: {
         create: questions!.map((item, index) => ({
           order: index + 1,

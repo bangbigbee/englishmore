@@ -117,6 +117,7 @@ interface ExerciseItem {
   id: string
   courseId: string
   order: number
+  description: string | null
   course: { title: string }
   questions: ExerciseQuestionItem[]
   submissions: ExerciseSubmissionItem[]
@@ -203,6 +204,10 @@ export default function AdminDashboard() {
   const [editExerciseQuestions, setEditExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
   const [savingExerciseId, setSavingExerciseId] = useState<string | null>(null)
   const [selectedExerciseResult, setSelectedExerciseResult] = useState<(ExerciseSubmissionItem & { exerciseOrder: number; courseTitle: string }) | null>(null)
+  const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
+  const [newExerciseDescription, setNewExerciseDescription] = useState('')
+  const [editExerciseDescription, setEditExerciseDescription] = useState('')
+  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise'>('course')
 
   const fetchStudents = async () => {
     try {
@@ -368,6 +373,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           courseId: newExerciseCourseId,
+          description: newExerciseDescription,
           questions: newExerciseQuestions
         })
       })
@@ -377,6 +383,8 @@ export default function AdminDashboard() {
       setExerciseSuccess('Đã tạo exercise mới')
       setExerciseError('')
       setNewExerciseQuestions(buildEmptyExerciseQuestions())
+      setNewExerciseDescription('')
+      setShowExerciseBuilder(false)
       fetchExerciseData()
     } catch (err) {
       setExerciseError(err instanceof Error ? err.message : 'Không thể tạo exercise')
@@ -386,6 +394,7 @@ export default function AdminDashboard() {
 
   const openEditExercise = (exercise: ExerciseItem) => {
     setEditingExercise(exercise)
+    setEditExerciseDescription(exercise.description || '')
     setEditExerciseQuestions(exercise.questions.map((question) => ({
       question: question.question,
       optionA: question.optionA,
@@ -404,7 +413,7 @@ export default function AdminDashboard() {
       const res = await fetch(`/api/admin/exercises/${editingExercise.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ questions: editExerciseQuestions })
+        body: JSON.stringify({ description: editExerciseDescription, questions: editExerciseQuestions })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Không thể cập nhật exercise')
@@ -695,8 +704,32 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => setActiveSection('course')}
+            className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'course' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            1. QUAN LY KHOA HOC
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection('homework')}
+            className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'homework' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            2. HOMEWORK
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection('exercise')}
+            className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'exercise' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            3. EXERCISE
+          </button>
+        </div>
+
         {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <div className="bg-white rounded shadow p-6">
             <h3 className="text-gray-500 text-sm font-medium">Tổng người dùng</h3>
             <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalUsers}</p>
@@ -720,7 +753,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+        <div className={`grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <div className="bg-white rounded shadow p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Bảng 1. Người dùng user</h2>
             <div className="overflow-x-auto">
@@ -792,7 +825,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded shadow p-6 mb-8">
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Quản lý bài tập theo khóa</h2>
 
           {homeworkSuccess && (
@@ -877,7 +910,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded shadow p-6 mb-8">
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Tạo Exercise trắc nghiệm</h2>
 
           {exerciseSuccess && (
@@ -887,80 +920,17 @@ export default function AdminDashboard() {
             <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Lỗi: {exerciseError}</div>
           )}
 
-          <div className="mb-6 flex flex-col gap-2 max-w-sm">
-            <label className="text-sm font-medium text-gray-700">Khóa học</label>
-            <select
-              value={newExerciseCourseId}
-              onChange={(e) => setNewExerciseCourseId(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-            >
-              <option value="">Chọn khóa học</option>
-              {courses.map((course) => (
-                <option key={course.id} value={course.id}>{course.title}</option>
-              ))}
-            </select>
+          <div className="mb-6 rounded border border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3 text-sm text-[#14532d]">
+            Tổng số Exercise đã tạo: <span className="font-semibold">{exercises.length}</span>
           </div>
 
-          <div className="space-y-4">
-            {newExerciseQuestions.map((question, index) => (
-              <div key={`new-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
-                <h3 className="font-bold text-[#14532d] mb-3">Câu {index + 1}</h3>
-                <div className="space-y-3">
-                  <textarea
-                    value={question.question}
-                    onChange={(e) => updateNewExerciseQuestion(index, 'question', e.target.value)}
-                    rows={2}
-                    placeholder="Nhập câu hỏi"
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                  <input
-                    type="text"
-                    value={question.optionA}
-                    onChange={(e) => updateNewExerciseQuestion(index, 'optionA', e.target.value)}
-                    placeholder="Đáp án A"
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                  <input
-                    type="text"
-                    value={question.optionB}
-                    onChange={(e) => updateNewExerciseQuestion(index, 'optionB', e.target.value)}
-                    placeholder="Đáp án B"
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                  <input
-                    type="text"
-                    value={question.optionC}
-                    onChange={(e) => updateNewExerciseQuestion(index, 'optionC', e.target.value)}
-                    placeholder="Đáp án C"
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                  <select
-                    value={question.correctOption}
-                    onChange={(e) => updateNewExerciseQuestion(index, 'correctOption', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  >
-                    <option value="A">Đáp án đúng: A</option>
-                    <option value="B">Đáp án đúng: B</option>
-                    <option value="C">Đáp án đúng: C</option>
-                  </select>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={createExercise}
-            className="mt-6 px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
-          >
-            Tạo Exercise 10 câu
-          </button>
-
-          <div className="mt-8 overflow-x-auto">
+          <div className="mb-8 overflow-x-auto">
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số câu</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
                 </tr>
@@ -970,6 +940,7 @@ export default function AdminDashboard() {
                   <tr key={exercise.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">Exercise {exercise.order}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{exercise.description || 'Chưa có mô tả'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.questions.length}</td>
                     <td className="px-4 py-3 text-sm">
                       <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Sửa</button>
@@ -978,15 +949,125 @@ export default function AdminDashboard() {
                 ))}
                 {exercises.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-4 py-3 text-center text-gray-500">Chưa có exercise nào</td>
+                    <td colSpan={5} className="px-4 py-3 text-center text-gray-500">Chưa có exercise nào</td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setShowExerciseBuilder((current) => !current)
+                setExerciseError('')
+                setExerciseSuccess('')
+              }}
+              className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+            >
+              {showExerciseBuilder ? 'Thu gọn form Exercise' : 'Tạo Exercise'}
+            </button>
+
+            {showExerciseBuilder && (
+              <button
+                type="button"
+                onClick={() => {
+                  setNewExerciseQuestions(buildEmptyExerciseQuestions())
+                  setExerciseError('')
+                }}
+                className="px-6 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-medium"
+              >
+                Làm mới form
+              </button>
+            )}
+          </div>
+
+          {showExerciseBuilder && (
+            <>
+              <div className="mb-6 flex flex-col gap-2 max-w-sm">
+                <label className="text-sm font-medium text-gray-700">Khóa học</label>
+                <select
+                  value={newExerciseCourseId}
+                  onChange={(e) => setNewExerciseCourseId(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                >
+                  <option value="">Chọn khóa học</option>
+                  {courses.map((course) => (
+                    <option key={course.id} value={course.id}>{course.title}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mb-6">
+                <label className="mb-2 block text-sm font-medium text-gray-700">Mô tả Exercise</label>
+                <textarea
+                  value={newExerciseDescription}
+                  onChange={(e) => setNewExerciseDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Ví dụ: Luyện tập phụ âm /th/ và phân biệt âm gần giống"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+              </div>
+
+              <div className="space-y-4">
+                {newExerciseQuestions.map((question, index) => (
+                  <div key={`new-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
+                    <h3 className="font-bold text-[#14532d] mb-3">Câu {index + 1}</h3>
+                    <div className="space-y-3">
+                      <textarea
+                        value={question.question}
+                        onChange={(e) => updateNewExerciseQuestion(index, 'question', e.target.value)}
+                        rows={2}
+                        placeholder="Nhập câu hỏi"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <input
+                        type="text"
+                        value={question.optionA}
+                        onChange={(e) => updateNewExerciseQuestion(index, 'optionA', e.target.value)}
+                        placeholder="Đáp án A"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <input
+                        type="text"
+                        value={question.optionB}
+                        onChange={(e) => updateNewExerciseQuestion(index, 'optionB', e.target.value)}
+                        placeholder="Đáp án B"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <input
+                        type="text"
+                        value={question.optionC}
+                        onChange={(e) => updateNewExerciseQuestion(index, 'optionC', e.target.value)}
+                        placeholder="Đáp án C"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <select
+                        value={question.correctOption}
+                        onChange={(e) => updateNewExerciseQuestion(index, 'correctOption', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      >
+                        <option value="A">Đáp án đúng: A</option>
+                        <option value="B">Đáp án đúng: B</option>
+                        <option value="C">Đáp án đúng: C</option>
+                      </select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={createExercise}
+                className="mt-6 px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+              >
+                Tạo Exercise 10 câu
+              </button>
+            </>
+          )}
         </div>
 
-        <div className="bg-white rounded shadow p-6 mb-8">
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Kết quả Exercise của học viên</h2>
 
           <div className="overflow-x-auto">
@@ -1025,7 +1106,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded shadow p-6 mb-8">
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <div className="flex items-center gap-4">
             <input
               type="text"
@@ -1044,14 +1125,14 @@ export default function AdminDashboard() {
         </div>
 
         {/* Error Message */}
-        {error && (
+        {activeSection === 'course' && error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-8">
             Lỗi: {error}
           </div>
         )}
 
         {/* Students Table */}
-        <div className="bg-white rounded shadow overflow-hidden">
+        <div className={`bg-white rounded shadow overflow-hidden ${activeSection === 'course' ? '' : 'hidden'}`}>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -1138,7 +1219,7 @@ export default function AdminDashboard() {
         )}
 
         {/* Course Management Section */}
-        <div className="mt-12 bg-white rounded shadow p-6">
+        <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Quản lý <span className="text-amber-600">Khóa học</span>
           </h2>
@@ -1401,6 +1482,16 @@ export default function AdminDashboard() {
             <div className="bg-white rounded shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Sửa Exercise {editingExercise.order}</h3>
 
+              <div className="mb-6">
+                <label className="mb-2 block text-sm font-medium text-gray-700">Mô tả Exercise</label>
+                <textarea
+                  value={editExerciseDescription}
+                  onChange={(e) => setEditExerciseDescription(e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+              </div>
+
               <div className="space-y-4">
                 {editExerciseQuestions.map((question, index) => (
                   <div key={`edit-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
@@ -1529,7 +1620,7 @@ export default function AdminDashboard() {
         )}
 
         {/* Enrollments Management Section */}
-        <div className="mt-12 bg-white rounded shadow p-6">
+        <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Đăng ký <span className="text-amber-600">Khóa học</span>
           </h2>

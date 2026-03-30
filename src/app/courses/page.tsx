@@ -123,7 +123,7 @@ export default function CoursesPage() {
       bankName: 'Techcombank',
       accountNumber: '19033113602011',
       accountName: 'Nguyen Tri Bang',
-      amount: enrollment.course?.price && enrollment.course.price > 0 ? enrollment.course.price : 3800000,
+      amount: 3800000,
       transferContent: enrollment.referenceCode || fallbackRef
     }
   }

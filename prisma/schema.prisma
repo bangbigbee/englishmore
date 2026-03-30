@@ -141,6 +141,7 @@ model CourseExercise {
   id          String             @id @default(cuid())
   courseId    String
   order       Int
+  description String?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 

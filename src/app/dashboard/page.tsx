@@ -16,6 +16,7 @@ interface HomeworkItem {
 interface ExerciseItem {
   id: string
   order: number
+  description: string | null
   submission: {
     id: string
     score: number
@@ -284,6 +285,9 @@ export default function Dashboard() {
                       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
                           <h3 className="text-lg font-bold text-[#14532d]">Exercise {exercise.order}</h3>
+                          {exercise.description && (
+                            <p className="mt-1 text-sm text-gray-600">{exercise.description}</p>
+                          )}
                           <p className="text-sm text-gray-500">
                             {Object.keys(exerciseAnswers[exercise.id] || {}).length}/{exercise.questions.length} câu đã chọn đáp án
                           </p>
