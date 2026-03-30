@@ -50,10 +50,14 @@ export default function CoursesPage() {
     if (status === 'unauthenticated') {
       router.push('/login')
     } else if (status === 'authenticated') {
+      if (session?.user?.role === 'admin') {
+        router.push('/admin')
+        return
+      }
       fetchCourses()
       fetchEnrollments()
     }
-  }, [status, router])
+  }, [status, router, session?.user?.role])
 
   const fetchCourses = async () => {
     try {

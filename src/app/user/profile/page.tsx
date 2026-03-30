@@ -266,6 +266,15 @@ export default function ProfilePage() {
 
             {/* Submit */}
             <div className="flex gap-3 pt-4">
+              {session.user?.role === 'admin' && (
+                <button
+                  type="button"
+                  onClick={() => router.push('/admin')}
+                  className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-black font-medium transition-colors cursor-pointer"
+                >
+                  Go to Dashboard
+                </button>
+              )}
               <button
                 type="submit"
                 disabled={saving}

@@ -9,6 +9,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } })
+  if (!currentUser) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 })
+  }
+  if (currentUser.role === 'admin') {
+    return NextResponse.json({ error: 'Tài khoản admin không được nộp bài tập' }, { status: 403 })
+  }
+
   const { homeworkId, description } = await request.json()
   const note = typeof description === 'string' ? description.trim() : ''
   if (!homeworkId) {
