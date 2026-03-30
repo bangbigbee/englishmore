@@ -36,6 +36,15 @@ function LogoutIcon() {
   )
 }
 
+function UserIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  )
+}
+
 export default function TopNav() {
   const { data: session, status } = useSession()
 
@@ -53,6 +62,16 @@ export default function TopNav() {
         <div className="flex items-center gap-3">
           {session ? (
             <>
+              <Link
+                href="/user/profile"
+                className="group relative p-2 text-slate-300 hover:text-white rounded-lg hover:bg-slate-800 transition cursor-pointer"
+                title="Profile"
+              >
+                <UserIcon />
+                <span className="pointer-events-none absolute right-0 top-full mt-2 w-max rounded bg-slate-800 px-2 py-1 text-xs text-slate-300 opacity-0 transition group-hover:opacity-100">
+                  Profile
+                </span>
+              </Link>
               <div className="group relative">
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
