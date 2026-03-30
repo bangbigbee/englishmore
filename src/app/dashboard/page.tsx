@@ -163,7 +163,7 @@ export default function Dashboard() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+            <h1 className="text-3xl font-bold mb-2">Practice Arena</h1>
             <p className="text-lg">Xin chào, <span className="font-semibold">{session.user.name || session.user.email}</span></p>
           </div>
         </div>
@@ -175,23 +175,6 @@ export default function Dashboard() {
         )}
 
         <div className="grid grid-cols-1 gap-6">
-          {session.user?.role === 'member' && (
-            <div className="bg-white p-6 rounded shadow-md">
-              <h2 className="text-xl font-semibold mb-2">Bài Tập</h2>
-              <p className="text-gray-600 mb-4">Nộp bài tập và xem tiến độ của bạn</p>
-              <button
-                onClick={() => {
-                  setHomeworkSuccess('')
-                  setHomeworkError('')
-                  setShowHomeworkModal(true)
-                }}
-                className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
-              >
-                Nộp Bài Tập
-              </button>
-            </div>
-          )}
-
           {session.user?.role === 'member' && (
             <div className="bg-white p-6 rounded shadow-md">
               <h2 className="text-xl font-semibold mb-4">Exercises</h2>
