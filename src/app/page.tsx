@@ -119,13 +119,13 @@ export default function Home() {
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
         {session?.user?.role === 'member' && memberCourseTitle && (
           <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-3">
-            <p className="text-sm font-semibold text-[#14532d]">
-              Bây giờ bạn là thành viên của {memberCourseTitle}.
+            <p className="text-base font-semibold text-[#14532d] sm:text-lg">
+              Bạn đang là thành viên {memberCourseTitle}.
             </p>
           </section>
         )}
 
-        {session && (
+        {session && session.user?.role !== 'member' && (
           <section className="mb-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
               <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Khóa học đang mở đăng ký</h2>
@@ -170,14 +170,7 @@ export default function Home() {
               Practice makes perfect!
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              {session?.user?.role === 'member' ? (
-                <Link
-                  href="/dashboard?homework=1"
-                  className="rounded-lg bg-[#14532d] px-6 py-3 text-base font-semibold text-white shadow hover:bg-[#166534]"
-                >
-                  My Homework
-                </Link>
-              ) : (
+              {session?.user?.role === 'member' ? null : (
                 <div className="group relative inline-block">
                   <a
                     href="https://www.facebook.com/bangbigbee"
@@ -217,7 +210,7 @@ export default function Home() {
 
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
           <section className="mt-8 rounded-2xl border border-[#14532d]/25 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-[#14532d]">Bài tập của bạn</h2>
+            <h2 className="text-xl font-bold text-[#14532d]">My Homework</h2>
             <p className="mt-2 text-sm text-slate-600">Khóa học: {memberHomework.courseTitle}</p>
 
             {memberHomework.pendingHomework.length > 0 && (
@@ -255,6 +248,42 @@ export default function Home() {
                   Nộp bài ngay
                 </Link>
               </>
+            )}
+          </section>
+        )}
+
+        {session?.user?.role === 'member' && (
+          <section className="mt-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Khóa học đang mở đăng ký</h2>
+              {availableCourses.length > 0 && (
+                <Link href="/courses" className="text-sm font-semibold text-amber-700 hover:underline">
+                  Xem tất cả
+                </Link>
+              )}
+            </div>
+
+            {loadingCourses ? (
+              <p className="px-4 py-4 text-sm text-slate-500">Đang tải khóa học...</p>
+            ) : availableCourses.length === 0 ? (
+              <p className="px-4 py-4 text-sm text-slate-500">Hiện chưa có khóa học mới.</p>
+            ) : (
+              <div className="course-ticker-wrap">
+                <div className="course-ticker-track">
+                  {tickerCourses.map((course, index) => (
+                    <Link
+                      key={`${course.id}-${index}`}
+                      href="/courses"
+                      className="course-ticker-item"
+                    >
+                      <span className="course-ticker-title">{course.title}</span>
+                      <span className="course-ticker-meta">
+                        Còn {Math.max(course.maxStudents - course.enrolledCount, 0)} chỗ • Hạn đăng ký {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             )}
           </section>
         )}
