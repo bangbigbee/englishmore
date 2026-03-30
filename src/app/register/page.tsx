@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 
 export default function Register() {
+  const isZaloInAppBrowser = typeof navigator !== 'undefined' && /zalo/i.test(navigator.userAgent || '')
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-0">
       <div className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-sm md:w-96">
@@ -11,8 +13,12 @@ export default function Register() {
 
         <button
           type="button"
-          onClick={() => signIn('google', { callbackUrl: '/' })}
-          className="w-full flex items-center justify-center gap-3 border-2 border-[#14532d] rounded p-2 hover:bg-slate-50 transition-colors mb-4 cursor-pointer"
+          onClick={() => {
+            if (isZaloInAppBrowser) return
+            signIn('google', { callbackUrl: '/' })
+          }}
+          disabled={isZaloInAppBrowser}
+          className="w-full flex items-center justify-center gap-3 border-2 border-[#14532d] rounded p-2 hover:bg-slate-50 transition-colors mb-4 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-5 h-5">
             <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
@@ -22,6 +28,12 @@ export default function Register() {
           </svg>
           <span className="text-sm font-medium text-slate-700">Continue with Google</span>
         </button>
+
+        {isZaloInAppBrowser && (
+          <div className="mb-3 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            Google không cho phép đăng nhập trong trình duyệt của Zalo (lỗi 403 disallowed_useragent). Vui lòng mở link này bằng Safari hoặc Chrome rồi đăng ký lại.
+          </div>
+        )}
 
         <p className="text-center text-sm text-slate-500 mb-3">
           Đăng ký tạm thời chỉ hỗ trợ Google.

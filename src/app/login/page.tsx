@@ -14,6 +14,7 @@ export default function Login() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const router = useRouter()
   const { data: session, status } = useSession()
+  const isZaloInAppBrowser = typeof navigator !== 'undefined' && /zalo/i.test(navigator.userAgent || '')
   const urlError =
     typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('error') || '' : ''
   const shownError = error || urlError
@@ -30,6 +31,12 @@ export default function Login() {
   }, [status, session, router])
 
   const handleGoogleSignIn = async () => {
+    if (isZaloInAppBrowser) {
+      setError('DisallowedUserAgentZalo')
+      setMessage('')
+      return
+    }
+
     setGoogleLoading(true)
     setError('')
     setMessage('')
@@ -77,6 +84,7 @@ export default function Login() {
     OAuthSignin: 'Không thể kết nối với Google, vui lòng thử lại.',
     OAuthAccountNotLinked: 'Email này đã được liên kết với tài khoản khác.',
     EmailInUse: 'Email này đã được đăng ký. Vui lòng sử dụng email khác hoặc đăng nhập với tài khoản hiện tại.',
+    DisallowedUserAgentZalo: 'Google không cho phép đăng nhập trong trình duyệt của Zalo. Vui lòng mở website bằng Safari hoặc Chrome để tiếp tục.',
     '': ''
   }
 
@@ -105,15 +113,21 @@ export default function Login() {
 
         <button
           onClick={handleGoogleSignIn}
-          disabled={googleLoading}
+          disabled={googleLoading || isZaloInAppBrowser}
           className={`w-full p-2 rounded mb-4 text-white font-medium transition ${
-            googleLoading
+            googleLoading || isZaloInAppBrowser
               ? 'bg-amber-300 cursor-not-allowed'
               : 'bg-amber-500 hover:bg-amber-600 cursor-pointer'
           }`}
         >
           {googleLoading ? 'Đang kết nối...' : 'Sign in with Google'}
         </button>
+
+        {isZaloInAppBrowser && (
+          <p className="text-left text-xs text-amber-700 mb-4">
+            Bạn đang mở trong trình duyệt của Zalo. Hãy mở link bằng trình duyệt ngoài ứng dụng để đăng nhập Google.
+          </p>
+        )}
 
         <div className="relative mb-4">
           <div className="absolute inset-0 flex items-center">
