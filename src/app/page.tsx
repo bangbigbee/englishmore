@@ -45,9 +45,6 @@ export default function Home() {
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberEnrollment, setMemberEnrollment] = useState<{ status: string; course: { title: string } } | null>(null)
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
-  const [activeMemberTab, setActiveMemberTab] = useState<'homework' | 'exercise' | 'lecture-notes'>('homework')
-  const [languagePreference, setLanguagePreference] = useState<'vi' | 'en'>('vi')
-  const [notifyByEmail, setNotifyByEmail] = useState(true)
   const [loadingCourses, setLoadingCourses] = useState(false)
   const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
 
@@ -187,34 +184,12 @@ export default function Home() {
               </div>
 
               <nav className="mt-4 space-y-1 text-sm">
-                <button
-                  type="button"
-                  onClick={() => setActiveMemberTab('homework')}
-                  className={`block w-full rounded-lg px-3 py-2 text-left font-medium transition ${activeMemberTab === 'homework' ? 'bg-[#14532d] text-white' : 'text-slate-700 hover:bg-slate-100'}`}
-                >
-                  Homework
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveMemberTab('exercise')}
-                  className={`block w-full rounded-lg px-3 py-2 text-left font-medium transition ${activeMemberTab === 'exercise' ? 'bg-[#14532d] text-white' : 'text-slate-700 hover:bg-slate-100'}`}
-                >
-                  Exercise
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveMemberTab('lecture-notes')}
-                  className={`block w-full rounded-lg px-3 py-2 text-left font-medium transition ${activeMemberTab === 'lecture-notes' ? 'bg-[#14532d] text-white' : 'text-slate-700 hover:bg-slate-100'}`}
-                >
-                  Lecture Notes
-                </button>
+                <Link href="/dashboard" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Dashboard</Link>
+                <Link href="/my-homework" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Homework</Link>
+                <Link href="/dashboard" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Exercise</Link>
+                <Link href="/lecture-notes" className="block rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-100">Lecture Notes</Link>
+                <span className="block rounded-lg bg-[#14532d] px-3 py-2 font-semibold text-white">Progress</span>
               </nav>
-
-              <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Task</p>
-                <p className="mt-1 text-sm font-semibold text-slate-800">Setting</p>
-                <p className="mt-1 text-xs text-slate-600">Cau hinh ngon ngu hien thi va thong bao hoc tap.</p>
-              </div>
             </aside>
 
             <section>
@@ -222,49 +197,49 @@ export default function Home() {
               <p className="mt-2 text-lg text-slate-500">Track your learning achievements and weekly activity</p>
 
               <div className="mt-6 grid gap-6 xl:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-                  <h2 className="text-2xl font-semibold text-slate-800">Overall Progress</h2>
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                  <h2 className="text-3xl font-semibold text-slate-800">Overall Progress</h2>
 
-                  <div className="mt-4 flex justify-center">
+                  <div className="mt-6 flex justify-center">
                     <div
-                      className="grid h-32 w-32 place-items-center rounded-full"
+                      className="grid h-36 w-36 place-items-center rounded-full"
                       style={{
                         background: `conic-gradient(#6366f1 ${progressPercent * 3.6}deg, #d5d7db ${progressPercent * 3.6}deg)`
                       }}
                     >
-                      <div className="grid h-24 w-24 place-items-center rounded-full bg-white text-3xl font-semibold text-slate-700">
+                      <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-4xl font-semibold text-slate-700">
                         {progressPercent}%
                       </div>
                     </div>
                   </div>
 
-                  <p className="mt-2 text-center text-lg text-slate-600">Course Completion</p>
+                  <p className="mt-3 text-center text-xl text-slate-600">Course Completion</p>
 
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     <div className="rounded-xl bg-indigo-50 px-4 py-4 text-center">
-                      <p className="text-3xl font-semibold text-indigo-600">{completedSessions}</p>
+                      <p className="text-4xl font-semibold text-indigo-600">{completedSessions}</p>
                       <p className="mt-1 text-sm text-slate-600">Lessons Completed</p>
                     </div>
                     <div className="rounded-xl bg-emerald-50 px-4 py-4 text-center">
-                      <p className="text-3xl font-semibold text-emerald-600">{wordsLearnedEstimate}</p>
+                      <p className="text-4xl font-semibold text-emerald-600">{wordsLearnedEstimate}</p>
                       <p className="mt-1 text-sm text-slate-600">Words Learned</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-                  <h2 className="text-2xl font-semibold text-slate-800">Weekly Activity</h2>
-                  <div className="mt-4 space-y-3">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                  <h2 className="text-3xl font-semibold text-slate-800">Weekly Activity</h2>
+                  <div className="mt-6 space-y-4">
                     {weeklyActivityRows.map((item) => (
                       <div key={item.day} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 sm:gap-4">
-                        <span className="text-base text-slate-600">{item.day}</span>
-                        <div className="h-2.5 w-24 overflow-hidden rounded-full bg-slate-200 sm:w-32">
+                        <span className="text-lg text-slate-600">{item.day}</span>
+                        <div className="h-3 w-28 overflow-hidden rounded-full bg-slate-200 sm:w-36">
                           <div
                             className={`h-full rounded-full ${item.barClass} transition-all duration-500`}
                             style={{ width: `${item.widthPercent}%` }}
                           />
                         </div>
-                        <span className="w-16 text-right text-lg font-medium text-slate-700">{item.minutes} min</span>
+                        <span className="w-18 text-right text-xl font-medium text-slate-700">{item.minutes} min</span>
                       </div>
                     ))}
                   </div>
@@ -272,86 +247,23 @@ export default function Home() {
               </div>
 
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-                {activeMemberTab === 'homework' && (
-                  <>
-                    <h3 className="text-2xl font-semibold text-slate-800">Homework Snapshot</h3>
-                    <p className="mt-2 text-slate-600">
-                      Bạn đã nộp <span className="font-semibold text-slate-900">{submittedHomework}</span> / <span className="font-semibold text-slate-900">{totalHomework}</span> bài tập.
-                    </p>
-                    {memberHomework?.pendingHomework?.length ? (
-                      <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                        {memberHomework.pendingHomework.slice(0, 3).map((homework) => (
-                          <li key={homework.id} className="rounded border border-amber-200 bg-amber-50 px-3 py-2">
-                            {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="mt-4 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">
-                        Tốt lắm, hiện tại bạn không có bài tập tồn đọng.
-                      </p>
-                    )}
-                  </>
+                <h3 className="text-2xl font-semibold text-slate-800">Homework Snapshot</h3>
+                <p className="mt-2 text-slate-600">
+                  Bạn đã nộp <span className="font-semibold text-slate-900">{submittedHomework}</span> / <span className="font-semibold text-slate-900">{totalHomework}</span> bài tập.
+                </p>
+                {memberHomework?.pendingHomework?.length ? (
+                  <ul className="mt-4 space-y-2 text-sm text-slate-700">
+                    {memberHomework.pendingHomework.slice(0, 3).map((homework) => (
+                      <li key={homework.id} className="rounded border border-amber-200 bg-amber-50 px-3 py-2">
+                        {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-4 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">
+                    Tốt lắm, hiện tại bạn không có bài tập tồn đọng.
+                  </p>
                 )}
-
-                {activeMemberTab === 'exercise' && (
-                  <>
-                    <h3 className="text-2xl font-semibold text-slate-800">Exercise Plan</h3>
-                    <p className="mt-2 text-slate-600">Hoat dong luyen tap tuan nay duoc cap nhat theo bai Exercise ban da nop.</p>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded border border-slate-200 bg-slate-50 px-4 py-3">
-                        <p className="text-sm text-slate-500">Muc tieu tuan</p>
-                        <p className="text-xl font-semibold text-slate-800">3 bai Exercise</p>
-                      </div>
-                      <div className="rounded border border-slate-200 bg-slate-50 px-4 py-3">
-                        <p className="text-sm text-slate-500">Da ghi nhan</p>
-                        <p className="text-xl font-semibold text-slate-800">{Math.ceil(weeklyActivityRows.reduce((sum, row) => sum + row.minutes, 0) / 15)} bai uoc tinh</p>
-                      </div>
-                    </div>
-                    <p className="mt-4 rounded border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm text-indigo-700">
-                      Goi y: Duy tri it nhat 20-30 phut moi ngay de tang toc do phan xa giao tiep.
-                    </p>
-                  </>
-                )}
-
-                {activeMemberTab === 'lecture-notes' && (
-                  <>
-                    <h3 className="text-2xl font-semibold text-slate-800">Lecture Notes Hub</h3>
-                    <p className="mt-2 text-slate-600">Tong hop ghi chu bai hoc va diem can on tap sau moi buoi hoc.</p>
-                    <div className="mt-4 space-y-2">
-                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">- Review phat am va intonation trong buoi gan nhat.</p>
-                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">- Ghi lai 5 cum tu ung dung trong cong viec/doi thoai hang ngay.</p>
-                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">- Chuan bi cau hoi de trao doi voi giao vien trong buoi tiep theo.</p>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-                <h3 className="text-2xl font-semibold text-slate-800">Setting</h3>
-                <p className="mt-2 text-slate-600">Cau hinh nhanh thong bao va ngon ngu hien thi tren homepage.</p>
-                <div className="mt-4 space-y-3">
-                  <label className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                    <span>Nhan thong bao bai tap qua email</span>
-                    <input
-                      type="checkbox"
-                      checked={notifyByEmail}
-                      onChange={(e) => setNotifyByEmail(e.target.checked)}
-                      className="h-4 w-4 accent-[#14532d]"
-                    />
-                  </label>
-                  <label className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                    <span>Ngon ngu hien thi</span>
-                    <select
-                      value={languagePreference}
-                      onChange={(e) => setLanguagePreference(e.target.value as 'vi' | 'en')}
-                      className="rounded border border-slate-300 bg-white px-2 py-1 text-sm"
-                    >
-                      <option value="vi">Tieng Viet</option>
-                      <option value="en">English</option>
-                    </select>
-                  </label>
-                </div>
               </div>
             </section>
           </div>
