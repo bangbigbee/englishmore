@@ -91,20 +91,35 @@ export default function ProfilePage() {
         bio: formData.bio
       }
 
-      if (selectedFile) {
-        const formDataFile = new FormData()
-        formDataFile.append('file', selectedFile)
-        
-        const uploadRes = await fetch('/api/user/upload-avatar', {
-          method: 'POST',
-          body: formDataFile
-        })
+      let avatarUploadFailed = false
+      let avatarUploadError = ''
 
-        if (!uploadRes.ok) throw new Error('Failed to upload image')
-        const uploadData = await uploadRes.json()
-        updateData.image = uploadData.url
+      // Try to upload avatar, but don't fail if it errors
+      if (selectedFile) {
+        try {
+          const formDataFile = new FormData()
+          formDataFile.append('file', selectedFile)
+          
+          const uploadRes = await fetch('/api/user/upload-avatar', {
+            method: 'POST',
+            body: formDataFile
+          })
+
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json()
+            updateData.image = uploadData.url
+          } else {
+            const uploadErr = await uploadRes.json().catch(() => ({ error: 'Unknown upload error' }))
+            avatarUploadFailed = true
+            avatarUploadError = uploadErr.error || 'Failed to upload image'
+          }
+        } catch (uploadErr) {
+          avatarUploadFailed = true
+          avatarUploadError = uploadErr instanceof Error ? uploadErr.message : 'Failed to upload image'
+        }
       }
 
+      // Always update profile, regardless of avatar upload status
       const res = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -119,7 +134,13 @@ export default function ProfilePage() {
       const updated = await res.json()
       setProfile(updated)
       setSelectedFile(null)
-      setSuccess('Profile updated successfully!')
+
+      // Show success message, with warning about avatar if it failed
+      if (avatarUploadFailed) {
+        setSuccess(`Thông tin cá nhân đã được lưu. Tuy nhiên, ảnh không tải lên được: ${avatarUploadError}`)
+      } else {
+        setSuccess('Profile updated successfully!')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update profile')
     } finally {
