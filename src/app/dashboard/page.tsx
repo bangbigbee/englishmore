@@ -1,24 +1,9 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-
-interface Course {
-  id: string
-  title: string
-  registrationDeadline: string
-  enrolledCount: number
-  maxStudents: number
-}
-
-interface Enrollment {
-  id: string
-  courseId: string
-  status: string
-  course: { title: string }
-}
 
 interface HomeworkItem {
   id: string
@@ -28,30 +13,33 @@ interface HomeworkItem {
   submitted: boolean
 }
 
+interface ExerciseItem {
+  id: string
+  order: number
+  questions: Array<{
+    id: string
+    order: number
+    question: string
+    optionA: string
+    optionB: string
+    optionC: string
+  }>
+}
+
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [courses, setCourses] = useState<Course[]>([])
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [registering, setRegistering] = useState<string | null>(null)
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
-  const [showConfirm, setShowConfirm] = useState(false)
   const [congratsEnrollment, setCongratsEnrollment] = useState<{ id: string; title: string } | null>(null)
   const [showHomeworkModal, setShowHomeworkModal] = useState(false)
   const [homeworks, setHomeworks] = useState<HomeworkItem[]>([])
+  const [exercises, setExercises] = useState<ExerciseItem[]>([])
   const [selectedHomeworkId, setSelectedHomeworkId] = useState('')
   const [homeworkNote, setHomeworkNote] = useState('')
   const [homeworkLoading, setHomeworkLoading] = useState(false)
   const [homeworkSuccess, setHomeworkSuccess] = useState('')
   const [homeworkError, setHomeworkError] = useState('')
-  const [bankInfo] = useState({
-    account: '19033113602011',
-    bank: 'Techcombank',
-    owner: 'Nguyễn Trí Bằng',
-    amount: '3,800,000 VND'
-  })
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -67,9 +55,9 @@ export default function Dashboard() {
         return
       }
 
-      fetchCourses()
       fetchEnrollments()
       fetchHomework()
+      fetchExercises()
 
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search)
@@ -83,6 +71,7 @@ export default function Dashboard() {
   const fetchHomework = async () => {
     try {
       setHomeworkLoading(true)
+      setHomeworkError('')
       const res = await fetch('/api/member/homework-summary')
       if (!res.ok) {
         setHomeworkError('Không thể tải danh sách bài tập')
@@ -99,14 +88,15 @@ export default function Dashboard() {
     }
   }
 
-  const fetchCourses = async () => {
+  const fetchExercises = async () => {
     try {
-      const res = await fetch('/api/courses')
-      if (!res.ok) throw new Error('Failed to fetch courses')
+      setError('')
+      const res = await fetch('/api/member/exercises')
+      if (!res.ok) throw new Error('Failed to fetch exercises')
       const data = await res.json()
-      setCourses(data)
+      setExercises(data.exercises || [])
     } catch (err) {
-      console.error(err)
+      setError(err instanceof Error ? err.message : 'Không thể tải exercises')
     } finally {
       setLoading(false)
     }
@@ -114,12 +104,12 @@ export default function Dashboard() {
 
   const fetchEnrollments = async () => {
     try {
+      setError('')
       const res = await fetch('/api/user/enrollments')
       if (!res.ok) return
       const data = await res.json()
-      setEnrollments(data)
       // Show congratulations for newly active enrollments not yet acknowledged
-      const activeEnrollment = data.find((e: Enrollment) => e.status === 'active')
+      const activeEnrollment = data.find((e: { id: string; status: string; course?: { title: string } }) => e.status === 'active')
       if (activeEnrollment) {
         const key = `congratulated_${activeEnrollment.id}`
         if (typeof window !== 'undefined' && !localStorage.getItem(key)) {
@@ -127,40 +117,8 @@ export default function Dashboard() {
         }
       }
     } catch (err) {
-      console.error(err)
+      setError(err instanceof Error ? err.message : 'Không thể tải thông tin khóa học')
     }
-  }
-
-  const registerCourse = async (courseId: string) => {
-    if (!courseId) {
-      setError('Course ID is required')
-      return
-    }
-
-    try {
-      setRegistering(courseId)
-      const res = await fetch(`/api/courses/${courseId}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        setError(data.error || 'Failed to register')
-      } else {
-        setError('')
-        setSelectedCourseId(null)
-        setShowConfirm(false)
-        fetchEnrollments()
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setRegistering(null)
-    }
-  }
-
-  const getEnrollmentStatus = (courseId: string) => {
-    return enrollments.find(e => e.courseId === courseId)
   }
 
   const submitHomework = async () => {
@@ -203,17 +161,11 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="mx-auto max-w-6xl">
-        <div className="flex justify-between items-start mb-6">
+        <div className="mb-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
             <p className="text-lg">Xin chào, <span className="font-semibold">{session.user.name || session.user.email}</span></p>
           </div>
-          <button
-            onClick={() => signOut()}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Đăng xuất
-          </button>
         </div>
 
         {error && (
@@ -222,58 +174,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="bg-white p-6 rounded shadow-md mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Các Khóa Học Có Sẵn</h2>
-
-          {loading ? (
-            <p className="text-gray-500">Đang tải...</p>
-          ) : courses.length === 0 ? (
-            <p className="text-gray-500">Chưa có khóa học nào</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {courses.map((course) => {
-                const enrollment = getEnrollmentStatus(course.id)
-                const isFull = course.enrolledCount >= course.maxStudents
-                return (
-                  <div key={course.id} className="border border-gray-200 rounded p-4 hover:shadow-md transition">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{course.title}</h3>
-                    <p className="text-gray-600 text-sm mb-2">
-                      Hạn đăng ký: {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
-                    </p>
-                    <p className="text-gray-600 text-sm mb-4">
-                      Số học viên: {course.enrolledCount}/{course.maxStudents}
-                    </p>
-
-                    {isFull ? (
-                      <div className="p-2 bg-red-50 rounded border border-red-200">
-                        <p className="text-xs text-red-800 font-semibold">Khóa học đã đủ số lượng</p>
-                      </div>
-                    ) : enrollment ? (
-                      <div className="p-2 bg-yellow-50 rounded border border-yellow-200">
-                        <p className="text-xs text-yellow-800">
-                          {enrollment.status === 'pending' ? 'Chờ xác nhận' : 'Đăng ký thành công'}
-                        </p>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          setSelectedCourseId(course.id)
-                          setShowConfirm(true)
-                        }}
-                        disabled={registering === course.id}
-                        className="w-full px-3 py-2 bg-[#14532d] text-white text-sm rounded hover:bg-[#166534] disabled:opacity-50"
-                      >
-                        {registering === course.id ? 'Đang đăng ký...' : 'Đăng ký'}
-                      </button>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {session.user?.role === 'member' && (
             <div className="bg-white p-6 rounded shadow-md">
               <h2 className="text-xl font-semibold mb-2">Bài Tập</h2>
@@ -288,6 +189,37 @@ export default function Dashboard() {
               >
                 Nộp Bài Tập
               </button>
+            </div>
+          )}
+
+          {session.user?.role === 'member' && (
+            <div className="bg-white p-6 rounded shadow-md">
+              <h2 className="text-xl font-semibold mb-4">Exercises</h2>
+              {loading ? (
+                <p className="text-gray-500">Đang tải exercises...</p>
+              ) : exercises.length === 0 ? (
+                <p className="text-gray-500">Chưa có exercise nào được tạo cho khóa học của bạn.</p>
+              ) : (
+                <div className="space-y-6">
+                  {exercises.map((exercise) => (
+                    <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
+                      <h3 className="text-lg font-bold text-[#14532d] mb-4">Exercise {exercise.order}</h3>
+                      <div className="space-y-4">
+                        {exercise.questions.map((question) => (
+                          <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
+                            <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
+                            <div className="mt-3 space-y-2 text-sm text-gray-700">
+                              <p>A. {question.optionA}</p>
+                              <p>B. {question.optionB}</p>
+                              <p>C. {question.optionC}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -332,76 +264,6 @@ export default function Dashboard() {
               >
                 Vào học ngay!
               </button>
-            </div>
-          </div>
-        )}
-
-        {showConfirm && selectedCourseId && (          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-md">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Xác nhận Đăng ký Khóa học</h3>
-
-              <div className="mb-6 space-y-4">
-                <p className="text-gray-700">
-                  Bạn cần chuyển khoản <strong>chính xác</strong> số tiền dưới đây:
-                </p>
-
-                <div className="bg-[#14532d]/10 border border-[#14532d]/25 rounded p-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Số tiền:</span>
-                    <span className="font-semibold text-gray-900">{bankInfo.amount}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Ngân hàng:</span>
-                    <span className="font-semibold text-gray-900">{bankInfo.bank}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Số TK:</span>
-                    <span className="font-mono font-semibold text-gray-900">{bankInfo.account}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Chủ TK:</span>
-                    <span className="font-semibold text-gray-900">{bankInfo.owner}</span>
-                  </div>
-                </div>
-
-                <p className="text-sm text-gray-600 bg-yellow-50 p-3 rounded">
-                  Sau khi chuyển khoản, admin sẽ xác nhận và kích hoạt khóa học cho bạn.
-                </p>
-              </div>
-
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => {
-                    setShowConfirm(false)
-                    setSelectedCourseId(null)
-                  }}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400"
-                >
-                  Hủy
-                </button>
-                <a
-                  href="https://www.facebook.com/bangbigbee"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-4 py-2 bg-amber-100 text-amber-700 rounded hover:bg-amber-200"
-                >
-                  Tư vấn
-                </a>
-                <button
-                  onClick={() => {
-                    if (!selectedCourseId) {
-                      setError('Course ID is required')
-                      setShowConfirm(false)
-                      return
-                    }
-                    registerCourse(selectedCourseId)
-                  }}
-                  disabled={registering === selectedCourseId}
-                  className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {registering === selectedCourseId ? 'Đang xử lý...' : 'Đã chuyển khoản'}
-                </button>
-              </div>
             </div>
           </div>
         )}

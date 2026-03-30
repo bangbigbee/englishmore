@@ -133,6 +133,39 @@ model Course {
   enrollments          Enrollment[]
   lessons              Lesson[]
   homeworks            CourseHomework[]
+  exercises            CourseExercise[]
+}
+
+model CourseExercise {
+  id          String             @id @default(cuid())
+  courseId    String
+  order       Int
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  course      Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions   ExerciseQuestion[]
+
+  @@unique([courseId, order])
+  @@index([courseId])
+}
+
+model ExerciseQuestion {
+  id            String          @id @default(cuid())
+  exerciseId    String
+  order         Int
+  question      String
+  optionA       String
+  optionB       String
+  optionC       String
+  correctOption String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  exercise      CourseExercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([exerciseId, order])
+  @@index([exerciseId])
 }
 
 model CourseHomework {

@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 
 interface StudentInfo {
@@ -78,6 +78,41 @@ interface HomeworkItem {
   _count: { submissions: number }
 }
 
+interface ExerciseQuestionItem {
+  id: string
+  order: number
+  question: string
+  optionA: string
+  optionB: string
+  optionC: string
+  correctOption: string
+}
+
+interface ExerciseItem {
+  id: string
+  courseId: string
+  order: number
+  course: { title: string }
+  questions: ExerciseQuestionItem[]
+}
+
+interface ExerciseQuestionForm {
+  question: string
+  optionA: string
+  optionB: string
+  optionC: string
+  correctOption: string
+}
+
+const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
+  Array.from({ length: 10 }, () => ({
+    question: '',
+    optionA: '',
+    optionB: '',
+    optionC: '',
+    correctOption: 'A'
+  }))
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -122,23 +157,14 @@ export default function AdminDashboard() {
   const [editHomeworkDueDate, setEditHomeworkDueDate] = useState('')
   const [savingHomeworkId, setSavingHomeworkId] = useState<string | null>(null)
   const [rejectingUserId, setRejectingUserId] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    } else if (status === 'authenticated') {
-      if (session?.user?.role !== 'admin') {
-        router.push('/dashboard')
-      } else {
-        fetchStudents()
-        fetchCourses()
-        fetchEnrollments()
-        fetchSummary()
-        fetchMemberOverview()
-        fetchHomeworkData()
-      }
-    }
-  }, [status, session, router])
+  const [exercises, setExercises] = useState<ExerciseItem[]>([])
+  const [newExerciseCourseId, setNewExerciseCourseId] = useState('')
+  const [newExerciseQuestions, setNewExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
+  const [exerciseError, setExerciseError] = useState('')
+  const [exerciseSuccess, setExerciseSuccess] = useState('')
+  const [editingExercise, setEditingExercise] = useState<ExerciseItem | null>(null)
+  const [editExerciseQuestions, setEditExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
+  const [savingExerciseId, setSavingExerciseId] = useState<string | null>(null)
 
   const fetchStudents = async () => {
     try {
@@ -238,7 +264,7 @@ export default function AdminDashboard() {
     }
   }
 
-  const fetchHomeworkData = async () => {
+  const fetchHomeworkData = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/homework')
       if (!res.ok) throw new Error('Failed to fetch homework')
@@ -249,6 +275,111 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error(err)
+    }
+  }, [newHomeworkCourseId])
+
+  const fetchExerciseData = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/exercises')
+      if (!res.ok) throw new Error('Failed to fetch exercises')
+      const data = await res.json()
+      setExercises(data.exercises || [])
+      if (!newExerciseCourseId && Array.isArray(data.courses) && data.courses.length > 0) {
+        setNewExerciseCourseId(data.courses[0].id)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }, [newExerciseCourseId])
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    } else if (status === 'authenticated') {
+      if (session?.user?.role !== 'admin') {
+        router.push('/dashboard')
+      } else {
+        fetchStudents()
+        fetchCourses()
+        fetchEnrollments()
+        fetchSummary()
+        fetchMemberOverview()
+        fetchHomeworkData()
+        fetchExerciseData()
+      }
+    }
+  }, [status, session, router, fetchHomeworkData, fetchExerciseData])
+
+  const updateNewExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
+    setNewExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
+  }
+
+  const updateEditExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
+    setEditExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
+  }
+
+  const createExercise = async () => {
+    if (!newExerciseCourseId) {
+      setExerciseError('Vui lòng chọn khóa học cho exercise')
+      return
+    }
+
+    try {
+      const res = await fetch('/api/admin/exercises', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: newExerciseCourseId,
+          questions: newExerciseQuestions
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể tạo exercise')
+
+      setExerciseSuccess('Đã tạo exercise mới')
+      setExerciseError('')
+      setNewExerciseQuestions(buildEmptyExerciseQuestions())
+      fetchExerciseData()
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Không thể tạo exercise')
+      setExerciseSuccess('')
+    }
+  }
+
+  const openEditExercise = (exercise: ExerciseItem) => {
+    setEditingExercise(exercise)
+    setEditExerciseQuestions(exercise.questions.map((question) => ({
+      question: question.question,
+      optionA: question.optionA,
+      optionB: question.optionB,
+      optionC: question.optionC,
+      correctOption: question.correctOption
+    })))
+    setExerciseError('')
+  }
+
+  const saveEditedExercise = async () => {
+    if (!editingExercise) return
+
+    try {
+      setSavingExerciseId(editingExercise.id)
+      const res = await fetch(`/api/admin/exercises/${editingExercise.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ questions: editExerciseQuestions })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể cập nhật exercise')
+
+      setExerciseSuccess('Đã cập nhật exercise')
+      setExerciseError('')
+      setEditingExercise(null)
+      fetchExerciseData()
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Không thể cập nhật exercise')
+      setExerciseSuccess('')
+    } finally {
+      setSavingExerciseId(null)
     }
   }
 
@@ -706,6 +837,115 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        <div className="bg-white rounded shadow p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Tạo Exercise trắc nghiệm</h2>
+
+          {exerciseSuccess && (
+            <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{exerciseSuccess}</div>
+          )}
+          {exerciseError && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Lỗi: {exerciseError}</div>
+          )}
+
+          <div className="mb-6 flex flex-col gap-2 max-w-sm">
+            <label className="text-sm font-medium text-gray-700">Khóa học</label>
+            <select
+              value={newExerciseCourseId}
+              onChange={(e) => setNewExerciseCourseId(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Chọn khóa học</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-4">
+            {newExerciseQuestions.map((question, index) => (
+              <div key={`new-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
+                <h3 className="font-bold text-[#14532d] mb-3">Câu {index + 1}</h3>
+                <div className="space-y-3">
+                  <textarea
+                    value={question.question}
+                    onChange={(e) => updateNewExerciseQuestion(index, 'question', e.target.value)}
+                    rows={2}
+                    placeholder="Nhập câu hỏi"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                  <input
+                    type="text"
+                    value={question.optionA}
+                    onChange={(e) => updateNewExerciseQuestion(index, 'optionA', e.target.value)}
+                    placeholder="Đáp án A"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                  <input
+                    type="text"
+                    value={question.optionB}
+                    onChange={(e) => updateNewExerciseQuestion(index, 'optionB', e.target.value)}
+                    placeholder="Đáp án B"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                  <input
+                    type="text"
+                    value={question.optionC}
+                    onChange={(e) => updateNewExerciseQuestion(index, 'optionC', e.target.value)}
+                    placeholder="Đáp án C"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                  <select
+                    value={question.correctOption}
+                    onChange={(e) => updateNewExerciseQuestion(index, 'correctOption', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  >
+                    <option value="A">Đáp án đúng: A</option>
+                    <option value="B">Đáp án đúng: B</option>
+                    <option value="C">Đáp án đúng: C</option>
+                  </select>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={createExercise}
+            className="mt-6 px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+          >
+            Tạo Exercise 10 câu
+          </button>
+
+          <div className="mt-8 overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số câu</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exercises.map((exercise) => (
+                  <tr key={exercise.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900">{exercise.course.title}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">Exercise {exercise.order}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{exercise.questions.length}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Sửa</button>
+                    </td>
+                  </tr>
+                ))}
+                {exercises.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-4 py-3 text-center text-gray-500">Chưa có exercise nào</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Search and Filter */}
         <div className="bg-white rounded shadow p-6 mb-8">
           <div className="flex items-center gap-4">
@@ -1072,6 +1312,74 @@ export default function AdminDashboard() {
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
                   {savingHomeworkId === editingHomework.id ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {editingExercise && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Sửa Exercise {editingExercise.order}</h3>
+
+              <div className="space-y-4">
+                {editExerciseQuestions.map((question, index) => (
+                  <div key={`edit-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
+                    <h4 className="font-bold text-[#14532d] mb-3">Câu {index + 1}</h4>
+                    <div className="space-y-3">
+                      <textarea
+                        value={question.question}
+                        onChange={(e) => updateEditExerciseQuestion(index, 'question', e.target.value)}
+                        rows={2}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <input
+                        type="text"
+                        value={question.optionA}
+                        onChange={(e) => updateEditExerciseQuestion(index, 'optionA', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <input
+                        type="text"
+                        value={question.optionB}
+                        onChange={(e) => updateEditExerciseQuestion(index, 'optionB', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <input
+                        type="text"
+                        value={question.optionC}
+                        onChange={(e) => updateEditExerciseQuestion(index, 'optionC', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                      <select
+                        value={question.correctOption}
+                        onChange={(e) => updateEditExerciseQuestion(index, 'correctOption', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      >
+                        <option value="A">Đáp án đúng: A</option>
+                        <option value="B">Đáp án đúng: B</option>
+                        <option value="C">Đáp án đúng: C</option>
+                      </select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setEditingExercise(null)}
+                  disabled={savingExerciseId === editingExercise.id}
+                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={saveEditedExercise}
+                  disabled={savingExerciseId === editingExercise.id}
+                  className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
+                >
+                  {savingExerciseId === editingExercise.id ? 'Đang lưu...' : 'Lưu thay đổi'}
                 </button>
               </div>
             </div>
