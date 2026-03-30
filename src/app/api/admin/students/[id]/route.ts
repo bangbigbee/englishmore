@@ -33,6 +33,7 @@ export async function GET(
       select: {
         id: true,
         name: true,
+        phone: true,
         email: true,
         method: true,
         createdAt: true,

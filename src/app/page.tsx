@@ -202,9 +202,14 @@ export default function Home() {
               className="h-80 w-full object-cover rounded-2xl"
               onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
             />
-            <p className="mt-4 text-sm text-slate-500">
+            <a
+              href="https://www.facebook.com/bangbigbee"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
+            >
               Giáo viên trực tiếp giảng dạy: Nguyễn Trí Bằng
-            </p>
+            </a>
           </div>
         </section>
 

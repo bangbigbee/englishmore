@@ -272,7 +272,7 @@ export default function CoursesPage() {
                       {paymentInstruction.transferContent}
                     </span>
                   </div>
-                  <p className="text-xs text-red-600 mt-1">Nguyen Van A 0934567890</p>
+                  <p className="text-sm text-[#14532d] font-semibold mt-1">Ví dụ: Nguyen Van A 0934567890</p>
                 </div>
               </div>
 

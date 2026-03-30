@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
       select: {
         id: true,
         name: true,
+        phone: true,
         email: true,
         method: true,
         createdAt: true,
@@ -46,6 +47,7 @@ export async function GET(request: NextRequest) {
     const formattedStudents = students.map(student => ({
       id: student.id,
       name: student.name,
+      phone: student.phone,
       email: student.email,
       method: student.method,
       assignmentCount: student._count.assignments,

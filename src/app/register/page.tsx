@@ -6,8 +6,10 @@ import Link from 'next/link'
 
 export default function Register() {
   const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -20,12 +22,18 @@ export default function Register() {
     setSubmitting(true)
 
     try {
+      if (password !== confirmPassword) {
+        setError('Xác nhận mật khẩu không khớp')
+        setSubmitting(false)
+        return
+      }
+
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, phone, email, password, confirmPassword })
       })
 
       const data = await res.json()
@@ -52,12 +60,24 @@ export default function Register() {
 
         <form onSubmit={handleRegister} className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-slate-700">Name (optional)</label>
+            <label className="block text-sm font-medium text-slate-700">Họ tên</label>
             <input
               type="text"
               className="mt-1 block w-full rounded border border-slate-300 p-2"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700">Số điện thoại</label>
+            <input
+              type="tel"
+              className="mt-1 block w-full rounded border border-slate-300 p-2"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Ví dụ: 0934567890"
+              required
             />
           </div>
           <div>
@@ -77,6 +97,17 @@ export default function Register() {
               className="mt-1 block w-full rounded border border-slate-300 p-2"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              minLength={6}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700">Xác nhận Password</label>
+            <input
+              type="password"
+              className="mt-1 block w-full rounded border border-slate-300 p-2"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               minLength={6}
               required
             />

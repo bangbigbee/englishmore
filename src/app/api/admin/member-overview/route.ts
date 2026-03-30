@@ -17,6 +17,7 @@ export async function GET() {
     select: {
       id: true,
       name: true,
+      phone: true,
       email: true,
       createdAt: true
     },
@@ -27,7 +28,7 @@ export async function GET() {
     where: { status: 'active' },
     include: {
       user: {
-        select: { id: true, name: true, email: true }
+        select: { id: true, name: true, phone: true, email: true }
       },
       course: {
         select: { id: true, title: true }
@@ -51,6 +52,7 @@ export async function GET() {
       return {
         id: enrollment.user.id,
         name: enrollment.user.name,
+        phone: enrollment.user.phone,
         email: enrollment.user.email,
         registeredAt: enrollment.createdAt,
         courseTitle: enrollment.course.title,

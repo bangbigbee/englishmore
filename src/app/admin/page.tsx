@@ -8,6 +8,7 @@ import Link from 'next/link'
 interface StudentInfo {
   id: string
   name: string | null
+  phone: string | null
   email: string
   assignmentCount: number
   createdAt: string
@@ -38,6 +39,7 @@ interface EnrollmentItem {
   user: {
     id: string
     name: string | null
+    phone: string | null
     email: string
   }
   course: {
@@ -53,6 +55,7 @@ interface DashboardSummary {
 interface UserOverviewItem {
   id: string
   name: string | null
+  phone: string | null
   email: string
   createdAt: string
 }
@@ -60,6 +63,7 @@ interface UserOverviewItem {
 interface MemberOverviewItem {
   id: string
   name: string | null
+  phone: string | null
   email: string
   registeredAt: string
   courseTitle: string
@@ -305,7 +309,8 @@ export default function AdminDashboard() {
   const filteredStudents = students.filter(
     student =>
       student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchTerm.toLowerCase())
+      student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(student.phone || '').toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const fetchCourses = async () => {
@@ -907,6 +912,7 @@ export default function AdminDashboard() {
                 <thead className="bg-gray-50 border-b">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Họ tên</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày mở tài khoản</th>
                   </tr>
                 </thead>
@@ -914,12 +920,13 @@ export default function AdminDashboard() {
                   {usersOverview.map((item) => (
                     <tr key={item.id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-900">{item.name || item.email}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{item.phone || 'Chưa cập nhật'}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
                     </tr>
                   ))}
                   {usersOverview.length === 0 && (
                     <tr>
-                      <td colSpan={2} className="px-4 py-3 text-center text-gray-500">Không có user nào</td>
+                      <td colSpan={3} className="px-4 py-3 text-center text-gray-500">Không có user nào</td>
                     </tr>
                   )}
                 </tbody>
@@ -934,6 +941,7 @@ export default function AdminDashboard() {
                 <thead className="bg-gray-50 border-b">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Họ tên</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học phí</th>
@@ -945,6 +953,7 @@ export default function AdminDashboard() {
                   {membersOverview.map((member) => (
                     <tr key={`${member.id}-${member.courseTitle}`} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-900">{member.name || member.email}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{member.phone || 'Chưa cập nhật'}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{new Date(member.registeredAt).toLocaleDateString('vi-VN')}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{member.courseTitle}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{member.isPaid ? 'Đã đóng' : 'Chưa đóng'}</td>
@@ -962,7 +971,7 @@ export default function AdminDashboard() {
                   ))}
                   {membersOverview.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có member đang học</td>
+                      <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có member đang học</td>
                     </tr>
                   )}
                 </tbody>
@@ -1302,7 +1311,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-4">
             <input
               type="text"
-              placeholder="Tìm kiếm học viên (tên hoặc email)..."
+              placeholder="Tìm kiếm học viên (tên, email hoặc SĐT)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
@@ -1330,6 +1339,7 @@ export default function AdminDashboard() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
@@ -1339,13 +1349,13 @@ export default function AdminDashboard() {
               <tbody className="divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
                       Đang tải...
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
                       Không tìm thấy học viên
                     </td>
                   </tr>
@@ -1353,6 +1363,7 @@ export default function AdminDashboard() {
                   filteredStudents.map(student => (
                     <tr key={student.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">{student.name || 'N/A'}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{student.phone || 'Chưa cập nhật'}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">{student.email}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{student.assignmentCount}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">
@@ -1829,6 +1840,7 @@ export default function AdminDashboard() {
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nội dung CK</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -1840,6 +1852,7 @@ export default function AdminDashboard() {
                 {enrollments.map((enrollment) => (
                   <tr key={enrollment.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{enrollment.user.name || enrollment.user.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{enrollment.user.phone || 'Chưa cập nhật'}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{enrollment.course.title}</td>
                     <td className="px-4 py-3 text-sm font-mono text-gray-700">{enrollment.referenceCode || 'Chưa có mã'}</td>
                     <td className="px-4 py-3 text-sm">
@@ -1880,7 +1893,7 @@ export default function AdminDashboard() {
                 ))}
                 {enrollments.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">
                       Chưa có đăng ký nào
                     </td>
                   </tr>

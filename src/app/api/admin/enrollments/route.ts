@@ -14,7 +14,14 @@ export async function GET() {
 
   const enrollments = await prisma.enrollment.findMany({
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true
+        }
+      },
       course: true,
       payments: {
         orderBy: { createdAt: 'desc' },

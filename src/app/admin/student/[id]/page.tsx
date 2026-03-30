@@ -17,6 +17,7 @@ interface Assignment {
 interface StudentDetail {
   id: string
   name: string | null
+  phone: string | null
   email: string
   method: string | null
   createdAt: string
@@ -133,6 +134,10 @@ export default function StudentDetailPage() {
             <div>
               <p className="text-gray-500 text-sm">Email</p>
               <p className="text-gray-900 font-medium text-lg">{student.email}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">Số điện thoại</p>
+              <p className="text-gray-900 font-medium text-lg">{student.phone || 'Chưa cập nhật'}</p>
             </div>
             <div>
               <p className="text-gray-500 text-sm">Phương thức học</p>
