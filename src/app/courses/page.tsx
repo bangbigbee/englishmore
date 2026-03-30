@@ -139,8 +139,8 @@ export default function CoursesPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Các Khóa Học Có Sẵn</h1>
-          <p className="text-gray-600 mt-2">Chọn khóa học mà bạn muốn tham gia</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Các Khóa Học Có Sẵn</h1>
+          <p className="text-xs sm:text-sm text-gray-600 mt-2">Chọn khóa học mà bạn muốn tham gia</p>
         </div>
       </div>
 
@@ -168,16 +168,16 @@ export default function CoursesPage() {
               const isFull = course.enrolledCount >= course.maxStudents
               const blockedByPending = !enrollment && hasPendingEnrollment
               return (
-                <div key={course.id} className="bg-white rounded shadow-md p-6 hover:shadow-lg transition">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{course.title}</h3>
-                  <p className="text-gray-700 text-sm mb-2">{course.description || 'Chưa có mô tả'}</p>
-                  <p className="text-gray-600 text-sm mb-2">
+                <div key={course.id} className="bg-white rounded shadow-md p-4 sm:p-6 hover:shadow-lg transition">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{course.title}</h3>
+                  <p className="text-gray-700 text-xs sm:text-sm mb-2">{course.description || 'Chưa có mô tả'}</p>
+                  <p className="text-gray-600 text-xs sm:text-sm mb-2">
                     Hạn đăng ký: {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                   </p>
-                  <p className="text-gray-600 text-sm mb-2">
+                  <p className="text-gray-600 text-xs sm:text-sm mb-2">
                     Số học viên: {course.enrolledCount}/{course.maxStudents}
                   </p>
-                  <p className="text-gray-600 text-sm mb-4">
+                  <p className="text-gray-600 text-xs sm:text-sm mb-4">
                     Đăng ký thành công: {course.successfulCount} • Chờ xác nhận: {course.pendingCount}
                   </p>
 

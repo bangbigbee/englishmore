@@ -126,16 +126,16 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-0">
+      <div className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-sm md:w-96">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">Register</h2>
 
         {step === 1 && (
           <>
             <button
               type="button"
               onClick={() => signIn('google', { callbackUrl: '/' })}
-              className="w-full flex items-center justify-center gap-3 border border-slate-300 rounded p-2 hover:bg-slate-50 transition-colors mb-4"
+              className="w-full flex items-center justify-center gap-3 border-2 border-[#14532d] rounded p-2 hover:bg-slate-50 transition-colors mb-4 cursor-pointer"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-5 h-5">
                 <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
@@ -148,13 +148,13 @@ export default function Register() {
 
             <div className="flex items-center gap-3 mb-4">
               <hr className="flex-1 border-slate-200" />
-              <span className="text-xs text-slate-400">hoặc</span>
+              <span className="text-xs text-slate-400">or</span>
               <hr className="flex-1 border-slate-200" />
             </div>
 
             {error && <p className="text-left text-red-600 mb-3 text-sm">{error}</p>}
 
-            <form onSubmit={handleSendOtp} className="space-y-3">
+            <form onSubmit={handleSendOtp} className="space-y-2 sm:space-y-3">
               <div>
                 <label className="block text-sm font-medium text-slate-700">Họ tên</label>
                 <input
@@ -210,7 +210,7 @@ export default function Register() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-[#14532d] text-white p-2 rounded hover:bg-[#166534]"
+                className="w-full bg-[#14532d] text-white p-2 rounded hover:bg-[#166534] cursor-pointer"
                 disabled={submitting}
               >
                 {submitting ? 'Đang gửi...' : 'Bắt đầu'}
@@ -278,7 +278,7 @@ export default function Register() {
           </>
         )}
 
-        <p className="mt-4 text-center text-sm text-slate-500">
+            <p className="mt-4 text-center text-xs sm:text-sm text-slate-500">
           Đã có tài khoản?{' '}
           <Link href="/login" className="font-medium text-[#14532d] hover:text-[#166534]">
             Đăng nhập

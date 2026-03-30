@@ -394,13 +394,13 @@ export default function Dashboard() {
 
                       {!startedExerciseAt[exercise.id] ? (
                         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                          <p className="text-sm text-blue-800 mb-3">Nhấn Start để mở bài Exercise và bắt đầu tính giờ làm bài.</p>
+                        <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs sm:text-sm text-blue-800">Nhấn nút dưới để mở bài Exercise và bắt đầu tính giờ làm bài.</p>
                           <button
                             type="button"
                             onClick={() => startExercise(exercise.id)}
-                            className="rounded-lg bg-blue-700 px-5 py-2 font-medium text-white hover:bg-blue-800"
+                            className="w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer"
                           >
-                            {exercise.submission ? 'Start làm lại' : 'Start'}
+                            {exercise.submission ? 'Làm lại' : 'Bắt đầu'}
                           </button>
                         </div>
                       ) : (
@@ -408,7 +408,7 @@ export default function Dashboard() {
                           {exercise.questions.map((question) => (
                             <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
                               <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
-                              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                              <div className="mt-2 sm:mt-3 grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                                 {[
                                   { key: 'A', text: question.optionA },
                                   { key: 'B', text: question.optionB },
@@ -422,7 +422,7 @@ export default function Dashboard() {
                                       key={`${question.id}-${option.key}`}
                                       type="button"
                                       onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
-                                      className={`rounded-lg border px-4 py-3 text-left text-sm transition ${
+                                      className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
                                         isSelected
                                           ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
                                           : 'border-gray-200 bg-white text-gray-700 hover:border-[#14532d]/40'
@@ -439,13 +439,13 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-sm text-gray-500">Bạn có thể cập nhật đáp án rồi nộp lại nếu muốn cải thiện kết quả.</p>
+                      <div className="mt-4 sm:mt-5 flex flex-col gap-2 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-xs sm:text-sm text-gray-500">Cập nhật đáp án rồi nộp lại nếu cải thiện kết quả.</p>
                         <button
                           type="button"
                           onClick={() => openSubmitConfirmation(exercise)}
                           disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
-                          className="rounded-lg bg-[#14532d] px-5 py-3 font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                          className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
                         >
                           {submittingExerciseId === exercise.id ? 'Đang nộp bài...' : exercise.submission ? 'Nộp lại Exercise' : 'Submit Exercise'}
                         </button>

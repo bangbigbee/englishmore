@@ -81,9 +81,9 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-0">
+      <div className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-sm md:w-96">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">Login</h2>
 
         {shownError && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded">
@@ -124,7 +124,7 @@ export default function Login() {
           </div>
         </div>
 
-        <form onSubmit={handleCredentialsSignIn} className="space-y-3">
+        <form onSubmit={handleCredentialsSignIn} className="space-y-2 sm:space-y-3">
           <div>
             <label className="block text-sm font-medium text-slate-700">Email</label>
             <input
