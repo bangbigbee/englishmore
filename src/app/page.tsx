@@ -117,6 +117,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+        {session?.user?.role === 'member' && memberCourseTitle && (
+          <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-3">
+            <p className="text-sm font-semibold text-[#14532d]">
+              Bây giờ bạn là thành viên của {memberCourseTitle}.
+            </p>
+          </section>
+        )}
+
         {session && (
           <section className="mb-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
@@ -158,13 +166,8 @@ export default function Home() {
             <h1 className="text-4xl font-extrabold leading-tight text-slate-900 sm:text-6xl">
               Master English with <span className="text-[#14532d]">English</span><span className="text-amber-500">More</span>
             </h1>
-            {session?.user?.role === 'member' && memberCourseTitle && (
-              <p className="mt-3 text-sm font-medium text-[#14532d]">
-                Bây giờ bạn là thành viên của {memberCourseTitle}.
-              </p>
-            )}
             <p className="mt-6 max-w-xl text-lg text-slate-600">
-              A dedicated platform for students to practice, submit assignments, and track progress. Teachers can manage materials and provide personalized feedback.
+              Practice makes perfect!
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               {session?.user?.role === 'member' ? (
@@ -221,10 +224,10 @@ export default function Home() {
               <div className="mt-4 homework-alert-wrap rounded border border-amber-300 bg-amber-50">
                 <div className="homework-alert-track">
                   <span className="homework-alert-text">
-                    Ban con {memberHomework.pendingHomework.length} bai tap chua nop. Vao Dashboard de nop bai ngay hom nay.
+                    You still have {memberHomework.pendingHomework.length} pending homework item(s). Open Dashboard to submit today.
                   </span>
                   <span className="homework-alert-text" aria-hidden="true">
-                    Ban con {memberHomework.pendingHomework.length} bai tap chua nop. Vao Dashboard de nop bai ngay hom nay.
+                    You still have {memberHomework.pendingHomework.length} pending homework item(s). Open Dashboard to submit today.
                   </span>
                 </div>
               </div>
@@ -255,28 +258,6 @@ export default function Home() {
             )}
           </section>
         )}
-
-        <section className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: 'Structured Lessons',
-              desc: 'Exercises organized from easy to difficult topics to help you improve step by step.',
-            },
-            {
-              title: 'Expert Feedback',
-              desc: 'Get detailed feedback and scores from your teachers on every submission.',
-            },
-            {
-              title: 'Progress Tracking',
-              desc: 'Monitor your learning journey with a personalized dashboard and statistics.',
-            },
-          ].map((card) => (
-            <article key={card.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-              <h3 className="text-xl font-semibold text-slate-900">{card.title}</h3>
-              <p className="mt-3 text-slate-600">{card.desc}</p>
-            </article>
-          ))}
-        </section>
 
         {session?.user?.role !== 'member' && (
           <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
