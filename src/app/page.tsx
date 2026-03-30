@@ -35,7 +35,7 @@ interface MemberHomeworkSummary {
 export default function Home() {
   const { data: session } = useSession()
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
-  const [memberCourseTitle, setMemberCourseTitle] = useState('')
+  const [memberEnrollment, setMemberEnrollment] = useState<{ status: string; course: { title: string } } | null>(null)
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [loadingCourses, setLoadingCourses] = useState(false)
   const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
@@ -63,25 +63,25 @@ export default function Home() {
 
     const fetchMemberEnrollment = async () => {
       if (session.user?.role !== 'member') {
-        setMemberCourseTitle('')
+        setMemberEnrollment(null)
         return
       }
 
       try {
         const res = await fetch('/api/user/enrollments')
         if (!res.ok) {
-          setMemberCourseTitle('')
+          setMemberEnrollment(null)
           return
         }
 
         const data = await res.json()
-        const latestActiveEnrollment = Array.isArray(data)
-          ? data.find((enrollment: MemberEnrollment) => enrollment.status === 'active')
+        const enrollment = Array.isArray(data)
+          ? data.find((e: MemberEnrollment) => e.status === 'active' || e.status === 'pending')
           : null
 
-        setMemberCourseTitle(latestActiveEnrollment?.course?.title || '')
+        setMemberEnrollment(enrollment || null)
       } catch {
-        setMemberCourseTitle('')
+        setMemberEnrollment(null)
       }
     }
 
@@ -117,10 +117,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-        {session?.user?.role === 'member' && memberCourseTitle && (
+        {session?.user?.role === 'member' && memberEnrollment && (
           <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-3">
             <p className="text-base font-semibold text-[#14532d] sm:text-lg">
-              Bạn đang là thành viên {memberCourseTitle}.
+              {memberEnrollment.status === 'pending'
+                ? `Đang xác nhận để trở thành học viên khóa học ${memberEnrollment.course.title}`
+                : `Bạn đang là thành viên ${memberEnrollment.course.title}.`}
             </p>
           </section>
         )}
