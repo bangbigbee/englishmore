@@ -23,7 +23,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { driveLink } = body
+    const { driveLink, sessionNumber } = body
     const { id: lectureNoteId } = await context.params
 
     // Check if lecture note exists
@@ -35,10 +35,28 @@ export async function PUT(
       return NextResponse.json({ error: 'Lecture note not found' }, { status: 404 })
     }
 
+    const parsedSessionNumber = Number(sessionNumber)
+    if (!Number.isInteger(parsedSessionNumber) || parsedSessionNumber < 1 || parsedSessionNumber > 30) {
+      return NextResponse.json({ error: 'sessionNumber must be between 1 and 30' }, { status: 400 })
+    }
+
+    const duplicateSession = await prisma.lectureNote.findFirst({
+      where: {
+        courseId: lectureNote.courseId,
+        sessionNumber: parsedSessionNumber,
+        id: { not: lectureNoteId }
+      }
+    })
+
+    if (duplicateSession) {
+      return NextResponse.json({ error: 'Session already exists for this course' }, { status: 409 })
+    }
+
     // Update lecture note
     const updated = await prisma.lectureNote.update({
       where: { id: lectureNoteId },
       data: {
+        sessionNumber: parsedSessionNumber,
         driveLink: driveLink || null
       }
     })

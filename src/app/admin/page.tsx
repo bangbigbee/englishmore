@@ -280,6 +280,7 @@ export default function AdminDashboard() {
   const [lectureError, setLectureError] = useState('')
   const [lectureSuccess, setLectureSuccess] = useState('')
   const [editingLectureNote, setEditingLectureNote] = useState<LectureNote | null>(null)
+  const [editLectureSession, setEditLectureSession] = useState('')
   const [editLectureDriveLink, setEditLectureDriveLink] = useState('')
   const [savingLectureId, setSavingLectureId] = useState<string | null>(null)
   const [deletingLectureId, setDeletingLectureId] = useState<string | null>(null)
@@ -886,6 +887,12 @@ export default function AdminDashboard() {
   const updateLectureNote = async () => {
     if (!editingLectureNote) return
 
+    const sessionNum = parseInt(editLectureSession, 10)
+    if (isNaN(sessionNum) || sessionNum < 1 || sessionNum > 30) {
+      setLectureError('Buổi học phải từ 1 đến 30')
+      return
+    }
+
     try {
       setSavingLectureId(editingLectureNote.id)
       setLectureError('')
@@ -895,6 +902,7 @@ export default function AdminDashboard() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          sessionNumber: sessionNum,
           driveLink: editLectureDriveLink || null
         })
       })
@@ -905,6 +913,7 @@ export default function AdminDashboard() {
       }
 
       setEditingLectureNote(null)
+  setEditLectureSession('')
       setEditLectureDriveLink('')
       setLectureSuccess('Cập nhật tài liệu thành công!')
       fetchLectureNotes(selectedLectureNoteCourseId)
@@ -1522,7 +1531,21 @@ export default function AdminDashboard() {
               <tbody>
                 {lectureNotes.map((note) => (
                   <tr key={note.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">Buổi {note.sessionNumber}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                      {editingLectureNote?.id === note.id ? (
+                        <input
+                          type="number"
+                          min={1}
+                          max={30}
+                          value={editLectureSession}
+                          onChange={(e) => setEditLectureSession(e.target.value)}
+                          className="w-24 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          placeholder="1-30"
+                        />
+                      ) : (
+                        <>Buổi {note.sessionNumber}</>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {editingLectureNote?.id === note.id ? (
                         <input
@@ -1554,6 +1577,7 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => {
                               setEditingLectureNote(null)
+                              setEditLectureSession('')
                               setEditLectureDriveLink('')
                             }}
                             className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
@@ -1566,6 +1590,7 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => {
                               setEditingLectureNote(note)
+                              setEditLectureSession(String(note.sessionNumber))
                               setEditLectureDriveLink(note.driveLink || '')
                             }}
                             className="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700"
