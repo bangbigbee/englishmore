@@ -20,10 +20,23 @@ interface MemberEnrollment {
   }
 }
 
+interface MemberHomeworkSummary {
+  hasActiveCourse: boolean
+  courseTitle: string
+  totalHomework: number
+  submittedHomework: number
+  pendingHomework: Array<{
+    id: string
+    title: string
+    dueDate: string
+  }>
+}
+
 export default function Home() {
   const { data: session } = useSession()
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberCourseTitle, setMemberCourseTitle] = useState('')
+  const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [loadingCourses, setLoadingCourses] = useState(false)
   const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
 
@@ -72,8 +85,28 @@ export default function Home() {
       }
     }
 
+    const fetchMemberHomework = async () => {
+      if (session.user?.role !== 'member') {
+        setMemberHomework(null)
+        return
+      }
+
+      try {
+        const res = await fetch('/api/member/homework-summary')
+        if (!res.ok) {
+          setMemberHomework(null)
+          return
+        }
+        const data = await res.json()
+        setMemberHomework(data)
+      } catch {
+        setMemberHomework(null)
+      }
+    }
+
     fetchAvailableCourses()
     fetchMemberEnrollment()
+    fetchMemberHomework()
   }, [session])
 
   const tickerCourses = useMemo(() => {
@@ -178,6 +211,37 @@ export default function Home() {
             </p>
           </div>
         </section>
+
+        {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
+          <section className="mt-8 rounded-2xl border border-[#14532d]/25 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-[#14532d]">Bài tập của bạn</h2>
+            <p className="mt-2 text-sm text-slate-600">Khóa học: {memberHomework.courseTitle}</p>
+
+            {memberHomework.totalHomework > 0 && memberHomework.submittedHomework === memberHomework.totalHomework ? (
+              <p className="mt-4 rounded-lg bg-[#14532d]/10 border border-[#14532d]/30 px-4 py-3 text-[#14532d] font-semibold">
+                Tốt lắm, bạn đã hoàn thành tất cả bài tập của mình rồi.
+              </p>
+            ) : (
+              <>
+                <p className="mt-4 text-slate-700">
+                  Bạn đã nộp <strong>{memberHomework.submittedHomework}</strong> / <strong>{memberHomework.totalHomework}</strong> bài tập.
+                </p>
+                {memberHomework.pendingHomework.length > 0 && (
+                  <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                    {memberHomework.pendingHomework.slice(0, 5).map((homework) => (
+                      <li key={homework.id} className="rounded border border-amber-200 bg-amber-50 px-3 py-2">
+                        {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <Link href="/submit" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
+                  Nộp bài ngay
+                </Link>
+              </>
+            )}
+          </section>
+        )}
 
         <section className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[

@@ -49,6 +49,34 @@ interface DashboardSummary {
   totalStudents: number
 }
 
+interface UserOverviewItem {
+  id: string
+  name: string | null
+  email: string
+  createdAt: string
+}
+
+interface MemberOverviewItem {
+  id: string
+  name: string | null
+  email: string
+  registeredAt: string
+  courseTitle: string
+  isPaid: boolean
+  submittedHomework: number
+  totalHomework: number
+}
+
+interface HomeworkItem {
+  id: string
+  courseId: string
+  title: string
+  description: string | null
+  dueDate: string
+  course: { title: string }
+  _count: { submissions: number }
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -77,6 +105,21 @@ export default function AdminDashboard() {
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
   const [summary, setSummary] = useState<DashboardSummary>({ totalUsers: 0, totalStudents: 0 })
+  const [usersOverview, setUsersOverview] = useState<UserOverviewItem[]>([])
+  const [membersOverview, setMembersOverview] = useState<MemberOverviewItem[]>([])
+  const [homeworks, setHomeworks] = useState<HomeworkItem[]>([])
+  const [newHomeworkCourseId, setNewHomeworkCourseId] = useState('')
+  const [newHomeworkTitle, setNewHomeworkTitle] = useState('')
+  const [newHomeworkDescription, setNewHomeworkDescription] = useState('')
+  const [newHomeworkDueDate, setNewHomeworkDueDate] = useState('')
+  const [homeworkError, setHomeworkError] = useState('')
+  const [homeworkSuccess, setHomeworkSuccess] = useState('')
+  const [editingHomework, setEditingHomework] = useState<HomeworkItem | null>(null)
+  const [editHomeworkCourseId, setEditHomeworkCourseId] = useState('')
+  const [editHomeworkTitle, setEditHomeworkTitle] = useState('')
+  const [editHomeworkDescription, setEditHomeworkDescription] = useState('')
+  const [editHomeworkDueDate, setEditHomeworkDueDate] = useState('')
+  const [savingHomeworkId, setSavingHomeworkId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -89,6 +132,8 @@ export default function AdminDashboard() {
         fetchCourses()
         fetchEnrollments()
         fetchSummary()
+        fetchMemberOverview()
+        fetchHomeworkData()
       }
     }
   }, [status, session, router])
@@ -176,6 +221,110 @@ export default function AdminDashboard() {
       })
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  const fetchMemberOverview = async () => {
+    try {
+      const res = await fetch('/api/admin/member-overview')
+      if (!res.ok) throw new Error('Failed to fetch member overview')
+      const data = await res.json()
+      setUsersOverview(data.users || [])
+      setMembersOverview(data.members || [])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const fetchHomeworkData = async () => {
+    try {
+      const res = await fetch('/api/admin/homework')
+      if (!res.ok) throw new Error('Failed to fetch homework')
+      const data = await res.json()
+      setHomeworks(data.homeworks || [])
+      if (!newHomeworkCourseId && Array.isArray(data.courses) && data.courses.length > 0) {
+        setNewHomeworkCourseId(data.courses[0].id)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const createHomework = async () => {
+    if (!newHomeworkCourseId || !newHomeworkTitle || !newHomeworkDueDate) {
+      setHomeworkError('Vui lòng nhập đủ khóa học, tên bài tập và hạn nộp')
+      return
+    }
+
+    try {
+      const res = await fetch('/api/admin/homework', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: newHomeworkCourseId,
+          title: newHomeworkTitle,
+          description: newHomeworkDescription,
+          dueDate: newHomeworkDueDate
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể tạo bài tập')
+
+      setHomeworkSuccess('Đã tạo bài tập mới')
+      setHomeworkError('')
+      setNewHomeworkTitle('')
+      setNewHomeworkDescription('')
+      setNewHomeworkDueDate('')
+      fetchHomeworkData()
+      fetchMemberOverview()
+    } catch (err) {
+      setHomeworkError(err instanceof Error ? err.message : 'Không thể tạo bài tập')
+      setHomeworkSuccess('')
+    }
+  }
+
+  const openEditHomework = (homework: HomeworkItem) => {
+    setEditingHomework(homework)
+    setEditHomeworkCourseId(homework.courseId)
+    setEditHomeworkTitle(homework.title)
+    setEditHomeworkDescription(homework.description || '')
+    setEditHomeworkDueDate(new Date(homework.dueDate).toISOString().slice(0, 10))
+    setHomeworkError('')
+  }
+
+  const saveEditedHomework = async () => {
+    if (!editingHomework) return
+    if (!editHomeworkCourseId || !editHomeworkTitle || !editHomeworkDueDate) {
+      setHomeworkError('Vui lòng nhập đủ thông tin bài tập')
+      return
+    }
+
+    try {
+      setSavingHomeworkId(editingHomework.id)
+      const res = await fetch(`/api/admin/homework/${editingHomework.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: editHomeworkCourseId,
+          title: editHomeworkTitle,
+          description: editHomeworkDescription,
+          dueDate: editHomeworkDueDate
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể cập nhật bài tập')
+
+      setHomeworkSuccess('Đã cập nhật bài tập')
+      setHomeworkError('')
+      setEditingHomework(null)
+      fetchHomeworkData()
+      fetchMemberOverview()
+    } catch (err) {
+      setHomeworkError(err instanceof Error ? err.message : 'Không thể cập nhật bài tập')
+      setHomeworkSuccess('')
+    } finally {
+      setSavingHomeworkId(null)
     }
   }
 
@@ -308,6 +457,7 @@ export default function AdminDashboard() {
       fetchEnrollments()
       fetchCourses()
       fetchSummary()
+      fetchMemberOverview()
     } catch (err) {
       setCourseError(err instanceof Error ? err.message : 'Không thể cập nhật trạng thái thanh toán')
     } finally {
@@ -365,6 +515,153 @@ export default function AdminDashboard() {
             >
               Xem chi tiết
             </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white rounded shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Bảng 1. Người dùng user</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Họ tên</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày mở tài khoản</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {usersOverview.map((item) => (
+                    <tr key={item.id} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm text-gray-900">{item.name || item.email}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
+                    </tr>
+                  ))}
+                  {usersOverview.length === 0 && (
+                    <tr>
+                      <td colSpan={2} className="px-4 py-3 text-center text-gray-500">Không có user nào</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="bg-white rounded shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Bảng 2. Thành viên member</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Họ tên</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học phí</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {membersOverview.map((member) => (
+                    <tr key={`${member.id}-${member.courseTitle}`} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm text-gray-900">{member.name || member.email}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(member.registeredAt).toLocaleDateString('vi-VN')}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{member.courseTitle}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{member.isPaid ? 'Đã đóng' : 'Chưa đóng'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{member.submittedHomework}/{member.totalHomework}</td>
+                    </tr>
+                  ))}
+                  {membersOverview.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-3 text-center text-gray-500">Chưa có member đang học</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded shadow p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quản lý bài tập theo khóa</h2>
+
+          {homeworkSuccess && (
+            <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{homeworkSuccess}</div>
+          )}
+          {homeworkError && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Lỗi: {homeworkError}</div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <select
+              value={newHomeworkCourseId}
+              onChange={(e) => setNewHomeworkCourseId(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Chọn khóa học</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Tên bài tập"
+              value={newHomeworkTitle}
+              onChange={(e) => setNewHomeworkTitle(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <input
+              type="date"
+              value={newHomeworkDueDate}
+              onChange={(e) => setNewHomeworkDueDate(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <button
+              onClick={createHomework}
+              className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+            >
+              Tạo bài tập
+            </button>
+          </div>
+
+          <textarea
+            placeholder="Mô tả bài tập"
+            value={newHomeworkDescription}
+            onChange={(e) => setNewHomeworkDescription(e.target.value)}
+            rows={3}
+            className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+          />
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên bài tập</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hạn nộp</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Đã nộp</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {homeworks.map((homework) => (
+                  <tr key={homework.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900">{homework.course.title}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{homework.title}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{homework.description || 'Không có mô tả'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{new Date(homework.dueDate).toLocaleDateString('vi-VN')}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{homework._count.submissions}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <button onClick={() => openEditHomework(homework)} className="text-[#14532d] hover:underline">Sửa</button>
+                    </td>
+                  </tr>
+                ))}
+                {homeworks.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có bài tập nào</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -677,6 +974,63 @@ export default function AdminDashboard() {
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
                   {savingCourseId === editingCourse.id ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {editingHomework && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded shadow-lg p-6 max-w-lg w-full">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Sửa bài tập</h3>
+
+              <div className="space-y-4">
+                <select
+                  value={editHomeworkCourseId}
+                  onChange={(e) => setEditHomeworkCourseId(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                >
+                  {courses.map((course) => (
+                    <option key={course.id} value={course.id}>{course.title}</option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  value={editHomeworkTitle}
+                  onChange={(e) => setEditHomeworkTitle(e.target.value)}
+                  placeholder="Tên bài tập"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+                <textarea
+                  value={editHomeworkDescription}
+                  onChange={(e) => setEditHomeworkDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Mô tả bài tập"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+                <input
+                  type="date"
+                  value={editHomeworkDueDate}
+                  onChange={(e) => setEditHomeworkDueDate(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setEditingHomework(null)}
+                  disabled={savingHomeworkId === editingHomework.id}
+                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={saveEditedHomework}
+                  disabled={savingHomeworkId === editingHomework.id}
+                  className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
+                >
+                  {savingHomeworkId === editingHomework.id ? 'Đang lưu...' : 'Lưu thay đổi'}
                 </button>
               </div>
             </div>

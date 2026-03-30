@@ -80,6 +80,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   assignments   Assignment[]
+  homeworkSubmissions HomeworkSubmission[]
   enrollments   Enrollment[]
 }
 
@@ -131,6 +132,39 @@ model Course {
   // Relations
   enrollments          Enrollment[]
   lessons              Lesson[]
+  homeworks            CourseHomework[]
+}
+
+model CourseHomework {
+  id          String              @id @default(cuid())
+  courseId    String
+  title       String
+  description String?
+  dueDate     DateTime
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  course      Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submissions HomeworkSubmission[]
+
+  @@index([courseId])
+  @@index([dueDate])
+}
+
+model HomeworkSubmission {
+  id          String         @id @default(cuid())
+  homeworkId  String
+  userId      String
+  note        String?
+  submittedAt DateTime       @default(now())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  homework    CourseHomework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([homeworkId, userId])
+  @@index([userId])
 }
 
 model Enrollment {

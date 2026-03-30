@@ -9,17 +9,43 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { title, description } = await request.json()
-  if (!title) {
-    return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+  const { homeworkId, description } = await request.json()
+  if (!homeworkId) {
+    return NextResponse.json({ error: 'homeworkId is required' }, { status: 400 })
   }
 
-  const assignment = await prisma.assignment.create({
-    data: {
+  const activeEnrollment = await prisma.enrollment.findFirst({
+    where: {
       userId: session.user.id,
-      title,
-      description: description || '',
-      method: 'homework'
+      status: 'active'
+    },
+    orderBy: { createdAt: 'desc' }
+  })
+
+  if (!activeEnrollment) {
+    return NextResponse.json({ error: 'Bạn chưa có khóa học đang hoạt động' }, { status: 400 })
+  }
+
+  const homework = await prisma.courseHomework.findUnique({ where: { id: homeworkId } })
+  if (!homework || homework.courseId !== activeEnrollment.courseId) {
+    return NextResponse.json({ error: 'Bài tập không hợp lệ với khóa học của bạn' }, { status: 400 })
+  }
+
+  const assignment = await prisma.homeworkSubmission.upsert({
+    where: {
+      homeworkId_userId: {
+        homeworkId,
+        userId: session.user.id
+      }
+    },
+    create: {
+      homeworkId,
+      userId: session.user.id,
+      note: description || null
+    },
+    update: {
+      note: description || null,
+      submittedAt: new Date()
     }
   })
 
