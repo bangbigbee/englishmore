@@ -14,16 +14,9 @@ export default function Login() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const router = useRouter()
   const { data: session, status } = useSession()
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const errorParam = params.get('error')
-      if (errorParam) {
-        setError(errorParam)
-      }
-    }
-  }, [])
+  const urlError =
+    typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('error') || '' : ''
+  const shownError = error || urlError
 
   // Redirect based on role after successful login
   useEffect(() => {
@@ -43,8 +36,8 @@ export default function Login() {
     setError('')
     setMessage('')
     try {
-      await signIn('google', { callbackUrl: '/login' })
-    } catch (err) {
+      await signIn('google', { callbackUrl: '/dashboard' })
+    } catch {
       setError('Google sign in failed')
       setGoogleLoading(false)
     }
@@ -79,6 +72,7 @@ export default function Login() {
   }
 
   const errorMessages: Record<string, string> = {
+    Callback: 'Lỗi callback từ Google. Hãy kiểm tra NEXTAUTH_URL và Google Redirect URI đã khớp domain hiện tại.',
     OAuthCallback: 'Google OAuth callback failed, vui lòng kiểm tra Client ID/Secret và redirect URI. (OAuthCallback)',
     Configuration: 'Cấu hình NextAuth có lỗi, kiểm tra biến môi trường.',
     AccessDenied: 'Đã hủy quyền đăng nhập.',
@@ -93,10 +87,10 @@ export default function Login() {
       <div className="bg-white p-8 rounded shadow-md w-96">
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
-        {error && (
+        {shownError && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded">
             <p className="text-red-700 text-sm">
-              Lỗi: {errorMessages[error] || error}
+              Lỗi: {errorMessages[shownError] || shownError}
             </p>
             <button
               onClick={handleClearError}

@@ -22,6 +22,14 @@ interface Enrollment {
   createdAt: string
 }
 
+interface PaymentInstruction {
+  bankName: string
+  accountNumber: string
+  accountName: string
+  amount: number
+  transferContent: string
+}
+
 export default function CoursesPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -33,6 +41,8 @@ export default function CoursesPage() {
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [lastRegisteredCourseId, setLastRegisteredCourseId] = useState<string | null>(null)
+  const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null)
+  const [paymentCourseTitle, setPaymentCourseTitle] = useState('')
   const [bankInfo] = useState({
     account: '19033113602011',
     bank: 'Techcombank',
@@ -86,6 +96,9 @@ export default function CoursesPage() {
       } else {
         setError('')
         setLastRegisteredCourseId(courseId)
+        setPaymentInstruction(data.paymentInstruction || null)
+        const course = courses.find((item) => item.id === courseId)
+        setPaymentCourseTitle(course?.title || '')
         setSelectedCourseId(null)
         setShowConfirm(false)
         fetchEnrollments()
@@ -213,7 +226,7 @@ export default function CoursesPage() {
                 </div>
 
                 <p className="text-sm text-gray-600 bg-yellow-50 p-3 rounded">
-                  Sau khi chuyển khoản, admin sẽ xác nhận và kích hoạt khóa học cho bạn.
+                  Bấm &quot;Tạo mã chuyển khoản&quot; để hệ thống cấp mã nội dung chuyển khoản riêng cho đăng ký này.
                 </p>
               </div>
 
@@ -247,16 +260,30 @@ export default function CoursesPage() {
                   disabled={registering === selectedCourseId}
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
-                  {registering === selectedCourseId ? 'Đang xử lý...' : 'Đã chuyển khoản'}
+                  {registering === selectedCourseId ? 'Đang xử lý...' : 'Tạo mã chuyển khoản'}
                 </button>
               </div>
             </div>
           </div>
         )}
 
+        {paymentInstruction && (
+          <div className="mt-6 p-4 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">
+            <p className="font-semibold">Đăng ký đã được tạo{paymentCourseTitle ? `: ${paymentCourseTitle}` : ''}.</p>
+            <p className="mt-2">Vui lòng chuyển khoản đúng thông tin sau để admin xác nhận:</p>
+            <div className="mt-3 grid gap-2 text-sm">
+              <p><strong>Ngân hàng:</strong> {paymentInstruction.bankName}</p>
+              <p><strong>Số tài khoản:</strong> {paymentInstruction.accountNumber}</p>
+              <p><strong>Chủ tài khoản:</strong> {paymentInstruction.accountName}</p>
+              <p><strong>Số tiền:</strong> {paymentInstruction.amount.toLocaleString('vi-VN')} VND</p>
+              <p><strong>Nội dung chuyển khoản:</strong> <span className="font-mono bg-white px-2 py-1 rounded border border-[#14532d]/30">{paymentInstruction.transferContent}</span></p>
+            </div>
+          </div>
+        )}
+
         {lastRegisteredCourseId && enrollments.some(e => e.courseId === lastRegisteredCourseId && e.status === 'pending') && !loading && (
           <div className="mt-6 p-4 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">
-            Đã ghi nhận đăng ký. Trạng thái hiện tại: Chờ xác nhận.
+            Đã ghi nhận đăng ký. Trạng thái hiện tại: Chờ xác nhận chuyển khoản.
           </div>
         )}
       </div>

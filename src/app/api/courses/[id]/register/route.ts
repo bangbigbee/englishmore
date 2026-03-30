@@ -36,19 +36,40 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     return NextResponse.json({ error: 'Bạn đã đăng ký khóa học này trước đó', enrollment: existing }, { status: 409 })
   }
 
+  const userId = session.user?.id as string
+  const courseCodePart = (course.code || course.id)
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .toUpperCase()
+    .slice(0, 8)
+  const userCodePart = userId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-6)
+  const nonce = Date.now().toString().slice(-4)
+  const referenceCode = `EM${courseCodePart}-${userCodePart}-${nonce}`
+  const transferAmount = course.price > 0 ? course.price : 4000000
+
   const enrollment = await prisma.enrollment.create({
     data: {
       courseId,
-      userId: session.user?.id as string,
-      status: 'pending'
+      userId,
+      status: 'pending',
+      referenceCode
     }
   })
 
   // Promote user to member after course registration
   await prisma.user.updateMany({
-    where: { id: session.user?.id as string, role: 'user' },
+    where: { id: userId, role: 'user' },
     data: { role: 'member' }
   })
 
-  return NextResponse.json({ message: 'Đăng ký thành công. Vui lòng chuyển khoản 4,000,000 VND vào TK Techcombank Nguyễn Trí Bằng', enrollment })
+  return NextResponse.json({
+    message: 'Đăng ký thành công. Vui lòng chuyển khoản đúng nội dung để admin xác nhận nhanh.',
+    enrollment,
+    paymentInstruction: {
+      bankName: 'Techcombank',
+      accountNumber: '19033113602011',
+      accountName: 'Nguyen Tri Bang',
+      amount: transferAmount,
+      transferContent: referenceCode
+    }
+  })
 }

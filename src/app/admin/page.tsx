@@ -9,7 +9,6 @@ interface StudentInfo {
   id: string
   name: string | null
   email: string
-  method: string | null
   assignmentCount: number
   createdAt: string
 }
@@ -26,7 +25,15 @@ interface CourseItem {
 interface EnrollmentItem {
   id: string
   status: string
+  referenceCode: string | null
+  isPaid: boolean
   createdAt: string
+  payments?: Array<{
+    id: string
+    bankReference: string | null
+    status: string
+    verifiedAt: string | null
+  }>
   user: {
     name: string | null
     email: string
@@ -34,6 +41,11 @@ interface EnrollmentItem {
   course: {
     title: string
   }
+}
+
+interface DashboardSummary {
+  totalUsers: number
+  totalStudents: number
 }
 
 export default function AdminDashboard() {
@@ -61,6 +73,7 @@ export default function AdminDashboard() {
   const [editCourseDeadline, setEditCourseDeadline] = useState('')
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
+  const [summary, setSummary] = useState<DashboardSummary>({ totalUsers: 0, totalStudents: 0 })
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -72,6 +85,7 @@ export default function AdminDashboard() {
         fetchStudents()
         fetchCourses()
         fetchEnrollments()
+        fetchSummary()
       }
     }
   }, [status, session, router])
@@ -143,6 +157,20 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to fetch enrollments')
       const data = await res.json()
       setEnrollments(data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const fetchSummary = async () => {
+    try {
+      const res = await fetch('/api/admin/dashboard-summary')
+      if (!res.ok) throw new Error('Failed to fetch dashboard summary')
+      const data = await res.json()
+      setSummary({
+        totalUsers: data.totalUsers || 0,
+        totalStudents: data.totalStudents || 0
+      })
     } catch (err) {
       console.error(err)
     }
@@ -246,17 +274,18 @@ export default function AdminDashboard() {
     }
   }
 
-  const setEnrollmentSuccessful = async (enrollmentId: string) => {
+  const confirmBankTransfer = async (enrollmentId: string) => {
     try {
       setUpdatingEnrollmentId(enrollmentId)
       const res = await fetch(`/api/admin/enrollments/${enrollmentId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'successful' })
+        body: JSON.stringify({ status: 'active' })
       })
       if (!res.ok) throw new Error('Failed to update enrollment')
       setCourseError('')
       fetchEnrollments()
+      fetchCourses()
     } catch (err) {
       setCourseError(err instanceof Error ? err.message : 'Không thể cập nhật trạng thái thanh toán')
     } finally {
@@ -295,26 +324,25 @@ export default function AdminDashboard() {
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Tổng học viên</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">{students.length}</p>
+            <h3 className="text-gray-500 text-sm font-medium">Tổng người dùng</h3>
+            <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalUsers}</p>
           </div>
           <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Phương pháp PPF</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
-              {students.filter(s => s.method === 'PPF').length}
-            </p>
+            <h3 className="text-gray-500 text-sm font-medium">Tổng học viên (toàn bộ khóa)</h3>
+            <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalStudents}</p>
           </div>
           <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Phương pháp Beyond</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
-              {students.filter(s => s.method === 'Beyond').length}
-            </p>
+            <h3 className="text-gray-500 text-sm font-medium">Chờ xác nhận chuyển khoản</h3>
+            <p className="text-3xl font-bold text-gray-900 mt-2">{enrollments.filter((e) => e.status === 'pending').length}</p>
           </div>
-          <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Phương pháp Contrast</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
-              {students.filter(s => s.method === 'Contrast').length}
-            </p>
+          <div className="bg-white rounded shadow p-6 flex flex-col justify-between">
+            <h3 className="text-gray-500 text-sm font-medium">Chi tiết học viên theo khóa</h3>
+            <Link
+              href="/admin/course-students"
+              className="mt-4 inline-flex items-center justify-center px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+            >
+              Xem chi tiết
+            </Link>
           </div>
         </div>
 
@@ -352,7 +380,6 @@ export default function AdminDashboard() {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phương pháp</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
@@ -361,13 +388,13 @@ export default function AdminDashboard() {
               <tbody className="divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                       Đang tải...
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
                       Không tìm thấy học viên
                     </td>
                   </tr>
@@ -376,16 +403,6 @@ export default function AdminDashboard() {
                     <tr key={student.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">{student.name || 'N/A'}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">{student.email}</td>
-                      <td className="px-6 py-4 text-sm">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          student.method === 'PPF' ? 'bg-[#14532d]/10 text-[#14532d]' :
-                          student.method === 'Beyond' ? 'bg-[#14532d]/10 text-[#14532d]' :
-                          student.method === 'Contrast' ? 'bg-amber-100 text-amber-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {student.method || 'Chưa chọn'}
-                        </span>
-                      </td>
                       <td className="px-6 py-4 text-sm text-gray-900">{student.assignmentCount}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {new Date(student.createdAt).toLocaleDateString('vi-VN')}
@@ -519,7 +536,7 @@ export default function AdminDashboard() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">
-                      {course.enrollments?.filter((e) => e.status === 'successful').length || 0}
+                      {course.enrollments?.filter((e) => e.status === 'active').length || 0}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">
                       {course.enrollments?.filter((e) => e.status === 'pending').length || 0}
@@ -646,6 +663,7 @@ export default function AdminDashboard() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nội dung CK</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
@@ -656,6 +674,7 @@ export default function AdminDashboard() {
                   <tr key={enrollment.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{enrollment.user.name || enrollment.user.email}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{enrollment.course.title}</td>
+                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{enrollment.referenceCode || 'Chưa có mã'}</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-medium ${
                         enrollment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-[#14532d]/10 text-[#14532d]'
@@ -677,7 +696,7 @@ export default function AdminDashboard() {
                           disabled={updatingEnrollmentId === enrollment.id}
                           className="text-amber-700 hover:text-amber-900 hover:underline"
                         >
-                          {updatingEnrollmentId === enrollment.id ? 'Đang cập nhật...' : 'Xác nhận thanh toán'}
+                          {updatingEnrollmentId === enrollment.id ? 'Đang cập nhật...' : 'Xác nhận đã nhận CK'}
                         </button>
                       )}
                     </td>
@@ -685,7 +704,7 @@ export default function AdminDashboard() {
                 ))}
                 {enrollments.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-3 text-center text-gray-500">
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">
                       Chưa có đăng ký nào
                     </td>
                   </tr>
@@ -716,7 +735,7 @@ export default function AdminDashboard() {
                   Hủy
                 </button>
                 <button
-                  onClick={() => setEnrollmentSuccessful(confirmPayment.id)}
+                  onClick={() => confirmBankTransfer(confirmPayment.id)}
                   disabled={updatingEnrollmentId === confirmPayment.id}
                   className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 disabled:opacity-50"
                 >

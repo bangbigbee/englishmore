@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -15,7 +15,11 @@ export async function GET() {
   const enrollments = await prisma.enrollment.findMany({
     include: {
       user: true,
-      course: true
+      course: true,
+      payments: {
+        orderBy: { createdAt: 'desc' },
+        take: 1
+      }
     },
     orderBy: { createdAt: 'desc' }
   })

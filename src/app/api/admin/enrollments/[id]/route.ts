@@ -14,16 +14,62 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id: enrollmentId } = await context.params
   const body = await request.json()
-  const { status } = body
+  const { status, bankReference } = body
 
-  if (!status || !['pending', 'successful'].includes(status)) {
+  if (!status || !['pending', 'active', 'completed', 'dropped', 'suspended'].includes(status)) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
   }
 
-  const enrollment = await prisma.enrollment.update({
+  const existing = await prisma.enrollment.findUnique({
     where: { id: enrollmentId },
-    data: { status },
-    include: { user: true, course: true }
+    include: { course: true }
+  })
+
+  if (!existing) {
+    return NextResponse.json({ error: 'Enrollment not found' }, { status: 404 })
+  }
+
+  const referenceCode =
+    existing.referenceCode ||
+    `EM-${existing.courseId.slice(-6).toUpperCase()}-${existing.userId.slice(-6).toUpperCase()}-${enrollmentId.slice(-4).toUpperCase()}`
+
+  const enrollment = await prisma.$transaction(async (tx) => {
+    const updated = await tx.enrollment.update({
+      where: { id: enrollmentId },
+      data: {
+        status,
+        isPaid: status === 'active' ? true : existing.isPaid,
+        paidAt: status === 'active' ? new Date() : existing.paidAt,
+        referenceCode
+      },
+      include: { user: true, course: true }
+    })
+
+    if (status === 'active') {
+      await tx.payment.upsert({
+        where: { referenceCode },
+        update: {
+          amount: updated.course.price,
+          status: 'verified',
+          paymentMethod: 'bank_transfer',
+          bankReference: bankReference || null,
+          transactionDate: new Date(),
+          verifiedAt: new Date()
+        },
+        create: {
+          enrollmentId: enrollmentId,
+          referenceCode,
+          amount: updated.course.price,
+          status: 'verified',
+          paymentMethod: 'bank_transfer',
+          bankReference: bankReference || null,
+          transactionDate: new Date(),
+          verifiedAt: new Date()
+        }
+      })
+    }
+
+    return updated
   })
 
   return NextResponse.json(enrollment)

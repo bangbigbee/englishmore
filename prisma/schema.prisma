@@ -17,6 +17,28 @@ enum UserRole {
   admin   // Quản trị viên
 }
 
+enum EnrollmentStatus {
+  pending      // Đã đăng ký, chờ thanh toán
+  active       // Đã thanh toán, đang học
+  completed    // Hoàn thành khóa
+  dropped      // Rút khỏi khóa
+  suspended    // Tạm dừng
+}
+
+enum PaymentStatus {
+  pending    // Chờ xác nhận
+  verified   // Đã xác nhận thanh toán
+  completed  // Hoàn thành
+  failed     // Thất bại
+}
+
+enum PaymentMethod {
+  bank_transfer   // Chuyển khoản ngân hàng
+  momo            // Ví Momo
+  zalopay         // Ví Zalopay
+  cash            // Tiền mặt
+}
+
 
 model Account {
   id                String  @id @default(cuid())
@@ -82,27 +104,144 @@ model Assignment {
 
 model Course {
   id                   String       @id @default(cuid())
+  code                 String?      // Mã khóa học: COURSE_001
   title                String
   description          String?
+  price                Int          @default(0)  // Giá khóa (VNĐ)
+  currency             String       @default("VND")
+  
+  // Thời gian khóa học
+  startDate            DateTime?    @default(now())
+  endDate              DateTime?    @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL '3 months'"))
   registrationDeadline DateTime
+  
+  // Thông tin khóa học
+  totalLessons         Int          @default(0)
   maxStudents          Int          @default(10)
+  method               String?      // PPF, Beyond, Contrast
+  teacher              String?      // Tên giáo viên
+  
+  // Trạng thái
   isPublished          Boolean      @default(false)
+  isActive             Boolean      @default(true)  // Khóa còn tuyển sinh
+  
   createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  
+  // Relations
   enrollments          Enrollment[]
+  lessons              Lesson[]
 }
 
 model Enrollment {
-  id         String   @id @default(cuid())
-  courseId   String
-  userId     String
-  status     String   @default("pending") // pending, successful
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id                String             @id @default(cuid())
+  courseId          String
+  userId            String
+  
+  // Mã tham chiếu (cho chuyển khoản)
+  referenceCode     String?            // COURSE_ID-USER_ID
+  
+  // Trạng thái đăng ký
+  status            EnrollmentStatus   @default(pending)
+  
+  // Thanh toán
+  isPaid            Boolean            @default(false)
+  paidAt            DateTime?
+  paymentId         String?            // Reference đến Payment
+  
+  // Kết quả học tập
+  completedAt       DateTime?
+  dropoutReason     String?            // Lý do rút khỏa (nếu có)
+  attendanceRate    Float              @default(0)  // Tỷ lệ dự học (0-100)
+  totalScore        Float?             // Điểm tổng
+  
+  // Timeline
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  
+  // Relations
+  course            Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments          Payment[]
+  progress          Progress[]
+  
   @@unique([courseId, userId])
+  @@index([courseId])
+  @@index([userId])
+  @@index([status])
+  @@index([referenceCode])
+}
+
+model Payment {
+  id              String          @id @default(cuid())
+  enrollmentId    String
+  referenceCode   String?         @unique  // COURSEID-USERID
+  amount          Int                      // Số tiền (VNĐ)
+  currency        String          @default("VND")
+  
+  // Trạng thái thanh toán
+  status          PaymentStatus   @default(pending)
+  paymentMethod   PaymentMethod?
+  
+  // Thông tin giao dịch
+  bankReference   String?         // Mã giao dịch ngân hàng
+  transactionDate DateTime?       // Ngày giao dịch thực tế
+  verifiedAt      DateTime?       // Lúc xác nhận thanh toán
+  
+  // Timeline
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // Relations
+  enrollment      Enrollment      @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  
+  @@index([referenceCode])
+  @@index([status])
+  @@index([enrollmentId])
+}
+
+model Lesson {
+  id            String   @id @default(cuid())
+  courseId      String
+  title         String
+  description   String?
+  order         Int      // Thứ tự bài học trong khóa
+  content       String?  // Nội dung bài học (có thể dài)
+  videoUrl      String?  // URL video bài học
+  duration      Int?     // Thời lượng video (phút)
+  
+  // Timeline
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress      Progress[]
+  
+  @@index([courseId])
+  @@index([order])
+}
+
+model Progress {
+  id            String   @id @default(cuid())
+  enrollmentId  String
+  lessonId      String
+  
+  // Tình trạng bài học
+  isCompleted   Boolean  @default(false)
+  score         Float?   // Điểm bài học (nếu có quiz)
+  
+  // Timeline
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  enrollment    Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson        Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  @@unique([enrollmentId, lessonId])
+  @@index([enrollmentId])
+  @@index([lessonId])
 }
 

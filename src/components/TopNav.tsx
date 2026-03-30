@@ -59,7 +59,7 @@ export default function TopNav() {
             </>
           ) : (
             <button
-              onClick={() => signIn('google', { callbackUrl: '/login' })}
+              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
               disabled={status === 'loading'}
               className="inline-flex items-center gap-2 px-4 py-2 border border-amber-300 bg-amber-50 text-amber-700 rounded transition hover:bg-amber-100 disabled:opacity-70"
             >

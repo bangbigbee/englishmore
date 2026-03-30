@@ -135,15 +135,10 @@ export default function StudentDetailPage() {
               <p className="text-gray-900 font-medium text-lg">{student.email}</p>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Phương pháp học</p>
+              <p className="text-gray-500 text-sm">Phương thức học</p>
               <p className="text-gray-900 font-medium text-lg">
-                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  student.method === 'PPF' ? 'bg-[#14532d]/10 text-[#14532d]' :
-                  student.method === 'Beyond' ? 'bg-[#14532d]/10 text-[#14532d]' :
-                  student.method === 'Contrast' ? 'bg-amber-100 text-amber-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
-                  {student.method || 'Chưa chọn'}
+                <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                  {student.method || 'Chưa cập nhật'}
                 </span>
               </p>
             </div>
@@ -176,7 +171,7 @@ export default function StudentDetailPage() {
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên bài tập</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phương pháp</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phân loại</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày nộp</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tệp đính kèm</th>
                     </tr>
@@ -186,13 +181,8 @@ export default function StudentDetailPage() {
                       <tr key={assignment.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm text-gray-900">{assignment.title}</td>
                         <td className="px-6 py-4 text-sm">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            assignment.method === 'PPF' ? 'bg-[#14532d]/10 text-[#14532d]' :
-                            assignment.method === 'Beyond' ? 'bg-[#14532d]/10 text-[#14532d]' :
-                            assignment.method === 'Contrast' ? 'bg-amber-100 text-amber-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {assignment.method}
+                          <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                            {assignment.method || 'Chưa cập nhật'}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
