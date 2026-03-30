@@ -3,11 +3,11 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { filename: string } }
+  _request: NextRequest,
+  context: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const filename = params.filename
+    const { filename } = await context.params
     if (!filename) {
       return NextResponse.json({ error: 'Filename required' }, { status: 400 })
     }

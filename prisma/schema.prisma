@@ -137,6 +137,7 @@ model Course {
   lessons              Lesson[]
   homeworks            CourseHomework[]
   exercises            CourseExercise[]
+  lectureNotes         LectureNote[]
 }
 
 model CourseExercise {
@@ -354,5 +355,22 @@ model Progress {
   @@unique([enrollmentId, lessonId])
   @@index([enrollmentId])
   @@index([lessonId])
+}
+
+model LectureNote {
+  id              String   @id @default(cuid())
+  courseId        String
+  sessionNumber   Int      // Buổi học từ 1-30
+  driveLink       String?  // Link Google Drive tài liệu
+  
+  // Timeline
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([courseId, sessionNumber])
+  @@index([courseId])
 }
 

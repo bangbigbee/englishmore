@@ -138,6 +138,15 @@ interface ExerciseQuestionForm {
   correctOption: string
 }
 
+interface LectureNote {
+  id: string
+  courseId: string
+  sessionNumber: number
+  driveLink: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
   Array.from({ length: 10 }, () => ({
     question: '',
@@ -256,12 +265,24 @@ export default function AdminDashboard() {
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
-  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise'>('course')
+  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote'>('course')
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
   const [publishingExercise, setPublishingExercise] = useState(false)
   const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
+
+  // Lecture Notes states
+  const [lectureNotes, setLectureNotes] = useState<LectureNote[]>([])
+  const [selectedLectureNoteCourseId, setSelectedLectureNoteCourseId] = useState('')
+  const [newLectureSession, setNewLectureSession] = useState('')
+  const [newLectureDriveLink, setNewLectureDriveLink] = useState('')
+  const [lectureError, setLectureError] = useState('')
+  const [lectureSuccess, setLectureSuccess] = useState('')
+  const [editingLectureNote, setEditingLectureNote] = useState<LectureNote | null>(null)
+  const [editLectureDriveLink, setEditLectureDriveLink] = useState('')
+  const [savingLectureId, setSavingLectureId] = useState<string | null>(null)
+  const [deletingLectureId, setDeletingLectureId] = useState<string | null>(null)
 
   const fetchStudents = async () => {
     try {
@@ -390,6 +411,19 @@ export default function AdminDashboard() {
     }
   }, [newExerciseCourseId])
 
+  const fetchLectureNotes = useCallback(async (courseId: string) => {
+    if (!courseId) return
+    try {
+      const res = await fetch(`/api/admin/lectures?courseId=${courseId}`)
+      if (!res.ok) throw new Error('Failed to fetch lecture notes')
+      const data = await res.json()
+      setLectureNotes(data)
+      setLectureError('')
+    } catch (err) {
+      setLectureError(err instanceof Error ? err.message : 'Failed to fetch lecture notes')
+    }
+  }, [])
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
@@ -407,6 +441,18 @@ export default function AdminDashboard() {
       }
     }
   }, [status, session, router, fetchHomeworkData, fetchExerciseData])
+
+  useEffect(() => {
+    if (!selectedLectureNoteCourseId && courses.length > 0) {
+      setSelectedLectureNoteCourseId(courses[0].id)
+    }
+  }, [courses, selectedLectureNoteCourseId])
+
+  useEffect(() => {
+    if (activeSection === 'lectureNote' && selectedLectureNoteCourseId) {
+      fetchLectureNotes(selectedLectureNoteCourseId)
+    }
+  }, [activeSection, selectedLectureNoteCourseId, fetchLectureNotes])
 
   const updateNewExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
     setNewExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
@@ -797,6 +843,104 @@ export default function AdminDashboard() {
     }
   }
 
+  const createLectureNote = async () => {
+    setLectureError('')
+    setLectureSuccess('')
+
+    if (!selectedLectureNoteCourseId || !newLectureSession) {
+      setLectureError('Vui lòng chọn khóa học và buổi học')
+      return
+    }
+
+    const sessionNum = parseInt(newLectureSession, 10)
+    if (isNaN(sessionNum) || sessionNum < 1 || sessionNum > 30) {
+      setLectureError('Buổi học phải từ 1 đến 30')
+      return
+    }
+
+    try {
+      const res = await fetch('/api/admin/lectures', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: selectedLectureNoteCourseId,
+          sessionNumber: sessionNum,
+          driveLink: newLectureDriveLink || null
+        })
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Failed to create lecture note')
+      }
+
+      setNewLectureSession('')
+      setNewLectureDriveLink('')
+      setLectureSuccess('Tài liệu bài giảng được tạo thành công!')
+      fetchLectureNotes(selectedLectureNoteCourseId)
+    } catch (err) {
+      setLectureError(err instanceof Error ? err.message : 'Failed to create lecture note')
+    }
+  }
+
+  const updateLectureNote = async () => {
+    if (!editingLectureNote) return
+
+    try {
+      setSavingLectureId(editingLectureNote.id)
+      setLectureError('')
+      setLectureSuccess('')
+
+      const res = await fetch(`/api/admin/lectures/${editingLectureNote.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          driveLink: editLectureDriveLink || null
+        })
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Failed to update lecture note')
+      }
+
+      setEditingLectureNote(null)
+      setEditLectureDriveLink('')
+      setLectureSuccess('Cập nhật tài liệu thành công!')
+      fetchLectureNotes(selectedLectureNoteCourseId)
+    } catch (err) {
+      setLectureError(err instanceof Error ? err.message : 'Failed to update lecture note')
+    } finally {
+      setSavingLectureId(null)
+    }
+  }
+
+  const deleteLectureNote = async (lectureId: string) => {
+    const confirmed = window.confirm('Bạn chắc chắn muốn xóa tài liệu này?')
+    if (!confirmed) return
+
+    try {
+      setLectureError('')
+      setLectureSuccess('')
+      setDeletingLectureId(lectureId)
+      const res = await fetch(`/api/admin/lectures/${lectureId}`, {
+        method: 'DELETE'
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Failed to delete lecture note')
+      }
+
+      setLectureSuccess('Xóa tài liệu thành công!')
+      fetchLectureNotes(selectedLectureNoteCourseId)
+    } catch (err) {
+      setLectureError(err instanceof Error ? err.message : 'Failed to delete lecture note')
+    } finally {
+      setDeletingLectureId(null)
+    }
+  }
+
   const rejectUser = async (userId: string, label: string) => {
     const confirmed = window.confirm(`Bạn có chắc chắn muốn từ chối ${label}? Người dùng sẽ bị reset và phải bắt đầu lại từ đầu.`)
     if (!confirmed) return
@@ -877,6 +1021,13 @@ export default function AdminDashboard() {
           >
             3. EXERCISE
           </button>
+           <button
+             type="button"
+             onClick={() => setActiveSection('lectureNote')}
+             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'lectureNote' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             4. LECTURE NOTES
+           </button>
         </div>
 
         {/* Statistics */}
@@ -1299,6 +1450,143 @@ export default function AdminDashboard() {
                 {exerciseResults.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có học viên nào nộp exercise</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'lectureNote' ? '' : 'hidden'}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Lecture Notes theo từng khóa học</h2>
+
+          {lectureSuccess && (
+            <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{lectureSuccess}</div>
+          )}
+          {lectureError && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Lỗi: {lectureError}</div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <select
+              value={selectedLectureNoteCourseId}
+              onChange={(e) => {
+                setSelectedLectureNoteCourseId(e.target.value)
+                setLectureSuccess('')
+                setLectureError('')
+              }}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Chọn khóa học</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+
+            <input
+              type="number"
+              min={1}
+              max={30}
+              value={newLectureSession}
+              onChange={(e) => setNewLectureSession(e.target.value)}
+              placeholder="Buổi học (1-30)"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+
+            <input
+              type="url"
+              value={newLectureDriveLink}
+              onChange={(e) => setNewLectureDriveLink(e.target.value)}
+              placeholder="Link Google Drive"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+
+            <button
+              onClick={createLectureNote}
+              className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+            >
+              Thêm tài liệu
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Buổi học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Google Drive link</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cập nhật</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lectureNotes.map((note) => (
+                  <tr key={note.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">Buổi {note.sessionNumber}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {editingLectureNote?.id === note.id ? (
+                        <input
+                          type="url"
+                          value={editLectureDriveLink}
+                          onChange={(e) => setEditLectureDriveLink(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          placeholder="Dán link Google Drive"
+                        />
+                      ) : note.driveLink ? (
+                        <a href={note.driveLink} target="_blank" rel="noreferrer" className="text-[#14532d] hover:underline break-all">
+                          {note.driveLink}
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">Chưa có link</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(note.updatedAt).toLocaleString('vi-VN')}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {editingLectureNote?.id === note.id ? (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={updateLectureNote}
+                            disabled={savingLectureId === note.id}
+                            className="px-3 py-1.5 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
+                          >
+                            Lưu
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingLectureNote(null)
+                              setEditLectureDriveLink('')
+                            }}
+                            className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                          >
+                            Hủy
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingLectureNote(note)
+                              setEditLectureDriveLink(note.driveLink || '')
+                            }}
+                            className="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700"
+                          >
+                            Sửa
+                          </button>
+                          <button
+                            onClick={() => deleteLectureNote(note.id)}
+                            disabled={deletingLectureId === note.id}
+                            className="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                          >
+                            {deletingLectureId === note.id ? 'Đang xóa...' : 'Xóa'}
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {lectureNotes.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-4 py-3 text-center text-gray-500">Chưa có lecture notes cho khóa học này</td>
                   </tr>
                 )}
               </tbody>
