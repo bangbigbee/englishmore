@@ -119,9 +119,9 @@ export default function Home() {
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
         {session?.user?.role === 'member' && memberEnrollment && (
           <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-3">
-            <p className="text-base font-semibold text-[#14532d] sm:text-lg">
+            <p className={`text-base font-semibold sm:text-lg ${memberEnrollment.status === 'pending' ? 'text-amber-500' : 'text-[#14532d]'}`}>
               {memberEnrollment.status === 'pending'
-                ? `Xin chào ${session.user?.name || 'bạn'}, đang xác nhận để trở thành học viên khóa học ${memberEnrollment.course.title}`
+                ? `Xin chào ${session.user?.name || 'bạn'}, bạn sắp trở thành học viên của ${memberEnrollment.course.title} rồi!`
                 : `Xin chào ${session.user?.name || 'bạn'}, bạn đang là thành viên ${memberEnrollment.course.title}.`}
             </p>
           </section>
