@@ -43,7 +43,7 @@ export default function Home() {
   useEffect(() => {
     if (!session) {
       setAvailableCourses([])
-      setMemberCourseTitle('')
+      setMemberEnrollment(null)
       return
     }
 
