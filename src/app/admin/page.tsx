@@ -36,6 +36,7 @@ interface EnrollmentItem {
     verifiedAt: string | null
   }>
   user: {
+    id: string
     name: string | null
     email: string
   }
@@ -120,6 +121,7 @@ export default function AdminDashboard() {
   const [editHomeworkDescription, setEditHomeworkDescription] = useState('')
   const [editHomeworkDueDate, setEditHomeworkDueDate] = useState('')
   const [savingHomeworkId, setSavingHomeworkId] = useState<string | null>(null)
+  const [rejectingUserId, setRejectingUserId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -466,6 +468,35 @@ export default function AdminDashboard() {
     }
   }
 
+  const rejectUser = async (userId: string, label: string) => {
+    const confirmed = window.confirm(`Bạn có chắc chắn muốn từ chối ${label}? Người dùng sẽ bị reset và phải bắt đầu lại từ đầu.`)
+    if (!confirmed) return
+
+    try {
+      setRejectingUserId(userId)
+      const res = await fetch(`/api/admin/members/${userId}/reject`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Không thể từ chối người dùng')
+      }
+
+      setCourseSuccess('Đã từ chối và reset người dùng về trạng thái ban đầu')
+      setCourseError('')
+      fetchMemberOverview()
+      fetchEnrollments()
+      fetchCourses()
+      fetchSummary()
+    } catch (err) {
+      setCourseError(err instanceof Error ? err.message : 'Không thể từ chối người dùng')
+    } finally {
+      setRejectingUserId(null)
+    }
+  }
+
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
@@ -557,6 +588,7 @@ export default function AdminDashboard() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học phí</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -567,11 +599,20 @@ export default function AdminDashboard() {
                       <td className="px-4 py-3 text-sm text-gray-900">{member.courseTitle}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{member.isPaid ? 'Đã đóng' : 'Chưa đóng'}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{member.submittedHomework}/{member.totalHomework}</td>
+                      <td className="px-4 py-3 text-sm">
+                        <button
+                          onClick={() => rejectUser(member.id, member.name || member.email)}
+                          disabled={rejectingUserId === member.id}
+                          className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
+                        >
+                          {rejectingUserId === member.id ? 'Đang xử lý...' : 'Từ chối thành viên'}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                   {membersOverview.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-3 text-center text-gray-500">Chưa có member đang học</td>
+                      <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có member đang học</td>
                     </tr>
                   )}
                 </tbody>
@@ -1100,19 +1141,28 @@ export default function AdminDashboard() {
                       {new Date(enrollment.createdAt).toLocaleDateString('vi-VN')}
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      {enrollment.status === 'pending' && (
+                      <div className="flex flex-wrap gap-2">
+                        {enrollment.status === 'pending' && (
+                          <button
+                            onClick={() => setConfirmPayment({
+                              id: enrollment.id,
+                              studentName: enrollment.user.name || enrollment.user.email,
+                              courseTitle: enrollment.course.title
+                            })}
+                            disabled={updatingEnrollmentId === enrollment.id}
+                            className="text-amber-700 hover:text-amber-900 hover:underline"
+                          >
+                            {updatingEnrollmentId === enrollment.id ? 'Đang cập nhật...' : 'Xác nhận đã nhận CK'}
+                          </button>
+                        )}
                         <button
-                          onClick={() => setConfirmPayment({
-                            id: enrollment.id,
-                            studentName: enrollment.user.name || enrollment.user.email,
-                            courseTitle: enrollment.course.title
-                          })}
-                          disabled={updatingEnrollmentId === enrollment.id}
-                          className="text-amber-700 hover:text-amber-900 hover:underline"
+                          onClick={() => rejectUser(enrollment.user.id, enrollment.user.name || enrollment.user.email)}
+                          disabled={rejectingUserId === enrollment.user.id}
+                          className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
                         >
-                          {updatingEnrollmentId === enrollment.id ? 'Đang cập nhật...' : 'Xác nhận đã nhận CK'}
+                          {rejectingUserId === enrollment.user.id ? 'Đang xử lý...' : 'Từ chối học viên'}
                         </button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))}
