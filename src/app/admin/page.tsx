@@ -118,6 +118,8 @@ interface ExerciseItem {
   courseId: string
   order: number
   description: string | null
+  isDraft: boolean
+  sourceFormUrl: string | null
   course: { title: string }
   questions: ExerciseQuestionItem[]
   submissions: ExerciseSubmissionItem[]
@@ -208,6 +210,10 @@ export default function AdminDashboard() {
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
   const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise'>('course')
+  const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
+  const [importingForm, setImportingForm] = useState(false)
+  const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
+  const [publishingExercise, setPublishingExercise] = useState(false)
 
   const fetchStudents = async () => {
     try {
@@ -361,34 +367,80 @@ export default function AdminDashboard() {
     setEditExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
   }
 
-  const createExercise = async () => {
+  const createExercise = async (saveAsDraft: boolean) => {
     if (!newExerciseCourseId) {
       setExerciseError('Vui lòng chọn khóa học cho exercise')
       return
     }
 
     try {
+      if (saveAsDraft) {
+        setSavingExerciseDraft(true)
+      } else {
+        setPublishingExercise(true)
+      }
+
       const res = await fetch('/api/admin/exercises', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           courseId: newExerciseCourseId,
           description: newExerciseDescription,
+          sourceFormUrl: newExerciseSourceFormUrl,
+          isDraft: saveAsDraft,
           questions: newExerciseQuestions
         })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Không thể tạo exercise')
 
-      setExerciseSuccess('Đã tạo exercise mới')
+      setExerciseSuccess(saveAsDraft ? 'Đã lưu bản nháp exercise' : 'Đã tạo exercise mới')
       setExerciseError('')
-      setNewExerciseQuestions(buildEmptyExerciseQuestions())
-      setNewExerciseDescription('')
-      setShowExerciseBuilder(false)
+      if (saveAsDraft) {
+        setShowExerciseBuilder(true)
+      } else {
+        setNewExerciseQuestions(buildEmptyExerciseQuestions())
+        setNewExerciseDescription('')
+        setNewExerciseSourceFormUrl('')
+        setShowExerciseBuilder(false)
+      }
       fetchExerciseData()
     } catch (err) {
       setExerciseError(err instanceof Error ? err.message : 'Không thể tạo exercise')
       setExerciseSuccess('')
+    } finally {
+      setSavingExerciseDraft(false)
+      setPublishingExercise(false)
+    }
+  }
+
+  const importFromGoogleForm = async () => {
+    if (!newExerciseSourceFormUrl.trim()) {
+      setExerciseError('Vui lòng nhập link Google Form trước khi import')
+      return
+    }
+
+    try {
+      setImportingForm(true)
+      const res = await fetch('/api/admin/exercises/import-google-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ formUrl: newExerciseSourceFormUrl })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể import từ Google Form')
+
+      setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
+      setNewExerciseDescription(String(data.description || '').trim())
+      setNewExerciseSourceFormUrl(String(data.sourceFormUrl || newExerciseSourceFormUrl).trim())
+      setExerciseError('')
+      setExerciseSuccess('Đã import dữ liệu từ Google Form, bạn có thể chỉnh sửa trước khi lưu.')
+      setShowExerciseBuilder(true)
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Không thể import từ Google Form')
+      setExerciseSuccess('')
+    } finally {
+      setImportingForm(false)
     }
   }
 
@@ -930,6 +982,7 @@ export default function AdminDashboard() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số câu</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
@@ -940,6 +993,11 @@ export default function AdminDashboard() {
                   <tr key={exercise.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">Exercise {exercise.order}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <span className={`rounded px-2 py-1 text-xs font-semibold ${exercise.isDraft ? 'bg-amber-100 text-amber-800' : 'bg-[#14532d]/10 text-[#14532d]'}`}>
+                        {exercise.isDraft ? 'Nháp' : 'Đã xuất bản'}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-600">{exercise.description || 'Chưa có mô tả'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.questions.length}</td>
                     <td className="px-4 py-3 text-sm">
@@ -949,7 +1007,7 @@ export default function AdminDashboard() {
                 ))}
                 {exercises.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-3 text-center text-gray-500">Chưa có exercise nào</td>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có exercise nào</td>
                   </tr>
                 )}
               </tbody>
@@ -968,6 +1026,24 @@ export default function AdminDashboard() {
             >
               {showExerciseBuilder ? 'Thu gọn form Exercise' : 'Tạo Exercise'}
             </button>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="url"
+                  value={newExerciseSourceFormUrl}
+                  onChange={(e) => setNewExerciseSourceFormUrl(e.target.value)}
+                  placeholder="Dán link Google Form (viewform)"
+                  className="w-80 max-w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+                <button
+                  type="button"
+                  onClick={importFromGoogleForm}
+                  disabled={importingForm}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {importingForm ? 'Đang import...' : 'Import từ Google Form'}
+                </button>
+              </div>
 
             {showExerciseBuilder && (
               <button
@@ -1058,10 +1134,19 @@ export default function AdminDashboard() {
               </div>
 
               <button
-                onClick={createExercise}
-                className="mt-6 px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+                onClick={() => createExercise(true)}
+                disabled={savingExerciseDraft || publishingExercise}
+                className="mt-6 mr-3 px-6 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 font-medium disabled:opacity-50"
               >
-                Tạo Exercise 10 câu
+                {savingExerciseDraft ? 'Đang lưu nháp...' : 'Save bản nháp'}
+              </button>
+
+              <button
+                onClick={() => createExercise(false)}
+                disabled={savingExerciseDraft || publishingExercise}
+                className="mt-6 px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium disabled:opacity-50"
+              >
+                {publishingExercise ? 'Đang xuất bản...' : 'Xuất bản Exercise'}
               </button>
             </>
           )}

@@ -11,6 +11,21 @@ type ExerciseQuestionInput = {
   correctOption: string
 }
 
+const normalizeDraftQuestions = (questions: ExerciseQuestionInput[]) => {
+  const rows = Array.from({ length: 10 }, (_, index) => {
+    const item = questions[index]
+    return {
+      question: String(item?.question || '').trim(),
+      optionA: String(item?.optionA || '').trim(),
+      optionB: String(item?.optionB || '').trim(),
+      optionC: String(item?.optionC || '').trim(),
+      correctOption: ['A', 'B', 'C'].includes(String(item?.correctOption || '').toUpperCase()) ? String(item.correctOption).toUpperCase() : 'A'
+    }
+  })
+
+  return rows
+}
+
 async function requireAdmin() {
   const session = await getServerSession(authOptions)
   if (!session) return { ok: false, status: 401 }
@@ -45,11 +60,29 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { description, questions } = body as { description?: string; questions?: ExerciseQuestionInput[] }
+  const { description, questions, isDraft, sourceFormUrl } = body as {
+    description?: string
+    questions?: ExerciseQuestionInput[]
+    isDraft?: boolean
+    sourceFormUrl?: string
+  }
 
-  const questionError = validateQuestions(questions || [])
-  if (questionError) {
-    return NextResponse.json({ error: questionError }, { status: 400 })
+  const targetExercise = await prisma.courseExercise.findUnique({
+    where: { id },
+    select: { isDraft: true }
+  })
+
+  if (!targetExercise) {
+    return NextResponse.json({ error: 'Exercise not found' }, { status: 404 })
+  }
+
+  const savingDraft = typeof isDraft === 'boolean' ? isDraft : targetExercise.isDraft
+  const normalizedQuestions = normalizeDraftQuestions(questions || [])
+  if (!savingDraft) {
+    const questionError = validateQuestions(normalizedQuestions)
+    if (questionError) {
+      return NextResponse.json({ error: questionError }, { status: 400 })
+    }
   }
 
   try {
@@ -61,13 +94,15 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
         where: { id },
         data: {
           description: String(description || '').trim() || null,
+          isDraft: savingDraft,
+          sourceFormUrl: String(sourceFormUrl || '').trim() || null,
           questions: {
-            create: questions!.map((item, index) => ({
+            create: normalizedQuestions.map((item, index) => ({
               order: index + 1,
-              question: item.question.trim(),
-              optionA: item.optionA.trim(),
-              optionB: item.optionB.trim(),
-              optionC: item.optionC.trim(),
+              question: item.question,
+              optionA: item.optionA,
+              optionB: item.optionB,
+              optionC: item.optionC,
               correctOption: item.correctOption
             }))
           }

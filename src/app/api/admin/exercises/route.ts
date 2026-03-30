@@ -11,6 +11,21 @@ type ExerciseQuestionInput = {
   correctOption: string
 }
 
+const normalizeDraftQuestions = (questions: ExerciseQuestionInput[]) => {
+  const rows = Array.from({ length: 10 }, (_, index) => {
+    const item = questions[index]
+    return {
+      question: String(item?.question || '').trim(),
+      optionA: String(item?.optionA || '').trim(),
+      optionB: String(item?.optionB || '').trim(),
+      optionC: String(item?.optionC || '').trim(),
+      correctOption: ['A', 'B', 'C'].includes(String(item?.correctOption || '').toUpperCase()) ? String(item.correctOption).toUpperCase() : 'A'
+    }
+  })
+
+  return rows
+}
+
 async function requireAdmin() {
   const session = await getServerSession(authOptions)
   if (!session) return { ok: false, status: 401 }
@@ -53,6 +68,9 @@ export async function GET() {
         id: true,
         courseId: true,
         order: true,
+        description: true,
+        isDraft: true,
+        sourceFormUrl: true,
         course: { select: { title: true } },
         questions: {
           select: {
@@ -117,15 +135,26 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { courseId, description, questions } = body as { courseId?: string; description?: string; questions?: ExerciseQuestionInput[] }
+  const { courseId, description, questions, isDraft, sourceFormUrl } = body as {
+    courseId?: string
+    description?: string
+    questions?: ExerciseQuestionInput[]
+    isDraft?: boolean
+    sourceFormUrl?: string
+  }
 
   if (!courseId) {
     return NextResponse.json({ error: 'courseId is required' }, { status: 400 })
   }
 
-  const questionError = validateQuestions(questions || [])
-  if (questionError) {
-    return NextResponse.json({ error: questionError }, { status: 400 })
+  const creatingDraft = Boolean(isDraft)
+  const normalizedQuestions = normalizeDraftQuestions(questions || [])
+
+  if (!creatingDraft) {
+    const questionError = validateQuestions(normalizedQuestions)
+    if (questionError) {
+      return NextResponse.json({ error: questionError }, { status: 400 })
+    }
   }
 
   const latestExercise = await prisma.courseExercise.findFirst({
@@ -139,13 +168,15 @@ export async function POST(request: NextRequest) {
       courseId,
       order: (latestExercise?.order || 0) + 1,
       description: String(description || '').trim() || null,
+      isDraft: creatingDraft,
+      sourceFormUrl: String(sourceFormUrl || '').trim() || null,
       questions: {
-        create: questions!.map((item, index) => ({
+        create: normalizedQuestions.map((item, index) => ({
           order: index + 1,
-          question: item.question.trim(),
-          optionA: item.optionA.trim(),
-          optionB: item.optionB.trim(),
-          optionC: item.optionC.trim(),
+          question: item.question,
+          optionA: item.optionA,
+          optionB: item.optionB,
+          optionC: item.optionC,
           correctOption: item.correctOption
         }))
       }

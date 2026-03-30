@@ -27,7 +27,7 @@ export async function GET() {
   }
 
   const exercises = await prisma.courseExercise.findMany({
-    where: { courseId: activeEnrollment.courseId },
+    where: { courseId: activeEnrollment.courseId, isDraft: false },
     select: {
       id: true,
       order: true,
