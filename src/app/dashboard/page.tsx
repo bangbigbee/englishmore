@@ -20,6 +20,14 @@ interface Enrollment {
   course: { title: string }
 }
 
+interface HomeworkItem {
+  id: string
+  title: string
+  description: string | null
+  dueDate: string
+  submitted: boolean
+}
+
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -31,6 +39,13 @@ export default function Dashboard() {
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [congratsEnrollment, setCongratsEnrollment] = useState<{ id: string; title: string } | null>(null)
+  const [showHomeworkModal, setShowHomeworkModal] = useState(false)
+  const [homeworks, setHomeworks] = useState<HomeworkItem[]>([])
+  const [selectedHomeworkId, setSelectedHomeworkId] = useState('')
+  const [homeworkNote, setHomeworkNote] = useState('')
+  const [homeworkLoading, setHomeworkLoading] = useState(false)
+  const [homeworkSuccess, setHomeworkSuccess] = useState('')
+  const [homeworkError, setHomeworkError] = useState('')
   const [bankInfo] = useState({
     account: '19033113602011',
     bank: 'Techcombank',
@@ -54,8 +69,35 @@ export default function Dashboard() {
 
       fetchCourses()
       fetchEnrollments()
+      fetchHomework()
+
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search)
+        if (params.get('homework') === '1') {
+          setShowHomeworkModal(true)
+        }
+      }
     }
   }, [status, router, session?.user?.role])
+
+  const fetchHomework = async () => {
+    try {
+      setHomeworkLoading(true)
+      const res = await fetch('/api/member/homework-summary')
+      if (!res.ok) {
+        setHomeworkError('Không thể tải danh sách bài tập')
+        return
+      }
+      const data = await res.json()
+      const pending = (data.allHomework || []).filter((item: HomeworkItem) => !item.submitted)
+      setHomeworks(pending)
+      setSelectedHomeworkId(pending[0]?.id || '')
+    } catch {
+      setHomeworkError('Không thể tải danh sách bài tập')
+    } finally {
+      setHomeworkLoading(false)
+    }
+  }
 
   const fetchCourses = async () => {
     try {
@@ -119,6 +161,35 @@ export default function Dashboard() {
 
   const getEnrollmentStatus = (courseId: string) => {
     return enrollments.find(e => e.courseId === courseId)
+  }
+
+  const submitHomework = async () => {
+    if (!selectedHomeworkId) {
+      setHomeworkError('Vui lòng chọn bài tập')
+      return
+    }
+
+    try {
+      const res = await fetch('/api/assignments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ homeworkId: selectedHomeworkId, description: homeworkNote })
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Không thể nộp bài')
+      }
+
+      setHomeworkSuccess('Nộp bài thành công!')
+      setHomeworkError('')
+      setHomeworkNote('')
+      const remaining = homeworks.filter((item) => item.id !== selectedHomeworkId)
+      setHomeworks(remaining)
+      setSelectedHomeworkId(remaining[0]?.id || '')
+    } catch (err) {
+      setHomeworkSuccess('')
+      setHomeworkError(err instanceof Error ? err.message : 'Không thể nộp bài')
+    }
   }
 
   if (status === 'loading') {
@@ -207,12 +278,16 @@ export default function Dashboard() {
             <div className="bg-white p-6 rounded shadow-md">
               <h2 className="text-xl font-semibold mb-2">Bài Tập</h2>
               <p className="text-gray-600 mb-4">Nộp bài tập và xem tiến độ của bạn</p>
-              <Link
-                href="/submit"
-                className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] inline-block"
+              <button
+                onClick={() => {
+                  setHomeworkSuccess('')
+                  setHomeworkError('')
+                  setShowHomeworkModal(true)
+                }}
+                className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
               >
                 Nộp Bài Tập
-              </Link>
+              </button>
             </div>
           )}
 
@@ -327,6 +402,64 @@ export default function Dashboard() {
                   {registering === selectedCourseId ? 'Đang xử lý...' : 'Đã chuyển khoản'}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {showHomeworkModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded shadow-lg p-6 max-w-md w-full">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-bold text-gray-900">Submit Assignment</h3>
+                <button
+                  onClick={() => setShowHomeworkModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+
+              {homeworkLoading ? (
+                <p className="text-gray-500 mb-4">Đang tải danh sách bài tập...</p>
+              ) : (
+                <>
+                  {homeworkError && <p className="text-red-500 mb-4">{homeworkError}</p>}
+                  {homeworkSuccess && <p className="text-[#14532d] mb-4">{homeworkSuccess}</p>}
+
+                  {homeworks.length === 0 ? (
+                    <p className="text-[#14532d] mb-4">Tốt lắm, bạn đã hoàn thành tất cả bài tập của mình rồi.</p>
+                  ) : (
+                    <select
+                      value={selectedHomeworkId}
+                      onChange={(e) => setSelectedHomeworkId(e.target.value)}
+                      className="w-full p-2 mb-4 border rounded"
+                    >
+                      {homeworks.map((homework) => (
+                        <option key={homework.id} value={homework.id}>
+                          {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+
+                  <textarea
+                    placeholder="Ghi chú bài nộp"
+                    value={homeworkNote}
+                    onChange={(e) => setHomeworkNote(e.target.value)}
+                    className="w-full p-2 mb-4 border rounded"
+                    rows={4}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={submitHomework}
+                    disabled={homeworks.length === 0}
+                    className="w-full bg-[#14532d] text-white p-2 rounded disabled:opacity-50"
+                  >
+                    Submit
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}

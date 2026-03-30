@@ -169,7 +169,7 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               {session?.user?.role === 'member' ? (
                 <Link
-                  href="/submit"
+                  href="/dashboard?homework=1"
                   className="rounded-lg bg-[#14532d] px-6 py-3 text-base font-semibold text-white shadow hover:bg-[#166534]"
                 >
                   My Homework
@@ -217,6 +217,19 @@ export default function Home() {
             <h2 className="text-xl font-bold text-[#14532d]">Bài tập của bạn</h2>
             <p className="mt-2 text-sm text-slate-600">Khóa học: {memberHomework.courseTitle}</p>
 
+            {memberHomework.pendingHomework.length > 0 && (
+              <div className="mt-4 homework-alert-wrap rounded border border-amber-300 bg-amber-50">
+                <div className="homework-alert-track">
+                  <span className="homework-alert-text">
+                    Ban con {memberHomework.pendingHomework.length} bai tap chua nop. Vao Dashboard de nop bai ngay hom nay.
+                  </span>
+                  <span className="homework-alert-text" aria-hidden="true">
+                    Ban con {memberHomework.pendingHomework.length} bai tap chua nop. Vao Dashboard de nop bai ngay hom nay.
+                  </span>
+                </div>
+              </div>
+            )}
+
             {memberHomework.totalHomework > 0 && memberHomework.submittedHomework === memberHomework.totalHomework ? (
               <p className="mt-4 rounded-lg bg-[#14532d]/10 border border-[#14532d]/30 px-4 py-3 text-[#14532d] font-semibold">
                 Tốt lắm, bạn đã hoàn thành tất cả bài tập của mình rồi.
@@ -235,7 +248,7 @@ export default function Home() {
                     ))}
                   </ul>
                 )}
-                <Link href="/submit" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
+                <Link href="/dashboard?homework=1" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
                   Nộp bài ngay
                 </Link>
               </>

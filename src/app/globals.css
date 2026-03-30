@@ -97,6 +97,29 @@ body {
   animation-play-state: paused;
 }
 
+.homework-alert-wrap {
+  overflow: hidden;
+  padding: 10px 0;
+}
+
+.homework-alert-track {
+  display: flex;
+  width: max-content;
+  gap: 2.5rem;
+  animation: homework-alert-scroll 14s linear infinite;
+}
+
+.homework-alert-wrap:hover .homework-alert-track {
+  animation-play-state: paused;
+}
+
+.homework-alert-text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #b45309;
+  letter-spacing: 0.01em;
+}
+
 .course-ticker-item {
   min-width: 320px;
   max-width: 360px;
@@ -136,6 +159,15 @@ body {
   }
 }
 
+@keyframes homework-alert-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (max-width: 640px) {
   .course-ticker-item {
     min-width: 260px;
@@ -145,6 +177,10 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .course-ticker-track {
+    animation: none;
+  }
+
+  .homework-alert-track {
     animation: none;
   }
 
