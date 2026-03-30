@@ -190,6 +190,15 @@ export default function Home() {
               )}
               {session?.user?.role === 'member' && (
                 <Link
+                  href="/my-homework"
+                  className="brand-cta brand-cta-outline"
+                >
+                  <span>My Homework</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                </Link>
+              )}
+              {session?.user?.role === 'member' && (
+                <Link
                   href="/lecture-notes"
                   className="brand-cta brand-cta-outline"
                 >

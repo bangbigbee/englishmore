@@ -10,8 +10,13 @@ export async function POST(request: NextRequest) {
   }
 
   const { homeworkId, description } = await request.json()
+  const note = typeof description === 'string' ? description.trim() : ''
   if (!homeworkId) {
     return NextResponse.json({ error: 'homeworkId is required' }, { status: 400 })
+  }
+
+  if (!note) {
+    return NextResponse.json({ error: 'Ghi chú không được để trống' }, { status: 400 })
   }
 
   const activeEnrollment = await prisma.enrollment.findFirst({
@@ -41,10 +46,10 @@ export async function POST(request: NextRequest) {
     create: {
       homeworkId,
       userId: session.user.id,
-      note: description || null
+      note
     },
     update: {
-      note: description || null,
+      note,
       submittedAt: new Date()
     }
   })

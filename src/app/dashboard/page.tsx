@@ -166,11 +166,17 @@ export default function Dashboard() {
       return
     }
 
+    const trimmedNote = homeworkNote.trim()
+    if (!trimmedNote) {
+      setHomeworkError('Vui lòng nhập Ghi chú trước khi nộp bài')
+      return
+    }
+
     try {
       const res = await fetch('/api/assignments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ homeworkId: selectedHomeworkId, description: homeworkNote })
+        body: JSON.stringify({ homeworkId: selectedHomeworkId, description: trimmedNote })
       })
       const data = await res.json()
       if (!res.ok) {
