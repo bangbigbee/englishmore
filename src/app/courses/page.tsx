@@ -272,7 +272,7 @@ export default function CoursesPage() {
                       {paymentInstruction.transferContent}
                     </span>
                   </div>
-                  <p className="text-xs text-red-600 mt-1">⚠ Nhập đúng nội dung này để quản trị viên nhận diện đúng thông tin của bạn.</p>
+                  <p className="text-xs text-red-600 mt-1">Nguyen Van A 0934567890</p>
                 </div>
               </div>
 

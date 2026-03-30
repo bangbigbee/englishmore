@@ -165,6 +165,37 @@ const formatDuration = (totalSeconds: number | null) => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
+const formatDateToDdMmYyyy = (value: string | Date) => {
+  const date = new Date(value)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = String(date.getFullYear())
+  return `${day}/${month}/${year}`
+}
+
+const parseDdMmYyyyToIsoDate = (value: string) => {
+  const trimmed = String(value || '').trim()
+  const match = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (!match) {
+    return null
+  }
+
+  const day = Number(match[1])
+  const month = Number(match[2])
+  const year = Number(match[3])
+  const date = new Date(Date.UTC(year, month - 1, day))
+
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() + 1 !== month ||
+    date.getUTCDate() !== day
+  ) {
+    return null
+  }
+
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -527,6 +558,12 @@ export default function AdminDashboard() {
       return
     }
 
+    const parsedNewHomeworkDueDate = parseDdMmYyyyToIsoDate(newHomeworkDueDate)
+    if (!parsedNewHomeworkDueDate) {
+      setHomeworkError('Hạn nộp phải theo định dạng dd/mm/yyyy')
+      return
+    }
+
     try {
       const res = await fetch('/api/admin/homework', {
         method: 'POST',
@@ -535,7 +572,7 @@ export default function AdminDashboard() {
           courseId: newHomeworkCourseId,
           title: newHomeworkTitle,
           description: newHomeworkDescription,
-          dueDate: newHomeworkDueDate
+          dueDate: parsedNewHomeworkDueDate
         })
       })
 
@@ -560,7 +597,7 @@ export default function AdminDashboard() {
     setEditHomeworkCourseId(homework.courseId)
     setEditHomeworkTitle(homework.title)
     setEditHomeworkDescription(homework.description || '')
-    setEditHomeworkDueDate(new Date(homework.dueDate).toISOString().slice(0, 10))
+    setEditHomeworkDueDate(formatDateToDdMmYyyy(homework.dueDate))
     setHomeworkError('')
   }
 
@@ -568,6 +605,12 @@ export default function AdminDashboard() {
     if (!editingHomework) return
     if (!editHomeworkCourseId || !editHomeworkTitle || !editHomeworkDueDate) {
       setHomeworkError('Vui lòng nhập đủ thông tin bài tập')
+      return
+    }
+
+    const parsedEditHomeworkDueDate = parseDdMmYyyyToIsoDate(editHomeworkDueDate)
+    if (!parsedEditHomeworkDueDate) {
+      setHomeworkError('Hạn nộp phải theo định dạng dd/mm/yyyy')
       return
     }
 
@@ -580,7 +623,7 @@ export default function AdminDashboard() {
           courseId: editHomeworkCourseId,
           title: editHomeworkTitle,
           description: editHomeworkDescription,
-          dueDate: editHomeworkDueDate
+          dueDate: parsedEditHomeworkDueDate
         })
       })
       const data = await res.json()
@@ -605,6 +648,12 @@ export default function AdminDashboard() {
       return
     }
 
+    const parsedNewDeadline = parseDdMmYyyyToIsoDate(newDeadline)
+    if (!parsedNewDeadline) {
+      setCourseError('Hạn đăng ký phải theo định dạng dd/mm/yyyy')
+      return
+    }
+
     if (!Number.isInteger(newCourseMaxStudents) || newCourseMaxStudents < 1 || newCourseMaxStudents > 10) {
       setCourseError('Số lượng chỗ phải từ 1 đến 10')
       return
@@ -617,7 +666,7 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           title: newCourseTitle,
           description: newCourseDescription,
-          registrationDeadline: newDeadline,
+          registrationDeadline: parsedNewDeadline,
           maxStudents: newCourseMaxStudents
         })
       })
@@ -642,7 +691,7 @@ export default function AdminDashboard() {
     setEditingCourse(course)
     setEditCourseTitle(course.title)
     setEditCourseDescription(course.description || '')
-    setEditCourseDeadline(new Date(course.registrationDeadline).toISOString().slice(0, 10))
+    setEditCourseDeadline(formatDateToDdMmYyyy(course.registrationDeadline))
     setEditCourseMaxStudents(course.maxStudents || 10)
     setCourseError('')
   }
@@ -651,6 +700,12 @@ export default function AdminDashboard() {
     if (!editingCourse) return
     if (!editCourseTitle || !editCourseDeadline) {
       setCourseError('Vui lòng nhập tên khóa học và hạn đăng ký')
+      return
+    }
+
+    const parsedEditDeadline = parseDdMmYyyyToIsoDate(editCourseDeadline)
+    if (!parsedEditDeadline) {
+      setCourseError('Hạn đăng ký phải theo định dạng dd/mm/yyyy')
       return
     }
 
@@ -667,7 +722,7 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           title: editCourseTitle,
           description: editCourseDescription,
-          registrationDeadline: editCourseDeadline,
+          registrationDeadline: parsedEditDeadline,
           maxStudents: editCourseMaxStudents
         })
       })
@@ -945,9 +1000,11 @@ export default function AdminDashboard() {
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
             <input
-              type="date"
+              type="text"
               value={newHomeworkDueDate}
               onChange={(e) => setNewHomeworkDueDate(e.target.value)}
+              placeholder="dd/mm/yyyy"
+              inputMode="numeric"
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
             <button
@@ -1395,9 +1452,11 @@ export default function AdminDashboard() {
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Hạn đăng ký</span>
               <input
-                type="date"
+                type="text"
                 value={newDeadline}
                 onChange={(e) => setNewDeadline(e.target.value)}
+                placeholder="dd/mm/yyyy"
+                inputMode="numeric"
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
               />
             </label>
@@ -1516,9 +1575,11 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <input
-                  type="date"
+                  type="text"
                   value={editCourseDeadline}
                   onChange={(e) => setEditCourseDeadline(e.target.value)}
+                  placeholder="dd/mm/yyyy"
+                  inputMode="numeric"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <label className="block">
@@ -1585,9 +1646,11 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <input
-                  type="date"
+                  type="text"
                   value={editHomeworkDueDate}
                   onChange={(e) => setEditHomeworkDueDate(e.target.value)}
+                  placeholder="dd/mm/yyyy"
+                  inputMode="numeric"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
               </div>
