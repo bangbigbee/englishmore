@@ -45,7 +45,6 @@ export default function CoursesPage() {
   const [error, setError] = useState('')
   const [registering, setRegistering] = useState<string | null>(null)
   const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null)
-  const [paymentCourseTitle, setPaymentCourseTitle] = useState('')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -93,8 +92,6 @@ export default function CoursesPage() {
       } else {
         setError('')
         setPaymentInstruction(data.paymentInstruction || null)
-        const course = courses.find((item) => item.id === courseId)
-        setPaymentCourseTitle(course?.title || '')
         fetchEnrollments()
       }
     } catch (err) {
@@ -116,21 +113,18 @@ export default function CoursesPage() {
     `?amount=${instruction.amount}&addInfo=${encodeURIComponent(instruction.transferContent)}` +
     `&accountName=${encodeURIComponent(instruction.accountName)}`
 
-  const buildInstructionFromEnrollment = (course: Course, enrollment: Enrollment): PaymentInstruction => {
-    const fallbackRef = `EM${course.id.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-8)}${(enrollment.userId || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-6)}${enrollment.id.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-4)}`
-
+  const buildInstructionFromEnrollment = (): PaymentInstruction => {
     return {
       bankName: 'Techcombank',
       accountNumber: '19033113602011',
       accountName: 'Nguyen Tri Bang',
       amount: 3800000,
-      transferContent: enrollment.referenceCode || fallbackRef
+      transferContent: '[Full Name] [Phone Number]'
     }
   }
 
-  const openPaymentInfo = (course: Course, enrollment: Enrollment) => {
-    setPaymentCourseTitle(course.title)
-    setPaymentInstruction(buildInstructionFromEnrollment(course, enrollment))
+  const openPaymentInfo = () => {
+    setPaymentInstruction(buildInstructionFromEnrollment())
   }
 
   if (status === 'loading') {
@@ -203,7 +197,7 @@ export default function CoursesPage() {
                         </p>
                       )}
                       <button
-                        onClick={() => openPaymentInfo(course, enrollment)}
+                        onClick={openPaymentInfo}
                         className="mt-3 inline-block text-xs px-3 py-1.5 rounded bg-white border border-[#14532d]/30 text-[#14532d] hover:bg-[#14532d]/10"
                       >
                         Xem lại thông tin chuyển khoản
@@ -242,7 +236,7 @@ export default function CoursesPage() {
               </div>
 
               <p className="text-green-700 bg-green-50 border border-green-200 rounded p-3 text-sm mb-4">
-                ✓ Đăng ký thành công{paymentCourseTitle ? `: ${paymentCourseTitle}` : ''}. Vui lòng chuyển khoản đúng nội dung bên dưới để admin xác nhận.
+                Vui lòng chuyển khoản đúng nội dung bên dưới để quản trị viên xác nhận đóng học phí.
               </p>
 
               <div className="flex justify-center mb-4">
@@ -278,7 +272,7 @@ export default function CoursesPage() {
                       {paymentInstruction.transferContent}
                     </span>
                   </div>
-                  <p className="text-xs text-red-600 mt-1">⚠ Nhập đúng nội dung này để admin nhận diện thanh toán của bạn</p>
+                  <p className="text-xs text-red-600 mt-1">⚠ Nhập đúng nội dung này để quản trị viên nhận diện đúng thông tin của bạn.</p>
                 </div>
               </div>
 

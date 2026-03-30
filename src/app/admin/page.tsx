@@ -104,6 +104,7 @@ interface ExerciseSubmissionItem {
   id: string
   score: number
   totalQuestions: number
+  durationSeconds: number | null
   submittedAt: string
   user: {
     id: string
@@ -152,6 +153,17 @@ const buildExerciseResults = (items: ExerciseItem[]) =>
       }))
     )
     .sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
+
+const formatDuration = (totalSeconds: number | null) => {
+  if (totalSeconds === null) {
+    return 'N/A'
+  }
+
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds))
+  const minutes = Math.floor(safeSeconds / 60)
+  const seconds = safeSeconds % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
@@ -214,6 +226,7 @@ export default function AdminDashboard() {
   const [importingForm, setImportingForm] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
   const [publishingExercise, setPublishingExercise] = useState(false)
+  const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
 
   const fetchStudents = async () => {
     try {
@@ -479,6 +492,32 @@ export default function AdminDashboard() {
       setExerciseSuccess('')
     } finally {
       setSavingExerciseId(null)
+    }
+  }
+
+  const deleteExercise = async (exercise: ExerciseItem) => {
+    const confirmed = window.confirm(`Bạn có chắc chắn muốn xóa Exercise ${exercise.order} của khóa "${exercise.course.title}"?`)
+    if (!confirmed) return
+
+    try {
+      setDeletingExerciseId(exercise.id)
+      const res = await fetch(`/api/admin/exercises/${exercise.id}`, {
+        method: 'DELETE'
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể xóa exercise')
+
+      setExerciseSuccess(`Đã xóa Exercise ${exercise.order}`)
+      setExerciseError('')
+      if (editingExercise?.id === exercise.id) {
+        setEditingExercise(null)
+      }
+      fetchExerciseData()
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Không thể xóa exercise')
+      setExerciseSuccess('')
+    } finally {
+      setDeletingExerciseId(null)
     }
   }
 
@@ -1001,7 +1040,16 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-600">{exercise.description || 'Chưa có mô tả'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.questions.length}</td>
                     <td className="px-4 py-3 text-sm">
-                      <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Sửa</button>
+                      <div className="flex items-center gap-3">
+                        <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Sửa</button>
+                        <button
+                          onClick={() => deleteExercise(exercise)}
+                          disabled={deletingExerciseId === exercise.id}
+                          className="text-red-600 hover:underline disabled:opacity-50"
+                        >
+                          {deletingExerciseId === exercise.id ? 'Đang xóa...' : 'Xóa'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1163,6 +1211,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Điểm</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian làm</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian nộp</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chi tiết</th>
                 </tr>
@@ -1174,6 +1223,7 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-900">{result.courseTitle}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">Exercise {result.exerciseOrder}</td>
                     <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{result.score}/{result.totalQuestions}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{formatDuration(result.durationSeconds)}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">{new Date(result.submittedAt).toLocaleString('vi-VN')}</td>
                     <td className="px-4 py-3 text-sm">
                       <button onClick={() => setSelectedExerciseResult(result)} className="text-[#14532d] hover:underline">Xem bài làm</button>
@@ -1182,7 +1232,7 @@ export default function AdminDashboard() {
                 ))}
                 {exerciseResults.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có học viên nào nộp exercise</td>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có học viên nào nộp exercise</td>
                   </tr>
                 )}
               </tbody>
@@ -1648,6 +1698,7 @@ export default function AdminDashboard() {
                   <h3 className="text-xl font-bold text-gray-900">Bài làm Exercise {selectedExerciseResult.exerciseOrder}</h3>
                   <p className="text-sm text-gray-600">{selectedExerciseResult.user.name || selectedExerciseResult.user.email} - {selectedExerciseResult.courseTitle}</p>
                   <p className="mt-1 text-sm font-semibold text-[#14532d]">Điểm: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
+                  <p className="mt-1 text-sm text-gray-600">Thời gian làm bài: {formatDuration(selectedExerciseResult.durationSeconds)}</p>
                 </div>
                 <button
                   onClick={() => setSelectedExerciseResult(null)}

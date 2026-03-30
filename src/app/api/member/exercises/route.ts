@@ -49,6 +49,7 @@ export async function GET() {
           id: true,
           score: true,
           totalQuestions: true,
+          durationSeconds: true,
           submittedAt: true,
           answers: {
             select: {

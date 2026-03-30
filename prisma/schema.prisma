@@ -180,6 +180,7 @@ model ExerciseSubmission {
   userId         String
   score          Int                        @default(0)
   totalQuestions Int
+  durationSeconds Int?
   submittedAt    DateTime                   @default(now())
   createdAt      DateTime                   @default(now())
   updatedAt      DateTime                   @updatedAt

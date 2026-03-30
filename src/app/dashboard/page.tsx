@@ -21,6 +21,7 @@ interface ExerciseItem {
     id: string
     score: number
     totalQuestions: number
+    durationSeconds: number | null
     submittedAt: string
     answers: Array<{
       questionId: string
@@ -36,6 +37,13 @@ interface ExerciseItem {
     optionB: string
     optionC: string
   }>
+}
+
+const formatDuration = (totalSeconds: number) => {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds))
+  const minutes = Math.floor(safeSeconds / 60)
+  const seconds = safeSeconds % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
 export default function Dashboard() {
@@ -55,6 +63,9 @@ export default function Dashboard() {
   const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, Record<string, string>>>({})
   const [exerciseFeedback, setExerciseFeedback] = useState<Record<string, { type: 'success' | 'error'; message: string }>>({})
   const [submittingExerciseId, setSubmittingExerciseId] = useState<string | null>(null)
+  const [startedExerciseAt, setStartedExerciseAt] = useState<Record<string, number>>({})
+  const [timerTick, setTimerTick] = useState(() => Date.now())
+  const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -193,7 +204,42 @@ export default function Dashboard() {
     })
   }
 
-  const submitExercise = async (exercise: ExerciseItem) => {
+  useEffect(() => {
+    if (Object.keys(startedExerciseAt).length === 0) {
+      return
+    }
+
+    const intervalId = window.setInterval(() => {
+      setTimerTick(Date.now())
+    }, 1000)
+
+    return () => {
+      window.clearInterval(intervalId)
+    }
+  }, [startedExerciseAt])
+
+  const getExerciseDurationSeconds = (exerciseId: string) => {
+    const startedAt = startedExerciseAt[exerciseId]
+    if (!startedAt) {
+      return 0
+    }
+
+    return Math.max(1, Math.floor((timerTick - startedAt) / 1000))
+  }
+
+  const startExercise = (exerciseId: string) => {
+    setStartedExerciseAt((current) => ({
+      ...current,
+      [exerciseId]: Date.now()
+    }))
+    setExerciseFeedback((current) => {
+      const next = { ...current }
+      delete next[exerciseId]
+      return next
+    })
+  }
+
+  const openSubmitConfirmation = (exercise: ExerciseItem) => {
     const selectedAnswers = exerciseAnswers[exercise.id] || {}
     const missingQuestion = exercise.questions.find((question) => !selectedAnswers[question.id])
 
@@ -208,12 +254,31 @@ export default function Dashboard() {
       return
     }
 
+    const durationSeconds = getExerciseDurationSeconds(exercise.id)
+    if (durationSeconds <= 0) {
+      setExerciseFeedback((current) => ({
+        ...current,
+        [exercise.id]: {
+          type: 'error',
+          message: 'Vui lòng nhấn Start để bắt đầu trước khi nộp bài.'
+        }
+      }))
+      return
+    }
+
+    setSubmitConfirm({ exercise, durationSeconds })
+  }
+
+  const submitExercise = async (exercise: ExerciseItem, durationSeconds: number) => {
+    const selectedAnswers = exerciseAnswers[exercise.id] || {}
+
     try {
       setSubmittingExerciseId(exercise.id)
       const res = await fetch(`/api/member/exercises/${exercise.id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          durationSeconds,
           answers: exercise.questions.map((question) => ({
             questionId: question.id,
             selectedOption: selectedAnswers[question.id]
@@ -229,9 +294,15 @@ export default function Dashboard() {
         ...current,
         [exercise.id]: {
           type: 'success',
-          message: `Đã nộp bài. Kết quả hiện tại: ${data.submission.score}/${data.submission.totalQuestions}.`
+          message: `Đã nộp bài. Kết quả hiện tại: ${data.submission.score}/${data.submission.totalQuestions}. Thời gian: ${formatDuration(durationSeconds)}.`
         }
       }))
+      setSubmitConfirm(null)
+      setStartedExerciseAt((current) => {
+        const next = { ...current }
+        delete next[exercise.id]
+        return next
+      })
       await fetchExercises()
     } catch (err) {
       setExerciseFeedback((current) => ({
@@ -282,6 +353,12 @@ export default function Dashboard() {
                 <div className="space-y-6">
                   {exercises.map((exercise) => (
                     <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
+                      {Boolean(startedExerciseAt[exercise.id]) && (
+                        <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+                          ⏱ Thời gian làm bài: {formatDuration(getExerciseDurationSeconds(exercise.id))}
+                        </div>
+                      )}
+
                       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
                           <h3 className="text-lg font-bold text-[#14532d]">Exercise {exercise.order}</h3>
@@ -295,6 +372,9 @@ export default function Dashboard() {
                         {exercise.submission ? (
                           <div className="rounded-lg bg-[#14532d]/10 px-4 py-3 text-sm text-[#14532d]">
                             <p className="font-semibold">Điểm gần nhất: {exercise.submission.score}/{exercise.submission.totalQuestions}</p>
+                            {exercise.submission.durationSeconds !== null && (
+                              <p>Thời gian làm: {formatDuration(exercise.submission.durationSeconds)}</p>
+                            )}
                             <p>Nộp lúc: {new Date(exercise.submission.submittedAt).toLocaleString('vi-VN')}</p>
                           </div>
                         ) : (
@@ -312,46 +392,59 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      <div className="space-y-4">
-                        {exercise.questions.map((question) => (
-                          <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
-                            <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
-                            <div className="mt-3 grid gap-2 md:grid-cols-3">
-                              {[
-                                { key: 'A', text: question.optionA },
-                                { key: 'B', text: question.optionB },
-                                { key: 'C', text: question.optionC }
-                              ].map((option) => {
-                                const selectedOption = exerciseAnswers[exercise.id]?.[question.id]
-                                const isSelected = selectedOption === option.key
+                      {!startedExerciseAt[exercise.id] ? (
+                        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                          <p className="text-sm text-blue-800 mb-3">Nhấn Start để mở bài Exercise và bắt đầu tính giờ làm bài.</p>
+                          <button
+                            type="button"
+                            onClick={() => startExercise(exercise.id)}
+                            className="rounded-lg bg-blue-700 px-5 py-2 font-medium text-white hover:bg-blue-800"
+                          >
+                            {exercise.submission ? 'Start làm lại' : 'Start'}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {exercise.questions.map((question) => (
+                            <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
+                              <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
+                              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                                {[
+                                  { key: 'A', text: question.optionA },
+                                  { key: 'B', text: question.optionB },
+                                  { key: 'C', text: question.optionC }
+                                ].map((option) => {
+                                  const selectedOption = exerciseAnswers[exercise.id]?.[question.id]
+                                  const isSelected = selectedOption === option.key
 
-                                return (
-                                  <button
-                                    key={`${question.id}-${option.key}`}
-                                    type="button"
-                                    onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
-                                    className={`rounded-lg border px-4 py-3 text-left text-sm transition ${
-                                      isSelected
-                                        ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
-                                        : 'border-gray-200 bg-white text-gray-700 hover:border-[#14532d]/40'
-                                    }`}
-                                  >
-                                    <span className="mb-1 block font-semibold">{option.key}.</span>
-                                    <span>{option.text}</span>
-                                  </button>
-                                )
-                              })}
+                                  return (
+                                    <button
+                                      key={`${question.id}-${option.key}`}
+                                      type="button"
+                                      onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
+                                      className={`rounded-lg border px-4 py-3 text-left text-sm transition ${
+                                        isSelected
+                                          ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
+                                          : 'border-gray-200 bg-white text-gray-700 hover:border-[#14532d]/40'
+                                      }`}
+                                    >
+                                      <span className="mb-1 block font-semibold">{option.key}.</span>
+                                      <span>{option.text}</span>
+                                    </button>
+                                  )
+                                })}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      )}
 
                       <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-sm text-gray-500">Bạn có thể cập nhật đáp án rồi nộp lại nếu muốn cải thiện kết quả.</p>
                         <button
                           type="button"
-                          onClick={() => submitExercise(exercise)}
-                          disabled={submittingExerciseId === exercise.id}
+                          onClick={() => openSubmitConfirmation(exercise)}
+                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
                           className="rounded-lg bg-[#14532d] px-5 py-3 font-medium text-white hover:bg-[#166534] disabled:opacity-50"
                         >
                           {submittingExerciseId === exercise.id ? 'Đang nộp bài...' : exercise.submission ? 'Nộp lại Exercise' : 'Submit Exercise'}
@@ -377,6 +470,36 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {submitConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+            <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+              <h3 className="text-lg font-bold text-gray-900">Xác nhận nộp Exercise</h3>
+              <p className="mt-3 text-sm text-gray-700">
+                Bạn đã làm Exercise {submitConfirm.exercise.order} trong vòng <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
+                Bạn có muốn gửi kết quả này không?
+              </p>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSubmitConfirm(null)}
+                  disabled={submittingExerciseId === submitConfirm.exercise.id}
+                  className="rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300 disabled:opacity-50"
+                >
+                  Quay lại
+                </button>
+                <button
+                  type="button"
+                  onClick={() => submitExercise(submitConfirm.exercise, submitConfirm.durationSeconds)}
+                  disabled={submittingExerciseId === submitConfirm.exercise.id}
+                  className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534] disabled:opacity-50"
+                >
+                  {submittingExerciseId === submitConfirm.exercise.id ? 'Đang gửi...' : 'Gửi kết quả'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {congratsEnrollment && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

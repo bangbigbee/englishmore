@@ -81,14 +81,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   })
 
   return NextResponse.json({
-    message: 'Đăng ký thành công. Vui lòng chuyển khoản đúng nội dung để admin xác nhận nhanh.',
+    message: 'Vui lòng chuyển khoản đúng nội dung bên dưới để quản trị viên xác nhận đóng học phí.',
     enrollment,
     paymentInstruction: {
       bankName: 'Techcombank',
       accountNumber: '19033113602011',
       accountName: 'Nguyen Tri Bang',
       amount: transferAmount,
-      transferContent: referenceCode
+      transferContent: '[Full Name] [Phone Number]'
     }
   })
 }

@@ -36,6 +36,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   const { id } = await context.params
   const body = await request.json()
   const answers = normalizeAnswers(body?.answers || [])
+  const durationSecondsRaw = Number(body?.durationSeconds)
+  const durationSeconds = Number.isFinite(durationSecondsRaw) && durationSecondsRaw > 0
+    ? Math.floor(durationSecondsRaw)
+    : null
 
   if (!answers) {
     return NextResponse.json({ error: 'Danh sách đáp án không hợp lệ' }, { status: 400 })
@@ -119,6 +123,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         data: {
           score,
           totalQuestions: exercise.questions.length,
+          durationSeconds,
           submittedAt: new Date(),
           answers: {
             create: evaluatedAnswers.map((item) => ({
@@ -132,6 +137,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
           id: true,
           score: true,
           totalQuestions: true,
+          durationSeconds: true,
           submittedAt: true,
           answers: {
             select: {
@@ -150,6 +156,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         userId: session.user.id,
         score,
         totalQuestions: exercise.questions.length,
+        durationSeconds,
         answers: {
           create: evaluatedAnswers.map((item) => ({
             questionId: item.questionId,
@@ -162,6 +169,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         id: true,
         score: true,
         totalQuestions: true,
+        durationSeconds: true,
         submittedAt: true,
         answers: {
           select: {
