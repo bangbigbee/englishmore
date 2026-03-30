@@ -17,6 +17,7 @@ interface Enrollment {
   id: string
   courseId: string
   status: string
+  course: { title: string }
 }
 
 export default function Dashboard() {
@@ -29,6 +30,7 @@ export default function Dashboard() {
   const [registering, setRegistering] = useState<string | null>(null)
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [congratsEnrollment, setCongratsEnrollment] = useState<{ id: string; title: string } | null>(null)
   const [bankInfo] = useState({
     account: '19033113602011',
     bank: 'Techcombank',
@@ -74,6 +76,14 @@ export default function Dashboard() {
       if (!res.ok) return
       const data = await res.json()
       setEnrollments(data)
+      // Show congratulations for newly active enrollments not yet acknowledged
+      const activeEnrollment = data.find((e: Enrollment) => e.status === 'active')
+      if (activeEnrollment) {
+        const key = `congratulated_${activeEnrollment.id}`
+        if (typeof window !== 'undefined' && !localStorage.getItem(key)) {
+          setCongratsEnrollment({ id: activeEnrollment.id, title: activeEnrollment.course?.title || '' })
+        }
+      }
     } catch (err) {
       console.error(err)
     }
@@ -220,8 +230,38 @@ export default function Dashboard() {
           )}
         </div>
 
-        {showConfirm && selectedCourseId && (
+        {congratsEnrollment && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
+              <div className="text-5xl mb-4">🎉</div>
+              <h3 className="text-2xl font-bold text-[#14532d] mb-3">Chúc mừng!</h3>
+              <p className="text-gray-700 mb-2">
+                Bạn đã ghi danh thành công vào khóa học
+              </p>
+              {congratsEnrollment.title && (
+                <p className="text-lg font-semibold text-[#14532d] mb-4">
+                  &quot;{congratsEnrollment.title}&quot;
+                </p>
+              )}
+              <p className="text-sm text-gray-500 mb-6">
+                Thanh toán đã được admin xác nhận. Chào mừng bạn đến với EnglishMore!
+              </p>
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem(`congratulated_${congratsEnrollment.id}`, '1')
+                  }
+                  setCongratsEnrollment(null)
+                }}
+                className="w-full px-4 py-3 bg-[#14532d] text-white rounded-lg font-semibold hover:bg-[#166534]"
+              >
+                Vào học ngay!
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showConfirm && selectedCourseId && (          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded shadow-lg p-6 max-w-md">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Xác nhận Đăng ký Khóa học</h3>
 

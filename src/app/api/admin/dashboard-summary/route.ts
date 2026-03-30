@@ -22,11 +22,15 @@ export async function GET() {
   }
 
   const totalUsers = await prisma.user.count()
-  const totalStudents = fixedCourseBreakdown.reduce((sum, item) => sum + item.studentCount, 0)
+  const totalStudents = await prisma.enrollment.count({ where: { status: 'active' } })
+  // Historical totals for closed cohorts (Khóa 1-4)
+  const historicalTotal = fixedCourseBreakdown
+    .filter(c => c.status === 'closed')
+    .reduce((sum, c) => sum + c.studentCount, 0)
 
   return NextResponse.json({
     totalUsers,
-    totalStudents,
+    totalStudents: totalStudents + historicalTotal,
     courseBreakdown: fixedCourseBreakdown
   })
 }

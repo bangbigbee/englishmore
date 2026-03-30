@@ -286,6 +286,7 @@ export default function AdminDashboard() {
       setCourseError('')
       fetchEnrollments()
       fetchCourses()
+      fetchSummary()
     } catch (err) {
       setCourseError(err instanceof Error ? err.message : 'Không thể cập nhật trạng thái thanh toán')
     } finally {
