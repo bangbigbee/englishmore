@@ -23,8 +23,6 @@ export default function Login() {
     if (status === 'authenticated' && session?.user?.role) {
       if (session.user.role === 'admin') {
         router.push('/admin')
-      } else if (session.user.role === 'member') {
-        router.push('/dashboard')
       } else {
         router.push('/')
       }
@@ -36,7 +34,7 @@ export default function Login() {
     setError('')
     setMessage('')
     try {
-      await signIn('google', { callbackUrl: '/dashboard' })
+      await signIn('google', { callbackUrl: '/' })
     } catch {
       setError('Google sign in failed')
       setGoogleLoading(false)

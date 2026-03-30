@@ -5,11 +5,12 @@ import bcrypt from 'bcrypt'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password, confirmPassword, name, phone } = body
+    const { email, password, confirmPassword, name, phone, otp } = body
 
     const normalizedName = String(name || '').trim()
     const normalizedEmail = String(email || '').trim().toLowerCase()
     const normalizedPhone = String(phone || '').trim()
+    const normalizedOtp = String(otp || '').trim()
 
     if (!normalizedName || !normalizedEmail || !normalizedPhone || !password || !confirmPassword) {
       return NextResponse.json({ error: 'Vui lòng nhập đầy đủ họ tên, email, số điện thoại và mật khẩu' }, { status: 400 })
@@ -28,6 +29,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Số điện thoại không hợp lệ' }, { status: 400 })
     }
 
+    // Verify OTP
+    if (!normalizedOtp) {
+      return NextResponse.json({ error: 'Vui lòng nhập mã OTP' }, { status: 400 })
+    }
+
+    const tokenRecord = await prisma.verificationToken.findFirst({
+      where: { identifier: normalizedEmail, token: normalizedOtp },
+    })
+
+    if (!tokenRecord) {
+      return NextResponse.json({ error: 'Mã OTP không đúng' }, { status: 400 })
+    }
+
+    if (tokenRecord.expires < new Date()) {
+      await prisma.verificationToken.deleteMany({ where: { identifier: normalizedEmail } })
+      return NextResponse.json({ error: 'Mã OTP đã hết hạn, vui lòng gửi lại' }, { status: 400 })
+    }
+
+    // Delete used token
+    await prisma.verificationToken.deleteMany({ where: { identifier: normalizedEmail } })
+
     const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } })
     if (existingUser) {
       return NextResponse.json({ error: 'Email already in use' }, { status: 409 })
@@ -45,7 +67,8 @@ export async function POST(request: NextRequest) {
         email: normalizedEmail,
         name: normalizedName,
         phone: normalizedPhone,
-        password: passwordHash
+        password: passwordHash,
+        emailVerified: new Date(),
       }
     })
 
@@ -58,3 +81,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
+
