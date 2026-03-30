@@ -274,108 +274,55 @@ export default function Home() {
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                 {activeMemberTab === 'homework' && (
                   <>
-                    <h3 className="text-2xl font-semibold text-[#14532d]">My Homework</h3>
-                    {memberHomework?.hasActiveCourse ? (
-                      <>
-                        <p className="mt-2 text-sm text-slate-600">Khóa học: {memberHomework.courseTitle}</p>
-
-                        {memberHomework.pendingHomework.length > 0 && (
-                          <div className="mt-4 homework-alert-wrap rounded border border-amber-300 bg-amber-50">
-                            <div className="homework-alert-track">
-                              <span className="homework-alert-text">
-                                You still have {memberHomework.pendingHomework.length} pending homework item(s). Open Dashboard to submit today.
-                              </span>
-                              <span className="homework-alert-text" aria-hidden="true">
-                                You still have {memberHomework.pendingHomework.length} pending homework item(s). Open Dashboard to submit today.
-                              </span>
-                            </div>
-                          </div>
-                        )}
-
-                        {memberHomework.totalHomework > 0 && memberHomework.submittedHomework === memberHomework.totalHomework ? (
-                          <p className="mt-4 rounded-lg border border-[#14532d]/30 bg-[#14532d]/10 px-4 py-3 font-semibold text-[#14532d]">
-                            Tốt lắm, bạn đã hoàn thành tất cả bài tập của mình rồi.
-                          </p>
-                        ) : (
-                          <>
-                            <p className="mt-4 text-slate-700">
-                              Bạn đã nộp <strong>{memberHomework.submittedHomework}</strong> / <strong>{memberHomework.totalHomework}</strong> bài tập.
-                            </p>
-                            {memberHomework.pendingHomework.length > 0 && (
-                              <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                                {memberHomework.pendingHomework.slice(0, 5).map((homework) => (
-                                  <li key={homework.id} className="rounded border border-amber-200 bg-amber-50 px-3 py-2">
-                                    {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                            <Link href="/my-homework" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
-                              Go to Homework
-                            </Link>
-                          </>
-                        )}
-                      </>
+                    <h3 className="text-2xl font-semibold text-slate-800">Homework Snapshot</h3>
+                    <p className="mt-2 text-slate-600">
+                      Bạn đã nộp <span className="font-semibold text-slate-900">{submittedHomework}</span> / <span className="font-semibold text-slate-900">{totalHomework}</span> bài tập.
+                    </p>
+                    {memberHomework?.pendingHomework?.length ? (
+                      <ul className="mt-4 space-y-2 text-sm text-slate-700">
+                        {memberHomework.pendingHomework.slice(0, 3).map((homework) => (
+                          <li key={homework.id} className="rounded border border-amber-200 bg-amber-50 px-3 py-2">
+                            {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
+                          </li>
+                        ))}
+                      </ul>
                     ) : (
-                      <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                        Bạn chưa có khóa học đang hoạt động để theo dõi bài tập.
-                      </div>
+                      <p className="mt-4 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">
+                        Tốt lắm, hiện tại bạn không có bài tập tồn đọng.
+                      </p>
                     )}
                   </>
                 )}
 
                 {activeMemberTab === 'exercise' && (
                   <>
-                    <h3 className="text-2xl font-semibold text-[#14532d]">Exercise More</h3>
-                    <p className="mt-2 text-sm text-slate-600">
-                      Theo dõi nhịp luyện tập và mở bài Exercise để duy trì phản xạ giao tiếp mỗi ngày.
-                    </p>
-
+                    <h3 className="text-2xl font-semibold text-slate-800">Exercise Plan</h3>
+                    <p className="mt-2 text-slate-600">Hoat dong luyen tap tuan nay duoc cap nhat theo bai Exercise ban da nop.</p>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-lg border border-[#14532d]/25 bg-[#14532d]/8 px-4 py-3">
-                        <p className="text-sm text-slate-600">Mục tiêu tuần</p>
-                        <p className="mt-1 text-xl font-semibold text-[#14532d]">3 buổi luyện Exercise</p>
+                      <div className="rounded border border-slate-200 bg-slate-50 px-4 py-3">
+                        <p className="text-sm text-slate-500">Muc tieu tuan</p>
+                        <p className="text-xl font-semibold text-slate-800">3 bai Exercise</p>
                       </div>
-                      <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
-                        <p className="text-sm text-amber-700">Đã ghi nhận</p>
-                        <p className="mt-1 text-xl font-semibold text-amber-800">
-                          {Math.ceil(weeklyActivityRows.reduce((sum, row) => sum + row.minutes, 0) / 15)} buổi ước tính
-                        </p>
+                      <div className="rounded border border-slate-200 bg-slate-50 px-4 py-3">
+                        <p className="text-sm text-slate-500">Da ghi nhan</p>
+                        <p className="text-xl font-semibold text-slate-800">{Math.ceil(weeklyActivityRows.reduce((sum, row) => sum + row.minutes, 0) / 15)} bai uoc tinh</p>
                       </div>
                     </div>
-
                     <p className="mt-4 rounded border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm text-indigo-700">
-                      Gợi ý: duy trì ít nhất 20-30 phút mỗi ngày để tăng tốc độ phản xạ giao tiếp.
+                      Goi y: Duy tri it nhat 20-30 phut moi ngay de tang toc do phan xa giao tiep.
                     </p>
-
-                    <Link href="/dashboard" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
-                      Go to Exercise
-                    </Link>
                   </>
                 )}
 
                 {activeMemberTab === 'lecture-notes' && (
                   <>
-                    <h3 className="text-2xl font-semibold text-[#14532d]">Lecture Notes</h3>
-                    <p className="mt-2 text-sm text-slate-600">
-                      Ôn tập nhanh nội dung trọng tâm sau mỗi buổi học để ghi nhớ lâu hơn.
-                    </p>
-
-                    <div className="mt-4 space-y-2 text-sm text-slate-700">
-                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2">
-                        Review phát âm và intonation trong buổi gần nhất.
-                      </p>
-                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2">
-                        Ghi lại 5 cụm từ ứng dụng trong công việc và đối thoại hằng ngày.
-                      </p>
-                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2">
-                        Chuẩn bị câu hỏi để trao đổi với giáo viên trong buổi tiếp theo.
-                      </p>
+                    <h3 className="text-2xl font-semibold text-slate-800">Lecture Notes Hub</h3>
+                    <p className="mt-2 text-slate-600">Tong hop ghi chu bai hoc va diem can on tap sau moi buoi hoc.</p>
+                    <div className="mt-4 space-y-2">
+                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">- Review phat am va intonation trong buoi gan nhat.</p>
+                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">- Ghi lai 5 cum tu ung dung trong cong viec/doi thoai hang ngay.</p>
+                      <p className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">- Chuan bi cau hoi de trao doi voi giao vien trong buoi tiep theo.</p>
                     </div>
-
-                    <Link href="/lecture-notes" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
-                      Open Lecture Notes
-                    </Link>
                   </>
                 )}
               </div>
