@@ -8,8 +8,8 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-0">
-      <div className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-sm md:w-96">
-        <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">Register</h2>
+      <div className="bg-white p-8 sm:p-10 rounded-xl shadow-lg w-full max-w-md md:w-120">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-7 text-center">MEMBER REGISTRATION</h2>
 
         <button
           type="button"
@@ -18,7 +18,7 @@ export default function Register() {
             signIn('google', { callbackUrl: '/' })
           }}
           disabled={isZaloInAppBrowser}
-          className="w-full flex items-center justify-center gap-3 border-2 border-[#14532d] rounded p-2 hover:bg-slate-50 transition-colors mb-4 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full flex items-center justify-center gap-3 border-2 border-[#14532d] rounded-md p-3 hover:bg-slate-50 transition-colors mb-5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-5 h-5">
             <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
@@ -26,22 +26,22 @@ export default function Register() {
             <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.6-3.1-11.3-7.5l-6.6 4.9C9.5 39.8 16.2 44 24 44z"/>
             <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.9 2.4-2.5 4.4-4.6 5.8l6.2 5.2C36.9 37.3 44 32 44 24c0-1.2-.1-2.4-.4-3.5z"/>
           </svg>
-          <span className="text-sm font-medium text-slate-700">Continue with Google</span>
+          <span className="text-base font-semibold text-slate-700">Continue with Google</span>
         </button>
 
         {isZaloInAppBrowser && (
-          <div className="mb-3 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-base text-amber-800">
             Google không cho phép đăng nhập trong trình duyệt của Zalo (lỗi 403 disallowed_useragent). Vui lòng mở link này bằng Safari hoặc Chrome rồi đăng ký lại.
           </div>
         )}
 
-        <p className="text-center text-sm text-slate-500 mb-3">
+        <p className="text-center text-base text-slate-500 mb-4">
           Đăng ký tạm thời chỉ hỗ trợ Google.
         </p>
 
-        <p className="mt-4 text-center text-xs sm:text-sm text-slate-500">
+        <p className="mt-4 text-center text-sm sm:text-base text-slate-500">
           Đã có tài khoản?{' '}
-          <Link href="/login" className="font-medium text-[#14532d] hover:text-[#166534]">
+          <Link href="/login" className="font-semibold text-[#14532d] hover:text-[#166534]">
             Đăng nhập
           </Link>
         </p>

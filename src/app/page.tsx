@@ -32,7 +32,13 @@ interface MemberHomeworkSummary {
     title: string
     dueDate: string
   }>
+  weeklyActivity?: Array<{
+    day: string
+    minutes: number
+  }>
 }
+
+const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const
 
 export default function Home() {
   const { data: session } = useSession()
@@ -115,6 +121,26 @@ export default function Home() {
     if (availableCourses.length === 0) return []
     return [...availableCourses, ...availableCourses]
   }, [availableCourses])
+
+  const weeklyActivityRows = useMemo(() => {
+    const data = memberHomework?.weeklyActivity ?? WEEK_DAYS.map((day) => ({ day, minutes: 0 }))
+    const maxMinutes = Math.max(1, ...data.map((item) => item.minutes))
+
+    return data.map((item) => {
+      const ratio = item.minutes / maxMinutes
+      const barClass = item.minutes === 0
+        ? 'bg-slate-300'
+        : item.minutes <= 15
+          ? 'bg-amber-500'
+          : 'bg-[#4db463]'
+
+      return {
+        ...item,
+        widthPercent: Math.max(item.minutes > 0 ? 16 : 0, Math.round(ratio * 100)),
+        barClass
+      }
+    })
+  }, [memberHomework])
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -209,30 +235,50 @@ export default function Home() {
                 </Link>
               )}
               <Link
-                href={session?.user?.role === 'member' ? '/dashboard' : session ? '/courses' : '/register'}
+                href={session?.user?.role === 'member' ? '/dashboard' : session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
                 className={session?.user?.role === 'member' ? 'brand-cta brand-cta-filled' : 'brand-cta brand-cta-outline'}
               >
-                <span>{session?.user?.role === 'member' ? "Exercise More" : 'Đăng Ký Học'}</span>
+                <span>{session?.user?.role === 'member' ? 'Exercise More' : session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Học'}</span>
                 <span aria-hidden="true" className="brand-cta-arrow">→</span>
               </Link>
             </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
-            <img
-              src="/uploads/hero.png"
-              alt="Study illustration"
-              className="h-80 w-full object-cover rounded-2xl"
-              onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
-            />
-            <a
-              href="https://www.facebook.com/bangbigbee"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
-            >
-              Giáo viên trực tiếp giảng dạy: Nguyễn Trí Bằng
-            </a>
-          </div>
+          {session?.user?.role === 'member' ? (
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
+              <h2 className="text-3xl font-bold text-slate-800">Weekly Activity</h2>
+              <div className="mt-6 space-y-4">
+                {weeklyActivityRows.map((item) => (
+                  <div key={item.day} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 sm:gap-4">
+                    <span className="text-lg text-slate-600">{item.day}</span>
+                    <div className="h-4 w-28 overflow-hidden rounded-full bg-slate-200 sm:w-32">
+                      <div
+                        className={`h-full rounded-full ${item.barClass} transition-all duration-500`}
+                        style={{ width: `${item.widthPercent}%` }}
+                      />
+                    </div>
+                    <span className="w-16 text-right text-2xl font-medium text-slate-700">{item.minutes} min</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
+              <img
+                src="/uploads/hero.png"
+                alt="Study illustration"
+                className="h-80 w-full object-cover rounded-2xl"
+                onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
+              />
+              <a
+                href="https://www.facebook.com/bangbigbee"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
+              >
+                Giáo viên trực tiếp giảng dạy: Nguyễn Trí Bằng
+              </a>
+            </div>
+          )}
         </section>
 
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (

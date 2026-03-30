@@ -123,7 +123,7 @@ export default function CoursesPage() {
       accountNumber: '19033113602011',
       accountName: 'Nguyen Tri Bang',
       amount: 3800000,
-      transferContent: '[Full Name] [Phone Number]'
+      transferContent: 'Your Full Name - Phone Number'
     }
   }
 
@@ -276,7 +276,7 @@ export default function CoursesPage() {
                       {paymentInstruction.transferContent}
                     </span>
                   </div>
-                  <p className="text-sm text-[#14532d] font-semibold mt-1">Ví dụ: Nguyen Van A 0934567890</p>
+                  <p className="text-sm text-[#14532d] font-semibold mt-1">Ví dụ: Nguyen Van A - 0934567890</p>
                 </div>
               </div>
 

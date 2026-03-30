@@ -3,6 +3,21 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const
+
+function getWeekStart(date: Date) {
+  const d = new Date(date)
+  const jsDay = d.getDay() // 0 = Sunday
+  const daysFromMonday = (jsDay + 6) % 7
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() - daysFromMonday)
+  return d
+}
+
+function toMondayFirstIndex(date: Date) {
+  return (date.getDay() + 6) % 7
+}
+
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session || !session.user) {
@@ -32,7 +47,8 @@ export async function GET() {
       totalSessions: 30,
       totalHomework: 0,
       submittedHomework: 0,
-      pendingHomework: []
+      pendingHomework: [],
+      weeklyActivity: WEEK_DAYS.map((day) => ({ day, minutes: 0 }))
     })
   }
 
@@ -56,6 +72,46 @@ export async function GET() {
       dueDate: homework.dueDate
     }))
 
+  const weekStart = getWeekStart(new Date())
+  const [weeklyHomeworkSubmissions, weeklyExerciseSubmissions] = await Promise.all([
+    prisma.homeworkSubmission.findMany({
+      where: {
+        userId: session.user.id,
+        homework: { courseId: activeEnrollment.courseId },
+        submittedAt: { gte: weekStart }
+      },
+      select: { submittedAt: true }
+    }),
+    prisma.exerciseSubmission.findMany({
+      where: {
+        userId: session.user.id,
+        exercise: { courseId: activeEnrollment.courseId },
+        submittedAt: { gte: weekStart }
+      },
+      select: { submittedAt: true, durationSeconds: true, totalQuestions: true }
+    })
+  ])
+
+  const minutesByDay = Array.from({ length: 7 }, () => 0)
+
+  for (const submission of weeklyHomeworkSubmissions) {
+    const dayIndex = toMondayFirstIndex(submission.submittedAt)
+    minutesByDay[dayIndex] += 20
+  }
+
+  for (const submission of weeklyExerciseSubmissions) {
+    const dayIndex = toMondayFirstIndex(submission.submittedAt)
+    const derivedMinutes = submission.durationSeconds
+      ? Math.max(1, Math.round(submission.durationSeconds / 60))
+      : Math.max(8, submission.totalQuestions * 2)
+    minutesByDay[dayIndex] += derivedMinutes
+  }
+
+  const weeklyActivity = WEEK_DAYS.map((day, index) => ({
+    day,
+    minutes: minutesByDay[index]
+  }))
+
   return NextResponse.json({
     hasActiveCourse: true,
     courseId: activeEnrollment.course.id,
@@ -65,6 +121,7 @@ export async function GET() {
     totalHomework: homeworks.length,
     submittedHomework: homeworks.length - pendingHomework.length,
     pendingHomework,
+    weeklyActivity,
     allHomework: homeworks.map((homework) => ({
       id: homework.id,
       title: homework.title,

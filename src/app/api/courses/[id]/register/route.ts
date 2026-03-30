@@ -88,7 +88,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       accountNumber: '19033113602011',
       accountName: 'Nguyen Tri Bang',
       amount: transferAmount,
-      transferContent: '[Full Name] [Phone Number]'
+      transferContent: 'Your Full Name - Phone Number'
     }
   })
 }
