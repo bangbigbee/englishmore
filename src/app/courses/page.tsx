@@ -19,6 +19,12 @@ interface Enrollment {
   id: string
   courseId: string
   status: string
+  referenceCode?: string | null
+  userId?: string
+  course?: {
+    title?: string
+    price?: number
+  }
   createdAt: string
 }
 
@@ -110,6 +116,23 @@ export default function CoursesPage() {
     `?amount=${instruction.amount}&addInfo=${encodeURIComponent(instruction.transferContent)}` +
     `&accountName=${encodeURIComponent(instruction.accountName)}`
 
+  const buildInstructionFromEnrollment = (course: Course, enrollment: Enrollment): PaymentInstruction => {
+    const fallbackRef = `EM${course.id.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-8)}${(enrollment.userId || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-6)}${enrollment.id.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-4)}`
+
+    return {
+      bankName: 'Techcombank',
+      accountNumber: '19033113602011',
+      accountName: 'Nguyen Tri Bang',
+      amount: enrollment.course?.price && enrollment.course.price > 0 ? enrollment.course.price : 3800000,
+      transferContent: enrollment.referenceCode || fallbackRef
+    }
+  }
+
+  const openPaymentInfo = (course: Course, enrollment: Enrollment) => {
+    setPaymentCourseTitle(course.title)
+    setPaymentInstruction(buildInstructionFromEnrollment(course, enrollment))
+  }
+
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
@@ -179,6 +202,12 @@ export default function CoursesPage() {
                           Chúng tôi đã nhận yêu cầu của bạn và đang chờ admin xác nhận thanh toán
                         </p>
                       )}
+                      <button
+                        onClick={() => openPaymentInfo(course, enrollment)}
+                        className="mt-3 inline-block text-xs px-3 py-1.5 rounded bg-white border border-[#14532d]/30 text-[#14532d] hover:bg-[#14532d]/10"
+                      >
+                        Xem lại thông tin chuyển khoản
+                      </button>
                     </div>
                   ) : blockedByPending ? (
                     <div className="p-3 bg-gray-50 rounded border border-gray-200">

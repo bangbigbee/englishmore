@@ -63,7 +63,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   const userCodePart = userId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-6)
   const nonce = Date.now().toString().slice(-4)
   const referenceCode = `EM${courseCodePart}${userCodePart}${nonce}`
-  const transferAmount = course.price > 0 ? course.price : 4000000
+  const transferAmount = course.price > 0 ? course.price : 3800000
 
   const enrollment = await prisma.enrollment.create({
     data: {

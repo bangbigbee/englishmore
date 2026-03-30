@@ -50,7 +50,7 @@ export default function Dashboard() {
     account: '19033113602011',
     bank: 'Techcombank',
     owner: 'Nguyễn Trí Bằng',
-    amount: '4,000,000 VND'
+    amount: '3,800,000 VND'
   })
 
   useEffect(() => {
