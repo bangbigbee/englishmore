@@ -37,13 +37,24 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   }
 
   const userId = session.user?.id as string
+
+  // Block if user already has a pending enrollment for any course
+  const pendingEnrollment = await prisma.enrollment.findFirst({
+    where: { userId, status: 'pending' }
+  })
+  if (pendingEnrollment) {
+    return NextResponse.json({
+      error: 'Bạn đang có một đăng ký chờ xác nhận. Vui lòng đợi admin xác nhận trước khi đăng ký khóa mới.'
+    }, { status: 409 })
+  }
+
   const courseCodePart = (course.code || course.id)
     .replace(/[^a-zA-Z0-9]/g, '')
     .toUpperCase()
     .slice(0, 8)
   const userCodePart = userId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-6)
   const nonce = Date.now().toString().slice(-4)
-  const referenceCode = `EM${courseCodePart}-${userCodePart}-${nonce}`
+  const referenceCode = `EM${courseCodePart}${userCodePart}${nonce}`
   const transferAmount = course.price > 0 ? course.price : 4000000
 
   const enrollment = await prisma.enrollment.create({

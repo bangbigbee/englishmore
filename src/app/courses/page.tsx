@@ -38,17 +38,8 @@ export default function CoursesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [registering, setRegistering] = useState<string | null>(null)
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [lastRegisteredCourseId, setLastRegisteredCourseId] = useState<string | null>(null)
   const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null)
   const [paymentCourseTitle, setPaymentCourseTitle] = useState('')
-  const [bankInfo] = useState({
-    account: '19033113602011',
-    bank: 'Techcombank',
-    owner: 'Nguyễn Trí Bằng',
-    amount: '4,000,000 VND'
-  })
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -95,12 +86,9 @@ export default function CoursesPage() {
         setError(data.error || 'Failed to register')
       } else {
         setError('')
-        setLastRegisteredCourseId(courseId)
         setPaymentInstruction(data.paymentInstruction || null)
         const course = courses.find((item) => item.id === courseId)
         setPaymentCourseTitle(course?.title || '')
-        setSelectedCourseId(null)
-        setShowConfirm(false)
         fetchEnrollments()
       }
     } catch (err) {
@@ -114,6 +102,13 @@ export default function CoursesPage() {
     const enrollment = enrollments.find(e => e.courseId === courseId)
     return enrollment
   }
+
+  const hasPendingEnrollment = enrollments.some(e => e.status === 'pending')
+
+  const getQrUrl = (instruction: PaymentInstruction) =>
+    `https://img.vietqr.io/image/TCB-${instruction.accountNumber}-compact2.png` +
+    `?amount=${instruction.amount}&addInfo=${encodeURIComponent(instruction.transferContent)}` +
+    `&accountName=${encodeURIComponent(instruction.accountName)}`
 
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -139,6 +134,12 @@ export default function CoursesPage() {
           </div>
         )}
 
+        {hasPendingEnrollment && (
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-300 rounded text-yellow-800">
+            <strong>Lưu ý:</strong> Bạn đang có một đăng ký chờ admin xác nhận. Vui lòng đợi xác nhận trước khi đăng ký thêm khóa học.
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {loading ? (
             <div className="col-span-full text-center text-gray-500">Đang tải...</div>
@@ -148,6 +149,7 @@ export default function CoursesPage() {
             courses.map((course) => {
               const enrollment = getEnrollmentStatus(course.id)
               const isFull = course.enrolledCount >= course.maxStudents
+              const blockedByPending = !enrollment && hasPendingEnrollment
               return (
                 <div key={course.id} className="bg-white rounded shadow-md p-6 hover:shadow-lg transition">
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{course.title}</h3>
@@ -178,12 +180,13 @@ export default function CoursesPage() {
                         </p>
                       )}
                     </div>
+                  ) : blockedByPending ? (
+                    <div className="p-3 bg-gray-50 rounded border border-gray-200">
+                      <p className="text-sm text-gray-500">Vui lòng đợi xác nhận đăng ký hiện tại trước khi đăng ký thêm</p>
+                    </div>
                   ) : (
                     <button
-                      onClick={() => {
-                        setSelectedCourseId(course.id)
-                        setShowConfirm(true)
-                      }}
+                      onClick={() => registerCourse(course.id)}
                       disabled={registering === course.id}
                       className="w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                     >
@@ -196,94 +199,67 @@ export default function CoursesPage() {
           )}
         </div>
 
-        {showConfirm && selectedCourseId && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-md">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Xác nhận Đăng ký Khóa học</h3>
-
-              <div className="mb-6 space-y-4">
-                <p className="text-gray-700">
-                  Bạn cần chuyển khoản <strong>chính xác</strong> số tiền dưới đây:
-                </p>
-
-                <div className="bg-[#14532d]/10 border border-[#14532d]/25 rounded p-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Số tiền:</span>
-                    <span className="font-semibold text-gray-900">{bankInfo.amount}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Ngân hàng:</span>
-                    <span className="font-semibold text-gray-900">{bankInfo.bank}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Số TK:</span>
-                    <span className="font-mono font-semibold text-gray-900">{bankInfo.account}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Chủ TK:</span>
-                    <span className="font-semibold text-gray-900">{bankInfo.owner}</span>
-                  </div>
-                </div>
-
-                <p className="text-sm text-gray-600 bg-yellow-50 p-3 rounded">
-                  Bấm &quot;Tạo mã chuyển khoản&quot; để hệ thống cấp mã nội dung chuyển khoản riêng cho đăng ký này.
-                </p>
-              </div>
-
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => {
-                    setShowConfirm(false)
-                    setSelectedCourseId(null)
-                  }}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400"
-                >
-                  Hủy
-                </button>
-                <a
-                  href="https://www.facebook.com/bangbigbee"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-4 py-2 bg-amber-100 text-amber-700 rounded hover:bg-amber-200"
-                >
-                  Tư vấn
-                </a>
-                <button
-                  onClick={() => {
-                    if (!selectedCourseId) {
-                      setError('Course ID is required')
-                      setShowConfirm(false)
-                      return
-                    }
-                    registerCourse(selectedCourseId)
-                  }}
-                  disabled={registering === selectedCourseId}
-                  className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {registering === selectedCourseId ? 'Đang xử lý...' : 'Tạo mã chuyển khoản'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {paymentInstruction && (
-          <div className="mt-6 p-4 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">
-            <p className="font-semibold">Đăng ký đã được tạo{paymentCourseTitle ? `: ${paymentCourseTitle}` : ''}.</p>
-            <p className="mt-2">Vui lòng chuyển khoản đúng thông tin sau để admin xác nhận:</p>
-            <div className="mt-3 grid gap-2 text-sm">
-              <p><strong>Ngân hàng:</strong> {paymentInstruction.bankName}</p>
-              <p><strong>Số tài khoản:</strong> {paymentInstruction.accountNumber}</p>
-              <p><strong>Chủ tài khoản:</strong> {paymentInstruction.accountName}</p>
-              <p><strong>Số tiền:</strong> {paymentInstruction.amount.toLocaleString('vi-VN')} VND</p>
-              <p><strong>Nội dung chuyển khoản:</strong> <span className="font-mono bg-white px-2 py-1 rounded border border-[#14532d]/30">{paymentInstruction.transferContent}</span></p>
-            </div>
-          </div>
-        )}
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-bold text-[#14532d]">Thông tin chuyển khoản</h3>
+                <button
+                  onClick={() => setPaymentInstruction(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none"
+                >
+                  ×
+                </button>
+              </div>
 
-        {lastRegisteredCourseId && enrollments.some(e => e.courseId === lastRegisteredCourseId && e.status === 'pending') && !loading && (
-          <div className="mt-6 p-4 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">
-            Đã ghi nhận đăng ký. Trạng thái hiện tại: Chờ xác nhận chuyển khoản.
+              <p className="text-green-700 bg-green-50 border border-green-200 rounded p-3 text-sm mb-4">
+                ✓ Đăng ký thành công{paymentCourseTitle ? `: ${paymentCourseTitle}` : ''}. Vui lòng chuyển khoản đúng nội dung bên dưới để admin xác nhận.
+              </p>
+
+              <div className="flex justify-center mb-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={getQrUrl(paymentInstruction)}
+                  alt="QR chuyển khoản"
+                  className="w-56 h-56 rounded border border-gray-200"
+                />
+              </div>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-gray-600">Ngân hàng:</span>
+                  <span className="font-semibold">{paymentInstruction.bankName}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-gray-600">Số tài khoản:</span>
+                  <span className="font-mono font-semibold">{paymentInstruction.accountNumber}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-gray-600">Chủ tài khoản:</span>
+                  <span className="font-semibold">{paymentInstruction.accountName}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-gray-600">Số tiền:</span>
+                  <span className="font-semibold text-red-600">{paymentInstruction.amount.toLocaleString('vi-VN')} VND</span>
+                </div>
+                <div className="py-2">
+                  <p className="text-gray-600 mb-1">Nội dung chuyển khoản:</p>
+                  <div className="bg-yellow-50 border-2 border-yellow-400 rounded p-3 text-center">
+                    <span className="font-mono font-bold text-lg text-yellow-900 tracking-wider">
+                      {paymentInstruction.transferContent}
+                    </span>
+                  </div>
+                  <p className="text-xs text-red-600 mt-1">⚠ Nhập đúng nội dung này để admin nhận diện thanh toán của bạn</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setPaymentInstruction(null)}
+                className="mt-4 w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+              >
+                Đã hiểu, đóng
+              </button>
+            </div>
           </div>
         )}
       </div>
