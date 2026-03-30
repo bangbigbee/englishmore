@@ -370,7 +370,7 @@ export default function Home() {
                   <div>
                     <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">5.</span> Học phí</h3>
                     <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Toàn bộ khóa học: 3.800.000 VND.</li>
+                      <li>Toàn bộ khóa học: 4.200.000 VND.</li>
                       <li>Có ưu đãi học phí 10% nếu đăng ký nhóm từ 2 bạn trở lên.</li>
                       <li>Sau phiên học thứ 3, nếu cảm thấy phù hợp với khóa học: chuyển học phí về số tài khoản 19033113602011 - Techcombank - Nguyen Tri Bang.</li>
                     </ul>
