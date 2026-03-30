@@ -187,13 +187,13 @@ export default function CoursesPage() {
                     </div>
                   ) : enrollment ? (
                     <div className="p-3 bg-yellow-50 rounded border border-yellow-200">
-                      <p className="text-sm text-yellow-800">
-                        <strong>Trạng thái:</strong>{' '}
-                        {enrollment.status === 'pending' ? 'Chờ xác nhận' : 'Đăng ký thành công'}
-                      </p>
-                      {enrollment.status === 'pending' && (
-                        <p className="text-xs text-yellow-700 mt-2">
-                          Chúng tôi đã nhận yêu cầu của bạn và đang chờ admin xác nhận thanh toán
+                      {enrollment.status === 'pending' ? (
+                        <p className="text-sm text-yellow-800">
+                          Đang xác nhận để trở thành học viên của khóa học <strong>&quot;{enrollment.course?.title}&quot;</strong>
+                        </p>
+                      ) : (
+                        <p className="text-sm text-yellow-800">
+                          <strong>Trạng thái:</strong> Đăng ký thành công
                         </p>
                       )}
                       <button
