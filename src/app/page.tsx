@@ -121,8 +121,8 @@ export default function Home() {
           <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-3">
             <p className="text-base font-semibold text-[#14532d] sm:text-lg">
               {memberEnrollment.status === 'pending'
-                ? `Đang xác nhận để trở thành học viên khóa học ${memberEnrollment.course.title}`
-                : `Bạn đang là thành viên ${memberEnrollment.course.title}.`}
+                ? `Xin chào ${session.user?.name || 'bạn'}, đang xác nhận để trở thành học viên khóa học ${memberEnrollment.course.title}`
+                : `Xin chào ${session.user?.name || 'bạn'}, bạn đang là thành viên ${memberEnrollment.course.title}.`}
             </p>
           </section>
         )}
