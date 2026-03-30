@@ -8,7 +8,6 @@ export default function Submit() {
   const { data: session } = useSession()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [method, setMethod] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const router = useRouter()
@@ -23,15 +22,16 @@ export default function Submit() {
     const res = await fetch('/api/assignments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, method })
+      body: JSON.stringify({ title, description })
     })
     if (res.ok) {
       setSuccess('Assignment submitted successfully!')
+      setError('')
       setTitle('')
       setDescription('')
-      setMethod('')
     } else {
       const data = await res.json()
+      setSuccess('')
       setError(data.error)
     }
   }
@@ -57,17 +57,6 @@ export default function Submit() {
           className="w-full p-2 mb-4 border rounded"
           rows={4}
         />
-        <select
-          value={method}
-          onChange={(e) => setMethod(e.target.value)}
-          className="w-full p-2 mb-4 border rounded"
-          required
-        >
-          <option value="">Select Method</option>
-          <option value="PPF">PPF</option>
-          <option value="Beyond">Beyond</option>
-          <option value="Contrast">Contrast</option>
-        </select>
         <button type="submit" className="w-full bg-[#14532d] text-white p-2 rounded">Submit</button>
       </form>
     </div>

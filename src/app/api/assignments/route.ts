@@ -9,8 +9,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { title, description, method } = await request.json()
-  if (!title || !method) {
+  const { title, description } = await request.json()
+  if (!title) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
 
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       userId: session.user.id,
       title,
       description: description || '',
-      method
+      method: 'homework'
     }
   })
 
