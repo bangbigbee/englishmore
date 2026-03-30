@@ -41,13 +41,6 @@ export default function TopNav() {
         </Link>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className="px-4 py-2 bg-[#14532d] hover:bg-[#166534] text-white rounded transition"
-          >
-            Home
-          </Link>
-
           {session ? (
             <>
               <button

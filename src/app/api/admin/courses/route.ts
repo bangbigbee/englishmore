@@ -38,10 +38,15 @@ export async function POST(request: NextRequest) {
   if (auth.status !== 200) return NextResponse.json(auth.body, { status: auth.status })
 
   const body = await request.json()
-  const { title, description, registrationDeadline } = body
+  const { title, description, registrationDeadline, maxStudents } = body
 
   if (!title || !registrationDeadline) {
     return NextResponse.json({ error: 'Title and registrationDeadline are required' }, { status: 400 })
+  }
+
+  const parsedMaxStudents = Number(maxStudents ?? 10)
+  if (!Number.isInteger(parsedMaxStudents) || parsedMaxStudents < 1 || parsedMaxStudents > 10) {
+    return NextResponse.json({ error: 'Số lượng chỗ phải là số nguyên từ 1 đến 10' }, { status: 400 })
   }
 
   const course = await prisma.course.create({
@@ -49,6 +54,7 @@ export async function POST(request: NextRequest) {
       title,
       description: description || null,
       registrationDeadline: new Date(registrationDeadline),
+      maxStudents: parsedMaxStudents,
       isPublished: true
     }
   })

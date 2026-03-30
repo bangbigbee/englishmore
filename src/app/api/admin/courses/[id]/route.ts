@@ -23,13 +23,14 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { title, description, registrationDeadline, isPublished } = body
+  const { title, description, registrationDeadline, isPublished, maxStudents } = body
 
   const data: {
     title?: string
     description?: string | null
     registrationDeadline?: Date
     isPublished?: boolean
+    maxStudents?: number
   } = {}
 
   if (title !== undefined) {
@@ -58,6 +59,14 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       return NextResponse.json({ error: 'isPublished must be a boolean' }, { status: 400 })
     }
     data.isPublished = isPublished
+  }
+
+  if (maxStudents !== undefined) {
+    const parsedMaxStudents = Number(maxStudents)
+    if (!Number.isInteger(parsedMaxStudents) || parsedMaxStudents < 1 || parsedMaxStudents > 10) {
+      return NextResponse.json({ error: 'Số lượng chỗ phải là số nguyên từ 1 đến 10' }, { status: 400 })
+    }
+    data.maxStudents = parsedMaxStudents
   }
 
   if (Object.keys(data).length === 0) {

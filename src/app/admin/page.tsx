@@ -18,6 +18,7 @@ interface CourseItem {
   title: string
   description: string | null
   registrationDeadline: string
+  maxStudents: number
   isPublished: boolean
   enrollments?: Array<{ status: string }>
 }
@@ -62,6 +63,7 @@ export default function AdminDashboard() {
   const [newCourseTitle, setNewCourseTitle] = useState('')
   const [newCourseDescription, setNewCourseDescription] = useState('')
   const [newDeadline, setNewDeadline] = useState('')
+  const [newCourseMaxStudents, setNewCourseMaxStudents] = useState(10)
   const [courseError, setCourseError] = useState('')
   const [courseSuccess, setCourseSuccess] = useState('')
   const [enrollments, setEnrollments] = useState<EnrollmentItem[]>([])
@@ -71,6 +73,7 @@ export default function AdminDashboard() {
   const [editCourseTitle, setEditCourseTitle] = useState('')
   const [editCourseDescription, setEditCourseDescription] = useState('')
   const [editCourseDeadline, setEditCourseDeadline] = useState('')
+  const [editCourseMaxStudents, setEditCourseMaxStudents] = useState(10)
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
   const [summary, setSummary] = useState<DashboardSummary>({ totalUsers: 0, totalStudents: 0 })
@@ -182,11 +185,21 @@ export default function AdminDashboard() {
       return
     }
 
+    if (!Number.isInteger(newCourseMaxStudents) || newCourseMaxStudents < 1 || newCourseMaxStudents > 10) {
+      setCourseError('Số lượng chỗ phải từ 1 đến 10')
+      return
+    }
+
     try {
       const res = await fetch('/api/admin/courses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newCourseTitle, description: newCourseDescription, registrationDeadline: newDeadline })
+        body: JSON.stringify({
+          title: newCourseTitle,
+          description: newCourseDescription,
+          registrationDeadline: newDeadline,
+          maxStudents: newCourseMaxStudents
+        })
       })
       if (!res.ok) {
         const errorData = await res.json()
@@ -197,6 +210,7 @@ export default function AdminDashboard() {
       setNewCourseTitle('')
       setNewCourseDescription('')
       setNewDeadline('')
+      setNewCourseMaxStudents(10)
       fetchCourses()
     } catch (err) {
       setCourseError(err instanceof Error ? err.message : 'An error occurred')
@@ -209,6 +223,7 @@ export default function AdminDashboard() {
     setEditCourseTitle(course.title)
     setEditCourseDescription(course.description || '')
     setEditCourseDeadline(new Date(course.registrationDeadline).toISOString().slice(0, 10))
+    setEditCourseMaxStudents(course.maxStudents || 10)
     setCourseError('')
   }
 
@@ -216,6 +231,11 @@ export default function AdminDashboard() {
     if (!editingCourse) return
     if (!editCourseTitle || !editCourseDeadline) {
       setCourseError('Vui lòng nhập tên khóa học và hạn đăng ký')
+      return
+    }
+
+    if (!Number.isInteger(editCourseMaxStudents) || editCourseMaxStudents < 1 || editCourseMaxStudents > 10) {
+      setCourseError('Số lượng chỗ phải từ 1 đến 10')
       return
     }
 
@@ -227,7 +247,8 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           title: editCourseTitle,
           description: editCourseDescription,
-          registrationDeadline: editCourseDeadline
+          registrationDeadline: editCourseDeadline,
+          maxStudents: editCourseMaxStudents
         })
       })
 
@@ -478,7 +499,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
             <input
               type="text"
               placeholder="Tên khóa học"
@@ -499,6 +520,15 @@ export default function AdminDashboard() {
               onChange={(e) => setNewDeadline(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
+            <input
+              type="number"
+              min={1}
+              max={10}
+              placeholder="Số chỗ tối đa"
+              value={newCourseMaxStudents}
+              onChange={(e) => setNewCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
             <button
               onClick={publishCourse}
               className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
@@ -514,6 +544,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hạn đăng ký</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số chỗ</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái công khai</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thành công</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chờ chuyển khoản</th>
@@ -529,6 +560,7 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                     </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{course.maxStudents}/10</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-medium ${
                         course.isPublished ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-gray-200 text-gray-700'
@@ -566,7 +598,7 @@ export default function AdminDashboard() {
                 ))}
                 {courses.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-3 text-center text-gray-500">
+                    <td colSpan={9} className="px-4 py-3 text-center text-gray-500">
                       Chưa có khóa học nào
                     </td>
                   </tr>
@@ -600,6 +632,15 @@ export default function AdminDashboard() {
                   type="date"
                   value={editCourseDeadline}
                   onChange={(e) => setEditCourseDeadline(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={editCourseMaxStudents}
+                  onChange={(e) => setEditCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
+                  placeholder="Số chỗ tối đa"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
               </div>
