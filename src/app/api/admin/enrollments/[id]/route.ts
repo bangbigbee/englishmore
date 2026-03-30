@@ -31,7 +31,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const referenceCode =
     existing.referenceCode ||
-    `EM-${existing.courseId.slice(-6).toUpperCase()}-${existing.userId.slice(-6).toUpperCase()}-${enrollmentId.slice(-4).toUpperCase()}`
+    `EM${existing.courseId.slice(-6).toUpperCase()}${existing.userId.slice(-6).toUpperCase()}${enrollmentId.slice(-4).toUpperCase()}`
 
   const enrollment = await prisma.$transaction(async (tx) => {
     const updated = await tx.enrollment.update({

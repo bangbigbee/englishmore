@@ -3,13 +3,11 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-const fixedCourseBreakdown = [
+const historicalCourseBreakdown = [
   { courseNumber: 1, title: 'Khóa 1', studentCount: 7, status: 'closed' },
   { courseNumber: 2, title: 'Khóa 2', studentCount: 8, status: 'closed' },
   { courseNumber: 3, title: 'Khóa 3', studentCount: 8, status: 'closed' },
-  { courseNumber: 4, title: 'Khóa 4', studentCount: 8, status: 'closed' },
-  { courseNumber: 5, title: 'Khóa 5', studentCount: 0, status: 'recruiting' },
-  { courseNumber: 6, title: 'Khóa 6', studentCount: 0, status: 'recruiting' }
+  { courseNumber: 4, title: 'Khóa 4', studentCount: 8, status: 'closed' }
 ]
 
 export async function GET() {
@@ -22,15 +20,35 @@ export async function GET() {
   }
 
   const totalUsers = await prisma.user.count()
-  const totalStudents = await prisma.enrollment.count({ where: { status: 'active' } })
-  // Historical totals for closed cohorts (Khóa 1-4)
-  const historicalTotal = fixedCourseBreakdown
+  const liveCourses = await prisma.course.findMany({
+    select: {
+      id: true,
+      title: true,
+      isPublished: true,
+      isActive: true,
+      enrollments: {
+        where: { status: 'active' },
+        select: { id: true }
+      }
+    },
+    orderBy: { createdAt: 'asc' }
+  })
+
+  const liveCourseBreakdown = liveCourses.map((course, index) => ({
+    courseNumber: historicalCourseBreakdown.length + index + 1,
+    title: course.title,
+    studentCount: course.enrollments.length,
+    status: course.isPublished && course.isActive ? 'recruiting' : 'closed'
+  }))
+
+  const liveTotal = liveCourseBreakdown.reduce((sum, course) => sum + course.studentCount, 0)
+  const historicalTotal = historicalCourseBreakdown
     .filter(c => c.status === 'closed')
     .reduce((sum, c) => sum + c.studentCount, 0)
 
   return NextResponse.json({
     totalUsers,
-    totalStudents: totalStudents + historicalTotal,
-    courseBreakdown: fixedCourseBreakdown
+    totalStudents: liveTotal + historicalTotal,
+    courseBreakdown: [...historicalCourseBreakdown, ...liveCourseBreakdown]
   })
 }
