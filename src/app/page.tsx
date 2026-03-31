@@ -68,6 +68,7 @@ interface MemberHomeworkSummary {
   totalSessions: number
   totalHomework: number
   submittedHomework: number
+  feedbackNoticeCount: number
   pendingHomework: Array<{
     id: string
     title: string
@@ -1210,6 +1211,26 @@ export default function Home() {
                 href="/my-homework"
                 className="brand-cta brand-cta-outline w-full justify-center relative"
               >
+                {memberHomework && memberHomework.feedbackNoticeCount > 0 && (
+                  <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-amber-300 bg-white px-2 py-1 text-[10px] font-bold text-amber-700 shadow-sm">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-3.5 w-3.5"
+                      aria-hidden="true"
+                    >
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      <path d="M8 9h8" />
+                      <path d="M8 13h5" />
+                    </svg>
+                    <span>{memberHomework.feedbackNoticeCount}</span>
+                  </span>
+                )}
                 <span>My Homework</span>
                 <span aria-hidden="true" className="brand-cta-arrow">→</span>
                 {memberHomework && Array.isArray(memberHomework.pendingHomework) && memberHomework.pendingHomework.length > 0 && (

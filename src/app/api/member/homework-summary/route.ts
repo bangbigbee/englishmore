@@ -47,6 +47,7 @@ export async function GET() {
       totalSessions: 30,
       totalHomework: 0,
       submittedHomework: 0,
+      feedbackNoticeCount: 0,
       pendingHomework: [],
       totalExercises: 0,
       pendingExercisesCount: 0,
@@ -73,6 +74,11 @@ export async function GET() {
       description: homework.description,
       dueDate: homework.dueDate
     }))
+
+  const feedbackNoticeCount = homeworks.filter((homework) => {
+    const teacherComment = homework.submissions[0]?.teacherComment
+    return typeof teacherComment === 'string' && teacherComment.trim().length > 0
+  }).length
 
   const exercises = await prisma.courseExercise.findMany({
     where: { courseId: activeEnrollment.courseId, isDraft: false },
@@ -152,6 +158,7 @@ export async function GET() {
     totalSessions: 30,
     totalHomework: homeworks.length,
     submittedHomework: homeworks.length - pendingHomework.length,
+    feedbackNoticeCount,
     pendingHomework,
     totalExercises: exercises.length,
     pendingExercisesCount: pendingExercises.length,
