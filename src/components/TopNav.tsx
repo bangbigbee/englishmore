@@ -58,7 +58,7 @@ function ChevronRightIcon() {
 export default function TopNav() {
   const { data: session, status } = useSession()
   const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
-  const [showUserInfo, setShowUserInfo] = useState(false)
+  const [showUserInfo, setShowUserInfo] = useState(true)
 
   useEffect(() => {
     let active = true
@@ -104,7 +104,7 @@ export default function TopNav() {
             <span className="text-[#14532d]">English</span>
             <span className="text-amber-500">More</span>
           </span>
-          <span className="hidden max-w-26 shrink-0 text-[11px] font-medium leading-[1.15] text-slate-600 min-[430px]:block sm:max-w-none sm:text-sm sm:leading-tight md:block">
+          <span className="block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm">
             Speak your mind and more
           </span>
         </Link>
@@ -114,14 +114,14 @@ export default function TopNav() {
             <>
               <div className="flex items-center gap-1">
                 <div
-                  className={`hidden overflow-hidden text-[11px] font-semibold text-[#166534] transition-all duration-300 ease-in-out min-[430px]:flex min-[430px]:items-center min-[430px]:gap-1.5 sm:gap-2 sm:text-xs ${
+                  className={`flex items-center gap-1 overflow-hidden text-[10px] font-semibold text-[#166534] transition-all duration-300 ease-in-out sm:gap-2 sm:text-xs ${
                     showUserInfo ? 'max-w-xs opacity-100' : 'max-w-0 opacity-0'
                   }`}
                 >
-                  <span className="max-w-28 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-35 whitespace-nowrap">
+                  <span className="max-w-20 truncate whitespace-nowrap rounded-md bg-[#14532d]/10 px-1.5 py-1 sm:max-w-35 sm:px-2">
                     {session.user?.name || 'User'}
                   </span>
-                  <span className="max-w-32 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-55 whitespace-nowrap">
+                  <span className="max-w-24 truncate whitespace-nowrap rounded-md bg-[#14532d]/10 px-1.5 py-1 sm:max-w-55 sm:px-2">
                     {enrolledCourseTitle || 'No active course yet'}
                   </span>
                 </div>

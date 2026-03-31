@@ -439,14 +439,6 @@ export default function Home() {
     return 'border-blue-200 bg-blue-50/95 text-blue-950 shadow-blue-100'
   }
 
-  const getActivityBadgeStyle = (item: DailyGreetingConversationItem) => {
-    if (item.entryType === 'reflection') {
-      return 'bg-violet-600/10 text-violet-800 ring-violet-200'
-    }
-
-    return 'bg-blue-600/10 text-blue-800 ring-blue-200'
-  }
-
   const getActivityDotStyle = (item: DailyGreetingConversationItem) => {
     if (item.entryType === 'reflection') {
       return 'bg-violet-500 ring-violet-200'
@@ -1193,9 +1185,6 @@ export default function Home() {
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <div className="flex min-w-0 flex-wrap items-center gap-2">
                                 <span className="truncate font-semibold">{item.studentName}</span>
-                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1 ring-inset sm:text-[11px] ${getActivityBadgeStyle(item)}`}>
-                                  {item.entryType === 'reflection' ? 'Reflect' : 'Check-in'}
-                                </span>
                                 {item.inputMethod === 'voice' && item.entryType === 'checkin' && (
                                   <span className="inline-flex items-center rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-medium text-slate-500 ring-1 ring-slate-200 sm:text-[11px]">
                                     Voice
