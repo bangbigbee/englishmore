@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface AvailableCourse {
   id: string
@@ -89,6 +89,8 @@ export default function Home() {
   const [pronunciationFeedback, setPronunciationFeedback] = useState('')
   const [pronunciationTranscript, setPronunciationTranscript] = useState('')
   const [pronunciationScore, setPronunciationScore] = useState<number | null>(null)
+  const vocabularyAudioRef = useRef<HTMLAudioElement | null>(null)
+  const vocabularyAudioObjectUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (!session) {
@@ -207,6 +209,20 @@ export default function Home() {
     }
 
     setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition))
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (vocabularyAudioRef.current) {
+        vocabularyAudioRef.current.pause()
+        vocabularyAudioRef.current = null
+      }
+
+      if (vocabularyAudioObjectUrlRef.current) {
+        URL.revokeObjectURL(vocabularyAudioObjectUrlRef.current)
+        vocabularyAudioObjectUrlRef.current = null
+      }
+    }
   }, [])
 
   const tickerCourses = useMemo(() => {
@@ -424,6 +440,68 @@ export default function Home() {
     ) || voices.find((voice) => voice.lang.toLowerCase() === 'en-us') || null
   }
 
+  const playVocabularyAudio = async (sourceUrl: string) => {
+    if (typeof window === 'undefined') {
+      return false
+    }
+
+    try {
+      if (vocabularyAudioRef.current) {
+        vocabularyAudioRef.current.pause()
+        vocabularyAudioRef.current = null
+      }
+
+      const audio = new Audio(sourceUrl)
+      vocabularyAudioRef.current = audio
+
+      await new Promise<void>((resolve, reject) => {
+        audio.onended = () => resolve()
+        audio.onerror = () => reject(new Error('Audio playback failed'))
+        audio.play().then(() => undefined).catch(reject)
+      })
+
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  const speakVocabularyWordWithAzure = async () => {
+    if (!currentVocabularyItem) {
+      return false
+    }
+
+    try {
+      const res = await fetch('/api/member/vocabulary/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: currentVocabularyItem.word })
+      })
+
+      if (!res.ok) {
+        return false
+      }
+
+      const audioBlob = await res.blob()
+      if (!audioBlob.size) {
+        return false
+      }
+
+      if (vocabularyAudioObjectUrlRef.current) {
+        URL.revokeObjectURL(vocabularyAudioObjectUrlRef.current)
+        vocabularyAudioObjectUrlRef.current = null
+      }
+
+      const objectUrl = URL.createObjectURL(audioBlob)
+      vocabularyAudioObjectUrlRef.current = objectUrl
+
+      const played = await playVocabularyAudio(objectUrl)
+      return played
+    } catch {
+      return false
+    }
+  }
+
   const startPronunciationRecognition = () => {
     if (!currentVocabularyItem || typeof window === 'undefined') {
       return
@@ -479,8 +557,30 @@ export default function Home() {
     recognition.start()
   }
 
-  const speakVocabularyWord = (options?: { startPracticeAfterSpeak?: boolean }) => {
-    if (!currentVocabularyItem || typeof window === 'undefined' || !window.speechSynthesis) {
+  const speakVocabularyWord = async (options?: { startPracticeAfterSpeak?: boolean }) => {
+    if (!currentVocabularyItem || typeof window === 'undefined') {
+      if (options?.startPracticeAfterSpeak) {
+        startPronunciationRecognition()
+      }
+      return
+    }
+
+    if (options?.startPracticeAfterSpeak) {
+      setPronunciationStatus('Listen to the sample first, then repeat it.')
+      setPronunciationFeedback('')
+      setPronunciationTranscript('')
+      setPronunciationScore(null)
+    }
+
+    const azurePlayed = await speakVocabularyWordWithAzure()
+    if (azurePlayed) {
+      if (options?.startPracticeAfterSpeak) {
+        startPronunciationRecognition()
+      }
+      return
+    }
+
+    if (!window.speechSynthesis) {
       if (options?.startPracticeAfterSpeak) {
         startPronunciationRecognition()
       }
@@ -498,10 +598,6 @@ export default function Home() {
       utterance.onend = () => {
         startPronunciationRecognition()
       }
-      setPronunciationStatus('Listen to the sample first, then repeat it.')
-      setPronunciationFeedback('')
-      setPronunciationTranscript('')
-      setPronunciationScore(null)
     }
     window.speechSynthesis.cancel()
     window.speechSynthesis.speak(utterance)
@@ -695,10 +791,10 @@ export default function Home() {
           </section>
         )}
 
-        <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
-          <div>
-            <h1 className="sr-only">EnglishMore</h1>
-            {session?.user?.role === 'member' ? (
+        {session?.user?.role === 'member' ? (
+          <>
+            <section>
+              <h1 className="sr-only">EnglishMore</h1>
               <div className="rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
@@ -804,39 +900,9 @@ export default function Home() {
                   </div>
                 )}
               </div>
-            ) : (
-              <>
-                <p className="max-w-xl text-base sm:text-lg text-slate-600">
-                  Practice makes perfect!
-                </p>
-                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
-                  <div className="group relative inline-block">
-                    <a
-                      href="https://www.facebook.com/bangbigbee"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="brand-cta brand-cta-filled"
-                    >
-                      <span>Tư vấn</span>
-                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                    </a>
-                    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
-                      trao đổi trực tiếp với giáo viên về nội dung học, lịch học
-                    </span>
-                  </div>
-                  <Link
-                    href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
-                    className="brand-cta brand-cta-outline"
-                  >
-                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Học'}</span>
-                    <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                  </Link>
-                </div>
-              </>
-            )}
-          </div>
-          {session?.user?.role === 'member' ? (
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
+            </section>
+
+            <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
               <h2 className="text-3xl font-bold text-slate-800">Weekly Activity</h2>
               <div className="mt-6 space-y-4">
                 {weeklyActivityRows.map((item) => (
@@ -852,8 +918,39 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+            </section>
+          </>
+        ) : (
+          <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
+            <div>
+              <h1 className="sr-only">EnglishMore</h1>
+              <p className="max-w-xl text-base sm:text-lg text-slate-600">
+                Practice makes perfect!
+              </p>
+              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
+                <div className="group relative inline-block">
+                  <a
+                    href="https://www.facebook.com/bangbigbee"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="brand-cta brand-cta-filled"
+                  >
+                    <span>Tư vấn</span>
+                    <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                  </a>
+                  <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
+                    trao đổi trực tiếp với giáo viên về nội dung học, lịch học
+                  </span>
+                </div>
+                <Link
+                  href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
+                  className="brand-cta brand-cta-outline"
+                >
+                  <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Học'}</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                </Link>
+              </div>
             </div>
-          ) : (
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
               <img
                 src="/uploads/hero.png"
@@ -870,8 +967,8 @@ export default function Home() {
                 Giáo viên trực tiếp giảng dạy: Nguyễn Trí Bằng
               </a>
             </div>
-          )}
-        </section>
+          </section>
+        )}
 
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
           <section className="mt-8 rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">

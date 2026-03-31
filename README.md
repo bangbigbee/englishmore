@@ -14,19 +14,26 @@ A web application for English teachers to manage student registrations and assig
    - Create a Google Cloud project and enable Google+ API.
    - Create OAuth 2.0 credentials and add the client ID and secret to `.env` as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
 
-2. Install dependencies:
+2. (Optional) Set up Azure Speech for vocabulary pronunciation:
+   - Create an Azure Speech resource.
+   - Add these values to `.env`:
+     - `AZURE_SPEECH_KEY=your_speech_key`
+     - `AZURE_SPEECH_REGION=your_speech_region` (for example: `eastus`)
+     - `AZURE_SPEECH_VOICE=en-US-JennyNeural` (optional, defaults to this voice)
+
+3. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Set up the database:
+4. Set up the database:
 
 ```bash
 npx prisma migrate dev
 ```
 
-4. Run the development server:
+5. Run the development server:
 
 ```bash
 npm run dev
