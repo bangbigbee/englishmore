@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 interface AvailableCourse {
   id: string
@@ -89,8 +89,6 @@ export default function Home() {
   const [pronunciationFeedback, setPronunciationFeedback] = useState('')
   const [pronunciationTranscript, setPronunciationTranscript] = useState('')
   const [pronunciationScore, setPronunciationScore] = useState<number | null>(null)
-  const vocabularyAudioRef = useRef<HTMLAudioElement | null>(null)
-  const vocabularyAudioObjectUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (!session) {
@@ -209,20 +207,6 @@ export default function Home() {
     }
 
     setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition))
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (vocabularyAudioRef.current) {
-        vocabularyAudioRef.current.pause()
-        vocabularyAudioRef.current = null
-      }
-
-      if (vocabularyAudioObjectUrlRef.current) {
-        URL.revokeObjectURL(vocabularyAudioObjectUrlRef.current)
-        vocabularyAudioObjectUrlRef.current = null
-      }
-    }
   }, [])
 
   const tickerCourses = useMemo(() => {
@@ -433,73 +417,21 @@ export default function Home() {
       return null
     }
 
-    const preferredVoiceNames = ['Jenny', 'Guy', 'Christopher', 'Eric', 'Aria', 'Davis', 'Roger', 'Joey', 'Matthew', 'Salli', 'Ivy', 'Kevin']
+    const exactGoogleUsVoice = voices.find((voice) => voice.name === 'Google US English' && voice.lang.toLowerCase() === 'en-us')
+    if (exactGoogleUsVoice) {
+      return exactGoogleUsVoice
+    }
+
+    const googleUsVoice = voices.find((voice) => voice.name.toLowerCase().includes('google') && voice.lang.toLowerCase() === 'en-us')
+    if (googleUsVoice) {
+      return googleUsVoice
+    }
+
+    const preferredVoiceNames = ['Samantha', 'Daniel', 'Alex', 'Google', 'Jenny', 'Guy', 'Christopher', 'Eric', 'Aria', 'Davis', 'Roger', 'Joey', 'Matthew', 'Salli', 'Ivy', 'Kevin']
 
     return voices.find((voice) =>
       voice.lang.toLowerCase() === 'en-us' && preferredVoiceNames.some((name) => voice.name.includes(name))
     ) || voices.find((voice) => voice.lang.toLowerCase() === 'en-us') || null
-  }
-
-  const playVocabularyAudio = async (sourceUrl: string) => {
-    if (typeof window === 'undefined') {
-      return false
-    }
-
-    try {
-      if (vocabularyAudioRef.current) {
-        vocabularyAudioRef.current.pause()
-        vocabularyAudioRef.current = null
-      }
-
-      const audio = new Audio(sourceUrl)
-      vocabularyAudioRef.current = audio
-
-      await new Promise<void>((resolve, reject) => {
-        audio.onended = () => resolve()
-        audio.onerror = () => reject(new Error('Audio playback failed'))
-        audio.play().then(() => undefined).catch(reject)
-      })
-
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  const speakVocabularyWordWithAzure = async () => {
-    if (!currentVocabularyItem) {
-      return false
-    }
-
-    try {
-      const res = await fetch('/api/member/vocabulary/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: currentVocabularyItem.word })
-      })
-
-      if (!res.ok) {
-        return false
-      }
-
-      const audioBlob = await res.blob()
-      if (!audioBlob.size) {
-        return false
-      }
-
-      if (vocabularyAudioObjectUrlRef.current) {
-        URL.revokeObjectURL(vocabularyAudioObjectUrlRef.current)
-        vocabularyAudioObjectUrlRef.current = null
-      }
-
-      const objectUrl = URL.createObjectURL(audioBlob)
-      vocabularyAudioObjectUrlRef.current = objectUrl
-
-      const played = await playVocabularyAudio(objectUrl)
-      return played
-    } catch {
-      return false
-    }
   }
 
   const startPronunciationRecognition = () => {
@@ -557,7 +489,7 @@ export default function Home() {
     recognition.start()
   }
 
-  const speakVocabularyWord = async (options?: { startPracticeAfterSpeak?: boolean }) => {
+  const speakVocabularyWord = (options?: { startPracticeAfterSpeak?: boolean }) => {
     if (!currentVocabularyItem || typeof window === 'undefined') {
       if (options?.startPracticeAfterSpeak) {
         startPronunciationRecognition()
@@ -570,14 +502,6 @@ export default function Home() {
       setPronunciationFeedback('')
       setPronunciationTranscript('')
       setPronunciationScore(null)
-    }
-
-    const azurePlayed = await speakVocabularyWordWithAzure()
-    if (azurePlayed) {
-      if (options?.startPracticeAfterSpeak) {
-        startPronunciationRecognition()
-      }
-      return
     }
 
     if (!window.speechSynthesis) {
