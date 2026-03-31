@@ -175,6 +175,21 @@ body {
   }
 }
 
+@keyframes checkin-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+.checkin-message {
+  animation: checkin-slide-in 0.35s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .course-ticker-track {
     animation: none;
@@ -186,5 +201,9 @@ body {
 
   .brand-cta {
     transition: none;
+  }
+
+  .checkin-message {
+    animation: none;
   }
 }

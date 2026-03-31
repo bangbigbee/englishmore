@@ -66,6 +66,8 @@ interface MemberHomeworkSummary {
     title: string
     dueDate: string
   }>
+  totalExercises: number
+  pendingExercisesCount: number
   weeklyActivity?: Array<{
     day: string
     minutes: number
@@ -726,7 +728,7 @@ export default function Home() {
                     greetingConversation.map((item) => (
                       <article
                         key={item.id}
-                        className={`rounded-lg border px-3 py-2 text-sm ${getCheckinBubbleStyle(item.userId)}`}
+                        className={`rounded-lg border px-3 py-2 text-sm checkin-message ${getCheckinBubbleStyle(item.userId)}`}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-semibold">{item.studentName}</span>
@@ -747,17 +749,27 @@ export default function Home() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Link
                 href="/my-homework"
-                className="brand-cta brand-cta-outline w-full justify-center"
+                className="brand-cta brand-cta-outline w-full justify-center relative"
               >
                 <span>My Homework</span>
                 <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                {memberHomework?.pendingHomework && memberHomework.pendingHomework.length > 0 && (
+                  <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                    {memberHomework.pendingHomework.length}
+                  </span>
+                )}
               </Link>
               <Link
                 href="/dashboard"
-                className="brand-cta brand-cta-filled w-full justify-center"
+                className="brand-cta brand-cta-filled w-full justify-center relative"
               >
                 <span>Exercise More</span>
                 <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                {memberHomework?.pendingExercisesCount && memberHomework.pendingExercisesCount > 0 && (
+                  <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                    {memberHomework.pendingExercisesCount}
+                  </span>
+                )}
               </Link>
               <Link
                 href="/lecture-notes"
@@ -983,50 +995,6 @@ export default function Home() {
                 Giáo viên trực tiếp giảng dạy: Nguyễn Trí Bằng
               </a>
             </div>
-          </section>
-        )}
-
-        {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
-          <section className="mt-8 rounded-2xl border border-[#14532d]/25 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-[#14532d]">My Homework</h2>
-            <p className="mt-2 text-sm text-slate-600">Khóa học: {memberHomework.courseTitle}</p>
-
-            {memberHomework.pendingHomework.length > 0 && (
-              <div className="mt-4 homework-alert-wrap rounded border border-amber-300 bg-amber-50">
-                <div className="homework-alert-track">
-                  <span className="homework-alert-text">
-                    You still have {memberHomework.pendingHomework.length} pending homework item(s). Open Dashboard to submit today.
-                  </span>
-                  <span className="homework-alert-text" aria-hidden="true">
-                    You still have {memberHomework.pendingHomework.length} pending homework item(s). Open Dashboard to submit today.
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {memberHomework.totalHomework > 0 && memberHomework.submittedHomework === memberHomework.totalHomework ? (
-              <p className="mt-4 rounded-lg bg-[#14532d]/10 border border-[#14532d]/30 px-4 py-3 text-[#14532d] font-semibold">
-                Tốt lắm, bạn đã hoàn thành tất cả bài tập của mình rồi.
-              </p>
-            ) : (
-              <>
-                <p className="mt-4 text-slate-700">
-                  Bạn đã nộp <strong>{memberHomework.submittedHomework}</strong> / <strong>{memberHomework.totalHomework}</strong> bài tập.
-                </p>
-                {memberHomework.pendingHomework.length > 0 && (
-                  <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                    {memberHomework.pendingHomework.slice(0, 5).map((homework) => (
-                      <li key={homework.id} className="rounded border border-amber-200 bg-amber-50 px-3 py-2">
-                        {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <Link href="/my-homework" className="mt-4 inline-block rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">
-                  Go to Homework
-                </Link>
-              </>
-            )}
           </section>
         )}
 

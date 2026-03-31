@@ -48,6 +48,8 @@ export async function GET() {
       totalHomework: 0,
       submittedHomework: 0,
       pendingHomework: [],
+      totalExercises: 0,
+      pendingExercisesCount: 0,
       weeklyActivity: WEEK_DAYS.map((day) => ({ day, minutes: 0 }))
     })
   }
@@ -71,6 +73,18 @@ export async function GET() {
       description: homework.description,
       dueDate: homework.dueDate
     }))
+
+  const exercises = await prisma.courseExercise.findMany({
+    where: { courseId: activeEnrollment.courseId, isDraft: false },
+    include: {
+      submissions: {
+        where: { userId: session.user.id },
+        select: { id: true }
+      }
+    }
+  })
+
+  const pendingExercises = exercises.filter((exercise) => exercise.submissions.length === 0)
 
   const weekStart = getWeekStart(new Date())
   const prismaWithGreeting = prisma as typeof prisma & {
@@ -139,6 +153,8 @@ export async function GET() {
     totalHomework: homeworks.length,
     submittedHomework: homeworks.length - pendingHomework.length,
     pendingHomework,
+    totalExercises: exercises.length,
+    pendingExercisesCount: pendingExercises.length,
     weeklyActivity,
     allHomework: homeworks.map((homework) => ({
       id: homework.id,
