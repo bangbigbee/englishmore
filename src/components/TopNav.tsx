@@ -2,6 +2,15 @@
 
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+
+interface HeaderEnrollment {
+  id: string
+  status: string
+  course?: {
+    title?: string
+  }
+}
 
 function LogoutIcon() {
   return (
@@ -32,16 +41,53 @@ function BookIcon() {
 
 export default function TopNav() {
   const { data: session, status } = useSession()
+  const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
+
+  useEffect(() => {
+    let active = true
+
+    const fetchEnrollment = async () => {
+      if (!session) {
+        setEnrolledCourseTitle('')
+        return
+      }
+
+      try {
+        const res = await fetch('/api/user/enrollments')
+        if (!res.ok) {
+          if (active) setEnrolledCourseTitle('')
+          return
+        }
+
+        const data = (await res.json()) as HeaderEnrollment[]
+        const currentEnrollment = Array.isArray(data)
+          ? data.find((item) => item.status === 'active') ?? data.find((item) => item.status === 'pending')
+          : null
+
+        if (active) {
+          setEnrolledCourseTitle(currentEnrollment?.course?.title?.trim() || '')
+        }
+      } catch {
+        if (active) setEnrolledCourseTitle('')
+      }
+    }
+
+    fetchEnrollment()
+
+    return () => {
+      active = false
+    }
+  }, [session])
 
   return (
     <header className="bg-transparent text-slate-900 px-6 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <Link href="/" className="flex flex-col items-start gap-1 leading-none">
+        <Link href="/" className="flex items-end gap-2 leading-none sm:gap-3">
           <span className="text-4xl font-extrabold tracking-tight">
             <span className="text-[#14532d]">English</span>
             <span className="text-amber-500">More</span>
           </span>
-          <span className="text-2xl font-extrabold uppercase tracking-tight text-slate-700 sm:text-3xl">
+          <span className="text-xl font-extrabold uppercase tracking-tight text-slate-700 sm:text-2xl md:text-3xl">
             LEARN SMARTER &amp; FASTER
           </span>
         </Link>
@@ -49,6 +95,14 @@ export default function TopNav() {
         <div className="flex items-center gap-3">
           {session ? (
             <>
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#166534] sm:gap-2 sm:text-xs">
+                <span className="max-w-28 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-35">
+                  {session.user?.name || 'User'}
+                </span>
+                <span className="max-w-32 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-55">
+                  {enrolledCourseTitle || 'Chua tham gia khoa hoc'}
+                </span>
+              </div>
               <Link
                 href="/user/profile"
                 className="group relative p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition cursor-pointer"
