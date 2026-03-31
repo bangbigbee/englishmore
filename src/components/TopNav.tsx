@@ -162,7 +162,7 @@ export default function TopNav() {
               disabled={status === 'loading'}
               className="inline-flex items-center gap-2 rounded-md bg-[#184d0d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#1f6111] disabled:opacity-70"
             >
-              Start Learning
+              Log in
               <BookIcon />
             </button>
           )}
