@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 const prismaWithGreeting = prisma as typeof prisma & {
   dailyGreetingCheckin: {
     findFirst: (...args: unknown[]) => Promise<unknown>
+    findMany: (...args: unknown[]) => Promise<unknown>
     upsert: (...args: unknown[]) => Promise<unknown>
   }
 }
@@ -25,12 +26,21 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, role: true }
+    })
+
+    if (!currentUser || currentUser.role !== 'member') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     const dayStart = getUtcDayStart()
     const nextDayStart = getUtcNextDayStart(dayStart)
 
     const checkin = await prismaWithGreeting.dailyGreetingCheckin.findFirst({
       where: {
-        userId: session.user.id,
+        userId: currentUser.id,
         responseDate: {
           gte: dayStart,
           lt: nextDayStart
@@ -45,9 +55,71 @@ export async function GET() {
       }
     })
 
+    const activeEnrollment = await prisma.enrollment.findFirst({
+      where: {
+        userId: currentUser.id,
+        status: 'active'
+      },
+      select: {
+        courseId: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    const conversation = activeEnrollment
+      ? await prismaWithGreeting.dailyGreetingCheckin.findMany({
+          where: {
+            responseDate: {
+              gte: dayStart,
+              lt: nextDayStart
+            },
+            user: {
+              enrollments: {
+                some: {
+                  courseId: activeEnrollment.courseId,
+                  status: 'active'
+                }
+              }
+            }
+          },
+          select: {
+            id: true,
+            message: true,
+            inputMethod: true,
+            updatedAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            }
+          },
+          orderBy: [{ updatedAt: 'asc' }]
+        })
+      : []
+
+    const conversationItems = conversation as Array<{
+      id: string
+      message: string
+      inputMethod: 'text' | 'voice'
+      updatedAt: Date
+      user: { id: string; name: string | null; email: string }
+    }>
+
     return NextResponse.json({
       hasResponse: Boolean(checkin),
-      response: checkin || null
+      response: checkin || null,
+      conversation: conversationItems.map((item) => ({
+        id: item.id,
+        userId: item.user.id,
+        studentName: item.user.name || item.user.email,
+        message: item.message,
+        inputMethod: item.inputMethod,
+        updatedAt: item.updatedAt
+      }))
     })
   } catch (error) {
     console.error('Error fetching daily greeting checkin:', error)

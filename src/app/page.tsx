@@ -22,6 +22,15 @@ interface DailyGreetingResponse {
   updatedAt: string
 }
 
+interface DailyGreetingConversationItem {
+  id: string
+  userId: string
+  studentName: string
+  message: string
+  inputMethod: GreetingInputMethod
+  updatedAt: string
+}
+
 interface MemberVocabularyItem {
   id: string
   word: string
@@ -77,6 +86,8 @@ export default function Home() {
   const [greetingStatus, setGreetingStatus] = useState('')
   const [hasGreetingToday, setHasGreetingToday] = useState(false)
   const [isSavingGreeting, setIsSavingGreeting] = useState(false)
+  const [greetingConversationLoading, setGreetingConversationLoading] = useState(false)
+  const [greetingConversation, setGreetingConversation] = useState<DailyGreetingConversationItem[]>([])
   const [isListening, setIsListening] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(false)
   const [memberVocabularyItems, setMemberVocabularyItems] = useState<MemberVocabularyItem[]>([])
@@ -95,6 +106,7 @@ export default function Home() {
       setAvailableCourses([])
       setGreetingMessage('')
       setHasGreetingToday(false)
+      setGreetingConversation([])
       return
     }
 
@@ -116,26 +128,37 @@ export default function Home() {
       if (session.user?.role !== 'member') {
         setGreetingMessage('')
         setHasGreetingToday(false)
+        setGreetingConversation([])
         return
       }
 
       try {
+        setGreetingConversationLoading(true)
         const res = await fetch('/api/member/daily-greeting')
         if (!res.ok) {
           setGreetingMessage('')
           setHasGreetingToday(false)
+          setGreetingConversation([])
           return
         }
 
-        const data = await res.json() as { hasResponse?: boolean; response?: DailyGreetingResponse | null }
+        const data = await res.json() as {
+          hasResponse?: boolean
+          response?: DailyGreetingResponse | null
+          conversation?: DailyGreetingConversationItem[]
+        }
         setHasGreetingToday(Boolean(data?.hasResponse))
         setGreetingMessage(data?.response?.message || '')
+        setGreetingConversation(Array.isArray(data?.conversation) ? data.conversation : [])
         if (data?.response?.inputMethod === 'voice' || data?.response?.inputMethod === 'text') {
           setGreetingMethod(data.response.inputMethod)
         }
       } catch {
         setGreetingMessage('')
         setHasGreetingToday(false)
+        setGreetingConversation([])
+      } finally {
+        setGreetingConversationLoading(false)
       }
     }
 
@@ -337,6 +360,20 @@ export default function Home() {
       }
     })
   }, [memberHomework])
+
+  const checkinBubbleStyles = [
+    'bg-blue-50 text-blue-900 border-blue-200',
+    'bg-emerald-50 text-emerald-900 border-emerald-200',
+    'bg-amber-50 text-amber-900 border-amber-200',
+    'bg-violet-50 text-violet-900 border-violet-200',
+    'bg-rose-50 text-rose-900 border-rose-200',
+    'bg-cyan-50 text-cyan-900 border-cyan-200'
+  ]
+
+  const getCheckinBubbleStyle = (userId: string) => {
+    const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    return checkinBubbleStyles[hash % checkinBubbleStyles.length]
+  }
 
   const startVoiceCapture = () => {
     if (typeof window === 'undefined') {
@@ -567,6 +604,16 @@ export default function Home() {
 
       setHasGreetingToday(true)
       setGreetingStatus('Tuyet voi! Check-in hom nay da duoc luu.')
+
+      const refreshRes = await fetch('/api/member/daily-greeting')
+      if (refreshRes.ok) {
+        const refreshData = await refreshRes.json() as {
+          hasResponse?: boolean
+          response?: DailyGreetingResponse | null
+          conversation?: DailyGreetingConversationItem[]
+        }
+        setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
+      }
     } catch {
       setGreetingError('Khong the luu check-in. Vui long thu lai.')
       setGreetingStatus('')
@@ -587,67 +634,109 @@ export default function Home() {
               Quick check-in helps us track your learning activity and unlock medals later.
             </p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setGreetingMethod('text')}
-                className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'text' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-              >
-                Text
-              </button>
-              <button
-                type="button"
-                onClick={() => setGreetingMethod('voice')}
-                className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'voice' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-              >
-                Voice
-              </button>
-              {hasGreetingToday && (
-                <span className="rounded-full border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
-                  Already checked in today
-                </span>
-              )}
-            </div>
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr]">
+              <div>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setGreetingMethod('text')}
+                    className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'text' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
+                  >
+                    Text
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGreetingMethod('voice')}
+                    className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'voice' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
+                  >
+                    Voice
+                  </button>
+                  {hasGreetingToday && (
+                    <span className="rounded-full border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+                      Already checked in today
+                    </span>
+                  )}
+                </div>
 
-            <div className="mt-3">
-              <textarea
-                value={greetingMessage}
-                onChange={(event) => setGreetingMessage(event.target.value)}
-                placeholder="Share your energy level, wins, or challenge for today..."
-                className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                maxLength={500}
+                <div className="mt-3">
+                  <textarea
+                    value={greetingMessage}
+                    onChange={(event) => setGreetingMessage(event.target.value)}
+                    placeholder="Share your energy level, wins, or challenge for today..."
+                    className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                    maxLength={500}
+                  />
+                  <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  {greetingMethod === 'voice' && (
+                    <button
+                      type="button"
+                      onClick={startVoiceCapture}
+                      disabled={!speechSupported || isListening}
+                      className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isListening ? 'Listening...' : 'Tap to speak'}
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleSubmitGreeting}
+                    disabled={isSavingGreeting}
+                    className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isSavingGreeting ? 'Saving...' : 'Check in'}
+                  </button>
+                </div>
+
+                {!speechSupported && greetingMethod === 'voice' && (
+                  <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
+                )}
+
+                {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
+                {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
+              </div>
+
+              <div className="rounded-lg border border-[#14532d]/20 bg-white/70 p-3">
+                <h3 className="text-sm font-bold text-[#14532d]">Check-in của lớp hôm nay</h3>
+                <div className="mt-3 max-h-56 space-y-2 overflow-y-auto pr-1">
+                  {greetingConversationLoading ? (
+                    <p className="text-xs text-slate-500">Đang tải hội thoại check-in...</p>
+                  ) : greetingConversation.length === 0 ? (
+                    <p className="text-xs text-slate-500">Chưa có check-in nào trong lớp hôm nay.</p>
+                  ) : (
+                    greetingConversation.map((item) => (
+                      <article
+                        key={item.id}
+                        className={`rounded-lg border px-3 py-2 text-sm ${getCheckinBubbleStyle(item.userId)}`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-semibold">{item.studentName}</span>
+                          <span className="text-[11px] opacity-75">{new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        <p className="mt-1 whitespace-pre-wrap">{item.message}</p>
+                      </article>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
+          <section className="mb-8 rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-bold text-slate-900">Tiến độ khóa học</h2>
+            <div className="mt-4 h-4 w-full overflow-hidden rounded-full bg-slate-200">
+              <div
+                className="h-full rounded-full bg-linear-to-r from-amber-400 to-amber-500 transition-all duration-500"
+                style={{
+                  width: `${(Math.min(memberHomework.totalSessions || 30, Math.max(0, memberHomework.completedSessions)) / Math.max(1, memberHomework.totalSessions || 30)) * 100}%`
+                }}
               />
-              <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
             </div>
-
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              {greetingMethod === 'voice' && (
-                <button
-                  type="button"
-                  onClick={startVoiceCapture}
-                  disabled={!speechSupported || isListening}
-                  className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isListening ? 'Listening...' : 'Tap to speak'}
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={handleSubmitGreeting}
-                disabled={isSavingGreeting}
-                className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {isSavingGreeting ? 'Saving...' : hasGreetingToday ? 'Update Today Check-in' : 'Submit Check-in'}
-              </button>
-            </div>
-
-            {!speechSupported && greetingMethod === 'voice' && (
-              <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
-            )}
-
-            {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
-            {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
           </section>
         )}
 
@@ -705,7 +794,9 @@ export default function Home() {
                     >
                       <span className="course-ticker-title">{course.title}</span>
                       <span className="course-ticker-meta">
-                        Còn {Math.max(course.maxStudents - course.enrolledCount, 0)} chỗ • Hạn đăng ký {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
+                        {Math.max(course.maxStudents - course.enrolledCount, 0) === 0
+                          ? 'Khóa học đã đủ số lượng'
+                          : `Còn ${Math.max(course.maxStudents - course.enrolledCount, 0)} chỗ`} • Hạn đăng ký {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                       </span>
                     </Link>
                   ))}
@@ -891,29 +982,6 @@ export default function Home() {
                 Giáo viên trực tiếp giảng dạy: Nguyễn Trí Bằng
               </a>
             </div>
-          </section>
-        )}
-
-        {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
-          <section className="mt-8 rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-xl font-bold text-slate-900">Tiến độ khóa học</h2>
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800">
-                {memberHomework.completedSessions}/{memberHomework.totalSessions} buổi
-              </span>
-            </div>
-            <p className="mt-2 text-sm text-slate-600">{memberHomework.courseTitle}</p>
-            <div className="mt-4 h-4 w-full overflow-hidden rounded-full bg-slate-200">
-              <div
-                className="h-full rounded-full bg-linear-to-r from-amber-400 to-amber-500 transition-all duration-500"
-                style={{
-                  width: `${(Math.min(memberHomework.totalSessions || 30, Math.max(0, memberHomework.completedSessions)) / Math.max(1, memberHomework.totalSessions || 30)) * 100}%`
-                }}
-              />
-            </div>
-            <p className="mt-3 text-sm font-medium text-slate-700">
-              {Math.round((Math.min(memberHomework.totalSessions || 30, Math.max(0, memberHomework.completedSessions)) / Math.max(1, memberHomework.totalSessions || 30)) * 100)}% lộ trình đã hoàn thành.
-            </p>
           </section>
         )}
 
