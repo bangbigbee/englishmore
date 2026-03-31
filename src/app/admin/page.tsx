@@ -1855,7 +1855,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Statistics */}
-        <div className={`grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <div className="bg-white rounded shadow p-6">
             <h3 className="text-gray-500 text-sm font-medium">Total users</h3>
             <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalUsers}</p>
@@ -1876,26 +1876,6 @@ export default function AdminDashboard() {
             >
               View details
             </Link>
-          </div>
-          <div className="bg-white rounded shadow p-6 flex flex-col justify-between">
-            <h3 className="text-gray-500 text-sm font-medium">Homework Review</h3>
-            <button
-              type="button"
-              onClick={() => setActiveSection('homework')}
-              className="mt-4 inline-flex items-center justify-center gap-2 rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]"
-            >
-              <span className="inline-flex items-center gap-1">
-                <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
-                  <path d="M20 4H4a2 2 0 0 0-2 2v15l4-4h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
-                </svg>
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold">{summary.unreadStudentMessageCount}</span>
-              </span>
-              <span className="text-sm font-semibold">Open review</span>
-              <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white">{summary.pendingTeacherReplyCount}</span>
-            </button>
-            <p className="mt-3 text-xs text-gray-500">
-              Message badge: unread from students. Red badge: submissions waiting for teacher reply.
-            </p>
           </div>
         </div>
 

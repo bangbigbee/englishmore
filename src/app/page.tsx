@@ -82,12 +82,18 @@ interface MemberHomeworkSummary {
   }>
 }
 
+interface AdminHomeworkReviewSummary {
+  unreadStudentMessageCount: number
+  pendingTeacherReplyCount: number
+}
+
 const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const
 
 export default function Home() {
   const { data: session } = useSession()
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
+  const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
   const [loadingCourses, setLoadingCourses] = useState(false)
   const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
@@ -129,6 +135,7 @@ export default function Home() {
   useEffect(() => {
     if (!session) {
       setAvailableCourses([])
+      setAdminHomeworkReview(null)
       setGreetingMessage('')
       setHasGreetingToday(false)
       setEditCheckinMessage('')
@@ -211,6 +218,29 @@ export default function Home() {
       }
     }
 
+    const fetchAdminHomeworkReview = async () => {
+      if (session.user?.role !== 'admin') {
+        setAdminHomeworkReview(null)
+        return
+      }
+
+      try {
+        const res = await fetch('/api/admin/dashboard-summary')
+        if (!res.ok) {
+          setAdminHomeworkReview(null)
+          return
+        }
+
+        const data = await res.json()
+        setAdminHomeworkReview({
+          unreadStudentMessageCount: Number(data?.unreadStudentMessageCount || 0),
+          pendingTeacherReplyCount: Number(data?.pendingTeacherReplyCount || 0)
+        })
+      } catch {
+        setAdminHomeworkReview(null)
+      }
+    }
+
     const fetchMemberVocabulary = async () => {
       if (session.user?.role !== 'member') {
         setMemberVocabularyItems([])
@@ -268,6 +298,7 @@ export default function Home() {
     fetchAvailableCourses()
     fetchGreetingResponse()
     fetchMemberHomework()
+    fetchAdminHomeworkReview()
     fetchMemberVocabulary()
     fetchReflection()
   }, [session])
@@ -1454,6 +1485,24 @@ export default function Home() {
                   <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Enroll Now'}</span>
                   <span aria-hidden="true" className="brand-cta-arrow">→</span>
                 </Link>
+                {session?.user?.role === 'admin' && (
+                  <Link
+                    href="/admin"
+                    className="brand-cta brand-cta-filled relative"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
+                        <path d="M20 4H4a2 2 0 0 0-2 2v15l4-4h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
+                      </svg>
+                      <span>{adminHomeworkReview?.unreadStudentMessageCount || 0}</span>
+                    </span>
+                    <span>Homework Review</span>
+                    <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    <span className="absolute -top-2 -right-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                      {adminHomeworkReview?.pendingTeacherReplyCount || 0}
+                    </span>
+                  </Link>
+                )}
               </div>
             </div>
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
