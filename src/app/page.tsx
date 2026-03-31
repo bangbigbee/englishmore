@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface AvailableCourse {
   id: string
@@ -111,6 +111,9 @@ export default function Home() {
   const [pronunciationFeedback, setPronunciationFeedback] = useState('')
   const [pronunciationTranscript, setPronunciationTranscript] = useState('')
   const [pronunciationScore, setPronunciationScore] = useState<number | null>(null)
+  const pronunciationScoringTimeoutRef = useRef<number | null>(null)
+  const pronunciationListeningTimeoutRef = useRef<number | null>(null)
+  const pronunciationRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
 
   useEffect(() => {
     if (!session) {
@@ -474,7 +477,41 @@ export default function Home() {
     setPronunciationFeedback('')
     setPronunciationTranscript('')
     setPronunciationScore(null)
+    if (pronunciationScoringTimeoutRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(pronunciationScoringTimeoutRef.current)
+      pronunciationScoringTimeoutRef.current = null
+    }
+    if (pronunciationListeningTimeoutRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(pronunciationListeningTimeoutRef.current)
+      pronunciationListeningTimeoutRef.current = null
+    }
+    if (pronunciationRecognitionRef.current) {
+      try {
+        pronunciationRecognitionRef.current.stop()
+      } catch {
+        // Ignore stop errors from already-ended recognition instances.
+      }
+      pronunciationRecognitionRef.current = null
+    }
   }, [currentVocabularyItem?.id])
+
+  useEffect(() => {
+    return () => {
+      if (pronunciationScoringTimeoutRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(pronunciationScoringTimeoutRef.current)
+      }
+      if (pronunciationListeningTimeoutRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(pronunciationListeningTimeoutRef.current)
+      }
+      if (pronunciationRecognitionRef.current) {
+        try {
+          pronunciationRecognitionRef.current.stop()
+        } catch {
+          // Ignore stop errors from already-ended recognition instances.
+        }
+      }
+    }
+  }, [])
 
   const moveVocabulary = (direction: 'prev' | 'next') => {
     if (memberVocabularyItems.length <= 1) return
@@ -511,6 +548,66 @@ export default function Home() {
     ) || voices.find((voice) => voice.lang.toLowerCase() === 'en-us') || null
   }
 
+  const clearPronunciationScoringTimeout = () => {
+    if (pronunciationScoringTimeoutRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(pronunciationScoringTimeoutRef.current)
+      pronunciationScoringTimeoutRef.current = null
+    }
+  }
+
+  const clearPronunciationListeningTimeout = () => {
+    if (pronunciationListeningTimeoutRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(pronunciationListeningTimeoutRef.current)
+      pronunciationListeningTimeoutRef.current = null
+    }
+  }
+
+  const playPronunciationDoneChime = () => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const AudioContextCtor = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    if (!AudioContextCtor) {
+      return
+    }
+
+    try {
+      const audioContext = new AudioContextCtor()
+      const startAt = audioContext.currentTime + 0.01
+      const gainNode = audioContext.createGain()
+      const firstOscillator = audioContext.createOscillator()
+      const secondOscillator = audioContext.createOscillator()
+
+      firstOscillator.type = 'sine'
+      secondOscillator.type = 'sine'
+      firstOscillator.frequency.setValueAtTime(1480, startAt)
+      firstOscillator.frequency.exponentialRampToValueAtTime(1760, startAt + 0.12)
+      secondOscillator.frequency.setValueAtTime(1760, startAt + 0.13)
+      secondOscillator.frequency.exponentialRampToValueAtTime(2090, startAt + 0.24)
+
+      gainNode.gain.setValueAtTime(0.0001, startAt)
+      gainNode.gain.exponentialRampToValueAtTime(0.12, startAt + 0.03)
+      gainNode.gain.exponentialRampToValueAtTime(0.08, startAt + 0.12)
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.28)
+
+      firstOscillator.connect(gainNode)
+      secondOscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+
+      firstOscillator.start(startAt)
+      firstOscillator.stop(startAt + 0.13)
+      secondOscillator.start(startAt + 0.13)
+      secondOscillator.stop(startAt + 0.28)
+
+      secondOscillator.onended = () => {
+        void audioContext.close().catch(() => undefined)
+      }
+    } catch {
+      return
+    }
+  }
+
   const startPronunciationRecognition = () => {
     if (!currentVocabularyItem || typeof window === 'undefined') {
       return
@@ -534,32 +631,86 @@ export default function Home() {
     setPronunciationTranscript('')
     setPronunciationScore(null)
     setIsPronunciationListening(true)
+    clearPronunciationScoringTimeout()
+    clearPronunciationListeningTimeout()
+    if (pronunciationRecognitionRef.current) {
+      try {
+        pronunciationRecognitionRef.current.stop()
+      } catch {
+        // Ignore stop errors from already-ended recognition instances.
+      }
+    }
 
     const recognition = new RecognitionCtor()
+    pronunciationRecognitionRef.current = recognition
     recognition.lang = 'en-US'
     recognition.interimResults = false
     recognition.continuous = false
+    let hasHandledResult = false
+
+    pronunciationListeningTimeoutRef.current = window.setTimeout(() => {
+      if (pronunciationRecognitionRef.current !== recognition || hasHandledResult) {
+        return
+      }
+
+      try {
+        recognition.stop()
+      } catch {
+        // Ignore stop errors from already-ended recognition instances.
+      }
+
+      pronunciationRecognitionRef.current = null
+      pronunciationListeningTimeoutRef.current = null
+      setIsPronunciationListening(false)
+      setPronunciationStatus('Listening timed out. Please try again and say the word once, clearly.')
+      setPronunciationFeedback('')
+      setPronunciationScore(null)
+    }, 7000)
 
     recognition.onresult = (event) => {
+      hasHandledResult = true
       const transcript = Array.from(event.results)
         .map((result) => result?.[0]?.transcript || '')
         .join(' ')
         .trim()
 
+      clearPronunciationListeningTimeout()
+      pronunciationRecognitionRef.current = null
+      setIsPronunciationListening(false)
+
       const { candidate, score } = getBestPronunciationCandidate(currentVocabularyItem.word, transcript)
       setPronunciationTranscript(transcript)
-      setPronunciationScore(score)
-      setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentVocabularyItem.word))
-      setPronunciationStatus(score >= 80 ? 'Nice work. Keep practicing to make it even cleaner.' : 'Try again and compare your sound with the sample.')
+      setPronunciationStatus('Got it. Checking your pronunciation...')
+      playPronunciationDoneChime()
+      clearPronunciationScoringTimeout()
+      try {
+        recognition.stop()
+      } catch {
+        // Ignore stop errors from already-ended recognition instances.
+      }
+      pronunciationScoringTimeoutRef.current = window.setTimeout(() => {
+        setPronunciationScore(score)
+        setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentVocabularyItem.word))
+        setPronunciationStatus(score >= 80 ? 'Nice work. Keep practicing to make it even cleaner.' : 'Try again and compare your sound with the sample.')
+        pronunciationScoringTimeoutRef.current = null
+      }, 420)
     }
 
     recognition.onerror = () => {
+      clearPronunciationScoringTimeout()
+      clearPronunciationListeningTimeout()
+      pronunciationRecognitionRef.current = null
+      setIsPronunciationListening(false)
       setPronunciationStatus('')
       setPronunciationFeedback('Không nhận diện được giọng nói lần này. Hãy thử lại ở nơi yên tĩnh hơn.')
       setPronunciationScore(null)
     }
 
     recognition.onend = () => {
+      clearPronunciationListeningTimeout()
+      if (pronunciationRecognitionRef.current === recognition) {
+        pronunciationRecognitionRef.current = null
+      }
       setIsPronunciationListening(false)
     }
 
