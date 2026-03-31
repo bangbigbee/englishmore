@@ -717,8 +717,8 @@ export default function Home() {
                 {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
               </div>
 
-              <div className="rounded-lg border border-[#14532d]/20 bg-white/70 p-3">
-                <h3 className="text-sm font-bold text-[#14532d]">Check-in của lớp hôm nay</h3>
+              <div className="rounded-lg border border-[#14532d]/30 bg-linear-to-br from-white via-white to-[#14532d]/5 p-4 shadow-sm">
+                <h3 className="text-sm font-bold text-[#14532d]">💬 Check-in của lớp hôm nay</h3>
                 <div className="mt-3 max-h-56 space-y-2 overflow-y-auto pr-1">
                   {greetingConversationLoading ? (
                     <p className="text-xs text-slate-500">Đang tải hội thoại check-in...</p>
@@ -728,11 +728,11 @@ export default function Home() {
                     greetingConversation.map((item) => (
                       <article
                         key={item.id}
-                        className={`rounded-lg border px-3 py-2 text-sm checkin-message ${getCheckinBubbleStyle(item.userId)}`}
+                        className={`rounded-lg border px-3 py-2.5 text-sm checkin-message shadow-sm transition-all hover:shadow-md ${getCheckinBubbleStyle(item.userId)}`}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-semibold">{item.studentName}</span>
-                          <span className="text-[11px] opacity-75">{new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span className="text-[11px] opacity-65">{new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
                         <p className="mt-1 whitespace-pre-wrap">{item.message}</p>
                       </article>
