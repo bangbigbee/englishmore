@@ -62,8 +62,8 @@ export default function MyHomeworkPage() {
       setError('')
       const res = await fetch('/api/member/homework-summary')
       if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: 'Không thể tải bài tập' }))
-        throw new Error(data.error || 'Không thể tải bài tập')
+        const data = await res.json().catch(() => ({ error: 'Could not load homework.' }))
+        throw new Error(data.error || 'Could not load homework.')
       }
 
       const data = (await res.json()) as HomeworkSummaryResponse
@@ -74,7 +74,7 @@ export default function MyHomeworkPage() {
         Object.fromEntries(rows.map((row) => [row.id, row.note || '']))
       )
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải bài tập')
+      setError(err instanceof Error ? err.message : 'Could not load homework.')
     } finally {
       setLoading(false)
     }
@@ -87,7 +87,7 @@ export default function MyHomeworkPage() {
   const submitOrUpdateHomework = async (homeworkId: string, isUpdate: boolean) => {
     const note = String(notesByHomework[homeworkId] || '').trim()
     if (!note) {
-      setError('Ghi chú không được để trống')
+      setError('The note cannot be empty.')
       return
     }
 
@@ -104,13 +104,13 @@ export default function MyHomeworkPage() {
 
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        throw new Error(data.error || 'Không thể lưu bài tập')
+        throw new Error(data.error || 'Could not save the homework.')
       }
 
-      setSuccess(isUpdate ? 'Đã cập nhật bài tập đã nộp.' : 'Đã nộp bài tập thành công.')
+      setSuccess(isUpdate ? 'Submitted homework updated.' : 'Homework submitted successfully.')
       await fetchHomework()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể lưu bài tập')
+      setError(err instanceof Error ? err.message : 'Could not save the homework.')
     } finally {
       setSavingId(null)
     }
@@ -119,7 +119,7 @@ export default function MyHomeworkPage() {
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <p className="text-slate-500">Đang tải My Homework...</p>
+        <p className="text-slate-500">Loading My Homework...</p>
       </div>
     )
   }
@@ -130,11 +130,11 @@ export default function MyHomeworkPage() {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">My Homework</h1>
-            <p className="mt-2 text-sm sm:text-base text-slate-600">Theo dõi bài cần làm, bài đã nộp và chỉnh sửa bài đã nộp của bạn.</p>
-            <p className="mt-1 text-sm font-semibold text-[#14532d]">Khóa học: {summary?.courseTitle || 'Chưa có khóa học active'}</p>
+            <p className="mt-2 text-sm sm:text-base text-slate-600">Track pending homework, submitted work, and updates to previous submissions.</p>
+            <p className="mt-1 text-sm font-semibold text-[#14532d]">Course: {summary?.courseTitle || 'No active course yet'}</p>
           </div>
           <Link href="/" className="brand-cta brand-cta-outline">
-            <span>Về trang chủ</span>
+            <span>Back to home</span>
             <span aria-hidden="true" className="brand-cta-arrow">→</span>
           </Link>
         </div>
@@ -144,44 +144,44 @@ export default function MyHomeworkPage() {
 
         <section className="mb-6 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Tổng bài tập</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500">Total homework</p>
             <p className="mt-2 text-3xl font-black text-slate-900">{summary?.totalHomework || 0}</p>
           </div>
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-amber-700">Đang cần làm</p>
+            <p className="text-xs uppercase tracking-wide text-amber-700">Pending</p>
             <p className="mt-2 text-3xl font-black text-amber-800">{pendingHomework.length}</p>
           </div>
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-emerald-700">Đã nộp</p>
+            <p className="text-xs uppercase tracking-wide text-emerald-700">Submitted</p>
             <p className="mt-2 text-3xl font-black text-emerald-800">{submittedHomework.length}</p>
           </div>
         </section>
 
         {!summary?.hasActiveCourse ? (
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-slate-700">Bạn chưa có khóa học active để làm homework.</p>
-            <Link href="/courses" className="mt-4 inline-flex rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">Đăng ký khóa học</Link>
+            <p className="text-slate-700">You do not have an active course for homework yet.</p>
+            <Link href="/courses" className="mt-4 inline-flex rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]">Browse courses</Link>
           </section>
         ) : (
           <div className="grid gap-6 xl:grid-cols-2">
             <section className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-bold text-amber-800">Bài tập đang cần làm</h2>
+              <h2 className="text-xl font-bold text-amber-800">Pending Homework</h2>
               <div className="mt-4 space-y-4">
                 {pendingHomework.length === 0 && (
-                  <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-800">Bạn đã nộp hết bài tập cần làm.</p>
+                  <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-800">You have submitted all required homework.</p>
                 )}
 
                 {pendingHomework.map((item) => (
                   <article key={item.id} className="rounded-xl border border-amber-200 bg-amber-50 p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
-                    <p className="mt-1 text-sm text-slate-600">Hạn nộp: {new Date(item.dueDate).toLocaleDateString('vi-VN')}</p>
+                    <p className="mt-1 text-sm text-slate-600">Due: {new Date(item.dueDate).toLocaleDateString('en-GB')}</p>
                     {item.description && <p className="mt-2 text-sm text-slate-700">{item.description}</p>}
-                    <label className="mt-3 block text-sm font-semibold text-slate-700">Ghi chú</label>
+                    <label className="mt-3 block text-sm font-semibold text-slate-700">Note</label>
                     <textarea
                       value={notesByHomework[item.id] || ''}
                       onChange={(e) => setNotesByHomework((current) => ({ ...current, [item.id]: e.target.value }))}
                       rows={4}
-                      placeholder="Nhập nội dung bài làm của bạn..."
+                      placeholder="Enter your submission note..."
                       className="mt-1 w-full rounded-lg border border-amber-300 bg-white px-3 py-2 outline-none focus:border-amber-500"
                     />
                     <button
@@ -189,7 +189,7 @@ export default function MyHomeworkPage() {
                       disabled={savingId === item.id}
                       className="mt-3 rounded bg-[#14532d] px-4 py-2 text-sm font-bold text-white hover:bg-[#166534] disabled:opacity-50"
                     >
-                      {savingId === item.id ? 'Đang nộp...' : 'Nộp bài'}
+                      {savingId === item.id ? 'Submitting...' : 'Submit homework'}
                     </button>
                   </article>
                 ))}
@@ -197,26 +197,26 @@ export default function MyHomeworkPage() {
             </section>
 
             <section className="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-bold text-emerald-800">Bài tập đã nộp</h2>
+              <h2 className="text-xl font-bold text-emerald-800">Submitted Homework</h2>
               <div className="mt-4 space-y-4">
                 {submittedHomework.length === 0 && (
-                  <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700">Bạn chưa nộp bài tập nào.</p>
+                  <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700">You have not submitted any homework yet.</p>
                 )}
 
                 {submittedHomework.map((item) => (
                   <article key={item.id} className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
-                    <p className="mt-1 text-sm text-slate-600">Nộp lúc: {item.submittedAt ? new Date(item.submittedAt).toLocaleString('vi-VN') : 'N/A'}</p>
+                    <p className="mt-1 text-sm text-slate-600">Submitted at: {item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</p>
                     <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
-                      <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Nhận xét từ giảng viên</p>
-                      <p className="mt-1 text-sm text-blue-900 whitespace-pre-wrap">{item.teacherComment || 'Giảng viên chưa để lại nhận xét cho bài này.'}</p>
+                      <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Teacher Feedback</p>
+                      <p className="mt-1 text-sm text-blue-900 whitespace-pre-wrap">{item.teacherComment || 'The teacher has not left feedback on this homework yet.'}</p>
                     </div>
-                    <label className="mt-3 block text-sm font-semibold text-slate-700">Ghi chú đã nộp (có thể chỉnh sửa)</label>
+                    <label className="mt-3 block text-sm font-semibold text-slate-700">Submitted note (editable)</label>
                     <textarea
                       value={notesByHomework[item.id] || ''}
                       onChange={(e) => setNotesByHomework((current) => ({ ...current, [item.id]: e.target.value }))}
                       rows={4}
-                      placeholder="Cập nhật ghi chú bài làm..."
+                      placeholder="Update your submission note..."
                       className="mt-1 w-full rounded-lg border border-emerald-300 bg-white px-3 py-2 outline-none focus:border-emerald-500"
                     />
                     <button
@@ -224,7 +224,7 @@ export default function MyHomeworkPage() {
                       disabled={savingId === item.id}
                       className="mt-3 rounded bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-50"
                     >
-                      {savingId === item.id ? 'Đang cập nhật...' : 'Cập nhật bài đã nộp'}
+                      {savingId === item.id ? 'Updating...' : 'Update submitted homework'}
                     </button>
                   </article>
                 ))}

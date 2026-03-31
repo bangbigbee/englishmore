@@ -13,25 +13,25 @@ export async function POST(request: NextRequest) {
     const normalizedOtp = String(otp || '').trim()
 
     if (!normalizedName || !normalizedEmail || !normalizedPhone || !password || !confirmPassword) {
-      return NextResponse.json({ error: 'Vui lòng nhập đầy đủ họ tên, email, số điện thoại và mật khẩu' }, { status: 400 })
+      return NextResponse.json({ error: 'Please enter your full name, email, phone number, and password' }, { status: 400 })
     }
 
     if (password.length < 6) {
-      return NextResponse.json({ error: 'Mật khẩu phải có ít nhất 6 ký tự' }, { status: 400 })
+      return NextResponse.json({ error: 'Password must be at least 6 characters long' }, { status: 400 })
     }
 
     if (password !== confirmPassword) {
-      return NextResponse.json({ error: 'Xác nhận mật khẩu không khớp' }, { status: 400 })
+      return NextResponse.json({ error: 'Password confirmation does not match' }, { status: 400 })
     }
 
     const phonePattern = /^[0-9+\-\s]{9,15}$/
     if (!phonePattern.test(normalizedPhone)) {
-      return NextResponse.json({ error: 'Số điện thoại không hợp lệ' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 })
     }
 
     // Verify OTP
     if (!normalizedOtp) {
-      return NextResponse.json({ error: 'Vui lòng nhập mã OTP' }, { status: 400 })
+      return NextResponse.json({ error: 'Please enter the OTP code' }, { status: 400 })
     }
 
     const tokenRecord = await prisma.verificationToken.findFirst({
@@ -39,12 +39,12 @@ export async function POST(request: NextRequest) {
     })
 
     if (!tokenRecord) {
-      return NextResponse.json({ error: 'Mã OTP không đúng' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid OTP code' }, { status: 400 })
     }
 
     if (tokenRecord.expires < new Date()) {
       await prisma.verificationToken.deleteMany({ where: { identifier: normalizedEmail } })
-      return NextResponse.json({ error: 'Mã OTP đã hết hạn, vui lòng gửi lại' }, { status: 400 })
+      return NextResponse.json({ error: 'OTP code has expired. Please request a new one.' }, { status: 400 })
     }
 
     // Delete used token
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     const existingPhone = await prisma.user.findFirst({ where: { phone: normalizedPhone } })
     if (existingPhone) {
-      return NextResponse.json({ error: 'Số điện thoại đã được sử dụng' }, { status: 409 })
+      return NextResponse.json({ error: 'Phone number is already in use' }, { status: 409 })
     }
 
     const passwordHash = await bcrypt.hash(password, 10)

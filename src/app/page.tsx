@@ -122,6 +122,7 @@ export default function Home() {
   const pronunciationListeningTimeoutRef = useRef<number | null>(null)
   const pronunciationRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
   const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null)
+  const pronunciationDoneAudioPrimedRef = useRef(false)
 
   useEffect(() => {
     if (!session) {
@@ -222,7 +223,7 @@ export default function Home() {
         if (!res.ok) {
           setMemberVocabularyItems([])
           setMemberVocabularyCourseTitle('')
-          setMemberVocabularyError('Không thể tải dữ liệu vocabulary')
+          setMemberVocabularyError('Could not load the vocabulary data.')
           return
         }
 
@@ -234,7 +235,7 @@ export default function Home() {
       } catch {
         setMemberVocabularyItems([])
         setMemberVocabularyCourseTitle('')
-        setMemberVocabularyError('Không thể tải dữ liệu vocabulary')
+        setMemberVocabularyError('Could not load the vocabulary data.')
       } finally {
         setMemberVocabularyLoading(false)
       }
@@ -455,7 +456,7 @@ export default function Home() {
 
   const startVoiceCapture = () => {
     if (typeof window === 'undefined') {
-      setGreetingError('Trinh duyet khong ho tro voice input.')
+      setGreetingError('This browser does not support voice input.')
       return
     }
 
@@ -466,12 +467,12 @@ export default function Home() {
 
     const RecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition
     if (!RecognitionCtor) {
-      setGreetingError('Trinh duyet khong ho tro voice input.')
+      setGreetingError('This browser does not support voice input.')
       return
     }
 
     setGreetingError('')
-    setGreetingStatus('Dang nghe... Hay noi cau tra loi cua ban.')
+    setGreetingStatus('Listening... Please say your check-in now.')
     setIsListening(true)
 
     const recognition = new RecognitionCtor()
@@ -487,12 +488,12 @@ export default function Home() {
 
       if (transcript) {
         setGreetingMessage((prev) => `${prev}${prev ? ' ' : ''}${transcript}`.trim())
-        setGreetingStatus('Da ghi nhan voice input. Ban co the sua lai text truoc khi gui.')
+        setGreetingStatus('Voice input captured. You can still edit the text before submitting.')
       }
     }
 
     recognition.onerror = () => {
-      setGreetingError('Khong the nhan voice luc nay. Vui long thu lai hoac chuyen sang text.')
+      setGreetingError('Voice input is unavailable right now. Please try again or switch to text mode.')
     }
 
     recognition.onend = () => {
@@ -537,6 +538,8 @@ export default function Home() {
 
     pronunciationDoneAudioRef.current = new Audio('/audio/tingsound.mp3')
     pronunciationDoneAudioRef.current.preload = 'auto'
+    pronunciationDoneAudioRef.current.playsInline = true
+    pronunciationDoneAudioRef.current.load()
 
     return () => {
       if (pronunciationDoneAudioRef.current) {
@@ -627,6 +630,27 @@ export default function Home() {
     }
   }
 
+  const primePronunciationDoneChime = async () => {
+    if (typeof window === 'undefined' || !pronunciationDoneAudioRef.current || pronunciationDoneAudioPrimedRef.current) {
+      return
+    }
+
+    try {
+      const audio = pronunciationDoneAudioRef.current
+      audio.muted = true
+      audio.currentTime = 0
+      await audio.play()
+      audio.pause()
+      audio.currentTime = 0
+      audio.muted = false
+      pronunciationDoneAudioPrimedRef.current = true
+    } catch {
+      if (pronunciationDoneAudioRef.current) {
+        pronunciationDoneAudioRef.current.muted = false
+      }
+    }
+  }
+
   const startPronunciationRecognition = () => {
     if (!currentVocabularyItem || typeof window === 'undefined') {
       return
@@ -640,7 +664,7 @@ export default function Home() {
     const RecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition
     if (!RecognitionCtor) {
       setPronunciationStatus('')
-      setPronunciationFeedback('Trình duyệt này chưa hỗ trợ voice practice.')
+      setPronunciationFeedback('This browser does not support voice practice yet.')
       setPronunciationScore(null)
       return
     }
@@ -753,7 +777,7 @@ export default function Home() {
       pronunciationRecognitionRef.current = null
       setIsPronunciationListening(false)
       setPronunciationStatus('')
-      setPronunciationFeedback('Chưa nghe rõ từ bạn vừa đọc. Hãy thử lại và phát âm ngắn, rõ hơn.')
+      setPronunciationFeedback('We could not hear the word clearly. Please try again and say it more clearly.')
       setPronunciationScore(null)
     }
 
@@ -763,7 +787,7 @@ export default function Home() {
       pronunciationRecognitionRef.current = null
       setIsPronunciationListening(false)
       setPronunciationStatus('')
-      setPronunciationFeedback('Không nhận diện được giọng nói lần này. Hãy thử lại ở nơi yên tĩnh hơn.')
+      setPronunciationFeedback('Speech recognition failed this time. Please try again in a quieter place.')
       setPronunciationScore(null)
     }
 
@@ -816,23 +840,24 @@ export default function Home() {
     window.speechSynthesis.speak(utterance)
   }
 
-  const handleTryVocabulary = () => {
+  const handleTryVocabulary = async () => {
     if (!currentVocabularyItem) {
       return
     }
 
+    await primePronunciationDoneChime()
     speakVocabularyWord({ startPracticeAfterSpeak: true })
   }
 
   const handleSubmitGreeting = async () => {
     const normalizedMessage = greetingMessage.trim()
     if (!normalizedMessage) {
-      setGreetingError('Vui long nhap noi dung check-in truoc khi gui.')
+      setGreetingError('Please enter your check-in before submitting.')
       return
     }
 
     setGreetingError('')
-    setGreetingStatus('Dang luu check-in...')
+    setGreetingStatus('Saving your check-in...')
     setIsSavingGreeting(true)
 
     try {
@@ -849,14 +874,14 @@ export default function Home() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setGreetingError(data?.error || 'Khong the luu check-in. Vui long thu lai.')
+        setGreetingError(data?.error || 'Could not save your check-in. Please try again.')
         setGreetingStatus('')
         return
       }
 
       setHasGreetingToday(true)
       setEditCheckinMessage(normalizedMessage)
-      setGreetingStatus('Tuyet voi! Check-in hom nay da duoc luu.')
+      setGreetingStatus('Nice. Your check-in for today has been saved.')
 
       const refreshRes = await fetch('/api/member/daily-greeting')
       if (refreshRes.ok) {
@@ -868,7 +893,7 @@ export default function Home() {
         setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
       }
     } catch {
-      setGreetingError('Khong the luu check-in. Vui long thu lai.')
+      setGreetingError('Could not save your check-in. Please try again.')
       setGreetingStatus('')
     } finally {
       setIsSavingGreeting(false)
@@ -878,17 +903,17 @@ export default function Home() {
   const handleSaveEditCheckin = async () => {
     const msg = editCheckinMessage.trim()
     if (!msg) return
-    setEditCheckinStatus('Đang lưu...')
+    setEditCheckinStatus('Saving...')
     try {
       const res = await fetch('/api/member/daily-greeting', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ inputMethod: greetingMethod, message: msg })
       })
-      if (!res.ok) { setEditCheckinStatus('Lưu thất bại.'); return }
+      if (!res.ok) { setEditCheckinStatus('Save failed.'); return }
       setGreetingMessage(msg)
       setEditCheckinMessage(msg)
-      setEditCheckinStatus('Đã cập nhật check-in!')
+      setEditCheckinStatus('Your check-in has been updated.')
       setIsEditingCheckin(false)
       const refreshRes = await fetch('/api/member/daily-greeting')
       if (refreshRes.ok) {
@@ -896,15 +921,15 @@ export default function Home() {
         setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
       }
     } catch {
-      setEditCheckinStatus('Lưu thất bại.')
+      setEditCheckinStatus('Save failed.')
     }
   }
 
   const handleSubmitReflection = async () => {
     const msg = reflectionMessage.trim()
-    if (!msg) { setReflectionError('Vui lòng nhập nội dung reflect.'); return }
+    if (!msg) { setReflectionError('Please enter your reflection.'); return }
     setReflectionError('')
-    setReflectionStatus('Đang lưu...')
+    setReflectionStatus('Saving...')
     setIsSavingReflection(true)
     try {
       const res = await fetch('/api/member/daily-reflection', {
@@ -913,16 +938,16 @@ export default function Home() {
         body: JSON.stringify({ message: msg })
       })
       const data = await res.json().catch(() => ({})) as { error?: string }
-      if (!res.ok) { setReflectionError(data?.error || 'Không thể lưu.'); setReflectionStatus(''); return }
+      if (!res.ok) { setReflectionError(data?.error || 'Could not save your reflection.'); setReflectionStatus(''); return }
       setHasReflectionToday(true)
-      setReflectionStatus('Đã lưu reflection hôm nay!')
+      setReflectionStatus('Your reflection for today has been saved.')
       const refreshRes = await fetch('/api/member/daily-greeting')
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json() as { conversation?: DailyGreetingConversationItem[] }
         setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
       }
     } catch {
-      setReflectionError('Không thể lưu.')
+      setReflectionError('Could not save your reflection.')
       setReflectionStatus('')
     } finally {
       setIsSavingReflection(false)
@@ -935,7 +960,7 @@ export default function Home() {
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
           <section className="mb-3 rounded-xl bg-white shadow-sm overflow-hidden">
             <div className="px-4 py-3 sm:px-5 sm:py-3.5">
-              <h2 className="text-base font-semibold text-slate-800">Tiến độ khóa học</h2>
+              <h2 className="text-base font-semibold text-slate-800">Course Progress</h2>
             </div>
             <div className="h-2.5 w-full overflow-hidden bg-slate-200">
               <div
@@ -1107,8 +1132,7 @@ export default function Home() {
               <div className="rounded-2xl border border-slate-200 bg-[radial-gradient(circle_at_top,#eff6ff_0%,#ffffff_38%,#faf5ff_100%)] p-3 sm:p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Check-in & Reflection của lớp hôm nay</h3>
-                    <p className="mt-1 text-[11px] text-slate-500 sm:text-xs">Cả lớp đang hiện diện ở đây. Check-in màu xanh, reflection màu tím.</p>
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Today&apos;s Class Check-ins & Reflections</h3>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
@@ -1123,9 +1147,9 @@ export default function Home() {
                 </div>
                 <div className="mt-3 max-h-72 space-y-2.5 overflow-y-auto pr-1 sm:max-h-80">
                   {greetingConversationLoading ? (
-                    <p className="text-xs text-slate-500">Đang tải hoạt động của lớp...</p>
+                    <p className="text-xs text-slate-500">Loading class activity...</p>
                   ) : greetingConversation.length === 0 ? (
-                    <p className="rounded-2xl border border-dashed border-slate-200 bg-white/80 px-4 py-5 text-center text-xs text-slate-500">Chưa có check-in hoặc reflection nào trong lớp hôm nay.</p>
+                    <p className="rounded-2xl border border-dashed border-slate-200 bg-white/80 px-4 py-5 text-center text-xs text-slate-500">No check-ins or reflections have been posted by the class yet today.</p>
                   ) : (
                     greetingConversation.map((item) => (
                       <article
@@ -1150,7 +1174,7 @@ export default function Home() {
                                 )}
                               </div>
                               <span className="whitespace-nowrap text-[10px] font-medium opacity-70 sm:text-[11px]">
-                                {new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                {new Date(item.updatedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
                             <p className="mt-1.5 whitespace-pre-wrap text-wrap leading-relaxed">{item.message}</p>
@@ -1202,18 +1226,18 @@ export default function Home() {
         {session && session.user?.role !== 'member' && (
           <section className="mb-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Khóa học đang mở đăng ký</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Open Courses</h2>
               {availableCourses.length > 0 && (
                 <Link href="/courses" className="text-sm font-semibold text-amber-700 hover:underline">
-                  Xem tất cả
+                  View all
                 </Link>
               )}
             </div>
 
             {loadingCourses ? (
-              <p className="px-4 py-4 text-sm text-slate-500">Đang tải khóa học...</p>
+              <p className="px-4 py-4 text-sm text-slate-500">Loading courses...</p>
             ) : availableCourses.length === 0 ? (
-              <p className="px-4 py-4 text-sm text-slate-500">Hiện chưa có khóa học mới.</p>
+              <p className="px-4 py-4 text-sm text-slate-500">There are no new courses right now.</p>
             ) : (
               <div className="course-ticker-wrap">
                 <div className="course-ticker-track">
@@ -1225,7 +1249,7 @@ export default function Home() {
                     >
                       <span className="course-ticker-title">{course.title}</span>
                       <span className="course-ticker-meta">
-                        Còn {Math.max(course.maxStudents - course.enrolledCount, 0)} chỗ • Hạn đăng ký {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
+                        {Math.max(course.maxStudents - course.enrolledCount, 0)} seats left • Register by {new Date(course.registrationDeadline).toLocaleDateString('en-GB')}
                       </span>
                     </Link>
                   ))}
@@ -1250,11 +1274,11 @@ export default function Home() {
                 </div>
 
                 {memberVocabularyLoading ? (
-                  <p className="text-sm text-slate-500">Đang tải vocabulary...</p>
+                  <p className="text-sm text-slate-500">Loading vocabulary...</p>
                 ) : memberVocabularyError ? (
                   <p className="text-sm text-red-600">{memberVocabularyError}</p>
                 ) : !currentVocabularyItem ? (
-                  <p className="text-sm text-slate-500">Chưa có từ vựng cho khóa học hiện tại.</p>
+                  <p className="text-sm text-slate-500">No vocabulary has been added for your current course yet.</p>
                 ) : (
                   <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 sm:px-4 py-4 sm:py-5 md:px-6 md:py-6 text-white">
                     <div className="mb-3 sm:mb-4 flex items-center justify-between gap-1">
@@ -1377,18 +1401,18 @@ export default function Home() {
                     rel="noreferrer"
                     className="brand-cta brand-cta-filled"
                   >
-                    <span>Tư vấn</span>
+                    <span>Get Advice</span>
                     <span aria-hidden="true" className="brand-cta-arrow">→</span>
                   </a>
                   <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
-                    trao đổi trực tiếp với giáo viên về nội dung học, lịch học
+                    talk directly with the teacher about course content and schedule
                   </span>
                 </div>
                 <Link
                   href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
                   className="brand-cta brand-cta-outline"
                 >
-                  <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Học'}</span>
+                  <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Enroll Now'}</span>
                   <span aria-hidden="true" className="brand-cta-arrow">→</span>
                 </Link>
               </div>
@@ -1406,7 +1430,7 @@ export default function Home() {
                 rel="noreferrer"
                 className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
               >
-                Giáo viên trực tiếp giảng dạy: Nguyễn Trí Bằng
+                Lead teacher: Nguyen Tri Bang
               </a>
             </div>
           </section>
@@ -1415,18 +1439,18 @@ export default function Home() {
         {session?.user?.role === 'member' && (
           <section className="mt-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Khóa học đang mở đăng ký</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Open Courses</h2>
               {availableCourses.length > 0 && (
                 <Link href="/courses" className="text-sm font-semibold text-amber-700 hover:underline">
-                  Xem tất cả
+                  View all
                 </Link>
               )}
             </div>
 
             {loadingCourses ? (
-              <p className="px-4 py-4 text-sm text-slate-500">Đang tải khóa học...</p>
+              <p className="px-4 py-4 text-sm text-slate-500">Loading courses...</p>
             ) : availableCourses.length === 0 ? (
-              <p className="px-4 py-4 text-sm text-slate-500">Hiện chưa có khóa học mới.</p>
+              <p className="px-4 py-4 text-sm text-slate-500">There are no new courses right now.</p>
             ) : (
               <div className="course-ticker-wrap">
                 <div className="course-ticker-track">
@@ -1438,7 +1462,7 @@ export default function Home() {
                     >
                       <span className="course-ticker-title">{course.title}</span>
                       <span className="course-ticker-meta">
-                        Còn {Math.max(course.maxStudents - course.enrolledCount, 0)} chỗ • Hạn đăng ký {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
+                        {Math.max(course.maxStudents - course.enrolledCount, 0)} seats left • Register by {new Date(course.registrationDeadline).toLocaleDateString('en-GB')}
                       </span>
                     </Link>
                   ))}

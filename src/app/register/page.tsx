@@ -31,18 +31,18 @@ export default function Register() {
 
         {isZaloInAppBrowser && (
           <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-base text-amber-800">
-            Google không cho phép đăng nhập trong trình duyệt của Zalo (lỗi 403 disallowed_useragent). Vui lòng mở link này bằng Safari hoặc Chrome rồi đăng ký lại.
+            Google sign-in is blocked inside the Zalo browser (403 disallowed_useragent). Please open this link in Safari or Chrome and try again.
           </div>
         )}
 
         <p className="text-center text-base text-slate-500 mb-4">
-          Đăng ký tạm thời chỉ hỗ trợ Google.
+          Registration currently supports Google sign-in only.
         </p>
 
         <p className="mt-4 text-center text-sm sm:text-base text-slate-500">
-          Đã có tài khoản?{' '}
+          Already have an account?{' '}
           <Link href="/login" className="font-semibold text-[#14532d] hover:text-[#166534]">
-            Đăng nhập
+            Sign in
           </Link>
         </p>
       </div>

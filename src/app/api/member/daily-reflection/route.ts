@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     }) as { id: string } | null
 
     if (!checkin) {
-      return NextResponse.json({ error: 'Bạn cần check-in trước khi reflect.' }, { status: 400 })
+      return NextResponse.json({ error: 'You need to complete your check-in before writing a reflection.' }, { status: 400 })
     }
 
     const body = await request.json()

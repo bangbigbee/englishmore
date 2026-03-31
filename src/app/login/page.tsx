@@ -63,7 +63,7 @@ export default function Login() {
     setLoading(false)
 
     if (!result?.ok) {
-      setMessage('Email hoặc mật khẩu không đúng.')
+      setMessage('Incorrect email or password.')
       return
     }
   }
@@ -77,14 +77,14 @@ export default function Login() {
   }
 
   const errorMessages: Record<string, string> = {
-    Callback: 'Lỗi callback từ Google. Hãy kiểm tra NEXTAUTH_URL và Google Redirect URI đã khớp domain hiện tại.',
-    OAuthCallback: 'Google OAuth callback failed, vui lòng kiểm tra Client ID/Secret và redirect URI. (OAuthCallback)',
-    Configuration: 'Cấu hình NextAuth có lỗi, kiểm tra biến môi trường.',
-    AccessDenied: 'Đã hủy quyền đăng nhập.',
-    OAuthSignin: 'Không thể kết nối với Google, vui lòng thử lại.',
-    OAuthAccountNotLinked: 'Email này đã được liên kết với tài khoản khác.',
-    EmailInUse: 'Email này đã được đăng ký. Vui lòng sử dụng email khác hoặc đăng nhập với tài khoản hiện tại.',
-    DisallowedUserAgentZalo: 'Google không cho phép đăng nhập trong trình duyệt của Zalo. Vui lòng mở website bằng Safari hoặc Chrome để tiếp tục.',
+    Callback: 'Google callback error. Check NEXTAUTH_URL and make sure the Google redirect URI matches the current domain.',
+    OAuthCallback: 'Google OAuth callback failed. Please verify the client ID, client secret, and redirect URI. (OAuthCallback)',
+    Configuration: 'There is a NextAuth configuration error. Please check the environment variables.',
+    AccessDenied: 'Sign-in permission was denied.',
+    OAuthSignin: 'Could not connect to Google. Please try again.',
+    OAuthAccountNotLinked: 'This email is already linked to another account.',
+    EmailInUse: 'This email is already registered. Please use another email or sign in with your existing account.',
+    DisallowedUserAgentZalo: 'Google sign-in is blocked inside the Zalo in-app browser. Please open this website in Safari or Chrome to continue.',
     '': ''
   }
 
@@ -96,13 +96,13 @@ export default function Login() {
         {shownError && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded">
             <p className="text-red-700 text-sm">
-              Lỗi: {errorMessages[shownError] || shownError}
+              Error: {errorMessages[shownError] || shownError}
             </p>
             <button
               onClick={handleClearError}
               className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
             >
-              Thử lại
+              Try again
             </button>
           </div>
         )}
@@ -120,12 +120,12 @@ export default function Login() {
               : 'bg-amber-500 hover:bg-amber-600 cursor-pointer'
           }`}
         >
-          {googleLoading ? 'Đang kết nối...' : 'Sign in with Google'}
+          {googleLoading ? 'Connecting...' : 'Sign in with Google'}
         </button>
 
         {isZaloInAppBrowser && (
           <p className="text-left text-xs text-amber-700 mb-4">
-            Bạn đang mở trong trình duyệt của Zalo. Hãy mở link bằng trình duyệt ngoài ứng dụng để đăng nhập Google.
+            You are opening this page inside the Zalo browser. Please open it in an external browser to sign in with Google.
           </p>
         )}
 
@@ -134,7 +134,7 @@ export default function Login() {
             <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">hoặc</span>
+            <span className="px-2 bg-white text-gray-500">or</span>
           </div>
         </div>
 
@@ -169,9 +169,9 @@ export default function Login() {
         </form>
 
         <p className="mt-4 text-center text-sm text-slate-500">
-          Chưa có tài khoản?{' '}
+          Don&apos;t have an account yet?{' '}
           <Link href="/register" className="font-medium text-amber-700 hover:text-amber-800">
-            Đăng ký ở đây
+            Register here
           </Link>
         </p>
       </div>

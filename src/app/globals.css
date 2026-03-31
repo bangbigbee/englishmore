@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-nunito);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,7 +22,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
 }
 
 .brand-cta {
@@ -39,7 +39,7 @@ body {
   line-height: 1;
   white-space: nowrap;
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: 999px;
   transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -125,7 +125,7 @@ body {
   max-width: 360px;
   border: 1px solid #bbf7d0;
   background: #f0fdf4;
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;

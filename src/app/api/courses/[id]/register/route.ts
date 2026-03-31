@@ -14,7 +14,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
   if (currentUser.role === 'admin') {
-    return NextResponse.json({ error: 'Tài khoản admin không được đăng ký khóa học' }, { status: 403 })
+    return NextResponse.json({ error: 'Admin accounts cannot register for courses' }, { status: 403 })
   }
 
   const { id: courseId } = await context.params
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   // Check capacity
   if (course.enrollments.length >= course.maxStudents) {
-    return NextResponse.json({ error: 'Khóa học này đã đạt số lượng tối đa. Vui lòng chọn khóa học khác.' }, { status: 400 })
+    return NextResponse.json({ error: 'This course is already full. Please choose another course.' }, { status: 400 })
   }
 
   const existing = await prisma.enrollment.findUnique({
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   })
 
   if (existing) {
-    return NextResponse.json({ error: 'Bạn đã đăng ký khóa học này trước đó', enrollment: existing }, { status: 409 })
+    return NextResponse.json({ error: 'You have already registered for this course', enrollment: existing }, { status: 409 })
   }
 
   const userId = session.user?.id as string
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   })
   if (pendingEnrollment) {
     return NextResponse.json({
-      error: 'Bạn đang có một đăng ký chờ xác nhận. Vui lòng đợi admin xác nhận trước khi đăng ký khóa mới.'
+      error: 'You already have a pending enrollment. Please wait for admin confirmation before registering for a new course.'
     }, { status: 409 })
   }
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   })
 
   return NextResponse.json({
-    message: 'Vui lòng chuyển khoản đúng nội dung bên dưới để quản trị viên xác nhận đóng học phí.',
+    message: 'Please use the transfer details below so the admin can confirm your tuition payment.',
     enrollment,
     paymentInstruction: {
       bankName: 'Techcombank',

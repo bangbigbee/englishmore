@@ -22,12 +22,12 @@ export default function Submit() {
   if (!session) return null
 
   if (redirecting) {
-    return <div className="min-h-screen flex items-center justify-center">Đang tải...</div>
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <p className="text-gray-600">Đang chuyển đến Dashboard...</p>
+      <p className="text-gray-600">Redirecting to the dashboard...</p>
     </div>
   )
 }

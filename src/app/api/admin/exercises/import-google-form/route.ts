@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
   const formUrl = normalizeGoogleFormUrl(body?.formUrl)
 
   if (!formUrl) {
-    return NextResponse.json({ error: 'Link Google Form không hợp lệ' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid Google Form link' }, { status: 400 })
   }
 
   try {
@@ -137,18 +137,18 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
-      return NextResponse.json({ error: 'Không thể đọc dữ liệu từ Google Form. Hãy đảm bảo form đang public.' }, { status: 400 })
+      return NextResponse.json({ error: 'Unable to read data from Google Form. Make sure the form is public.' }, { status: 400 })
     }
 
     const html = await response.text()
     const payload = extractFormPayload(html)
     if (!payload) {
-      return NextResponse.json({ error: 'Không trích xuất được nội dung form. Hãy dùng link form public (viewform).' }, { status: 400 })
+      return NextResponse.json({ error: 'Unable to extract form content. Please use a public viewform link.' }, { status: 400 })
     }
 
     const parsedQuestions = extractFromPublicLoadData(payload)
     if (parsedQuestions.length === 0) {
-      return NextResponse.json({ error: 'Không tìm thấy câu hỏi trắc nghiệm hợp lệ trong form này.' }, { status: 400 })
+      return NextResponse.json({ error: 'No valid multiple-choice questions were found in this form.' }, { status: 400 })
     }
 
     return NextResponse.json({
@@ -157,6 +157,6 @@ export async function POST(request: NextRequest) {
       questions: toFixedTen(parsedQuestions)
     })
   } catch {
-    return NextResponse.json({ error: 'Không thể import từ Google Form lúc này. Vui lòng thử lại.' }, { status: 500 })
+    return NextResponse.json({ error: 'Unable to import from Google Form right now. Please try again.' }, { status: 500 })
   }
 }

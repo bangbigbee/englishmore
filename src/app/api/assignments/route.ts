@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
   if (currentUser.role === 'admin') {
-    return NextResponse.json({ error: 'Tài khoản admin không được nộp bài tập' }, { status: 403 })
+    return NextResponse.json({ error: 'Admin accounts cannot submit homework' }, { status: 403 })
   }
 
   const { homeworkId, description } = await request.json()
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!note) {
-    return NextResponse.json({ error: 'Ghi chú không được để trống' }, { status: 400 })
+    return NextResponse.json({ error: 'Note cannot be empty' }, { status: 400 })
   }
 
   const activeEnrollment = await prisma.enrollment.findFirst({
@@ -36,12 +36,12 @@ export async function POST(request: NextRequest) {
   })
 
   if (!activeEnrollment) {
-    return NextResponse.json({ error: 'Bạn chưa có khóa học đang hoạt động' }, { status: 400 })
+    return NextResponse.json({ error: 'You do not have an active course yet' }, { status: 400 })
   }
 
   const homework = await prisma.courseHomework.findUnique({ where: { id: homeworkId } })
   if (!homework || homework.courseId !== activeEnrollment.courseId) {
-    return NextResponse.json({ error: 'Bài tập không hợp lệ với khóa học của bạn' }, { status: 400 })
+    return NextResponse.json({ error: 'This homework does not belong to your course' }, { status: 400 })
   }
 
   const assignment = await prisma.homeworkSubmission.upsert({

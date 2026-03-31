@@ -122,13 +122,13 @@ export default function TopNav() {
                     {session.user?.name || 'User'}
                   </span>
                   <span className="max-w-32 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-55 whitespace-nowrap">
-                    {enrolledCourseTitle || 'Chua tham gia khoa hoc'}
+                    {enrolledCourseTitle || 'No active course yet'}
                   </span>
                 </div>
                 <button
                   onClick={() => setShowUserInfo((v) => !v)}
                   className="p-1.5 text-[#166534] hover:text-[#14532d] rounded-lg hover:bg-[#14532d]/10 transition cursor-pointer"
-                  title={showUserInfo ? 'Ẩn thông tin' : 'Hiện thông tin'}
+                  title={showUserInfo ? 'Hide info' : 'Show info'}
                 >
                   {showUserInfo ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                 </button>
@@ -162,7 +162,7 @@ export default function TopNav() {
               disabled={status === 'loading'}
               className="inline-flex items-center gap-2 rounded-md bg-[#184d0d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#1f6111] disabled:opacity-70"
             >
-              Get Started
+              Start Learning
               <BookIcon />
             </button>
           )}

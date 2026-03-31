@@ -140,7 +140,7 @@ export default function ProfilePage() {
 
       // Show success message, with warning about avatar if it failed
       if (avatarUploadFailed) {
-        setSuccess(`Thông tin cá nhân đã được lưu. Tuy nhiên, ảnh không tải lên được: ${avatarUploadError}`)
+        setSuccess(`Your profile has been saved, but the avatar upload failed: ${avatarUploadError}`)
       } else {
         setSuccess('Profile updated successfully!')
       }
@@ -167,7 +167,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow p-6 sm:p-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Thông tin cá nhân</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Profile</h1>
 
           {error && <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">{error}</div>}
           {success && <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded text-green-700 text-sm">{success}</div>}
@@ -175,7 +175,7 @@ export default function ProfilePage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Avatar Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Ảnh cá nhân</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Profile photo</label>
               <div className="flex items-end gap-4">
                 <div className="shrink-0">
                   {imagePreview ? (
@@ -215,7 +215,7 @@ export default function ProfilePage() {
 
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Họ và tên</label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full name</label>
               <input
                 type="text"
                 id="name"
@@ -240,7 +240,7 @@ export default function ProfilePage() {
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Số điện thoại</label>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone number</label>
               <input
                 type="tel"
                 id="phone"
@@ -254,17 +254,17 @@ export default function ProfilePage() {
 
             {/* Bio */}
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Giới thiệu</label>
+              <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Bio</label>
               <textarea
                 id="bio"
                 name="bio"
                 value={formData.bio}
                 onChange={handleInputChange}
-                placeholder="Viết gì đó về bạn..."
+                placeholder="Write something about yourself..."
                 rows={4}
                 className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d] outline-none resize-none"
               />
-              <p className="text-xs text-gray-500 mt-1">Tối đa 500 ký tự</p>
+              <p className="text-xs text-gray-500 mt-1">Up to 500 characters</p>
             </div>
 
             {/* Submit */}
@@ -283,14 +283,14 @@ export default function ProfilePage() {
                 disabled={saving}
                 className="flex-1 px-4 py-2 bg-[#14532d] text-white rounded-lg hover:bg-[#166534] disabled:opacity-50 font-medium transition-colors cursor-pointer"
               >
-                {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+                {saving ? 'Saving...' : 'Save changes'}
               </button>
               <button
                 type="button"
                 onClick={() => router.back()}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors cursor-pointer"
               >
-                Quay lại
+                Back
               </button>
             </div>
           </form>

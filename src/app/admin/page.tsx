@@ -521,7 +521,7 @@ export default function AdminDashboard() {
       )
       setHomeworkError('')
     } catch (err) {
-      setHomeworkError(err instanceof Error ? err.message : 'Không thể tải bài nộp của học viên')
+      setHomeworkError(err instanceof Error ? err.message : 'Could not load student submissions.')
     }
   }, [homeworkSubmissionCourseFilter, homeworkSubmissionHomeworkFilter])
 
@@ -571,7 +571,7 @@ export default function AdminDashboard() {
         checkedInToday: data.summary?.checkedInToday || 0
       })
     } catch (err) {
-      setCheckinError(err instanceof Error ? err.message : 'Không thể tải dữ liệu check-in')
+      setCheckinError(err instanceof Error ? err.message : 'Could not load check-in data.')
       setCheckinRows([])
       setCheckinSummary({ totalStudents: 0, checkedInToday: 0 })
     } finally {
@@ -592,7 +592,7 @@ export default function AdminDashboard() {
       setReflectRows(data.rows || [])
       setReflectSummary({ totalStudents: data.summary?.totalStudents || 0, reflectedToday: data.summary?.reflectedToday || 0 })
     } catch (err) {
-      setReflectError(err instanceof Error ? err.message : 'Không thể tải dữ liệu reflect')
+      setReflectError(err instanceof Error ? err.message : 'Could not load reflection data.')
       setReflectRows([])
       setReflectSummary({ totalStudents: 0, reflectedToday: 0 })
     } finally {
@@ -614,7 +614,7 @@ export default function AdminDashboard() {
       setVocabularyItems(data.items || [])
     } catch (err) {
       setVocabularyItems([])
-      setVocabularyError(err instanceof Error ? err.message : 'Không thể tải dữ liệu từ vựng')
+      setVocabularyError(err instanceof Error ? err.message : 'Could not load vocabulary data.')
     }
   }, [vocabularyCourseFilter])
 
@@ -622,12 +622,12 @@ export default function AdminDashboard() {
     const displayOrder = Number(newVocabularyOrder)
 
     if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
-      setVocabularyError('Vui lòng nhập đầy đủ khóa học, từ vựng và nghĩa')
+      setVocabularyError('Please enter the course, word, and meaning.')
       return
     }
 
     if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
-      setVocabularyError('Thứ tự hiển thị phải là số nguyên từ 1 đến 9999')
+      setVocabularyError('Display order must be an integer from 1 to 9999.')
       return
     }
 
@@ -651,9 +651,9 @@ export default function AdminDashboard() {
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể thêm từ vựng')
+      if (!res.ok) throw new Error(data?.error || 'Could not add the vocabulary item.')
 
-      setVocabularySuccess('Đã thêm từ vựng mới')
+      setVocabularySuccess('New vocabulary item added.')
       setNewVocabularyWord('')
       setNewVocabularyPhonetic('')
       setNewVocabularyEnglishDefinition('')
@@ -662,7 +662,7 @@ export default function AdminDashboard() {
       setNewVocabularyOrder('1')
       fetchVocabularyData()
     } catch (err) {
-      setVocabularyError(err instanceof Error ? err.message : 'Không thể thêm từ vựng')
+      setVocabularyError(err instanceof Error ? err.message : 'Could not add the vocabulary item.')
     } finally {
       setSavingVocabulary(false)
     }
@@ -701,12 +701,12 @@ export default function AdminDashboard() {
     const displayOrder = Number(newVocabularyOrder)
 
     if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
-      setVocabularyError('Vui lòng nhập đầy đủ khóa học, từ vựng và nghĩa')
+      setVocabularyError('Please enter the course, word, and meaning.')
       return
     }
 
     if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
-      setVocabularyError('Thứ tự hiển thị phải là số nguyên từ 1 đến 9999')
+      setVocabularyError('Display order must be an integer from 1 to 9999.')
       return
     }
 
@@ -730,20 +730,20 @@ export default function AdminDashboard() {
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể cập nhật từ vựng')
+      if (!res.ok) throw new Error(data?.error || 'Could not update the vocabulary item.')
 
-      setVocabularySuccess('Đã cập nhật từ vựng')
+      setVocabularySuccess('Vocabulary item updated.')
       resetVocabularyForm()
       fetchVocabularyData()
     } catch (err) {
-      setVocabularyError(err instanceof Error ? err.message : 'Không thể cập nhật từ vựng')
+      setVocabularyError(err instanceof Error ? err.message : 'Could not update the vocabulary item.')
     } finally {
       setUpdatingVocabularyId(null)
     }
   }
 
   const deleteVocabulary = async (id: string) => {
-    const confirmed = window.confirm('Bạn có chắc muốn xóa từ vựng này?')
+    const confirmed = window.confirm('Are you sure you want to delete this vocabulary item?')
     if (!confirmed) return
 
     try {
@@ -755,12 +755,12 @@ export default function AdminDashboard() {
         method: 'DELETE'
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể xóa từ vựng')
+      if (!res.ok) throw new Error(data?.error || 'Could not delete the vocabulary item.')
 
-      setVocabularySuccess('Đã xóa từ vựng')
+      setVocabularySuccess('Vocabulary item deleted.')
       fetchVocabularyData()
     } catch (err) {
-      setVocabularyError(err instanceof Error ? err.message : 'Không thể xóa từ vựng')
+      setVocabularyError(err instanceof Error ? err.message : 'Could not delete the vocabulary item.')
     } finally {
       setDeletingVocabularyId(null)
     }
@@ -845,7 +845,7 @@ export default function AdminDashboard() {
 
   const createExercise = async (saveAsDraft: boolean) => {
     if (!newExerciseCourseId) {
-      setExerciseError('Vui lòng chọn khóa học cho exercise')
+      setExerciseError('Please choose a course for the exercise.')
       return
     }
 
@@ -868,9 +868,9 @@ export default function AdminDashboard() {
         })
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể tạo exercise')
+      if (!res.ok) throw new Error(data?.error || 'Unable to create exercise')
 
-      setExerciseSuccess(saveAsDraft ? 'Đã lưu bản nháp exercise' : 'Đã tạo exercise mới')
+      setExerciseSuccess(saveAsDraft ? 'Exercise draft saved.' : 'New exercise created.')
       setExerciseError('')
       if (saveAsDraft) {
         setShowExerciseBuilder(true)
@@ -882,7 +882,7 @@ export default function AdminDashboard() {
       }
       fetchExerciseData()
     } catch (err) {
-      setExerciseError(err instanceof Error ? err.message : 'Không thể tạo exercise')
+      setExerciseError(err instanceof Error ? err.message : 'Unable to create exercise')
       setExerciseSuccess('')
     } finally {
       setSavingExerciseDraft(false)
@@ -904,16 +904,16 @@ export default function AdminDashboard() {
         body: JSON.stringify({ formUrl: newExerciseSourceFormUrl })
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể import từ Google Form')
+      if (!res.ok) throw new Error(data?.error || 'Unable to import from Google Form')
 
       setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
       setNewExerciseDescription(String(data.description || '').trim())
       setNewExerciseSourceFormUrl(String(data.sourceFormUrl || newExerciseSourceFormUrl).trim())
       setExerciseError('')
-      setExerciseSuccess('Đã import dữ liệu từ Google Form, bạn có thể chỉnh sửa trước khi lưu.')
+      setExerciseSuccess('Data imported from Google Form. You can edit it before saving.')
       setShowExerciseBuilder(true)
     } catch (err) {
-      setExerciseError(err instanceof Error ? err.message : 'Không thể import từ Google Form')
+      setExerciseError(err instanceof Error ? err.message : 'Unable to import from Google Form')
       setExerciseSuccess('')
     } finally {
       setImportingForm(false)
@@ -944,14 +944,14 @@ export default function AdminDashboard() {
         body: JSON.stringify({ description: editExerciseDescription, questions: editExerciseQuestions })
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể cập nhật exercise')
+      if (!res.ok) throw new Error(data?.error || 'Unable to update exercise')
 
-      setExerciseSuccess('Đã cập nhật exercise')
+      setExerciseSuccess('Exercise updated.')
       setExerciseError('')
       setEditingExercise(null)
       fetchExerciseData()
     } catch (err) {
-      setExerciseError(err instanceof Error ? err.message : 'Không thể cập nhật exercise')
+      setExerciseError(err instanceof Error ? err.message : 'Unable to update exercise')
       setExerciseSuccess('')
     } finally {
       setSavingExerciseId(null)
@@ -959,7 +959,7 @@ export default function AdminDashboard() {
   }
 
   const deleteExercise = async (exercise: ExerciseItem) => {
-    const confirmed = window.confirm(`Bạn có chắc chắn muốn xóa Exercise ${exercise.order} của khóa "${exercise.course.title}"?`)
+    const confirmed = window.confirm(`Are you sure you want to delete Exercise ${exercise.order} from the course "${exercise.course.title}"?`)
     if (!confirmed) return
 
     try {
@@ -968,16 +968,16 @@ export default function AdminDashboard() {
         method: 'DELETE'
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể xóa exercise')
+      if (!res.ok) throw new Error(data?.error || 'Could not delete the exercise.')
 
-      setExerciseSuccess(`Đã xóa Exercise ${exercise.order}`)
+      setExerciseSuccess(`Exercise ${exercise.order} deleted.`)
       setExerciseError('')
       if (editingExercise?.id === exercise.id) {
         setEditingExercise(null)
       }
       fetchExerciseData()
     } catch (err) {
-      setExerciseError(err instanceof Error ? err.message : 'Không thể xóa exercise')
+      setExerciseError(err instanceof Error ? err.message : 'Could not delete the exercise.')
       setExerciseSuccess('')
     } finally {
       setDeletingExerciseId(null)
@@ -986,7 +986,7 @@ export default function AdminDashboard() {
 
   const createHomework = async () => {
     if (!newHomeworkCourseId || !newHomeworkTitle || !newHomeworkDueDate) {
-      setHomeworkError('Vui lòng nhập đủ khóa học, tên bài tập và hạn nộp')
+      setHomeworkError('Please enter the course, homework title, and due date.')
       return
     }
 
@@ -1009,9 +1009,9 @@ export default function AdminDashboard() {
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể tạo bài tập')
+      if (!res.ok) throw new Error(data?.error || 'Could not create the homework.')
 
-      setHomeworkSuccess('Đã tạo bài tập mới')
+      setHomeworkSuccess('New homework created.')
       setHomeworkError('')
       setNewHomeworkTitle('')
       setNewHomeworkDescription('')
@@ -1019,7 +1019,7 @@ export default function AdminDashboard() {
       fetchHomeworkData()
       fetchMemberOverview()
     } catch (err) {
-      setHomeworkError(err instanceof Error ? err.message : 'Không thể tạo bài tập')
+      setHomeworkError(err instanceof Error ? err.message : 'Could not create the homework.')
       setHomeworkSuccess('')
     }
   }
@@ -1036,7 +1036,7 @@ export default function AdminDashboard() {
   const saveEditedHomework = async () => {
     if (!editingHomework) return
     if (!editHomeworkCourseId || !editHomeworkTitle || !editHomeworkDueDate) {
-      setHomeworkError('Vui lòng nhập đủ thông tin bài tập')
+      setHomeworkError('Please complete all homework fields.')
       return
     }
 
@@ -1059,15 +1059,15 @@ export default function AdminDashboard() {
         })
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể cập nhật bài tập')
+      if (!res.ok) throw new Error(data?.error || 'Could not update the homework.')
 
-      setHomeworkSuccess('Đã cập nhật bài tập')
+      setHomeworkSuccess('Homework updated.')
       setHomeworkError('')
       setEditingHomework(null)
       fetchHomeworkData()
       fetchMemberOverview()
     } catch (err) {
-      setHomeworkError(err instanceof Error ? err.message : 'Không thể cập nhật bài tập')
+      setHomeworkError(err instanceof Error ? err.message : 'Could not update the homework.')
       setHomeworkSuccess('')
     } finally {
       setSavingHomeworkId(null)
@@ -1075,7 +1075,7 @@ export default function AdminDashboard() {
   }
 
   const deleteHomework = async (homework: HomeworkItem) => {
-    const confirmed = window.confirm(`Bạn có chắc chắn muốn xóa bài tập "${homework.title}"?`)
+    const confirmed = window.confirm(`Are you sure you want to delete the homework "${homework.title}"?`)
     if (!confirmed) return
 
     try {
@@ -1084,9 +1084,9 @@ export default function AdminDashboard() {
         method: 'DELETE'
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể xóa bài tập')
+      if (!res.ok) throw new Error(data?.error || 'Could not delete the homework.')
 
-      setHomeworkSuccess('Đã xóa bài tập')
+      setHomeworkSuccess('Homework deleted.')
       setHomeworkError('')
       if (editingHomework?.id === homework.id) {
         setEditingHomework(null)
@@ -1095,7 +1095,7 @@ export default function AdminDashboard() {
       fetchHomeworkSubmissions()
       fetchMemberOverview()
     } catch (err) {
-      setHomeworkError(err instanceof Error ? err.message : 'Không thể xóa bài tập')
+      setHomeworkError(err instanceof Error ? err.message : 'Could not delete the homework.')
       setHomeworkSuccess('')
     } finally {
       setDeletingHomeworkId(null)
@@ -1111,13 +1111,13 @@ export default function AdminDashboard() {
         body: JSON.stringify({ teacherComment: homeworkTeacherComments[submissionId] || '' })
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Không thể lưu nhận xét')
+      if (!res.ok) throw new Error(data?.error || 'Could not save the feedback.')
 
-      setHomeworkSuccess('Đã lưu nhận xét cho bài tập học viên')
+      setHomeworkSuccess('Feedback saved for the student submission.')
       setHomeworkError('')
       fetchHomeworkSubmissions()
     } catch (err) {
-      setHomeworkError(err instanceof Error ? err.message : 'Không thể lưu nhận xét')
+      setHomeworkError(err instanceof Error ? err.message : 'Could not save the feedback.')
       setHomeworkSuccess('')
     } finally {
       setSavingHomeworkCommentId(null)
@@ -1126,13 +1126,13 @@ export default function AdminDashboard() {
 
   const publishCourse = async () => {
     if (!newCourseTitle || !newDeadline) {
-      setCourseError('Vui lòng nhập tên khóa học và hạn đăng ký')
+      setCourseError('Please enter the course title and registration deadline.')
       return
     }
 
     const parsedNewDeadline = parseDdMmYyyyToIsoDate(newDeadline)
     if (!parsedNewDeadline) {
-      setCourseError('Hạn đăng ký phải theo định dạng dd/mm/yyyy')
+      setCourseError('Registration deadline must use the dd/mm/yyyy format')
       return
     }
 
@@ -1157,7 +1157,7 @@ export default function AdminDashboard() {
         throw new Error(errorData?.error || 'Failed to publish course')
       }
       const data = await res.json()
-      setCourseSuccess(`Khóa học "${data.title}" đã được xuất bản`)
+      setCourseSuccess(`Course "${data.title}" has been published.`)
       setNewCourseTitle('')
       setNewCourseDescription('')
       setNewDeadline('')
@@ -1182,13 +1182,13 @@ export default function AdminDashboard() {
   const saveEditedCourse = async () => {
     if (!editingCourse) return
     if (!editCourseTitle || !editCourseDeadline) {
-      setCourseError('Vui lòng nhập tên khóa học và hạn đăng ký')
+      setCourseError('Please enter the course title and registration deadline.')
       return
     }
 
     const parsedEditDeadline = parseDdMmYyyyToIsoDate(editCourseDeadline)
     if (!parsedEditDeadline) {
-      setCourseError('Hạn đăng ký phải theo định dạng dd/mm/yyyy')
+      setCourseError('Registration deadline must use the dd/mm/yyyy format')
       return
     }
 
@@ -1198,7 +1198,7 @@ export default function AdminDashboard() {
     }
 
     if (!Number.isInteger(editCourseCompletedSessions) || editCourseCompletedSessions < 0 || editCourseCompletedSessions > 30) {
-      setCourseError('Tiến độ khóa học phải từ 0 đến 30 buổi')
+      setCourseError('Course progress must be between 0 and 30 sessions.')
       return
     }
 
@@ -1218,15 +1218,15 @@ export default function AdminDashboard() {
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data?.error || 'Không thể cập nhật khóa học')
+        throw new Error(data?.error || 'Could not update the course.')
       }
 
-      setCourseSuccess(`Đã cập nhật khóa học "${data.title}"`)
+      setCourseSuccess(`Course "${data.title}" updated.`)
       setCourseError('')
       setEditingCourse(null)
       fetchCourses()
     } catch (err) {
-      setCourseError(err instanceof Error ? err.message : 'Không thể cập nhật khóa học')
+      setCourseError(err instanceof Error ? err.message : 'Could not update the course.')
       setCourseSuccess('')
     } finally {
       setSavingCourseId(null)
@@ -1244,15 +1244,15 @@ export default function AdminDashboard() {
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data?.error || 'Không thể hủy khai giảng khóa học')
+        throw new Error(data?.error || 'Could not unpublish the course.')
       }
 
-      setCourseSuccess(`Đã hủy khai giảng khóa học "${courseTitle}"`) 
+      setCourseSuccess(`Course "${courseTitle}" has been unpublished.`) 
       setCourseError('')
       setConfirmUnpublish(null)
       fetchCourses()
     } catch (err) {
-      setCourseError(err instanceof Error ? err.message : 'Không thể hủy khai giảng khóa học')
+      setCourseError(err instanceof Error ? err.message : 'Could not unpublish the course.')
       setCourseSuccess('')
     } finally {
       setSavingCourseId(null)
@@ -1274,7 +1274,7 @@ export default function AdminDashboard() {
       fetchSummary()
       fetchMemberOverview()
     } catch (err) {
-      setCourseError(err instanceof Error ? err.message : 'Không thể cập nhật trạng thái thanh toán')
+      setCourseError(err instanceof Error ? err.message : 'Unable to update payment status')
     } finally {
       setUpdatingEnrollmentId(null)
       setConfirmPayment(null)
@@ -1286,13 +1286,13 @@ export default function AdminDashboard() {
     setLectureSuccess('')
 
     if (!selectedLectureNoteCourseId || !newLectureSession) {
-      setLectureError('Vui lòng chọn khóa học và buổi học')
+      setLectureError('Please choose a course and session number.')
       return
     }
 
     const sessionNum = parseInt(newLectureSession, 10)
     if (isNaN(sessionNum) || sessionNum < 1 || sessionNum > 30) {
-      setLectureError('Buổi học phải từ 1 đến 30')
+      setLectureError('Session number must be between 1 and 30')
       return
     }
 
@@ -1314,7 +1314,7 @@ export default function AdminDashboard() {
 
       setNewLectureSession('')
       setNewLectureDriveLink('')
-      setLectureSuccess('Tài liệu bài giảng được tạo thành công!')
+      setLectureSuccess('Lecture note created successfully!')
       fetchLectureNotes(selectedLectureNoteCourseId)
     } catch (err) {
       setLectureError(err instanceof Error ? err.message : 'Failed to create lecture note')
@@ -1326,7 +1326,7 @@ export default function AdminDashboard() {
 
     const sessionNum = parseInt(editLectureSession, 10)
     if (isNaN(sessionNum) || sessionNum < 1 || sessionNum > 30) {
-      setLectureError('Buổi học phải từ 1 đến 30')
+      setLectureError('Session number must be between 1 and 30')
       return
     }
 
@@ -1352,7 +1352,7 @@ export default function AdminDashboard() {
       setEditingLectureNote(null)
   setEditLectureSession('')
       setEditLectureDriveLink('')
-      setLectureSuccess('Cập nhật tài liệu thành công!')
+      setLectureSuccess('Lecture note updated successfully!')
       fetchLectureNotes(selectedLectureNoteCourseId)
     } catch (err) {
       setLectureError(err instanceof Error ? err.message : 'Failed to update lecture note')
@@ -1362,7 +1362,7 @@ export default function AdminDashboard() {
   }
 
   const deleteLectureNote = async (lectureId: string) => {
-    const confirmed = window.confirm('Bạn chắc chắn muốn xóa tài liệu này?')
+    const confirmed = window.confirm('Are you sure you want to delete this material?')
     if (!confirmed) return
 
     try {
@@ -1378,7 +1378,7 @@ export default function AdminDashboard() {
         throw new Error(err.error || 'Failed to delete lecture note')
       }
 
-      setLectureSuccess('Xóa tài liệu thành công!')
+      setLectureSuccess('Material deleted successfully.')
       fetchLectureNotes(selectedLectureNoteCourseId)
     } catch (err) {
       setLectureError(err instanceof Error ? err.message : 'Failed to delete lecture note')
@@ -1388,7 +1388,7 @@ export default function AdminDashboard() {
   }
 
   const rejectUser = async (userId: string, label: string) => {
-    const confirmed = window.confirm(`Bạn có chắc chắn muốn từ chối ${label}? Người dùng sẽ bị reset và phải bắt đầu lại từ đầu.`)
+    const confirmed = window.confirm(`Are you sure you want to reject ${label}? The user will be reset and must start again from the beginning.`)
     if (!confirmed) return
 
     try {
@@ -1400,17 +1400,17 @@ export default function AdminDashboard() {
 
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data?.error || 'Không thể từ chối người dùng')
+        throw new Error(data?.error || 'Could not reject the user.')
       }
 
-      setCourseSuccess('Đã từ chối và reset người dùng về trạng thái ban đầu')
+      setCourseSuccess('The user has been rejected and reset to the initial state.')
       setCourseError('')
       fetchMemberOverview()
       fetchEnrollments()
       fetchCourses()
       fetchSummary()
     } catch (err) {
-      setCourseError(err instanceof Error ? err.message : 'Không thể từ chối người dùng')
+      setCourseError(err instanceof Error ? err.message : 'Could not reject the user.')
     } finally {
       setRejectingUserId(null)
     }
@@ -1498,8 +1498,8 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'checkin' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Theo dõi check-in học viên theo khóa học</h2>
-          <p className="text-sm text-gray-600 mb-5">Theo dõi phản hồi daily greeting để đánh giá mức độ active và chuẩn bị medal reward.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Student Check-in Tracking by Course</h2>
+          <p className="text-sm text-gray-600 mb-5">Monitor daily greeting responses to evaluate engagement and prepare medal rewards.</p>
 
           {checkinError && (
             <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{checkinError}</div>
@@ -1511,25 +1511,25 @@ export default function AdminDashboard() {
               onChange={(e) => setCheckinCourseFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
-              <option value="">Tất cả khóa học đang active</option>
+              <option value="">All active courses</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
             </select>
 
             <div className="rounded border border-[#14532d]/30 bg-[#14532d]/10 px-4 py-2 text-sm text-[#14532d]">
-              Tổng học viên: <span className="font-bold">{checkinSummary.totalStudents}</span>
+              Total students: <span className="font-bold">{checkinSummary.totalStudents}</span>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="rounded border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
-                Check-in hôm nay: <span className="font-bold">{checkinSummary.checkedInToday}</span>
+                Check-ins today: <span className="font-bold">{checkinSummary.checkedInToday}</span>
               </div>
               <button
                 onClick={fetchCheckinData}
                 className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
               >
-                {checkinLoading ? 'Đang tải...' : 'Làm mới'}
+                {checkinLoading ? 'Loading...' : 'Refresh'}
               </button>
             </div>
           </div>
@@ -1538,51 +1538,51 @@ export default function AdminDashboard() {
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hôm nay</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">7 ngày</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lần check-in gần nhất</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nội dung gần nhất</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Today</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">7 days</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Latest check-in</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Latest message</th>
                 </tr>
               </thead>
               <tbody>
                 {checkinRows.map((row) => (
                   <tr key={row.enrollmentId} className="border-b align-top hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{row.studentName || row.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{row.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{row.phone || 'Not updated yet'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{row.courseTitle}</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`rounded px-2 py-1 text-xs font-semibold ${row.checkedInToday ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                        {row.checkedInToday ? 'Đã check-in' : 'Chưa check-in'}
+                        {row.checkedInToday ? 'Checked in' : 'Not checked in'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{row.checkinCount7d}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {row.latestUpdatedAt ? (
                         <>
-                          {new Date(row.latestUpdatedAt).toLocaleString('vi-VN')}
+                          {new Date(row.latestUpdatedAt).toLocaleString('en-GB')}
                           {row.latestInputMethod && (
                             <span className="ml-2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                               {row.latestInputMethod === 'voice' ? 'voice' : 'text'}
                             </span>
                           )}
                         </>
-                      ) : 'Chưa có dữ liệu'}
+                      ) : 'No data yet'}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {row.latestMessage ? (
                         <p className="max-w-md whitespace-pre-wrap">{row.latestMessage}</p>
                       ) : (
-                        <span className="text-gray-400">Chưa có nội dung</span>
+                        <span className="text-gray-400">No content yet</span>
                       )}
                     </td>
                   </tr>
                 ))}
                 {!checkinLoading && checkinRows.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Không có học viên nào theo bộ lọc hiện tại</td>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No students match the current filter.</td>
                   </tr>
                 )}
               </tbody>
@@ -1591,8 +1591,8 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'reflect' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Theo dõi Reflect của học viên</h2>
-          <p className="text-sm text-gray-600 mb-5">Những học viên đã check-in hôm nay và ghi lại reflection.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Student Reflection Tracking</h2>
+          <p className="text-sm text-gray-600 mb-5">See which students checked in today and also posted a reflection.</p>
 
           {reflectError && (
             <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{reflectError}</div>
@@ -1604,20 +1604,20 @@ export default function AdminDashboard() {
               onChange={(e) => setReflectCourseFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-violet-600"
             >
-              <option value="">Tất cả khóa học đang active</option>
+              <option value="">All active courses</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
             </select>
             <div className="rounded border border-[#14532d]/30 bg-[#14532d]/10 px-4 py-2 text-sm text-[#14532d]">
-              Tổng học viên: <span className="font-bold">{reflectSummary.totalStudents}</span>
+              Total students: <span className="font-bold">{reflectSummary.totalStudents}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="rounded border border-violet-300 bg-violet-50 px-4 py-2 text-sm text-violet-700">
-                Reflect hôm nay: <span className="font-bold">{reflectSummary.reflectedToday}</span>
+                Reflections today: <span className="font-bold">{reflectSummary.reflectedToday}</span>
               </div>
               <button onClick={fetchReflectData} className="px-4 py-2 bg-violet-700 text-white rounded hover:bg-violet-800">
-                {reflectLoading ? 'Đang tải...' : 'Làm mới'}
+                {reflectLoading ? 'Loading...' : 'Refresh'}
               </button>
             </div>
           </div>
@@ -1626,40 +1626,40 @@ export default function AdminDashboard() {
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reflect hôm nay</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nội dung</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Today</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Content</th>
                 </tr>
               </thead>
               <tbody>
                 {reflectRows.map((row) => (
                   <tr key={row.enrollmentId} className="border-b align-top hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{row.studentName || row.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{row.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{row.phone || 'Not updated yet'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{row.courseTitle}</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`rounded px-2 py-1 text-xs font-semibold ${row.reflectedToday ? 'bg-violet-100 text-violet-700' : 'bg-gray-100 text-gray-500'}`}>
-                        {row.reflectedToday ? 'Đã reflect' : 'Chưa reflect'}
+                        {row.reflectedToday ? 'Reflected' : 'Not reflected'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
-                      {row.updatedAt ? new Date(row.updatedAt).toLocaleString('vi-VN') : '—'}
+                      {row.updatedAt ? new Date(row.updatedAt).toLocaleString('en-GB') : '—'}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {row.message ? (
                         <p className="max-w-md whitespace-pre-wrap">{row.message}</p>
                       ) : (
-                        <span className="text-gray-400">Chưa có nội dung</span>
+                        <span className="text-gray-400">No content yet</span>
                       )}
                     </td>
                   </tr>
                 ))}
                 {!reflectLoading && reflectRows.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Không có dữ liệu theo bộ lọc hiện tại</td>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No data matches the current filter.</td>
                   </tr>
                 )}
               </tbody>
@@ -1668,8 +1668,8 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'vocabulary' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Vocabulary cho học viên</h2>
-          <p className="text-sm text-gray-600 mb-5">Admin chuẩn bị từ vựng theo từng khóa để hiển thị cho học viên ở homepage.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Student Vocabulary</h2>
+          <p className="text-sm text-gray-600 mb-5">Prepare vocabulary by course to display on the homepage for students.</p>
 
           {vocabularySuccess && (
             <div className="mb-4 rounded border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{vocabularySuccess}</div>
@@ -1680,8 +1680,8 @@ export default function AdminDashboard() {
 
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-[#14532d]/15 bg-[#14532d]/5 px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-[#14532d]">{editingVocabulary ? `Đang sửa: ${editingVocabulary.word}` : 'Thêm từ vựng mới'}</p>
-              <p className="text-xs text-gray-600">{editingVocabulary ? 'Chỉnh sửa xong thì bấm cập nhật hoặc hủy để quay lại chế độ thêm mới.' : 'Form này dùng để thêm từ mới cho từng khóa học.'}</p>
+              <p className="text-sm font-semibold text-[#14532d]">{editingVocabulary ? `Editing: ${editingVocabulary.word}` : 'Add a new vocabulary item'}</p>
+              <p className="text-xs text-gray-600">{editingVocabulary ? 'After editing, click update or cancel to return to add mode.' : 'Use this form to add new vocabulary for each course.'}</p>
             </div>
             {editingVocabulary && (
               <button
@@ -1689,7 +1689,7 @@ export default function AdminDashboard() {
                 onClick={resetVocabularyForm}
                 className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white"
               >
-                Hủy sửa
+                Cancel editing
               </button>
             )}
           </div>
@@ -1700,7 +1700,7 @@ export default function AdminDashboard() {
               onChange={(e) => setNewVocabularyCourseId(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
-              <option value="">Chọn khóa học</option>
+              <option value="">Choose a course</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
@@ -1710,7 +1710,7 @@ export default function AdminDashboard() {
               min={1}
               value={newVocabularyOrder}
               onChange={(e) => setNewVocabularyOrder(e.target.value)}
-              placeholder="Thứ tự"
+              placeholder="Order"
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
             <input
@@ -1738,7 +1738,7 @@ export default function AdminDashboard() {
               type="text"
               value={newVocabularyMeaning}
               onChange={(e) => setNewVocabularyMeaning(e.target.value)}
-              placeholder="Nghĩa tiếng Việt"
+              placeholder="Meaning"
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
             <button
@@ -1746,7 +1746,7 @@ export default function AdminDashboard() {
               disabled={savingVocabulary || Boolean(updatingVocabularyId)}
               className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
             >
-              {savingVocabulary ? 'Đang lưu...' : updatingVocabularyId ? 'Đang cập nhật...' : editingVocabulary ? 'Cập nhật từ' : 'Thêm từ'}
+              {savingVocabulary ? 'Saving...' : updatingVocabularyId ? 'Updating...' : editingVocabulary ? 'Update word' : 'Add word'}
             </button>
           </div>
 
@@ -1754,7 +1754,7 @@ export default function AdminDashboard() {
             value={newVocabularyExample}
             onChange={(e) => setNewVocabularyExample(e.target.value)}
             rows={2}
-            placeholder="Ví dụ sử dụng (optional)"
+            placeholder="Usage example (optional)"
             className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
           />
 
@@ -1764,7 +1764,7 @@ export default function AdminDashboard() {
               onChange={(e) => setVocabularyCourseFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
-              <option value="">Tất cả khóa học</option>
+              <option value="">All courses</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
@@ -1773,7 +1773,7 @@ export default function AdminDashboard() {
               onClick={fetchVocabularyData}
               className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
             >
-              Làm mới danh sách
+              Refresh list
             </button>
           </div>
 
@@ -1781,14 +1781,14 @@ export default function AdminDashboard() {
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thứ tự</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Word</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phonetic</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">English definition</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nghĩa</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ví dụ</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Meaning</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Example</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1806,21 +1806,21 @@ export default function AdminDashboard() {
                         onClick={() => startEditVocabulary(item)}
                         className="mr-3 text-[#14532d] hover:text-[#166534] hover:underline"
                       >
-                        Sửa
+                        Edit
                       </button>
                       <button
                         onClick={() => deleteVocabulary(item.id)}
                         disabled={deletingVocabularyId === item.id}
                         className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
                       >
-                        {deletingVocabularyId === item.id ? 'Đang xóa...' : 'Xóa'}
+                        {deletingVocabularyId === item.id ? 'Deleting...' : 'Delete'}
                       </button>
                     </td>
                   </tr>
                 ))}
                 {vocabularyItems.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-3 text-center text-gray-500">Chưa có từ vựng nào theo bộ lọc hiện tại</td>
+                    <td colSpan={8} className="px-4 py-3 text-center text-gray-500">No vocabulary items match the current filter.</td>
                   </tr>
                 )}
               </tbody>
@@ -1831,51 +1831,51 @@ export default function AdminDashboard() {
         {/* Statistics */}
         <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Tổng người dùng</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Total users</h3>
             <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalUsers}</p>
           </div>
           <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Tổng học viên (toàn bộ khóa)</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Total students across all courses</h3>
             <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalStudents}</p>
           </div>
           <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Chờ xác nhận chuyển khoản</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Waiting for payment confirmation</h3>
             <p className="text-3xl font-bold text-gray-900 mt-2">{enrollments.filter((e) => e.status === 'pending').length}</p>
           </div>
           <div className="bg-white rounded shadow p-6 flex flex-col justify-between">
-            <h3 className="text-gray-500 text-sm font-medium">Chi tiết học viên theo khóa</h3>
+            <h3 className="text-gray-500 text-sm font-medium">Students by course</h3>
             <Link
               href="/admin/course-students"
               className="mt-4 inline-flex items-center justify-center px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
             >
-              Xem chi tiết
+              View details
             </Link>
           </div>
         </div>
 
         <div className={`grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <div className="bg-white rounded shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Bảng 1. Người dùng user</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Table 1. User accounts</h2>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Họ tên</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày mở tài khoản</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created on</th>
                   </tr>
                 </thead>
                 <tbody>
                   {usersOverview.map((item) => (
                     <tr key={item.id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-900">{item.name || item.email}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{item.phone || 'Chưa cập nhật'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{item.phone || 'Not updated yet'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(item.createdAt).toLocaleDateString('en-GB')}</td>
                     </tr>
                   ))}
                   {usersOverview.length === 0 && (
                     <tr>
-                      <td colSpan={3} className="px-4 py-3 text-center text-gray-500">Không có user nào</td>
+                      <td colSpan={3} className="px-4 py-3 text-center text-gray-500">No user accounts found.</td>
                     </tr>
                   )}
                 </tbody>
@@ -1884,28 +1884,28 @@ export default function AdminDashboard() {
           </div>
 
           <div className="bg-white rounded shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Bảng 2. Thành viên member</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Table 2. Active members</h2>
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Họ tên</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học phí</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered on</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {membersOverview.map((member) => (
                     <tr key={`${member.id}-${member.courseTitle}`} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-900">{member.name || member.email}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{member.phone || 'Chưa cập nhật'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(member.registeredAt).toLocaleDateString('vi-VN')}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{member.phone || 'Not updated yet'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(member.registeredAt).toLocaleDateString('en-GB')}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{member.courseTitle}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{member.isPaid ? 'Đã đóng' : 'Chưa đóng'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{member.isPaid ? 'Paid' : 'Unpaid'}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{member.submittedHomework}/{member.totalHomework}</td>
                       <td className="px-4 py-3 text-sm">
                         <button
@@ -1913,14 +1913,14 @@ export default function AdminDashboard() {
                           disabled={rejectingUserId === member.id}
                           className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
                         >
-                          {rejectingUserId === member.id ? 'Đang xử lý...' : 'Từ chối thành viên'}
+                          {rejectingUserId === member.id ? 'Processing...' : 'Reject member'}
                         </button>
                       </td>
                     </tr>
                   ))}
                   {membersOverview.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có member đang học</td>
+                      <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No active members found.</td>
                     </tr>
                   )}
                 </tbody>
@@ -1930,13 +1930,13 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quản lý bài tập theo khóa</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Homework Management by Course</h2>
 
           {homeworkSuccess && (
             <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{homeworkSuccess}</div>
           )}
           {homeworkError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Lỗi: {homeworkError}</div>
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Error: {homeworkError}</div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -1945,14 +1945,14 @@ export default function AdminDashboard() {
               onChange={(e) => setNewHomeworkCourseId(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
-              <option value="">Chọn khóa học</option>
+              <option value="">Choose a course</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
             </select>
             <input
               type="text"
-              placeholder="Tên bài tập"
+              placeholder="Homework title"
               value={newHomeworkTitle}
               onChange={(e) => setNewHomeworkTitle(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
@@ -1969,12 +1969,12 @@ export default function AdminDashboard() {
               onClick={createHomework}
               className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
             >
-              Tạo bài tập
+              Create homework
             </button>
           </div>
 
           <textarea
-            placeholder="Mô tả bài tập"
+            placeholder="Homework description"
             value={newHomeworkDescription}
             onChange={(e) => setNewHomeworkDescription(e.target.value)}
             rows={3}
@@ -1985,12 +1985,12 @@ export default function AdminDashboard() {
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên bài tập</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hạn nộp</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Đã nộp</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submissions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1998,18 +1998,18 @@ export default function AdminDashboard() {
                   <tr key={homework.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{homework.course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{homework.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{homework.description || 'Không có mô tả'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{new Date(homework.dueDate).toLocaleDateString('vi-VN')}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{homework.description || 'No description'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{new Date(homework.dueDate).toLocaleDateString('en-GB')}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{homework._count.submissions}</td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex items-center gap-3">
-                        <button onClick={() => openEditHomework(homework)} className="text-[#14532d] hover:underline">Sửa</button>
+                        <button onClick={() => openEditHomework(homework)} className="text-[#14532d] hover:underline">Edit</button>
                         <button
                           onClick={() => deleteHomework(homework)}
                           disabled={deletingHomeworkId === homework.id}
                           className="text-red-600 hover:underline disabled:opacity-50"
                         >
-                          {deletingHomeworkId === homework.id ? 'Đang xóa...' : 'Xóa'}
+                          {deletingHomeworkId === homework.id ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
                     </td>
@@ -2017,7 +2017,7 @@ export default function AdminDashboard() {
                 ))}
                 {homeworks.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có bài tập nào</td>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No homework has been created yet.</td>
                   </tr>
                 )}
               </tbody>
@@ -2026,7 +2026,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Bài nộp của học viên và nhận xét giáo viên</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Student Submissions and Teacher Feedback</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <select
@@ -2037,7 +2037,7 @@ export default function AdminDashboard() {
               }}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
-              <option value="">Tất cả khóa học</option>
+              <option value="">All courses</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
@@ -2048,7 +2048,7 @@ export default function AdminDashboard() {
               onChange={(e) => setHomeworkSubmissionHomeworkFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
-              <option value="">Tất cả bài tập</option>
+              <option value="">All homework</option>
               {homeworks
                 .filter((homework) => !homeworkSubmissionCourseFilter || homework.courseId === homeworkSubmissionCourseFilter)
                 .map((homework) => (
@@ -2060,7 +2060,7 @@ export default function AdminDashboard() {
               onClick={fetchHomeworkSubmissions}
               className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
             >
-              Làm mới danh sách nộp bài
+              Refresh submission list
             </button>
           </div>
 
@@ -2068,30 +2068,30 @@ export default function AdminDashboard() {
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài làm học viên</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày nộp</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nhận xét giáo viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submission</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted on</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teacher feedback</th>
                 </tr>
               </thead>
               <tbody>
                 {homeworkSubmissions.map((submission) => (
                   <tr key={submission.id} className="border-b align-top">
                     <td className="px-4 py-3 text-sm text-gray-900">{submission.user.name || submission.user.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{submission.user.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{submission.user.phone || 'Not updated yet'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-pre-wrap">{submission.note || 'Không có nội dung'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(submission.submittedAt).toLocaleString('vi-VN')}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-pre-wrap">{submission.note || 'No content'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(submission.submittedAt).toLocaleString('en-GB')}</td>
                     <td className="px-4 py-3 text-sm">
                       <textarea
                         value={homeworkTeacherComments[submission.id] || ''}
                         onChange={(e) => setHomeworkTeacherComments((current) => ({ ...current, [submission.id]: e.target.value }))}
                         rows={3}
-                        placeholder="Nhập nhận xét cho học viên"
+                        placeholder="Enter feedback for the student"
                         className="w-72 max-w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
                       <button
@@ -2099,14 +2099,14 @@ export default function AdminDashboard() {
                         disabled={savingHomeworkCommentId === submission.id}
                         className="mt-2 block px-3 py-1.5 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                       >
-                        {savingHomeworkCommentId === submission.id ? 'Đang lưu...' : 'Lưu nhận xét'}
+                        {savingHomeworkCommentId === submission.id ? 'Saving...' : 'Save feedback'}
                       </button>
                     </td>
                   </tr>
                 ))}
                 {homeworkSubmissions.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có bài nộp nào theo bộ lọc hiện tại</td>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No submissions match the current filter.</td>
                   </tr>
                 )}
               </tbody>
@@ -2115,29 +2115,29 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Tạo Exercise trắc nghiệm</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Multiple-Choice Exercises</h2>
 
           {exerciseSuccess && (
             <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{exerciseSuccess}</div>
           )}
           {exerciseError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Lỗi: {exerciseError}</div>
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Error: {exerciseError}</div>
           )}
 
           <div className="mb-6 rounded border border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3 text-sm text-[#14532d]">
-            Tổng số Exercise đã tạo: <span className="font-semibold">{exercises.length}</span>
+            Total exercises created: <span className="font-semibold">{exercises.length}</span>
           </div>
 
           <div className="mb-8 overflow-x-auto">
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số câu</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Questions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -2147,20 +2147,20 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-900">Exercise {exercise.order}</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`rounded px-2 py-1 text-xs font-semibold ${exercise.isDraft ? 'bg-amber-100 text-amber-800' : 'bg-[#14532d]/10 text-[#14532d]'}`}>
-                        {exercise.isDraft ? 'Nháp' : 'Đã xuất bản'}
+                        {exercise.isDraft ? 'Draft' : 'Published'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{exercise.description || 'Chưa có mô tả'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{exercise.description || 'No description yet'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.questions.length}</td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex items-center gap-3">
-                        <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Sửa</button>
+                        <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Edit</button>
                         <button
                           onClick={() => deleteExercise(exercise)}
                           disabled={deletingExerciseId === exercise.id}
                           className="text-red-600 hover:underline disabled:opacity-50"
                         >
-                          {deletingExerciseId === exercise.id ? 'Đang xóa...' : 'Xóa'}
+                          {deletingExerciseId === exercise.id ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
                     </td>
@@ -2168,7 +2168,7 @@ export default function AdminDashboard() {
                 ))}
                 {exercises.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Chưa có exercise nào</td>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No exercises yet</td>
                   </tr>
                 )}
               </tbody>
@@ -2185,7 +2185,7 @@ export default function AdminDashboard() {
               }}
               className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
             >
-              {showExerciseBuilder ? 'Thu gọn form Exercise' : 'Tạo Exercise'}
+              {showExerciseBuilder ? 'Hide exercise form' : 'Create exercise'}
             </button>
 
               <div className="flex flex-wrap items-center gap-2">
@@ -2193,7 +2193,7 @@ export default function AdminDashboard() {
                   type="url"
                   value={newExerciseSourceFormUrl}
                   onChange={(e) => setNewExerciseSourceFormUrl(e.target.value)}
-                  placeholder="Dán link Google Form (viewform)"
+                  placeholder="Paste Google Form link (viewform)"
                   className="w-80 max-w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <button
@@ -2202,7 +2202,7 @@ export default function AdminDashboard() {
                   disabled={importingForm}
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {importingForm ? 'Đang import...' : 'Import từ Google Form'}
+                  {importingForm ? 'Importing...' : 'Import from Google Form'}
                 </button>
               </div>
 
@@ -2215,7 +2215,7 @@ export default function AdminDashboard() {
                 }}
                 className="px-6 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-medium"
               >
-                Làm mới form
+                Reset form
               </button>
             )}
           </div>
@@ -2223,13 +2223,13 @@ export default function AdminDashboard() {
           {showExerciseBuilder && (
             <>
               <div className="mb-6 flex flex-col gap-2 max-w-sm">
-                <label className="text-sm font-medium text-gray-700">Khóa học</label>
+                <label className="text-sm font-medium text-gray-700">Course</label>
                 <select
                   value={newExerciseCourseId}
                   onChange={(e) => setNewExerciseCourseId(e.target.value)}
                   className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 >
-                  <option value="">Chọn khóa học</option>
+                  <option value="">Select course</option>
                   {courses.map((course) => (
                     <option key={course.id} value={course.id}>{course.title}</option>
                   ))}
@@ -2237,12 +2237,12 @@ export default function AdminDashboard() {
               </div>
 
               <div className="mb-6">
-                <label className="mb-2 block text-sm font-medium text-gray-700">Mô tả Exercise</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
                 <textarea
                   value={newExerciseDescription}
                   onChange={(e) => setNewExerciseDescription(e.target.value)}
                   rows={3}
-                  placeholder="Ví dụ: Luyện tập phụ âm /th/ và phân biệt âm gần giống"
+                  placeholder="Example: Practice the /th/ sound and compare similar sounds"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
               </div>
@@ -2250,34 +2250,34 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 {newExerciseQuestions.map((question, index) => (
                   <div key={`new-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
-                    <h3 className="font-bold text-[#14532d] mb-3">Câu {index + 1}</h3>
+                    <h3 className="font-bold text-[#14532d] mb-3">Question {index + 1}</h3>
                     <div className="space-y-3">
                       <textarea
                         value={question.question}
                         onChange={(e) => updateNewExerciseQuestion(index, 'question', e.target.value)}
                         rows={2}
-                        placeholder="Nhập câu hỏi"
+                        placeholder="Enter the question"
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
                       <input
                         type="text"
                         value={question.optionA}
                         onChange={(e) => updateNewExerciseQuestion(index, 'optionA', e.target.value)}
-                        placeholder="Đáp án A"
+                        placeholder="Answer A"
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
                       <input
                         type="text"
                         value={question.optionB}
                         onChange={(e) => updateNewExerciseQuestion(index, 'optionB', e.target.value)}
-                        placeholder="Đáp án B"
+                        placeholder="Answer B"
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
                       <input
                         type="text"
                         value={question.optionC}
                         onChange={(e) => updateNewExerciseQuestion(index, 'optionC', e.target.value)}
-                        placeholder="Đáp án C"
+                        placeholder="Answer C"
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
                       <select
@@ -2285,9 +2285,9 @@ export default function AdminDashboard() {
                         onChange={(e) => updateNewExerciseQuestion(index, 'correctOption', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       >
-                        <option value="A">Đáp án đúng: A</option>
-                        <option value="B">Đáp án đúng: B</option>
-                        <option value="C">Đáp án đúng: C</option>
+                        <option value="A">Correct answer: A</option>
+                        <option value="B">Correct answer: B</option>
+                        <option value="C">Correct answer: C</option>
                       </select>
                     </div>
                   </div>
@@ -2299,7 +2299,7 @@ export default function AdminDashboard() {
                 disabled={savingExerciseDraft || publishingExercise}
                 className="mt-6 mr-3 px-6 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 font-medium disabled:opacity-50"
               >
-                {savingExerciseDraft ? 'Đang lưu nháp...' : 'Save bản nháp'}
+                {savingExerciseDraft ? 'Saving draft...' : 'Save draft'}
               </button>
 
               <button
@@ -2307,26 +2307,26 @@ export default function AdminDashboard() {
                 disabled={savingExerciseDraft || publishingExercise}
                 className="mt-6 px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium disabled:opacity-50"
               >
-                {publishingExercise ? 'Đang xuất bản...' : 'Xuất bản Exercise'}
+                {publishingExercise ? 'Publishing...' : 'Publish exercise'}
               </button>
             </>
           )}
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Kết quả Exercise của học viên</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Student exercise results</h2>
 
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Điểm</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian làm</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian nộp</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chi tiết</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
                 </tr>
               </thead>
               <tbody>
@@ -2339,13 +2339,13 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-700">{formatDuration(result.durationSeconds)}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">{new Date(result.submittedAt).toLocaleString('vi-VN')}</td>
                     <td className="px-4 py-3 text-sm">
-                      <button onClick={() => setSelectedExerciseResult(result)} className="text-[#14532d] hover:underline">Xem bài làm</button>
+                      <button onClick={() => setSelectedExerciseResult(result)} className="text-[#14532d] hover:underline">View submission</button>
                     </td>
                   </tr>
                 ))}
                 {exerciseResults.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có học viên nào nộp exercise</td>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No student submissions yet</td>
                   </tr>
                 )}
               </tbody>
@@ -2354,13 +2354,13 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'lectureNote' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Lecture Notes theo từng khóa học</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Lecture notes by course</h2>
 
           {lectureSuccess && (
             <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{lectureSuccess}</div>
           )}
           {lectureError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Lỗi: {lectureError}</div>
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Error: {lectureError}</div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -2373,7 +2373,7 @@ export default function AdminDashboard() {
               }}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
-              <option value="">Chọn khóa học</option>
+              <option value="">Select course</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
@@ -2385,7 +2385,7 @@ export default function AdminDashboard() {
               max={30}
               value={newLectureSession}
               onChange={(e) => setNewLectureSession(e.target.value)}
-              placeholder="Buổi học (1-30)"
+              placeholder="Session number (1-30)"
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
 
@@ -2401,7 +2401,7 @@ export default function AdminDashboard() {
               onClick={createLectureNote}
               className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
             >
-              Thêm tài liệu
+              Add note
             </button>
           </div>
 
@@ -2409,10 +2409,10 @@ export default function AdminDashboard() {
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Buổi học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Session</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Google Drive link</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cập nhật</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Updated</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -2430,7 +2430,7 @@ export default function AdminDashboard() {
                           placeholder="1-30"
                         />
                       ) : (
-                        <>Buổi {note.sessionNumber}</>
+                        <>Session {note.sessionNumber}</>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
@@ -2447,7 +2447,7 @@ export default function AdminDashboard() {
                           {note.driveLink}
                         </a>
                       ) : (
-                        <span className="text-gray-400">Chưa có link</span>
+                        <span className="text-gray-400">No link yet</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">{new Date(note.updatedAt).toLocaleString('vi-VN')}</td>
@@ -2459,7 +2459,7 @@ export default function AdminDashboard() {
                             disabled={savingLectureId === note.id}
                             className="px-3 py-1.5 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                           >
-                            Lưu
+                            Save
                           </button>
                           <button
                             onClick={() => {
@@ -2469,7 +2469,7 @@ export default function AdminDashboard() {
                             }}
                             className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
                           >
-                            Hủy
+                            Cancel
                           </button>
                         </div>
                       ) : (
@@ -2482,14 +2482,14 @@ export default function AdminDashboard() {
                             }}
                             className="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700"
                           >
-                            Sửa
+                            Edit
                           </button>
                           <button
                             onClick={() => deleteLectureNote(note.id)}
                             disabled={deletingLectureId === note.id}
                             className="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
                           >
-                            {deletingLectureId === note.id ? 'Đang xóa...' : 'Xóa'}
+                            {deletingLectureId === note.id ? 'Deleting...' : 'Delete'}
                           </button>
                         </div>
                       )}
@@ -2498,7 +2498,7 @@ export default function AdminDashboard() {
                 ))}
                 {lectureNotes.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-4 py-3 text-center text-gray-500">Chưa có lecture notes cho khóa học này</td>
+                    <td colSpan={4} className="px-4 py-3 text-center text-gray-500">No lecture notes for this course yet</td>
                   </tr>
                 )}
               </tbody>
@@ -2511,7 +2511,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-4">
             <input
               type="text"
-              placeholder="Tìm kiếm học viên (tên, email hoặc SĐT)..."
+              placeholder="Search students by name, email, or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
@@ -2520,7 +2520,7 @@ export default function AdminDashboard() {
               onClick={fetchStudents}
               className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
             >
-              Làm mới
+              Refresh
             </button>
           </div>
         </div>
@@ -2528,7 +2528,7 @@ export default function AdminDashboard() {
         {/* Error Message */}
         {activeSection === 'course' && error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-8">
-            Lỗi: {error}
+            Error: {error}
           </div>
         )}
 
@@ -2538,32 +2538,32 @@ export default function AdminDashboard() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tên</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bài tập</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {loading ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      Đang tải...
+                      Loading...
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      Không tìm thấy học viên
+                      No students found
                     </td>
                   </tr>
                 ) : (
                   filteredStudents.map(student => (
                     <tr key={student.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">{student.name || 'N/A'}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{student.phone || 'Chưa cập nhật'}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{student.phone || 'Not updated'}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">{student.email}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{student.assignmentCount}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">
@@ -2575,13 +2575,13 @@ export default function AdminDashboard() {
                             href={`/admin/student/${student.id}`}
                             className="text-[#14532d] hover:text-[#14532d] hover:underline"
                           >
-                            Chi tiết
+                            Details
                           </Link>
                           <button
                             onClick={() => setDeleteConfirm({ id: student.id, name: student.name || student.email })}
                             className="text-red-600 hover:text-red-800 hover:underline"
                           >
-                            Xóa
+                            Delete
                           </button>
                         </div>
                       </td>
@@ -2597,9 +2597,9 @@ export default function AdminDashboard() {
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded shadow-lg p-6 max-w-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Xác nhận xóa học viên</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm student deletion</h3>
               <p className="text-gray-700 mb-6">
-                Bạn có chắc chắn muốn xóa <strong>{deleteConfirm.name}</strong>? Thao tác này không thể hoàn tác.
+                Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-end">
                 <button
@@ -2607,14 +2607,14 @@ export default function AdminDashboard() {
                   disabled={deleting}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   onClick={() => deleteStudent(deleteConfirm.id)}
                   disabled={deleting}
                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
                 >
-                  {deleting ? 'Đang xóa...' : 'Xóa'}
+                  {deleting ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>
@@ -2624,7 +2624,7 @@ export default function AdminDashboard() {
         {/* Course Management Section */}
         <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Quản lý <span className="text-amber-600">Khóa học</span>
+            Manage <span className="text-amber-600">Courses</span>
           </h2>
           
           {courseSuccess && (
@@ -2635,25 +2635,25 @@ export default function AdminDashboard() {
           
           {courseError && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">
-              Lỗi: {courseError}
+              Error: {courseError}
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-gray-700">Tên khóa học</span>
+              <span className="text-sm font-medium text-gray-700">Course title</span>
               <input
                 type="text"
-                placeholder="Tên khóa học"
+                placeholder="Course title"
                 value={newCourseTitle}
                 onChange={(e) => setNewCourseTitle(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
               />
             </label>
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-gray-700">Mô tả khóa học</span>
+              <span className="text-sm font-medium text-gray-700">Course description</span>
               <textarea
-                placeholder="Mô tả khóa học"
+                placeholder="Course description"
                 value={newCourseDescription}
                 onChange={(e) => setNewCourseDescription(e.target.value)}
                 rows={2}
@@ -2661,7 +2661,7 @@ export default function AdminDashboard() {
               />
             </label>
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-gray-700">Hạn đăng ký</span>
+              <span className="text-sm font-medium text-gray-700">Registration deadline</span>
               <input
                 type="text"
                 value={newDeadline}
@@ -2672,7 +2672,7 @@ export default function AdminDashboard() {
               />
             </label>
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-gray-700">Số lượng học viên tối đa</span>
+              <span className="text-sm font-medium text-gray-700">Maximum students</span>
               <input
                 type="number"
                 min={1}
@@ -2682,14 +2682,14 @@ export default function AdminDashboard() {
                 onChange={(e) => setNewCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
               />
-              <span className="text-xs text-gray-500">Mỗi khóa học tối đa 10 học viên.</span>
+              <span className="text-xs text-gray-500">Each course supports up to 10 students.</span>
             </label>
             <div className="flex items-end">
               <button
                 onClick={publishCourse}
                 className="w-full px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
               >
-                Xuất bản Khóa học
+                Publish course
               </button>
             </div>
           </div>
@@ -2698,23 +2698,23 @@ export default function AdminDashboard() {
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mô tả</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hạn đăng ký</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registration deadline</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số chỗ</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tiến độ khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái công khai</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thành công</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chờ chuyển khoản</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tổng</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Progress</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Visibility</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Successful</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Awaiting transfer</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {courses.map((course) => (
                   <tr key={course.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{course.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{course.description || 'Chưa có mô tả'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">{course.description || 'No description yet'}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                     </td>
@@ -2722,7 +2722,7 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-900">
                       <div className="w-40">
                         <div className="mb-1 flex items-center justify-between text-xs text-gray-600">
-                          <span>{course.completedSessions}/30 buổi</span>
+                          <span>{course.completedSessions}/30 sessions</span>
                           <span>{Math.round((Math.min(30, Math.max(0, course.completedSessions)) / 30) * 100)}%</span>
                         </div>
                         <div className="h-2 w-full overflow-hidden rounded bg-gray-200">
@@ -2737,7 +2737,7 @@ export default function AdminDashboard() {
                       <span className={`px-2 py-1 rounded text-xs font-medium ${
                         course.isPublished ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-gray-200 text-gray-700'
                       }`}>
-                        {course.isPublished ? 'Đang công khai' : 'Đã hủy khai giảng'}
+                        {course.isPublished ? 'Public' : 'Unpublished'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">
@@ -2753,7 +2753,7 @@ export default function AdminDashboard() {
                           onClick={() => openEditCourse(course)}
                           className="text-[#14532d] hover:text-[#14532d] hover:underline"
                         >
-                          Sửa
+                          Edit
                         </button>
                         {course.isPublished && (
                           <button
@@ -2761,7 +2761,7 @@ export default function AdminDashboard() {
                             disabled={savingCourseId === course.id}
                             className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
                           >
-                            {savingCourseId === course.id ? 'Đang xử lý...' : 'Hủy khai giảng'}
+                            {savingCourseId === course.id ? 'Processing...' : 'Unpublish'}
                           </button>
                         )}
                       </div>
@@ -2771,7 +2771,7 @@ export default function AdminDashboard() {
                 {courses.length === 0 && (
                   <tr>
                     <td colSpan={10} className="px-4 py-3 text-center text-gray-500">
-                      Chưa có khóa học nào
+                      No courses yet
                     </td>
                   </tr>
                 )}
@@ -2783,21 +2783,21 @@ export default function AdminDashboard() {
         {editingCourse && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded shadow-lg p-6 max-w-lg w-full">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Sửa thông tin khóa học</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit course details</h3>
 
               <div className="space-y-4">
                 <input
                   type="text"
                   value={editCourseTitle}
                   onChange={(e) => setEditCourseTitle(e.target.value)}
-                  placeholder="Tên khóa học"
+                  placeholder="Course title"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <textarea
                   value={editCourseDescription}
                   onChange={(e) => setEditCourseDescription(e.target.value)}
                   rows={4}
-                  placeholder="Mô tả khóa học"
+                  placeholder="Course description"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <input
@@ -2809,7 +2809,7 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-gray-700">Số lượng học viên tối đa</span>
+                  <span className="mb-2 block text-sm font-medium text-gray-700">Maximum students</span>
                   <input
                     type="number"
                     min={1}
@@ -2821,14 +2821,14 @@ export default function AdminDashboard() {
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-gray-700">Số buổi đã hoàn thành (0-30)</span>
+                  <span className="mb-2 block text-sm font-medium text-gray-700">Completed sessions (0-30)</span>
                   <input
                     type="number"
                     min={0}
                     max={30}
                     value={editCourseCompletedSessions}
                     onChange={(e) => setEditCourseCompletedSessions(Math.min(30, Math.max(0, Number(e.target.value) || 0)))}
-                    placeholder="Từ 0 đến 30"
+                    placeholder="From 0 to 30"
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   />
                 </label>
@@ -2840,14 +2840,14 @@ export default function AdminDashboard() {
                   disabled={savingCourseId === editingCourse.id}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   onClick={saveEditedCourse}
                   disabled={savingCourseId === editingCourse.id}
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
-                  {savingCourseId === editingCourse.id ? 'Đang lưu...' : 'Lưu thay đổi'}
+                  {savingCourseId === editingCourse.id ? 'Saving...' : 'Save changes'}
                 </button>
               </div>
             </div>
@@ -2857,7 +2857,7 @@ export default function AdminDashboard() {
         {editingHomework && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded shadow-lg p-6 max-w-lg w-full">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Sửa bài tập</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit homework</h3>
 
               <div className="space-y-4">
                 <select
@@ -2873,14 +2873,14 @@ export default function AdminDashboard() {
                   type="text"
                   value={editHomeworkTitle}
                   onChange={(e) => setEditHomeworkTitle(e.target.value)}
-                  placeholder="Tên bài tập"
+                  placeholder="Homework title"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <textarea
                   value={editHomeworkDescription}
                   onChange={(e) => setEditHomeworkDescription(e.target.value)}
                   rows={3}
-                  placeholder="Mô tả bài tập"
+                  placeholder="Homework description"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <input
@@ -2899,14 +2899,14 @@ export default function AdminDashboard() {
                   disabled={savingHomeworkId === editingHomework.id}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   onClick={saveEditedHomework}
                   disabled={savingHomeworkId === editingHomework.id}
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
-                  {savingHomeworkId === editingHomework.id ? 'Đang lưu...' : 'Lưu thay đổi'}
+                  {savingHomeworkId === editingHomework.id ? 'Saving...' : 'Save changes'}
                 </button>
               </div>
             </div>
@@ -2916,10 +2916,10 @@ export default function AdminDashboard() {
         {editingExercise && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Sửa Exercise {editingExercise.order}</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit Exercise {editingExercise.order}</h3>
 
               <div className="mb-6">
-                <label className="mb-2 block text-sm font-medium text-gray-700">Mô tả Exercise</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
                 <textarea
                   value={editExerciseDescription}
                   onChange={(e) => setEditExerciseDescription(e.target.value)}
@@ -2931,7 +2931,7 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 {editExerciseQuestions.map((question, index) => (
                   <div key={`edit-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
-                    <h4 className="font-bold text-[#14532d] mb-3">Câu {index + 1}</h4>
+                    <h4 className="font-bold text-[#14532d] mb-3">Question {index + 1}</h4>
                     <div className="space-y-3">
                       <textarea
                         value={question.question}
@@ -2962,9 +2962,9 @@ export default function AdminDashboard() {
                         onChange={(e) => updateEditExerciseQuestion(index, 'correctOption', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       >
-                        <option value="A">Đáp án đúng: A</option>
-                        <option value="B">Đáp án đúng: B</option>
-                        <option value="C">Đáp án đúng: C</option>
+                        <option value="A">Correct answer: A</option>
+                        <option value="B">Correct answer: B</option>
+                        <option value="C">Correct answer: C</option>
                       </select>
                     </div>
                   </div>
@@ -2977,14 +2977,14 @@ export default function AdminDashboard() {
                   disabled={savingExerciseId === editingExercise.id}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   onClick={saveEditedExercise}
                   disabled={savingExerciseId === editingExercise.id}
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
-                  {savingExerciseId === editingExercise.id ? 'Đang lưu...' : 'Lưu thay đổi'}
+                  {savingExerciseId === editingExercise.id ? 'Saving...' : 'Save changes'}
                 </button>
               </div>
             </div>
@@ -2996,10 +2996,10 @@ export default function AdminDashboard() {
             <div className="bg-white rounded shadow-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Bài làm Exercise {selectedExerciseResult.exerciseOrder}</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Exercise submission {selectedExerciseResult.exerciseOrder}</h3>
                   <p className="text-sm text-gray-600">{selectedExerciseResult.user.name || selectedExerciseResult.user.email} - {selectedExerciseResult.courseTitle}</p>
-                  <p className="mt-1 text-sm font-semibold text-[#14532d]">Điểm: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
-                  <p className="mt-1 text-sm text-gray-600">Thời gian làm bài: {formatDuration(selectedExerciseResult.durationSeconds)}</p>
+                  <p className="mt-1 text-sm font-semibold text-[#14532d]">Score: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
+                  <p className="mt-1 text-sm text-gray-600">Time spent: {formatDuration(selectedExerciseResult.durationSeconds)}</p>
                 </div>
                 <button
                   onClick={() => setSelectedExerciseResult(null)}
@@ -3015,10 +3015,10 @@ export default function AdminDashboard() {
                     <p className="font-semibold text-gray-900">{answer.question.order}. {answer.question.question}</p>
                     <div className="mt-3 grid gap-3 md:grid-cols-2">
                       <div className={`rounded-lg px-4 py-3 text-sm ${answer.isCorrect ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-red-50 text-red-700'}`}>
-                        Học viên chọn: {answer.selectedOption}
+                        Student selected: {answer.selectedOption}
                       </div>
                       <div className="rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-700">
-                        Đáp án đúng: {answer.question.correctOption}
+                        Correct answer: {answer.question.correctOption}
                       </div>
                     </div>
                   </div>
@@ -3031,9 +3031,9 @@ export default function AdminDashboard() {
         {confirmUnpublish && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded shadow-lg p-6 max-w-md w-full">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Hủy khai giảng khóa học</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Unpublish course</h3>
               <p className="text-gray-700 mb-6">
-                Bạn có chắc chắn muốn hủy khai giảng khóa học <strong>{confirmUnpublish.title}</strong>? Khóa học sẽ không còn hiển thị công khai cho học viên.
+                Are you sure you want to unpublish <strong>{confirmUnpublish.title}</strong>? Students will no longer see this course publicly.
               </p>
 
               <div className="flex justify-end gap-3">
@@ -3042,14 +3042,14 @@ export default function AdminDashboard() {
                   disabled={savingCourseId === confirmUnpublish.id}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   onClick={() => unpublishCourse(confirmUnpublish.id, confirmUnpublish.title)}
                   disabled={savingCourseId === confirmUnpublish.id}
                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
                 >
-                  {savingCourseId === confirmUnpublish.id ? 'Đang xử lý...' : 'Xác nhận'}
+                  {savingCourseId === confirmUnpublish.id ? 'Processing...' : 'Confirm'}
                 </button>
               </div>
             </div>
@@ -3059,34 +3059,34 @@ export default function AdminDashboard() {
         {/* Enrollments Management Section */}
         <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Đăng ký <span className="text-amber-600">Khóa học</span>
+            <span className="text-amber-600">Course</span> enrollments
           </h2>
           
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nội dung CK</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transfer code</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày đăng ký</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {enrollments.map((enrollment) => (
                   <tr key={enrollment.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{enrollment.user.name || enrollment.user.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{enrollment.user.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{enrollment.user.phone || 'Not updated'}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{enrollment.course.title}</td>
-                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{enrollment.referenceCode || 'Chưa có mã'}</td>
+                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{enrollment.referenceCode || 'No code yet'}</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-medium ${
                         enrollment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-[#14532d]/10 text-[#14532d]'
                       }`}>
-                        {enrollment.status === 'pending' ? 'Chờ thanh toán' : 'Đã nhận thanh toán'}
+                        {enrollment.status === 'pending' ? 'Awaiting payment' : 'Payment received'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
@@ -3104,7 +3104,7 @@ export default function AdminDashboard() {
                             disabled={updatingEnrollmentId === enrollment.id}
                             className="text-amber-700 hover:text-amber-900 hover:underline"
                           >
-                            {updatingEnrollmentId === enrollment.id ? 'Đang cập nhật...' : 'Xác nhận đã nhận CK'}
+                            {updatingEnrollmentId === enrollment.id ? 'Updating...' : 'Confirm transfer received'}
                           </button>
                         )}
                         <button
@@ -3112,7 +3112,7 @@ export default function AdminDashboard() {
                           disabled={rejectingUserId === enrollment.user.id}
                           className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
                         >
-                          {rejectingUserId === enrollment.user.id ? 'Đang xử lý...' : 'Từ chối học viên'}
+                          {rejectingUserId === enrollment.user.id ? 'Processing...' : 'Reject student'}
                         </button>
                       </div>
                     </td>
@@ -3121,7 +3121,7 @@ export default function AdminDashboard() {
                 {enrollments.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-3 text-center text-gray-500">
-                      Chưa có đăng ký nào
+                      No enrollments yet
                     </td>
                   </tr>
                 )}
@@ -3133,14 +3133,14 @@ export default function AdminDashboard() {
         {confirmPayment && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded shadow-lg p-6 max-w-md w-full">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Xác nhận thanh toán</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Confirm payment</h3>
               <p className="text-gray-700 mb-2">
-                Học viên: <strong>{confirmPayment.studentName}</strong>
+                Student: <strong>{confirmPayment.studentName}</strong>
               </p>
               <p className="text-gray-700 mb-4">
-                Khóa học: <strong>{confirmPayment.courseTitle}</strong>
+                Course: <strong>{confirmPayment.courseTitle}</strong>
               </p>
-              <p className="text-gray-800 mb-6">Bạn đã nhận được thanh toán chưa?</p>
+              <p className="text-gray-800 mb-6">Have you received the payment?</p>
 
               <div className="flex justify-end gap-3">
                 <button
@@ -3148,14 +3148,14 @@ export default function AdminDashboard() {
                   disabled={updatingEnrollmentId === confirmPayment.id}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   onClick={() => confirmBankTransfer(confirmPayment.id)}
                   disabled={updatingEnrollmentId === confirmPayment.id}
                   className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 disabled:opacity-50"
                 >
-                  {updatingEnrollmentId === confirmPayment.id ? 'Đang xử lý...' : 'OK'}
+                  {updatingEnrollmentId === confirmPayment.id ? 'Processing...' : 'OK'}
                 </button>
               </div>
             </div>

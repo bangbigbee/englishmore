@@ -65,7 +65,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   if (maxStudents !== undefined) {
     const parsedMaxStudents = Number(maxStudents)
     if (!Number.isInteger(parsedMaxStudents) || parsedMaxStudents < 1 || parsedMaxStudents > 10) {
-      return NextResponse.json({ error: 'Số lượng chỗ phải là số nguyên từ 1 đến 10' }, { status: 400 })
+      return NextResponse.json({ error: 'Seat count must be an integer between 1 and 10' }, { status: 400 })
     }
     data.maxStudents = parsedMaxStudents
   }
@@ -73,7 +73,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   if (completedSessions !== undefined) {
     const parsedCompletedSessions = Number(completedSessions)
     if (!Number.isInteger(parsedCompletedSessions) || parsedCompletedSessions < 0 || parsedCompletedSessions > 30) {
-      return NextResponse.json({ error: 'Tiến độ khóa học phải là số nguyên từ 0 đến 30' }, { status: 400 })
+      return NextResponse.json({ error: 'Course progress must be an integer between 0 and 30' }, { status: 400 })
     }
     data.completedSessions = parsedCompletedSessions
   }

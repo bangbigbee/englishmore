@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
   const parsedMaxStudents = Number(maxStudents ?? 10)
   if (!Number.isInteger(parsedMaxStudents) || parsedMaxStudents < 1 || parsedMaxStudents > 10) {
-    return NextResponse.json({ error: 'Số lượng chỗ phải là số nguyên từ 1 đến 10' }, { status: 400 })
+    return NextResponse.json({ error: 'Seat count must be an integer between 1 and 10' }, { status: 400 })
   }
 
   const course = await prisma.course.create({

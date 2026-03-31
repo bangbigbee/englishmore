@@ -16,30 +16,30 @@ export async function POST(request: NextRequest) {
     const normalizedPhone = String(phone || '').trim()
 
     if (!normalizedName || !normalizedEmail || !normalizedPhone || !password || !confirmPassword) {
-      return NextResponse.json({ error: 'Vui lòng điền đầy đủ thông tin' }, { status: 400 })
+      return NextResponse.json({ error: 'Please fill in all required fields' }, { status: 400 })
     }
 
     if (password.length < 6) {
-      return NextResponse.json({ error: 'Mật khẩu phải có ít nhất 6 ký tự' }, { status: 400 })
+      return NextResponse.json({ error: 'Password must be at least 6 characters long' }, { status: 400 })
     }
 
     if (password !== confirmPassword) {
-      return NextResponse.json({ error: 'Xác nhận mật khẩu không khớp' }, { status: 400 })
+      return NextResponse.json({ error: 'Password confirmation does not match' }, { status: 400 })
     }
 
     const phonePattern = /^[0-9+\-\s]{9,15}$/
     if (!phonePattern.test(normalizedPhone)) {
-      return NextResponse.json({ error: 'Số điện thoại không hợp lệ' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid phone number' }, { status: 400 })
     }
 
     const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } })
     if (existingUser) {
-      return NextResponse.json({ error: 'Email này đã được sử dụng' }, { status: 409 })
+      return NextResponse.json({ error: 'This email is already in use' }, { status: 409 })
     }
 
     const existingPhone = await prisma.user.findFirst({ where: { phone: normalizedPhone } })
     if (existingPhone) {
-      return NextResponse.json({ error: 'Số điện thoại này đã được sử dụng' }, { status: 409 })
+      return NextResponse.json({ error: 'This phone number is already in use' }, { status: 409 })
     }
 
     // Remove any existing OTP tokens for this email
@@ -61,6 +61,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('send-otp error:', error)
-    return NextResponse.json({ error: 'Gửi OTP thất bại, thử lại sau.' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to send OTP. Please try again later.' }, { status: 500 })
   }
 }

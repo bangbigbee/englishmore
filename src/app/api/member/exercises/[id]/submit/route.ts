@@ -42,7 +42,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     : null
 
   if (!answers) {
-    return NextResponse.json({ error: 'Danh sách đáp án không hợp lệ' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid answer list' }, { status: 400 })
   }
 
   const activeEnrollment = await prisma.enrollment.findFirst({
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   })
 
   if (!activeEnrollment) {
-    return NextResponse.json({ error: 'Bạn chưa có khóa học đang hoạt động' }, { status: 400 })
+    return NextResponse.json({ error: 'You do not have an active course yet' }, { status: 400 })
   }
 
   const exercise = await prisma.courseExercise.findFirst({
@@ -74,23 +74,23 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   })
 
   if (!exercise) {
-    return NextResponse.json({ error: 'Exercise không hợp lệ với khóa học của bạn' }, { status: 404 })
+    return NextResponse.json({ error: 'This exercise does not belong to your course' }, { status: 404 })
   }
 
   if (answers.length !== exercise.questions.length) {
-    return NextResponse.json({ error: `Bạn cần chọn đủ ${exercise.questions.length} đáp án trước khi nộp bài` }, { status: 400 })
+    return NextResponse.json({ error: `Please select all ${exercise.questions.length} answers before submitting` }, { status: 400 })
   }
 
   const answerMap = new Map(answers.map((item) => [item.questionId, item.selectedOption]))
   const missingAnswer = exercise.questions.find((question) => !answerMap.has(question.id))
   if (missingAnswer) {
-    return NextResponse.json({ error: 'Có câu hỏi chưa được chọn đáp án' }, { status: 400 })
+    return NextResponse.json({ error: 'At least one question is still unanswered' }, { status: 400 })
   }
 
   const questionIds = new Set(exercise.questions.map((question) => question.id))
   const invalidAnswer = answers.find((item) => !questionIds.has(item.questionId))
   if (invalidAnswer) {
-    return NextResponse.json({ error: 'Có đáp án không thuộc exercise này' }, { status: 400 })
+    return NextResponse.json({ error: 'One or more answers do not belong to this exercise' }, { status: 400 })
   }
 
   const evaluatedAnswers = exercise.questions.map((question) => {
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   })
 
   return NextResponse.json({
-    message: 'Đã nộp bài thành công',
+    message: 'Exercise submitted successfully',
     submission
   })
 }

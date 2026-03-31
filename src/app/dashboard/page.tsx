@@ -100,7 +100,7 @@ export default function Dashboard() {
       setHomeworkError('')
       const res = await fetch('/api/member/homework-summary')
       if (!res.ok) {
-        setHomeworkError('Không thể tải danh sách bài tập')
+        setHomeworkError('Could not load the homework list.')
         return
       }
       const data = await res.json()
@@ -108,7 +108,7 @@ export default function Dashboard() {
       setHomeworks(pending)
       setSelectedHomeworkId(pending[0]?.id || '')
     } catch {
-      setHomeworkError('Không thể tải danh sách bài tập')
+      setHomeworkError('Could not load the homework list.')
     } finally {
       setHomeworkLoading(false)
     }
@@ -135,7 +135,7 @@ export default function Dashboard() {
         return mapped
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải exercises')
+      setError(err instanceof Error ? err.message : 'Could not load the exercises.')
     } finally {
       setLoading(false)
     }
@@ -156,19 +156,19 @@ export default function Dashboard() {
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải thông tin khóa học')
+      setError(err instanceof Error ? err.message : 'Could not load the course information.')
     }
   }
 
   const submitHomework = async () => {
     if (!selectedHomeworkId) {
-      setHomeworkError('Vui lòng chọn bài tập')
+      setHomeworkError('Please choose a homework item.')
       return
     }
 
     const trimmedNote = homeworkNote.trim()
     if (!trimmedNote) {
-      setHomeworkError('Vui lòng nhập Ghi chú trước khi nộp bài')
+      setHomeworkError('Please enter your note before submitting.')
       return
     }
 
@@ -180,10 +180,10 @@ export default function Dashboard() {
       })
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data?.error || 'Không thể nộp bài')
+        throw new Error(data?.error || 'Could not submit the assignment.')
       }
 
-      setHomeworkSuccess('Nộp bài thành công!')
+      setHomeworkSuccess('Assignment submitted successfully.')
       setHomeworkError('')
       setHomeworkNote('')
       const remaining = homeworks.filter((item) => item.id !== selectedHomeworkId)
@@ -191,7 +191,7 @@ export default function Dashboard() {
       setSelectedHomeworkId(remaining[0]?.id || '')
     } catch (err) {
       setHomeworkSuccess('')
-      setHomeworkError(err instanceof Error ? err.message : 'Không thể nộp bài')
+      setHomeworkError(err instanceof Error ? err.message : 'Could not submit the assignment.')
     }
   }
 
@@ -254,7 +254,7 @@ export default function Dashboard() {
         ...current,
         [exercise.id]: {
           type: 'error',
-          message: `Bạn cần chọn đáp án cho câu ${missingQuestion.order} trước khi nộp bài.`
+          message: `Please choose an answer for question ${missingQuestion.order} before submitting.`
         }
       }))
       return
@@ -266,7 +266,7 @@ export default function Dashboard() {
         ...current,
         [exercise.id]: {
           type: 'error',
-          message: 'Vui lòng nhấn Start để bắt đầu trước khi nộp bài.'
+          message: 'Please press Start before submitting.'
         }
       }))
       return
@@ -293,14 +293,14 @@ export default function Dashboard() {
       })
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data?.error || 'Không thể nộp exercise')
+        throw new Error(data?.error || 'Could not submit the exercise.')
       }
 
       setExerciseFeedback((current) => ({
         ...current,
         [exercise.id]: {
           type: 'success',
-          message: `Đã nộp bài. Kết quả hiện tại: ${data.submission.score}/${data.submission.totalQuestions}. Thời gian: ${formatDuration(durationSeconds)}.`
+          message: `Submitted. Current result: ${data.submission.score}/${data.submission.totalQuestions}. Time: ${formatDuration(durationSeconds)}.`
         }
       }))
       setSubmitConfirm(null)
@@ -315,7 +315,7 @@ export default function Dashboard() {
         ...current,
         [exercise.id]: {
           type: 'error',
-          message: err instanceof Error ? err.message : 'Không thể nộp exercise'
+          message: err instanceof Error ? err.message : 'Could not submit the exercise.'
         }
       }))
     } finally {
@@ -337,7 +337,7 @@ export default function Dashboard() {
         <div className="mb-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">Practice Zone</h1>
-            <p className="text-lg">Xin chào, <span className="font-semibold">{session.user.name || session.user.email}</span></p>
+            <p className="text-lg">Hello, <span className="font-semibold">{session.user.name || session.user.email}</span></p>
           </div>
         </div>
 
@@ -352,16 +352,16 @@ export default function Dashboard() {
             <div className="bg-white p-6 rounded shadow-md">
               <h2 className="text-xl font-semibold mb-4">Exercises</h2>
               {loading ? (
-                <p className="text-gray-500">Đang tải exercises...</p>
+                <p className="text-gray-500">Loading exercises...</p>
               ) : exercises.length === 0 ? (
-                <p className="text-gray-500">Chưa có exercise nào được tạo cho khóa học của bạn.</p>
+                <p className="text-gray-500">No exercises have been created for your course yet.</p>
               ) : (
                 <div className="space-y-6">
                   {exercises.map((exercise) => (
                     <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
                       {Boolean(startedExerciseAt[exercise.id]) && (
                         <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
-                          ⏱ Thời gian làm bài: {formatDuration(getExerciseDurationSeconds(exercise.id))}
+                          ⏱ Time spent: {formatDuration(getExerciseDurationSeconds(exercise.id))}
                         </div>
                       )}
 
@@ -372,19 +372,19 @@ export default function Dashboard() {
                             <p className="mt-1 text-sm text-gray-600">{exercise.description}</p>
                           )}
                           <p className="text-sm text-gray-500">
-                            {Object.keys(exerciseAnswers[exercise.id] || {}).length}/{exercise.questions.length} câu đã chọn đáp án
+                            {Object.keys(exerciseAnswers[exercise.id] || {}).length}/{exercise.questions.length} questions answered
                           </p>
                         </div>
                         {exercise.submission ? (
                           <div className="rounded-lg bg-[#14532d]/10 px-4 py-3 text-sm text-[#14532d]">
-                            <p className="font-semibold">Điểm gần nhất: {exercise.submission.score}/{exercise.submission.totalQuestions}</p>
+                            <p className="font-semibold">Latest score: {exercise.submission.score}/{exercise.submission.totalQuestions}</p>
                             {exercise.submission.durationSeconds !== null && (
-                              <p>Thời gian làm: {formatDuration(exercise.submission.durationSeconds)}</p>
+                              <p>Time taken: {formatDuration(exercise.submission.durationSeconds)}</p>
                             )}
-                            <p>Nộp lúc: {new Date(exercise.submission.submittedAt).toLocaleString('vi-VN')}</p>
+                            <p>Submitted at: {new Date(exercise.submission.submittedAt).toLocaleString('en-GB')}</p>
                           </div>
                         ) : (
-                          <span className="inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">Chưa nộp bài</span>
+                          <span className="inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">Not submitted yet</span>
                         )}
                       </div>
 
@@ -400,13 +400,13 @@ export default function Dashboard() {
 
                       {!startedExerciseAt[exercise.id] ? (
                         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                        <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs sm:text-sm text-blue-800">Nhấn nút dưới để mở bài Exercise và bắt đầu tính giờ làm bài.</p>
+                        <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs sm:text-sm text-blue-800">Press the button below to begin the exercise and start the timer.</p>
                           <button
                             type="button"
                             onClick={() => startExercise(exercise.id)}
                             className="w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer"
                           >
-                            {exercise.submission ? 'Làm lại' : 'Bắt đầu'}
+                            {exercise.submission ? 'Retry' : 'Start'}
                           </button>
                         </div>
                       ) : (
@@ -446,14 +446,14 @@ export default function Dashboard() {
                       )}
 
                       <div className="mt-4 sm:mt-5 flex flex-col gap-2 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-xs sm:text-sm text-gray-500">Cập nhật đáp án rồi nộp lại nếu cải thiện kết quả.</p>
+                        <p className="text-xs sm:text-sm text-gray-500">Update your answers and resubmit if you improve your result.</p>
                         <button
                           type="button"
                           onClick={() => openSubmitConfirmation(exercise)}
                           disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
                           className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
                         >
-                          {submittingExerciseId === exercise.id ? 'Đang nộp bài...' : exercise.submission ? 'Nộp lại Exercise' : 'Submit Exercise'}
+                          {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
                         </button>
                       </div>
                     </div>
@@ -465,13 +465,13 @@ export default function Dashboard() {
 
           {session.user?.role === 'admin' && (
             <div className="bg-[#14532d]/10 border border-[#14532d]/25 p-6 rounded shadow-md">
-              <h2 className="text-xl font-semibold mb-2 text-[#14532d]">Quản lý</h2>
-              <p className="text-gray-700 mb-4">Bạn có quyền quản trị viên. Truy cập bảng điều khiển quản lý.</p>
+              <h2 className="text-xl font-semibold mb-2 text-[#14532d]">Admin Access</h2>
+              <p className="text-gray-700 mb-4">You have administrator access. Open the management dashboard.</p>
               <Link
                 href="/admin"
                 className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] inline-block"
               >
-                Đi đến Admin Dashboard
+                Open Admin Dashboard
               </Link>
             </div>
           )}
@@ -480,10 +480,10 @@ export default function Dashboard() {
         {submitConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-900">Xác nhận nộp Exercise</h3>
+              <h3 className="text-lg font-bold text-gray-900">Confirm Exercise Submission</h3>
               <p className="mt-3 text-sm text-gray-700">
-                Bạn đã làm Exercise {submitConfirm.exercise.order} trong vòng <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
-                Bạn có muốn gửi kết quả này không?
+                You worked on Exercise {submitConfirm.exercise.order} for <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
+                Do you want to submit this result?
               </p>
               <div className="mt-6 flex justify-end gap-3">
                 <button
@@ -492,7 +492,7 @@ export default function Dashboard() {
                   disabled={submittingExerciseId === submitConfirm.exercise.id}
                   className="rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300 disabled:opacity-50"
                 >
-                  Quay lại
+                  Back
                 </button>
                 <button
                   type="button"
@@ -500,7 +500,7 @@ export default function Dashboard() {
                   disabled={submittingExerciseId === submitConfirm.exercise.id}
                   className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534] disabled:opacity-50"
                 >
-                  {submittingExerciseId === submitConfirm.exercise.id ? 'Đang gửi...' : 'Gửi kết quả'}
+                  {submittingExerciseId === submitConfirm.exercise.id ? 'Sending...' : 'Send result'}
                 </button>
               </div>
             </div>
@@ -511,9 +511,9 @@ export default function Dashboard() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
               <div className="text-5xl mb-4">🎉</div>
-              <h3 className="text-2xl font-bold text-[#14532d] mb-3">Chúc mừng!</h3>
+              <h3 className="text-2xl font-bold text-[#14532d] mb-3">Congratulations!</h3>
               <p className="text-gray-700 mb-2">
-                Bạn đã ghi danh thành công vào khóa học
+                You have successfully enrolled in the course
               </p>
               {congratsEnrollment.title && (
                 <p className="text-lg font-semibold text-[#14532d] mb-4">
@@ -521,7 +521,7 @@ export default function Dashboard() {
                 </p>
               )}
               <p className="text-sm text-gray-500 mb-6">
-                Thanh toán đã được admin xác nhận. Chào mừng bạn đến với EnglishMore!
+                Your payment has been confirmed by the admin. Welcome to EnglishMore!
               </p>
               <button
                 onClick={() => {
@@ -532,7 +532,7 @@ export default function Dashboard() {
                 }}
                 className="w-full px-4 py-3 bg-[#14532d] text-white rounded-lg font-semibold hover:bg-[#166534]"
               >
-                Vào học ngay!
+                Start learning now
               </button>
             </div>
           </div>
@@ -552,14 +552,14 @@ export default function Dashboard() {
               </div>
 
               {homeworkLoading ? (
-                <p className="text-gray-500 mb-4">Đang tải danh sách bài tập...</p>
+                <p className="text-gray-500 mb-4">Loading homework list...</p>
               ) : (
                 <>
                   {homeworkError && <p className="text-red-500 mb-4">{homeworkError}</p>}
                   {homeworkSuccess && <p className="text-[#14532d] mb-4">{homeworkSuccess}</p>}
 
                   {homeworks.length === 0 ? (
-                    <p className="text-[#14532d] mb-4">Tốt lắm, bạn đã hoàn thành tất cả bài tập của mình rồi.</p>
+                    <p className="text-[#14532d] mb-4">Nice work. You have completed all of your homework.</p>
                   ) : (
                     <select
                       value={selectedHomeworkId}
@@ -568,14 +568,14 @@ export default function Dashboard() {
                     >
                       {homeworks.map((homework) => (
                         <option key={homework.id} value={homework.id}>
-                          {homework.title} - Hạn nộp {new Date(homework.dueDate).toLocaleDateString('vi-VN')}
+                          {homework.title} - Due {new Date(homework.dueDate).toLocaleDateString('en-GB')}
                         </option>
                       ))}
                     </select>
                   )}
 
                   <textarea
-                    placeholder="Ghi chú bài nộp"
+                    placeholder="Submission note"
                     value={homeworkNote}
                     onChange={(e) => setHomeworkNote(e.target.value)}
                     className="w-full p-2 mb-4 border rounded"

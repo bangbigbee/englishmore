@@ -53,8 +53,8 @@ export default function LectureNotesPage() {
       setError('')
       const res = await fetch('/api/member/lecture-notes')
       if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: 'Không thể tải tài liệu bài giảng' }))
-        throw new Error(data.error || 'Không thể tải tài liệu bài giảng')
+        const data = await res.json().catch(() => ({ error: 'Could not load lecture materials.' }))
+        throw new Error(data.error || 'Could not load lecture materials.')
       }
 
       const data = await res.json()
@@ -64,7 +64,7 @@ export default function LectureNotesPage() {
         setSelectedCourseId(nextCourses[0].courseId)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Không thể tải tài liệu bài giảng')
+      setError(err instanceof Error ? err.message : 'Could not load lecture materials.')
     } finally {
       setLoading(false)
     }
@@ -87,7 +87,7 @@ export default function LectureNotesPage() {
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <p className="text-slate-500">Đang tải lecture notes...</p>
+        <p className="text-slate-500">Loading lecture notes...</p>
       </div>
     )
   }
@@ -98,10 +98,10 @@ export default function LectureNotesPage() {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">Lecture Notes</h1>
-            <p className="mt-2 text-sm sm:text-base text-slate-600">Tài liệu bài giảng theo từng buổi học của khóa bạn đang tham gia.</p>
+            <p className="mt-2 text-sm sm:text-base text-slate-600">Lecture materials for each class session in your current course.</p>
           </div>
           <Link href="/" className="brand-cta brand-cta-outline">
-            <span>Về trang chủ</span>
+            <span>Back to home</span>
             <span aria-hidden="true" className="brand-cta-arrow">→</span>
           </Link>
         </div>
@@ -112,15 +112,15 @@ export default function LectureNotesPage() {
 
         {courses.length === 0 ? (
           <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-            <p className="text-slate-700">Hiện bạn chưa có khóa học active hoặc chưa có lecture notes được đăng.</p>
+            <p className="text-slate-700">You do not have an active course yet, or no lecture notes have been uploaded.</p>
             <Link href="/courses" className="mt-4 inline-flex rounded bg-[#14532d] px-4 py-2 font-semibold text-white hover:bg-[#166534]">
-              Xem khóa học
+              View courses
             </Link>
           </div>
         ) : (
           <>
             <section className="mb-6 rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm">
-              <label htmlFor="courseFilter" className="mb-2 block text-sm font-semibold text-emerald-800">Chọn khóa học</label>
+              <label htmlFor="courseFilter" className="mb-2 block text-sm font-semibold text-emerald-800">Choose a course</label>
               <select
                 id="courseFilter"
                 value={selectedCourse?.courseId || ''}
@@ -151,9 +151,9 @@ export default function LectureNotesPage() {
                         className={`rounded-2xl border p-4 transition ${hasLink ? 'border-emerald-200 bg-emerald-50/60 hover:shadow-md' : 'border-slate-200 bg-slate-50'}`}
                       >
                         <div className="mb-3 flex items-center justify-between">
-                          <h3 className="text-base font-bold text-slate-900">Buổi {sessionNumber}</h3>
+                          <h3 className="text-base font-bold text-slate-900">Session {sessionNumber}</h3>
                           <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${hasLink ? 'bg-emerald-200 text-emerald-900' : 'bg-slate-200 text-slate-600'}`}>
-                            {hasLink ? 'Sẵn sàng' : 'Chưa cập nhật'}
+                            {hasLink ? 'Ready' : 'Not uploaded yet'}
                           </span>
                         </div>
 
@@ -165,12 +165,12 @@ export default function LectureNotesPage() {
                               rel="noreferrer"
                               className="inline-flex w-full items-center justify-center rounded-lg bg-[#14532d] px-3 py-2 text-sm font-bold text-white hover:bg-[#166534]"
                             >
-                              Mở slide Google Drive
+                              Open Google Drive slide
                             </a>
-                            <p className="mt-2 text-xs text-slate-500">Cập nhật: {note ? new Date(note.updatedAt).toLocaleString('vi-VN') : ''}</p>
+                            <p className="mt-2 text-xs text-slate-500">Updated: {note ? new Date(note.updatedAt).toLocaleString('en-GB') : ''}</p>
                           </>
                         ) : (
-                          <p className="text-sm text-slate-600">Tài liệu sẽ được cập nhật sau.</p>
+                          <p className="text-sm text-slate-600">This material will be uploaded later.</p>
                         )}
                       </article>
                     )
