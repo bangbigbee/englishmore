@@ -120,6 +120,7 @@ export default function Home() {
   const [pronunciationScore, setPronunciationScore] = useState<number | null>(null)
   const pronunciationScoringTimeoutRef = useRef<number | null>(null)
   const pronunciationListeningTimeoutRef = useRef<number | null>(null)
+  const pronunciationFinalizeTimeoutRef = useRef<number | null>(null)
   const pronunciationRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
   const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null)
   const pronunciationDoneAudioPrimedRef = useRef(false)
@@ -616,6 +617,13 @@ export default function Home() {
     }
   }
 
+  const clearPronunciationFinalizeTimeout = () => {
+    if (pronunciationFinalizeTimeoutRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(pronunciationFinalizeTimeoutRef.current)
+      pronunciationFinalizeTimeoutRef.current = null
+    }
+  }
+
   const playPronunciationDoneChime = () => {
     if (typeof window === 'undefined' || !pronunciationDoneAudioRef.current) {
       return
@@ -676,6 +684,7 @@ export default function Home() {
     setIsPronunciationListening(true)
     clearPronunciationScoringTimeout()
     clearPronunciationListeningTimeout()
+    clearPronunciationFinalizeTimeout()
     if (pronunciationRecognitionRef.current) {
       try {
         pronunciationRecognitionRef.current.stop()
@@ -691,6 +700,7 @@ export default function Home() {
     recognition.continuous = false
     let hasHandledResult = false
     let hasSpeechFinished = false
+    let latestTranscript = ''
 
     const stopRecognitionSafely = () => {
       try {
@@ -714,45 +724,20 @@ export default function Home() {
       }
     }
 
-    const requestRecognitionStop = () => {
-      markListeningAsFinished()
-      stopRecognitionSafely()
-    }
-
-    pronunciationListeningTimeoutRef.current = window.setTimeout(() => {
-      if (pronunciationRecognitionRef.current !== recognition || hasHandledResult) {
-        return
-      }
-
-      stopRecognitionSafely()
-
-      pronunciationRecognitionRef.current = null
-      pronunciationListeningTimeoutRef.current = null
-      setIsPronunciationListening(false)
-      setPronunciationStatus('Listening timed out. Please try again and say the word once, clearly.')
-      setPronunciationFeedback('')
-      setPronunciationScore(null)
-    }, 7000)
-
-    recognition.onresult = (event) => {
-      const latestResult = event.results[event.results.length - 1]
-      const transcript = Array.from(latestResult || [])
-        .map((result) => result?.transcript || '')
-        .join(' ')
-        .trim()
-
-      if (!transcript) {
+    const finalizeRecognition = (transcript: string) => {
+      const normalizedTranscript = transcript.trim()
+      if (!normalizedTranscript || hasHandledResult) {
         return
       }
 
       hasHandledResult = true
-
       clearPronunciationListeningTimeout()
+      clearPronunciationFinalizeTimeout()
       pronunciationRecognitionRef.current = null
       markListeningAsFinished()
 
-      const { candidate, score } = getBestPronunciationCandidate(currentVocabularyItem.word, transcript)
-      setPronunciationTranscript(transcript)
+      const { candidate, score } = getBestPronunciationCandidate(currentVocabularyItem.word, normalizedTranscript)
+      setPronunciationTranscript(normalizedTranscript)
       setPronunciationStatus('Got it. Checking your pronunciation...')
       playPronunciationDoneChime()
       clearPronunciationScoringTimeout()
@@ -765,8 +750,49 @@ export default function Home() {
       }, 420)
     }
 
-    recognition.onspeechend = requestRecognitionStop
-    recognition.onsoundend = requestRecognitionStop
+    pronunciationListeningTimeoutRef.current = window.setTimeout(() => {
+      if (pronunciationRecognitionRef.current !== recognition || hasHandledResult) {
+        return
+      }
+
+      clearPronunciationFinalizeTimeout()
+      stopRecognitionSafely()
+
+      pronunciationRecognitionRef.current = null
+      pronunciationListeningTimeoutRef.current = null
+      setIsPronunciationListening(false)
+      setPronunciationStatus('Listening timed out. Please try again and say the word once, clearly.')
+      setPronunciationFeedback('')
+      setPronunciationScore(null)
+    }, 7000)
+
+    recognition.onresult = (event) => {
+      const latestResult = event.results[event.results.length - 1]
+      const transcript = Array.from(event.results)
+        .map((result) => Array.from(result || []).map((option) => option?.transcript || '').join(' '))
+        .join(' ')
+        .trim()
+
+      if (!transcript) {
+        return
+      }
+
+      latestTranscript = transcript
+      setPronunciationTranscript(transcript)
+      clearPronunciationListeningTimeout()
+      clearPronunciationFinalizeTimeout()
+
+      if (latestResult?.isFinal) {
+        finalizeRecognition(transcript)
+        return
+      }
+
+      setPronunciationStatus('Listening... finish the whole word.')
+      pronunciationFinalizeTimeoutRef.current = window.setTimeout(() => {
+        finalizeRecognition(latestTranscript)
+      }, 900)
+    }
+
     recognition.onaudioend = () => {
       if (!hasHandledResult) {
         markListeningAsFinished()
@@ -774,6 +800,7 @@ export default function Home() {
     }
     recognition.onnomatch = () => {
       clearPronunciationListeningTimeout()
+      clearPronunciationFinalizeTimeout()
       pronunciationRecognitionRef.current = null
       setIsPronunciationListening(false)
       setPronunciationStatus('')
@@ -784,6 +811,7 @@ export default function Home() {
     recognition.onerror = () => {
       clearPronunciationScoringTimeout()
       clearPronunciationListeningTimeout()
+      clearPronunciationFinalizeTimeout()
       pronunciationRecognitionRef.current = null
       setIsPronunciationListening(false)
       setPronunciationStatus('')
@@ -793,6 +821,7 @@ export default function Home() {
 
     recognition.onend = () => {
       clearPronunciationListeningTimeout()
+      clearPronunciationFinalizeTimeout()
       if (pronunciationRecognitionRef.current === recognition) {
         pronunciationRecognitionRef.current = null
       }
