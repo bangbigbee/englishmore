@@ -753,7 +753,7 @@ export default function Home() {
               >
                 <span>My Homework</span>
                 <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                {memberHomework?.pendingHomework && memberHomework.pendingHomework.length > 0 && (
+                {(memberHomework?.pendingHomework?.length ?? 0) > 0 && (
                   <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
                     {memberHomework.pendingHomework.length}
                   </span>
@@ -765,7 +765,7 @@ export default function Home() {
               >
                 <span>Exercise More</span>
                 <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                {memberHomework?.pendingExercisesCount && memberHomework.pendingExercisesCount > 0 && (
+                {(memberHomework?.pendingExercisesCount ?? 0) > 0 && (
                   <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
                     {memberHomework.pendingExercisesCount}
                   </span>
