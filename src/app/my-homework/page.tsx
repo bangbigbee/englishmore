@@ -14,6 +14,14 @@ interface HomeworkRow {
   submittedAt: string | null
   note: string
   teacherComment: string
+  messages?: HomeworkMessage[]
+}
+
+interface HomeworkMessage {
+  id: string
+  senderRole: 'student' | 'teacher'
+  content: string
+  createdAt: string
 }
 
 interface HomeworkSummaryResponse {
@@ -177,8 +185,7 @@ export default function MyHomeworkPage() {
                     <p className="mt-1 text-sm text-slate-600">Due: {new Date(item.dueDate).toLocaleDateString('en-GB')}</p>
                     {item.description && <p className="mt-2 text-sm text-slate-700">{item.description}</p>}
                     <div className="mt-4 rounded-2xl border border-amber-200 bg-white/80 p-3">
-                      <p className="text-xs font-bold uppercase tracking-wide text-amber-700">Conversation</p>
-                      <div className="mt-3 flex justify-end">
+                      <div className="flex justify-end">
                         <div className="max-w-[85%] rounded-2xl rounded-br-md bg-amber-100 px-3 py-2 text-sm text-amber-950 shadow-sm">
                           <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700">You</p>
                           <p className="mt-1 text-amber-900">Start the conversation by sending your homework message below.</p>
@@ -217,21 +224,37 @@ export default function MyHomeworkPage() {
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
                     <p className="mt-1 text-sm text-slate-600">Submitted at: {item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</p>
                     <div className="mt-4 rounded-2xl border border-emerald-200 bg-white/85 p-3 shadow-sm">
-                      <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Conversation</p>
                       <div className="mt-3 space-y-3">
-                        <div className="flex justify-end">
-                          <div className="max-w-[85%] rounded-2xl rounded-br-md bg-emerald-100 px-3 py-2 text-sm text-emerald-950 shadow-sm">
-                            <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">You</p>
-                            <p className="mt-1 whitespace-pre-wrap text-emerald-900">{item.note || 'No message yet.'}</p>
+                        {(item.messages || []).map((message) => (
+                          <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
+                            <div
+                              className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
+                                message.senderRole === 'student'
+                                  ? 'rounded-br-md bg-emerald-100 text-emerald-950'
+                                  : 'rounded-bl-md border border-blue-200 bg-blue-50 text-blue-950'
+                              }`}
+                            >
+                              <p
+                                className={`text-[11px] font-bold uppercase tracking-wide ${
+                                  message.senderRole === 'student' ? 'text-emerald-700' : 'text-blue-700'
+                                }`}
+                              >
+                                {message.senderRole === 'student' ? 'You' : 'Teacher'}
+                              </p>
+                              <p
+                                className={`mt-1 whitespace-pre-wrap ${
+                                  message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
+                                }`}
+                              >
+                                {message.content}
+                              </p>
+                              <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
+                            </div>
                           </div>
-                        </div>
-
-                        <div className="flex justify-start">
-                          <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-950 shadow-sm">
-                            <p className="text-[11px] font-bold uppercase tracking-wide text-blue-700">Teacher</p>
-                            <p className="mt-1 whitespace-pre-wrap text-blue-900">{item.teacherComment || 'The teacher has not replied yet.'}</p>
-                          </div>
-                        </div>
+                        ))}
+                        {(item.messages || []).length === 0 && (
+                          <p className="text-sm text-slate-600">No messages yet.</p>
+                        )}
                       </div>
                     </div>
                     <label className="mt-4 block text-sm font-semibold text-slate-700">Your next message</label>

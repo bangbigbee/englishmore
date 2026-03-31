@@ -60,7 +60,20 @@ export async function GET() {
     include: {
       submissions: {
         where: { userId: session.user.id },
-        select: { submittedAt: true, note: true, teacherComment: true }
+        select: {
+          submittedAt: true,
+          note: true,
+          teacherComment: true,
+          messages: {
+            select: {
+              id: true,
+              senderRole: true,
+              content: true,
+              createdAt: true
+            },
+            orderBy: { createdAt: 'asc' }
+          }
+        }
       }
     },
     orderBy: { dueDate: 'asc' }
@@ -75,10 +88,9 @@ export async function GET() {
       dueDate: homework.dueDate
     }))
 
-  const feedbackNoticeCount = homeworks.filter((homework) => {
-    const teacherComment = homework.submissions[0]?.teacherComment
-    return typeof teacherComment === 'string' && teacherComment.trim().length > 0
-  }).length
+  const feedbackNoticeCount = homeworks.filter((homework) =>
+    (homework.submissions[0]?.messages || []).some((message) => message.senderRole === 'teacher')
+  ).length
 
   const exercises = await prisma.courseExercise.findMany({
     where: { courseId: activeEnrollment.courseId, isDraft: false },
@@ -163,15 +175,28 @@ export async function GET() {
     totalExercises: exercises.length,
     pendingExercisesCount: pendingExercises.length,
     weeklyActivity,
-    allHomework: homeworks.map((homework) => ({
-      id: homework.id,
-      title: homework.title,
-      description: homework.description,
-      dueDate: homework.dueDate,
-      submitted: homework.submissions.length > 0,
-      submittedAt: homework.submissions[0]?.submittedAt || null,
-      note: homework.submissions[0]?.note || '',
-      teacherComment: homework.submissions[0]?.teacherComment || ''
-    }))
+    allHomework: homeworks.map((homework) => {
+      const submission = homework.submissions[0]
+      const messages = submission?.messages || []
+      const latestStudentMessage = [...messages].reverse().find((message) => message.senderRole === 'student')
+      const latestTeacherMessage = [...messages].reverse().find((message) => message.senderRole === 'teacher')
+
+      return {
+        id: homework.id,
+        title: homework.title,
+        description: homework.description,
+        dueDate: homework.dueDate,
+        submitted: homework.submissions.length > 0,
+        submittedAt: submission?.submittedAt || null,
+        note: latestStudentMessage?.content || submission?.note || '',
+        teacherComment: latestTeacherMessage?.content || submission?.teacherComment || '',
+        messages: messages.map((message) => ({
+          id: message.id,
+          senderRole: message.senderRole,
+          content: message.content,
+          createdAt: message.createdAt
+        }))
+      }
+    })
   })
 }

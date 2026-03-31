@@ -44,6 +44,11 @@ enum GreetingInputMethod {
   voice
 }
 
+enum HomeworkMessageSender {
+  student
+  teacher
+}
+
 
 model Account {
   id                String  @id @default(cuid())
@@ -250,9 +255,24 @@ model HomeworkSubmission {
 
   homework    CourseHomework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages    HomeworkMessage[]
 
   @@unique([homeworkId, userId])
   @@index([userId])
+}
+
+model HomeworkMessage {
+  id           String                @id @default(cuid())
+  submissionId String
+  senderRole   HomeworkMessageSender
+  content      String
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  submission   HomeworkSubmission    @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+  @@index([createdAt])
 }
 
 model Enrollment {

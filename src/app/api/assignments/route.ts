@@ -44,22 +44,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'This homework does not belong to your course' }, { status: 400 })
   }
 
-  const assignment = await prisma.homeworkSubmission.upsert({
-    where: {
-      homeworkId_userId: {
+  const assignment = await prisma.$transaction(async (tx) => {
+    const upserted = await tx.homeworkSubmission.upsert({
+      where: {
+        homeworkId_userId: {
+          homeworkId,
+          userId: session.user.id
+        }
+      },
+      create: {
         homeworkId,
-        userId: session.user.id
+        userId: session.user.id,
+        note
+      },
+      update: {
+        note,
+        submittedAt: new Date()
       }
-    },
-    create: {
-      homeworkId,
-      userId: session.user.id,
-      note
-    },
-    update: {
-      note,
-      submittedAt: new Date()
-    }
+    })
+
+    await tx.homeworkMessage.create({
+      data: {
+        submissionId: upserted.id,
+        senderRole: 'student',
+        content: note
+      }
+    })
+
+    return upserted
   })
 
   return NextResponse.json({ message: 'Assignment submitted', assignment })

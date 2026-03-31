@@ -88,6 +88,7 @@ interface HomeworkSubmissionItem {
   note: string | null
   teacherComment: string | null
   submittedAt: string
+  messages: HomeworkMessageItem[]
   user: {
     id: string
     name: string | null
@@ -102,6 +103,13 @@ interface HomeworkSubmissionItem {
       title: string
     }
   }
+}
+
+interface HomeworkMessageItem {
+  id: string
+  senderRole: 'student' | 'teacher'
+  content: string
+  createdAt: string
 }
 
 interface ExerciseQuestionItem {
@@ -516,7 +524,12 @@ export default function AdminDashboard() {
       setHomeworkSubmissions(submissions)
       setHomeworkTeacherComments(
         Object.fromEntries(
-          submissions.map((submission: HomeworkSubmissionItem) => [submission.id, submission.teacherComment || ''])
+          submissions.map((submission: HomeworkSubmissionItem) => {
+            const latestTeacherMessage = [...(submission.messages || [])]
+              .reverse()
+              .find((message) => message.senderRole === 'teacher')
+            return [submission.id, latestTeacherMessage?.content || submission.teacherComment || '']
+          })
         )
       )
       setHomeworkError('')
@@ -2077,21 +2090,37 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Conversation</p>
                   <div className="mt-3 space-y-3">
-                    <div className="flex justify-end">
-                      <div className="max-w-[85%] rounded-2xl rounded-br-md bg-emerald-100 px-3 py-2 text-sm text-emerald-950 shadow-sm">
-                        <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">Student</p>
-                        <p className="mt-1 whitespace-pre-wrap text-emerald-900">{submission.note || 'No message yet.'}</p>
+                    {(submission.messages || []).map((message) => (
+                      <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
+                        <div
+                          className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
+                            message.senderRole === 'student'
+                              ? 'rounded-br-md bg-emerald-100 text-emerald-950'
+                              : 'rounded-bl-md border border-blue-200 bg-blue-50 text-blue-950'
+                          }`}
+                        >
+                          <p
+                            className={`text-[11px] font-bold uppercase tracking-wide ${
+                              message.senderRole === 'student' ? 'text-emerald-700' : 'text-blue-700'
+                            }`}
+                          >
+                            {message.senderRole === 'student' ? 'Student' : 'Teacher'}
+                          </p>
+                          <p
+                            className={`mt-1 whitespace-pre-wrap ${
+                              message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
+                            }`}
+                          >
+                            {message.content}
+                          </p>
+                          <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="flex justify-start">
-                      <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-950 shadow-sm">
-                        <p className="text-[11px] font-bold uppercase tracking-wide text-blue-700">Teacher</p>
-                        <p className="mt-1 whitespace-pre-wrap text-blue-900">{submission.teacherComment || 'No reply yet.'}</p>
-                      </div>
-                    </div>
+                    ))}
+                    {(submission.messages || []).length === 0 && (
+                      <p className="text-sm text-slate-600">No messages yet.</p>
+                    )}
                   </div>
                 </div>
 

@@ -25,13 +25,28 @@ export async function PATCH(
   const { id } = await context.params
   const body = await request.json()
   const teacherComment = typeof body.teacherComment === 'string' ? body.teacherComment.trim() : ''
+  if (!teacherComment) {
+    return NextResponse.json({ error: 'Reply cannot be empty' }, { status: 400 })
+  }
 
   try {
-    const updated = await prisma.homeworkSubmission.update({
-      where: { id },
-      data: {
-        teacherComment: teacherComment || null
-      }
+    const updated = await prisma.$transaction(async (tx) => {
+      const submission = await tx.homeworkSubmission.update({
+        where: { id },
+        data: {
+          teacherComment
+        }
+      })
+
+      await tx.homeworkMessage.create({
+        data: {
+          submissionId: submission.id,
+          senderRole: 'teacher',
+          content: teacherComment
+        }
+      })
+
+      return submission
     })
 
     return NextResponse.json(updated)

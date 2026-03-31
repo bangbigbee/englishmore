@@ -38,6 +38,15 @@ export async function GET(request: NextRequest) {
   const submissions = await prisma.homeworkSubmission.findMany({
     where,
     include: {
+      messages: {
+        select: {
+          id: true,
+          senderRole: true,
+          content: true,
+          createdAt: true
+        },
+        orderBy: { createdAt: 'asc' }
+      },
       user: {
         select: {
           id: true,
