@@ -345,19 +345,20 @@ export default function Home() {
 
   const weeklyActivityRows = useMemo(() => {
     const data = memberHomework?.weeklyActivity ?? WEEK_DAYS.map((day) => ({ day, minutes: 0 }))
-    const maxMinutes = Math.max(1, ...data.map((item) => item.minutes))
 
     return data.map((item) => {
-      const ratio = item.minutes / maxMinutes
       const barClass = item.minutes === 0
         ? 'bg-slate-300'
         : item.minutes <= 15
           ? 'bg-amber-500'
           : 'bg-[#4db463]'
 
+      // 60 minutes = 100%, cap at 100%
+      const widthPercent = Math.min(Math.max(item.minutes > 0 ? 16 : 0, Math.round((item.minutes / 60) * 100)), 100)
+
       return {
         ...item,
-        widthPercent: Math.max(item.minutes > 0 ? 16 : 0, Math.round(ratio * 100)),
+        widthPercent,
         barClass
       }
     })
@@ -644,15 +645,15 @@ export default function Home() {
         )}
 
         {session?.user?.role === 'member' && (
-          <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5">
-            <h2 className="text-lg font-extrabold text-[#14532d] sm:text-xl">
+          <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5 sm:py-5">
+            <h2 className="text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
               Hello {session.user?.name || 'there'}! How are you today?
             </h2>
-            <p className="mt-1 text-sm text-[#14532d]/85">
+            <p className="mt-1 text-xs sm:text-sm text-[#14532d]/85">
               Quick check-in helps us track your learning activity and unlock medals later.
             </p>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr]">
+            <div className="mt-4 grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-[2fr_1fr]">
               <div>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <button
@@ -717,9 +718,9 @@ export default function Home() {
                 {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
               </div>
 
-              <div className="rounded-lg border border-[#14532d]/30 bg-linear-to-br from-white via-white to-[#14532d]/5 p-4 shadow-sm">
-                <h3 className="text-sm font-bold text-[#14532d]">💬 Check-in của lớp hôm nay</h3>
-                <div className="mt-3 max-h-56 space-y-2 overflow-y-auto pr-1">
+              <div className="rounded-lg border border-[#14532d]/30 bg-linear-to-br from-white via-white to-[#14532d]/5 p-3 sm:p-4 shadow-sm">
+                <h3 className="text-xs sm:text-sm font-bold text-[#14532d]">💬 Check-in của lớp hôm nay</h3>
+                <div className="mt-2 sm:mt-3 max-h-48 sm:max-h-56 space-y-1.5 sm:space-y-2 overflow-y-auto pr-1">
                   {greetingConversationLoading ? (
                     <p className="text-xs text-slate-500">Đang tải hội thoại check-in...</p>
                   ) : greetingConversation.length === 0 ? (
@@ -728,13 +729,13 @@ export default function Home() {
                     greetingConversation.map((item) => (
                       <article
                         key={item.id}
-                        className={`rounded-lg border px-3 py-2.5 text-sm checkin-message shadow-sm transition-all hover:shadow-md ${getCheckinBubbleStyle(item.userId)}`}
+                        className={`rounded-lg border px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm checkin-message shadow-sm transition-all hover:shadow-md ${getCheckinBubbleStyle(item.userId)}`}
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-semibold">{item.studentName}</span>
-                          <span className="text-[11px] opacity-65">{new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span className="font-semibold truncate">{item.studentName}</span>
+                          <span className="text-[10px] sm:text-[11px] opacity-65 whitespace-nowrap ml-1">{new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
-                        <p className="mt-1 whitespace-pre-wrap">{item.message}</p>
+                        <p className="mt-0.5 sm:mt-1 whitespace-pre-wrap text-xs sm:text-sm text-wrap">{item.message}</p>
                       </article>
                     ))
                   )}
@@ -841,28 +842,28 @@ export default function Home() {
                 ) : !currentVocabularyItem ? (
                   <p className="text-sm text-slate-500">Chưa có từ vựng cho khóa học hiện tại.</p>
                 ) : (
-                  <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-4 py-5 text-white sm:px-6 sm:py-6">
-                    <div className="mb-4 flex items-center justify-between">
+                  <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 sm:px-4 py-4 sm:py-5 md:px-6 md:py-6 text-white">
+                    <div className="mb-3 sm:mb-4 flex items-center justify-between gap-1">
                       <button
                         type="button"
                         onClick={() => moveVocabulary('prev')}
                         disabled={memberVocabularyItems.length <= 1}
-                        className="rounded-full px-3 py-1 text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
                         aria-label="Previous vocabulary"
                       >
                         {'<'}
                       </button>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
                         <button
                           type="button"
                           onClick={() => speakVocabularyWord()}
-                          className="inline-flex items-center justify-center rounded-full bg-white/15 p-3 transition hover:bg-white/25"
+                          className="inline-flex items-center justify-center rounded-full bg-white/15 p-2 sm:p-3 transition hover:bg-white/25"
                           aria-label="Speak vocabulary"
                         >
                           <svg
                             aria-hidden="true"
                             viewBox="0 0 24 24"
-                            className="h-6 w-6 fill-current"
+                            className="h-5 w-5 sm:h-6 sm:w-6 fill-current"
                           >
                             <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
                           </svg>
@@ -871,12 +872,12 @@ export default function Home() {
                           type="button"
                           onClick={handleTryVocabulary}
                           disabled={!speechSupported || isPronunciationListening}
-                          className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/25 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="inline-flex items-center gap-1 sm:gap-2 rounded-full bg-white/15 px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white transition hover:bg-white/25 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <svg
                             aria-hidden="true"
                             viewBox="0 0 24 24"
-                            className="h-5 w-5 fill-current"
+                            className="h-4 w-4 sm:h-5 sm:w-5 fill-current shrink-0"
                           >
                             <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.5 14.53 16 12 16s-4.52-1.5-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.063.54-.92 1.14.72 3.44 3.82 5.96 7.81 5.96s7.09-2.52 7.81-5.96c.14-.6-.31-1.14-.92-1.14z" />
                           </svg>
@@ -887,7 +888,7 @@ export default function Home() {
                         type="button"
                         onClick={() => moveVocabulary('next')}
                         disabled={memberVocabularyItems.length <= 1}
-                        className="rounded-full px-3 py-1 text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
                         aria-label="Next vocabulary"
                       >
                         {'>'}
@@ -895,34 +896,34 @@ export default function Home() {
                     </div>
 
                     <div className="text-center">
-                      <p className="text-4xl font-extrabold tracking-tight">{currentVocabularyItem.word}</p>
-                      <p className="mt-2 text-2xl">{currentVocabularyItem.phonetic ? `/${currentVocabularyItem.phonetic}/` : ''}</p>
+                      <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">{currentVocabularyItem.word}</p>
+                      <p className="mt-1 sm:mt-2 text-lg sm:text-2xl text-white/90">{currentVocabularyItem.phonetic ? `/${currentVocabularyItem.phonetic}/` : ''}</p>
                       {currentVocabularyItem.englishDefinition && (
-                        <p className="mt-3 text-base font-medium text-white/90 sm:text-lg">{currentVocabularyItem.englishDefinition}</p>
+                        <p className="mt-2 sm:mt-3 text-xs sm:text-base font-medium text-white/90">{currentVocabularyItem.englishDefinition}</p>
                       )}
-                      <p className="mt-5 text-2xl font-semibold">{currentVocabularyItem.meaning}</p>
+                      <p className="mt-3 sm:mt-5 text-base sm:text-2xl font-semibold">{currentVocabularyItem.meaning}</p>
                       {currentVocabularyItem.example && (
-                        <p className="mt-4 text-base italic text-white/90">&quot;{currentVocabularyItem.example}&quot;</p>
+                        <p className="mt-2 sm:mt-4 text-xs sm:text-base italic text-white/90">&quot;{currentVocabularyItem.example}&quot;</p>
                       )}
 
                       {pronunciationStatus && (
-                        <p className="mt-5 text-sm font-medium text-white/85">{pronunciationStatus}</p>
+                        <p className="mt-3 sm:mt-5 text-xs sm:text-sm font-medium text-white/85">{pronunciationStatus}</p>
                       )}
 
                       {pronunciationScore !== null && (
-                        <div className="mt-4 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-left backdrop-blur-sm">
+                        <div className="mt-3 sm:mt-4 rounded-xl sm:rounded-2xl border border-white/20 bg-white/10 px-3 sm:px-4 py-2 sm:py-3 text-left backdrop-blur-sm text-xs sm:text-sm">
                           {pronunciationTranscript && (
-                            <p className="text-sm text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
+                            <p className="text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
                           )}
                           {pronunciationFeedback && (
-                            <p className={`${pronunciationTranscript ? 'mt-2 ' : ''}text-sm font-semibold text-amber-300`}>{pronunciationFeedback}</p>
+                            <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-amber-300`}>{pronunciationFeedback}</p>
                           )}
-                          <p className="mt-2 text-xs text-white/70">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
+                          <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-white/70">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
                         </div>
                       )}
 
                       {!speechSupported && (
-                        <p className="mt-4 text-xs text-white/70">Voice practice is not supported in this browser.</p>
+                        <p className="mt-3 sm:mt-4 text-xs text-white/70">Voice practice is not supported in this browser.</p>
                       )}
                     </div>
                   </div>
@@ -930,19 +931,19 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
-              <h2 className="text-3xl font-bold text-slate-800">Weekly Activity</h2>
-              <div className="mt-6 space-y-4">
+            <section className="mt-6 sm:mt-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Weekly Activity</h2>
+              <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
                 {weeklyActivityRows.map((item) => (
-                  <div key={item.day} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 sm:gap-4">
-                    <span className="text-lg text-slate-600">{item.day}</span>
-                    <div className="h-4 w-28 overflow-hidden rounded-full bg-slate-200 sm:w-32">
+                  <div key={item.day} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3 md:gap-4">
+                    <span className="text-xs sm:text-sm lg:text-base text-slate-600 w-16 sm:w-20">{item.day}</span>
+                    <div className="h-3 sm:h-4 overflow-hidden rounded-full bg-slate-200">
                       <div
                         className={`h-full rounded-full ${item.barClass} transition-all duration-500`}
                         style={{ width: `${item.widthPercent}%` }}
                       />
                     </div>
-                    <span className="w-16 text-right text-2xl font-medium text-slate-700">{item.minutes} min</span>
+                    <span className="w-12 sm:w-14 text-right text-lg sm:text-xl font-medium text-slate-700">{item.minutes}m</span>
                   </div>
                 ))}
               </div>
