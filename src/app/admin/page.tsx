@@ -169,6 +169,21 @@ interface LectureNote {
   updatedAt: string
 }
 
+interface AdminCheckinRow {
+  enrollmentId: string
+  userId: string
+  studentName: string
+  phone: string
+  email: string
+  courseId: string
+  courseTitle: string
+  checkedInToday: boolean
+  checkinCount7d: number
+  latestMessage: string
+  latestInputMethod: 'text' | 'voice' | null
+  latestUpdatedAt: string | null
+}
+
 const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
   Array.from({ length: 10 }, () => ({
     question: '',
@@ -294,7 +309,7 @@ export default function AdminDashboard() {
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
-  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote'>('course')
+  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin'>('course')
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
@@ -313,6 +328,14 @@ export default function AdminDashboard() {
   const [editLectureDriveLink, setEditLectureDriveLink] = useState('')
   const [savingLectureId, setSavingLectureId] = useState<string | null>(null)
   const [deletingLectureId, setDeletingLectureId] = useState<string | null>(null)
+  const [checkinRows, setCheckinRows] = useState<AdminCheckinRow[]>([])
+  const [checkinCourseFilter, setCheckinCourseFilter] = useState('')
+  const [checkinLoading, setCheckinLoading] = useState(false)
+  const [checkinError, setCheckinError] = useState('')
+  const [checkinSummary, setCheckinSummary] = useState<{ totalStudents: number; checkedInToday: number }>({
+    totalStudents: 0,
+    checkedInToday: 0
+  })
 
   const fetchStudents = async () => {
     try {
@@ -480,6 +503,33 @@ export default function AdminDashboard() {
     }
   }, [])
 
+  const fetchCheckinData = useCallback(async () => {
+    try {
+      setCheckinLoading(true)
+      setCheckinError('')
+
+      const params = new URLSearchParams()
+      if (checkinCourseFilter) params.set('courseId', checkinCourseFilter)
+      const query = params.toString()
+
+      const res = await fetch(`/api/admin/daily-greeting${query ? `?${query}` : ''}`)
+      if (!res.ok) throw new Error('Failed to fetch check-in data')
+
+      const data = await res.json()
+      setCheckinRows(data.rows || [])
+      setCheckinSummary({
+        totalStudents: data.summary?.totalStudents || 0,
+        checkedInToday: data.summary?.checkedInToday || 0
+      })
+    } catch (err) {
+      setCheckinError(err instanceof Error ? err.message : 'Không thể tải dữ liệu check-in')
+      setCheckinRows([])
+      setCheckinSummary({ totalStudents: 0, checkedInToday: 0 })
+    } finally {
+      setCheckinLoading(false)
+    }
+  }, [checkinCourseFilter])
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
@@ -505,6 +555,12 @@ export default function AdminDashboard() {
   }, [courses, selectedLectureNoteCourseId])
 
   useEffect(() => {
+    if (!checkinCourseFilter && courses.length > 0) {
+      setCheckinCourseFilter(courses[0].id)
+    }
+  }, [courses, checkinCourseFilter])
+
+  useEffect(() => {
     if (activeSection === 'lectureNote' && selectedLectureNoteCourseId) {
       fetchLectureNotes(selectedLectureNoteCourseId)
     }
@@ -515,6 +571,12 @@ export default function AdminDashboard() {
       fetchHomeworkSubmissions()
     }
   }, [activeSection, fetchHomeworkSubmissions])
+
+  useEffect(() => {
+    if (activeSection === 'checkin') {
+      fetchCheckinData()
+    }
+  }, [activeSection, fetchCheckinData])
 
   const updateNewExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
     setNewExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
@@ -1155,6 +1217,106 @@ export default function AdminDashboard() {
            >
              4. LECTURE NOTES
            </button>
+           <button
+             type="button"
+             onClick={() => setActiveSection('checkin')}
+             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'checkin' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             5. DAILY CHECK-IN
+           </button>
+        </div>
+
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'checkin' ? '' : 'hidden'}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Theo dõi check-in học viên theo khóa học</h2>
+          <p className="text-sm text-gray-600 mb-5">Theo dõi phản hồi daily greeting để đánh giá mức độ active và chuẩn bị medal reward.</p>
+
+          {checkinError && (
+            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{checkinError}</div>
+          )}
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
+            <select
+              value={checkinCourseFilter}
+              onChange={(e) => setCheckinCourseFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Tất cả khóa học đang active</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+
+            <div className="rounded border border-[#14532d]/30 bg-[#14532d]/10 px-4 py-2 text-sm text-[#14532d]">
+              Tổng học viên: <span className="font-bold">{checkinSummary.totalStudents}</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="rounded border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+                Check-in hôm nay: <span className="font-bold">{checkinSummary.checkedInToday}</span>
+              </div>
+              <button
+                onClick={fetchCheckinData}
+                className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+              >
+                {checkinLoading ? 'Đang tải...' : 'Làm mới'}
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hôm nay</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">7 ngày</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lần check-in gần nhất</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nội dung gần nhất</th>
+                </tr>
+              </thead>
+              <tbody>
+                {checkinRows.map((row) => (
+                  <tr key={row.enrollmentId} className="border-b align-top hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900">{row.studentName || row.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{row.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{row.courseTitle}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <span className={`rounded px-2 py-1 text-xs font-semibold ${row.checkedInToday ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {row.checkedInToday ? 'Đã check-in' : 'Chưa check-in'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{row.checkinCount7d}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      {row.latestUpdatedAt ? (
+                        <>
+                          {new Date(row.latestUpdatedAt).toLocaleString('vi-VN')}
+                          {row.latestInputMethod && (
+                            <span className="ml-2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+                              {row.latestInputMethod === 'voice' ? 'voice' : 'text'}
+                            </span>
+                          )}
+                        </>
+                      ) : 'Chưa có dữ liệu'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {row.latestMessage ? (
+                        <p className="max-w-md whitespace-pre-wrap">{row.latestMessage}</p>
+                      ) : (
+                        <span className="text-gray-400">Chưa có nội dung</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {!checkinLoading && checkinRows.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Không có học viên nào theo bộ lọc hiện tại</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Statistics */}

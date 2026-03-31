@@ -275,66 +275,61 @@ export default function Home() {
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
         {session?.user?.role === 'member' && (
           <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5">
-            <h2 className="text-lg font-extrabold text-[#14532d] sm:text-xl">
-              Hello {session.user?.name || 'there'}! How are you today?
-            </h2>
-            <p className="mt-1 text-sm text-[#14532d]/85">
-              Quick check-in helps us track your learning activity and unlock medals later.
-            </p>
+            <div className="grid gap-4 lg:grid-cols-[1fr_220px] lg:items-start">
+              <div>
+                <h2 className="text-lg font-extrabold text-[#14532d] sm:text-xl">
+                  Hello {session.user?.name || 'there'}! How are you today?
+                </h2>
+                <p className="mt-1 text-sm text-[#14532d]/85">
+                  Quick check-in helps us track your learning activity and unlock medals later.
+                </p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setGreetingMethod('text')}
-                className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'text' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-              >
-                Text
-              </button>
-              <button
-                type="button"
-                onClick={() => setGreetingMethod('voice')}
-                className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'voice' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-              >
-                Voice
-              </button>
-              {hasGreetingToday && (
-                <span className="rounded-full border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
-                  Already checked in today
-                </span>
-              )}
-            </div>
+                {hasGreetingToday && (
+                  <span className="mt-3 inline-flex rounded-full border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+                    Already checked in today
+                  </span>
+                )}
 
-            <div className="mt-3">
-              <textarea
-                value={greetingMessage}
-                onChange={(event) => setGreetingMessage(event.target.value)}
-                placeholder="Share your energy level, wins, or challenge for today..."
-                className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                maxLength={500}
-              />
-              <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
-            </div>
+                <div className="mt-3">
+                  <textarea
+                    value={greetingMessage}
+                    onChange={(event) => setGreetingMessage(event.target.value)}
+                    placeholder="Share your energy level, wins, or challenge for today..."
+                    className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                    maxLength={500}
+                  />
+                  <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
+                </div>
+              </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              {greetingMethod === 'voice' && (
+              <div className="flex flex-col gap-2 lg:pt-1">
                 <button
                   type="button"
-                  onClick={startVoiceCapture}
-                  disabled={!speechSupported || isListening}
-                  className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => setGreetingMethod('text')}
+                  className={`w-full rounded-md px-3 py-2 text-sm font-semibold transition ${greetingMethod === 'text' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
                 >
-                  {isListening ? 'Listening...' : 'Tap to speak'}
+                  Text Input
                 </button>
-              )}
-
-              <button
-                type="button"
-                onClick={handleSubmitGreeting}
-                disabled={isSavingGreeting}
-                className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {isSavingGreeting ? 'Saving...' : hasGreetingToday ? 'Update Today Check-in' : 'Submit Check-in'}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGreetingMethod('voice')
+                    startVoiceCapture()
+                  }}
+                  disabled={!speechSupported || isListening}
+                  className={`w-full rounded-md px-3 py-2 text-sm font-semibold transition ${greetingMethod === 'voice' ? 'bg-amber-500 text-white' : 'border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'} disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                  {isListening ? 'Listening...' : 'Voice Input'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitGreeting}
+                  disabled={isSavingGreeting}
+                  className="w-full rounded-md bg-[#14532d] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {isSavingGreeting ? 'Saving...' : hasGreetingToday ? 'Update Today Check-in' : 'Submit Check-in'}
+                </button>
+              </div>
             </div>
 
             {!speechSupported && greetingMethod === 'voice' && (
