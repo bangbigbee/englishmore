@@ -2090,7 +2090,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="mt-3 space-y-3">
+                  <div className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
                     {(submission.messages || []).map((message) => (
                       <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
                         <div

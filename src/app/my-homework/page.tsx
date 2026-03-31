@@ -224,7 +224,7 @@ export default function MyHomeworkPage() {
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
                     <p className="mt-1 text-sm text-slate-600">Submitted at: {item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</p>
                     <div className="mt-4 rounded-2xl border border-emerald-200 bg-white/85 p-3 shadow-sm">
-                      <div className="mt-3 space-y-3">
+                      <div className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
                         {(item.messages || []).map((message) => (
                           <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
                             <div
