@@ -87,8 +87,8 @@ export default function TopNav() {
             <span className="text-[#14532d]">English</span>
             <span className="text-amber-500">More</span>
           </span>
-          <span className="text-xl font-extrabold uppercase tracking-tight text-slate-700 sm:text-2xl md:text-3xl">
-            LEARN SMARTER &amp; FASTER
+          <span className="text-xs font-medium text-slate-600 sm:text-sm">
+            Speak your mind and more
           </span>
         </Link>
 

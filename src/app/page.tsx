@@ -12,13 +12,28 @@ interface AvailableCourse {
   maxStudents: number
 }
 
-interface MemberEnrollment {
+type GreetingInputMethod = 'text' | 'voice'
+
+interface DailyGreetingResponse {
   id: string
-  status: string
-  course: {
-    title: string
-  }
+  message: string
+  inputMethod: GreetingInputMethod
+  responseDate: string
+  updatedAt: string
 }
+
+type BrowserSpeechRecognition = {
+  lang: string
+  interimResults: boolean
+  continuous: boolean
+  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null
+  onerror: ((event: { error: string }) => void) | null
+  onend: (() => void) | null
+  start: () => void
+  stop: () => void
+}
+
+type SpeechRecognitionFactory = new () => BrowserSpeechRecognition
 
 interface MemberHomeworkSummary {
   hasActiveCourse: boolean
@@ -43,15 +58,23 @@ const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satu
 export default function Home() {
   const { data: session } = useSession()
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
-  const [memberEnrollment, setMemberEnrollment] = useState<{ status: string; course: { title: string } } | null>(null)
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [loadingCourses, setLoadingCourses] = useState(false)
   const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
+  const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
+  const [greetingMessage, setGreetingMessage] = useState('')
+  const [greetingError, setGreetingError] = useState('')
+  const [greetingStatus, setGreetingStatus] = useState('')
+  const [hasGreetingToday, setHasGreetingToday] = useState(false)
+  const [isSavingGreeting, setIsSavingGreeting] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(false)
 
   useEffect(() => {
     if (!session) {
       setAvailableCourses([])
-      setMemberEnrollment(null)
+      setGreetingMessage('')
+      setHasGreetingToday(false)
       return
     }
 
@@ -69,27 +92,30 @@ export default function Home() {
       }
     }
 
-    const fetchMemberEnrollment = async () => {
+    const fetchGreetingResponse = async () => {
       if (session.user?.role !== 'member') {
-        setMemberEnrollment(null)
+        setGreetingMessage('')
+        setHasGreetingToday(false)
         return
       }
 
       try {
-        const res = await fetch('/api/user/enrollments')
+        const res = await fetch('/api/member/daily-greeting')
         if (!res.ok) {
-          setMemberEnrollment(null)
+          setGreetingMessage('')
+          setHasGreetingToday(false)
           return
         }
 
-        const data = await res.json()
-        const enrollment = Array.isArray(data)
-          ? data.find((e: MemberEnrollment) => e.status === 'active' || e.status === 'pending')
-          : null
-
-        setMemberEnrollment(enrollment || null)
+        const data = await res.json() as { hasResponse?: boolean; response?: DailyGreetingResponse | null }
+        setHasGreetingToday(Boolean(data?.hasResponse))
+        setGreetingMessage(data?.response?.message || '')
+        if (data?.response?.inputMethod === 'voice' || data?.response?.inputMethod === 'text') {
+          setGreetingMethod(data.response.inputMethod)
+        }
       } catch {
-        setMemberEnrollment(null)
+        setGreetingMessage('')
+        setHasGreetingToday(false)
       }
     }
 
@@ -113,9 +139,22 @@ export default function Home() {
     }
 
     fetchAvailableCourses()
-    fetchMemberEnrollment()
+    fetchGreetingResponse()
     fetchMemberHomework()
   }, [session])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const win = window as Window & {
+      SpeechRecognition?: SpeechRecognitionFactory
+      webkitSpeechRecognition?: SpeechRecognitionFactory
+    }
+
+    setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition))
+  }, [])
 
   const tickerCourses = useMemo(() => {
     if (availableCourses.length === 0) return []
@@ -142,16 +181,168 @@ export default function Home() {
     })
   }, [memberHomework])
 
+  const startVoiceCapture = () => {
+    if (typeof window === 'undefined') {
+      setGreetingError('Trinh duyet khong ho tro voice input.')
+      return
+    }
+
+    const win = window as Window & {
+      SpeechRecognition?: SpeechRecognitionFactory
+      webkitSpeechRecognition?: SpeechRecognitionFactory
+    }
+
+    const RecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition
+    if (!RecognitionCtor) {
+      setGreetingError('Trinh duyet khong ho tro voice input.')
+      return
+    }
+
+    setGreetingError('')
+    setGreetingStatus('Dang nghe... Hay noi cau tra loi cua ban.')
+    setIsListening(true)
+
+    const recognition = new RecognitionCtor()
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.continuous = false
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result?.[0]?.transcript || '')
+        .join(' ')
+        .trim()
+
+      if (transcript) {
+        setGreetingMessage((prev) => `${prev}${prev ? ' ' : ''}${transcript}`.trim())
+        setGreetingStatus('Da ghi nhan voice input. Ban co the sua lai text truoc khi gui.')
+      }
+    }
+
+    recognition.onerror = () => {
+      setGreetingError('Khong the nhan voice luc nay. Vui long thu lai hoac chuyen sang text.')
+    }
+
+    recognition.onend = () => {
+      setIsListening(false)
+    }
+
+    recognition.start()
+  }
+
+  const handleSubmitGreeting = async () => {
+    const normalizedMessage = greetingMessage.trim()
+    if (!normalizedMessage) {
+      setGreetingError('Vui long nhap noi dung check-in truoc khi gui.')
+      return
+    }
+
+    setGreetingError('')
+    setGreetingStatus('Dang luu check-in...')
+    setIsSavingGreeting(true)
+
+    try {
+      const res = await fetch('/api/member/daily-greeting', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          inputMethod: greetingMethod,
+          message: normalizedMessage
+        })
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setGreetingError(data?.error || 'Khong the luu check-in. Vui long thu lai.')
+        setGreetingStatus('')
+        return
+      }
+
+      setHasGreetingToday(true)
+      setGreetingStatus('Tuyet voi! Check-in hom nay da duoc luu.')
+    } catch {
+      setGreetingError('Khong the luu check-in. Vui long thu lai.')
+      setGreetingStatus('')
+    } finally {
+      setIsSavingGreeting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-        {session?.user?.role === 'member' && memberEnrollment && (
-          <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-3">
-            <p className={`text-base font-semibold sm:text-lg ${memberEnrollment.status === 'pending' ? 'text-amber-500' : 'text-[#14532d]'}`}>
-              {memberEnrollment.status === 'pending'
-                ? `Xin chào ${session.user?.name || 'bạn'}, bạn sắp trở thành học viên của ${memberEnrollment.course.title} rồi!`
-                : `Xin chào ${session.user?.name || 'bạn'}, bạn đang là thành viên ${memberEnrollment.course.title}.`}
+        {session?.user?.role === 'member' && (
+          <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5">
+            <h2 className="text-lg font-extrabold text-[#14532d] sm:text-xl">
+              Hello {session.user?.name || 'there'}! How are you today?
+            </h2>
+            <p className="mt-1 text-sm text-[#14532d]/85">
+              Quick check-in helps us track your learning activity and unlock medals later.
             </p>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setGreetingMethod('text')}
+                className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'text' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
+              >
+                Text
+              </button>
+              <button
+                type="button"
+                onClick={() => setGreetingMethod('voice')}
+                className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'voice' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
+              >
+                Voice
+              </button>
+              {hasGreetingToday && (
+                <span className="rounded-full border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+                  Already checked in today
+                </span>
+              )}
+            </div>
+
+            <div className="mt-3">
+              <textarea
+                value={greetingMessage}
+                onChange={(event) => setGreetingMessage(event.target.value)}
+                placeholder="Share your energy level, wins, or challenge for today..."
+                className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                maxLength={500}
+              />
+              <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {greetingMethod === 'voice' && (
+                <button
+                  type="button"
+                  onClick={startVoiceCapture}
+                  disabled={!speechSupported || isListening}
+                  className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isListening ? 'Listening...' : 'Tap to speak'}
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={handleSubmitGreeting}
+                disabled={isSavingGreeting}
+                className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSavingGreeting ? 'Saving...' : hasGreetingToday ? 'Update Today Check-in' : 'Submit Check-in'}
+              </button>
+            </div>
+
+            {!speechSupported && greetingMethod === 'voice' && (
+              <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
+            )}
+
+            {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
+            {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
           </section>
         )}
 
