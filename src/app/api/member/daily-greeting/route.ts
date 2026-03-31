@@ -9,6 +9,9 @@ const prismaWithGreeting = prisma as typeof prisma & {
     findMany: (...args: unknown[]) => Promise<unknown>
     upsert: (...args: unknown[]) => Promise<unknown>
   }
+  dailyReflection: {
+    findMany: (...args: unknown[]) => Promise<unknown>
+  }
 }
 
 const getUtcDayStart = () => {
@@ -68,7 +71,7 @@ export async function GET() {
       }
     })
 
-    const conversation = activeEnrollment
+    const checkinConversation = activeEnrollment
       ? await prismaWithGreeting.dailyGreetingCheckin.findMany({
           where: {
             responseDate: {
@@ -101,7 +104,39 @@ export async function GET() {
         })
       : []
 
-    const conversationItems = conversation as Array<{
+    const reflectionConversation = activeEnrollment
+      ? await prismaWithGreeting.dailyReflection.findMany({
+          where: {
+            responseDate: {
+              gte: dayStart,
+              lt: nextDayStart
+            },
+            user: {
+              enrollments: {
+                some: {
+                  courseId: activeEnrollment.courseId,
+                  status: 'active'
+                }
+              }
+            }
+          },
+          select: {
+            id: true,
+            message: true,
+            updatedAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            }
+          },
+          orderBy: [{ updatedAt: 'asc' }]
+        })
+      : []
+
+    const checkinConversationItems = checkinConversation as Array<{
       id: string
       message: string
       inputMethod: 'text' | 'voice'
@@ -109,17 +144,40 @@ export async function GET() {
       user: { id: string; name: string | null; email: string }
     }>
 
-    return NextResponse.json({
-      hasResponse: Boolean(checkin),
-      response: checkin || null,
-      conversation: conversationItems.map((item) => ({
-        id: item.id,
+    const reflectionConversationItems = reflectionConversation as Array<{
+      id: string
+      message: string
+      updatedAt: Date
+      user: { id: string; name: string | null; email: string }
+    }>
+
+    const conversationItems = [
+      ...checkinConversationItems.map((item) => ({
+        id: `checkin-${item.id}`,
+        sourceId: item.id,
         userId: item.user.id,
         studentName: item.user.name || item.user.email,
         message: item.message,
         inputMethod: item.inputMethod,
-        updatedAt: item.updatedAt
+        updatedAt: item.updatedAt,
+        entryType: 'checkin' as const
+      })),
+      ...reflectionConversationItems.map((item) => ({
+        id: `reflection-${item.id}`,
+        sourceId: item.id,
+        userId: item.user.id,
+        studentName: item.user.name || item.user.email,
+        message: item.message,
+        inputMethod: null,
+        updatedAt: item.updatedAt,
+        entryType: 'reflection' as const
       }))
+    ].sort((left, right) => new Date(left.updatedAt).getTime() - new Date(right.updatedAt).getTime())
+
+    return NextResponse.json({
+      hasResponse: Boolean(checkin),
+      response: checkin || null,
+      conversation: conversationItems
     })
   } catch (error) {
     console.error('Error fetching daily greeting checkin:', error)

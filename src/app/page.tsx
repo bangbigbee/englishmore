@@ -24,11 +24,13 @@ interface DailyGreetingResponse {
 
 interface DailyGreetingConversationItem {
   id: string
+  sourceId?: string
   userId: string
   studentName: string
   message: string
-  inputMethod: GreetingInputMethod
+  inputMethod: GreetingInputMethod | null
   updatedAt: string
+  entryType: 'checkin' | 'reflection'
 }
 
 interface MemberVocabularyItem {
@@ -45,11 +47,16 @@ type BrowserSpeechRecognition = {
   lang: string
   interimResults: boolean
   continuous: boolean
-  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null
+  onresult: ((event: { results: ArrayLike<(ArrayLike<{ transcript: string }> & { isFinal?: boolean })> }) => void) | null
   onerror: ((event: { error: string }) => void) | null
   onend: (() => void) | null
+  onspeechend?: (() => void) | null
+  onsoundend?: (() => void) | null
+  onaudioend?: (() => void) | null
+  onnomatch?: (() => void) | null
   start: () => void
   stop: () => void
+  abort?: () => void
 }
 
 type SpeechRecognitionFactory = new () => BrowserSpeechRecognition
@@ -114,6 +121,7 @@ export default function Home() {
   const pronunciationScoringTimeoutRef = useRef<number | null>(null)
   const pronunciationListeningTimeoutRef = useRef<number | null>(null)
   const pronunciationRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
+  const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     if (!session) {
@@ -404,18 +412,45 @@ export default function Home() {
     })
   }, [memberHomework])
 
-  const checkinBubbleStyles = [
-    'bg-blue-50 text-blue-900 border-blue-200',
-    'bg-emerald-50 text-emerald-900 border-emerald-200',
-    'bg-amber-50 text-amber-900 border-amber-200',
-    'bg-violet-50 text-violet-900 border-violet-200',
-    'bg-rose-50 text-rose-900 border-rose-200',
-    'bg-cyan-50 text-cyan-900 border-cyan-200'
-  ]
+  const classActivitySummary = useMemo(() => {
+    return greetingConversation.reduce(
+      (summary, item) => {
+        if (item.entryType === 'checkin') {
+          summary.checkins += 1
+        }
 
-  const getCheckinBubbleStyle = (userId: string) => {
-    const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    return checkinBubbleStyles[hash % checkinBubbleStyles.length]
+        if (item.entryType === 'reflection') {
+          summary.reflections += 1
+        }
+
+        return summary
+      },
+      { checkins: 0, reflections: 0 }
+    )
+  }, [greetingConversation])
+
+  const getActivityBubbleStyle = (item: DailyGreetingConversationItem) => {
+    if (item.entryType === 'reflection') {
+      return 'border-violet-200 bg-violet-50/95 text-violet-950 shadow-violet-100'
+    }
+
+    return 'border-blue-200 bg-blue-50/95 text-blue-950 shadow-blue-100'
+  }
+
+  const getActivityBadgeStyle = (item: DailyGreetingConversationItem) => {
+    if (item.entryType === 'reflection') {
+      return 'bg-violet-600/10 text-violet-800 ring-violet-200'
+    }
+
+    return 'bg-blue-600/10 text-blue-800 ring-blue-200'
+  }
+
+  const getActivityDotStyle = (item: DailyGreetingConversationItem) => {
+    if (item.entryType === 'reflection') {
+      return 'bg-violet-500 ring-violet-200'
+    }
+
+    return 'bg-blue-500 ring-blue-200'
   }
 
   const startVoiceCapture = () => {
@@ -496,6 +531,22 @@ export default function Home() {
   }, [currentVocabularyItem?.id])
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    pronunciationDoneAudioRef.current = new Audio('/audio/tingsound.mp3')
+    pronunciationDoneAudioRef.current.preload = 'auto'
+
+    return () => {
+      if (pronunciationDoneAudioRef.current) {
+        pronunciationDoneAudioRef.current.pause()
+        pronunciationDoneAudioRef.current = null
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     return () => {
       if (pronunciationScoringTimeoutRef.current !== null && typeof window !== 'undefined') {
         window.clearTimeout(pronunciationScoringTimeoutRef.current)
@@ -563,46 +614,14 @@ export default function Home() {
   }
 
   const playPronunciationDoneChime = () => {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const AudioContextCtor = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-    if (!AudioContextCtor) {
+    if (typeof window === 'undefined' || !pronunciationDoneAudioRef.current) {
       return
     }
 
     try {
-      const audioContext = new AudioContextCtor()
-      const startAt = audioContext.currentTime + 0.01
-      const gainNode = audioContext.createGain()
-      const firstOscillator = audioContext.createOscillator()
-      const secondOscillator = audioContext.createOscillator()
-
-      firstOscillator.type = 'sine'
-      secondOscillator.type = 'sine'
-      firstOscillator.frequency.setValueAtTime(1480, startAt)
-      firstOscillator.frequency.exponentialRampToValueAtTime(1760, startAt + 0.12)
-      secondOscillator.frequency.setValueAtTime(1760, startAt + 0.13)
-      secondOscillator.frequency.exponentialRampToValueAtTime(2090, startAt + 0.24)
-
-      gainNode.gain.setValueAtTime(0.0001, startAt)
-      gainNode.gain.exponentialRampToValueAtTime(0.12, startAt + 0.03)
-      gainNode.gain.exponentialRampToValueAtTime(0.08, startAt + 0.12)
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.28)
-
-      firstOscillator.connect(gainNode)
-      secondOscillator.connect(gainNode)
-      gainNode.connect(audioContext.destination)
-
-      firstOscillator.start(startAt)
-      firstOscillator.stop(startAt + 0.13)
-      secondOscillator.start(startAt + 0.13)
-      secondOscillator.stop(startAt + 0.28)
-
-      secondOscillator.onended = () => {
-        void audioContext.close().catch(() => undefined)
-      }
+      pronunciationDoneAudioRef.current.pause()
+      pronunciationDoneAudioRef.current.currentTime = 0
+      void pronunciationDoneAudioRef.current.play().catch(() => undefined)
     } catch {
       return
     }
@@ -644,20 +663,44 @@ export default function Home() {
     const recognition = new RecognitionCtor()
     pronunciationRecognitionRef.current = recognition
     recognition.lang = 'en-US'
-    recognition.interimResults = false
+    recognition.interimResults = true
     recognition.continuous = false
     let hasHandledResult = false
+    let hasSpeechFinished = false
+
+    const stopRecognitionSafely = () => {
+      try {
+        recognition.stop()
+      } catch {
+        try {
+          recognition.abort?.()
+        } catch {
+          // Ignore stop errors from already-ended recognition instances.
+        }
+      }
+    }
+
+    const markListeningAsFinished = () => {
+      if (!hasSpeechFinished) {
+        hasSpeechFinished = true
+        setIsPronunciationListening(false)
+        setPronunciationStatus((current) =>
+          current.startsWith('Listening') ? 'Got it. Finishing recognition...' : current
+        )
+      }
+    }
+
+    const requestRecognitionStop = () => {
+      markListeningAsFinished()
+      stopRecognitionSafely()
+    }
 
     pronunciationListeningTimeoutRef.current = window.setTimeout(() => {
       if (pronunciationRecognitionRef.current !== recognition || hasHandledResult) {
         return
       }
 
-      try {
-        recognition.stop()
-      } catch {
-        // Ignore stop errors from already-ended recognition instances.
-      }
+      stopRecognitionSafely()
 
       pronunciationRecognitionRef.current = null
       pronunciationListeningTimeoutRef.current = null
@@ -668,32 +711,50 @@ export default function Home() {
     }, 7000)
 
     recognition.onresult = (event) => {
-      hasHandledResult = true
-      const transcript = Array.from(event.results)
-        .map((result) => result?.[0]?.transcript || '')
+      const latestResult = event.results[event.results.length - 1]
+      const transcript = Array.from(latestResult || [])
+        .map((result) => result?.transcript || '')
         .join(' ')
         .trim()
 
+      if (!transcript) {
+        return
+      }
+
+      hasHandledResult = true
+
       clearPronunciationListeningTimeout()
       pronunciationRecognitionRef.current = null
-      setIsPronunciationListening(false)
+      markListeningAsFinished()
 
       const { candidate, score } = getBestPronunciationCandidate(currentVocabularyItem.word, transcript)
       setPronunciationTranscript(transcript)
       setPronunciationStatus('Got it. Checking your pronunciation...')
       playPronunciationDoneChime()
       clearPronunciationScoringTimeout()
-      try {
-        recognition.stop()
-      } catch {
-        // Ignore stop errors from already-ended recognition instances.
-      }
+      stopRecognitionSafely()
       pronunciationScoringTimeoutRef.current = window.setTimeout(() => {
         setPronunciationScore(score)
         setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentVocabularyItem.word))
         setPronunciationStatus(score >= 80 ? 'Nice work. Keep practicing to make it even cleaner.' : 'Try again and compare your sound with the sample.')
         pronunciationScoringTimeoutRef.current = null
       }, 420)
+    }
+
+    recognition.onspeechend = requestRecognitionStop
+    recognition.onsoundend = requestRecognitionStop
+    recognition.onaudioend = () => {
+      if (!hasHandledResult) {
+        markListeningAsFinished()
+      }
+    }
+    recognition.onnomatch = () => {
+      clearPronunciationListeningTimeout()
+      pronunciationRecognitionRef.current = null
+      setIsPronunciationListening(false)
+      setPronunciationStatus('')
+      setPronunciationFeedback('Chưa nghe rõ từ bạn vừa đọc. Hãy thử lại và phát âm ngắn, rõ hơn.')
+      setPronunciationScore(null)
     }
 
     recognition.onerror = () => {
@@ -855,6 +916,11 @@ export default function Home() {
       if (!res.ok) { setReflectionError(data?.error || 'Không thể lưu.'); setReflectionStatus(''); return }
       setHasReflectionToday(true)
       setReflectionStatus('Đã lưu reflection hôm nay!')
+      const refreshRes = await fetch('/api/member/daily-greeting')
+      if (refreshRes.ok) {
+        const refreshData = await refreshRes.json() as { conversation?: DailyGreetingConversationItem[] }
+        setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
+      }
     } catch {
       setReflectionError('Không thể lưu.')
       setReflectionStatus('')
@@ -1038,26 +1104,58 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="rounded-lg border border-[#14532d]/30 bg-linear-to-br from-white via-white to-[#14532d]/5 p-3 sm:p-4 shadow-sm">
-                <h3 className="text-xs sm:text-sm font-bold text-[#14532d]">💬 Check-in của lớp hôm nay</h3>
-                <div className="mt-2 sm:mt-3 max-h-48 sm:max-h-56 space-y-1.5 sm:space-y-2 overflow-y-auto pr-1">
+              <div className="rounded-2xl border border-slate-200 bg-[radial-gradient(circle_at_top,#eff6ff_0%,#ffffff_38%,#faf5ff_100%)] p-3 sm:p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Check-in & Reflection của lớp hôm nay</h3>
+                    <p className="mt-1 text-[11px] text-slate-500 sm:text-xs">Cả lớp đang hiện diện ở đây. Check-in màu xanh, reflection màu tím.</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
+                      <span className="h-2 w-2 rounded-full bg-blue-500" />
+                      {classActivitySummary.checkins} check-in
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[11px] font-semibold text-violet-700">
+                      <span className="h-2 w-2 rounded-full bg-violet-500" />
+                      {classActivitySummary.reflections} reflection
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-3 max-h-72 space-y-2.5 overflow-y-auto pr-1 sm:max-h-80">
                   {greetingConversationLoading ? (
-                    <p className="text-xs text-slate-500">Đang tải hội thoại check-in...</p>
+                    <p className="text-xs text-slate-500">Đang tải hoạt động của lớp...</p>
                   ) : greetingConversation.length === 0 ? (
-                    <p className="text-xs text-slate-500">Chưa có check-in nào trong lớp hôm nay.</p>
+                    <p className="rounded-2xl border border-dashed border-slate-200 bg-white/80 px-4 py-5 text-center text-xs text-slate-500">Chưa có check-in hoặc reflection nào trong lớp hôm nay.</p>
                   ) : (
                     greetingConversation.map((item) => (
                       <article
                         key={item.id}
-                        className={`rounded-lg border px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm checkin-message shadow-sm transition-all hover:shadow-md ${getCheckinBubbleStyle(item.userId)}`}
+                        className={`rounded-2xl border px-3 py-3 text-xs shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:px-4 sm:text-sm ${getActivityBubbleStyle(item)}`}
                       >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="font-semibold truncate">{item.studentName}</span>
-                          <span className="ml-1 whitespace-nowrap text-[10px] opacity-65 sm:text-[11px]">
-                            {new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                          </span>
+                        <div className="flex items-start gap-3">
+                          <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ring-4 ${getActivityDotStyle(item)}`}>
+                            {item.studentName.trim().charAt(0).toUpperCase() || '?'}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                                <span className="truncate font-semibold">{item.studentName}</span>
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1 ring-inset sm:text-[11px] ${getActivityBadgeStyle(item)}`}>
+                                  {item.entryType === 'reflection' ? 'Reflect' : 'Check-in'}
+                                </span>
+                                {item.inputMethod === 'voice' && item.entryType === 'checkin' && (
+                                  <span className="inline-flex items-center rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-medium text-slate-500 ring-1 ring-slate-200 sm:text-[11px]">
+                                    Voice
+                                  </span>
+                                )}
+                              </div>
+                              <span className="whitespace-nowrap text-[10px] font-medium opacity-70 sm:text-[11px]">
+                                {new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                            <p className="mt-1.5 whitespace-pre-wrap text-wrap leading-relaxed">{item.message}</p>
+                          </div>
                         </div>
-                        <p className="mt-0.5 text-wrap whitespace-pre-wrap text-xs sm:mt-1 sm:text-sm">{item.message}</p>
                       </article>
                     ))
                   )}
