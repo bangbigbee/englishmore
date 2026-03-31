@@ -15,7 +15,7 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
@@ -134,6 +134,9 @@ export default function ProfilePage() {
       const updated = await res.json()
       setProfile(updated)
       setSelectedFile(null)
+
+      // Refresh session to sync name and image across app
+      await update()
 
       // Show success message, with warning about avatar if it failed
       if (avatarUploadFailed) {
