@@ -968,178 +968,101 @@ export default function Home() {
             ) : (
               <div className="course-ticker-wrap">
                 <div className="course-ticker-track">
-                  {session?.user?.role === 'member' && (
-                    <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5 sm:py-5">
-                      {/* --- CHECK-IN BLOCK --- */}
-                      <h2 className="text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
-                        Hello {session.user?.name || 'there'}! How are you today?
-                      </h2>
+                  {tickerCourses.map((course, index) => (
+                    <Link
+                      key={`${course.id}-${index}`}
+                      href="/courses"
+                      className="course-ticker-item"
+                    >
+                      <span className="course-ticker-title">{course.title}</span>
+                      <span className="course-ticker-meta">
+                        Còn {Math.max(course.maxStudents - course.enrolledCount, 0)} chỗ • Hạn đăng ký {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
 
-                      <div className="mt-4 grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-[2fr_1fr]">
-                        <div>
-                          {hasGreetingToday ? (
-                            /* Already checked in — show message + clickable edit badge */
-                            <div>
-                              <div className="flex flex-wrap items-center gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setEditCheckinMessage(greetingMessage)
-                                    setEditCheckinStatus('')
-                                    setIsEditingCheckin(true)
-                                  }}
-                                  className="rounded-full border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition cursor-pointer"
-                                >
-                                  ✓ Already checked in today — click to edit
-                                </button>
-                              </div>
-                              {isEditingCheckin ? (
-                                <div className="mt-3">
-                                  <textarea
-                                    value={editCheckinMessage}
-                                    onChange={(e) => setEditCheckinMessage(e.target.value)}
-                                    className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                                    maxLength={500}
-                                  />
-                                  <div className="mt-2 flex gap-2">
-                                    <button
-                                      type="button"
-                                      onClick={handleSaveEditCheckin}
-                                      className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white hover:bg-[#166534] transition"
-                                    >
-                                      Save
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => setIsEditingCheckin(false)}
-                                      className="rounded-md border border-slate-300 bg-white px-4 py-1.5 text-sm text-slate-600 hover:bg-slate-50 transition"
-                                    >
-                                      Cancel
-                                    </button>
-                                  </div>
-                                  {editCheckinStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{editCheckinStatus}</p>}
-                                </div>
-                              ) : (
-                                <p className="mt-3 whitespace-pre-wrap rounded-lg border border-[#14532d]/20 bg-white px-3 py-2 text-sm text-slate-700">{greetingMessage}</p>
-                              )}
-                            </div>
-                          ) : (
-                            /* Not checked in yet */
-                            <div>
-                              <div className="mt-1 flex flex-wrap items-center gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => setGreetingMethod('text')}
-                                  className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'text' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-                                >
-                                  Text
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setGreetingMethod('voice')}
-                                  className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'voice' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-                                >
-                                  Voice
-                                </button>
-                              </div>
-                              <div className="mt-3">
-                                <textarea
-                                  value={greetingMessage}
-                                  onChange={(event) => setGreetingMessage(event.target.value)}
-                                  placeholder="Share your energy level, wins, or challenge for today..."
-                                  className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                                  maxLength={500}
-                                />
-                                <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
-                              </div>
-                              <div className="mt-3 flex flex-wrap items-center gap-2">
-                                {greetingMethod === 'voice' && (
-                                  <button
-                                    type="button"
-                                    onClick={startVoiceCapture}
-                                    disabled={!speechSupported || isListening}
-                                    className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-                                  >
-                                    {isListening ? 'Listening...' : 'Tap to speak'}
-                                  </button>
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={handleSubmitGreeting}
-                                  disabled={isSavingGreeting}
-                                  className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
-                                >
-                                  {isSavingGreeting ? 'Saving...' : 'Check in'}
-                                </button>
-                              </div>
-                              {!speechSupported && greetingMethod === 'voice' && (
-                                <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
-                              )}
-                              {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
-                              {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
-                            </div>
-                          )}
-                        </div>
+        {session?.user?.role === 'member' ? (
+          <>
+            <section>
+              <h1 className="sr-only">EnglishMore</h1>
+              <div className="rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
+                  {memberVocabularyCourseTitle && (
+                    <span className="rounded-full bg-[#14532d]/10 px-3 py-1 text-xs font-semibold text-[#14532d]">
+                      {memberVocabularyCourseTitle}
+                    </span>
+                  )}
+                </div>
 
-                        <div className="rounded-lg border border-[#14532d]/30 bg-linear-to-br from-white via-white to-[#14532d]/5 p-3 sm:p-4 shadow-sm">
-                          <h3 className="text-xs sm:text-sm font-bold text-[#14532d]">💬 Check-in của lớp hôm nay</h3>
-                          <div className="mt-2 sm:mt-3 max-h-48 sm:max-h-56 space-y-1.5 sm:space-y-2 overflow-y-auto pr-1">
-                            {greetingConversationLoading ? (
-                              <p className="text-xs text-slate-500">Đang tải hội thoại check-in...</p>
-                            ) : greetingConversation.length === 0 ? (
-                              <p className="text-xs text-slate-500">Chưa có check-in nào trong lớp hôm nay.</p>
-                            ) : (
-                              greetingConversation.map((item) => (
-                                <article
-                                  key={item.id}
-                                  className={`rounded-lg border px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm checkin-message shadow-sm transition-all hover:shadow-md ${getCheckinBubbleStyle(item.userId)}`}
-                                >
-                                  <div className="flex items-center justify-between gap-2">
-                                    <span className="font-semibold truncate">{item.studentName}</span>
-                                    <span className="text-[10px] sm:text-[11px] opacity-65 whitespace-nowrap ml-1">{new Date(item.updatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
-                                  </div>
-                                  <p className="mt-0.5 sm:mt-1 whitespace-pre-wrap text-xs sm:text-sm text-wrap">{item.message}</p>
-                                </article>
-                              ))
-                            )}
-                          </div>
-                        </div>
+                {memberVocabularyLoading ? (
+                  <p className="text-sm text-slate-500">Đang tải vocabulary...</p>
+                ) : memberVocabularyError ? (
+                  <p className="text-sm text-red-600">{memberVocabularyError}</p>
+                ) : !currentVocabularyItem ? (
+                  <p className="text-sm text-slate-500">Chưa có từ vựng cho khóa học hiện tại.</p>
+                ) : (
+                  <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 sm:px-4 py-4 sm:py-5 md:px-6 md:py-6 text-white">
+                    <div className="mb-3 sm:mb-4 flex items-center justify-between gap-1">
+                      <button
+                        type="button"
+                        onClick={() => moveVocabulary('prev')}
+                        disabled={memberVocabularyItems.length <= 1}
+                        className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        aria-label="Previous vocabulary"
+                      >
+                        {'<'}
+                      </button>
+                      <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+                        <button
+                          type="button"
+                          onClick={() => speakVocabularyWord()}
+                          className="inline-flex items-center justify-center rounded-full bg-white/15 p-2 sm:p-3 transition hover:bg-white/25"
+                          aria-label="Speak vocabulary"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                            className="h-5 w-5 sm:h-6 sm:w-6 fill-current"
+                          >
+                            <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleTryVocabulary}
+                          disabled={!speechSupported || isPronunciationListening}
+                          className="inline-flex items-center gap-1 sm:gap-2 rounded-full bg-white/15 px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white transition hover:bg-white/25 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                            className="h-4 w-4 sm:h-5 sm:w-5 fill-current shrink-0"
+                          >
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.5 14.53 16 12 16s-4.52-1.5-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.063.54-.92 1.14.72 3.44 3.82 5.96 7.81 5.96s7.09-2.52 7.81-5.96c.14-.6-.31-1.14-.92-1.14z" />
+                          </svg>
+                          <span>{isPronunciationListening ? 'Listening...' : 'Try it'}</span>
+                        </button>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => moveVocabulary('next')}
+                        disabled={memberVocabularyItems.length <= 1}
+                        className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        aria-label="Next vocabulary"
+                      >
+                        {'>'}
+                      </button>
+                    </div>
 
-                      {/* --- REFLECT BLOCK (only after check-in) --- */}
-                      {hasGreetingToday && (
-                        <div className="mt-4 border-t border-[#14532d]/20 pt-4">
-                          <h3 className="text-sm font-bold text-[#14532d] sm:text-base">How was your day?</h3>
-                          <p className="mt-0.5 text-xs text-[#14532d]/70">Reflect on your learning — what went well, what was hard, what you want to remember.</p>
-                          <div className="mt-3">
-                            <textarea
-                              value={reflectionMessage}
-                              onChange={(e) => setReflectionMessage(e.target.value)}
-                              placeholder="Write your reflection here..."
-                              className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                              maxLength={1000}
-                            />
-                            <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
-                          </div>
-                          <div className="mt-2 flex flex-wrap items-center gap-3">
-                            <button
-                              type="button"
-                              onClick={handleSubmitReflection}
-                              disabled={isSavingReflection}
-                              className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
-                            >
-                              {isSavingReflection ? 'Saving...' : hasReflectionToday ? 'Update Reflect' : 'Reflect'}
-                            </button>
-                            {hasReflectionToday && (
-                              <span className="rounded-full border border-violet-300 bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-700">
-                                ✓ Reflected today
-                              </span>
-                            )}
-                          </div>
-                          {reflectionStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{reflectionStatus}</p>}
-                          {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
-                        </div>
-                      )}
+                    <div className="text-center">
+                      <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">{currentVocabularyItem.word}</p>
+                      <p className="mt-1 sm:mt-2 text-lg sm:text-2xl text-white/90">{currentVocabularyItem.phonetic ? `/${currentVocabularyItem.phonetic}/` : ''}</p>
                       {currentVocabularyItem.englishDefinition && (
                         <p className="mt-2 sm:mt-3 text-xs sm:text-base font-medium text-white/90">{currentVocabularyItem.englishDefinition}</p>
                       )}
@@ -1172,7 +1095,6 @@ export default function Home() {
                 )}
               </div>
             </section>
-
             <section className="mt-6 sm:mt-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Weekly Activity</h2>
               <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
