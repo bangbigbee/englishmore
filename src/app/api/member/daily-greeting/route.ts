@@ -22,8 +22,10 @@ const getUtcDayStart = () => {
 const getUtcNextDayStart = (date: Date) =>
   new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1))
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const shouldMarkAsRead = request.nextUrl.searchParams.get('markAsRead') === '1'
+
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -31,7 +33,7 @@ export async function GET() {
 
     const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, role: true }
+      select: { id: true, role: true, classActivityLastReadAt: true }
     })
 
     if (!currentUser || currentUser.role !== 'member') {
@@ -174,10 +176,41 @@ export async function GET() {
       }))
     ].sort((left, right) => new Date(left.updatedAt).getTime() - new Date(right.updatedAt).getTime())
 
+    const unreadSummary = conversationItems.reduce(
+      (summary, item) => {
+        const isFromOtherUser = item.userId !== currentUser.id
+        const isUnread = !currentUser.classActivityLastReadAt || new Date(item.updatedAt).getTime() > currentUser.classActivityLastReadAt.getTime()
+
+        if (!isFromOtherUser || !isUnread) {
+          return summary
+        }
+
+        if (item.entryType === 'checkin') {
+          summary.checkins += 1
+        }
+
+        if (item.entryType === 'reflection') {
+          summary.reflections += 1
+        }
+
+        summary.total += 1
+        return summary
+      },
+      { checkins: 0, reflections: 0, total: 0 }
+    )
+
+    if (shouldMarkAsRead) {
+      await prisma.user.update({
+        where: { id: currentUser.id },
+        data: { classActivityLastReadAt: new Date() }
+      })
+    }
+
     return NextResponse.json({
       hasResponse: Boolean(checkin),
       response: checkin || null,
-      conversation: conversationItems
+      conversation: conversationItems,
+      unreadSummary: shouldMarkAsRead ? { checkins: 0, reflections: 0, total: 0 } : unreadSummary
     })
   } catch (error) {
     console.error('Error fetching daily greeting checkin:', error)

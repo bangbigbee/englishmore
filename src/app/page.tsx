@@ -33,6 +33,12 @@ interface DailyGreetingConversationItem {
   entryType: 'checkin' | 'reflection'
 }
 
+interface ClassActivityUnreadSummary {
+  checkins: number
+  reflections: number
+  total: number
+}
+
 interface MemberVocabularyItem {
   id: string
   word: string
@@ -106,6 +112,7 @@ export default function Home() {
   const [editCheckinMessage, setEditCheckinMessage] = useState('')
   const [editCheckinStatus, setEditCheckinStatus] = useState('')
   const [greetingConversationLoading, setGreetingConversationLoading] = useState(false)
+  const [classActivityUnread, setClassActivityUnread] = useState<ClassActivityUnreadSummary>({ checkins: 0, reflections: 0, total: 0 })
   // Reflection state
   const [reflectionMessage, setReflectionMessage] = useState('')
   const [reflectionStatus, setReflectionStatus] = useState('')
@@ -148,6 +155,7 @@ export default function Home() {
       setIsEditingReflection(false)
       setEditReflectionStatus('')
       setGreetingConversation([])
+      setClassActivityUnread({ checkins: 0, reflections: 0, total: 0 })
       return
     }
 
@@ -165,21 +173,25 @@ export default function Home() {
       }
     }
 
-    const fetchGreetingResponse = async () => {
+    const fetchGreetingResponse = async (showLoading = true) => {
       if (session.user?.role !== 'member') {
         setGreetingMessage('')
         setHasGreetingToday(false)
         setGreetingConversation([])
+        setClassActivityUnread({ checkins: 0, reflections: 0, total: 0 })
         return
       }
 
       try {
-        setGreetingConversationLoading(true)
+        if (showLoading) {
+          setGreetingConversationLoading(true)
+        }
         const res = await fetch('/api/member/daily-greeting')
         if (!res.ok) {
           setGreetingMessage('')
           setHasGreetingToday(false)
           setGreetingConversation([])
+          setClassActivityUnread({ checkins: 0, reflections: 0, total: 0 })
           return
         }
 
@@ -187,11 +199,17 @@ export default function Home() {
           hasResponse?: boolean
           response?: DailyGreetingResponse | null
           conversation?: DailyGreetingConversationItem[]
+          unreadSummary?: ClassActivityUnreadSummary
         }
         setHasGreetingToday(Boolean(data?.hasResponse))
         setGreetingMessage(data?.response?.message || '')
         setEditCheckinMessage(data?.response?.message || '')
         setGreetingConversation(Array.isArray(data?.conversation) ? data.conversation : [])
+        setClassActivityUnread({
+          checkins: Number(data?.unreadSummary?.checkins || 0),
+          reflections: Number(data?.unreadSummary?.reflections || 0),
+          total: Number(data?.unreadSummary?.total || 0)
+        })
         if (data?.response?.inputMethod === 'voice' || data?.response?.inputMethod === 'text') {
           setGreetingMethod(data.response.inputMethod)
         }
@@ -200,8 +218,11 @@ export default function Home() {
         setHasGreetingToday(false)
         setEditCheckinMessage('')
         setGreetingConversation([])
+        setClassActivityUnread({ checkins: 0, reflections: 0, total: 0 })
       } finally {
-        setGreetingConversationLoading(false)
+        if (showLoading) {
+          setGreetingConversationLoading(false)
+        }
       }
     }
 
@@ -314,6 +335,14 @@ export default function Home() {
     fetchAdminHomeworkReview()
     fetchMemberVocabulary()
     fetchReflection()
+
+    const conversationRefreshInterval = window.setInterval(() => {
+      fetchGreetingResponse(false)
+    }, 25000)
+
+    return () => {
+      window.clearInterval(conversationRefreshInterval)
+    }
   }, [session])
 
   useEffect(() => {
@@ -955,8 +984,14 @@ export default function Home() {
           hasResponse?: boolean
           response?: DailyGreetingResponse | null
           conversation?: DailyGreetingConversationItem[]
+          unreadSummary?: ClassActivityUnreadSummary
         }
         setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
+        setClassActivityUnread({
+          checkins: Number(refreshData?.unreadSummary?.checkins || 0),
+          reflections: Number(refreshData?.unreadSummary?.reflections || 0),
+          total: Number(refreshData?.unreadSummary?.total || 0)
+        })
       }
     } catch {
       setGreetingError('Could not save your check-in. Please try again.')
@@ -983,8 +1018,16 @@ export default function Home() {
       setIsEditingCheckin(false)
       const refreshRes = await fetch('/api/member/daily-greeting')
       if (refreshRes.ok) {
-        const refreshData = await refreshRes.json() as { conversation?: DailyGreetingConversationItem[] }
+        const refreshData = await refreshRes.json() as {
+          conversation?: DailyGreetingConversationItem[]
+          unreadSummary?: ClassActivityUnreadSummary
+        }
         setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
+        setClassActivityUnread({
+          checkins: Number(refreshData?.unreadSummary?.checkins || 0),
+          reflections: Number(refreshData?.unreadSummary?.reflections || 0),
+          total: Number(refreshData?.unreadSummary?.total || 0)
+        })
       }
     } catch {
       setEditCheckinStatus('Save failed.')
@@ -1011,8 +1054,16 @@ export default function Home() {
       setReflectionStatus('Your reflection for today has been saved.')
       const refreshRes = await fetch('/api/member/daily-greeting')
       if (refreshRes.ok) {
-        const refreshData = await refreshRes.json() as { conversation?: DailyGreetingConversationItem[] }
+        const refreshData = await refreshRes.json() as {
+          conversation?: DailyGreetingConversationItem[]
+          unreadSummary?: ClassActivityUnreadSummary
+        }
         setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
+        setClassActivityUnread({
+          checkins: Number(refreshData?.unreadSummary?.checkins || 0),
+          reflections: Number(refreshData?.unreadSummary?.reflections || 0),
+          total: Number(refreshData?.unreadSummary?.total || 0)
+        })
       }
     } catch {
       setReflectionError('Could not save your reflection.')
@@ -1051,13 +1102,48 @@ export default function Home() {
 
       const refreshRes = await fetch('/api/member/daily-greeting')
       if (refreshRes.ok) {
-        const refreshData = await refreshRes.json() as { conversation?: DailyGreetingConversationItem[] }
+        const refreshData = await refreshRes.json() as {
+          conversation?: DailyGreetingConversationItem[]
+          unreadSummary?: ClassActivityUnreadSummary
+        }
         setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
+        setClassActivityUnread({
+          checkins: Number(refreshData?.unreadSummary?.checkins || 0),
+          reflections: Number(refreshData?.unreadSummary?.reflections || 0),
+          total: Number(refreshData?.unreadSummary?.total || 0)
+        })
       }
     } catch {
       setEditReflectionStatus('Save failed.')
     } finally {
       setIsSavingReflection(false)
+    }
+  }
+
+  const handleMarkClassActivityRead = async () => {
+    if (session?.user?.role !== 'member') {
+      return
+    }
+
+    try {
+      const res = await fetch('/api/member/daily-greeting?markAsRead=1')
+      if (!res.ok) {
+        return
+      }
+
+      const data = await res.json() as {
+        conversation?: DailyGreetingConversationItem[]
+        unreadSummary?: ClassActivityUnreadSummary
+      }
+
+      setGreetingConversation(Array.isArray(data?.conversation) ? data.conversation : [])
+      setClassActivityUnread({
+        checkins: Number(data?.unreadSummary?.checkins || 0),
+        reflections: Number(data?.unreadSummary?.reflections || 0),
+        total: Number(data?.unreadSummary?.total || 0)
+      })
+    } catch {
+      // Ignore silent mark-as-read failures.
     }
   }
 
@@ -1292,15 +1378,31 @@ export default function Home() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Today&apos;s Class Check-ins & Reflections</h3>
+                    {classActivityUnread.total > 0 && (
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                          {classActivityUnread.total} unread
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleMarkClassActivityRead}
+                          className="inline-flex items-center rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 transition hover:border-[#14532d]/40 hover:text-[#14532d]"
+                        >
+                          Mark as read
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
                       <span className="h-2 w-2 rounded-full bg-blue-500" />
                       {classActivitySummary.checkins} check-in
+                      {classActivityUnread.checkins > 0 ? ` • ${classActivityUnread.checkins} unread` : ''}
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[11px] font-semibold text-violet-700">
                       <span className="h-2 w-2 rounded-full bg-violet-500" />
                       {classActivitySummary.reflections} reflection
+                      {classActivityUnread.reflections > 0 ? ` • ${classActivityUnread.reflections} unread` : ''}
                     </span>
                   </div>
                 </div>
