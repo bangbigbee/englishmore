@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 const prismaWithVocabulary = prisma as typeof prisma & {
   vocabularyItem: {
     findMany: (...args: unknown[]) => Promise<unknown>
+    findFirst: (...args: unknown[]) => Promise<unknown>
     create: (...args: unknown[]) => Promise<unknown>
   }
 }
@@ -63,20 +64,23 @@ export async function POST(request: NextRequest) {
   const englishDefinition = String(body?.englishDefinition || '').trim()
   const meaning = String(body?.meaning || '').trim()
   const example = String(body?.example || '').trim()
-  const displayOrder = Number(body?.displayOrder)
 
   if (!courseId || !word || !meaning) {
     return NextResponse.json({ error: 'courseId, word, meaning are required' }, { status: 400 })
-  }
-
-  if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
-    return NextResponse.json({ error: 'displayOrder must be an integer between 1 and 9999' }, { status: 400 })
   }
 
   const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
   if (!course) {
     return NextResponse.json({ error: 'Course not found' }, { status: 404 })
   }
+
+  const lastItem = await prismaWithVocabulary.vocabularyItem.findFirst({
+    where: { courseId },
+    select: { displayOrder: true },
+    orderBy: { displayOrder: 'desc' }
+  }) as { displayOrder: number } | null
+
+  const displayOrder = (lastItem?.displayOrder || 0) + 1
 
   const item = await prismaWithVocabulary.vocabularyItem.create({
     data: {

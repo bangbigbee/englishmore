@@ -218,8 +218,7 @@ const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   phonetic: item?.phonetic || '',
   englishDefinition: item?.englishDefinition || '',
   meaning: item?.meaning || '',
-  example: item?.example || '',
-  displayOrder: String(item?.displayOrder || 1)
+  example: item?.example || ''
 })
 
 const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
@@ -396,7 +395,9 @@ export default function AdminDashboard() {
   const [newVocabularyEnglishDefinition, setNewVocabularyEnglishDefinition] = useState('')
   const [newVocabularyMeaning, setNewVocabularyMeaning] = useState('')
   const [newVocabularyExample, setNewVocabularyExample] = useState('')
-  const [newVocabularyOrder, setNewVocabularyOrder] = useState('1')
+  const [vocabularyImportSourceCourseId, setVocabularyImportSourceCourseId] = useState('')
+  const [vocabularyImportTargetCourseId, setVocabularyImportTargetCourseId] = useState('')
+  const [importingVocabulary, setImportingVocabulary] = useState(false)
   const [vocabularyError, setVocabularyError] = useState('')
   const [vocabularySuccess, setVocabularySuccess] = useState('')
   const [savingVocabulary, setSavingVocabulary] = useState(false)
@@ -642,15 +643,8 @@ export default function AdminDashboard() {
   }, [vocabularyCourseFilter])
 
   const createVocabulary = async () => {
-    const displayOrder = Number(newVocabularyOrder)
-
     if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
       setVocabularyError('Please enter the course, word, and meaning.')
-      return
-    }
-
-    if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
-      setVocabularyError('Display order must be an integer from 1 to 9999.')
       return
     }
 
@@ -668,8 +662,7 @@ export default function AdminDashboard() {
           phonetic: newVocabularyPhonetic,
           englishDefinition: newVocabularyEnglishDefinition,
           meaning: newVocabularyMeaning,
-          example: newVocabularyExample,
-          displayOrder
+          example: newVocabularyExample
         })
       })
 
@@ -682,7 +675,6 @@ export default function AdminDashboard() {
       setNewVocabularyEnglishDefinition('')
       setNewVocabularyMeaning('')
       setNewVocabularyExample('')
-      setNewVocabularyOrder('1')
       fetchVocabularyData()
     } catch (err) {
       setVocabularyError(err instanceof Error ? err.message : 'Could not add the vocabulary item.')
@@ -700,7 +692,6 @@ export default function AdminDashboard() {
     setNewVocabularyEnglishDefinition(formState.englishDefinition)
     setNewVocabularyMeaning(formState.meaning)
     setNewVocabularyExample(formState.example)
-    setNewVocabularyOrder(formState.displayOrder)
     setVocabularyError('')
     setVocabularySuccess('')
   }
@@ -713,7 +704,6 @@ export default function AdminDashboard() {
     setNewVocabularyEnglishDefinition('')
     setNewVocabularyMeaning('')
     setNewVocabularyExample('')
-    setNewVocabularyOrder('1')
   }
 
   const updateVocabulary = async () => {
@@ -721,15 +711,8 @@ export default function AdminDashboard() {
       return
     }
 
-    const displayOrder = Number(newVocabularyOrder)
-
     if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
       setVocabularyError('Please enter the course, word, and meaning.')
-      return
-    }
-
-    if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
-      setVocabularyError('Display order must be an integer from 1 to 9999.')
       return
     }
 
@@ -747,8 +730,7 @@ export default function AdminDashboard() {
           phonetic: newVocabularyPhonetic,
           englishDefinition: newVocabularyEnglishDefinition,
           meaning: newVocabularyMeaning,
-          example: newVocabularyExample,
-          displayOrder
+          example: newVocabularyExample
         })
       })
 
@@ -789,6 +771,48 @@ export default function AdminDashboard() {
     }
   }
 
+  const importVocabularyBetweenCourses = async () => {
+    if (!vocabularyImportSourceCourseId || !vocabularyImportTargetCourseId) {
+      setVocabularyError('Please choose both source and target courses for import.')
+      return
+    }
+
+    if (vocabularyImportSourceCourseId === vocabularyImportTargetCourseId) {
+      setVocabularyError('Source and target courses must be different.')
+      return
+    }
+
+    try {
+      setImportingVocabulary(true)
+      setVocabularyError('')
+      setVocabularySuccess('')
+
+      const res = await fetch('/api/admin/vocabulary/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sourceCourseId: vocabularyImportSourceCourseId,
+          targetCourseId: vocabularyImportTargetCourseId
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Could not import vocabulary.')
+      }
+
+      const createdCount = Number(data?.createdCount || 0)
+      const skippedCount = Number(data?.skippedCount || 0)
+      setVocabularySuccess(`Imported ${createdCount} words. Skipped ${skippedCount} duplicate words.`)
+      setVocabularyCourseFilter(vocabularyImportTargetCourseId)
+      fetchVocabularyData()
+    } catch (err) {
+      setVocabularyError(err instanceof Error ? err.message : 'Could not import vocabulary.')
+    } finally {
+      setImportingVocabulary(false)
+    }
+  }
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
@@ -826,7 +850,16 @@ export default function AdminDashboard() {
     if (!newVocabularyCourseId && courses.length > 0) {
       setNewVocabularyCourseId(courses[0].id)
     }
-  }, [courses, vocabularyCourseFilter, newVocabularyCourseId])
+    if (!vocabularyImportSourceCourseId && courses.length > 0) {
+      setVocabularyImportSourceCourseId(courses[0].id)
+    }
+    if (!vocabularyImportTargetCourseId && courses.length > 1) {
+      setVocabularyImportTargetCourseId(courses[1].id)
+    }
+    if (!vocabularyImportTargetCourseId && courses.length === 1) {
+      setVocabularyImportTargetCourseId(courses[0].id)
+    }
+  }, [courses, vocabularyCourseFilter, newVocabularyCourseId, vocabularyImportSourceCourseId, vocabularyImportTargetCourseId])
 
   useEffect(() => {
     if (activeSection === 'lectureNote' && selectedLectureNoteCourseId) {
@@ -1715,7 +1748,7 @@ export default function AdminDashboard() {
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-[#14532d]/15 bg-[#14532d]/5 px-4 py-3">
             <div>
               <p className="text-sm font-semibold text-[#14532d]">{editingVocabulary ? `Editing: ${editingVocabulary.word}` : 'Add a new vocabulary item'}</p>
-              <p className="text-xs text-gray-600">{editingVocabulary ? 'After editing, click update or cancel to return to add mode.' : 'Use this form to add new vocabulary for each course.'}</p>
+              <p className="text-xs text-gray-600">{editingVocabulary ? 'After editing, click update or cancel to return to add mode.' : 'Use this form to add new vocabulary for each course. Display order is auto-generated.'}</p>
             </div>
             {editingVocabulary && (
               <button
@@ -1728,7 +1761,7 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-7 mb-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-6 mb-4">
             <select
               value={newVocabularyCourseId}
               onChange={(e) => setNewVocabularyCourseId(e.target.value)}
@@ -1739,14 +1772,6 @@ export default function AdminDashboard() {
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
             </select>
-            <input
-              type="number"
-              min={1}
-              value={newVocabularyOrder}
-              onChange={(e) => setNewVocabularyOrder(e.target.value)}
-              placeholder="Order"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-            />
             <input
               type="text"
               value={newVocabularyWord}
@@ -1791,6 +1816,41 @@ export default function AdminDashboard() {
             placeholder="Usage example (optional)"
             className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
           />
+
+          <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-4">
+            <p className="text-sm font-semibold text-amber-900">Import vocabulary between courses</p>
+            <p className="mt-1 text-xs text-amber-800">Copy all words from one course to another. Duplicate words (same word + meaning) will be skipped automatically.</p>
+            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]">
+              <select
+                value={vocabularyImportSourceCourseId}
+                onChange={(e) => setVocabularyImportSourceCourseId(e.target.value)}
+                className="px-4 py-2 border border-amber-300 bg-white rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+              >
+                <option value="">Source course</option>
+                {courses.map((course) => (
+                  <option key={`source-${course.id}`} value={course.id}>{course.title}</option>
+                ))}
+              </select>
+              <select
+                value={vocabularyImportTargetCourseId}
+                onChange={(e) => setVocabularyImportTargetCourseId(e.target.value)}
+                className="px-4 py-2 border border-amber-300 bg-white rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+              >
+                <option value="">Target course</option>
+                {courses.map((course) => (
+                  <option key={`target-${course.id}`} value={course.id}>{course.title}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={importVocabularyBetweenCourses}
+                disabled={importingVocabulary}
+                className="px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 disabled:opacity-50"
+              >
+                {importingVocabulary ? 'Importing...' : 'Import words'}
+              </button>
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto] mb-4">
             <select

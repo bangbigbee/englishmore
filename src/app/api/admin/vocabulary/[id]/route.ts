@@ -54,14 +54,17 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
   const englishDefinition = String(body?.englishDefinition || '').trim()
   const meaning = String(body?.meaning || '').trim()
   const example = String(body?.example || '').trim()
-  const displayOrder = Number(body?.displayOrder)
+  const displayOrderRaw = body?.displayOrder
 
   if (!courseId || !word || !meaning) {
     return NextResponse.json({ error: 'courseId, word, meaning are required' }, { status: 400 })
   }
 
-  if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
-    return NextResponse.json({ error: 'displayOrder must be an integer between 1 and 9999' }, { status: 400 })
+  if (displayOrderRaw !== undefined && displayOrderRaw !== null && displayOrderRaw !== '') {
+    const displayOrder = Number(displayOrderRaw)
+    if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
+      return NextResponse.json({ error: 'displayOrder must be an integer between 1 and 9999' }, { status: 400 })
+    }
   }
 
   const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
@@ -70,6 +73,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
   }
 
   try {
+    const displayOrder = Number(displayOrderRaw)
     const item = await prismaWithVocabulary.vocabularyItem.update({
       where: { id },
       data: {
@@ -79,7 +83,9 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
         englishDefinition: englishDefinition || null,
         meaning,
         example: example || null,
-        displayOrder
+        ...(displayOrderRaw !== undefined && displayOrderRaw !== null && displayOrderRaw !== ''
+          ? { displayOrder }
+          : {})
       },
       include: {
         course: {
