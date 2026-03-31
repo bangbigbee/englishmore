@@ -184,6 +184,21 @@ interface AdminCheckinRow {
   latestUpdatedAt: string | null
 }
 
+interface AdminVocabularyItem {
+  id: string
+  courseId: string
+  word: string
+  phonetic: string | null
+  meaning: string
+  example: string | null
+  displayOrder: number
+  isActive: boolean
+  course: {
+    id: string
+    title: string
+  }
+}
+
 const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
   Array.from({ length: 10 }, () => ({
     question: '',
@@ -309,7 +324,7 @@ export default function AdminDashboard() {
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
-  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin'>('course')
+  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'vocabulary'>('course')
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
@@ -336,6 +351,18 @@ export default function AdminDashboard() {
     totalStudents: 0,
     checkedInToday: 0
   })
+  const [vocabularyItems, setVocabularyItems] = useState<AdminVocabularyItem[]>([])
+  const [vocabularyCourseFilter, setVocabularyCourseFilter] = useState('')
+  const [newVocabularyCourseId, setNewVocabularyCourseId] = useState('')
+  const [newVocabularyWord, setNewVocabularyWord] = useState('')
+  const [newVocabularyPhonetic, setNewVocabularyPhonetic] = useState('')
+  const [newVocabularyMeaning, setNewVocabularyMeaning] = useState('')
+  const [newVocabularyExample, setNewVocabularyExample] = useState('')
+  const [newVocabularyOrder, setNewVocabularyOrder] = useState('1')
+  const [vocabularyError, setVocabularyError] = useState('')
+  const [vocabularySuccess, setVocabularySuccess] = useState('')
+  const [savingVocabulary, setSavingVocabulary] = useState(false)
+  const [deletingVocabularyId, setDeletingVocabularyId] = useState<string | null>(null)
 
   const fetchStudents = async () => {
     try {
@@ -530,6 +557,96 @@ export default function AdminDashboard() {
     }
   }, [checkinCourseFilter])
 
+  const fetchVocabularyData = useCallback(async () => {
+    try {
+      setVocabularyError('')
+      const params = new URLSearchParams()
+      if (vocabularyCourseFilter) params.set('courseId', vocabularyCourseFilter)
+      const query = params.toString()
+
+      const res = await fetch(`/api/admin/vocabulary${query ? `?${query}` : ''}`)
+      if (!res.ok) throw new Error('Failed to fetch vocabulary')
+
+      const data = await res.json()
+      setVocabularyItems(data.items || [])
+    } catch (err) {
+      setVocabularyItems([])
+      setVocabularyError(err instanceof Error ? err.message : 'Không thể tải dữ liệu từ vựng')
+    }
+  }, [vocabularyCourseFilter])
+
+  const createVocabulary = async () => {
+    const displayOrder = Number(newVocabularyOrder)
+
+    if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
+      setVocabularyError('Vui lòng nhập đầy đủ khóa học, từ vựng và nghĩa')
+      return
+    }
+
+    if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
+      setVocabularyError('Thứ tự hiển thị phải là số nguyên từ 1 đến 9999')
+      return
+    }
+
+    try {
+      setSavingVocabulary(true)
+      setVocabularyError('')
+      setVocabularySuccess('')
+
+      const res = await fetch('/api/admin/vocabulary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: newVocabularyCourseId,
+          word: newVocabularyWord,
+          phonetic: newVocabularyPhonetic,
+          meaning: newVocabularyMeaning,
+          example: newVocabularyExample,
+          displayOrder
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể thêm từ vựng')
+
+      setVocabularySuccess('Đã thêm từ vựng mới')
+      setNewVocabularyWord('')
+      setNewVocabularyPhonetic('')
+      setNewVocabularyMeaning('')
+      setNewVocabularyExample('')
+      setNewVocabularyOrder('1')
+      fetchVocabularyData()
+    } catch (err) {
+      setVocabularyError(err instanceof Error ? err.message : 'Không thể thêm từ vựng')
+    } finally {
+      setSavingVocabulary(false)
+    }
+  }
+
+  const deleteVocabulary = async (id: string) => {
+    const confirmed = window.confirm('Bạn có chắc muốn xóa từ vựng này?')
+    if (!confirmed) return
+
+    try {
+      setDeletingVocabularyId(id)
+      setVocabularyError('')
+      setVocabularySuccess('')
+
+      const res = await fetch(`/api/admin/vocabulary/${id}`, {
+        method: 'DELETE'
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể xóa từ vựng')
+
+      setVocabularySuccess('Đã xóa từ vựng')
+      fetchVocabularyData()
+    } catch (err) {
+      setVocabularyError(err instanceof Error ? err.message : 'Không thể xóa từ vựng')
+    } finally {
+      setDeletingVocabularyId(null)
+    }
+  }
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
@@ -561,6 +678,15 @@ export default function AdminDashboard() {
   }, [courses, checkinCourseFilter])
 
   useEffect(() => {
+    if (!vocabularyCourseFilter && courses.length > 0) {
+      setVocabularyCourseFilter(courses[0].id)
+    }
+    if (!newVocabularyCourseId && courses.length > 0) {
+      setNewVocabularyCourseId(courses[0].id)
+    }
+  }, [courses, vocabularyCourseFilter, newVocabularyCourseId])
+
+  useEffect(() => {
     if (activeSection === 'lectureNote' && selectedLectureNoteCourseId) {
       fetchLectureNotes(selectedLectureNoteCourseId)
     }
@@ -577,6 +703,12 @@ export default function AdminDashboard() {
       fetchCheckinData()
     }
   }, [activeSection, fetchCheckinData])
+
+  useEffect(() => {
+    if (activeSection === 'vocabulary') {
+      fetchVocabularyData()
+    }
+  }, [activeSection, fetchVocabularyData])
 
   const updateNewExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
     setNewExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
@@ -1224,6 +1356,13 @@ export default function AdminDashboard() {
            >
              5. DAILY CHECK-IN
            </button>
+           <button
+             type="button"
+             onClick={() => setActiveSection('vocabulary')}
+             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'vocabulary' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             6. VOCABULARY
+           </button>
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'checkin' ? '' : 'hidden'}`}>
@@ -1312,6 +1451,136 @@ export default function AdminDashboard() {
                 {!checkinLoading && checkinRows.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Không có học viên nào theo bộ lọc hiện tại</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'vocabulary' ? '' : 'hidden'}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Vocabulary cho học viên</h2>
+          <p className="text-sm text-gray-600 mb-5">Admin chuẩn bị từ vựng theo từng khóa để hiển thị cho học viên ở homepage.</p>
+
+          {vocabularySuccess && (
+            <div className="mb-4 rounded border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{vocabularySuccess}</div>
+          )}
+          {vocabularyError && (
+            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{vocabularyError}</div>
+          )}
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-6 mb-4">
+            <select
+              value={newVocabularyCourseId}
+              onChange={(e) => setNewVocabularyCourseId(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Chọn khóa học</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+            <input
+              type="number"
+              min={1}
+              value={newVocabularyOrder}
+              onChange={(e) => setNewVocabularyOrder(e.target.value)}
+              placeholder="Thứ tự"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <input
+              type="text"
+              value={newVocabularyWord}
+              onChange={(e) => setNewVocabularyWord(e.target.value)}
+              placeholder="Word"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <input
+              type="text"
+              value={newVocabularyPhonetic}
+              onChange={(e) => setNewVocabularyPhonetic(e.target.value)}
+              placeholder="Phonetic (optional)"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <input
+              type="text"
+              value={newVocabularyMeaning}
+              onChange={(e) => setNewVocabularyMeaning(e.target.value)}
+              placeholder="Nghĩa tiếng Việt"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <button
+              onClick={createVocabulary}
+              disabled={savingVocabulary}
+              className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
+            >
+              {savingVocabulary ? 'Đang lưu...' : 'Thêm từ'}
+            </button>
+          </div>
+
+          <textarea
+            value={newVocabularyExample}
+            onChange={(e) => setNewVocabularyExample(e.target.value)}
+            rows={2}
+            placeholder="Ví dụ sử dụng (optional)"
+            className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+          />
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto] mb-4">
+            <select
+              value={vocabularyCourseFilter}
+              onChange={(e) => setVocabularyCourseFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Tất cả khóa học</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+            <button
+              onClick={fetchVocabularyData}
+              className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+            >
+              Làm mới danh sách
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thứ tự</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Word</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phonetic</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nghĩa</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ví dụ</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vocabularyItems.map((item) => (
+                  <tr key={item.id} className="border-b hover:bg-gray-50 align-top">
+                    <td className="px-4 py-3 text-sm text-gray-900">{item.course.title}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{item.displayOrder}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{item.word}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{item.phonetic || '-'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{item.meaning}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{item.example || '-'}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <button
+                        onClick={() => deleteVocabulary(item.id)}
+                        disabled={deletingVocabularyId === item.id}
+                        className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
+                      >
+                        {deletingVocabularyId === item.id ? 'Đang xóa...' : 'Xóa'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {vocabularyItems.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có từ vựng nào theo bộ lọc hiện tại</td>
                   </tr>
                 )}
               </tbody>

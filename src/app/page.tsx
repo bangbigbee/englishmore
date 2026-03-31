@@ -22,6 +22,15 @@ interface DailyGreetingResponse {
   updatedAt: string
 }
 
+interface MemberVocabularyItem {
+  id: string
+  word: string
+  phonetic: string | null
+  meaning: string
+  example: string | null
+  displayOrder: number
+}
+
 type BrowserSpeechRecognition = {
   lang: string
   interimResults: boolean
@@ -69,6 +78,11 @@ export default function Home() {
   const [isSavingGreeting, setIsSavingGreeting] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(false)
+  const [memberVocabularyItems, setMemberVocabularyItems] = useState<MemberVocabularyItem[]>([])
+  const [memberVocabularyCourseTitle, setMemberVocabularyCourseTitle] = useState('')
+  const [memberVocabularyIndex, setMemberVocabularyIndex] = useState(0)
+  const [memberVocabularyLoading, setMemberVocabularyLoading] = useState(false)
+  const [memberVocabularyError, setMemberVocabularyError] = useState('')
 
   useEffect(() => {
     if (!session) {
@@ -138,9 +152,42 @@ export default function Home() {
       }
     }
 
+    const fetchMemberVocabulary = async () => {
+      if (session.user?.role !== 'member') {
+        setMemberVocabularyItems([])
+        setMemberVocabularyCourseTitle('')
+        return
+      }
+
+      try {
+        setMemberVocabularyLoading(true)
+        setMemberVocabularyError('')
+        const res = await fetch('/api/member/vocabulary')
+        if (!res.ok) {
+          setMemberVocabularyItems([])
+          setMemberVocabularyCourseTitle('')
+          setMemberVocabularyError('Không thể tải dữ liệu vocabulary')
+          return
+        }
+
+        const data = await res.json()
+        const items = Array.isArray(data?.items) ? data.items : []
+        setMemberVocabularyItems(items)
+        setMemberVocabularyCourseTitle(String(data?.courseTitle || ''))
+        setMemberVocabularyIndex(0)
+      } catch {
+        setMemberVocabularyItems([])
+        setMemberVocabularyCourseTitle('')
+        setMemberVocabularyError('Không thể tải dữ liệu vocabulary')
+      } finally {
+        setMemberVocabularyLoading(false)
+      }
+    }
+
     fetchAvailableCourses()
     fetchGreetingResponse()
     fetchMemberHomework()
+    fetchMemberVocabulary()
   }, [session])
 
   useEffect(() => {
@@ -228,6 +275,30 @@ export default function Home() {
     }
 
     recognition.start()
+  }
+
+  const currentVocabularyItem = memberVocabularyItems.length > 0
+    ? memberVocabularyItems[((memberVocabularyIndex % memberVocabularyItems.length) + memberVocabularyItems.length) % memberVocabularyItems.length]
+    : null
+
+  const moveVocabulary = (direction: 'prev' | 'next') => {
+    if (memberVocabularyItems.length <= 1) return
+    setMemberVocabularyIndex((current) => {
+      const delta = direction === 'next' ? 1 : -1
+      return (current + delta + memberVocabularyItems.length) % memberVocabularyItems.length
+    })
+  }
+
+  const speakVocabularyWord = () => {
+    if (!currentVocabularyItem || typeof window === 'undefined' || !window.speechSynthesis) {
+      return
+    }
+
+    const utterance = new SpeechSynthesisUtterance(currentVocabularyItem.word)
+    utterance.lang = 'en-US'
+    utterance.rate = 0.9
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(utterance)
   }
 
   const handleSubmitGreeting = async () => {
@@ -413,36 +484,95 @@ export default function Home() {
         <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
           <div>
             <h1 className="sr-only">EnglishMore</h1>
-            <p className="max-w-xl text-base sm:text-lg text-slate-600">
-              Practice makes perfect!
-            </p>
-            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
-              {session?.user?.role !== 'member' && (
-                <div className="group relative inline-block">
-                  <a
-                    href="https://www.facebook.com/bangbigbee"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="brand-cta brand-cta-filled"
-                  >
-                    <span>Tư vấn</span>
-                    <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                  </a>
-                  <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
-                    trao đổi trực tiếp với giáo viên về nội dung học, lịch học
-                  </span>
+            {session?.user?.role === 'member' ? (
+              <div className="rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
+                  {memberVocabularyCourseTitle && (
+                    <span className="rounded-full bg-[#14532d]/10 px-3 py-1 text-xs font-semibold text-[#14532d]">
+                      {memberVocabularyCourseTitle}
+                    </span>
+                  )}
                 </div>
-              )}
-              {session?.user?.role !== 'member' && (
-                <Link
-                  href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
-                  className="brand-cta brand-cta-outline"
-                >
-                  <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Học'}</span>
-                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                </Link>
-              )}
-            </div>
+
+                {memberVocabularyLoading ? (
+                  <p className="text-sm text-slate-500">Đang tải vocabulary...</p>
+                ) : memberVocabularyError ? (
+                  <p className="text-sm text-red-600">{memberVocabularyError}</p>
+                ) : !currentVocabularyItem ? (
+                  <p className="text-sm text-slate-500">Chưa có từ vựng cho khóa học hiện tại.</p>
+                ) : (
+                  <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-4 py-5 text-white sm:px-6 sm:py-6">
+                    <div className="mb-4 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => moveVocabulary('prev')}
+                        disabled={memberVocabularyItems.length <= 1}
+                        className="rounded-full px-3 py-1 text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        aria-label="Previous vocabulary"
+                      >
+                        {'<'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={speakVocabularyWord}
+                        className="rounded-full bg-white/15 px-3 py-1 text-lg transition hover:bg-white/25"
+                        aria-label="Speak vocabulary"
+                      >
+                        SPEAK
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveVocabulary('next')}
+                        disabled={memberVocabularyItems.length <= 1}
+                        className="rounded-full px-3 py-1 text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        aria-label="Next vocabulary"
+                      >
+                        {'>'}
+                      </button>
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-4xl font-extrabold tracking-tight">{currentVocabularyItem.word}</p>
+                      <p className="mt-2 text-2xl">{currentVocabularyItem.phonetic ? `/${currentVocabularyItem.phonetic}/` : ''}</p>
+                      <p className="mt-5 text-2xl font-semibold">{currentVocabularyItem.meaning}</p>
+                      {currentVocabularyItem.example && (
+                        <p className="mt-4 text-base italic text-white/90">&quot;{currentVocabularyItem.example}&quot;</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <p className="max-w-xl text-base sm:text-lg text-slate-600">
+                  Practice makes perfect!
+                </p>
+                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
+                  <div className="group relative inline-block">
+                    <a
+                      href="https://www.facebook.com/bangbigbee"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="brand-cta brand-cta-filled"
+                    >
+                      <span>Tư vấn</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </a>
+                    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
+                      trao đổi trực tiếp với giáo viên về nội dung học, lịch học
+                    </span>
+                  </div>
+                  <Link
+                    href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
+                    className="brand-cta brand-cta-outline"
+                  >
+                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Học'}</span>
+                    <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
           {session?.user?.role === 'member' ? (
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
