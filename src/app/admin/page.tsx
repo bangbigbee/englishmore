@@ -2064,53 +2064,62 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submission</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted on</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teacher feedback</th>
-                </tr>
-              </thead>
-              <tbody>
-                {homeworkSubmissions.map((submission) => (
-                  <tr key={submission.id} className="border-b align-top">
-                    <td className="px-4 py-3 text-sm text-gray-900">{submission.user.name || submission.user.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{submission.user.phone || 'Not updated yet'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.course.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 whitespace-pre-wrap">{submission.note || 'No content'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(submission.submittedAt).toLocaleString('en-GB')}</td>
-                    <td className="px-4 py-3 text-sm">
-                      <textarea
-                        value={homeworkTeacherComments[submission.id] || ''}
-                        onChange={(e) => setHomeworkTeacherComments((current) => ({ ...current, [submission.id]: e.target.value }))}
-                        rows={3}
-                        placeholder="Enter feedback for the student"
-                        className="w-72 max-w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                      />
-                      <button
-                        onClick={() => saveHomeworkTeacherComment(submission.id)}
-                        disabled={savingHomeworkCommentId === submission.id}
-                        className="mt-2 block px-3 py-1.5 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
-                      >
-                        {savingHomeworkCommentId === submission.id ? 'Saving...' : 'Save feedback'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                {homeworkSubmissions.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No submissions match the current filter.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          <div className="space-y-4">
+            {homeworkSubmissions.map((submission) => (
+              <article key={submission.id} className="rounded-2xl border border-gray-200 bg-slate-50 p-4 shadow-sm">
+                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-3">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900">{submission.homework.title}</h3>
+                    <p className="mt-1 text-sm text-slate-600">{submission.user.name || submission.user.email} • {submission.user.phone || 'Not updated yet'}</p>
+                    <p className="mt-1 text-sm text-slate-500">Course: {submission.homework.course.title}</p>
+                  </div>
+                  <p className="text-sm text-slate-500">Submitted at: {new Date(submission.submittedAt).toLocaleString('en-GB')}</p>
+                </div>
+
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Conversation</p>
+                  <div className="mt-3 space-y-3">
+                    <div className="flex justify-end">
+                      <div className="max-w-[85%] rounded-2xl rounded-br-md bg-emerald-100 px-3 py-2 text-sm text-emerald-950 shadow-sm">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">Student</p>
+                        <p className="mt-1 whitespace-pre-wrap text-emerald-900">{submission.note || 'No message yet.'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-start">
+                      <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-950 shadow-sm">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-blue-700">Teacher</p>
+                        <p className="mt-1 whitespace-pre-wrap text-blue-900">{submission.teacherComment || 'No reply yet.'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className="block text-sm font-semibold text-slate-700">Your reply</label>
+                  <textarea
+                    value={homeworkTeacherComments[submission.id] || ''}
+                    onChange={(e) => setHomeworkTeacherComments((current) => ({ ...current, [submission.id]: e.target.value }))}
+                    rows={3}
+                    placeholder="Write your reply to the student..."
+                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                  <button
+                    onClick={() => saveHomeworkTeacherComment(submission.id)}
+                    disabled={savingHomeworkCommentId === submission.id}
+                    className="mt-3 block rounded bg-[#14532d] px-4 py-2 text-sm font-bold text-white hover:bg-[#166534] disabled:opacity-50"
+                  >
+                    {savingHomeworkCommentId === submission.id ? 'Sending...' : 'Send reply'}
+                  </button>
+                </div>
+              </article>
+            ))}
+
+            {homeworkSubmissions.length === 0 && (
+              <div className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-8 text-center text-gray-500">
+                No submissions match the current filter.
+              </div>
+            )}
           </div>
         </div>
 
