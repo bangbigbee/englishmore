@@ -26,6 +26,7 @@ interface MemberVocabularyItem {
   id: string
   word: string
   phonetic: string | null
+  englishDefinition: string | null
   meaning: string
   example: string | null
   displayOrder: number
@@ -83,6 +84,11 @@ export default function Home() {
   const [memberVocabularyIndex, setMemberVocabularyIndex] = useState(0)
   const [memberVocabularyLoading, setMemberVocabularyLoading] = useState(false)
   const [memberVocabularyError, setMemberVocabularyError] = useState('')
+  const [isPronunciationListening, setIsPronunciationListening] = useState(false)
+  const [pronunciationStatus, setPronunciationStatus] = useState('')
+  const [pronunciationFeedback, setPronunciationFeedback] = useState('')
+  const [pronunciationTranscript, setPronunciationTranscript] = useState('')
+  const [pronunciationScore, setPronunciationScore] = useState<number | null>(null)
 
   useEffect(() => {
     if (!session) {
@@ -208,6 +214,110 @@ export default function Home() {
     return [...availableCourses, ...availableCourses]
   }, [availableCourses])
 
+  const normalizePronunciationText = (value: string) =>
+    value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+  const calculateLevenshteinDistance = (left: string, right: string) => {
+    const rows = left.length + 1
+    const cols = right.length + 1
+    const matrix = Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0))
+
+    for (let row = 0; row < rows; row += 1) {
+      matrix[row][0] = row
+    }
+
+    for (let col = 0; col < cols; col += 1) {
+      matrix[0][col] = col
+    }
+
+    for (let row = 1; row < rows; row += 1) {
+      for (let col = 1; col < cols; col += 1) {
+        const substitutionCost = left[row - 1] === right[col - 1] ? 0 : 1
+        matrix[row][col] = Math.min(
+          matrix[row - 1][col] + 1,
+          matrix[row][col - 1] + 1,
+          matrix[row - 1][col - 1] + substitutionCost
+        )
+      }
+    }
+
+    return matrix[left.length][right.length]
+  }
+
+  const calculateSimilarityScore = (target: string, candidate: string) => {
+    if (!target && !candidate) {
+      return 100
+    }
+
+    const maxLength = Math.max(target.length, candidate.length)
+    if (maxLength === 0) {
+      return 0
+    }
+
+    const distance = calculateLevenshteinDistance(target, candidate)
+    return Math.max(0, Math.round((1 - distance / maxLength) * 100))
+  }
+
+  const getBestPronunciationCandidate = (target: string, transcript: string) => {
+    const normalizedTarget = normalizePronunciationText(target)
+    const normalizedTranscript = normalizePronunciationText(transcript)
+
+    if (!normalizedTarget || !normalizedTranscript) {
+      return { candidate: normalizedTranscript, score: 0 }
+    }
+
+    const targetTokenCount = normalizedTarget.split(' ').length
+    const transcriptTokens = normalizedTranscript.split(' ')
+    const candidates = new Set<string>([normalizedTranscript])
+
+    transcriptTokens.forEach((token) => {
+      if (token) {
+        candidates.add(token)
+      }
+    })
+
+    for (let windowSize = Math.max(1, targetTokenCount - 1); windowSize <= Math.min(transcriptTokens.length, targetTokenCount + 1); windowSize += 1) {
+      for (let index = 0; index <= transcriptTokens.length - windowSize; index += 1) {
+        candidates.add(transcriptTokens.slice(index, index + windowSize).join(' '))
+      }
+    }
+
+    let bestCandidate = normalizedTranscript
+    let bestScore = 0
+
+    candidates.forEach((candidate) => {
+      const score = calculateSimilarityScore(normalizedTarget, candidate)
+      if (score > bestScore) {
+        bestScore = score
+        bestCandidate = candidate
+      }
+    })
+
+    return { candidate: bestCandidate, score: bestScore }
+  }
+
+  const buildPronunciationFeedback = (score: number, candidate: string, target: string) => {
+    if (score >= 95) {
+      return `Excellent. Your pronunciation matched \"${target}\" very closely.`
+    }
+
+    if (score >= 80) {
+      return `Good job. We heard \"${candidate}\", which is close to \"${target}\".`
+    }
+
+    if (score >= 60) {
+      return `Pretty close. We heard \"${candidate}\". Try slowing down and stressing each syllable more clearly.`
+    }
+
+    return `We heard \"${candidate || 'something different'}\". Listen again and repeat the word \"${target}\" more clearly.`
+  }
+
   const weeklyActivityRows = useMemo(() => {
     const data = memberHomework?.weeklyActivity ?? WEEK_DAYS.map((day) => ({ day, minutes: 0 }))
     const maxMinutes = Math.max(1, ...data.map((item) => item.minutes))
@@ -281,6 +391,14 @@ export default function Home() {
     ? memberVocabularyItems[((memberVocabularyIndex % memberVocabularyItems.length) + memberVocabularyItems.length) % memberVocabularyItems.length]
     : null
 
+  useEffect(() => {
+    setIsPronunciationListening(false)
+    setPronunciationStatus('')
+    setPronunciationFeedback('')
+    setPronunciationTranscript('')
+    setPronunciationScore(null)
+  }, [currentVocabularyItem?.id])
+
   const moveVocabulary = (direction: 'prev' | 'next') => {
     if (memberVocabularyItems.length <= 1) return
     setMemberVocabularyIndex((current) => {
@@ -289,16 +407,112 @@ export default function Home() {
     })
   }
 
-  const speakVocabularyWord = () => {
+  const pickAmericanVoice = () => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      return null
+    }
+
+    const voices = window.speechSynthesis.getVoices()
+    if (voices.length === 0) {
+      return null
+    }
+
+    const preferredVoiceNames = ['Jenny', 'Guy', 'Christopher', 'Eric', 'Aria', 'Davis', 'Roger', 'Joey', 'Matthew', 'Salli', 'Ivy', 'Kevin']
+
+    return voices.find((voice) =>
+      voice.lang.toLowerCase() === 'en-us' && preferredVoiceNames.some((name) => voice.name.includes(name))
+    ) || voices.find((voice) => voice.lang.toLowerCase() === 'en-us') || null
+  }
+
+  const startPronunciationRecognition = () => {
+    if (!currentVocabularyItem || typeof window === 'undefined') {
+      return
+    }
+
+    const win = window as Window & {
+      SpeechRecognition?: SpeechRecognitionFactory
+      webkitSpeechRecognition?: SpeechRecognitionFactory
+    }
+
+    const RecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition
+    if (!RecognitionCtor) {
+      setPronunciationStatus('')
+      setPronunciationFeedback('Trình duyệt này chưa hỗ trợ voice practice.')
+      setPronunciationScore(null)
+      return
+    }
+
+    setPronunciationStatus('Listening... Say the word clearly now.')
+    setPronunciationFeedback('')
+    setPronunciationTranscript('')
+    setPronunciationScore(null)
+    setIsPronunciationListening(true)
+
+    const recognition = new RecognitionCtor()
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.continuous = false
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result?.[0]?.transcript || '')
+        .join(' ')
+        .trim()
+
+      const { candidate, score } = getBestPronunciationCandidate(currentVocabularyItem.word, transcript)
+      setPronunciationTranscript(transcript)
+      setPronunciationScore(score)
+      setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentVocabularyItem.word))
+      setPronunciationStatus(score >= 80 ? 'Nice work. Keep practicing to make it even cleaner.' : 'Try again and compare your sound with the sample.')
+    }
+
+    recognition.onerror = () => {
+      setPronunciationStatus('')
+      setPronunciationFeedback('Không nhận diện được giọng nói lần này. Hãy thử lại ở nơi yên tĩnh hơn.')
+      setPronunciationScore(null)
+    }
+
+    recognition.onend = () => {
+      setIsPronunciationListening(false)
+    }
+
+    recognition.start()
+  }
+
+  const speakVocabularyWord = (options?: { startPracticeAfterSpeak?: boolean }) => {
     if (!currentVocabularyItem || typeof window === 'undefined' || !window.speechSynthesis) {
+      if (options?.startPracticeAfterSpeak) {
+        startPronunciationRecognition()
+      }
       return
     }
 
     const utterance = new SpeechSynthesisUtterance(currentVocabularyItem.word)
     utterance.lang = 'en-US'
     utterance.rate = 0.9
+    const americanVoice = pickAmericanVoice()
+    if (americanVoice) {
+      utterance.voice = americanVoice
+    }
+    if (options?.startPracticeAfterSpeak) {
+      utterance.onend = () => {
+        startPronunciationRecognition()
+      }
+      setPronunciationStatus('Listen to the sample first, then repeat it.')
+      setPronunciationFeedback('')
+      setPronunciationTranscript('')
+      setPronunciationScore(null)
+    }
     window.speechSynthesis.cancel()
     window.speechSynthesis.speak(utterance)
+  }
+
+  const handleTryVocabulary = () => {
+    if (!currentVocabularyItem) {
+      return
+    }
+
+    speakVocabularyWord({ startPracticeAfterSpeak: true })
   }
 
   const handleSubmitGreeting = async () => {
@@ -513,14 +727,37 @@ export default function Home() {
                       >
                         {'<'}
                       </button>
-                      <button
-                        type="button"
-                        onClick={speakVocabularyWord}
-                        className="rounded-full bg-white/15 px-3 py-1 text-lg transition hover:bg-white/25"
-                        aria-label="Speak vocabulary"
-                      >
-                        SPEAK
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => speakVocabularyWord()}
+                          className="inline-flex items-center justify-center rounded-full bg-white/15 p-3 transition hover:bg-white/25"
+                          aria-label="Speak vocabulary"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                            className="h-6 w-6 fill-current"
+                          >
+                            <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleTryVocabulary}
+                          disabled={!speechSupported || isPronunciationListening}
+                          className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/25 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 24 24"
+                            className="h-5 w-5 fill-current"
+                          >
+                            <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
+                          </svg>
+                          <span>{isPronunciationListening ? 'Listening...' : 'Try it'}</span>
+                        </button>
+                      </div>
                       <button
                         type="button"
                         onClick={() => moveVocabulary('next')}
@@ -535,9 +772,33 @@ export default function Home() {
                     <div className="text-center">
                       <p className="text-4xl font-extrabold tracking-tight">{currentVocabularyItem.word}</p>
                       <p className="mt-2 text-2xl">{currentVocabularyItem.phonetic ? `/${currentVocabularyItem.phonetic}/` : ''}</p>
+                      {currentVocabularyItem.englishDefinition && (
+                        <p className="mt-3 text-base font-medium text-white/90 sm:text-lg">{currentVocabularyItem.englishDefinition}</p>
+                      )}
                       <p className="mt-5 text-2xl font-semibold">{currentVocabularyItem.meaning}</p>
                       {currentVocabularyItem.example && (
                         <p className="mt-4 text-base italic text-white/90">&quot;{currentVocabularyItem.example}&quot;</p>
+                      )}
+
+                      {pronunciationStatus && (
+                        <p className="mt-5 text-sm font-medium text-white/85">{pronunciationStatus}</p>
+                      )}
+
+                      {pronunciationScore !== null && (
+                        <div className="mt-4 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-left backdrop-blur-sm">
+                          <p className="text-sm font-semibold text-white">Pronunciation accuracy: {pronunciationScore}%</p>
+                          {pronunciationTranscript && (
+                            <p className="mt-2 text-sm text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
+                          )}
+                          {pronunciationFeedback && (
+                            <p className="mt-2 text-sm text-white/90">{pronunciationFeedback}</p>
+                          )}
+                          <p className="mt-2 text-xs text-white/70">Score is estimated from browser speech recognition, useful for quick self-practice.</p>
+                        </div>
+                      )}
+
+                      {!speechSupported && (
+                        <p className="mt-4 text-xs text-white/70">Voice practice is not supported in this browser.</p>
                       )}
                     </div>
                   </div>

@@ -403,6 +403,7 @@ model VocabularyItem {
   courseId     String
   word         String
   phonetic     String?
+  englishDefinition String?
   meaning      String
   example      String?
   displayOrder Int      @default(1)

@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
   const courseId = String(body?.courseId || '').trim()
   const word = String(body?.word || '').trim()
   const phonetic = String(body?.phonetic || '').trim()
+  const englishDefinition = String(body?.englishDefinition || '').trim()
   const meaning = String(body?.meaning || '').trim()
   const example = String(body?.example || '').trim()
   const displayOrder = Number(body?.displayOrder)
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
       courseId,
       word,
       phonetic: phonetic || null,
+      englishDefinition: englishDefinition || null,
       meaning,
       example: example || null,
       displayOrder,

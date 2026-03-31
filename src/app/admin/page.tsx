@@ -189,6 +189,7 @@ interface AdminVocabularyItem {
   courseId: string
   word: string
   phonetic: string | null
+  englishDefinition: string | null
   meaning: string
   example: string | null
   displayOrder: number
@@ -198,6 +199,16 @@ interface AdminVocabularyItem {
     title: string
   }
 }
+
+const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
+  courseId: item?.courseId || '',
+  word: item?.word || '',
+  phonetic: item?.phonetic || '',
+  englishDefinition: item?.englishDefinition || '',
+  meaning: item?.meaning || '',
+  example: item?.example || '',
+  displayOrder: String(item?.displayOrder || 1)
+})
 
 const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
   Array.from({ length: 10 }, () => ({
@@ -356,12 +367,15 @@ export default function AdminDashboard() {
   const [newVocabularyCourseId, setNewVocabularyCourseId] = useState('')
   const [newVocabularyWord, setNewVocabularyWord] = useState('')
   const [newVocabularyPhonetic, setNewVocabularyPhonetic] = useState('')
+  const [newVocabularyEnglishDefinition, setNewVocabularyEnglishDefinition] = useState('')
   const [newVocabularyMeaning, setNewVocabularyMeaning] = useState('')
   const [newVocabularyExample, setNewVocabularyExample] = useState('')
   const [newVocabularyOrder, setNewVocabularyOrder] = useState('1')
   const [vocabularyError, setVocabularyError] = useState('')
   const [vocabularySuccess, setVocabularySuccess] = useState('')
   const [savingVocabulary, setSavingVocabulary] = useState(false)
+  const [editingVocabulary, setEditingVocabulary] = useState<AdminVocabularyItem | null>(null)
+  const [updatingVocabularyId, setUpdatingVocabularyId] = useState<string | null>(null)
   const [deletingVocabularyId, setDeletingVocabularyId] = useState<string | null>(null)
 
   const fetchStudents = async () => {
@@ -600,6 +614,7 @@ export default function AdminDashboard() {
           courseId: newVocabularyCourseId,
           word: newVocabularyWord,
           phonetic: newVocabularyPhonetic,
+          englishDefinition: newVocabularyEnglishDefinition,
           meaning: newVocabularyMeaning,
           example: newVocabularyExample,
           displayOrder
@@ -612,6 +627,7 @@ export default function AdminDashboard() {
       setVocabularySuccess('Đã thêm từ vựng mới')
       setNewVocabularyWord('')
       setNewVocabularyPhonetic('')
+      setNewVocabularyEnglishDefinition('')
       setNewVocabularyMeaning('')
       setNewVocabularyExample('')
       setNewVocabularyOrder('1')
@@ -620,6 +636,80 @@ export default function AdminDashboard() {
       setVocabularyError(err instanceof Error ? err.message : 'Không thể thêm từ vựng')
     } finally {
       setSavingVocabulary(false)
+    }
+  }
+
+  const startEditVocabulary = (item: AdminVocabularyItem) => {
+    const formState = buildVocabularyFormState(item)
+    setEditingVocabulary(item)
+    setNewVocabularyCourseId(formState.courseId)
+    setNewVocabularyWord(formState.word)
+    setNewVocabularyPhonetic(formState.phonetic)
+    setNewVocabularyEnglishDefinition(formState.englishDefinition)
+    setNewVocabularyMeaning(formState.meaning)
+    setNewVocabularyExample(formState.example)
+    setNewVocabularyOrder(formState.displayOrder)
+    setVocabularyError('')
+    setVocabularySuccess('')
+  }
+
+  const resetVocabularyForm = () => {
+    setEditingVocabulary(null)
+    setNewVocabularyCourseId(courses[0]?.id || '')
+    setNewVocabularyWord('')
+    setNewVocabularyPhonetic('')
+    setNewVocabularyEnglishDefinition('')
+    setNewVocabularyMeaning('')
+    setNewVocabularyExample('')
+    setNewVocabularyOrder('1')
+  }
+
+  const updateVocabulary = async () => {
+    if (!editingVocabulary) {
+      return
+    }
+
+    const displayOrder = Number(newVocabularyOrder)
+
+    if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
+      setVocabularyError('Vui lòng nhập đầy đủ khóa học, từ vựng và nghĩa')
+      return
+    }
+
+    if (!Number.isInteger(displayOrder) || displayOrder < 1 || displayOrder > 9999) {
+      setVocabularyError('Thứ tự hiển thị phải là số nguyên từ 1 đến 9999')
+      return
+    }
+
+    try {
+      setUpdatingVocabularyId(editingVocabulary.id)
+      setVocabularyError('')
+      setVocabularySuccess('')
+
+      const res = await fetch(`/api/admin/vocabulary/${editingVocabulary.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: newVocabularyCourseId,
+          word: newVocabularyWord,
+          phonetic: newVocabularyPhonetic,
+          englishDefinition: newVocabularyEnglishDefinition,
+          meaning: newVocabularyMeaning,
+          example: newVocabularyExample,
+          displayOrder
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể cập nhật từ vựng')
+
+      setVocabularySuccess('Đã cập nhật từ vựng')
+      resetVocabularyForm()
+      fetchVocabularyData()
+    } catch (err) {
+      setVocabularyError(err instanceof Error ? err.message : 'Không thể cập nhật từ vựng')
+    } finally {
+      setUpdatingVocabularyId(null)
     }
   }
 
@@ -1469,7 +1559,23 @@ export default function AdminDashboard() {
             <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{vocabularyError}</div>
           )}
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-6 mb-4">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-[#14532d]/15 bg-[#14532d]/5 px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold text-[#14532d]">{editingVocabulary ? `Đang sửa: ${editingVocabulary.word}` : 'Thêm từ vựng mới'}</p>
+              <p className="text-xs text-gray-600">{editingVocabulary ? 'Chỉnh sửa xong thì bấm cập nhật hoặc hủy để quay lại chế độ thêm mới.' : 'Form này dùng để thêm từ mới cho từng khóa học.'}</p>
+            </div>
+            {editingVocabulary && (
+              <button
+                type="button"
+                onClick={resetVocabularyForm}
+                className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white"
+              >
+                Hủy sửa
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-7 mb-4">
             <select
               value={newVocabularyCourseId}
               onChange={(e) => setNewVocabularyCourseId(e.target.value)}
@@ -1504,17 +1610,24 @@ export default function AdminDashboard() {
             />
             <input
               type="text"
+              value={newVocabularyEnglishDefinition}
+              onChange={(e) => setNewVocabularyEnglishDefinition(e.target.value)}
+              placeholder="English definition (optional)"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <input
+              type="text"
               value={newVocabularyMeaning}
               onChange={(e) => setNewVocabularyMeaning(e.target.value)}
               placeholder="Nghĩa tiếng Việt"
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
             <button
-              onClick={createVocabulary}
-              disabled={savingVocabulary}
+              onClick={editingVocabulary ? updateVocabulary : createVocabulary}
+              disabled={savingVocabulary || Boolean(updatingVocabularyId)}
               className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
             >
-              {savingVocabulary ? 'Đang lưu...' : 'Thêm từ'}
+              {savingVocabulary ? 'Đang lưu...' : updatingVocabularyId ? 'Đang cập nhật...' : editingVocabulary ? 'Cập nhật từ' : 'Thêm từ'}
             </button>
           </div>
 
@@ -1553,6 +1666,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thứ tự</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Word</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phonetic</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">English definition</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nghĩa</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ví dụ</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hành động</th>
@@ -1565,9 +1679,16 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-700">{item.displayOrder}</td>
                     <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{item.word}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{item.phonetic || '-'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{item.englishDefinition || '-'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{item.meaning}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{item.example || '-'}</td>
                     <td className="px-4 py-3 text-sm">
+                      <button
+                        onClick={() => startEditVocabulary(item)}
+                        className="mr-3 text-[#14532d] hover:text-[#166534] hover:underline"
+                      >
+                        Sửa
+                      </button>
                       <button
                         onClick={() => deleteVocabulary(item.id)}
                         disabled={deletingVocabularyId === item.id}
@@ -1580,7 +1701,7 @@ export default function AdminDashboard() {
                 ))}
                 {vocabularyItems.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Chưa có từ vựng nào theo bộ lọc hiện tại</td>
+                    <td colSpan={8} className="px-4 py-3 text-center text-gray-500">Chưa có từ vựng nào theo bộ lọc hiện tại</td>
                   </tr>
                 )}
               </tbody>

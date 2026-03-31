@@ -51,6 +51,7 @@ export async function GET() {
       id: true,
       word: true,
       phonetic: true,
+      englishDefinition: true,
       meaning: true,
       example: true,
       displayOrder: true
