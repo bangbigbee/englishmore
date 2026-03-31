@@ -1489,7 +1489,7 @@ export default function Home() {
                 </Link>
                 {session?.user?.role === 'admin' && (
                   <Link
-                    href="/admin"
+                    href="/admin?section=homework"
                     className="brand-cta brand-cta-filled relative"
                   >
                     <span className="inline-flex items-center gap-1.5">

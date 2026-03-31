@@ -89,10 +89,9 @@ export async function GET() {
     }, 0)
 
     pendingTeacherReplyCount = submissions.reduce((total, submission) => {
-      const latestStudent = [...submission.messages].reverse().find((message) => message.senderRole === 'student')
-      const latestTeacher = [...submission.messages].reverse().find((message) => message.senderRole === 'teacher')
-      if (!latestStudent) return total
-      if (!latestTeacher || latestTeacher.createdAt.getTime() < latestStudent.createdAt.getTime()) {
+      const hasStudentMessage = submission.messages.some((message) => message.senderRole === 'student')
+      const hasTeacherReply = submission.messages.some((message) => message.senderRole === 'teacher')
+      if (hasStudentMessage && !hasTeacherReply) {
         return total + 1
       }
       return total
@@ -122,10 +121,8 @@ export async function GET() {
 
     pendingTeacherReplyCount = submissions.reduce((total, submission) => {
       if (!submission.note || !submission.note.trim()) return total
-      const studentMessageAt = submission.submittedAt
-      const teacherMessageAt = submission.teacherComment && submission.teacherComment.trim() ? submission.updatedAt : null
-      const pendingReply = !teacherMessageAt || teacherMessageAt.getTime() < studentMessageAt.getTime()
-      return total + (pendingReply ? 1 : 0)
+      const hasTeacherReply = Boolean(submission.teacherComment && submission.teacherComment.trim())
+      return total + (hasTeacherReply ? 0 : 1)
     }, 0)
   }
 

@@ -210,6 +210,8 @@ interface AdminVocabularyItem {
   }
 }
 
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'reflect' | 'vocabulary'
+
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
   word: item?.word || '',
@@ -351,7 +353,7 @@ export default function AdminDashboard() {
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
-  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'reflect' | 'vocabulary'>('course')
+  const [activeSection, setActiveSection] = useState<AdminSection>('course')
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
@@ -860,6 +862,16 @@ export default function AdminDashboard() {
       fetchReflectData()
     }
   }, [activeSection, fetchReflectData])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const section = params.get('section')
+    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'checkin', 'reflect', 'vocabulary']
+    if (section && allowed.includes(section as AdminSection)) {
+      setActiveSection(section as AdminSection)
+    }
+  }, [])
 
   const updateNewExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
     setNewExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
