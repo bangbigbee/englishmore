@@ -3,6 +3,24 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+function isHomeworkMessageStorageMissing(error: unknown) {
+  if (!error || typeof error !== 'object') return false
+  const maybeCode = (error as { code?: unknown }).code
+  const maybeMessage = (error as { message?: unknown }).message
+  return (
+    (maybeCode === 'P2021' || maybeCode === 'P2022') &&
+    typeof maybeMessage === 'string' &&
+    maybeMessage.toLowerCase().includes('homeworkmessage')
+  )
+}
+
+type NormalizedHomeworkMessage = {
+  id: string
+  senderRole: 'student' | 'teacher'
+  content: string
+  createdAt: Date
+}
+
 const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const
 
 function getWeekStart(date: Date) {
@@ -55,29 +73,96 @@ export async function GET() {
     })
   }
 
-  const homeworks = await prisma.courseHomework.findMany({
-    where: { courseId: activeEnrollment.courseId },
-    include: {
-      submissions: {
-        where: { userId: session.user.id },
-        select: {
-          submittedAt: true,
-          note: true,
-          teacherComment: true,
-          messages: {
-            select: {
-              id: true,
-              senderRole: true,
-              content: true,
-              createdAt: true
-            },
-            orderBy: { createdAt: 'asc' }
+  let homeworksRaw: Array<{
+    id: string
+    title: string
+    description: string | null
+    dueDate: Date
+    submissions: Array<{
+      submittedAt: Date
+      note: string | null
+      teacherComment: string | null
+      messages?: Array<{
+        id: string
+        senderRole: 'student' | 'teacher'
+        content: string
+        createdAt: Date
+      }>
+    }>
+  }>
+
+  try {
+    homeworksRaw = (await prisma.courseHomework.findMany({
+      where: { courseId: activeEnrollment.courseId },
+      include: {
+        submissions: {
+          where: { userId: session.user.id },
+          select: {
+            submittedAt: true,
+            note: true,
+            teacherComment: true,
+            messages: {
+              select: {
+                id: true,
+                senderRole: true,
+                content: true,
+                createdAt: true
+              },
+              orderBy: { createdAt: 'asc' }
+            }
           }
         }
+      },
+      orderBy: { dueDate: 'asc' }
+    })) as typeof homeworksRaw
+  } catch (error) {
+    if (!isHomeworkMessageStorageMissing(error)) {
+      throw error
+    }
+
+    homeworksRaw = (await prisma.courseHomework.findMany({
+      where: { courseId: activeEnrollment.courseId },
+      include: {
+        submissions: {
+          where: { userId: session.user.id },
+          select: {
+            submittedAt: true,
+            note: true,
+            teacherComment: true
+          }
+        }
+      },
+      orderBy: { dueDate: 'asc' }
+    })) as typeof homeworksRaw
+  }
+
+  const homeworks = homeworksRaw.map((homework) => ({
+    ...homework,
+    submissions: homework.submissions.map((submission) => {
+      const fallbackMessages: NormalizedHomeworkMessage[] = []
+      if (submission.note && submission.note.trim()) {
+        fallbackMessages.push({
+          id: `legacy-student-${homework.id}`,
+          senderRole: 'student',
+          content: submission.note,
+          createdAt: submission.submittedAt
+        })
       }
-    },
-    orderBy: { dueDate: 'asc' }
-  })
+      if (submission.teacherComment && submission.teacherComment.trim()) {
+        fallbackMessages.push({
+          id: `legacy-teacher-${homework.id}`,
+          senderRole: 'teacher',
+          content: submission.teacherComment,
+          createdAt: submission.submittedAt
+        })
+      }
+
+      return {
+        ...submission,
+        messages: (submission.messages || fallbackMessages) as NormalizedHomeworkMessage[]
+      }
+    })
+  }))
 
   const pendingHomework = homeworks
     .filter((homework) => homework.submissions.length === 0)

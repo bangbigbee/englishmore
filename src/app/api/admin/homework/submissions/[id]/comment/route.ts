@@ -3,6 +3,17 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+function isHomeworkMessageStorageMissing(error: unknown) {
+  if (!error || typeof error !== 'object') return false
+  const maybeCode = (error as { code?: unknown }).code
+  const maybeMessage = (error as { message?: unknown }).message
+  return (
+    (maybeCode === 'P2021' || maybeCode === 'P2022') &&
+    typeof maybeMessage === 'string' &&
+    maybeMessage.toLowerCase().includes('homeworkmessage')
+  )
+}
+
 async function requireAdmin() {
   const session = await getServerSession(authOptions)
   if (!session) return { ok: false, status: 401 }
@@ -30,27 +41,32 @@ export async function PATCH(
   }
 
   try {
-    const updated = await prisma.$transaction(async (tx) => {
-      const submission = await tx.homeworkSubmission.update({
-        where: { id },
-        data: {
-          teacherComment
-        }
-      })
+    const updated = await prisma.homeworkSubmission.update({
+      where: { id },
+      data: {
+        teacherComment
+      }
+    })
 
-      await tx.homeworkMessage.create({
+    try {
+      await prisma.homeworkMessage.create({
         data: {
-          submissionId: submission.id,
+          submissionId: updated.id,
           senderRole: 'teacher',
           content: teacherComment
         }
       })
-
-      return submission
-    })
+    } catch (error) {
+      if (!isHomeworkMessageStorageMissing(error)) {
+        throw error
+      }
+    }
 
     return NextResponse.json(updated)
-  } catch {
-    return NextResponse.json({ error: 'Submission not found' }, { status: 404 })
+  } catch (error) {
+    if (error && typeof error === 'object' && (error as { code?: string }).code === 'P2025') {
+      return NextResponse.json({ error: 'Submission not found' }, { status: 404 })
+    }
+    return NextResponse.json({ error: 'Could not save the reply' }, { status: 500 })
   }
 }

@@ -3,6 +3,17 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+function isHomeworkMessageStorageMissing(error: unknown) {
+  if (!error || typeof error !== 'object') return false
+  const maybeCode = (error as { code?: unknown }).code
+  const maybeMessage = (error as { message?: unknown }).message
+  return (
+    (maybeCode === 'P2021' || maybeCode === 'P2022') &&
+    typeof maybeMessage === 'string' &&
+    maybeMessage.toLowerCase().includes('homeworkmessage')
+  )
+}
+
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || !session.user) {
@@ -44,35 +55,37 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'This homework does not belong to your course' }, { status: 400 })
   }
 
-  const assignment = await prisma.$transaction(async (tx) => {
-    const upserted = await tx.homeworkSubmission.upsert({
-      where: {
-        homeworkId_userId: {
-          homeworkId,
-          userId: session.user.id
-        }
-      },
-      create: {
+  const assignment = await prisma.homeworkSubmission.upsert({
+    where: {
+      homeworkId_userId: {
         homeworkId,
-        userId: session.user.id,
-        note
-      },
-      update: {
-        note,
-        submittedAt: new Date()
+        userId: session.user.id
       }
-    })
+    },
+    create: {
+      homeworkId,
+      userId: session.user.id,
+      note
+    },
+    update: {
+      note,
+      submittedAt: new Date()
+    }
+  })
 
-    await tx.homeworkMessage.create({
+  try {
+    await prisma.homeworkMessage.create({
       data: {
-        submissionId: upserted.id,
+        submissionId: assignment.id,
         senderRole: 'student',
         content: note
       }
     })
-
-    return upserted
-  })
+  } catch (error) {
+    if (!isHomeworkMessageStorageMissing(error)) {
+      throw error
+    }
+  }
 
   return NextResponse.json({ message: 'Assignment submitted', assignment })
 }
