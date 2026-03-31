@@ -97,24 +97,24 @@ export default function TopNav() {
   }, [session])
 
   return (
-    <header className="bg-transparent text-slate-900 px-6 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 leading-none sm:gap-3">
-          <span className="text-4xl font-extrabold tracking-tight">
+    <header className="bg-transparent px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4">
+        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 leading-none sm:gap-3">
+          <span className="shrink-0 text-[2.35rem] font-extrabold tracking-tight sm:text-4xl">
             <span className="text-[#14532d]">English</span>
             <span className="text-amber-500">More</span>
           </span>
-          <span className="text-xs font-medium text-slate-600 sm:text-sm">
+          <span className="hidden max-w-26 shrink-0 text-[11px] font-medium leading-[1.15] text-slate-600 min-[430px]:block sm:max-w-none sm:text-sm sm:leading-tight md:block">
             Speak your mind and more
           </span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="shrink-0 flex items-center gap-1.5 sm:gap-3">
           {session ? (
             <>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 <div
-                  className={`flex items-center gap-1.5 text-[11px] font-semibold text-[#166534] sm:gap-2 sm:text-xs overflow-hidden transition-all duration-300 ease-in-out ${
+                  className={`hidden overflow-hidden text-[11px] font-semibold text-[#166534] transition-all duration-300 ease-in-out min-[430px]:flex min-[430px]:items-center min-[430px]:gap-1.5 sm:gap-2 sm:text-xs ${
                     showUserInfo ? 'max-w-xs opacity-100' : 'max-w-0 opacity-0'
                   }`}
                 >

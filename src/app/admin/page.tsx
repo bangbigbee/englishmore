@@ -1451,7 +1451,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveSection('course')}
             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'course' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
-            1. QUAN LY KHOA HOC
+            1. COURSE MANAGEMENT
           </button>
           <button
             type="button"
