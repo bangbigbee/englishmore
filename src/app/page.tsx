@@ -193,10 +193,8 @@ export default function Home() {
 
         <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
           <div>
-            <h1 className="text-3xl font-extrabold leading-tight text-slate-900 sm:text-5xl md:text-6xl">
-              Master English with <span className="text-[#14532d]">English</span><span className="text-amber-500">More</span>
-            </h1>
-            <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-slate-600">
+            <h1 className="sr-only">EnglishMore</h1>
+            <p className="max-w-xl text-base sm:text-lg text-slate-600">
               Practice makes perfect!
             </p>
             <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
