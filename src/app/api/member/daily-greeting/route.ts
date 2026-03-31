@@ -134,6 +134,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, role: true }
+    })
+
+    if (!currentUser || currentUser.role !== 'member') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     const body = await request.json()
     const inputMethod = body?.inputMethod === 'voice' ? 'voice' : body?.inputMethod === 'text' ? 'text' : null
     const message = String(body?.message || '').trim()
@@ -155,7 +164,7 @@ export async function POST(request: NextRequest) {
     const checkin = await prismaWithGreeting.dailyGreetingCheckin.upsert({
       where: {
         userId_responseDate: {
-          userId: session.user.id,
+          userId: currentUser.id,
           responseDate: dayStart
         }
       },
@@ -164,7 +173,7 @@ export async function POST(request: NextRequest) {
         inputMethod
       },
       create: {
-        userId: session.user.id,
+        userId: currentUser.id,
         responseDate: dayStart,
         message,
         inputMethod

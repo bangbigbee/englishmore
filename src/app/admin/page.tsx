@@ -335,7 +335,7 @@ export default function AdminDashboard() {
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
-  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'vocabulary'>('course')
+  const [activeSection, setActiveSection] = useState<'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'reflect' | 'vocabulary'>('course')
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
@@ -362,6 +362,14 @@ export default function AdminDashboard() {
     totalStudents: 0,
     checkedInToday: 0
   })
+  const [reflectRows, setReflectRows] = useState<Array<{
+    enrollmentId: string; userId: string; studentName: string; phone: string; email: string
+    courseId: string; courseTitle: string; reflectedToday: boolean; message: string; updatedAt: string | null
+  }>>([])
+  const [reflectCourseFilter, setReflectCourseFilter] = useState('')
+  const [reflectLoading, setReflectLoading] = useState(false)
+  const [reflectError, setReflectError] = useState('')
+  const [reflectSummary, setReflectSummary] = useState<{ totalStudents: number; reflectedToday: number }>({ totalStudents: 0, reflectedToday: 0 })
   const [vocabularyItems, setVocabularyItems] = useState<AdminVocabularyItem[]>([])
   const [vocabularyCourseFilter, setVocabularyCourseFilter] = useState('')
   const [newVocabularyCourseId, setNewVocabularyCourseId] = useState('')
@@ -570,6 +578,27 @@ export default function AdminDashboard() {
       setCheckinLoading(false)
     }
   }, [checkinCourseFilter])
+
+  const fetchReflectData = useCallback(async () => {
+    try {
+      setReflectLoading(true)
+      setReflectError('')
+      const params = new URLSearchParams()
+      if (reflectCourseFilter) params.set('courseId', reflectCourseFilter)
+      const query = params.toString()
+      const res = await fetch(`/api/admin/reflections${query ? `?${query}` : ''}`)
+      if (!res.ok) throw new Error('Failed to fetch reflection data')
+      const data = await res.json()
+      setReflectRows(data.rows || [])
+      setReflectSummary({ totalStudents: data.summary?.totalStudents || 0, reflectedToday: data.summary?.reflectedToday || 0 })
+    } catch (err) {
+      setReflectError(err instanceof Error ? err.message : 'Không thể tải dữ liệu reflect')
+      setReflectRows([])
+      setReflectSummary({ totalStudents: 0, reflectedToday: 0 })
+    } finally {
+      setReflectLoading(false)
+    }
+  }, [reflectCourseFilter])
 
   const fetchVocabularyData = useCallback(async () => {
     try {
@@ -799,6 +828,12 @@ export default function AdminDashboard() {
       fetchVocabularyData()
     }
   }, [activeSection, fetchVocabularyData])
+
+  useEffect(() => {
+    if (activeSection === 'reflect') {
+      fetchReflectData()
+    }
+  }, [activeSection, fetchReflectData])
 
   const updateNewExerciseQuestion = (index: number, field: keyof ExerciseQuestionForm, value: string) => {
     setNewExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
@@ -1448,10 +1483,17 @@ export default function AdminDashboard() {
            </button>
            <button
              type="button"
+             onClick={() => setActiveSection('reflect')}
+             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'reflect' ? 'bg-violet-700 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             6. REFLECT
+           </button>
+           <button
+             type="button"
              onClick={() => setActiveSection('vocabulary')}
              className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'vocabulary' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             6. VOCABULARY
+             7. VOCABULARY
            </button>
         </div>
 
@@ -1541,6 +1583,83 @@ export default function AdminDashboard() {
                 {!checkinLoading && checkinRows.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-3 text-center text-gray-500">Không có học viên nào theo bộ lọc hiện tại</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'reflect' ? '' : 'hidden'}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Theo dõi Reflect của học viên</h2>
+          <p className="text-sm text-gray-600 mb-5">Những học viên đã check-in hôm nay và ghi lại reflection.</p>
+
+          {reflectError && (
+            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{reflectError}</div>
+          )}
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
+            <select
+              value={reflectCourseFilter}
+              onChange={(e) => setReflectCourseFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-violet-600"
+            >
+              <option value="">Tất cả khóa học đang active</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
+            <div className="rounded border border-[#14532d]/30 bg-[#14532d]/10 px-4 py-2 text-sm text-[#14532d]">
+              Tổng học viên: <span className="font-bold">{reflectSummary.totalStudents}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="rounded border border-violet-300 bg-violet-50 px-4 py-2 text-sm text-violet-700">
+                Reflect hôm nay: <span className="font-bold">{reflectSummary.reflectedToday}</span>
+              </div>
+              <button onClick={fetchReflectData} className="px-4 py-2 bg-violet-700 text-white rounded hover:bg-violet-800">
+                {reflectLoading ? 'Đang tải...' : 'Làm mới'}
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học viên</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SĐT</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khóa học</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reflect hôm nay</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nội dung</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reflectRows.map((row) => (
+                  <tr key={row.enrollmentId} className="border-b align-top hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900">{row.studentName || row.email}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{row.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{row.courseTitle}</td>
+                    <td className="px-4 py-3 text-sm">
+                      <span className={`rounded px-2 py-1 text-xs font-semibold ${row.reflectedToday ? 'bg-violet-100 text-violet-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {row.reflectedToday ? 'Đã reflect' : 'Chưa reflect'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      {row.updatedAt ? new Date(row.updatedAt).toLocaleString('vi-VN') : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {row.message ? (
+                        <p className="max-w-md whitespace-pre-wrap">{row.message}</p>
+                      ) : (
+                        <span className="text-gray-400">Chưa có nội dung</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {!reflectLoading && reflectRows.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Không có dữ liệu theo bộ lọc hiện tại</td>
                   </tr>
                 )}
               </tbody>
