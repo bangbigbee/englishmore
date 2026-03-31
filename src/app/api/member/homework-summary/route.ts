@@ -73,7 +73,13 @@ export async function GET() {
     }))
 
   const weekStart = getWeekStart(new Date())
-  const [weeklyHomeworkSubmissions, weeklyExerciseSubmissions] = await Promise.all([
+  const prismaWithGreeting = prisma as typeof prisma & {
+    dailyGreetingCheckin: {
+      findMany: (...args: unknown[]) => Promise<unknown>
+    }
+  }
+
+  const [weeklyHomeworkSubmissions, weeklyExerciseSubmissions, weeklyGreetingCheckins] = await Promise.all([
     prisma.homeworkSubmission.findMany({
       where: {
         userId: session.user.id,
@@ -89,6 +95,13 @@ export async function GET() {
         submittedAt: { gte: weekStart }
       },
       select: { submittedAt: true, durationSeconds: true, totalQuestions: true }
+    }),
+    prismaWithGreeting.dailyGreetingCheckin.findMany({
+      where: {
+        userId: session.user.id,
+        responseDate: { gte: weekStart }
+      },
+      select: { responseDate: true }
     })
   ])
 
@@ -105,6 +118,11 @@ export async function GET() {
       ? Math.max(1, Math.round(submission.durationSeconds / 60))
       : Math.max(8, submission.totalQuestions * 2)
     minutesByDay[dayIndex] += derivedMinutes
+  }
+
+  for (const checkin of weeklyGreetingCheckins as Array<{ responseDate: Date }>) {
+    const dayIndex = toMondayFirstIndex(checkin.responseDate)
+    minutesByDay[dayIndex] += 5
   }
 
   const weeklyActivity = WEEK_DAYS.map((day, index) => ({

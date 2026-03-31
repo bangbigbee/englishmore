@@ -625,6 +625,20 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+        {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
+          <section className="mb-3 rounded-xl bg-white px-4 py-3 shadow-sm sm:px-5 sm:py-3.5">
+            <h2 className="text-base font-semibold text-slate-800">Tiến độ khóa học</h2>
+            <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
+              <div
+                className="h-full rounded-full bg-linear-to-r from-amber-400 to-amber-500 transition-all duration-500"
+                style={{
+                  width: `${(Math.min(memberHomework.totalSessions || 30, Math.max(0, memberHomework.completedSessions)) / Math.max(1, memberHomework.totalSessions || 30)) * 100}%`
+                }}
+              />
+            </div>
+          </section>
+        )}
+
         {session?.user?.role === 'member' && (
           <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5">
             <h2 className="text-lg font-extrabold text-[#14532d] sm:text-xl">
@@ -722,20 +736,6 @@ export default function Home() {
                   )}
                 </div>
               </div>
-            </div>
-          </section>
-        )}
-
-        {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
-          <section className="mb-8 rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900">Tiến độ khóa học</h2>
-            <div className="mt-4 h-4 w-full overflow-hidden rounded-full bg-slate-200">
-              <div
-                className="h-full rounded-full bg-linear-to-r from-amber-400 to-amber-500 transition-all duration-500"
-                style={{
-                  width: `${(Math.min(memberHomework.totalSessions || 30, Math.max(0, memberHomework.completedSessions)) / Math.max(1, memberHomework.totalSessions || 30)) * 100}%`
-                }}
-              />
             </div>
           </section>
         )}
