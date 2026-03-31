@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
 
   const courseId = request.nextUrl.searchParams.get('courseId')
   const homeworkId = request.nextUrl.searchParams.get('homeworkId')
+  const shouldMarkAsRead = request.nextUrl.searchParams.get('markAsRead') === '1'
 
   const where: {
     homework?: {
@@ -44,6 +45,15 @@ export async function GET(request: NextRequest) {
     where.homework = {}
     if (courseId) where.homework.courseId = courseId
     if (homeworkId) where.homework.id = homeworkId
+  }
+
+  if (shouldMarkAsRead) {
+    await prisma.homeworkSubmission.updateMany({
+      where,
+      data: {
+        teacherLastReadAt: new Date()
+      }
+    })
   }
 
   try {

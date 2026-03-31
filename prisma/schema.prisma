@@ -250,6 +250,7 @@ model HomeworkSubmission {
   note        String?
   teacherComment String?
   studentLastReadAt DateTime?
+  teacherLastReadAt DateTime?
   submittedAt DateTime       @default(now())
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
