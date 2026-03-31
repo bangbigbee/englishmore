@@ -112,6 +112,9 @@ export default function Home() {
   const [reflectionError, setReflectionError] = useState('')
   const [hasReflectionToday, setHasReflectionToday] = useState(false)
   const [isSavingReflection, setIsSavingReflection] = useState(false)
+  const [isEditingReflection, setIsEditingReflection] = useState(false)
+  const [editReflectionMessage, setEditReflectionMessage] = useState('')
+  const [editReflectionStatus, setEditReflectionStatus] = useState('')
   const [greetingConversation, setGreetingConversation] = useState<DailyGreetingConversationItem[]>([])
   const [isListening, setIsListening] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(false)
@@ -141,6 +144,9 @@ export default function Home() {
       setEditCheckinMessage('')
       setReflectionMessage('')
       setHasReflectionToday(false)
+      setEditReflectionMessage('')
+      setIsEditingReflection(false)
+      setEditReflectionStatus('')
       setGreetingConversation([])
       return
     }
@@ -277,6 +283,9 @@ export default function Home() {
       if (session.user?.role !== 'member') {
         setHasReflectionToday(false)
         setReflectionMessage('')
+        setEditReflectionMessage('')
+        setIsEditingReflection(false)
+        setEditReflectionStatus('')
         return
       }
       try {
@@ -289,9 +298,13 @@ export default function Home() {
         const data = await res.json() as { hasReflection?: boolean; reflection?: { message: string } | null }
         setHasReflectionToday(Boolean(data?.hasReflection))
         setReflectionMessage(data?.reflection?.message || '')
+        setEditReflectionMessage(data?.reflection?.message || '')
       } catch {
         setHasReflectionToday(false)
         setReflectionMessage('')
+        setEditReflectionMessage('')
+        setIsEditingReflection(false)
+        setEditReflectionStatus('')
       }
     }
 
@@ -993,6 +1006,8 @@ export default function Home() {
       const data = await res.json().catch(() => ({})) as { error?: string }
       if (!res.ok) { setReflectionError(data?.error || 'Could not save your reflection.'); setReflectionStatus(''); return }
       setHasReflectionToday(true)
+      setReflectionMessage(msg)
+      setEditReflectionMessage(msg)
       setReflectionStatus('Your reflection for today has been saved.')
       const refreshRes = await fetch('/api/member/daily-greeting')
       if (refreshRes.ok) {
@@ -1002,6 +1017,45 @@ export default function Home() {
     } catch {
       setReflectionError('Could not save your reflection.')
       setReflectionStatus('')
+    } finally {
+      setIsSavingReflection(false)
+    }
+  }
+
+  const handleSaveEditReflection = async () => {
+    const msg = editReflectionMessage.trim()
+    if (!msg) {
+      setEditReflectionStatus('Please enter your reflection.')
+      return
+    }
+
+    setEditReflectionStatus('Saving...')
+    setIsSavingReflection(true)
+    try {
+      const res = await fetch('/api/member/daily-reflection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      })
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      if (!res.ok) {
+        setEditReflectionStatus(data?.error || 'Save failed.')
+        return
+      }
+
+      setReflectionMessage(msg)
+      setEditReflectionMessage(msg)
+      setHasReflectionToday(true)
+      setIsEditingReflection(false)
+      setEditReflectionStatus('Your reflection has been updated.')
+
+      const refreshRes = await fetch('/api/member/daily-greeting')
+      if (refreshRes.ok) {
+        const refreshData = await refreshRes.json() as { conversation?: DailyGreetingConversationItem[] }
+        setGreetingConversation(Array.isArray(refreshData?.conversation) ? refreshData.conversation : [])
+      }
+    } catch {
+      setEditReflectionStatus('Save failed.')
     } finally {
       setIsSavingReflection(false)
     }
@@ -1151,31 +1205,83 @@ export default function Home() {
                     <h3 className="text-sm font-bold text-[#14532d] sm:text-base">
                       Hello {session.user?.name || 'there'}! How was your day?
                     </h3>
-                    <div className="mt-3">
-                      <textarea
-                        value={reflectionMessage}
-                        onChange={(event) => setReflectionMessage(event.target.value)}
-                        placeholder="Write your reflection for today..."
-                        className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                        maxLength={1000}
-                      />
-                      <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
-                    </div>
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={handleSubmitReflection}
-                        disabled={isSavingReflection}
-                        className="rounded-md bg-violet-700 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-70"
-                      >
-                        {isSavingReflection ? 'Saving...' : hasReflectionToday ? 'Update reflect' : 'Reflect'}
-                      </button>
-                      {hasReflectionToday && (
-                        <span className="rounded-full border border-violet-300 bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
-                          Reflected today
-                        </span>
-                      )}
-                    </div>
+                    {hasReflectionToday ? (
+                      <div className="mt-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditReflectionMessage(reflectionMessage)
+                            setEditReflectionStatus('')
+                            setIsEditingReflection(true)
+                          }}
+                          className="rounded-full border border-violet-300 bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 transition hover:bg-violet-100"
+                        >
+                          Already reflected today. Click here to edit.
+                        </button>
+
+                        {isEditingReflection ? (
+                          <div className="mt-3">
+                            <textarea
+                              value={editReflectionMessage}
+                              onChange={(event) => setEditReflectionMessage(event.target.value)}
+                              placeholder="Update your reflection..."
+                              className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                              maxLength={1000}
+                            />
+                            <p className="mt-1 text-xs text-slate-500">{editReflectionMessage.trim().length}/1000</p>
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={handleSaveEditReflection}
+                                disabled={isSavingReflection}
+                                className="rounded-md bg-violet-700 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-70"
+                              >
+                                {isSavingReflection ? 'Saving...' : 'Save reflection'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setIsEditingReflection(false)
+                                  setEditReflectionMessage(reflectionMessage)
+                                  setEditReflectionStatus('')
+                                }}
+                                className="rounded-md border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                            {editReflectionStatus && <p className="mt-2 text-sm font-medium text-violet-700">{editReflectionStatus}</p>}
+                          </div>
+                        ) : (
+                          <div className="mt-3 rounded-lg border border-violet-200 bg-white px-3 py-3 text-sm text-slate-700">
+                            <p className="whitespace-pre-wrap">{reflectionMessage}</p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="mt-3">
+                          <textarea
+                            value={reflectionMessage}
+                            onChange={(event) => setReflectionMessage(event.target.value)}
+                            placeholder="Write your reflection for today..."
+                            className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                            maxLength={1000}
+                          />
+                          <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
+                        </div>
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={handleSubmitReflection}
+                            disabled={isSavingReflection}
+                            className="rounded-md bg-violet-700 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-70"
+                          >
+                            {isSavingReflection ? 'Saving...' : 'Reflect'}
+                          </button>
+                        </div>
+                      </>
+                    )}
                     {reflectionStatus && <p className="mt-2 text-sm font-medium text-violet-700">{reflectionStatus}</p>}
                     {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
                   </div>
@@ -1240,10 +1346,10 @@ export default function Home() {
             <div className="mt-5 border-t border-[#14532d]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Link
                 href="/my-homework"
-                className="brand-cta brand-cta-outline w-full justify-center relative"
+                className="brand-cta brand-cta-filled w-full justify-center relative"
               >
                 {memberHomework && memberHomework.feedbackNoticeCount > 0 && (
-                  <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-amber-300 bg-white px-2 py-1 text-[10px] font-bold text-amber-700 shadow-sm">
+                  <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-red-500 bg-red-600 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
