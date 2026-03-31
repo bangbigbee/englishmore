@@ -1349,7 +1349,7 @@ export default function Home() {
                 className="brand-cta brand-cta-filled w-full justify-center relative"
               >
                 {memberHomework && memberHomework.feedbackNoticeCount > 0 && (
-                  <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-red-500 bg-red-600 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
+                  <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-500 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
