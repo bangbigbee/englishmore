@@ -645,13 +645,12 @@ export default function Home() {
         )}
 
         {session?.user?.role === 'member' && (
-          <section className="mb-4 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5 sm:py-5">
+          <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5 sm:py-5">
             <h2 className="text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
-              Hello {session.user?.name || 'there'}! How are you today?
+              {hasGreetingToday
+                ? `Hello ${session.user?.name || 'there'}! How was your day?`
+                : `Hello ${session.user?.name || 'there'}! How are you today?`}
             </h2>
-            <p className="mt-1 text-xs sm:text-sm text-[#14532d]/85">
-              Quick check-in helps us track your learning activity and unlock medals later.
-            </p>
 
             <div className="mt-4 grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-[2fr_1fr]">
               <div>
@@ -706,7 +705,7 @@ export default function Home() {
                     disabled={isSavingGreeting}
                     className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    {isSavingGreeting ? 'Saving...' : 'Check in'}
+                    {isSavingGreeting ? 'Saving...' : hasGreetingToday ? 'Reflect' : 'Check in'}
                   </button>
                 </div>
 
@@ -742,12 +741,8 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </section>
-        )}
 
-        {session?.user?.role === 'member' && (
-          <section className="mb-8 rounded-xl border border-[#14532d]/20 bg-white p-4 shadow-sm sm:p-5">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="mt-5 border-t border-[#14532d]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <Link
                 href="/my-homework"
                 className="brand-cta brand-cta-outline w-full justify-center relative"

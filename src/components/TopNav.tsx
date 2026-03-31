@@ -39,9 +39,26 @@ function BookIcon() {
   )
 }
 
+function ChevronLeftIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  )
+}
+
+function ChevronRightIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  )
+}
+
 export default function TopNav() {
   const { data: session, status } = useSession()
   const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
+  const [showUserInfo, setShowUserInfo] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -95,13 +112,26 @@ export default function TopNav() {
         <div className="flex items-center gap-3">
           {session ? (
             <>
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#166534] sm:gap-2 sm:text-xs">
-                <span className="max-w-28 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-35">
-                  {session.user?.name || 'User'}
-                </span>
-                <span className="max-w-32 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-55">
-                  {enrolledCourseTitle || 'Chua tham gia khoa hoc'}
-                </span>
+              <div className="flex items-center gap-1.5">
+                <div
+                  className={`flex items-center gap-1.5 text-[11px] font-semibold text-[#166534] sm:gap-2 sm:text-xs overflow-hidden transition-all duration-300 ease-in-out ${
+                    showUserInfo ? 'max-w-xs opacity-100' : 'max-w-0 opacity-0'
+                  }`}
+                >
+                  <span className="max-w-28 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-35 whitespace-nowrap">
+                    {session.user?.name || 'User'}
+                  </span>
+                  <span className="max-w-32 truncate rounded-md bg-[#14532d]/10 px-2 py-1 sm:max-w-55 whitespace-nowrap">
+                    {enrolledCourseTitle || 'Chua tham gia khoa hoc'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setShowUserInfo((v) => !v)}
+                  className="p-1.5 text-[#166534] hover:text-[#14532d] rounded-lg hover:bg-[#14532d]/10 transition cursor-pointer"
+                  title={showUserInfo ? 'Ẩn thông tin' : 'Hiện thông tin'}
+                >
+                  {showUserInfo ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                </button>
               </div>
               <Link
                 href="/user/profile"
