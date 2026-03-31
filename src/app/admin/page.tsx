@@ -329,6 +329,7 @@ export default function AdminDashboard() {
   const [homeworkSubmissionCourseFilter, setHomeworkSubmissionCourseFilter] = useState('')
   const [homeworkSubmissionHomeworkFilter, setHomeworkSubmissionHomeworkFilter] = useState('')
   const [homeworkTeacherComments, setHomeworkTeacherComments] = useState<Record<string, string>>({})
+  const [homeworkDetailSubmissionId, setHomeworkDetailSubmissionId] = useState<string | null>(null)
   const [savingHomeworkCommentId, setSavingHomeworkCommentId] = useState<string | null>(null)
   const [rejectingUserId, setRejectingUserId] = useState<string | null>(null)
   const [exercises, setExercises] = useState<ExerciseItem[]>([])
@@ -2077,79 +2078,137 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          <div className="space-y-4">
-            {homeworkSubmissions.map((submission) => (
-              <article key={submission.id} className="rounded-2xl border border-gray-200 bg-slate-50 p-4 shadow-sm">
-                <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-3">
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900">{submission.homework.title}</h3>
-                    <p className="mt-1 text-sm text-slate-600">{submission.user.name || submission.user.email} • {submission.user.phone || 'Not updated yet'}</p>
-                    <p className="mt-1 text-sm text-slate-500">Course: {submission.homework.course.title}</p>
-                  </div>
-                  <p className="text-sm text-slate-500">Submitted at: {new Date(submission.submittedAt).toLocaleString('en-GB')}</p>
-                </div>
-
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
-                    {(submission.messages || []).map((message) => (
-                      <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
-                        <div
-                          className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
-                            message.senderRole === 'student'
-                              ? 'rounded-br-md bg-emerald-100 text-emerald-950'
-                              : 'rounded-bl-md border border-blue-200 bg-blue-50 text-blue-950'
-                          }`}
+          <div className="overflow-x-auto rounded-xl border border-gray-200">
+            <table className="w-full border-collapse bg-white">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last message</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted at</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {homeworkSubmissions.map((submission) => {
+                  const latestMessage = [...(submission.messages || [])].reverse()[0]
+                  return (
+                    <tr key={submission.id} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        <p className="font-semibold">{submission.user.name || submission.user.email}</p>
+                        <p className="text-xs text-gray-500">{submission.user.phone || 'Not updated yet'}</p>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{submission.homework.course.title}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.title}</td>
+                      <td className="px-4 py-3 text-sm text-gray-700">
+                        {latestMessage ? (
+                          <p className="max-w-xs truncate">
+                            <span className="font-semibold">{latestMessage.senderRole === 'teacher' ? 'Teacher: ' : 'Student: '}</span>
+                            <span>{latestMessage.content}</span>
+                          </p>
+                        ) : (
+                          <span className="text-gray-500">No messages yet</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500">{new Date(submission.submittedAt).toLocaleString('en-GB')}</td>
+                      <td className="px-4 py-3 text-sm">
+                        <button
+                          onClick={() => setHomeworkDetailSubmissionId(submission.id)}
+                          className="rounded bg-[#14532d] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#166534]"
                         >
-                          <p
-                            className={`text-[11px] font-bold uppercase tracking-wide ${
-                              message.senderRole === 'student' ? 'text-emerald-700' : 'text-blue-700'
+                          Detail
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
+                {homeworkSubmissions.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">No submissions match the current filter.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {homeworkDetailSubmissionId && (() => {
+            const selectedSubmission = homeworkSubmissions.find((item) => item.id === homeworkDetailSubmissionId)
+            if (!selectedSubmission) return null
+
+            return (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+                <div className="w-full max-w-3xl rounded-2xl bg-white p-5 shadow-2xl">
+                  <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">{selectedSubmission.homework.title}</h3>
+                      <p className="mt-1 text-sm text-slate-600">{selectedSubmission.user.name || selectedSubmission.user.email} • {selectedSubmission.user.phone || 'Not updated yet'}</p>
+                      <p className="mt-1 text-sm text-slate-500">Course: {selectedSubmission.homework.course.title}</p>
+                    </div>
+                    <button
+                      onClick={() => setHomeworkDetailSubmissionId(null)}
+                      className="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      Close
+                    </button>
+                  </div>
+
+                  <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                    <div className="max-h-96 space-y-3 overflow-y-auto pr-1">
+                      {(selectedSubmission.messages || []).map((message) => (
+                        <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
+                          <div
+                            className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
+                              message.senderRole === 'student'
+                                ? 'rounded-br-md bg-emerald-100 text-emerald-950'
+                                : 'rounded-bl-md border border-blue-200 bg-blue-50 text-blue-950'
                             }`}
                           >
-                            {message.senderRole === 'student' ? 'Student' : 'Teacher'}
-                          </p>
-                          <p
-                            className={`mt-1 whitespace-pre-wrap ${
-                              message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
-                            }`}
-                          >
-                            {message.content}
-                          </p>
-                          <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
+                            <p
+                              className={`text-[11px] font-bold uppercase tracking-wide ${
+                                message.senderRole === 'student' ? 'text-emerald-700' : 'text-blue-700'
+                              }`}
+                            >
+                              {message.senderRole === 'student' ? 'Student' : 'Teacher'}
+                            </p>
+                            <p
+                              className={`mt-1 whitespace-pre-wrap ${
+                                message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
+                              }`}
+                            >
+                              {message.content}
+                            </p>
+                            <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                    {(submission.messages || []).length === 0 && (
-                      <p className="text-sm text-slate-600">No messages yet.</p>
-                    )}
+                      ))}
+                      {(selectedSubmission.messages || []).length === 0 && (
+                        <p className="text-sm text-slate-600">No messages yet.</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm font-semibold text-slate-700">Your reply</label>
+                    <textarea
+                      value={homeworkTeacherComments[selectedSubmission.id] || ''}
+                      onChange={(e) => setHomeworkTeacherComments((current) => ({ ...current, [selectedSubmission.id]: e.target.value }))}
+                      rows={3}
+                      placeholder="Write your reply to the student..."
+                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    />
+                    <button
+                      onClick={() => saveHomeworkTeacherComment(selectedSubmission.id)}
+                      disabled={savingHomeworkCommentId === selectedSubmission.id}
+                      className="mt-3 block rounded bg-[#14532d] px-4 py-2 text-sm font-bold text-white hover:bg-[#166534] disabled:opacity-50"
+                    >
+                      {savingHomeworkCommentId === selectedSubmission.id ? 'Sending...' : 'Send reply'}
+                    </button>
                   </div>
                 </div>
-
-                <div className="mt-4">
-                  <label className="block text-sm font-semibold text-slate-700">Your reply</label>
-                  <textarea
-                    value={homeworkTeacherComments[submission.id] || ''}
-                    onChange={(e) => setHomeworkTeacherComments((current) => ({ ...current, [submission.id]: e.target.value }))}
-                    rows={3}
-                    placeholder="Write your reply to the student..."
-                    className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                  <button
-                    onClick={() => saveHomeworkTeacherComment(submission.id)}
-                    disabled={savingHomeworkCommentId === submission.id}
-                    className="mt-3 block rounded bg-[#14532d] px-4 py-2 text-sm font-bold text-white hover:bg-[#166534] disabled:opacity-50"
-                  >
-                    {savingHomeworkCommentId === submission.id ? 'Sending...' : 'Send reply'}
-                  </button>
-                </div>
-              </article>
-            ))}
-
-            {homeworkSubmissions.length === 0 && (
-              <div className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-8 text-center text-gray-500">
-                No submissions match the current filter.
               </div>
-            )}
-          </div>
+            )
+          })()}
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>

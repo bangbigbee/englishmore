@@ -65,10 +65,12 @@ export async function POST(request: NextRequest) {
     create: {
       homeworkId,
       userId: session.user.id,
-      note
+      note,
+      studentLastReadAt: new Date()
     },
     update: {
       note,
+      studentLastReadAt: new Date(),
       submittedAt: new Date()
     }
   })

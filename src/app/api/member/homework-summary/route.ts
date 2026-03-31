@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -36,7 +36,7 @@ function toMondayFirstIndex(date: Date) {
   return (date.getDay() + 6) % 7
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -73,6 +73,19 @@ export async function GET() {
     })
   }
 
+  const shouldMarkAsRead = request.nextUrl.searchParams.get('markAsRead') === '1'
+  if (shouldMarkAsRead) {
+    await prisma.homeworkSubmission.updateMany({
+      where: {
+        userId: session.user.id,
+        homework: { courseId: activeEnrollment.courseId }
+      },
+      data: {
+        studentLastReadAt: new Date()
+      }
+    })
+  }
+
   let homeworksRaw: Array<{
     id: string
     title: string
@@ -82,6 +95,7 @@ export async function GET() {
       submittedAt: Date
       note: string | null
       teacherComment: string | null
+      studentLastReadAt?: Date | null
       messages?: Array<{
         id: string
         senderRole: 'student' | 'teacher'
@@ -101,6 +115,7 @@ export async function GET() {
             submittedAt: true,
             note: true,
             teacherComment: true,
+            studentLastReadAt: true,
             messages: {
               select: {
                 id: true,
@@ -128,7 +143,8 @@ export async function GET() {
           select: {
             submittedAt: true,
             note: true,
-            teacherComment: true
+            teacherComment: true,
+            studentLastReadAt: true
           }
         }
       },
@@ -173,9 +189,19 @@ export async function GET() {
       dueDate: homework.dueDate
     }))
 
-  const feedbackNoticeCount = homeworks.filter((homework) =>
-    (homework.submissions[0]?.messages || []).some((message) => message.senderRole === 'teacher')
-  ).length
+  const feedbackNoticeCount = homeworks.reduce((total, homework) => {
+    const submission = homework.submissions[0]
+    if (!submission) return total
+
+    const readAt = submission.studentLastReadAt || null
+    const unreadTeacherMessages = (submission.messages || []).filter((message) => {
+      if (message.senderRole !== 'teacher') return false
+      if (!readAt) return true
+      return message.createdAt.getTime() > readAt.getTime()
+    }).length
+
+    return total + unreadTeacherMessages
+  }, 0)
 
   const exercises = await prisma.courseExercise.findMany({
     where: { courseId: activeEnrollment.courseId, isDraft: false },

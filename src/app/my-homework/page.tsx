@@ -68,7 +68,7 @@ export default function MyHomeworkPage() {
     try {
       setLoading(true)
       setError('')
-      const res = await fetch('/api/member/homework-summary')
+      const res = await fetch('/api/member/homework-summary?markAsRead=1')
       if (!res.ok) {
         const data = await res.json().catch(() => ({ error: 'Could not load homework.' }))
         throw new Error(data.error || 'Could not load homework.')
