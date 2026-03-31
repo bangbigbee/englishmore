@@ -82,7 +82,7 @@ export default function TopNav() {
   return (
     <header className="bg-transparent text-slate-900 px-6 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-end gap-2 leading-none sm:gap-3">
+        <Link href="/" className="flex items-center gap-2 leading-none sm:gap-3">
           <span className="text-4xl font-extrabold tracking-tight">
             <span className="text-[#14532d]">English</span>
             <span className="text-amber-500">More</span>

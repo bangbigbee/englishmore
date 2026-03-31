@@ -626,9 +626,11 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
-          <section className="mb-3 rounded-xl bg-white px-4 py-3 shadow-sm sm:px-5 sm:py-3.5">
-            <h2 className="text-base font-semibold text-slate-800">Tiến độ khóa học</h2>
-            <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
+          <section className="mb-3 rounded-xl bg-white shadow-sm overflow-hidden">
+            <div className="px-4 py-3 sm:px-5 sm:py-3.5">
+              <h2 className="text-base font-semibold text-slate-800">Tiến độ khóa học</h2>
+            </div>
+            <div className="h-2.5 w-full overflow-hidden bg-slate-200">
               <div
                 className="h-full rounded-full bg-linear-to-r from-amber-400 to-amber-500 transition-all duration-500"
                 style={{
@@ -897,14 +899,13 @@ export default function Home() {
 
                       {pronunciationScore !== null && (
                         <div className="mt-4 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-left backdrop-blur-sm">
-                          <p className="text-sm font-semibold text-white">Pronunciation accuracy: {pronunciationScore}%</p>
                           {pronunciationTranscript && (
-                            <p className="mt-2 text-sm text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
+                            <p className="text-sm text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
                           )}
                           {pronunciationFeedback && (
-                            <p className="mt-2 text-sm text-white/90">{pronunciationFeedback}</p>
+                            <p className={`${pronunciationTranscript ? 'mt-2 ' : ''}text-sm font-semibold text-amber-300`}>{pronunciationFeedback}</p>
                           )}
-                          <p className="mt-2 text-xs text-white/70">Score is estimated from browser speech recognition, useful for quick self-practice.</p>
+                          <p className="mt-2 text-xs text-white/70">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
                         </div>
                       )}
 
