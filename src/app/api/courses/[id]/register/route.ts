@@ -46,13 +46,19 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   const userId = session.user?.id as string
 
-  // Block if user already has a pending enrollment for any course
-  const pendingEnrollment = await prisma.enrollment.findFirst({
-    where: { userId, status: 'pending' }
+  // Check if user already has ANY active enrollment (not just pending - checking pending, active, completed, suspended)
+  const existingEnrollment = await prisma.enrollment.findFirst({
+    where: {
+      userId,
+      status: {
+        in: ['pending', 'active', 'completed', 'suspended']
+      }
+    },
+    include: { course: true }
   })
-  if (pendingEnrollment) {
+  if (existingEnrollment) {
     return NextResponse.json({
-      error: 'You already have a pending enrollment. Please wait for admin confirmation before registering for a new course.'
+      error: 'Bạn đã đăng ký một khóa học rồi. Vui lòng liên hệ giáo viên để trao đổi thêm.'
     }, { status: 409 })
   }
 
@@ -65,12 +71,30 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   const referenceCode = `EM${courseCodePart}${userCodePart}${nonce}`
   const transferAmount = 3800000
 
+  // Generate unique 6-digit student ID
+  let studentId = ''
+  let isUnique = false
+  let attempts = 0
+  while (!isUnique && attempts < 10) {
+    studentId = Math.floor(100000 + Math.random() * 900000).toString()
+    const existing = await prisma.enrollment.findFirst({ where: { studentId } })
+    if (!existing) {
+      isUnique = true
+    }
+    attempts++
+  }
+
+  if (!isUnique) {
+    return NextResponse.json({ error: 'Failed to generate student ID. Please try again.' }, { status: 500 })
+  }
+
   const enrollment = await prisma.enrollment.create({
     data: {
       courseId,
       userId,
       status: 'pending',
-      referenceCode
+      referenceCode,
+      studentId
     }
   })
 

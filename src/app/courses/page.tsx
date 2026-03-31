@@ -43,6 +43,7 @@ export default function CoursesPage() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [errorModal, setErrorModal] = useState<string | null>(null)
   const [registering, setRegistering] = useState<string | null>(null)
   const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null)
 
@@ -92,9 +93,10 @@ export default function CoursesPage() {
       })
       const data = await res.json()
       if (!res.ok) {
-        setError(data.error || 'Failed to register')
+        setErrorModal(data.error || 'Failed to register')
       } else {
         setError('')
+        setErrorModal(null)
         setPaymentInstruction(data.paymentInstruction || null)
         fetchEnrollments()
       }
@@ -110,7 +112,10 @@ export default function CoursesPage() {
     return enrollment
   }
 
-  const hasPendingEnrollment = enrollments.some(e => e.status === 'pending')
+  // Check if user has any active enrollment (not counting dropped)
+  const hasExistingEnrollment = enrollments.some(e => {
+    return ['pending', 'active', 'completed', 'suspended'].includes(e.status)
+  })
 
   const getQrUrl = (instruction: PaymentInstruction) =>
     `https://img.vietqr.io/image/TCB-${instruction.accountNumber}-compact2.png` +
@@ -155,12 +160,6 @@ export default function CoursesPage() {
           </div>
         )}
 
-        {hasPendingEnrollment && (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-300 rounded text-yellow-800">
-            <strong>Note:</strong> You already have a pending enrollment waiting for admin approval. Please wait before registering for another course.
-          </div>
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {loading ? (
             <div className="col-span-full text-center text-gray-500">Loading...</div>
@@ -170,7 +169,7 @@ export default function CoursesPage() {
             courses.map((course) => {
               const enrollment = getEnrollmentStatus(course.id)
               const isFull = course.enrolledCount >= course.maxStudents
-              const blockedByPending = !enrollment && hasPendingEnrollment
+              const blockedByExistingEnrollment = !enrollment && hasExistingEnrollment
               return (
                 <div key={course.id} className="bg-white rounded shadow-md p-4 sm:p-6 hover:shadow-lg transition">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{course.title}</h3>
@@ -207,7 +206,7 @@ export default function CoursesPage() {
                         Review payment details
                       </button>
                     </div>
-                  ) : blockedByPending ? (
+                  ) : blockedByExistingEnrollment ? (
                     <div className="p-3 bg-gray-50 rounded border border-gray-200">
                       <p className="text-sm text-gray-500">Please wait for your current enrollment to be approved before registering again.</p>
                     </div>
@@ -285,6 +284,29 @@ export default function CoursesPage() {
                 className="mt-4 w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
               >
                 Got it, close
+              </button>
+            </div>
+          </div>
+        )}
+
+        {errorModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-bold text-red-600">Registration Error</h3>
+                <button
+                  onClick={() => setErrorModal(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none"
+                >
+                  ×
+                </button>
+              </div>
+              <p className="text-gray-700 mb-4">{errorModal}</p>
+              <button
+                onClick={() => setErrorModal(null)}
+                className="w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+              >
+                Close
               </button>
             </div>
           </div>

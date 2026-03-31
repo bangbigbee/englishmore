@@ -281,6 +281,7 @@ model Enrollment {
   id                String             @id @default(cuid())
   courseId          String
   userId            String
+  studentId         String?            @unique // ID cá nhân (6 kí tự số) cho học viên
   
   // Mã tham chiếu (cho chuyển khoản)
   referenceCode     String?            // COURSE_ID-USER_ID
