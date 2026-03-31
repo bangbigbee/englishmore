@@ -79,7 +79,7 @@ export default function MyHomeworkPage() {
 
       setSummary(data)
       setNotesByHomework(
-        Object.fromEntries(rows.map((row) => [row.id, row.note || '']))
+        Object.fromEntries(rows.map((row) => [row.id, '']))
       )
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load homework.')
@@ -116,6 +116,7 @@ export default function MyHomeworkPage() {
       }
 
       setSuccess(isUpdate ? 'Submitted homework updated.' : 'Homework submitted successfully.')
+      setNotesByHomework((current) => ({ ...current, [homeworkId]: '' }))
       await fetchHomework()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not save the homework.')

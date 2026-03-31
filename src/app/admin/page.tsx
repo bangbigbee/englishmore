@@ -538,12 +538,7 @@ export default function AdminDashboard() {
       setHomeworkSubmissions(submissions)
       setHomeworkTeacherComments(
         Object.fromEntries(
-          submissions.map((submission: HomeworkSubmissionItem) => {
-            const latestTeacherMessage = [...(submission.messages || [])]
-              .reverse()
-              .find((message) => message.senderRole === 'teacher')
-            return [submission.id, latestTeacherMessage?.content || submission.teacherComment || '']
-          })
+          submissions.map((submission: HomeworkSubmissionItem) => [submission.id, ''])
         )
       )
       setHomeworkError('')
@@ -1153,6 +1148,7 @@ export default function AdminDashboard() {
 
       setHomeworkSuccess('Feedback saved for the student submission.')
       setHomeworkError('')
+      setHomeworkTeacherComments((current) => ({ ...current, [submissionId]: '' }))
       fetchHomeworkSubmissions()
     } catch (err) {
       setHomeworkError(err instanceof Error ? err.message : 'Could not save the feedback.')
