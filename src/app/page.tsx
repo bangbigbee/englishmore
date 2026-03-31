@@ -538,7 +538,7 @@ export default function Home() {
 
     pronunciationDoneAudioRef.current = new Audio('/audio/tingsound.mp3')
     pronunciationDoneAudioRef.current.preload = 'auto'
-    pronunciationDoneAudioRef.current.playsInline = true
+    pronunciationDoneAudioRef.current.setAttribute('playsinline', 'true')
     pronunciationDoneAudioRef.current.load()
 
     return () => {
