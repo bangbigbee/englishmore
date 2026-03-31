@@ -57,6 +57,15 @@ export const authOptions: NextAuthOptions = {
     session: async ({ session, token }) => {
       if (token.sub) {
         session.user.id = token.sub
+        // Fetch fresh user data from database to sync name and image
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { name: true, image: true }
+        })
+        if (dbUser) {
+          session.user.name = dbUser.name
+          session.user.image = dbUser.image
+        }
       }
       if (token.role) {
         session.user.role = token.role as string
