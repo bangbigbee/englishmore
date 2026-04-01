@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+const DAILY_ACTIVITY_ROLES = new Set(['member', 'admin'])
+
 const prismaExt = prisma as typeof prisma & {
   dailyGreetingCheckin: {
     findFirst: (...args: unknown[]) => Promise<unknown>
@@ -33,7 +35,7 @@ export async function GET() {
       select: { id: true, role: true }
     })
 
-    if (!currentUser || currentUser.role !== 'member') {
+    if (!currentUser || !DAILY_ACTIVITY_ROLES.has(currentUser.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
       select: { id: true, role: true }
     })
 
-    if (!currentUser || currentUser.role !== 'member') {
+    if (!currentUser || !DAILY_ACTIVITY_ROLES.has(currentUser.role)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

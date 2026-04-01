@@ -109,6 +109,7 @@ const QUICK_REFLECTION_MESSAGES = [
 
 export default function Home() {
   const { data: session } = useSession()
+  const canUseDailyActivity = session?.user?.role === 'member' || session?.user?.role === 'admin'
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
@@ -190,7 +191,8 @@ export default function Home() {
     }
 
     const fetchGreetingResponse = async (showLoading = true) => {
-      if (session.user?.role !== 'member') {
+      const hasDailyActivityAccess = session.user?.role === 'member' || session.user?.role === 'admin'
+      if (!hasDailyActivityAccess) {
         setGreetingMessage('')
         setHasGreetingToday(false)
         setGreetingConversation([])
@@ -319,7 +321,8 @@ export default function Home() {
     }
 
     const fetchReflection = async () => {
-      if (session.user?.role !== 'member') {
+      const hasDailyActivityAccess = session.user?.role === 'member' || session.user?.role === 'admin'
+      if (!hasDailyActivityAccess) {
         setHasReflectionToday(false)
         setReflectionMessage('')
         setShowCustomReflectionInput(false)
@@ -1199,7 +1202,7 @@ export default function Home() {
   }
 
   const handleMarkClassActivityRead = async () => {
-    if (session?.user?.role !== 'member') {
+    if (!canUseDailyActivity) {
       return
     }
 
@@ -1257,7 +1260,7 @@ export default function Home() {
           </section>
         )}
 
-        {session?.user?.role === 'member' && (
+        {canUseDailyActivity && (
           <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
               <div className="space-y-4">

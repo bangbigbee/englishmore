@@ -473,7 +473,6 @@ export default function AdminDashboard() {
       enrollment.user.email,
       enrollment.user.phone || '',
       enrollment.course.title,
-      enrollment.referenceCode || '',
       enrollment.status
     ].some((field) => field.toLowerCase().includes(keyword))
   })
@@ -3486,7 +3485,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-4 mb-5">
             <input
               type="text"
-              placeholder="Search by student, email, phone, course, transfer code, status..."
+              placeholder="Search by student, email, phone, course, status..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
@@ -3507,7 +3506,6 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transfer code</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -3520,7 +3518,6 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-700">{enrollment.user.phone || 'Not updated'}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{enrollment.user.email}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{enrollment.course.title}</td>
-                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{enrollment.referenceCode || 'No code yet'}</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-medium ${
                         enrollment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-[#14532d]/10 text-[#14532d]'
