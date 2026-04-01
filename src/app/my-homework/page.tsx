@@ -9,6 +9,7 @@ interface HomeworkRow {
   id: string
   title: string
   description: string | null
+  attachmentUrl: string | null
   dueDate: string
   submitted: boolean
   submittedAt: string | null
@@ -183,13 +184,34 @@ export default function MyHomeworkPage() {
                 {pendingHomework.map((item) => (
                   <article key={item.id} className="rounded-xl border border-amber-200 bg-amber-50 p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
-                    <p className="mt-1 text-sm text-slate-600">Due: {new Date(item.dueDate).toLocaleDateString('en-GB')}</p>
-                    {item.description && <p className="mt-2 text-sm text-slate-700">{item.description}</p>}
+                    <p className="mt-1 text-sm text-slate-500">Due: <span className="font-medium text-amber-800">{new Date(item.dueDate).toLocaleDateString('en-GB')}</span></p>
+                    {item.description && (
+                      <div className="mt-3 rounded-lg border border-amber-200 bg-white px-4 py-3">
+                        <p className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-1">Assignment Description</p>
+                        <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                      </div>
+                    )}
+                    {item.attachmentUrl && (
+                      <div className="mt-2">
+                        <a
+                          href={item.attachmentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download
+                          className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-medium text-amber-800 hover:bg-amber-100 transition-colors"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+                          </svg>
+                          Download attachment
+                        </a>
+                      </div>
+                    )}
                     <div className="mt-4 rounded-2xl border border-amber-200 bg-white/80 p-3">
                       <div className="flex justify-end">
                         <div className="max-w-[85%] rounded-2xl rounded-br-md bg-amber-100 px-3 py-2 text-sm text-amber-950 shadow-sm">
                           <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700">You</p>
-                          <p className="mt-1 text-amber-900">Start the conversation by sending your homework message below.</p>
+                          <p className="mt-1 text-amber-900">Submit your homework and start the conversation with teacher by submitting your homework message below.</p>
                         </div>
                       </div>
                     </div>
@@ -206,7 +228,7 @@ export default function MyHomeworkPage() {
                       disabled={savingId === item.id}
                       className="mt-3 rounded bg-[#14532d] px-4 py-2 text-sm font-bold text-white hover:bg-[#166534] disabled:opacity-50"
                     >
-                      {savingId === item.id ? 'Sending...' : 'Send message'}
+                      {savingId === item.id ? 'Sending...' : 'Submit'}
                     </button>
                   </article>
                 ))}
@@ -223,7 +245,29 @@ export default function MyHomeworkPage() {
                 {submittedHomework.map((item) => (
                   <article key={item.id} className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
-                    <p className="mt-1 text-sm text-slate-600">Submitted at: {item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</p>
+                    <p className="mt-1 text-sm text-slate-500">Submitted: <span className="font-medium text-emerald-800">{item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</span></p>
+                    {item.description && (
+                      <div className="mt-3 rounded-lg border border-emerald-200 bg-white px-4 py-3">
+                        <p className="text-xs font-bold uppercase tracking-wide text-emerald-600 mb-1">Assignment Description</p>
+                        <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                      </div>
+                    )}
+                    {item.attachmentUrl && (
+                      <div className="mt-2">
+                        <a
+                          href={item.attachmentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download
+                          className="inline-flex items-center gap-2 rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+                          </svg>
+                          Download attachment
+                        </a>
+                      </div>
+                    )}
                     <div className="mt-4 rounded-2xl border border-emerald-200 bg-white/85 p-3 shadow-sm">
                       <div className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
                         {(item.messages || []).map((message) => (

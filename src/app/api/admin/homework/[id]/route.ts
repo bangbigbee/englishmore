@@ -21,12 +21,13 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { courseId, title, description, dueDate } = body
+  const { courseId, title, description, attachmentUrl, dueDate } = body
 
   const data: {
     courseId?: string
     title?: string
     description?: string | null
+    attachmentUrl?: string | null
     dueDate?: Date
   } = {}
 
@@ -41,6 +42,10 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   if (description !== undefined) {
     const normalizedDescription = String(description).trim()
     data.description = normalizedDescription || null
+  }
+  if (attachmentUrl !== undefined) {
+    const normalizedUrl = String(attachmentUrl).trim()
+    data.attachmentUrl = normalizedUrl || null
   }
   if (dueDate !== undefined) {
     const parsedDueDate = new Date(dueDate)

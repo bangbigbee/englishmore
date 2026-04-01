@@ -80,6 +80,7 @@ interface HomeworkItem {
   courseId: string
   title: string
   description: string | null
+  attachmentUrl: string | null
   dueDate: string
   course: { title: string }
   _count: { submissions: number }
@@ -324,6 +325,8 @@ export default function AdminDashboard() {
   const [newHomeworkTitle, setNewHomeworkTitle] = useState('')
   const [newHomeworkDescription, setNewHomeworkDescription] = useState('')
   const [newHomeworkDueDate, setNewHomeworkDueDate] = useState('')
+  const [newHomeworkAttachment, setNewHomeworkAttachment] = useState<File | null>(null)
+  const [newHomeworkAttachmentUploading, setNewHomeworkAttachmentUploading] = useState(false)
   const [homeworkError, setHomeworkError] = useState('')
   const [homeworkSuccess, setHomeworkSuccess] = useState('')
   const [editingHomework, setEditingHomework] = useState<HomeworkItem | null>(null)
@@ -331,6 +334,9 @@ export default function AdminDashboard() {
   const [editHomeworkTitle, setEditHomeworkTitle] = useState('')
   const [editHomeworkDescription, setEditHomeworkDescription] = useState('')
   const [editHomeworkDueDate, setEditHomeworkDueDate] = useState('')
+  const [editHomeworkAttachment, setEditHomeworkAttachment] = useState<File | null>(null)
+  const [editHomeworkAttachmentUrl, setEditHomeworkAttachmentUrl] = useState<string | null>(null)
+  const [editHomeworkAttachmentUploading, setEditHomeworkAttachmentUploading] = useState(false)
   const [savingHomeworkId, setSavingHomeworkId] = useState<string | null>(null)
   const [deletingHomeworkId, setDeletingHomeworkId] = useState<string | null>(null)
   const [homeworkSubmissions, setHomeworkSubmissions] = useState<HomeworkSubmissionItem[]>([])
@@ -1050,6 +1056,15 @@ export default function AdminDashboard() {
     }
   }
 
+  const uploadHomeworkAttachment = async (file: File): Promise<string> => {
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch('/api/admin/homework/upload-attachment', { method: 'POST', body: fd })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data?.error || 'Could not upload the attachment.')
+    return data.url as string
+  }
+
   const createHomework = async () => {
     if (!newHomeworkCourseId || !newHomeworkTitle || !newHomeworkDueDate) {
       setHomeworkError('Please enter the course, homework title, and due date.')
@@ -1063,6 +1078,12 @@ export default function AdminDashboard() {
     }
 
     try {
+      setNewHomeworkAttachmentUploading(true)
+      let attachmentUrl: string | null = null
+      if (newHomeworkAttachment) {
+        attachmentUrl = await uploadHomeworkAttachment(newHomeworkAttachment)
+      }
+
       const res = await fetch('/api/admin/homework', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1070,6 +1091,7 @@ export default function AdminDashboard() {
           courseId: newHomeworkCourseId,
           title: newHomeworkTitle,
           description: newHomeworkDescription,
+          attachmentUrl,
           dueDate: parsedNewHomeworkDueDate
         })
       })
@@ -1082,11 +1104,14 @@ export default function AdminDashboard() {
       setNewHomeworkTitle('')
       setNewHomeworkDescription('')
       setNewHomeworkDueDate('')
+      setNewHomeworkAttachment(null)
       fetchHomeworkData()
       fetchMemberOverview()
     } catch (err) {
       setHomeworkError(err instanceof Error ? err.message : 'Could not create the homework.')
       setHomeworkSuccess('')
+    } finally {
+      setNewHomeworkAttachmentUploading(false)
     }
   }
 
@@ -1096,6 +1121,8 @@ export default function AdminDashboard() {
     setEditHomeworkTitle(homework.title)
     setEditHomeworkDescription(homework.description || '')
     setEditHomeworkDueDate(formatDateToDdMmYyyy(homework.dueDate))
+    setEditHomeworkAttachment(null)
+    setEditHomeworkAttachmentUrl(homework.attachmentUrl ?? null)
     setHomeworkError('')
   }
 
@@ -1114,6 +1141,13 @@ export default function AdminDashboard() {
 
     try {
       setSavingHomeworkId(editingHomework.id)
+      setEditHomeworkAttachmentUploading(true)
+      let attachmentUrl = editHomeworkAttachmentUrl
+
+      if (editHomeworkAttachment) {
+        attachmentUrl = await uploadHomeworkAttachment(editHomeworkAttachment)
+      }
+
       const res = await fetch(`/api/admin/homework/${editingHomework.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -1121,6 +1155,7 @@ export default function AdminDashboard() {
           courseId: editHomeworkCourseId,
           title: editHomeworkTitle,
           description: editHomeworkDescription,
+          attachmentUrl,
           dueDate: parsedEditHomeworkDueDate
         })
       })
@@ -1130,6 +1165,8 @@ export default function AdminDashboard() {
       setHomeworkSuccess('Homework updated.')
       setHomeworkError('')
       setEditingHomework(null)
+      setEditHomeworkAttachment(null)
+      setEditHomeworkAttachmentUrl(null)
       fetchHomeworkData()
       fetchMemberOverview()
     } catch (err) {
@@ -1137,6 +1174,7 @@ export default function AdminDashboard() {
       setHomeworkSuccess('')
     } finally {
       setSavingHomeworkId(null)
+      setEditHomeworkAttachmentUploading(false)
     }
   }
 
@@ -2061,9 +2099,10 @@ export default function AdminDashboard() {
             />
             <button
               onClick={createHomework}
-              className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+              disabled={newHomeworkAttachmentUploading}
+              className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium disabled:opacity-50"
             >
-              Create homework
+              {newHomeworkAttachmentUploading ? 'Uploading...' : 'Create homework'}
             </button>
           </div>
 
@@ -2072,8 +2111,23 @@ export default function AdminDashboard() {
             value={newHomeworkDescription}
             onChange={(e) => setNewHomeworkDescription(e.target.value)}
             rows={3}
-            className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
           />
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Attach a file <span className="text-gray-400 font-normal">(image, audio, PDF, Word, PowerPoint, Excel — max 20 MB)</span>
+            </label>
+            <input
+              type="file"
+              accept="image/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+              onChange={(e) => setNewHomeworkAttachment(e.target.files?.[0] ?? null)}
+              className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#14532d]/10 file:text-[#14532d] file:font-medium hover:file:bg-[#14532d]/20"
+            />
+            {newHomeworkAttachment && (
+              <p className="mt-1 text-xs text-gray-500">Selected: {newHomeworkAttachment.name}</p>
+            )}
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -2082,6 +2136,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attachment</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due date</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submissions</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -2093,6 +2148,20 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-900">{homework.course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{homework.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">{homework.description || 'No description'}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {homework.attachmentUrl ? (
+                        <a
+                          href={homework.attachmentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[#14532d] hover:underline"
+                        >
+                          📎 Download
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-900">{new Date(homework.dueDate).toLocaleDateString('en-GB')}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{homework._count.submissions}</td>
                     <td className="px-4 py-3 text-sm">
@@ -3068,22 +3137,51 @@ export default function AdminDashboard() {
                   inputMode="numeric"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Attach a file <span className="text-gray-400 font-normal">(image, audio, PDF, Word, PowerPoint, Excel — max 20 MB)</span>
+                  </label>
+                  {editHomeworkAttachmentUrl && !editHomeworkAttachment && (
+                    <div className="mb-2 flex items-center gap-2 text-sm text-gray-600">
+                      <span>Current:</span>
+                      <a href={editHomeworkAttachmentUrl} target="_blank" rel="noopener noreferrer" className="text-[#14532d] hover:underline truncate max-w-50">
+                        📎 {editHomeworkAttachmentUrl.split('/').pop()}
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setEditHomeworkAttachmentUrl(null)}
+                        className="text-red-500 hover:text-red-700 text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                    onChange={(e) => setEditHomeworkAttachment(e.target.files?.[0] ?? null)}
+                    className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#14532d]/10 file:text-[#14532d] file:font-medium hover:file:bg-[#14532d]/20"
+                  />
+                  {editHomeworkAttachment && (
+                    <p className="mt-1 text-xs text-gray-500">New file: {editHomeworkAttachment.name}</p>
+                  )}
+                </div>
               </div>
 
               <div className="mt-6 flex justify-end gap-3">
                 <button
                   onClick={() => setEditingHomework(null)}
-                  disabled={savingHomeworkId === editingHomework.id}
+                  disabled={savingHomeworkId === editingHomework.id || editHomeworkAttachmentUploading}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={saveEditedHomework}
-                  disabled={savingHomeworkId === editingHomework.id}
+                  disabled={savingHomeworkId === editingHomework.id || editHomeworkAttachmentUploading}
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
-                  {savingHomeworkId === editingHomework.id ? 'Saving...' : 'Save changes'}
+                  {editHomeworkAttachmentUploading ? 'Uploading...' : savingHomeworkId === editingHomework.id ? 'Saving...' : 'Save changes'}
                 </button>
               </div>
             </div>

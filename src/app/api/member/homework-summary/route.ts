@@ -90,6 +90,7 @@ export async function GET(request: NextRequest) {
     id: string
     title: string
     description: string | null
+    attachmentUrl: string | null
     dueDate: Date
     submissions: Array<{
       submittedAt: Date
@@ -186,6 +187,7 @@ export async function GET(request: NextRequest) {
       id: homework.id,
       title: homework.title,
       description: homework.description,
+      attachmentUrl: homework.attachmentUrl,
       dueDate: homework.dueDate
     }))
 
@@ -296,6 +298,7 @@ export async function GET(request: NextRequest) {
         id: homework.id,
         title: homework.title,
         description: homework.description,
+        attachmentUrl: homework.attachmentUrl,
         dueDate: homework.dueDate,
         submitted: homework.submissions.length > 0,
         submittedAt: submission?.submittedAt || null,

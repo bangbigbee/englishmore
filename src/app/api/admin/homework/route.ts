@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { courseId, title, description, dueDate } = body
+  const { courseId, title, description, attachmentUrl, dueDate } = body
 
   if (!courseId || !title || !dueDate) {
     return NextResponse.json({ error: 'courseId, title, dueDate are required' }, { status: 400 })
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       courseId,
       title: String(title).trim(),
       description: String(description || '').trim() || null,
+      attachmentUrl: String(attachmentUrl || '').trim() || null,
       dueDate: parsedDueDate
     },
     include: {
