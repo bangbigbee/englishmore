@@ -12,6 +12,22 @@ interface UserProfile {
   phone: string | null
   image: string | null
   bio: string | null
+  studentId: string | null
+  referrer: {
+    id: string
+    name: string | null
+    email: string
+    phone: string | null
+    studentId: string | null
+  } | null
+  referredUsers: Array<{
+    id: string
+    name: string | null
+    email: string
+    phone: string | null
+    studentId: string | null
+    createdAt: string
+  }>
 }
 
 export default function ProfilePage() {
@@ -238,6 +254,16 @@ export default function ProfilePage() {
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Student ID</label>
+              <input
+                type="text"
+                value={profile?.studentId || 'Not assigned yet'}
+                disabled
+                className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
+              />
+            </div>
+
             {/* Phone */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone number</label>
@@ -265,6 +291,36 @@ export default function ProfilePage() {
                 className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d] outline-none resize-none"
               />
               <p className="text-xs text-gray-500 mt-1">Up to 500 characters</p>
+            </div>
+
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-amber-700">Referred By</h2>
+              {profile?.referrer ? (
+                <div className="mt-3 space-y-1 text-sm text-slate-700">
+                  <p><span className="font-semibold">Name:</span> {profile.referrer.name || 'N/A'}</p>
+                  <p><span className="font-semibold">Email:</span> {profile.referrer.email}</p>
+                  <p><span className="font-semibold">Student ID:</span> {profile.referrer.studentId || 'N/A'}</p>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-slate-600">No referrer recorded.</p>
+              )}
+            </div>
+
+            <div className="rounded-lg border border-[#14532d]/20 bg-[#14532d]/5 p-4">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Successful Referrals</h2>
+              {profile?.referredUsers?.length ? (
+                <div className="mt-3 space-y-3">
+                  {profile.referredUsers.map((item) => (
+                    <div key={item.id} className="rounded-lg border border-white bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">
+                      <p><span className="font-semibold">Name:</span> {item.name || 'N/A'}</p>
+                      <p><span className="font-semibold">Email:</span> {item.email}</p>
+                      <p><span className="font-semibold">Student ID:</span> {item.studentId || 'N/A'}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-slate-600">No successful referrals yet.</p>
+              )}
             </div>
 
             {/* Submit */}

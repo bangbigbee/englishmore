@@ -19,6 +19,42 @@ export async function GET() {
         phone: true,
         image: true,
         bio: true,
+        referrer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            enrollments: {
+              select: { studentId: true, createdAt: true },
+              where: { studentId: { not: null } },
+              orderBy: { createdAt: 'desc' },
+              take: 1
+            }
+          }
+        },
+        referredUsers: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            createdAt: true,
+            enrollments: {
+              select: { studentId: true, createdAt: true },
+              where: { studentId: { not: null } },
+              orderBy: { createdAt: 'desc' },
+              take: 1
+            }
+          },
+          orderBy: { createdAt: 'desc' }
+        },
+        enrollments: {
+          select: { studentId: true, createdAt: true },
+          where: { studentId: { not: null } },
+          orderBy: { createdAt: 'desc' },
+          take: 1
+        }
       }
     })
 
@@ -26,7 +62,27 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    return NextResponse.json(user)
+    return NextResponse.json({
+      ...user,
+      studentId: user.enrollments[0]?.studentId || null,
+      referrer: user.referrer
+        ? {
+            id: user.referrer.id,
+            name: user.referrer.name,
+            email: user.referrer.email,
+            phone: user.referrer.phone,
+            studentId: user.referrer.enrollments[0]?.studentId || null
+          }
+        : null,
+      referredUsers: user.referredUsers.map((item) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        phone: item.phone,
+        createdAt: item.createdAt,
+        studentId: item.enrollments[0]?.studentId || null
+      }))
+    })
   } catch (error) {
     console.error('Error fetching profile:', error)
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 })

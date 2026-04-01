@@ -36,6 +36,11 @@ interface PaymentInstruction {
   transferContent: string
 }
 
+interface PendingReferralCourse {
+  id: string
+  title: string
+}
+
 export default function CoursesPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -46,6 +51,8 @@ export default function CoursesPage() {
   const [errorModal, setErrorModal] = useState<string | null>(null)
   const [registering, setRegistering] = useState<string | null>(null)
   const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null)
+  const [pendingReferralCourse, setPendingReferralCourse] = useState<PendingReferralCourse | null>(null)
+  const [referrerInput, setReferrerInput] = useState('')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -84,20 +91,24 @@ export default function CoursesPage() {
     }
   }
 
-  const registerCourse = async (courseId: string) => {
+  const registerCourse = async (courseId: string, referrer?: string) => {
     try {
       setRegistering(courseId)
       const res = await fetch(`/api/courses/${courseId}/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ referrer: referrer || '' })
       })
       const data = await res.json()
       if (!res.ok) {
         setErrorModal(data.error || 'Failed to register')
+        setPendingReferralCourse(null)
       } else {
         setError('')
         setErrorModal(null)
         setPaymentInstruction(data.paymentInstruction || null)
+        setPendingReferralCourse(null)
+        setReferrerInput('')
         fetchEnrollments()
       }
     } catch (err) {
@@ -212,7 +223,11 @@ export default function CoursesPage() {
                     </div>
                   ) : (
                     <button
-                      onClick={() => registerCourse(course.id)}
+                      onClick={() => {
+                        setPendingReferralCourse({ id: course.id, title: course.title })
+                        setReferrerInput('')
+                        setErrorModal(null)
+                      }}
                       disabled={registering === course.id}
                       className="w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                     >
@@ -308,6 +323,60 @@ export default function CoursesPage() {
               >
                 Close
               </button>
+            </div>
+          </div>
+        )}
+
+        {pendingReferralCourse && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+            <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Referral information</h3>
+                  <p className="mt-1 text-sm text-gray-600">Optional: enter the referrer&apos;s student ID or email before registering for <strong>{pendingReferralCourse.title}</strong>.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingReferralCourse(null)
+                    setReferrerInput('')
+                  }}
+                  className="text-2xl leading-none text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              </div>
+
+              <label className="block text-sm font-medium text-gray-700">Referrer student ID or email</label>
+              <input
+                type="text"
+                value={referrerInput}
+                onChange={(event) => setReferrerInput(event.target.value)}
+                placeholder="Optional"
+                className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d]"
+              />
+              <p className="mt-2 text-xs text-gray-500">Leave this blank if the student was not referred by anyone.</p>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingReferralCourse(null)
+                    setReferrerInput('')
+                  }}
+                  className="rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => registerCourse(pendingReferralCourse.id, referrerInput)}
+                  disabled={registering === pendingReferralCourse.id}
+                  className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                >
+                  {registering === pendingReferralCourse.id ? 'Registering...' : 'Continue'}
+                </button>
+              </div>
             </div>
           </div>
         )}

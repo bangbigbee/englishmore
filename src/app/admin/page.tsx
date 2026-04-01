@@ -75,6 +75,23 @@ interface MemberOverviewItem {
   totalHomework: number
 }
 
+interface ReferralRowItem {
+  referredUserId: string
+  referredUserName: string | null
+  referredUserEmail: string
+  referredUserPhone: string | null
+  referredStudentId: string | null
+  referredCourseTitle: string | null
+  referredStatus: string | null
+  registeredAt: string
+  referrerUserId: string | null
+  referrerName: string | null
+  referrerEmail: string | null
+  referrerPhone: string | null
+  referrerStudentId: string | null
+  referrerCourseTitle: string | null
+}
+
 interface HomeworkItem {
   id: string
   courseId: string
@@ -211,7 +228,7 @@ interface AdminVocabularyItem {
   }
 }
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'reflect' | 'vocabulary'
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'reflect' | 'vocabulary' | 'referral'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -320,6 +337,14 @@ export default function AdminDashboard() {
   })
   const [usersOverview, setUsersOverview] = useState<UserOverviewItem[]>([])
   const [membersOverview, setMembersOverview] = useState<MemberOverviewItem[]>([])
+  const [referralRows, setReferralRows] = useState<ReferralRowItem[]>([])
+  const [referralLoading, setReferralLoading] = useState(false)
+  const [referralError, setReferralError] = useState('')
+  const [referralSummary, setReferralSummary] = useState<{ totalReferrals: number; uniqueReferrers: number; referredMembers: number }>({
+    totalReferrals: 0,
+    uniqueReferrers: 0,
+    referredMembers: 0
+  })
   const [homeworks, setHomeworks] = useState<HomeworkItem[]>([])
   const [newHomeworkCourseId, setNewHomeworkCourseId] = useState('')
   const [newHomeworkTitle, setNewHomeworkTitle] = useState('')
@@ -535,7 +560,6 @@ export default function AdminDashboard() {
       if (homeworkSubmissionCourseFilter) params.set('courseId', homeworkSubmissionCourseFilter)
       if (homeworkSubmissionHomeworkFilter) params.set('homeworkId', homeworkSubmissionHomeworkFilter)
 
-      const query = params.toString()
       params.set('markAsRead', '1')
       const queryWithRead = params.toString()
       const res = await fetch(`/api/admin/homework/submissions${queryWithRead ? `?${queryWithRead}` : ''}`)
@@ -647,6 +671,28 @@ export default function AdminDashboard() {
       setVocabularyError(err instanceof Error ? err.message : 'Could not load vocabulary data.')
     }
   }, [vocabularyCourseFilter])
+
+  const fetchReferralData = useCallback(async () => {
+    try {
+      setReferralLoading(true)
+      setReferralError('')
+      const res = await fetch('/api/admin/referrals')
+      if (!res.ok) throw new Error('Failed to fetch referral data')
+      const data = await res.json()
+      setReferralRows(data.rows || [])
+      setReferralSummary({
+        totalReferrals: data.summary?.totalReferrals || 0,
+        uniqueReferrers: data.summary?.uniqueReferrers || 0,
+        referredMembers: data.summary?.referredMembers || 0
+      })
+    } catch (err) {
+      setReferralError(err instanceof Error ? err.message : 'Could not load referral data.')
+      setReferralRows([])
+      setReferralSummary({ totalReferrals: 0, uniqueReferrers: 0, referredMembers: 0 })
+    } finally {
+      setReferralLoading(false)
+    }
+  }, [])
 
   const createVocabulary = async () => {
     if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
@@ -898,10 +944,16 @@ export default function AdminDashboard() {
   }, [activeSection, fetchReflectData])
 
   useEffect(() => {
+    if (activeSection === 'referral') {
+      fetchReferralData()
+    }
+  }, [activeSection, fetchReferralData])
+
+  useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const section = params.get('section')
-    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'checkin', 'reflect', 'vocabulary']
+    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'checkin', 'reflect', 'vocabulary', 'referral']
     if (section && allowed.includes(section as AdminSection)) {
       setActiveSection(section as AdminSection)
     }
@@ -1603,6 +1655,13 @@ export default function AdminDashboard() {
            >
              7. VOCABULARY
            </button>
+           <button
+             type="button"
+             onClick={() => setActiveSection('referral')}
+             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'referral' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             8. REFERRALS
+           </button>
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'checkin' ? '' : 'hidden'}`}>
@@ -1691,6 +1750,84 @@ export default function AdminDashboard() {
                 {!checkinLoading && checkinRows.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No students match the current filter.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'referral' ? '' : 'hidden'}`}>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Referral Management</h2>
+              <p className="mt-1 text-sm text-gray-600">Track who referred whom based on student ID or email entered during course registration.</p>
+            </div>
+            <button
+              type="button"
+              onClick={fetchReferralData}
+              className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]"
+            >
+              Refresh list
+            </button>
+          </div>
+
+          {referralError && (
+            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{referralError}</div>
+          )}
+
+          <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Total referrals</p>
+              <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.totalReferrals}</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Unique referrers</p>
+              <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.uniqueReferrers}</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs uppercase tracking-wide text-slate-500">Referred members</p>
+              <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.referredMembers}</p>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referred user</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referred ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
+                </tr>
+              </thead>
+              <tbody>
+                {referralRows.map((row) => (
+                  <tr key={row.referredUserId} className="border-b hover:bg-gray-50 align-top">
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      <div>{row.referrerName || row.referrerEmail || 'Unknown'}</div>
+                      {row.referrerEmail && <div className="text-xs text-gray-500">{row.referrerEmail}</div>}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{row.referrerStudentId || 'N/A'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      <div>{row.referredUserName || row.referredUserEmail}</div>
+                      <div className="text-xs text-gray-500">{row.referredUserEmail}</div>
+                    </td>
+                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{row.referredStudentId || 'Pending'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{row.referredCourseTitle || 'N/A'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(row.registeredAt).toLocaleDateString('en-GB')}</td>
+                  </tr>
+                ))}
+                {!referralLoading && referralRows.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No referrals recorded yet.</td>
+                  </tr>
+                )}
+                {referralLoading && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Loading referral data...</td>
                   </tr>
                 )}
               </tbody>

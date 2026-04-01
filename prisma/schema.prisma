@@ -87,9 +87,12 @@ model User {
   password      String?
   method        String?      // PPF, Beyond, Contrast
   role          UserRole     @default(user) // user, member, or admin
+  referrerId    String?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @default(now())
   classActivityLastReadAt DateTime?
+  referrer      User?        @relation("UserReferrals", fields: [referrerId], references: [id])
+  referredUsers User[]       @relation("UserReferrals")
   accounts      Account[]
   sessions      Session[]
   assignments   Assignment[]
@@ -98,6 +101,8 @@ model User {
   enrollments   Enrollment[]
   dailyGreetingCheckins DailyGreetingCheckin[]
   dailyReflections      DailyReflection[]
+
+  @@index([referrerId])
 }
 
 model VerificationToken {
