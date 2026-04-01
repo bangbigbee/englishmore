@@ -68,6 +68,7 @@ export async function GET() {
         id: true,
         courseId: true,
         order: true,
+        title: true,
         description: true,
         isDraft: true,
         sourceFormUrl: true,
@@ -136,8 +137,9 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { courseId, description, questions, isDraft, sourceFormUrl } = body as {
+  const { courseId, title, description, questions, isDraft, sourceFormUrl } = body as {
     courseId?: string
+    title?: string
     description?: string
     questions?: ExerciseQuestionInput[]
     isDraft?: boolean
@@ -146,6 +148,11 @@ export async function POST(request: NextRequest) {
 
   if (!courseId) {
     return NextResponse.json({ error: 'courseId is required' }, { status: 400 })
+  }
+
+  const normalizedTitle = String(title || '').trim()
+  if (!normalizedTitle) {
+    return NextResponse.json({ error: 'title is required' }, { status: 400 })
   }
 
   const creatingDraft = Boolean(isDraft)
@@ -168,6 +175,7 @@ export async function POST(request: NextRequest) {
     data: {
       courseId,
       order: (latestExercise?.order || 0) + 1,
+      title: normalizedTitle,
       description: String(description || '').trim() || null,
       isDraft: creatingDraft,
       sourceFormUrl: String(sourceFormUrl || '').trim() || null,

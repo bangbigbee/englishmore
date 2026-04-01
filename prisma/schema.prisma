@@ -164,6 +164,7 @@ model CourseExercise {
   id          String             @id @default(cuid())
   courseId    String
   order       Int
+  title       String
   description String?
   isDraft     Boolean            @default(false)
   sourceFormUrl String?

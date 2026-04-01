@@ -16,6 +16,7 @@ interface HomeworkItem {
 interface ExerciseItem {
   id: string
   order: number
+  title: string | null
   description: string | null
   submission: {
     id: string
@@ -44,6 +45,11 @@ const formatDuration = (totalSeconds: number) => {
   const minutes = Math.floor(safeSeconds / 60)
   const seconds = safeSeconds % 60
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
+const getExerciseTitle = (exercise: Pick<ExerciseItem, 'title' | 'order'>) => {
+  const trimmed = String(exercise.title || '').trim()
+  return trimmed || `Exercise ${exercise.order}`
 }
 
 export default function Dashboard() {
@@ -373,7 +379,7 @@ export default function Dashboard() {
 
                       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
-                          <h3 className="text-lg font-bold text-[#14532d]">Exercise {exercise.order}</h3>
+                          <h3 className="text-lg font-bold text-[#14532d]">{getExerciseTitle(exercise)}</h3>
                           {exercise.description && (
                             <p className="mt-1 text-sm text-gray-600">{exercise.description}</p>
                           )}
@@ -488,7 +494,7 @@ export default function Dashboard() {
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
               <h3 className="text-lg font-bold text-gray-900">Confirm Exercise Submission</h3>
               <p className="mt-3 text-sm text-gray-700">
-                You worked on Exercise {submitConfirm.exercise.order} for <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
+                You worked on {getExerciseTitle(submitConfirm.exercise)} for <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
                 Do you want to submit this result?
               </p>
               <div className="mt-6 flex justify-end gap-3">

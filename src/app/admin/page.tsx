@@ -151,6 +151,7 @@ interface ExerciseItem {
   id: string
   courseId: string
   order: number
+  title: string | null
   description: string | null
   isDraft: boolean
   sourceFormUrl: string | null
@@ -232,11 +233,16 @@ const buildExerciseResults = (items: ExerciseItem[]) =>
     .flatMap((exercise) =>
       exercise.submissions.map((submission) => ({
         ...submission,
-        exerciseOrder: exercise.order,
+        exerciseTitle: String(exercise.title || '').trim() || `Exercise ${exercise.order}`,
         courseTitle: exercise.course.title
       }))
     )
     .sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
+
+const getExerciseTitle = (exercise: Pick<ExerciseItem, 'title' | 'order'>) => {
+  const trimmed = String(exercise.title || '').trim()
+  return trimmed || `Exercise ${exercise.order}`
+}
 
 const formatDuration = (totalSeconds: number | null) => {
   if (totalSeconds === null) {
@@ -349,15 +355,17 @@ export default function AdminDashboard() {
   const [table1Expanded, setTable1Expanded] = useState(false)
   const [exercises, setExercises] = useState<ExerciseItem[]>([])
   const [newExerciseCourseId, setNewExerciseCourseId] = useState('')
+  const [newExerciseTitle, setNewExerciseTitle] = useState('')
   const [newExerciseQuestions, setNewExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
   const [exerciseError, setExerciseError] = useState('')
   const [exerciseSuccess, setExerciseSuccess] = useState('')
   const [editingExercise, setEditingExercise] = useState<ExerciseItem | null>(null)
   const [editExerciseQuestions, setEditExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
   const [savingExerciseId, setSavingExerciseId] = useState<string | null>(null)
-  const [selectedExerciseResult, setSelectedExerciseResult] = useState<(ExerciseSubmissionItem & { exerciseOrder: number; courseTitle: string }) | null>(null)
+  const [selectedExerciseResult, setSelectedExerciseResult] = useState<(ExerciseSubmissionItem & { exerciseTitle: string; courseTitle: string }) | null>(null)
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
+  const [editExerciseTitle, setEditExerciseTitle] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
   const [activeSection, setActiveSection] = useState<AdminSection>('course')
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
@@ -942,6 +950,11 @@ export default function AdminDashboard() {
       return
     }
 
+    if (!newExerciseTitle.trim()) {
+      setExerciseError('Please enter an exercise title.')
+      return
+    }
+
     try {
       if (saveAsDraft) {
         setSavingExerciseDraft(true)
@@ -954,6 +967,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           courseId: newExerciseCourseId,
+          title: newExerciseTitle,
           description: newExerciseDescription,
           sourceFormUrl: newExerciseSourceFormUrl,
           isDraft: saveAsDraft,
@@ -968,6 +982,7 @@ export default function AdminDashboard() {
       if (saveAsDraft) {
         setShowExerciseBuilder(true)
       } else {
+        setNewExerciseTitle('')
         setNewExerciseQuestions(buildEmptyExerciseQuestions())
         setNewExerciseDescription('')
         setNewExerciseSourceFormUrl('')
@@ -1000,6 +1015,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error(data?.error || 'Unable to import from Google Form')
 
       setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
+      setNewExerciseTitle(String(data.title || '').trim())
       setNewExerciseDescription(String(data.description || '').trim())
       setNewExerciseSourceFormUrl(String(data.sourceFormUrl || newExerciseSourceFormUrl).trim())
       setExerciseError('')
@@ -1036,6 +1052,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error(data?.error || 'Unable to import from DOCX')
 
       setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
+      setNewExerciseTitle(String(data.title || '').trim())
       setNewExerciseDescription(String(data.description || '').trim())
       setExerciseSuccess('Data imported from DOCX. You can edit it before saving.')
       setShowExerciseBuilder(true)
@@ -1049,6 +1066,7 @@ export default function AdminDashboard() {
 
   const openEditExercise = (exercise: ExerciseItem) => {
     setEditingExercise(exercise)
+    setEditExerciseTitle(getExerciseTitle(exercise))
     setEditExerciseDescription(exercise.description || '')
     setEditExerciseQuestions(exercise.questions.map((question) => ({
       question: question.question,
@@ -1063,12 +1081,17 @@ export default function AdminDashboard() {
   const saveEditedExercise = async () => {
     if (!editingExercise) return
 
+    if (!editExerciseTitle.trim()) {
+      setExerciseError('Please enter an exercise title.')
+      return
+    }
+
     try {
       setSavingExerciseId(editingExercise.id)
       const res = await fetch(`/api/admin/exercises/${editingExercise.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: editExerciseDescription, questions: editExerciseQuestions })
+        body: JSON.stringify({ title: editExerciseTitle, description: editExerciseDescription, questions: editExerciseQuestions })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Unable to update exercise')
@@ -1086,7 +1109,7 @@ export default function AdminDashboard() {
   }
 
   const deleteExercise = async (exercise: ExerciseItem) => {
-    const confirmed = window.confirm(`Are you sure you want to delete Exercise ${exercise.order} from the course "${exercise.course.title}"?`)
+    const confirmed = window.confirm(`Are you sure you want to delete "${getExerciseTitle(exercise)}" from the course "${exercise.course.title}"?`)
     if (!confirmed) return
 
     try {
@@ -1097,7 +1120,7 @@ export default function AdminDashboard() {
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Could not delete the exercise.')
 
-      setExerciseSuccess(`Exercise ${exercise.order} deleted.`)
+      setExerciseSuccess(`Exercise "${getExerciseTitle(exercise)}" deleted.`)
       setExerciseError('')
       if (editingExercise?.id === exercise.id) {
         setEditingExercise(null)
@@ -2540,7 +2563,7 @@ export default function AdminDashboard() {
                 {exercises.map((exercise) => (
                   <tr key={exercise.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.course.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">Exercise {exercise.order}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{getExerciseTitle(exercise)}</td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`rounded px-2 py-1 text-xs font-semibold ${exercise.isDraft ? 'bg-amber-100 text-amber-800' : 'bg-[#14532d]/10 text-[#14532d]'}`}>
                         {exercise.isDraft ? 'Draft' : 'Published'}
@@ -2622,6 +2645,7 @@ export default function AdminDashboard() {
               <button
                 type="button"
                 onClick={() => {
+                  setNewExerciseTitle('')
                   setNewExerciseQuestions(buildEmptyExerciseQuestions())
                   setExerciseError('')
                 }}
@@ -2646,6 +2670,17 @@ export default function AdminDashboard() {
                     <option key={course.id} value={course.id}>{course.title}</option>
                   ))}
                 </select>
+              </div>
+
+              <div className="mb-6">
+                <label className="mb-2 block text-sm font-medium text-gray-700">Exercise title</label>
+                <input
+                  type="text"
+                  value={newExerciseTitle}
+                  onChange={(e) => setNewExerciseTitle(e.target.value)}
+                  placeholder="Example: Week 1 Pronunciation Drill"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
               </div>
 
               <div className="mb-6">
@@ -2746,7 +2781,7 @@ export default function AdminDashboard() {
                   <tr key={result.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{result.user.name || result.user.email}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{result.courseTitle}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">Exercise {result.exerciseOrder}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{result.exerciseTitle}</td>
                     <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{result.score}/{result.totalQuestions}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{formatDuration(result.durationSeconds)}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">{new Date(result.submittedAt).toLocaleString('vi-VN')}</td>
@@ -3279,7 +3314,17 @@ export default function AdminDashboard() {
         {editingExercise && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit Exercise {editingExercise.order}</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit exercise</h3>
+
+              <div className="mb-6">
+                <label className="mb-2 block text-sm font-medium text-gray-700">Exercise title</label>
+                <input
+                  type="text"
+                  value={editExerciseTitle}
+                  onChange={(e) => setEditExerciseTitle(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                />
+              </div>
 
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
@@ -3359,7 +3404,7 @@ export default function AdminDashboard() {
             <div className="bg-white rounded shadow-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Exercise submission {selectedExerciseResult.exerciseOrder}</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Exercise submission: {selectedExerciseResult.exerciseTitle}</h3>
                   <p className="text-sm text-gray-600">{selectedExerciseResult.user.name || selectedExerciseResult.user.email} - {selectedExerciseResult.courseTitle}</p>
                   <p className="mt-1 text-sm font-semibold text-[#14532d]">Score: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
                   <p className="mt-1 text-sm text-gray-600">Time spent: {formatDuration(selectedExerciseResult.durationSeconds)}</p>

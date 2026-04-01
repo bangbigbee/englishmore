@@ -60,11 +60,17 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { description, questions, isDraft, sourceFormUrl } = body as {
+  const { title, description, questions, isDraft, sourceFormUrl } = body as {
+    title?: string
     description?: string
     questions?: ExerciseQuestionInput[]
     isDraft?: boolean
     sourceFormUrl?: string
+  }
+
+  const normalizedTitle = String(title || '').trim()
+  if (!normalizedTitle) {
+    return NextResponse.json({ error: 'title is required' }, { status: 400 })
   }
 
   const targetExercise = await prisma.courseExercise.findUnique({
@@ -93,6 +99,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
       return tx.courseExercise.update({
         where: { id },
         data: {
+          title: normalizedTitle,
           description: String(description || '').trim() || null,
           isDraft: savingDraft,
           sourceFormUrl: String(sourceFormUrl || '').trim() || null,
