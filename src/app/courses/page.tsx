@@ -285,8 +285,8 @@ export default function CoursesPage() {
                 </div>
                 <div className="py-2">
                   <p className="text-gray-600 mb-1">Transfer message:</p>
-                  <div className="bg-yellow-50 border-2 border-yellow-400 rounded p-3 text-center">
-                    <span className="font-mono font-bold text-lg text-yellow-900 tracking-wider">
+                  <div className="rounded border-2 border-[#14532d] bg-green-50 p-3 text-center">
+                    <span className="font-mono text-base font-semibold tracking-wider text-[#14532d]">
                       {paymentInstruction.transferContent}
                     </span>
                   </div>

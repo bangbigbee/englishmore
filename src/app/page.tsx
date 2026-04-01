@@ -521,6 +521,8 @@ export default function Home() {
     )
   }, [memberHomework])
 
+  const showRegistrationProcessingTicker = session?.user?.role === 'member' && Boolean(memberHomework) && !memberHomework?.hasActiveCourse
+
   const classActivitySummary = useMemo(() => {
     return greetingConversation.reduce(
       (summary, item) => {
@@ -1226,6 +1228,18 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+        {showRegistrationProcessingTicker && (
+          <section className="mb-3 overflow-hidden rounded-lg border border-[#14532d]/25 bg-white shadow-sm">
+            <div className="homework-alert-wrap">
+              <div className="homework-alert-track">
+                <span className="text-sm font-bold text-[#14532d]">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-[#14532d]">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-[#14532d]">Please wait a moment while we process your registration.</span>
+              </div>
+            </div>
+          </section>
+        )}
+
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
           <section className="mb-3 bg-white shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5">
@@ -1314,7 +1328,7 @@ export default function Home() {
                           type="button"
                           onClick={() => void handleQuickGreetingSubmit(message)}
                           disabled={isSavingGreeting}
-                          className="rounded-full border border-[#14532d]/35 bg-white px-3 py-1.5 text-sm font-semibold text-[#14532d] transition hover:bg-[#14532d]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="rounded-full border border-[#14532d]/35 bg-white px-2.5 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           {message}
                         </button>
@@ -1330,7 +1344,7 @@ export default function Home() {
                           setGreetingStatus('')
                           setGreetingError('')
                         }}
-                        className="mt-3 inline-flex w-fit items-center rounded-full border border-[#14532d]/35 bg-white px-3 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10"
+                        className="mt-3 inline-flex w-fit items-center text-xs font-semibold text-[#14532d] transition hover:underline"
                       >
                         I want to text myself
                       </button>
@@ -1452,7 +1466,7 @@ export default function Home() {
                               type="button"
                               onClick={() => void handleQuickReflectionSubmit(message)}
                               disabled={isSavingReflection}
-                              className="rounded-full border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
+                              className="rounded-full border border-amber-300 bg-white px-2.5 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                               {message}
                             </button>
@@ -1467,7 +1481,7 @@ export default function Home() {
                               setReflectionStatus('')
                               setReflectionError('')
                             }}
-                            className="mt-3 inline-flex w-fit items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-50"
+                            className="mt-3 inline-flex w-fit items-center text-xs font-semibold text-amber-700 transition hover:underline"
                           >
                             I want to text myself
                           </button>

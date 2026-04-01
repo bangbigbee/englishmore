@@ -1419,6 +1419,31 @@ export default function AdminDashboard() {
     }
   }
 
+  const republishCourse = async (courseId: string, courseTitle: string) => {
+    try {
+      setSavingCourseId(courseId)
+      const res = await fetch(`/api/admin/courses/${courseId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublished: true })
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Could not publish the course.')
+      }
+
+      setCourseSuccess(`Course "${courseTitle}" is public again.`)
+      setCourseError('')
+      fetchCourses()
+    } catch (err) {
+      setCourseError(err instanceof Error ? err.message : 'Could not publish the course.')
+      setCourseSuccess('')
+    } finally {
+      setSavingCourseId(null)
+    }
+  }
+
   const confirmBankTransfer = async (enrollmentId: string) => {
     try {
       setUpdatingEnrollmentId(enrollmentId)
@@ -3148,6 +3173,15 @@ export default function AdminDashboard() {
                             className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
                           >
                             {savingCourseId === course.id ? 'Processing...' : 'Unpublish'}
+                          </button>
+                        )}
+                        {!course.isPublished && (
+                          <button
+                            onClick={() => republishCourse(course.id, course.title)}
+                            disabled={savingCourseId === course.id}
+                            className="text-[#14532d] hover:text-[#166534] hover:underline disabled:opacity-50"
+                          >
+                            {savingCourseId === course.id ? 'Processing...' : 'Publish'}
                           </button>
                         )}
                       </div>
