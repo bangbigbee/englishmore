@@ -94,6 +94,11 @@ interface AdminHomeworkReviewSummary {
 }
 
 const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const
+const QUICK_CHECKIN_MESSAGES = [
+  "I'm good!",
+  "I'm so energetic to start a new day.",
+  "I'm wonderful"
+] as const
 
 export default function Home() {
   const { data: session } = useSession()
@@ -104,6 +109,7 @@ export default function Home() {
   const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
   const [greetingMessage, setGreetingMessage] = useState('')
+  const [showCustomGreetingInput, setShowCustomGreetingInput] = useState(false)
   const [greetingError, setGreetingError] = useState('')
   const [greetingStatus, setGreetingStatus] = useState('')
   const [hasGreetingToday, setHasGreetingToday] = useState(false)
@@ -147,6 +153,7 @@ export default function Home() {
       setAvailableCourses([])
       setAdminHomeworkReview(null)
       setGreetingMessage('')
+      setShowCustomGreetingInput(false)
       setHasGreetingToday(false)
       setEditCheckinMessage('')
       setReflectionMessage('')
@@ -203,6 +210,7 @@ export default function Home() {
         }
         setHasGreetingToday(Boolean(data?.hasResponse))
         setGreetingMessage(data?.response?.message || '')
+        setShowCustomGreetingInput(false)
         setEditCheckinMessage(data?.response?.message || '')
         setGreetingConversation(Array.isArray(data?.conversation) ? data.conversation : [])
         setClassActivityUnread({
@@ -215,6 +223,7 @@ export default function Home() {
         }
       } catch {
         setGreetingMessage('')
+        setShowCustomGreetingInput(false)
         setHasGreetingToday(false)
         setEditCheckinMessage('')
         setGreetingConversation([])
@@ -956,8 +965,8 @@ export default function Home() {
     speakVocabularyWord({ startPracticeAfterSpeak: true })
   }
 
-  const handleSubmitGreeting = async () => {
-    const normalizedMessage = greetingMessage.trim()
+  const submitGreeting = async (message: string, method: GreetingInputMethod) => {
+    const normalizedMessage = message.trim()
     if (!normalizedMessage) {
       setGreetingError('Please enter your check-in before submitting.')
       return
@@ -974,7 +983,7 @@ export default function Home() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          inputMethod: greetingMethod,
+          inputMethod: method,
           message: normalizedMessage
         })
       })
@@ -987,6 +996,8 @@ export default function Home() {
       }
 
       setHasGreetingToday(true)
+      setGreetingMethod(method)
+      setGreetingMessage(normalizedMessage)
       setEditCheckinMessage(normalizedMessage)
       setGreetingStatus('Nice. Your check-in for today has been saved.')
 
@@ -1011,6 +1022,16 @@ export default function Home() {
     } finally {
       setIsSavingGreeting(false)
     }
+  }
+
+  const handleSubmitGreeting = async () => {
+    await submitGreeting(greetingMessage, greetingMethod)
+  }
+
+  const handleQuickGreetingSubmit = async (message: string) => {
+    setGreetingMessage(message)
+    setGreetingMethod('text')
+    await submitGreeting(message, 'text')
   }
 
   const handleSaveEditCheckin = async () => {
@@ -1242,56 +1263,74 @@ export default function Home() {
                 ) : (
                   <>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setGreetingMethod('text')}
-                        className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'text' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-                      >
-                        Text
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setGreetingMethod('voice')}
-                        className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${greetingMethod === 'voice' ? 'bg-[#14532d] text-white' : 'border border-[#14532d]/35 bg-white text-[#14532d] hover:bg-[#14532d]/10'}`}
-                      >
-                        Voice
-                      </button>
-                    </div>
-
-                    <div className="mt-3">
-                      <textarea
-                        value={greetingMessage}
-                        onChange={(event) => setGreetingMessage(event.target.value)}
-                        placeholder="Share your energy level, wins, or challenge for today..."
-                        className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                        maxLength={500}
-                      />
-                      <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      {greetingMethod === 'voice' && (
+                      {QUICK_CHECKIN_MESSAGES.map((message) => (
                         <button
+                          key={message}
                           type="button"
-                          onClick={startVoiceCapture}
-                          disabled={!speechSupported || isListening}
-                          className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          onClick={() => void handleQuickGreetingSubmit(message)}
+                          disabled={isSavingGreeting}
+                          className="rounded-full border border-[#14532d]/35 bg-white px-3 py-1.5 text-sm font-semibold text-[#14532d] transition hover:bg-[#14532d]/10 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          {isListening ? 'Listening...' : 'Tap to speak'}
+                          {message}
                         </button>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={handleSubmitGreeting}
-                        disabled={isSavingGreeting}
-                        className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
-                      >
-                        {isSavingGreeting ? 'Saving...' : 'Check in'}
-                      </button>
+                      ))}
                     </div>
 
-                    {!speechSupported && greetingMethod === 'voice' && (
+                    {!showCustomGreetingInput ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowCustomGreetingInput(true)
+                          setGreetingMethod('text')
+                          setGreetingStatus('')
+                          setGreetingError('')
+                        }}
+                        className="mt-3 text-xs font-semibold text-[#14532d] hover:underline"
+                      >
+                        I want to text myself
+                      </button>
+                    ) : (
+                      <>
+                        <div className="mt-3">
+                          <textarea
+                            value={greetingMessage}
+                            onChange={(event) => {
+                              setGreetingMethod('text')
+                              setGreetingMessage(event.target.value)
+                            }}
+                            placeholder="Share your energy level, wins, or challenge for today..."
+                            className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                            maxLength={500}
+                          />
+                          <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
+                        </div>
+
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGreetingMethod('voice')
+                              startVoiceCapture()
+                            }}
+                            disabled={!speechSupported || isListening}
+                            className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {isListening ? 'Listening...' : 'Voice'}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => void handleSubmitGreeting()}
+                            disabled={isSavingGreeting}
+                            className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
+                          >
+                            {isSavingGreeting ? 'Saving...' : 'Check in'}
+                          </button>
+                        </div>
+                      </>
+                    )}
+
+                    {!speechSupported && showCustomGreetingInput && (
                       <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
                     )}
                     {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
