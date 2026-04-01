@@ -1313,11 +1313,7 @@ export default function Home() {
                         </div>
                         {editCheckinStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{editCheckinStatus}</p>}
                       </div>
-                    ) : (
-                      <div className="mt-3 rounded-lg border border-[#14532d]/20 bg-white px-3 py-3 text-sm text-slate-700">
-                        <p className="whitespace-pre-wrap">{greetingMessage}</p>
-                      </div>
-                    )}
+                    ) : null}
                   </div>
                 ) : (
                   <>
