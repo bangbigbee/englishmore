@@ -1261,16 +1261,6 @@ export default function Home() {
           <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
               <div className="space-y-4">
-                <div className="rounded-2xl border border-[#14532d]/30 bg-white px-4 py-4 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#14532d]/10 text-xl">🌿</span>
-                    <div>
-                      <h2 className="text-base font-bold text-[#14532d] sm:text-lg">Daily momentum</h2>
-                      <p className="text-xs text-slate-500">A quick check-in and reflection keeps your learning streak strong.</p>
-                    </div>
-                  </div>
-                </div>
-
                 <article className="checkin-message rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
                     <div>
