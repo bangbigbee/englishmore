@@ -5,15 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 
-interface StudentInfo {
-  id: string
-  name: string | null
-  phone: string | null
-  email: string
-  assignmentCount: number
-  createdAt: string
-}
-
 interface CourseItem {
   id: string
   title: string
@@ -292,12 +283,9 @@ const parseDdMmYyyyToIsoDate = (value: string) => {
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [students, setStudents] = useState<StudentInfo[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null)
-  const [deleting, setDeleting] = useState(false)
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
 
   const [courses, setCourses] = useState<CourseItem[]>([])
   const [newCourseTitle, setNewCourseTitle] = useState('')
@@ -424,27 +412,10 @@ export default function AdminDashboard() {
   const [updatingVocabularyId, setUpdatingVocabularyId] = useState<string | null>(null)
   const [deletingVocabularyId, setDeletingVocabularyId] = useState<string | null>(null)
 
-  const fetchStudents = async () => {
+  const deleteUserAccount = async (userId: string) => {
     try {
-      setLoading(true)
-      const res = await fetch('/api/admin/students')
-      if (!res.ok) {
-        throw new Error('Failed to fetch students')
-      }
-      const data = await res.json()
-      setStudents(data)
-      setError('')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const deleteStudent = async (studentId: string) => {
-    try {
-      setDeleting(true)
-      const res = await fetch(`/api/admin/users/${studentId}`, {
+      setDeletingUserId(userId)
+      const res = await fetch(`/api/admin/users/${userId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -455,24 +426,35 @@ export default function AdminDashboard() {
         const errorData = await res.json()
         throw new Error(errorData.error || 'Failed to delete student')
       }
-      // Remove student from list
-      setStudents(students.filter(s => s.id !== studentId))
+
+      setCourseSuccess('User account deleted successfully.')
+      setCourseError('')
       setDeleteConfirm(null)
-      setError('')
+      fetchEnrollments()
+      fetchMemberOverview()
+      fetchCourses()
+      fetchSummary()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setCourseError(err instanceof Error ? err.message : 'An error occurred')
       setDeleteConfirm(null)
     } finally {
-      setDeleting(false)
+      setDeletingUserId(null)
     }
   }
 
-  const filteredStudents = students.filter(
-    student =>
-      student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      String(student.phone || '').toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredEnrollments = enrollments.filter((enrollment) => {
+    const keyword = searchTerm.trim().toLowerCase()
+    if (!keyword) return true
+
+    return [
+      enrollment.user.name || '',
+      enrollment.user.email,
+      enrollment.user.phone || '',
+      enrollment.course.title,
+      enrollment.referenceCode || '',
+      enrollment.status
+    ].some((field) => field.toLowerCase().includes(keyword))
+  })
 
   const fetchCourses = async () => {
     try {
@@ -859,7 +841,6 @@ export default function AdminDashboard() {
       if (session?.user?.role !== 'admin') {
         router.push('/dashboard')
       } else {
-        fetchStudents()
         fetchCourses()
         fetchEnrollments()
         fetchSummary()
@@ -2886,93 +2867,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Search and Filter */}
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
-          <div className="flex items-center gap-4">
-            <input
-              type="text"
-              placeholder="Search students by name, email, or phone..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-            />
-            <button
-              onClick={fetchStudents}
-              className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
-            >
-              Refresh
-            </button>
-          </div>
-        </div>
-
-        {/* Error Message */}
-        {activeSection === 'course' && error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-8">
-            Error: {error}
-          </div>
-        )}
-
-        {/* Students Table */}
-        <div className={`bg-white rounded shadow overflow-hidden ${activeSection === 'course' ? '' : 'hidden'}`}>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      Loading...
-                    </td>
-                  </tr>
-                ) : filteredStudents.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      No students found
-                    </td>
-                  </tr>
-                ) : (
-                  filteredStudents.map(student => (
-                    <tr key={student.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm text-gray-900">{student.name || 'N/A'}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{student.phone || 'Not updated'}</td>
-                      <td className="px-6 py-4 text-sm text-gray-500">{student.email}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{student.assignmentCount}</td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {new Date(student.createdAt).toLocaleDateString('vi-VN')}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <div className="flex gap-2">
-                          <Link
-                            href={`/admin/student/${student.id}`}
-                            className="text-[#14532d] hover:text-[#14532d] hover:underline"
-                          >
-                            Details
-                          </Link>
-                          <button
-                            onClick={() => setDeleteConfirm({ id: student.id, name: student.name || student.email })}
-                            className="text-red-600 hover:text-red-800 hover:underline"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -2984,17 +2878,17 @@ export default function AdminDashboard() {
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setDeleteConfirm(null)}
-                  disabled={deleting}
+                  disabled={deletingUserId === deleteConfirm.id}
                   className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={() => deleteStudent(deleteConfirm.id)}
-                  disabled={deleting}
+                  onClick={() => deleteUserAccount(deleteConfirm.id)}
+                  disabled={deletingUserId === deleteConfirm.id}
                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
                 >
-                  {deleting ? 'Deleting...' : 'Delete'}
+                  {deletingUserId === deleteConfirm.id ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>
@@ -3479,6 +3373,22 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             <span className="text-amber-600">Course</span> enrollments
           </h2>
+
+          <div className="flex items-center gap-4 mb-5">
+            <input
+              type="text"
+              placeholder="Search by student, email, phone, course, transfer code, status..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <button
+              onClick={fetchEnrollments}
+              className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+            >
+              Refresh
+            </button>
+          </div>
           
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -3486,6 +3396,7 @@ export default function AdminDashboard() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transfer code</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -3494,10 +3405,11 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {enrollments.map((enrollment) => (
+                {filteredEnrollments.map((enrollment) => (
                   <tr key={enrollment.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{enrollment.user.name || enrollment.user.email}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{enrollment.user.phone || 'Not updated'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">{enrollment.user.email}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{enrollment.course.title}</td>
                     <td className="px-4 py-3 text-sm font-mono text-gray-700">{enrollment.referenceCode || 'No code yet'}</td>
                     <td className="px-4 py-3 text-sm">
@@ -3512,6 +3424,19 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex flex-wrap gap-2">
+                        <Link
+                          href={`/admin/student/${enrollment.user.id}`}
+                          className="text-[#14532d] hover:text-[#14532d] hover:underline"
+                        >
+                          Details
+                        </Link>
+                        <button
+                          onClick={() => setDeleteConfirm({ id: enrollment.user.id, name: enrollment.user.name || enrollment.user.email })}
+                          disabled={deletingUserId === enrollment.user.id}
+                          className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
+                        >
+                          {deletingUserId === enrollment.user.id ? 'Deleting...' : 'Delete'}
+                        </button>
                         {enrollment.status === 'pending' && (
                           <button
                             onClick={() => setConfirmPayment({
@@ -3536,10 +3461,10 @@ export default function AdminDashboard() {
                     </td>
                   </tr>
                 ))}
-                {enrollments.length === 0 && (
+                {filteredEnrollments.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">
-                      No enrollments yet
+                    <td colSpan={8} className="px-4 py-3 text-center text-gray-500">
+                      {enrollments.length === 0 ? 'No enrollments yet' : 'No enrollments match the current search'}
                     </td>
                   </tr>
                 )}
