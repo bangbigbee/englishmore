@@ -334,11 +334,17 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl font-bold mb-2">Practice Zone</h1>
             <p className="text-lg">Hello, <span className="font-semibold">{session.user.name || session.user.email}</span></p>
           </div>
+          <Link
+            href="/"
+            className="inline-flex items-center rounded-md border border-[#14532d]/35 bg-white px-4 py-2 text-sm font-semibold text-[#14532d] transition hover:bg-[#14532d]/10"
+          >
+            Back to home
+          </Link>
         </div>
 
         {error && (

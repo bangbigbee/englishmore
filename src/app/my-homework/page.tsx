@@ -152,11 +152,7 @@ export default function MyHomeworkPage() {
         {error && <div className="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-700">{error}</div>}
         {success && <div className="mb-4 rounded-lg border border-[#14532d]/30 bg-[#14532d]/10 px-4 py-3 text-[#14532d]">{success}</div>}
 
-        <section className="mb-6 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Total homework</p>
-            <p className="mt-2 text-3xl font-black text-slate-900">{summary?.totalHomework || 0}</p>
-          </div>
+        <section className="mb-6 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-amber-700">Pending</p>
             <p className="mt-2 text-3xl font-black text-amber-800">{pendingHomework.length}</p>
@@ -207,14 +203,6 @@ export default function MyHomeworkPage() {
                         </a>
                       </div>
                     )}
-                    <div className="mt-4 rounded-2xl border border-amber-200 bg-white/80 p-3">
-                      <div className="flex justify-end">
-                        <div className="max-w-[85%] rounded-2xl rounded-br-md bg-amber-100 px-3 py-2 text-sm text-amber-950 shadow-sm">
-                          <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700">You</p>
-                          <p className="mt-1 text-amber-900">Submit your homework and start the conversation with teacher by submitting your homework message below.</p>
-                        </div>
-                      </div>
-                    </div>
                     <label className="mt-4 block text-sm font-semibold text-slate-700">Your message</label>
                     <textarea
                       value={notesByHomework[item.id] || ''}
@@ -315,7 +303,7 @@ export default function MyHomeworkPage() {
                       disabled={savingId === item.id}
                       className="mt-3 rounded bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-50"
                     >
-                      {savingId === item.id ? 'Sending...' : 'Send message'}
+                      {savingId === item.id ? 'Sending...' : 'Send'}
                     </button>
                   </article>
                 ))}

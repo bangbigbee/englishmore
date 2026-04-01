@@ -99,6 +99,11 @@ const QUICK_CHECKIN_MESSAGES = [
   "I'm so energetic to start a new day.",
   "I'm wonderful"
 ] as const
+const QUICK_REFLECTION_MESSAGES = [
+  'Today was productive and meaningful.',
+  'I learned something useful and feel more confident.',
+  'It was a good day, and I am grateful for the progress.'
+] as const
 
 export default function Home() {
   const { data: session } = useSession()
@@ -121,6 +126,7 @@ export default function Home() {
   const [classActivityUnread, setClassActivityUnread] = useState<ClassActivityUnreadSummary>({ checkins: 0, reflections: 0, total: 0 })
   // Reflection state
   const [reflectionMessage, setReflectionMessage] = useState('')
+  const [showCustomReflectionInput, setShowCustomReflectionInput] = useState(false)
   const [reflectionStatus, setReflectionStatus] = useState('')
   const [reflectionError, setReflectionError] = useState('')
   const [hasReflectionToday, setHasReflectionToday] = useState(false)
@@ -157,6 +163,7 @@ export default function Home() {
       setHasGreetingToday(false)
       setEditCheckinMessage('')
       setReflectionMessage('')
+      setShowCustomReflectionInput(false)
       setHasReflectionToday(false)
       setEditReflectionMessage('')
       setIsEditingReflection(false)
@@ -313,6 +320,7 @@ export default function Home() {
       if (session.user?.role !== 'member') {
         setHasReflectionToday(false)
         setReflectionMessage('')
+        setShowCustomReflectionInput(false)
         setEditReflectionMessage('')
         setIsEditingReflection(false)
         setEditReflectionStatus('')
@@ -328,10 +336,12 @@ export default function Home() {
         const data = await res.json() as { hasReflection?: boolean; reflection?: { message: string } | null }
         setHasReflectionToday(Boolean(data?.hasReflection))
         setReflectionMessage(data?.reflection?.message || '')
+        setShowCustomReflectionInput(false)
         setEditReflectionMessage(data?.reflection?.message || '')
       } catch {
         setHasReflectionToday(false)
         setReflectionMessage('')
+        setShowCustomReflectionInput(false)
         setEditReflectionMessage('')
         setIsEditingReflection(false)
         setEditReflectionStatus('')
@@ -528,7 +538,7 @@ export default function Home() {
 
   const getActivityBubbleStyle = (item: DailyGreetingConversationItem) => {
     if (item.entryType === 'reflection') {
-      return 'border-violet-200 bg-violet-50/95 text-violet-950 shadow-violet-100'
+      return 'border-amber-200 bg-amber-50/95 text-amber-950 shadow-amber-100'
     }
 
     return 'border-blue-200 bg-blue-50/95 text-blue-950 shadow-blue-100'
@@ -536,15 +546,19 @@ export default function Home() {
 
   const getActivityDotStyle = (item: DailyGreetingConversationItem) => {
     if (item.entryType === 'reflection') {
-      return 'bg-violet-500 ring-violet-200'
+      return 'bg-amber-500 ring-amber-200'
     }
 
     return 'bg-blue-500 ring-blue-200'
   }
 
-  const startVoiceCapture = () => {
+  const startVoiceCapture = (target: 'checkin' | 'reflection' = 'checkin') => {
     if (typeof window === 'undefined') {
-      setGreetingError('This browser does not support voice input.')
+      if (target === 'reflection') {
+        setReflectionError('This browser does not support voice input.')
+      } else {
+        setGreetingError('This browser does not support voice input.')
+      }
       return
     }
 
@@ -555,12 +569,21 @@ export default function Home() {
 
     const RecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition
     if (!RecognitionCtor) {
-      setGreetingError('This browser does not support voice input.')
+      if (target === 'reflection') {
+        setReflectionError('This browser does not support voice input.')
+      } else {
+        setGreetingError('This browser does not support voice input.')
+      }
       return
     }
 
-    setGreetingError('')
-    setGreetingStatus('Listening... Please say your check-in now.')
+    if (target === 'reflection') {
+      setReflectionError('')
+      setReflectionStatus('Listening... Please say your reflection now.')
+    } else {
+      setGreetingError('')
+      setGreetingStatus('Listening... Please say your check-in now.')
+    }
     setIsListening(true)
 
     const recognition = new RecognitionCtor()
@@ -575,13 +598,22 @@ export default function Home() {
         .trim()
 
       if (transcript) {
-        setGreetingMessage((prev) => `${prev}${prev ? ' ' : ''}${transcript}`.trim())
-        setGreetingStatus('Voice input captured. You can still edit the text before submitting.')
+        if (target === 'reflection') {
+          setReflectionMessage((prev) => `${prev}${prev ? ' ' : ''}${transcript}`.trim())
+          setReflectionStatus('Voice input captured. You can still edit the text before submitting.')
+        } else {
+          setGreetingMessage((prev) => `${prev}${prev ? ' ' : ''}${transcript}`.trim())
+          setGreetingStatus('Voice input captured. You can still edit the text before submitting.')
+        }
       }
     }
 
     recognition.onerror = () => {
-      setGreetingError('Voice input is unavailable right now. Please try again or switch to text mode.')
+      if (target === 'reflection') {
+        setReflectionError('Voice input is unavailable right now. Please try again or switch to text mode.')
+      } else {
+        setGreetingError('Voice input is unavailable right now. Please try again or switch to text mode.')
+      }
     }
 
     recognition.onend = () => {
@@ -1067,8 +1099,8 @@ export default function Home() {
     }
   }
 
-  const handleSubmitReflection = async () => {
-    const msg = reflectionMessage.trim()
+  const submitReflection = async (message: string) => {
+    const msg = message.trim()
     if (!msg) { setReflectionError('Please enter your reflection.'); return }
     setReflectionError('')
     setReflectionStatus('Saving...')
@@ -1104,6 +1136,15 @@ export default function Home() {
     } finally {
       setIsSavingReflection(false)
     }
+  }
+
+  const handleSubmitReflection = async () => {
+    await submitReflection(reflectionMessage)
+  }
+
+  const handleQuickReflectionSubmit = async (message: string) => {
+    setReflectionMessage(message)
+    await submitReflection(message)
   }
 
   const handleSaveEditReflection = async () => {
@@ -1204,9 +1245,12 @@ export default function Home() {
           <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5 sm:py-5">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr] md:gap-4">
               <div>
-                <h2 className="text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
-                  Hello {session.user?.name || 'there'}! How are you today?
-                </h2>
+                <div className="rounded-2xl border border-[#14532d]/30 bg-white px-4 py-3 shadow-sm">
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-[#14532d]">Teacher Bang</p>
+                  <h2 className="mt-1 text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
+                    Hello {session.user?.name || 'there'}! How are you today?
+                  </h2>
+                </div>
 
                 {hasGreetingToday ? (
                   <div className="mt-3">
@@ -1339,10 +1383,13 @@ export default function Home() {
                 )}
 
                 {hasGreetingToday && (
-                  <div className="mt-5 border-t border-[#14532d]/20 pt-4">
-                    <h3 className="text-sm font-bold text-[#14532d] sm:text-base">
-                      Hello {session.user?.name || 'there'}! How was your day?
-                    </h3>
+                  <div className="mt-5 border-t border-amber-300/40 pt-4">
+                    <div className="rounded-2xl border border-amber-300 bg-white px-4 py-3 shadow-sm">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700">Teacher Bang</p>
+                      <h3 className="mt-1 text-sm font-bold text-amber-800 sm:text-base">
+                        Hello {session.user?.name || 'there'}! How was your day?
+                      </h3>
+                    </div>
                     {hasReflectionToday ? (
                       <div className="mt-3">
                         <button
@@ -1352,7 +1399,7 @@ export default function Home() {
                             setEditReflectionStatus('')
                             setIsEditingReflection(true)
                           }}
-                          className="rounded-full border border-violet-300 bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 transition hover:bg-violet-100"
+                          className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-100"
                         >
                           Already reflected today. Click here to edit.
                         </button>
@@ -1363,7 +1410,7 @@ export default function Home() {
                               value={editReflectionMessage}
                               onChange={(event) => setEditReflectionMessage(event.target.value)}
                               placeholder="Update your reflection..."
-                              className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                              className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
                               maxLength={1000}
                             />
                             <p className="mt-1 text-xs text-slate-500">{editReflectionMessage.trim().length}/1000</p>
@@ -1372,7 +1419,7 @@ export default function Home() {
                                 type="button"
                                 onClick={handleSaveEditReflection}
                                 disabled={isSavingReflection}
-                                className="rounded-md bg-violet-700 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-70"
+                                className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
                               >
                                 {isSavingReflection ? 'Saving...' : 'Save reflection'}
                               </button>
@@ -1388,39 +1435,81 @@ export default function Home() {
                                 Cancel
                               </button>
                             </div>
-                            {editReflectionStatus && <p className="mt-2 text-sm font-medium text-violet-700">{editReflectionStatus}</p>}
+                            {editReflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{editReflectionStatus}</p>}
                           </div>
                         ) : (
-                          <div className="mt-3 rounded-lg border border-violet-200 bg-white px-3 py-3 text-sm text-slate-700">
+                          <div className="mt-3 rounded-lg border border-amber-200 bg-white px-3 py-3 text-sm text-slate-700">
                             <p className="whitespace-pre-wrap">{reflectionMessage}</p>
                           </div>
                         )}
                       </div>
                     ) : (
                       <>
-                        <div className="mt-3">
-                          <textarea
-                            value={reflectionMessage}
-                            onChange={(event) => setReflectionMessage(event.target.value)}
-                            placeholder="Write your reflection for today..."
-                            className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                            maxLength={1000}
-                          />
-                          <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
-                        </div>
                         <div className="mt-3 flex flex-wrap items-center gap-2">
+                          {QUICK_REFLECTION_MESSAGES.map((message) => (
+                            <button
+                              key={message}
+                              type="button"
+                              onClick={() => void handleQuickReflectionSubmit(message)}
+                              disabled={isSavingReflection}
+                              className="rounded-full border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {message}
+                            </button>
+                          ))}
+                        </div>
+
+                        {!showCustomReflectionInput ? (
                           <button
                             type="button"
-                            onClick={handleSubmitReflection}
-                            disabled={isSavingReflection}
-                            className="rounded-md bg-violet-700 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-70"
+                            onClick={() => {
+                              setShowCustomReflectionInput(true)
+                              setReflectionStatus('')
+                              setReflectionError('')
+                            }}
+                            className="mt-3 text-xs font-semibold text-amber-700 hover:underline"
                           >
-                            {isSavingReflection ? 'Saving...' : 'Reflect'}
+                            I want to text myself
                           </button>
-                        </div>
+                        ) : (
+                          <>
+                            <div className="mt-3">
+                              <textarea
+                                value={reflectionMessage}
+                                onChange={(event) => setReflectionMessage(event.target.value)}
+                                placeholder="Write your reflection for today..."
+                                className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
+                                maxLength={1000}
+                              />
+                              <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
+                            </div>
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => startVoiceCapture('reflection')}
+                                disabled={!speechSupported || isListening}
+                                className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {isListening ? 'Listening...' : 'Voice'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void handleSubmitReflection()}
+                                disabled={isSavingReflection}
+                                className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
+                              >
+                                {isSavingReflection ? 'Saving...' : 'Reflect'}
+                              </button>
+                            </div>
+                          </>
+                        )}
+
+                        {!speechSupported && showCustomReflectionInput && (
+                          <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
+                        )}
                       </>
                     )}
-                    {reflectionStatus && <p className="mt-2 text-sm font-medium text-violet-700">{reflectionStatus}</p>}
+                    {reflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{reflectionStatus}</p>}
                     {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
                   </div>
                 )}
@@ -1451,8 +1540,8 @@ export default function Home() {
                       {classActivitySummary.checkins} check-in
                       {classActivityUnread.checkins > 0 ? ` • ${classActivityUnread.checkins} unread` : ''}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[11px] font-semibold text-violet-700">
-                      <span className="h-2 w-2 rounded-full bg-violet-500" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                      <span className="h-2 w-2 rounded-full bg-amber-500" />
                       {classActivitySummary.reflections} reflection
                       {classActivityUnread.reflections > 0 ? ` • ${classActivityUnread.reflections} unread` : ''}
                     </span>
