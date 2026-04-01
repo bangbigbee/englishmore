@@ -263,6 +263,51 @@ const formatDateToDdMmYyyy = (value: string | Date) => {
   return `${day}/${month}/${year}`
 }
 
+const isValidYoutubeVideoId = (value: string) => /^[A-Za-z0-9_-]{11}$/.test(value)
+
+const extractYoutubeVideoIdFromUrl = (urlValue: string) => {
+  try {
+    const parsed = new URL(urlValue)
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, '')
+    const pathSegments = parsed.pathname.split('/').filter(Boolean)
+
+    if (host === 'youtu.be') {
+      const shortId = pathSegments[0] || ''
+      return isValidYoutubeVideoId(shortId) ? shortId : null
+    }
+
+    if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'music.youtube.com' || host === 'youtube-nocookie.com') {
+      if (parsed.pathname === '/watch') {
+        const watchId = parsed.searchParams.get('v') || ''
+        return isValidYoutubeVideoId(watchId) ? watchId : null
+      }
+
+      if (pathSegments[0] === 'shorts' || pathSegments[0] === 'embed' || pathSegments[0] === 'live') {
+        const pathId = pathSegments[1] || ''
+        return isValidYoutubeVideoId(pathId) ? pathId : null
+      }
+    }
+
+    return null
+  } catch {
+    return null
+  }
+}
+
+const extractYoutubeVideoIdFromText = (content: string) => {
+  const urlMatches = content.match(/https?:\/\/[^\s]+/gi) || []
+
+  for (const match of urlMatches) {
+    const cleanUrl = match.replace(/[),.;!?]+$/g, '')
+    const videoId = extractYoutubeVideoIdFromUrl(cleanUrl)
+    if (videoId) {
+      return videoId
+    }
+  }
+
+  return null
+}
+
 const parseDdMmYyyyToIsoDate = (value: string) => {
   const trimmed = String(value || '').trim()
   const match = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
@@ -2489,7 +2534,10 @@ export default function AdminDashboard() {
 
                   <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
                     <div className="max-h-96 space-y-3 overflow-y-auto pr-1">
-                      {(selectedSubmission.messages || []).map((message) => (
+                      {(selectedSubmission.messages || []).map((message) => {
+                        const youtubeVideoId = extractYoutubeVideoIdFromText(message.content)
+
+                        return (
                         <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
                           <div
                             className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
@@ -2512,10 +2560,25 @@ export default function AdminDashboard() {
                             >
                               {message.content}
                             </p>
+                            {youtubeVideoId && (
+                              <div className="mt-2 overflow-hidden rounded-lg border border-slate-200 bg-black">
+                                <div className="relative w-full pt-[56.25%]">
+                                  <iframe
+                                    src={`https://www.youtube-nocookie.com/embed/${youtubeVideoId}`}
+                                    title="YouTube video preview"
+                                    className="absolute inset-0 h-full w-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allowFullScreen
+                                  />
+                                </div>
+                              </div>
+                            )}
                             <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
                           </div>
                         </div>
-                      ))}
+                        )
+                      })}
                       {(selectedSubmission.messages || []).length === 0 && (
                         <p className="text-sm text-slate-600">No messages yet.</p>
                       )}

@@ -332,8 +332,8 @@ export default function CoursesPage() {
             <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Who recommended this course to you?</h3>
-                  <p className="mt-1 text-sm text-gray-600">Optional: enter the referrer&apos;s student ID or email before registering for <strong>{pendingReferralCourse.title}</strong>.</p>
+                  <h3 className="text-xl font-bold text-gray-900">Ai đã giới thiệu khóa học này cho bạn?</h3>
+                  <p className="mt-1 text-sm text-gray-600">Không bắt buộc: nhập mã học viên hoặc email của người giới thiệu trước khi đăng ký <strong>{pendingReferralCourse.title}</strong>.</p>
                 </div>
                 <button
                   type="button"
@@ -347,15 +347,15 @@ export default function CoursesPage() {
                 </button>
               </div>
 
-              <label className="block text-sm font-medium text-gray-700">Referrer student ID or email</label>
+              <label className="block text-sm font-medium text-gray-700">Mã học viên hoặc email người giới thiệu</label>
               <input
                 type="text"
                 value={referrerInput}
                 onChange={(event) => setReferrerInput(event.target.value)}
-                placeholder="Optional"
+                placeholder="Không bắt buộc"
                 className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d]"
               />
-              <p className="mt-2 text-xs text-gray-500">Leave this blank if the student was not referred by anyone.</p>
+              <p className="mt-2 text-xs text-gray-500">Để trống nếu bạn không được ai giới thiệu.</p>
 
               <div className="mt-6 flex justify-end gap-3">
                 <button
@@ -366,7 +366,7 @@ export default function CoursesPage() {
                   }}
                   className="rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
                 >
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="button"
@@ -374,7 +374,7 @@ export default function CoursesPage() {
                   disabled={registering === pendingReferralCourse.id}
                   className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
                 >
-                  {registering === pendingReferralCourse.id ? 'Registering...' : 'Continue'}
+                  {registering === pendingReferralCourse.id ? 'Đang đăng ký...' : 'Tiếp tục'}
                 </button>
               </div>
             </div>

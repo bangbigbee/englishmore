@@ -126,7 +126,7 @@ export default function Home() {
   const [editCheckinMessage, setEditCheckinMessage] = useState('')
   const [editCheckinStatus, setEditCheckinStatus] = useState('')
   const [greetingConversationLoading, setGreetingConversationLoading] = useState(false)
-  const [classActivityUnread, setClassActivityUnread] = useState<ClassActivityUnreadSummary>({ checkins: 0, reflections: 0, total: 0 })
+  const [, setClassActivityUnread] = useState<ClassActivityUnreadSummary>({ checkins: 0, reflections: 0, total: 0 })
   // Reflection state
   const [reflectionMessage, setReflectionMessage] = useState('')
   const [showCustomReflectionInput, setShowCustomReflectionInput] = useState(false)
@@ -1201,33 +1201,6 @@ export default function Home() {
     }
   }
 
-  const handleMarkClassActivityRead = async () => {
-    if (!canUseDailyActivity) {
-      return
-    }
-
-    try {
-      const res = await fetch('/api/member/daily-greeting?markAsRead=1')
-      if (!res.ok) {
-        return
-      }
-
-      const data = await res.json() as {
-        conversation?: DailyGreetingConversationItem[]
-        unreadSummary?: ClassActivityUnreadSummary
-      }
-
-      setGreetingConversation(Array.isArray(data?.conversation) ? data.conversation : [])
-      setClassActivityUnread({
-        checkins: Number(data?.unreadSummary?.checkins || 0),
-        reflections: Number(data?.unreadSummary?.reflections || 0),
-        total: Number(data?.unreadSummary?.total || 0)
-      })
-    } catch {
-      // Ignore silent mark-as-read failures.
-    }
-  }
-
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
@@ -1560,31 +1533,15 @@ export default function Home() {
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
                     <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
-                    {classActivityUnread.total > 0 && (
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
-                          {classActivityUnread.total} unread
-                        </span>
-                        <button
-                          type="button"
-                          onClick={handleMarkClassActivityRead}
-                          className="inline-flex items-center rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 transition hover:border-[#14532d]/40 hover:text-[#14532d]"
-                        >
-                          Mark as read
-                        </button>
-                      </div>
-                    )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-[#14532d]/20 bg-[#14532d]/5 px-2.5 py-1 text-[11px] font-semibold text-[#14532d]">
                       <span className="h-2 w-2 rounded-full bg-[#14532d]" />
                       {classActivitySummary.checkins} check-in
-                      {classActivityUnread.checkins > 0 ? ` • ${classActivityUnread.checkins} unread` : ''}
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
                       <span className="h-2 w-2 rounded-full bg-amber-500" />
                       {classActivitySummary.reflections} reflection
-                      {classActivityUnread.reflections > 0 ? ` • ${classActivityUnread.reflections} unread` : ''}
                     </span>
                   </div>
                 </div>
