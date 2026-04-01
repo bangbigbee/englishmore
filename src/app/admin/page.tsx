@@ -2137,7 +2137,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className={`grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
+        <div className={`mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
           {/* Table 1 — User accounts */}
           <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <button
