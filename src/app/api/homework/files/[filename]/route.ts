@@ -78,7 +78,9 @@ export async function GET(_request: Request, context: { params: Promise<{ filena
     try {
       buffer = await readFile(tempPath)
     } catch {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 })
+      // Compatibility path for legacy records that stored plain filenames.
+      // If static hosting has the file, this redirect will resolve it.
+      return NextResponse.redirect(new URL(`/uploads/homework/${baseName}`, _request.url), { status: 307 })
     }
   }
 
