@@ -170,11 +170,7 @@ export default function TopNav() {
           />
 
           <aside className={`absolute right-0 top-0 flex h-full w-[min(22rem,88vw)] flex-col border-l border-[#14532d]/15 bg-white shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-            <div className="flex items-center justify-between border-b border-[#14532d]/10 px-5 py-4">
-              <div>
-                <p className="text-sm font-bold text-[#14532d]">Menu</p>
-                <p className="text-xs text-slate-500">EnglishMore</p>
-              </div>
+            <div className="flex items-center justify-end border-b border-[#14532d]/10 px-5 py-4">
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
