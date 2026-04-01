@@ -371,6 +371,8 @@ export default function AdminDashboard() {
   const [homeworkDetailSubmissionId, setHomeworkDetailSubmissionId] = useState<string | null>(null)
   const [savingHomeworkCommentId, setSavingHomeworkCommentId] = useState<string | null>(null)
   const [rejectingUserId, setRejectingUserId] = useState<string | null>(null)
+  const [table1Expanded, setTable1Expanded] = useState(false)
+  const [table2Expanded, setTable2Expanded] = useState(false)
   const [exercises, setExercises] = useState<ExerciseItem[]>([])
   const [newExerciseCourseId, setNewExerciseCourseId] = useState('')
   const [newExerciseQuestions, setNewExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
@@ -2151,78 +2153,136 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
-          <div className="bg-white rounded shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Table 1. User accounts</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead className="bg-gray-50 border-b">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created on</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {usersOverview.map((item) => (
-                    <tr key={item.id} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">{item.name || item.email}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{item.phone || 'Not updated yet'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(item.createdAt).toLocaleDateString('en-GB')}</td>
-                    </tr>
-                  ))}
-                  {usersOverview.length === 0 && (
-                    <tr>
-                      <td colSpan={3} className="px-4 py-3 text-center text-gray-500">No user accounts found.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+          {/* Table 1 — User accounts */}
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <button
+              type="button"
+              onClick={() => setTable1Expanded((v) => !v)}
+              className="flex w-full items-center justify-between px-5 py-4 text-left hover:bg-slate-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-base font-bold text-slate-800">User accounts</span>
+                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">{usersOverview.length}</span>
+              </div>
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full border transition-colors ${
+                table1Expanded
+                  ? 'border-slate-300 bg-white text-slate-600'
+                  : 'border-[#14532d]/30 bg-[#14532d]/5 text-[#14532d]'
+              }`}>
+                {table1Expanded ? 'Collapse ▲' : 'Expand ▼'}
+              </span>
+            </button>
+            {table1Expanded && (
+              <div className="border-t border-slate-100">
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Name</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Phone</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Created on</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {usersOverview.map((item) => (
+                        <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                          <td className="px-4 py-3 text-sm font-medium text-slate-800">{item.name || item.email}</td>
+                          <td className="px-4 py-3 text-sm text-slate-600">{item.phone || <span className="text-slate-400 italic">Not updated yet</span>}</td>
+                          <td className="px-4 py-3 text-sm text-slate-500">{new Date(item.createdAt).toLocaleDateString('en-GB')}</td>
+                        </tr>
+                      ))}
+                      {usersOverview.length === 0 && (
+                        <tr>
+                          <td colSpan={3} className="px-4 py-6 text-center text-sm text-slate-400">No user accounts found.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {!table1Expanded && usersOverview.length > 0 && (
+              <div className="border-t border-slate-100 px-5 py-3">
+                <p className="text-xs text-slate-400">Showing summary — expand to view all {usersOverview.length} accounts.</p>
+              </div>
+            )}
           </div>
 
-          <div className="bg-white rounded shadow p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Table 2. Active members</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead className="bg-gray-50 border-b">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered on</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {membersOverview.map((member) => (
-                    <tr key={`${member.id}-${member.courseTitle}`} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">{member.name || member.email}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{member.phone || 'Not updated yet'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{new Date(member.registeredAt).toLocaleDateString('en-GB')}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{member.courseTitle}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{member.isPaid ? 'Paid' : 'Unpaid'}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{member.submittedHomework}/{member.totalHomework}</td>
-                      <td className="px-4 py-3 text-sm">
-                        <button
-                          onClick={() => rejectUser(member.id, member.name || member.email)}
-                          disabled={rejectingUserId === member.id}
-                          className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
-                        >
-                          {rejectingUserId === member.id ? 'Processing...' : 'Reject member'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {membersOverview.length === 0 && (
-                    <tr>
-                      <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No active members found.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+          {/* Table 2 — Active members */}
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <button
+              type="button"
+              onClick={() => setTable2Expanded((v) => !v)}
+              className="flex w-full items-center justify-between px-5 py-4 text-left hover:bg-slate-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-base font-bold text-slate-800">Active members</span>
+                <span className="rounded-full bg-[#14532d]/10 px-2.5 py-0.5 text-xs font-semibold text-[#14532d]">{membersOverview.length}</span>
+              </div>
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full border transition-colors ${
+                table2Expanded
+                  ? 'border-slate-300 bg-white text-slate-600'
+                  : 'border-[#14532d]/30 bg-[#14532d]/5 text-[#14532d]'
+              }`}>
+                {table2Expanded ? 'Collapse ▲' : 'Expand ▼'}
+              </span>
+            </button>
+            {table2Expanded && (
+              <div className="border-t border-slate-100">
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Name</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Phone</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Registered on</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Course</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Payment</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Homework</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {membersOverview.map((member) => (
+                        <tr key={`${member.id}-${member.courseTitle}`} className="hover:bg-slate-50 transition-colors">
+                          <td className="px-4 py-3 text-sm font-medium text-slate-800">{member.name || member.email}</td>
+                          <td className="px-4 py-3 text-sm text-slate-600">{member.phone || <span className="text-slate-400 italic">Not updated yet</span>}</td>
+                          <td className="px-4 py-3 text-sm text-slate-500">{new Date(member.registeredAt).toLocaleDateString('en-GB')}</td>
+                          <td className="px-4 py-3 text-sm text-slate-800">{member.courseTitle}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
+                              member.isPaid ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-amber-50 text-amber-700'
+                            }`}>
+                              {member.isPaid ? 'Paid' : 'Unpaid'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-700">{member.submittedHomework}/{member.totalHomework}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <button
+                              onClick={() => rejectUser(member.id, member.name || member.email)}
+                              disabled={rejectingUserId === member.id}
+                              className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50 text-xs font-medium"
+                            >
+                              {rejectingUserId === member.id ? 'Processing...' : 'Reject'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {membersOverview.length === 0 && (
+                        <tr>
+                          <td colSpan={7} className="px-4 py-6 text-center text-sm text-slate-400">No active members found.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {!table2Expanded && membersOverview.length > 0 && (
+              <div className="border-t border-slate-100 px-5 py-3">
+                <p className="text-xs text-slate-400">Showing summary — expand to view all {membersOverview.length} members.</p>
+              </div>
+            )}
           </div>
         </div>
 
