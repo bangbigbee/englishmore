@@ -1,10 +1,7 @@
 import { getServerSession } from 'next-auth/next'
 import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
-import { mkdir, writeFile } from 'fs/promises'
-import path from 'path'
-import crypto from 'crypto'
-import os from 'os'
+import { prisma } from '@/lib/prisma'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -53,33 +50,6 @@ async function requireAdminUser() {
   return { ok: false as const, status: 403, error: 'Forbidden' }
 }
 
-async function saveFileInFirstWritableDir(fileName: string, buffer: Buffer) {
-  const preferredDir = process.env.HOMEWORK_UPLOAD_DIR
-  const publicDir = path.join(process.cwd(), 'public', 'uploads', 'homework')
-  const tempDir = path.join(os.tmpdir(), 'englishmore', 'uploads', 'homework')
-
-  const candidates = [preferredDir, publicDir, tempDir].filter((dir): dir is string => Boolean(dir))
-  let lastError: unknown = null
-
-  for (const dir of candidates) {
-    try {
-      await mkdir(dir, { recursive: true })
-      const fullPath = path.join(dir, fileName)
-      await writeFile(fullPath, buffer)
-
-      if (dir === publicDir) {
-        return { url: `/uploads/homework/${fileName}` }
-      }
-
-      return { url: `/api/homework/files/${fileName}` }
-    } catch (error) {
-      lastError = error
-    }
-  }
-
-  throw lastError || new Error('No writable upload directory available')
-}
-
 export async function POST(request: NextRequest) {
   try {
     const auth = await requireAdminUser()
@@ -111,10 +81,16 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const safeName = `${crypto.randomBytes(10).toString('hex')}_${Date.now()}.${ext}`
-    const saved = await saveFileInFirstWritableDir(safeName, buffer)
+    const saved = await prisma.homeworkAttachmentFile.create({
+      data: {
+        originalName: file.name || `attachment.${ext}`,
+        mimeType: file.type || 'application/octet-stream',
+        data: buffer
+      },
+      select: { id: true }
+    })
 
-    return NextResponse.json({ url: saved.url })
+    return NextResponse.json({ url: `/api/homework/files/${saved.id}` })
   } catch (error) {
     console.error('[Homework Upload] Error:', error)
     const detail = error instanceof Error ? error.message : String(error)

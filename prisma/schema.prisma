@@ -279,6 +279,15 @@ model HomeworkMessage {
   @@index([createdAt])
 }
 
+model HomeworkAttachmentFile {
+  id           String   @id @default(cuid())
+  originalName String
+  mimeType     String
+  data         Bytes
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 model Enrollment {
   id                String             @id @default(cuid())
   courseId          String
