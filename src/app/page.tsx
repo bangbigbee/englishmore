@@ -2,6 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface AvailableCourse {
@@ -27,6 +28,7 @@ interface DailyGreetingConversationItem {
   sourceId?: string
   userId: string
   studentName: string
+  studentImage?: string | null
   message: string
   inputMethod: GreetingInputMethod | null
   updatedAt: string
@@ -1557,9 +1559,15 @@ export default function Home() {
                         className={`rounded-2xl border px-3 py-3 text-xs shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:px-4 sm:text-sm ${getActivityBubbleStyle(item)}`}
                       >
                         <div className="flex items-start gap-3">
-                          <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ring-4 ${getActivityDotStyle(item)}`}>
-                            {item.studentName.trim().charAt(0).toUpperCase() || '?'}
-                          </div>
+                          {item.studentImage ? (
+                            <div className={`relative mt-0.5 h-8 w-8 shrink-0 overflow-hidden rounded-full ring-4 ${getActivityDotStyle(item)}`}>
+                              <Image src={item.studentImage} alt={item.studentName} fill className="object-cover" />
+                            </div>
+                          ) : (
+                            <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ring-4 ${getActivityDotStyle(item)}`}>
+                              {item.studentName.trim().charAt(0).toUpperCase() || '?'}
+                            </div>
+                          )}
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <div className="flex min-w-0 flex-wrap items-center gap-2">

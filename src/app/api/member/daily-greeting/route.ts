@@ -98,7 +98,8 @@ export async function GET(request: NextRequest) {
               select: {
                 id: true,
                 name: true,
-                email: true
+                email: true,
+                image: true
               }
             }
           },
@@ -130,7 +131,8 @@ export async function GET(request: NextRequest) {
               select: {
                 id: true,
                 name: true,
-                email: true
+                email: true,
+                image: true
               }
             }
           },
@@ -143,14 +145,14 @@ export async function GET(request: NextRequest) {
       message: string
       inputMethod: 'text' | 'voice'
       updatedAt: Date
-      user: { id: string; name: string | null; email: string }
+      user: { id: string; name: string | null; email: string; image: string | null }
     }>
 
     const reflectionConversationItems = reflectionConversation as Array<{
       id: string
       message: string
       updatedAt: Date
-      user: { id: string; name: string | null; email: string }
+      user: { id: string; name: string | null; email: string; image: string | null }
     }>
 
     const conversationItems = [
@@ -159,6 +161,7 @@ export async function GET(request: NextRequest) {
         sourceId: item.id,
         userId: item.user.id,
         studentName: item.user.name || item.user.email,
+        studentImage: item.user.image,
         message: item.message,
         inputMethod: item.inputMethod,
         updatedAt: item.updatedAt,
@@ -169,6 +172,7 @@ export async function GET(request: NextRequest) {
         sourceId: item.id,
         userId: item.user.id,
         studentName: item.user.name || item.user.email,
+        studentImage: item.user.image,
         message: item.message,
         inputMethod: null,
         updatedAt: item.updatedAt,

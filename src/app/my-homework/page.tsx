@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 
 interface HomeworkRow {
@@ -288,28 +289,46 @@ export default function MyHomeworkPage() {
                       <div className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
                         {(item.messages || []).map((message) => (
                           <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
-                            <div
-                              className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
-                                message.senderRole === 'student'
-                                  ? 'rounded-br-md bg-emerald-100 text-emerald-950'
-                                  : 'rounded-bl-md border border-blue-200 bg-blue-50 text-blue-950'
-                              }`}
-                            >
-                              <p
-                                className={`text-[11px] font-bold uppercase tracking-wide ${
-                                  message.senderRole === 'student' ? 'text-emerald-700' : 'text-blue-700'
+                            <div className={`flex max-w-[95%] items-end gap-2 ${message.senderRole === 'student' ? 'flex-row-reverse' : 'flex-row'}`}>
+                              {message.senderRole === 'student' ? (
+                                session?.user?.image ? (
+                                  <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full border border-emerald-300 bg-white">
+                                    <Image src={session.user.image} alt="Your avatar" fill className="object-cover" />
+                                  </div>
+                                ) : (
+                                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-emerald-300 bg-white text-[10px] font-bold text-emerald-700">
+                                    {(session?.user?.name || session?.user?.email || 'Y').trim().charAt(0).toUpperCase()}
+                                  </div>
+                                )
+                              ) : (
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-blue-300 bg-white text-[10px] font-bold text-blue-700">
+                                  T
+                                </div>
+                              )}
+
+                              <div
+                                className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
+                                  message.senderRole === 'student'
+                                    ? 'rounded-br-md bg-emerald-100 text-emerald-950'
+                                    : 'rounded-bl-md border border-blue-200 bg-blue-50 text-blue-950'
                                 }`}
                               >
-                                {message.senderRole === 'student' ? 'You' : 'Teacher'}
-                              </p>
-                              <p
-                                className={`mt-1 whitespace-pre-wrap ${
-                                  message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
-                                }`}
-                              >
-                                {message.content}
-                              </p>
-                              <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
+                                <p
+                                  className={`text-[11px] font-bold uppercase tracking-wide ${
+                                    message.senderRole === 'student' ? 'text-emerald-700' : 'text-blue-700'
+                                  }`}
+                                >
+                                  {message.senderRole === 'student' ? 'You' : 'Teacher'}
+                                </p>
+                                <p
+                                  className={`mt-1 whitespace-pre-wrap ${
+                                    message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
+                                  }`}
+                                >
+                                  {message.content}
+                                </p>
+                                <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
+                              </div>
                             </div>
                           </div>
                         ))}

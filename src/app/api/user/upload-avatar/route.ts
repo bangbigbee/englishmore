@@ -1,14 +1,15 @@
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
-import { mkdir, writeFile } from 'fs/promises'
-import path from 'path'
-import crypto from 'crypto'
+import { prisma } from '@/lib/prisma'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session || !session.user?.email) {
+    if (!session || !session.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -33,34 +34,16 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Generate unique filename
-    const ext = file.type.split('/')[1] || 'jpg'
-    const fileName = `${crypto.randomBytes(8).toString('hex')}_${Date.now()}.${ext}`
-    
-    // Use public/uploads/avatars - standard Next.js location for public files
-    const baseDir = process.cwd()
-    const uploadsDir = path.join(baseDir, 'public', 'uploads', 'avatars')
-    
-    try {
-      // Ensure directory exists
-      await mkdir(uploadsDir, { recursive: true })
-    } catch (mkdirError) {
-      console.error('[Avatar Upload] Error creating directory:', uploadsDir, mkdirError)
-      return NextResponse.json({ error: 'Failed to create upload directory' }, { status: 500 })
-    }
+    const saved = await prisma.userAvatarFile.create({
+      data: {
+        originalName: file.name || 'avatar.jpg',
+        mimeType: file.type || 'image/jpeg',
+        data: buffer
+      },
+      select: { id: true }
+    })
 
-    const filePath = path.join(uploadsDir, fileName)
-    
-    try {
-      await writeFile(filePath, buffer)
-      console.log('[Avatar Upload] File saved successfully:', filePath)
-    } catch (writeError) {
-      console.error('[Avatar Upload] Error writing file:', filePath, writeError)
-      return NextResponse.json({ error: 'Failed to save file to disk' }, { status: 500 })
-    }
-
-    const url = `/uploads/avatars/${fileName}`
-    console.log('[Avatar Upload] Upload successful, URL:', url)
+    const url = `/api/user/avatar/${saved.id}`
 
     return NextResponse.json({ url })
   } catch (error) {
