@@ -5,6 +5,17 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
+interface BadgeItem {
+  id: string
+  icon: string
+  name: string
+  description: string
+  earned: boolean
+  earnedAt?: string | null
+  progress?: number
+  progressLabel?: string
+}
+
 interface UserProfile {
   id: string
   name: string | null
@@ -46,14 +57,31 @@ export default function ProfilePage() {
     phone: '',
     bio: ''
   })
+  const [badges, setBadges] = useState<BadgeItem[]>([])
+  const [badgesLoading, setBadgesLoading] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
     } else if (status === 'authenticated') {
       fetchProfile()
+      fetchBadges()
     }
   }, [status, router])
+
+  const fetchBadges = async () => {
+    try {
+      setBadgesLoading(true)
+      const res = await fetch('/api/user/badges')
+      if (!res.ok) return
+      const data = await res.json()
+      setBadges(data.badges || [])
+    } catch {
+      // Ignore badge fetch errors silently
+    } finally {
+      setBadgesLoading(false)
+    }
+  }
 
   const fetchProfile = async () => {
     try {
@@ -184,6 +212,63 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
           <aside className="space-y-6 lg:sticky lg:top-6 self-start">
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700">Achievements</h2>
+                {badges.length > 0 && (
+                  <span className="rounded-full bg-[#14532d]/10 px-2 py-0.5 text-xs font-semibold text-[#14532d]">
+                    {badges.filter((b) => b.earned).length}/{badges.length}
+                  </span>
+                )}
+              </div>
+              {badgesLoading ? (
+                <p className="text-xs text-slate-500">Loading achievements...</p>
+              ) : badges.length === 0 ? (
+                <p className="text-xs text-slate-500">No activity data yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {badges.map((badge) => (
+                    <div
+                      key={badge.id}
+                      className={`flex items-start gap-3 rounded-lg border p-3 transition-all ${
+                        badge.earned
+                          ? 'border-[#14532d]/20 bg-[#14532d]/5'
+                          : 'border-slate-100 bg-slate-50 opacity-60'
+                      }`}
+                    >
+                      <span className="mt-0.5 shrink-0 text-xl leading-none">{badge.icon}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className={`text-xs font-bold ${ badge.earned ? 'text-[#14532d]' : 'text-slate-500'}`}>{badge.name}</p>
+                          {badge.earned && <span className="shrink-0 rounded-full bg-[#14532d] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Earned</span>}
+                        </div>
+                        <p className="mt-0.5 text-[11px] leading-snug text-slate-500">{badge.description}</p>
+                        {!badge.earned && typeof badge.progress === 'number' && (
+                          <div className="mt-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] text-slate-400">{badge.progressLabel}</span>
+                              <span className="text-[10px] font-semibold text-slate-500">{badge.progress}%</span>
+                            </div>
+                            <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-slate-200">
+                              <div
+                                className="h-full rounded-full bg-[#14532d]/40 transition-all"
+                                style={{ width: `${badge.progress}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {badge.earned && badge.earnedAt && (
+                          <p className="mt-1 text-[10px] text-slate-400">
+                            {new Date(badge.earnedAt).toLocaleDateString('en-GB')}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
               <h2 className="text-sm font-bold uppercase tracking-wide text-amber-700">Referred By</h2>
               {profile?.referrer ? (

@@ -1332,18 +1332,20 @@ export default function Home() {
                     </div>
 
                     {!showCustomGreetingInput ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowCustomGreetingInput(true)
-                          setGreetingMethod('text')
-                          setGreetingStatus('')
-                          setGreetingError('')
-                        }}
-                        className="mt-3 inline-flex w-fit items-center text-xs font-semibold text-[#14532d] transition hover:underline"
-                      >
-                        I want to text myself
-                      </button>
+                      <div className="mt-3 pl-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowCustomGreetingInput(true)
+                            setGreetingMethod('text')
+                            setGreetingStatus('')
+                            setGreetingError('')
+                          }}
+                          className="inline-flex w-fit items-center text-xs font-semibold text-[#14532d] transition hover:underline"
+                        >
+                          Type it manually
+                        </button>
+                      </div>
                     ) : (
                       <>
                         <div className="mt-3">
@@ -1470,17 +1472,19 @@ export default function Home() {
                         </div>
 
                         {!showCustomReflectionInput ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowCustomReflectionInput(true)
-                              setReflectionStatus('')
-                              setReflectionError('')
-                            }}
-                            className="mt-3 inline-flex w-fit items-center text-xs font-semibold text-amber-700 transition hover:underline"
-                          >
-                            I want to text myself
-                          </button>
+                          <div className="mt-3 pl-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowCustomReflectionInput(true)
+                                setReflectionStatus('')
+                                setReflectionError('')
+                              }}
+                              className="inline-flex w-fit items-center text-xs font-semibold text-amber-700 transition hover:underline"
+                            >
+                              Type it manually
+                            </button>
+                          </div>
                         ) : (
                           <>
                             <div className="mt-3">

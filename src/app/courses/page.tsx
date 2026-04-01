@@ -286,7 +286,7 @@ export default function CoursesPage() {
                 <div className="py-2">
                   <p className="text-gray-600 mb-1">Transfer message:</p>
                   <div className="rounded border-2 border-[#14532d] bg-green-50 p-3 text-center">
-                    <span className="font-mono text-base font-semibold tracking-wider text-[#14532d]">
+                    <span className="font-mono text-sm font-normal tracking-wider text-[#14532d]">
                       {paymentInstruction.transferContent}
                     </span>
                   </div>
@@ -305,7 +305,7 @@ export default function CoursesPage() {
         )}
 
         {errorModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-xl font-bold text-red-600">Registration Error</h3>
