@@ -53,6 +53,9 @@ export default function TopNav() {
   const { data: session, status } = useSession()
   const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
+
+  const userInitial = (session?.user?.name || session?.user?.email || 'U').trim().charAt(0).toUpperCase()
 
   useEffect(() => {
     let active = true
@@ -89,6 +92,10 @@ export default function TopNav() {
       active = false
     }
   }, [session])
+
+  useEffect(() => {
+    setAvatarLoadFailed(false)
+  }, [session?.user?.image])
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -133,10 +140,10 @@ export default function TopNav() {
                 className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-[#14532d]/20 bg-white text-[#14532d] shadow-sm transition hover:border-[#14532d]/35 hover:shadow-md"
                 aria-label="Open profile menu"
               >
-                {session.user?.image ? (
-                  <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" />
+                {session.user?.image && !avatarLoadFailed ? (
+                  <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
                 ) : (
-                  <UserIcon />
+                  <span className="text-sm font-bold text-[#14532d]">{userInitial}</span>
                 )}
               </button>
             </>
@@ -181,10 +188,10 @@ export default function TopNav() {
             <div className="border-b border-[#14532d]/10 bg-linear-to-b from-[#14532d]/8 to-white px-5 py-5">
               <div className="flex items-center gap-3">
                 <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#14532d]/15 bg-white text-[#14532d] shadow-sm">
-                  {session.user?.image ? (
-                    <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" />
+                  {session.user?.image && !avatarLoadFailed ? (
+                    <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
                   ) : (
-                    <UserIcon />
+                    <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
                   )}
                 </div>
                 <div className="min-w-0">
@@ -198,7 +205,7 @@ export default function TopNav() {
             <nav className="flex-1 px-3 py-4">
               <div className="space-y-1">
                 <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
-                  Setting
+                  Profile
                 </Link>
                 <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Homework
@@ -209,19 +216,16 @@ export default function TopNav() {
                 <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Slides
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="flex w-full items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 hover:text-amber-800"
+                >
+                  <LogoutIcon />
+                  Log out
+                </button>
               </div>
             </nav>
-
-            <div className="border-t border-[#14532d]/10 p-4">
-              <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold text-white transition hover:bg-amber-600"
-              >
-                <LogoutIcon />
-                Log out
-              </button>
-            </div>
           </aside>
         </div>
       )}

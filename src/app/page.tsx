@@ -1244,11 +1244,11 @@ export default function Home() {
           <section className="mb-3 bg-white shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5">
               <h2 className="text-base font-semibold text-slate-800">Course Progress</h2>
-              <span className="text-sm font-bold text-amber-600">{courseProgressPercent}%</span>
+              <span className="text-sm font-bold text-[#14532d]">{courseProgressPercent}%</span>
             </div>
-            <div className="h-2.5 w-full overflow-hidden bg-slate-200">
+            <div className="h-1 w-full overflow-hidden bg-slate-200">
               <div
-                className="h-full rounded-full bg-linear-to-r from-amber-400 to-amber-500 transition-all duration-500"
+                className="h-full rounded-full bg-[#14532d] transition-all duration-500"
                 style={{
                   width: `${courseProgressPercent}%`
                 }}
