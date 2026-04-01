@@ -196,12 +196,11 @@ export default function MyHomeworkPage() {
                           onClick={() => toggleHomeworkDetail(item.id)}
                           className="inline-flex items-center gap-2 rounded-md border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100"
                         >
-                          Detail
+                          Description
                           <span aria-hidden="true">{expandedDetailByHomework[item.id] ? '−' : '+'}</span>
                         </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-amber-200 bg-white px-4 py-3">
-                            <p className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-1">Assignment Description</p>
                             <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
                           </div>
                         )}
@@ -259,12 +258,11 @@ export default function MyHomeworkPage() {
                           onClick={() => toggleHomeworkDetail(item.id)}
                           className="inline-flex items-center gap-2 rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-sm font-semibold text-emerald-800 hover:bg-emerald-100"
                         >
-                          Detail
+                          Description
                           <span aria-hidden="true">{expandedDetailByHomework[item.id] ? '−' : '+'}</span>
                         </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-emerald-200 bg-white px-4 py-3">
-                            <p className="text-xs font-bold uppercase tracking-wide text-emerald-600 mb-1">Assignment Description</p>
                             <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
                           </div>
                         )}
