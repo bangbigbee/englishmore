@@ -1246,8 +1246,7 @@ export default function Home() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr] md:gap-4">
               <div>
                 <div className="rounded-2xl border border-[#14532d]/30 bg-white px-4 py-3 shadow-sm">
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-[#14532d]">Teacher Bang</p>
-                  <h2 className="mt-1 text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
+                  <h2 className="text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
                     Hello {session.user?.name || 'there'}! How are you today?
                   </h2>
                 </div>
@@ -1385,8 +1384,7 @@ export default function Home() {
                 {hasGreetingToday && (
                   <div className="mt-5 border-t border-amber-300/40 pt-4">
                     <div className="rounded-2xl border border-amber-300 bg-white px-4 py-3 shadow-sm">
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700">Teacher Bang</p>
-                      <h3 className="mt-1 text-sm font-bold text-amber-800 sm:text-base">
+                      <h3 className="text-sm font-bold text-amber-800 sm:text-base">
                         Hello {session.user?.name || 'there'}! How was your day?
                       </h3>
                     </div>
