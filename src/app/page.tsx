@@ -545,7 +545,7 @@ export default function Home() {
       return 'border-amber-200 bg-amber-50/95 text-amber-950 shadow-amber-100'
     }
 
-    return 'border-blue-200 bg-blue-50/95 text-blue-950 shadow-blue-100'
+    return 'border-[#14532d]/20 bg-[#14532d]/5 text-[#14532d] shadow-[#14532d]/10'
   }
 
   const getActivityDotStyle = (item: DailyGreetingConversationItem) => {
@@ -553,7 +553,7 @@ export default function Home() {
       return 'bg-amber-500 ring-amber-200'
     }
 
-    return 'bg-blue-500 ring-blue-200'
+    return 'bg-[#14532d] ring-[#14532d]/20'
   }
 
   const startVoiceCapture = (target: 'checkin' | 'reflection' = 'checkin') => {
@@ -1258,7 +1258,7 @@ export default function Home() {
         )}
 
         {session?.user?.role === 'member' && (
-          <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5 sm:py-5">
+          <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
               <div className="space-y-4">
                 <div className="rounded-2xl border border-[#14532d]/30 bg-white px-4 py-4 shadow-sm">
@@ -1280,13 +1280,13 @@ export default function Home() {
                       </div>
                       <p className="mt-1 text-xs text-slate-500">How do you feel today? Share in one short message.</p>
                     </div>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasGreetingToday ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasGreetingToday ? 'bg-[#14532d]/12 text-[#14532d]' : 'bg-amber-100 text-amber-700'}`}>
                       {hasGreetingToday ? 'Done today' : 'Pending'}
                     </span>
                   </div>
 
                   {hasGreetingToday ? (
-                    <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+                    <div className="mt-3 rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 px-3 py-2.5">
                       <button
                         type="button"
                         onClick={() => {
@@ -1294,7 +1294,7 @@ export default function Home() {
                           setEditCheckinStatus('')
                           setIsEditingCheckin(true)
                         }}
-                        className="text-xs font-semibold text-emerald-700 underline-offset-2 hover:underline"
+                        className="text-xs font-semibold text-[#14532d] underline-offset-2 hover:underline"
                       >
                         You already checked in. Edit it
                       </button>
@@ -1427,7 +1427,7 @@ export default function Home() {
                       </div>
                       <p className="mt-1 text-xs text-slate-500">Capture one thing you learned or felt today.</p>
                     </div>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-emerald-100 text-emerald-700' : hasGreetingToday ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-[#14532d]/12 text-[#14532d]' : hasGreetingToday ? 'bg-amber-100 text-amber-700' : 'bg-[#14532d]/8 text-[#14532d]/70'}`}>
                       {hasReflectionToday ? 'Done today' : hasGreetingToday ? 'Ready' : 'Check-in first'}
                     </span>
                   </div>
@@ -1562,7 +1562,7 @@ export default function Home() {
                 </article>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-[radial-gradient(circle_at_top,#eff6ff_0%,#ffffff_38%,#faf5ff_100%)] p-3 sm:p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
+              <div className="rounded-2xl border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-amber-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
@@ -1583,8 +1583,8 @@ export default function Home() {
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-700">
-                      <span className="h-2 w-2 rounded-full bg-blue-500" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#14532d]/20 bg-[#14532d]/5 px-2.5 py-1 text-[11px] font-semibold text-[#14532d]">
+                      <span className="h-2 w-2 rounded-full bg-[#14532d]" />
                       {classActivitySummary.checkins} check-in
                       {classActivityUnread.checkins > 0 ? ` • ${classActivityUnread.checkins} unread` : ''}
                     </span>
