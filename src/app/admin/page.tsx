@@ -362,6 +362,7 @@ export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState<AdminSection>('course')
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
+  const [importingDocx, setImportingDocx] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
   const [publishingExercise, setPublishingExercise] = useState(false)
   const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
@@ -1009,6 +1010,40 @@ export default function AdminDashboard() {
       setExerciseSuccess('')
     } finally {
       setImportingForm(false)
+    }
+  }
+
+  const importFromDocxFile = async (file: File) => {
+    const normalizedName = String(file?.name || '').toLowerCase()
+    if (!normalizedName.endsWith('.docx')) {
+      setExerciseError('Please choose a .docx file.')
+      return
+    }
+
+    try {
+      setImportingDocx(true)
+      setExerciseError('')
+      setExerciseSuccess('')
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await fetch('/api/admin/exercises/import-docx', {
+        method: 'POST',
+        body: formData
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Unable to import from DOCX')
+
+      setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
+      setNewExerciseDescription(String(data.description || '').trim())
+      setExerciseSuccess('Data imported from DOCX. You can edit it before saving.')
+      setShowExerciseBuilder(true)
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Unable to import from DOCX')
+      setExerciseSuccess('')
+    } finally {
+      setImportingDocx(false)
     }
   }
 
@@ -2565,6 +2600,22 @@ export default function AdminDashboard() {
                 >
                   {importingForm ? 'Importing...' : 'Import from Google Form'}
                 </button>
+                <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50">
+                  {importingDocx ? 'Importing DOCX...' : 'Import DOCX'}
+                  <input
+                    type="file"
+                    accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    className="hidden"
+                    disabled={importingDocx}
+                    onChange={(event) => {
+                      const file = event.target.files?.[0]
+                      if (file) {
+                        void importFromDocxFile(file)
+                      }
+                      event.currentTarget.value = ''
+                    }}
+                  />
+                </label>
               </div>
 
             {showExerciseBuilder && (

@@ -170,31 +170,30 @@ export default function TopNav() {
           />
 
           <aside className={`absolute right-0 top-0 flex h-full w-[min(22rem,88vw)] flex-col border-l border-[#14532d]/15 bg-white shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-            <div className="flex items-center justify-end border-b border-[#14532d]/10 px-5 py-4">
-              <button
-                type="button"
-                onClick={() => setIsMenuOpen(false)}
-                className="rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-[#14532d]/20 hover:text-[#14532d]"
-                aria-label="Close profile menu"
-              >
-                <CloseIcon />
-              </button>
-            </div>
-
             <div className="border-b border-[#14532d]/10 bg-linear-to-b from-[#14532d]/8 to-white px-5 py-5">
-              <div className="flex items-center gap-3">
-                <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#14532d]/15 bg-white text-[#14532d] shadow-sm">
-                  {session.user?.image && !avatarLoadFailed ? (
-                    <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
-                  ) : (
-                    <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
-                  )}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#14532d]/15 bg-white text-[#14532d] shadow-sm">
+                    {session.user?.image && !avatarLoadFailed ? (
+                      <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
+                    ) : (
+                      <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-slate-900">{session.user?.name || 'User'}</p>
+                    <p className="truncate text-xs text-slate-500">{session.user?.email || ''}</p>
+                    <p className="mt-1 truncate text-xs font-semibold text-[#14532d]">{enrolledCourseTitle || 'No active course yet'}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-900">{session.user?.name || 'User'}</p>
-                  <p className="truncate text-xs text-slate-500">{session.user?.email || ''}</p>
-                  <p className="mt-1 truncate text-xs font-semibold text-[#14532d]">{enrolledCourseTitle || 'No active course yet'}</p>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="shrink-0 rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-[#14532d]/20 hover:text-[#14532d]"
+                  aria-label="Close profile menu"
+                >
+                  <CloseIcon />
+                </button>
               </div>
             </div>
 
