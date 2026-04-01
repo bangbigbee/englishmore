@@ -43,6 +43,7 @@ export default function MyHomeworkPage() {
   const [success, setSuccess] = useState('')
   const [summary, setSummary] = useState<HomeworkSummaryResponse | null>(null)
   const [notesByHomework, setNotesByHomework] = useState<Record<string, string>>({})
+  const [expandedDetailByHomework, setExpandedDetailByHomework] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -126,6 +127,13 @@ export default function MyHomeworkPage() {
     }
   }
 
+  const toggleHomeworkDetail = (homeworkId: string) => {
+    setExpandedDetailByHomework((current) => ({
+      ...current,
+      [homeworkId]: !current[homeworkId]
+    }))
+  }
+
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -181,9 +189,21 @@ export default function MyHomeworkPage() {
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
                     <p className="mt-1 text-sm text-slate-500">Due: <span className="font-medium text-amber-800">{new Date(item.dueDate).toLocaleDateString('en-GB')}</span></p>
                     {item.description && (
-                      <div className="mt-3 rounded-lg border border-amber-200 bg-white px-4 py-3">
-                        <p className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-1">Assignment Description</p>
-                        <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                      <div className="mt-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleHomeworkDetail(item.id)}
+                          className="inline-flex items-center gap-2 rounded-md border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100"
+                        >
+                          Detail
+                          <span aria-hidden="true">{expandedDetailByHomework[item.id] ? '−' : '+'}</span>
+                        </button>
+                        {expandedDetailByHomework[item.id] && (
+                          <div className="mt-2 rounded-lg border border-amber-200 bg-white px-4 py-3">
+                            <p className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-1">Assignment Description</p>
+                            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                          </div>
+                        )}
                       </div>
                     )}
                     {item.attachmentUrl && (
@@ -192,7 +212,6 @@ export default function MyHomeworkPage() {
                           href={item.attachmentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          download
                           className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-medium text-amber-800 hover:bg-amber-100 transition-colors"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -233,9 +252,21 @@ export default function MyHomeworkPage() {
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
                     <p className="mt-1 text-sm text-slate-500">Submitted: <span className="font-medium text-emerald-800">{item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</span></p>
                     {item.description && (
-                      <div className="mt-3 rounded-lg border border-emerald-200 bg-white px-4 py-3">
-                        <p className="text-xs font-bold uppercase tracking-wide text-emerald-600 mb-1">Assignment Description</p>
-                        <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                      <div className="mt-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleHomeworkDetail(item.id)}
+                          className="inline-flex items-center gap-2 rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-sm font-semibold text-emerald-800 hover:bg-emerald-100"
+                        >
+                          Detail
+                          <span aria-hidden="true">{expandedDetailByHomework[item.id] ? '−' : '+'}</span>
+                        </button>
+                        {expandedDetailByHomework[item.id] && (
+                          <div className="mt-2 rounded-lg border border-emerald-200 bg-white px-4 py-3">
+                            <p className="text-xs font-bold uppercase tracking-wide text-emerald-600 mb-1">Assignment Description</p>
+                            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                          </div>
+                        )}
                       </div>
                     )}
                     {item.attachmentUrl && (
@@ -244,7 +275,6 @@ export default function MyHomeworkPage() {
                           href={item.attachmentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          download
                           className="inline-flex items-center gap-2 rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -1328,7 +1328,7 @@ export default function Home() {
                           setGreetingStatus('')
                           setGreetingError('')
                         }}
-                        className="mt-3 text-xs font-semibold text-[#14532d] hover:underline"
+                        className="mt-3 inline-flex w-fit items-center rounded-full border border-[#14532d]/35 bg-white px-3 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10"
                       >
                         I want to text myself
                       </button>
@@ -1465,7 +1465,7 @@ export default function Home() {
                               setReflectionStatus('')
                               setReflectionError('')
                             }}
-                            className="mt-3 text-xs font-semibold text-amber-700 hover:underline"
+                            className="mt-3 inline-flex w-fit items-center rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-50"
                           >
                             I want to text myself
                           </button>
