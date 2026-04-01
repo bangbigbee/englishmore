@@ -1259,280 +1259,314 @@ export default function Home() {
 
         {session?.user?.role === 'member' && (
           <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-[#14532d]/10 px-4 py-4 sm:px-5 sm:py-5">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr] md:gap-4">
-              <div>
-                <div className="rounded-2xl border border-[#14532d]/30 bg-white px-4 py-3 shadow-sm">
-                  <h2 className="text-base font-bold text-[#14532d] sm:text-lg md:text-xl">
-                    Hello {session.user?.name || 'there'}! How are you today?
-                  </h2>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-[#14532d]/30 bg-white px-4 py-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#14532d]/10 text-xl">🌿</span>
+                    <div>
+                      <h2 className="text-base font-bold text-[#14532d] sm:text-lg">Daily momentum</h2>
+                      <p className="text-xs text-slate-500">A quick check-in and reflection keeps your learning streak strong.</p>
+                    </div>
+                  </div>
                 </div>
 
-                {hasGreetingToday ? (
-                  <div className="mt-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditCheckinMessage(greetingMessage)
-                        setEditCheckinStatus('')
-                        setIsEditingCheckin(true)
-                      }}
-                      className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
-                    >
-                      Already checked in today. Click here to edit.
-                    </button>
-
-                    {isEditingCheckin ? (
-                      <div className="mt-3">
-                        <textarea
-                          value={editCheckinMessage}
-                          onChange={(event) => setEditCheckinMessage(event.target.value)}
-                          placeholder="Update your check-in..."
-                          className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
-                          maxLength={500}
-                        />
-                        <p className="mt-1 text-xs text-slate-500">{editCheckinMessage.trim().length}/500</p>
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={handleSaveEditCheckin}
-                            className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534]"
-                          >
-                            Save check-in
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsEditingCheckin(false)
-                              setEditCheckinMessage(greetingMessage)
-                              setEditCheckinStatus('')
-                            }}
-                            className="rounded-md border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                        {editCheckinStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{editCheckinStatus}</p>}
+                <article className="checkin-message rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#14532d]/10 text-base">☀️</span>
+                        <h3 className="text-sm font-bold text-[#14532d] sm:text-base">Morning Check-in</h3>
                       </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <>
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      {QUICK_CHECKIN_MESSAGES.map((message) => (
-                        <button
-                          key={message}
-                          type="button"
-                          onClick={() => void handleQuickGreetingSubmit(message)}
-                          disabled={isSavingGreeting}
-                          className="rounded-full border border-[#14532d]/35 bg-white px-2.5 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          {message}
-                        </button>
-                      ))}
+                      <p className="mt-1 text-xs text-slate-500">How do you feel today? Share in one short message.</p>
                     </div>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasGreetingToday ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                      {hasGreetingToday ? 'Done today' : 'Pending'}
+                    </span>
+                  </div>
 
-                    {!showCustomGreetingInput ? (
-                      <div className="mt-3 pl-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowCustomGreetingInput(true)
-                            setGreetingMethod('text')
-                            setGreetingStatus('')
-                            setGreetingError('')
-                          }}
-                          className="inline-flex w-fit items-center text-xs font-semibold text-[#14532d] transition hover:underline"
-                        >
-                          Type it manually
-                        </button>
-                      </div>
-                    ) : (
-                      <>
+                  {hasGreetingToday ? (
+                    <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditCheckinMessage(greetingMessage)
+                          setEditCheckinStatus('')
+                          setIsEditingCheckin(true)
+                        }}
+                        className="text-xs font-semibold text-emerald-700 underline-offset-2 hover:underline"
+                      >
+                        You already checked in. Edit it
+                      </button>
+
+                      {!isEditingCheckin && greetingMessage && (
+                        <p className="mt-2 rounded-lg bg-white px-3 py-2 text-sm text-slate-700">{greetingMessage}</p>
+                      )}
+
+                      {isEditingCheckin ? (
                         <div className="mt-3">
                           <textarea
-                            value={greetingMessage}
-                            onChange={(event) => {
-                              setGreetingMethod('text')
-                              setGreetingMessage(event.target.value)
-                            }}
-                            placeholder="Share your energy level, wins, or challenge for today..."
+                            value={editCheckinMessage}
+                            onChange={(event) => setEditCheckinMessage(event.target.value)}
+                            placeholder="Update your check-in..."
                             className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
                             maxLength={500}
                           />
-                          <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
-                        </div>
-
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setGreetingMethod('voice')
-                              startVoiceCapture()
-                            }}
-                            disabled={!speechSupported || isListening}
-                            className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-                          >
-                            {isListening ? 'Listening...' : 'Voice'}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => void handleSubmitGreeting()}
-                            disabled={isSavingGreeting}
-                            className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
-                          >
-                            {isSavingGreeting ? 'Saving...' : 'Check in'}
-                          </button>
-                        </div>
-                      </>
-                    )}
-
-                    {!speechSupported && showCustomGreetingInput && (
-                      <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
-                    )}
-                    {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
-                    {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
-                  </>
-                )}
-
-                {hasGreetingToday && (
-                  <div className="mt-5 border-t border-amber-300/40 pt-4">
-                    <div className="rounded-2xl border border-amber-300 bg-white px-4 py-3 shadow-sm">
-                      <h3 className="text-sm font-bold text-amber-800 sm:text-base">
-                        Hello {session.user?.name || 'there'}! How was your day?
-                      </h3>
-                    </div>
-                    {hasReflectionToday ? (
-                      <div className="mt-3">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditReflectionMessage(reflectionMessage)
-                            setEditReflectionStatus('')
-                            setIsEditingReflection(true)
-                          }}
-                          className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-100"
-                        >
-                          Already reflected today. Click here to edit.
-                        </button>
-
-                        {isEditingReflection ? (
-                          <div className="mt-3">
-                            <textarea
-                              value={editReflectionMessage}
-                              onChange={(event) => setEditReflectionMessage(event.target.value)}
-                              placeholder="Update your reflection..."
-                              className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
-                              maxLength={1000}
-                            />
-                            <p className="mt-1 text-xs text-slate-500">{editReflectionMessage.trim().length}/1000</p>
-                            <div className="mt-3 flex flex-wrap items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={handleSaveEditReflection}
-                                disabled={isSavingReflection}
-                                className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
-                              >
-                                {isSavingReflection ? 'Saving...' : 'Save reflection'}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setIsEditingReflection(false)
-                                  setEditReflectionMessage(reflectionMessage)
-                                  setEditReflectionStatus('')
-                                }}
-                                className="rounded-md border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                            {editReflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{editReflectionStatus}</p>}
-                          </div>
-                        ) : (
-                          <div className="mt-3 rounded-lg border border-amber-200 bg-white px-3 py-3 text-sm text-slate-700">
-                            <p className="whitespace-pre-wrap">{reflectionMessage}</p>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <>
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                          {QUICK_REFLECTION_MESSAGES.map((message) => (
+                          <p className="mt-1 text-xs text-slate-500">{editCheckinMessage.trim().length}/500</p>
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
                             <button
-                              key={message}
                               type="button"
-                              onClick={() => void handleQuickReflectionSubmit(message)}
-                              disabled={isSavingReflection}
-                              className="rounded-full border border-amber-300 bg-white px-2.5 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
+                              onClick={handleSaveEditCheckin}
+                              className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534]"
                             >
-                              {message}
+                              Save check-in
                             </button>
-                          ))}
-                        </div>
-
-                        {!showCustomReflectionInput ? (
-                          <div className="mt-3 pl-1">
                             <button
                               type="button"
                               onClick={() => {
-                                setShowCustomReflectionInput(true)
-                                setReflectionStatus('')
-                                setReflectionError('')
+                                setIsEditingCheckin(false)
+                                setEditCheckinMessage(greetingMessage)
+                                setEditCheckinStatus('')
                               }}
-                              className="inline-flex w-fit items-center text-xs font-semibold text-amber-700 transition hover:underline"
+                              className="rounded-md border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                             >
-                              Type it manually
+                              Cancel
                             </button>
                           </div>
-                        ) : (
-                          <>
-                            <div className="mt-3">
-                              <textarea
-                                value={reflectionMessage}
-                                onChange={(event) => setReflectionMessage(event.target.value)}
-                                placeholder="Write your reflection for today..."
-                                className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
-                                maxLength={1000}
-                              />
-                              <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
-                            </div>
-                            <div className="mt-3 flex flex-wrap items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => startVoiceCapture('reflection')}
-                                disabled={!speechSupported || isListening}
-                                className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-                              >
-                                {isListening ? 'Listening...' : 'Voice'}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => void handleSubmitReflection()}
-                                disabled={isSavingReflection}
-                                className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
-                              >
-                                {isSavingReflection ? 'Saving...' : 'Reflect'}
-                              </button>
-                            </div>
-                          </>
-                        )}
+                          {editCheckinStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{editCheckinStatus}</p>}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        {QUICK_CHECKIN_MESSAGES.map((message) => (
+                          <button
+                            key={message}
+                            type="button"
+                            onClick={() => void handleQuickGreetingSubmit(message)}
+                            disabled={isSavingGreeting}
+                            className="rounded-full border border-[#14532d]/35 bg-[#14532d]/5 px-2.5 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {message}
+                          </button>
+                        ))}
+                      </div>
 
-                        {!speechSupported && showCustomReflectionInput && (
-                          <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
-                        )}
-                      </>
-                    )}
-                    {reflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{reflectionStatus}</p>}
-                    {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
+                      {!showCustomGreetingInput ? (
+                        <div className="mt-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowCustomGreetingInput(true)
+                              setGreetingMethod('text')
+                              setGreetingStatus('')
+                              setGreetingError('')
+                            }}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-[#14532d] transition hover:underline"
+                          >
+                            ✍️ Type it manually
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="mt-3">
+                            <textarea
+                              value={greetingMessage}
+                              onChange={(event) => {
+                                setGreetingMethod('text')
+                                setGreetingMessage(event.target.value)
+                              }}
+                              placeholder="Share your energy level, wins, or challenge for today..."
+                              className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                              maxLength={500}
+                            />
+                            <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
+                          </div>
+
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setGreetingMethod('voice')
+                                startVoiceCapture()
+                              }}
+                              disabled={!speechSupported || isListening}
+                              className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {isListening ? '🎙️ Listening...' : '🎙️ Voice'}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => void handleSubmitGreeting()}
+                              disabled={isSavingGreeting}
+                              className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
+                            >
+                              {isSavingGreeting ? 'Saving...' : 'Check in now'}
+                            </button>
+                          </div>
+                        </>
+                      )}
+
+                      {!speechSupported && showCustomGreetingInput && (
+                        <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
+                      )}
+                      {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
+                      {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
+                    </>
+                  )}
+                </article>
+
+                <article className={`checkin-message rounded-2xl border bg-white px-4 py-4 shadow-sm transition-all ${hasGreetingToday ? 'border-amber-300/60' : 'border-slate-200 opacity-85'}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-base">🌙</span>
+                        <h3 className="text-sm font-bold text-amber-800 sm:text-base">Daily Reflection</h3>
+                      </div>
+                      <p className="mt-1 text-xs text-slate-500">Capture one thing you learned or felt today.</p>
+                    </div>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-emerald-100 text-emerald-700' : hasGreetingToday ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}>
+                      {hasReflectionToday ? 'Done today' : hasGreetingToday ? 'Ready' : 'Check-in first'}
+                    </span>
                   </div>
-                )}
+
+                  {!hasGreetingToday ? (
+                    <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-xs text-slate-500">
+                      Complete your check-in first, then reflection opens automatically.
+                    </div>
+                  ) : hasReflectionToday ? (
+                    <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditReflectionMessage(reflectionMessage)
+                          setEditReflectionStatus('')
+                          setIsEditingReflection(true)
+                        }}
+                        className="text-xs font-semibold text-amber-700 underline-offset-2 hover:underline"
+                      >
+                        You already reflected today. Edit it
+                      </button>
+
+                      {!isEditingReflection && reflectionMessage && (
+                        <p className="mt-2 whitespace-pre-wrap rounded-lg bg-white px-3 py-2 text-sm text-slate-700">{reflectionMessage}</p>
+                      )}
+
+                      {isEditingReflection ? (
+                        <div className="mt-3">
+                          <textarea
+                            value={editReflectionMessage}
+                            onChange={(event) => setEditReflectionMessage(event.target.value)}
+                            placeholder="Update your reflection..."
+                            className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
+                            maxLength={1000}
+                          />
+                          <p className="mt-1 text-xs text-slate-500">{editReflectionMessage.trim().length}/1000</p>
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={handleSaveEditReflection}
+                              disabled={isSavingReflection}
+                              className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
+                            >
+                              {isSavingReflection ? 'Saving...' : 'Save reflection'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsEditingReflection(false)
+                                setEditReflectionMessage(reflectionMessage)
+                                setEditReflectionStatus('')
+                              }}
+                              className="rounded-md border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                          {editReflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{editReflectionStatus}</p>}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        {QUICK_REFLECTION_MESSAGES.map((message) => (
+                          <button
+                            key={message}
+                            type="button"
+                            onClick={() => void handleQuickReflectionSubmit(message)}
+                            disabled={isSavingReflection}
+                            className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {message}
+                          </button>
+                        ))}
+                      </div>
+
+                      {!showCustomReflectionInput ? (
+                        <div className="mt-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowCustomReflectionInput(true)
+                              setReflectionStatus('')
+                              setReflectionError('')
+                            }}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 transition hover:underline"
+                          >
+                            ✍️ Type it manually
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="mt-3">
+                            <textarea
+                              value={reflectionMessage}
+                              onChange={(event) => setReflectionMessage(event.target.value)}
+                              placeholder="Write your reflection for today..."
+                              className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
+                              maxLength={1000}
+                            />
+                            <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
+                          </div>
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => startVoiceCapture('reflection')}
+                              disabled={!speechSupported || isListening}
+                              className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {isListening ? '🎙️ Listening...' : '🎙️ Voice'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void handleSubmitReflection()}
+                              disabled={isSavingReflection}
+                              className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
+                            >
+                              {isSavingReflection ? 'Saving...' : 'Reflect now'}
+                            </button>
+                          </div>
+                        </>
+                      )}
+
+                      {!speechSupported && showCustomReflectionInput && (
+                        <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
+                      )}
+                      {reflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{reflectionStatus}</p>}
+                      {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
+                    </>
+                  )}
+                </article>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-[radial-gradient(circle_at_top,#eff6ff_0%,#ffffff_38%,#faf5ff_100%)] p-3 sm:p-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Today&apos;s Class Check-ins & Reflections</h3>
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
+                    <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
                     {classActivityUnread.total > 0 && (
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
@@ -1570,7 +1604,7 @@ export default function Home() {
                     greetingConversation.map((item) => (
                       <article
                         key={item.id}
-                        className={`rounded-2xl border px-3 py-3 text-xs shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:px-4 sm:text-sm ${getActivityBubbleStyle(item)}`}
+                        className={`checkin-message rounded-2xl border px-3 py-3 text-xs shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:px-4 sm:text-sm ${getActivityBubbleStyle(item)}`}
                       >
                         <div className="flex items-start gap-3">
                           {item.studentImage ? (

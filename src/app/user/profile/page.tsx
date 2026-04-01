@@ -59,6 +59,11 @@ export default function ProfilePage() {
   })
   const [badges, setBadges] = useState<BadgeItem[]>([])
   const [badgesLoading, setBadgesLoading] = useState(false)
+  const [showAllBadges, setShowAllBadges] = useState(false)
+
+  const defaultVisibleBadges = 5
+  const hiddenBadgesCount = Math.max(0, badges.length - defaultVisibleBadges)
+  const visibleBadges = showAllBadges ? badges : badges.slice(0, defaultVisibleBadges)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -226,45 +231,62 @@ export default function ProfilePage() {
               ) : badges.length === 0 ? (
                 <p className="text-xs text-slate-500">No activity data yet.</p>
               ) : (
-                <div className="space-y-2">
-                  {badges.map((badge) => (
-                    <div
-                      key={badge.id}
-                      className={`flex items-start gap-3 rounded-lg border p-3 transition-all ${
-                        badge.earned
-                          ? 'border-[#14532d]/20 bg-[#14532d]/5'
-                          : 'border-slate-100 bg-slate-50 opacity-60'
-                      }`}
-                    >
-                      <span className="mt-0.5 shrink-0 text-xl leading-none">{badge.icon}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className={`text-xs font-bold ${ badge.earned ? 'text-[#14532d]' : 'text-slate-500'}`}>{badge.name}</p>
-                          {badge.earned && <span className="shrink-0 rounded-full bg-[#14532d] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Earned</span>}
-                        </div>
-                        <p className="mt-0.5 text-[11px] leading-snug text-slate-500">{badge.description}</p>
-                        {!badge.earned && typeof badge.progress === 'number' && (
-                          <div className="mt-1.5">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] text-slate-400">{badge.progressLabel}</span>
-                              <span className="text-[10px] font-semibold text-slate-500">{badge.progress}%</span>
+                <div>
+                  <div className="relative">
+                    <div className="space-y-2">
+                      {visibleBadges.map((badge) => (
+                        <div
+                          key={badge.id}
+                          className={`flex items-start gap-3 rounded-lg border p-3 transition-all ${
+                            badge.earned
+                              ? 'border-[#14532d]/20 bg-[#14532d]/5'
+                              : 'border-slate-100 bg-slate-50 opacity-60'
+                          }`}
+                        >
+                          <span className="mt-0.5 shrink-0 text-xl leading-none">{badge.icon}</span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className={`text-xs font-bold ${ badge.earned ? 'text-[#14532d]' : 'text-slate-500'}`}>{badge.name}</p>
+                              {badge.earned && <span className="shrink-0 rounded-full bg-[#14532d] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Earned</span>}
                             </div>
-                            <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-slate-200">
-                              <div
-                                className="h-full rounded-full bg-[#14532d]/40 transition-all"
-                                style={{ width: `${badge.progress}%` }}
-                              />
-                            </div>
+                            <p className="mt-0.5 text-[11px] leading-snug text-slate-500">{badge.description}</p>
+                            {!badge.earned && typeof badge.progress === 'number' && (
+                              <div className="mt-1.5">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[10px] text-slate-400">{badge.progressLabel}</span>
+                                  <span className="text-[10px] font-semibold text-slate-500">{badge.progress}%</span>
+                                </div>
+                                <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-slate-200">
+                                  <div
+                                    className="h-full rounded-full bg-[#14532d]/40 transition-all"
+                                    style={{ width: `${badge.progress}%` }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                            {badge.earned && badge.earnedAt && (
+                              <p className="mt-1 text-[10px] text-slate-400">
+                                {new Date(badge.earnedAt).toLocaleDateString('en-GB')}
+                              </p>
+                            )}
                           </div>
-                        )}
-                        {badge.earned && badge.earnedAt && (
-                          <p className="mt-1 text-[10px] text-slate-400">
-                            {new Date(badge.earnedAt).toLocaleDateString('en-GB')}
-                          </p>
-                        )}
-                      </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                    {!showAllBadges && hiddenBadgesCount > 0 && (
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-t from-white via-white/90 to-transparent" />
+                    )}
+                  </div>
+
+                  {hiddenBadgesCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllBadges((prev) => !prev)}
+                      className="mt-2 w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100"
+                    >
+                      {showAllBadges ? 'Show less' : `Expand to see ${hiddenBadgesCount} more`}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
