@@ -154,11 +154,11 @@ export default function MyHomeworkPage() {
 
         <section className="mb-6 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-amber-700">Pending</p>
+            <p className="text-xs uppercase tracking-wide text-amber-700">Pending Homework</p>
             <p className="mt-2 text-3xl font-black text-amber-800">{pendingHomework.length}</p>
           </div>
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-emerald-700">Submitted</p>
+            <p className="text-xs uppercase tracking-wide text-emerald-700">Submitted Homework</p>
             <p className="mt-2 text-3xl font-black text-emerald-800">{submittedHomework.length}</p>
           </div>
         </section>
@@ -171,8 +171,7 @@ export default function MyHomeworkPage() {
         ) : (
           <div className="grid gap-6 xl:grid-cols-2">
             <section className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-bold text-amber-800">Pending Homework</h2>
-              <div className="mt-4 space-y-4">
+              <div className="space-y-4">
                 {pendingHomework.length === 0 && (
                   <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-800">You have submitted all required homework.</p>
                 )}
@@ -224,8 +223,7 @@ export default function MyHomeworkPage() {
             </section>
 
             <section className="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm">
-              <h2 className="text-xl font-bold text-emerald-800">Submitted Homework</h2>
-              <div className="mt-4 space-y-4">
+              <div className="space-y-4">
                 {submittedHomework.length === 0 && (
                   <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700">You have not submitted any homework yet.</p>
                 )}

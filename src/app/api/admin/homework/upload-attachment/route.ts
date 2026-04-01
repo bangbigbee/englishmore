@@ -1,10 +1,12 @@
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
 import { mkdir, writeFile } from 'fs/promises'
 import path from 'path'
 import crypto from 'crypto'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const ALLOWED_TYPES: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -28,16 +30,33 @@ const ALLOWED_TYPES: Record<string, string> = {
 
 const MAX_SIZE = 20 * 1024 * 1024 // 20 MB
 
+function getExtensionFromName(name: string) {
+  const ext = name.split('.').pop()?.toLowerCase() || ''
+  if (!ext) return null
+
+  const allowedExts = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp3', 'm4a', 'wav', 'ogg', 'webm', 'mp4', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'])
+  return allowedExts.has(ext) ? ext : null
+}
+
+async function requireAdminUser() {
+  const session = await getServerSession(authOptions)
+  if (!session || !session.user) {
+    return { ok: false as const, status: 401, error: 'Unauthorized' }
+  }
+
+  // Prefer role from session token to avoid extra DB call in upload route.
+  if (session.user.role === 'admin') {
+    return { ok: true as const, status: 200, error: '' }
+  }
+
+  return { ok: false as const, status: 403, error: 'Forbidden' }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session || !session.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const user = await prisma.user.findUnique({ where: { id: session.user.id as string } })
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    const auth = await requireAdminUser()
+    if (!auth.ok) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
     }
 
     const formData = await request.formData()
@@ -47,7 +66,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    const ext = ALLOWED_TYPES[file.type]
+    const extByMime = ALLOWED_TYPES[file.type]
+    const extByName = getExtensionFromName(file.name || '')
+    const ext = extByMime || extByName
     if (!ext) {
       return NextResponse.json(
         { error: 'Unsupported file type. Allowed: images, audio, PDF, Word, PowerPoint, Excel.' },
@@ -71,6 +92,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: `/uploads/homework/${safeName}` })
   } catch (error) {
     console.error('[Homework Upload] Error:', error)
-    return NextResponse.json({ error: 'Failed to upload file', details: String(error) }, { status: 500 })
+    const detail = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: 'Failed to upload file', details: detail }, { status: 500 })
   }
 }

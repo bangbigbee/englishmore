@@ -1061,7 +1061,10 @@ export default function AdminDashboard() {
     fd.append('file', file)
     const res = await fetch('/api/admin/homework/upload-attachment', { method: 'POST', body: fd })
     const data = await res.json()
-    if (!res.ok) throw new Error(data?.error || 'Could not upload the attachment.')
+    if (!res.ok) {
+      const detail = typeof data?.details === 'string' && data.details ? ` (${data.details})` : ''
+      throw new Error((data?.error || 'Could not upload the attachment.') + detail)
+    }
     return data.url as string
   }
 
