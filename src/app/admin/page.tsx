@@ -286,6 +286,19 @@ const parseDdMmYyyyToIsoDate = (value: string) => {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
+const parseApiResponse = async (response: Response) => {
+  const raw = await response.text()
+  if (!raw) {
+    return {}
+  }
+
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return { error: raw }
+  }
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -974,7 +987,7 @@ export default function AdminDashboard() {
           questions: newExerciseQuestions
         })
       })
-      const data = await res.json()
+      const data = await parseApiResponse(res)
       if (!res.ok) throw new Error(data?.error || 'Unable to create exercise')
 
       setExerciseSuccess(saveAsDraft ? 'Exercise draft saved.' : 'New exercise created.')
@@ -1093,7 +1106,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: editExerciseTitle, description: editExerciseDescription, questions: editExerciseQuestions })
       })
-      const data = await res.json()
+      const data = await parseApiResponse(res)
       if (!res.ok) throw new Error(data?.error || 'Unable to update exercise')
 
       setExerciseSuccess('Exercise updated.')

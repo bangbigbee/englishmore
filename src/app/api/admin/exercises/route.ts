@@ -58,76 +58,81 @@ export async function GET() {
     return NextResponse.json({ error: auth.status === 401 ? 'Unauthorized' : 'Forbidden' }, { status: auth.status })
   }
 
-  const [courses, exercises] = await Promise.all([
-    prisma.course.findMany({
-      select: { id: true, title: true },
-      orderBy: { createdAt: 'desc' }
-    }),
-    prisma.courseExercise.findMany({
-      select: {
-        id: true,
-        courseId: true,
-        order: true,
-        title: true,
-        description: true,
-        isDraft: true,
-        sourceFormUrl: true,
-        course: { select: { title: true } },
-        questions: {
-          select: {
-            id: true,
-            order: true,
-            question: true,
-            optionA: true,
-            optionB: true,
-            optionC: true,
-            correctOption: true
-          },
-          orderBy: { order: 'asc' }
-        },
-        submissions: {
-          select: {
-            id: true,
-            score: true,
-            totalQuestions: true,
-            durationSeconds: true,
-            submittedAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true
-              }
+  try {
+    const [courses, exercises] = await Promise.all([
+      prisma.course.findMany({
+        select: { id: true, title: true },
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.courseExercise.findMany({
+        select: {
+          id: true,
+          courseId: true,
+          order: true,
+          title: true,
+          description: true,
+          isDraft: true,
+          sourceFormUrl: true,
+          course: { select: { title: true } },
+          questions: {
+            select: {
+              id: true,
+              order: true,
+              question: true,
+              optionA: true,
+              optionB: true,
+              optionC: true,
+              correctOption: true
             },
-            answers: {
-              select: {
-                id: true,
-                selectedOption: true,
-                isCorrect: true,
-                question: {
-                  select: {
-                    id: true,
-                    order: true,
-                    question: true,
-                    correctOption: true
-                  }
+            orderBy: { order: 'asc' }
+          },
+          submissions: {
+            select: {
+              id: true,
+              score: true,
+              totalQuestions: true,
+              durationSeconds: true,
+              submittedAt: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
                 }
               },
-              orderBy: {
-                question: {
-                  order: 'asc'
+              answers: {
+                select: {
+                  id: true,
+                  selectedOption: true,
+                  isCorrect: true,
+                  question: {
+                    select: {
+                      id: true,
+                      order: true,
+                      question: true,
+                      correctOption: true
+                    }
+                  }
+                },
+                orderBy: {
+                  question: {
+                    order: 'asc'
+                  }
                 }
               }
-            }
-          },
-          orderBy: { submittedAt: 'desc' }
-        }
-      },
-      orderBy: [{ courseId: 'asc' }, { order: 'asc' }]
-    })
-  ])
+            },
+            orderBy: { submittedAt: 'desc' }
+          }
+        },
+        orderBy: [{ courseId: 'asc' }, { order: 'asc' }]
+      })
+    ])
 
-  return NextResponse.json({ courses, exercises })
+    return NextResponse.json({ courses, exercises })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Could not load exercises.'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -165,36 +170,41 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const latestExercise = await prisma.courseExercise.findFirst({
-    where: { courseId },
-    orderBy: { order: 'desc' },
-    select: { order: true }
-  })
+  try {
+    const latestExercise = await prisma.courseExercise.findFirst({
+      where: { courseId },
+      orderBy: { order: 'desc' },
+      select: { order: true }
+    })
 
-  const exercise = await prisma.courseExercise.create({
-    data: {
-      courseId,
-      order: (latestExercise?.order || 0) + 1,
-      title: normalizedTitle,
-      description: String(description || '').trim() || null,
-      isDraft: creatingDraft,
-      sourceFormUrl: String(sourceFormUrl || '').trim() || null,
-      questions: {
-        create: normalizedQuestions.map((item, index) => ({
-          order: index + 1,
-          question: item.question,
-          optionA: item.optionA,
-          optionB: item.optionB,
-          optionC: item.optionC,
-          correctOption: item.correctOption
-        }))
+    const exercise = await prisma.courseExercise.create({
+      data: {
+        courseId,
+        order: (latestExercise?.order || 0) + 1,
+        title: normalizedTitle,
+        description: String(description || '').trim() || null,
+        isDraft: creatingDraft,
+        sourceFormUrl: String(sourceFormUrl || '').trim() || null,
+        questions: {
+          create: normalizedQuestions.map((item, index) => ({
+            order: index + 1,
+            question: item.question,
+            optionA: item.optionA,
+            optionB: item.optionB,
+            optionC: item.optionC,
+            correctOption: item.correctOption
+          }))
+        }
+      },
+      include: {
+        course: { select: { title: true } },
+        questions: { orderBy: { order: 'asc' } }
       }
-    },
-    include: {
-      course: { select: { title: true } },
-      questions: { orderBy: { order: 'asc' } }
-    }
-  })
+    })
 
-  return NextResponse.json(exercise, { status: 201 })
+    return NextResponse.json(exercise, { status: 201 })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Could not create exercise.'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 }

@@ -122,8 +122,9 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     })
 
     return NextResponse.json(exercise)
-  } catch {
-    return NextResponse.json({ error: 'Exercise not found' }, { status: 404 })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Could not update exercise.'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
