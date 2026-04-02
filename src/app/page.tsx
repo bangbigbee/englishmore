@@ -1710,21 +1710,9 @@ export default function Home() {
               </div>
 
               <div className="rounded-2xl border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-amber-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
-                    <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#14532d]/20 bg-[#14532d]/5 px-2.5 py-1 text-[11px] font-semibold text-[#14532d]">
-                      <span className="h-2 w-2 rounded-full bg-[#14532d]" />
-                      {classActivitySummary.checkins} check-in
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
-                      <span className="h-2 w-2 rounded-full bg-amber-500" />
-                      {classActivitySummary.reflections} reflection
-                    </span>
-                  </div>
+                <div className="mb-3">
+                  <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
+                  <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
                 </div>
                 <div className="mt-3 max-h-72 space-y-2.5 overflow-y-auto pr-1 sm:max-h-80">
                   {greetingConversationLoading ? (

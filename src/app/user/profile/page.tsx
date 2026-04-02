@@ -218,7 +218,7 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
           <aside className="space-y-6 lg:sticky lg:top-6 self-start">
-            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border-2 border-slate-200 bg-white p-4 shadow-sm">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700">Achievements</h2>
                 {badges.length > 0 && (
@@ -306,8 +306,7 @@ export default function ProfilePage() {
             </div>
           </aside>
 
-          <div className="bg-white rounded-lg shadow p-6 sm:p-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Profile</h1>
+          <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm p-6 sm:p-8">
 
             {error && <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">{error}</div>}
             {success && <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded text-green-700 text-sm">{success}</div>}
