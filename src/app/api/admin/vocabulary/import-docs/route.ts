@@ -66,53 +66,31 @@ const extractGoogleDocId = (inputUrl: string) => {
 
 const parseVocabularyFromText = (text: string) => {
   const normalizedText = String(text || '').replace(/\r/g, '\n')
-  const blocks = normalizedText
-    .split(/\n\s*---+\s*\n|(?:\n\s*){2,}/)
-    .map((block) => block.trim())
-    .filter((block) => block.length > 0)
-
+  const lines = normalizedText.split('\n').map((line) => line.trim())
   const parsedItems: ParsedVocabularyItem[] = []
   let invalidCount = 0
 
-  for (const block of blocks) {
-    const lines = block
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0)
+  const currentMap = new Map<string, string>()
 
-    const map = new Map<string, string>()
-
-    for (const line of lines) {
-      const separatorIndex = line.indexOf(':')
-      if (separatorIndex <= 0) continue
-
-      const key = line
-        .slice(0, separatorIndex)
-        .trim()
-        .toUpperCase()
-        .replace(/[^A-Z0-9]+/g, '_')
-        .replace(/^_+|_+$/g, '')
-      const value = line.slice(separatorIndex + 1).trim()
-      if (!value) continue
-
-      if (!map.has(key)) {
-        map.set(key, value)
-      }
+  const flushCurrentItem = () => {
+    if (currentMap.size === 0) {
+      return
     }
 
-    const word = getFirstValue(map, ['WORD'])
-    const meaning = getFirstValue(map, ['MEANING'])
-    const phonetic = getFirstValue(map, ['PHONETIC'])
-    const partOfSpeech = getFirstValue(map, ['PART_OF_SPEECH', 'PARTOFSPEECH', 'POS'])
-    const englishDefinitionRaw = getFirstValue(map, ['ENGLISH_DEFINITION', 'ENGLISHDEFINITION', 'DEFINITION'])
+    const word = getFirstValue(currentMap, ['WORD'])
+    const meaning = getFirstValue(currentMap, ['MEANING'])
+    const phonetic = getFirstValue(currentMap, ['PHONETIC'])
+    const partOfSpeech = getFirstValue(currentMap, ['PART_OF_SPEECH', 'PARTOFSPEECH', 'POS'])
+    const englishDefinitionRaw = getFirstValue(currentMap, ['ENGLISH_DEFINITION', 'ENGLISHDEFINITION', 'DEFINITION'])
     const englishDefinition = englishDefinitionRaw
       ? (partOfSpeech ? `[${partOfSpeech}] ${englishDefinitionRaw}` : englishDefinitionRaw)
       : (partOfSpeech ? `[${partOfSpeech}]` : '')
-    const example = getFirstValue(map, ['EXAMPLE'])
+    const example = getFirstValue(currentMap, ['EXAMPLE'])
 
     if (!word || !meaning) {
       invalidCount += 1
-      continue
+      currentMap.clear()
+      return
     }
 
     parsedItems.push({
@@ -122,7 +100,46 @@ const parseVocabularyFromText = (text: string) => {
       meaning,
       example: example || null
     })
+
+    currentMap.clear()
   }
+
+  for (const line of lines) {
+    if (!line) {
+      continue
+    }
+
+    if (/^---+$/.test(line)) {
+      flushCurrentItem()
+      continue
+    }
+
+    const separatorIndex = line.indexOf(':')
+    if (separatorIndex <= 0) {
+      continue
+    }
+
+    const key = line
+      .slice(0, separatorIndex)
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+    const value = line.slice(separatorIndex + 1).trim()
+    if (!value) {
+      continue
+    }
+
+    if (key === 'WORD' && currentMap.has('WORD')) {
+      flushCurrentItem()
+    }
+
+    if (!currentMap.has(key)) {
+      currentMap.set(key, value)
+    }
+  }
+
+  flushCurrentItem()
 
   return { parsedItems, invalidCount }
 }
