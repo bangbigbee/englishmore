@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import LinkifiedText from '@/components/LinkifiedText'
 
 interface CourseItem {
   id: string
@@ -2822,7 +2823,9 @@ export default function AdminDashboard() {
                         {group.items.map((homework) => (
                           <tr key={homework.id} className="border-b hover:bg-gray-50">
                             <td className="px-4 py-3 text-sm text-gray-900">{homework.title}</td>
-                            <td className="px-4 py-3 text-sm text-gray-600">{homework.description || 'No description'}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">
+                              <LinkifiedText text={homework.description || 'No description'} />
+                            </td>
                             <td className="px-4 py-3 text-sm">
                               {homework.attachmentUrl ? (
                                 <a
@@ -2962,7 +2965,9 @@ export default function AdminDashboard() {
                                   {latestMessage ? (
                                     <p className="max-w-xs truncate">
                                       <span className="font-semibold">{latestMessage.senderRole === 'teacher' ? 'Teacher: ' : 'Student: '}</span>
-                                      <span>{latestMessage.content}</span>
+                                      <span>
+                                        <LinkifiedText text={latestMessage.content} preserveLineBreaks={false} linkClassName="font-medium text-sky-700 underline underline-offset-2 hover:text-sky-800" />
+                                      </span>
                                     </p>
                                   ) : (
                                     <span className="text-gray-500">No messages yet</span>
@@ -3032,11 +3037,11 @@ export default function AdminDashboard() {
                               {message.senderRole === 'student' ? 'Student' : 'Teacher'}
                             </p>
                             <p
-                              className={`mt-1 whitespace-pre-wrap ${
+                              className={`mt-1 ${
                                 message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
                               }`}
                             >
-                              {message.content}
+                              <LinkifiedText text={message.content} />
                             </p>
                             {youtubeVideoId && (
                               <div className="mt-2 overflow-hidden rounded-lg border border-slate-200 bg-black">
@@ -3122,7 +3127,9 @@ export default function AdminDashboard() {
                         {exercise.isDraft ? 'Draft' : 'Published'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{exercise.description || 'No description yet'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      <LinkifiedText text={exercise.description || 'No description yet'} />
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.questions.length}</td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex items-center gap-3">
@@ -3639,7 +3646,9 @@ export default function AdminDashboard() {
                 {courses.map((course) => (
                   <tr key={course.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{course.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{course.description || 'No description yet'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">
+                      <LinkifiedText text={course.description || 'No description yet'} />
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                     </td>

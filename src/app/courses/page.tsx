@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import LinkifiedText from '@/components/LinkifiedText'
 
 interface Course {
   id: string
@@ -184,7 +185,9 @@ export default function CoursesPage() {
               return (
                 <div key={course.id} className="bg-white rounded shadow-md p-4 sm:p-6 hover:shadow-lg transition">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{course.title}</h3>
-                  <p className="text-gray-700 text-xs sm:text-sm mb-2">{course.description || 'No description available.'}</p>
+                  <p className="text-gray-700 text-xs sm:text-sm mb-2">
+                    <LinkifiedText text={course.description || 'No description available.'} />
+                  </p>
                   <p className="text-gray-600 text-xs sm:text-sm mb-2">
                     Registration deadline: {new Date(course.registrationDeadline).toLocaleDateString('en-GB')}
                   </p>
@@ -287,7 +290,7 @@ export default function CoursesPage() {
                   <p className="text-gray-600 mb-1">Transfer message:</p>
                   <div className="rounded border-2 border-[#14532d] bg-green-50 p-3 text-center">
                     <span className="font-mono text-sm font-normal tracking-wider text-[#14532d]">
-                      {paymentInstruction.transferContent}
+                      <LinkifiedText text={paymentInstruction.transferContent} preserveLineBreaks={false} linkClassName="break-all font-medium text-[#14532d] underline underline-offset-2 hover:text-[#166534]" />
                     </span>
                   </div>
                   <p className="text-sm text-[#14532d] font-semibold mt-1">Example: Nguyen Van A - 0934567890</p>

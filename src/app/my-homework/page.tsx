@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
+import LinkifiedText from '@/components/LinkifiedText'
 
 interface HomeworkRow {
   id: string
@@ -201,7 +202,9 @@ export default function MyHomeworkPage() {
                         </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-amber-200 bg-white px-4 py-3">
-                            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                              <LinkifiedText text={item.description} />
+                            </p>
                           </div>
                         )}
                       </div>
@@ -263,7 +266,9 @@ export default function MyHomeworkPage() {
                         </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-emerald-200 bg-white px-4 py-3">
-                            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                            <p className="text-sm text-slate-700 leading-relaxed">
+                              <LinkifiedText text={item.description} />
+                            </p>
                           </div>
                         )}
                       </div>
@@ -319,11 +324,11 @@ export default function MyHomeworkPage() {
                                   {message.senderRole === 'student' ? 'You' : 'Teacher'}
                                 </p>
                                 <p
-                                  className={`mt-1 whitespace-pre-wrap ${
+                                  className={`mt-1 ${
                                     message.senderRole === 'student' ? 'text-emerald-900' : 'text-blue-900'
                                   }`}
                                 >
-                                  {message.content}
+                                  <LinkifiedText text={message.content} />
                                 </p>
                                 <p className="mt-1 text-[11px] text-slate-500">{new Date(message.createdAt).toLocaleString('en-GB')}</p>
                               </div>

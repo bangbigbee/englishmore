@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import LinkifiedText from '@/components/LinkifiedText'
 
 interface HomeworkItem {
   id: string
@@ -360,7 +361,9 @@ export default function Dashboard() {
                         <div>
                           <h3 className="text-lg font-bold text-[#14532d]">{getExerciseTitle(exercise)}</h3>
                           {exercise.description && (
-                            <p className="mt-1 text-sm text-gray-600">{exercise.description}</p>
+                            <p className="mt-1 text-sm text-gray-600">
+                              <LinkifiedText text={exercise.description} />
+                            </p>
                           )}
                           <p className="text-sm text-gray-500">
                             {Object.keys(exerciseAnswers[exercise.id] || {}).length}/{exercise.questions.length} questions answered

@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import LinkifiedText from '@/components/LinkifiedText'
 
 interface BadgeItem {
   id: string
@@ -248,7 +249,9 @@ export default function ProfilePage() {
                           <p className={`text-xs font-bold ${ badge.earned ? 'text-[#14532d]' : 'text-slate-500'}`}>{badge.name}</p>
                           {badge.earned && <span className="shrink-0 rounded-full bg-[#14532d] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Earned</span>}
                         </div>
-                        <p className="mt-0.5 text-[11px] leading-snug text-slate-500">{badge.description}</p>
+                        <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
+                          <LinkifiedText text={badge.description} />
+                        </p>
                         {!badge.earned && typeof badge.progress === 'number' && (
                           <div className="mt-1.5">
                             <div className="flex items-center justify-between">
