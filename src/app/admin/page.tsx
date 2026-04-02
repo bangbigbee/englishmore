@@ -1917,28 +1917,28 @@ export default function AdminDashboard() {
             onClick={() => setActiveSection('course')}
             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'course' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
-            1. COURSE MANAGEMENT
+            1. COURSE
           </button>
           <button
             type="button"
             onClick={() => setActiveSection('homework')}
             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'homework' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
-            2. HOMEWORK MANAGEMENT
+            2. HOMEWORK
           </button>
           <button
             type="button"
             onClick={() => setActiveSection('exercise')}
             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'exercise' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
-            3. EXERCISE MANAGEMENT
+            3. EXERCISE
           </button>
           <button
             type="button"
             onClick={() => setActiveSection('lectureNote')}
             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'lectureNote' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
-            4. LECTURE MANAGEMENT
+            4. LECTURE
           </button>
            <button
              type="button"
@@ -2790,9 +2790,9 @@ export default function AdminDashboard() {
                                 <td className="px-4 py-3 text-sm">
                                   <button
                                     onClick={() => setHomeworkDetailSubmissionId(submission.id)}
-                                    className="rounded bg-[#14532d] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#166534]"
+                                    className={`rounded px-3 py-1.5 text-xs font-semibold text-white transition-colors ${isPendingTeacherFeedback ? 'review-attention-button bg-amber-600 hover:bg-amber-700' : 'bg-[#14532d] hover:bg-[#166534]'}`}
                                   >
-                                    Detail
+                                    Review
                                   </button>
                                 </td>
                               </tr>

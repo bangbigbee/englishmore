@@ -190,6 +190,23 @@ body {
   animation: checkin-slide-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+@keyframes review-attention-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.55), 0 0 0 0 rgba(249, 115, 22, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.9), 0 0 0 6px rgba(249, 115, 22, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.55), 0 0 0 0 rgba(249, 115, 22, 0.2);
+  }
+}
+
+.review-attention-button {
+  border: 1px solid #f97316;
+  animation: review-attention-ring 1.8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .course-ticker-track {
     animation: none;
@@ -204,6 +221,10 @@ body {
   }
 
   .checkin-message {
+    animation: none;
+  }
+
+  .review-attention-button {
     animation: none;
   }
 }
