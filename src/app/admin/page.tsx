@@ -239,6 +239,34 @@ const buildExerciseResults = (items: ExerciseItem[]) =>
     )
     .sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
 
+const extractHomeworkOrder = (title: string) => {
+  const match = String(title || '').match(/homework\s*(\d+)/i)
+  return match ? Number(match[1]) : Number.POSITIVE_INFINITY
+}
+
+const HOMEWORK_SUBMISSION_GROUP_STYLES = [
+  {
+    wrap: 'border-[#14532d]/25',
+    header: 'border-[#14532d]/20 bg-[#14532d]/5',
+    title: 'text-[#14532d]'
+  },
+  {
+    wrap: 'border-amber-300/70',
+    header: 'border-amber-200 bg-amber-50',
+    title: 'text-amber-800'
+  },
+  {
+    wrap: 'border-blue-300/70',
+    header: 'border-blue-200 bg-blue-50',
+    title: 'text-blue-800'
+  },
+  {
+    wrap: 'border-emerald-300/70',
+    header: 'border-emerald-200 bg-emerald-50',
+    title: 'text-emerald-800'
+  }
+] as const
+
 const getExerciseTitle = (exercise: Pick<ExerciseItem, 'title' | 'order'>) => {
   const trimmed = String(exercise.title || '').trim()
   return trimmed || `Exercise ${exercise.order}`
@@ -573,6 +601,49 @@ export default function AdminDashboard() {
         }
       })
   }, [homeworks])
+
+  const groupedHomeworkSubmissions = useMemo(() => {
+    const groups = homeworkSubmissions.reduce((accumulator, submission) => {
+      const key = submission.homework.id
+      const existing = accumulator.get(key)
+      if (existing) {
+        existing.items.push(submission)
+        return accumulator
+      }
+
+      accumulator.set(key, {
+        homeworkId: submission.homework.id,
+        homeworkTitle: submission.homework.title,
+        courseTitle: submission.homework.course.title,
+        dueDate: submission.homework?.id ? (homeworks.find((item) => item.id === submission.homework.id)?.dueDate || '') : '',
+        items: [submission]
+      })
+
+      return accumulator
+    }, new Map<string, { homeworkId: string; homeworkTitle: string; courseTitle: string; dueDate: string; items: HomeworkSubmissionItem[] }>())
+
+    return Array.from(groups.values())
+      .sort((left, right) => {
+        const leftOrder = extractHomeworkOrder(left.homeworkTitle)
+        const rightOrder = extractHomeworkOrder(right.homeworkTitle)
+
+        if (leftOrder !== rightOrder) {
+          return leftOrder - rightOrder
+        }
+
+        const leftDue = left.dueDate ? new Date(left.dueDate).getTime() : Number.POSITIVE_INFINITY
+        const rightDue = right.dueDate ? new Date(right.dueDate).getTime() : Number.POSITIVE_INFINITY
+        if (leftDue !== rightDue) {
+          return leftDue - rightDue
+        }
+
+        return left.homeworkTitle.localeCompare(right.homeworkTitle, 'vi')
+      })
+      .map((group) => ({
+        ...group,
+        items: [...group.items].sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
+      }))
+  }, [homeworkSubmissions, homeworks])
 
   const fetchCourses = async () => {
     try {
@@ -1780,56 +1851,58 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-wrap gap-3">
+        <div className="mb-8 overflow-x-auto">
+          <div className="inline-flex min-w-max items-end gap-1 rounded-xl border border-slate-200 bg-white p-1.5 shadow-sm">
           <button
             type="button"
             onClick={() => setActiveSection('course')}
-            className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'course' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+            className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'course' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
             1. COURSE MANAGEMENT
           </button>
           <button
             type="button"
             onClick={() => setActiveSection('homework')}
-            className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'homework' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+            className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'homework' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
             2. HOMEWORK
           </button>
           <button
             type="button"
             onClick={() => setActiveSection('exercise')}
-            className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'exercise' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+            className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'exercise' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
             3. EXERCISE
           </button>
            <button
              type="button"
              onClick={() => setActiveSection('lectureNote')}
-             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'lectureNote' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'lectureNote' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
              4. LECTURE NOTES
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('dailyActivity')}
-             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'dailyActivity' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'dailyActivity' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
              5. DAILY ACTIVITY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('vocabulary')}
-             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'vocabulary' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'vocabulary' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
              6. VOCABULARY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('referral')}
-             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'referral' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'referral' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
              7. REFERRALS
            </button>
+          </div>
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'dailyActivity' ? '' : 'hidden'}`}>
@@ -2368,7 +2441,7 @@ export default function AdminDashboard() {
             <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Error: {homeworkError}</div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <select
               value={newHomeworkCourseId}
               onChange={(e) => setNewHomeworkCourseId(e.target.value)}
@@ -2394,13 +2467,6 @@ export default function AdminDashboard() {
               inputMode="numeric"
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
-            <button
-              onClick={createHomework}
-              disabled={newHomeworkAttachmentUploading}
-              className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium disabled:opacity-50"
-            >
-              {newHomeworkAttachmentUploading ? 'Uploading...' : 'Create homework'}
-            </button>
           </div>
 
           <textarea
@@ -2424,6 +2490,16 @@ export default function AdminDashboard() {
             {newHomeworkAttachment && (
               <p className="mt-1 text-xs text-gray-500">Selected: {newHomeworkAttachment.name}</p>
             )}
+
+            <div className="mt-4">
+              <button
+                onClick={createHomework}
+                disabled={newHomeworkAttachmentUploading}
+                className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium disabled:opacity-50"
+              >
+                {newHomeworkAttachmentUploading ? 'Uploading...' : 'Create homework'}
+              </button>
+            </div>
           </div>
 
           {groupedHomeworks.length === 0 ? (
@@ -2541,59 +2617,93 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-gray-200">
-            <table className="w-full border-collapse bg-white">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last message</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted at</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {homeworkSubmissions.map((submission) => {
-                  const latestMessage = [...(submission.messages || [])].reverse()[0]
-                  return (
-                    <tr key={submission.id} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        <p className="font-semibold">{submission.user.name || submission.user.email}</p>
-                        <p className="text-xs text-gray-500">{submission.user.phone || 'Not updated yet'}</p>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{submission.homework.course.title}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.title}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {latestMessage ? (
-                          <p className="max-w-xs truncate">
-                            <span className="font-semibold">{latestMessage.senderRole === 'teacher' ? 'Teacher: ' : 'Student: '}</span>
-                            <span>{latestMessage.content}</span>
-                          </p>
-                        ) : (
-                          <span className="text-gray-500">No messages yet</span>
+          {groupedHomeworkSubmissions.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-gray-300 px-4 py-8 text-center text-gray-500">
+              No submissions match the current filter.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {groupedHomeworkSubmissions.map((group, groupIndex) => {
+                const style = HOMEWORK_SUBMISSION_GROUP_STYLES[groupIndex % HOMEWORK_SUBMISSION_GROUP_STYLES.length]
+                const pendingFeedbackCount = group.items.filter((item) => {
+                  const latest = [...(item.messages || [])].reverse()[0]
+                  return latest?.senderRole === 'student'
+                }).length
+
+                return (
+                  <section key={group.homeworkId} className={`overflow-hidden rounded-xl border ${style.wrap}`}>
+                    <div className={`flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3 ${style.header}`}>
+                      <div>
+                        <h3 className={`text-sm font-bold sm:text-base ${style.title}`}>{group.homeworkTitle}</h3>
+                        <p className="mt-1 text-xs text-gray-600">{group.courseTitle}</p>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-semibold">
+                        <span className="rounded-full bg-white px-2.5 py-1 text-slate-600 ring-1 ring-slate-200">
+                          {group.items.length} submissions
+                        </span>
+                        {pendingFeedbackCount > 0 && (
+                          <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-800">
+                            {pendingFeedbackCount} waiting feedback
+                          </span>
                         )}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{new Date(submission.submittedAt).toLocaleString('en-GB')}</td>
-                      <td className="px-4 py-3 text-sm">
-                        <button
-                          onClick={() => setHomeworkDetailSubmissionId(submission.id)}
-                          className="rounded bg-[#14532d] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#166534]"
-                        >
-                          Detail
-                        </button>
-                      </td>
-                    </tr>
-                  )
-                })}
-                {homeworkSubmissions.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">No submissions match the current filter.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                      </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse bg-white">
+                        <thead className="bg-gray-50 border-b">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last message</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted at</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {group.items.map((submission) => {
+                            const latestMessage = [...(submission.messages || [])].reverse()[0]
+                            const isPendingTeacherFeedback = latestMessage?.senderRole === 'student'
+
+                            return (
+                              <tr key={submission.id} className={`border-b hover:bg-gray-50 ${isPendingTeacherFeedback ? 'bg-amber-50/60 font-semibold' : ''}`}>
+                                <td className="px-4 py-3 text-sm text-gray-900">
+                                  <p className="font-semibold">{submission.user.name || submission.user.email}</p>
+                                  <p className="text-xs text-gray-500">{submission.user.phone || 'Not updated yet'}</p>
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-700">{submission.homework.course.title}</td>
+                                <td className="px-4 py-3 text-sm text-gray-900">{submission.homework.title}</td>
+                                <td className="px-4 py-3 text-sm text-gray-700">
+                                  {latestMessage ? (
+                                    <p className="max-w-xs truncate">
+                                      <span className="font-semibold">{latestMessage.senderRole === 'teacher' ? 'Teacher: ' : 'Student: '}</span>
+                                      <span>{latestMessage.content}</span>
+                                    </p>
+                                  ) : (
+                                    <span className="text-gray-500">No messages yet</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-500">{new Date(submission.submittedAt).toLocaleString('en-GB')}</td>
+                                <td className="px-4 py-3 text-sm">
+                                  <button
+                                    onClick={() => setHomeworkDetailSubmissionId(submission.id)}
+                                    className="rounded bg-[#14532d] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#166534]"
+                                  >
+                                    Detail
+                                  </button>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
+                )
+              })}
+            </div>
+          )}
 
           {homeworkDetailSubmissionId && (() => {
             const selectedSubmission = homeworkSubmissions.find((item) => item.id === homeworkDetailSubmissionId)
