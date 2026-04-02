@@ -1735,6 +1735,24 @@ export default function AdminDashboard() {
     }
   }
 
+  const exerciseResults = buildExerciseResults(exercises)
+  const groupedExerciseResults = useMemo(() => {
+    const groups = exerciseResults.reduce((accumulator, result) => {
+      const courseTitle = result.courseTitle || 'Uncategorized'
+      const group = accumulator.get(courseTitle) || []
+      group.push(result)
+      accumulator.set(courseTitle, group)
+      return accumulator
+    }, new Map<string, typeof exerciseResults>())
+
+    return Array.from(groups.entries())
+      .sort(([left], [right]) => left.localeCompare(right, 'vi'))
+      .map(([courseTitle, items]) => ({
+        courseTitle,
+        items: [...items].sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
+      }))
+  }, [exerciseResults])
+
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
@@ -1742,8 +1760,6 @@ export default function AdminDashboard() {
   if (!session || session.user?.role !== 'admin') {
     return null
   }
-
-  const exerciseResults = buildExerciseResults(exercises)
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -2906,41 +2922,53 @@ export default function AdminDashboard() {
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Student exercise results</h2>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                {exerciseResults.map((result) => (
-                  <tr key={result.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-900">{result.user.name || result.user.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{result.courseTitle}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{result.exerciseTitle}</td>
-                    <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{result.score}/{result.totalQuestions}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{formatDuration(result.durationSeconds)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(result.submittedAt).toLocaleString('vi-VN')}</td>
-                    <td className="px-4 py-3 text-sm">
-                      <button onClick={() => setSelectedExerciseResult(result)} className="text-[#14532d] hover:underline">View submission</button>
-                    </td>
-                  </tr>
-                ))}
-                {exerciseResults.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No student submissions yet</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          {groupedExerciseResults.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-gray-300 px-4 py-8 text-center text-gray-500">
+              No student submissions yet
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {groupedExerciseResults.map((group) => (
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#14532d]/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3">
+                    <h3 className="text-base font-bold text-[#14532d]">{group.courseTitle}</h3>
+                    <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
+                      {group.items.length} submissions
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.items.map((result) => (
+                          <tr key={result.id} className="border-b hover:bg-gray-50">
+                            <td className="px-4 py-3 text-sm text-gray-900">{result.user.name || result.user.email}</td>
+                            <td className="px-4 py-3 text-sm text-gray-900">{result.exerciseTitle}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-[#14532d]">{result.score}/{result.totalQuestions}</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">{formatDuration(result.durationSeconds)}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{new Date(result.submittedAt).toLocaleString('vi-VN')}</td>
+                            <td className="px-4 py-3 text-sm">
+                              <button onClick={() => setSelectedExerciseResult(result)} className="text-[#14532d] hover:underline">View submission</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'lectureNote' ? '' : 'hidden'}`}>

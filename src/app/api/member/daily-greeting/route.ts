@@ -24,9 +24,33 @@ const getUtcDayStart = () => {
 const getUtcNextDayStart = (date: Date) =>
   new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1))
 
+const COURSE_SCOPE_PREFIX = '[course:'
+
+const encodeScopedMessage = (courseId: string, content: string) => `${COURSE_SCOPE_PREFIX}${courseId}] ${content}`
+
+const parseScopedMessage = (rawMessage: string) => {
+  const text = String(rawMessage || '')
+  if (!text.startsWith(COURSE_SCOPE_PREFIX)) {
+    return { courseId: null as string | null, message: text }
+  }
+
+  const endIndex = text.indexOf('] ')
+  if (endIndex <= COURSE_SCOPE_PREFIX.length) {
+    return { courseId: null as string | null, message: text }
+  }
+
+  const courseId = text.slice(COURSE_SCOPE_PREFIX.length, endIndex).trim()
+  const message = text.slice(endIndex + 2)
+  return {
+    courseId: courseId || null,
+    message
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const shouldMarkAsRead = request.nextUrl.searchParams.get('markAsRead') === '1'
+    const requestedCourseId = String(request.nextUrl.searchParams.get('courseId') || '').trim()
 
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -45,7 +69,7 @@ export async function GET(request: NextRequest) {
     const dayStart = getUtcDayStart()
     const nextDayStart = getUtcNextDayStart(dayStart)
 
-    const checkin = await prismaWithGreeting.dailyGreetingCheckin.findFirst({
+    const checkinRaw = await prismaWithGreeting.dailyGreetingCheckin.findFirst({
       where: {
         userId: currentUser.id,
         responseDate: {
@@ -60,101 +84,145 @@ export async function GET(request: NextRequest) {
         responseDate: true,
         updatedAt: true
       }
-    })
+    }) as {
+      id: string
+      message: string
+      inputMethod: 'text' | 'voice'
+      responseDate: Date
+      updatedAt: Date
+    } | null
+    const parsedSelfCheckin = checkinRaw ? parseScopedMessage(checkinRaw.message) : null
+    const checkin = checkinRaw
+      ? {
+          ...checkinRaw,
+          message: parsedSelfCheckin?.message || checkinRaw.message
+        }
+      : null
 
-    const activeEnrollment = await prisma.enrollment.findFirst({
+    let targetCourseId = ''
+
+    if (currentUser.role === 'member') {
+      const activeEnrollment = await prisma.enrollment.findFirst({
+        where: {
+          userId: currentUser.id,
+          status: 'active'
+        },
+        select: {
+          courseId: true
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      })
+      targetCourseId = String(activeEnrollment?.courseId || '')
+    } else {
+      targetCourseId = requestedCourseId
+    }
+
+    const hasScopedMatchForAdmin =
+      currentUser.role !== 'admin' || (parsedSelfCheckin?.courseId && parsedSelfCheckin.courseId === targetCourseId)
+
+    if (!targetCourseId) {
+      return NextResponse.json({
+        hasResponse: false,
+        response: null,
+        conversation: [],
+        unreadSummary: { checkins: 0, reflections: 0, total: 0 }
+      })
+    }
+
+    const checkinConversation = await prismaWithGreeting.dailyGreetingCheckin.findMany({
       where: {
-        userId: currentUser.id,
-        status: 'active'
+        responseDate: {
+          gte: dayStart,
+          lt: nextDayStart
+        },
+        user: {
+          OR: [
+            {
+              enrollments: {
+                some: {
+                  courseId: targetCourseId,
+                  status: 'active'
+                }
+              }
+            },
+            {
+              role: 'admin'
+            }
+          ]
+        }
       },
       select: {
-        courseId: true
+        id: true,
+        message: true,
+        inputMethod: true,
+        updatedAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true
+          }
+        }
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: [{ updatedAt: 'asc' }]
     })
 
-    const checkinConversation = activeEnrollment
-      ? await prismaWithGreeting.dailyGreetingCheckin.findMany({
-          where: {
-            responseDate: {
-              gte: dayStart,
-              lt: nextDayStart
-            },
-            user: {
+    const reflectionConversation = await prismaWithGreeting.dailyReflection.findMany({
+      where: {
+        responseDate: {
+          gte: dayStart,
+          lt: nextDayStart
+        },
+        user: {
+          OR: [
+            {
               enrollments: {
                 some: {
-                  courseId: activeEnrollment.courseId,
+                  courseId: targetCourseId,
                   status: 'active'
                 }
               }
-            }
-          },
-          select: {
-            id: true,
-            message: true,
-            inputMethod: true,
-            updatedAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true
-              }
-            }
-          },
-          orderBy: [{ updatedAt: 'asc' }]
-        })
-      : []
-
-    const reflectionConversation = activeEnrollment
-      ? await prismaWithGreeting.dailyReflection.findMany({
-          where: {
-            responseDate: {
-              gte: dayStart,
-              lt: nextDayStart
             },
-            user: {
-              enrollments: {
-                some: {
-                  courseId: activeEnrollment.courseId,
-                  status: 'active'
-                }
-              }
+            {
+              role: 'admin'
             }
-          },
+          ]
+        }
+      },
+      select: {
+        id: true,
+        message: true,
+        updatedAt: true,
+        user: {
           select: {
             id: true,
-            message: true,
-            updatedAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true
-              }
-            }
-          },
-          orderBy: [{ updatedAt: 'asc' }]
-        })
-      : []
+            name: true,
+            email: true,
+            image: true,
+            role: true
+          }
+        }
+      },
+      orderBy: [{ updatedAt: 'asc' }]
+    })
 
     const checkinConversationItems = checkinConversation as Array<{
       id: string
       message: string
       inputMethod: 'text' | 'voice'
       updatedAt: Date
-      user: { id: string; name: string | null; email: string; image: string | null }
+      user: { id: string; name: string | null; email: string; image: string | null; role: 'member' | 'admin' | 'user' }
     }>
 
     const reflectionConversationItems = reflectionConversation as Array<{
       id: string
       message: string
       updatedAt: Date
-      user: { id: string; name: string | null; email: string; image: string | null }
+      user: { id: string; name: string | null; email: string; image: string | null; role: 'member' | 'admin' | 'user' }
     }>
 
     const conversationItems = [
@@ -165,6 +233,7 @@ export async function GET(request: NextRequest) {
         studentName: item.user.name || item.user.email,
         studentImage: item.user.image,
         message: item.message,
+        senderRole: item.user.role,
         inputMethod: item.inputMethod,
         updatedAt: item.updatedAt,
         entryType: 'checkin' as const
@@ -176,11 +245,26 @@ export async function GET(request: NextRequest) {
         studentName: item.user.name || item.user.email,
         studentImage: item.user.image,
         message: item.message,
+        senderRole: item.user.role,
         inputMethod: null,
         updatedAt: item.updatedAt,
         entryType: 'reflection' as const
       }))
-    ].sort((left, right) => new Date(left.updatedAt).getTime() - new Date(right.updatedAt).getTime())
+    ]
+      .map((item) => {
+        if (item.senderRole !== 'admin') {
+          return { ...item, scopedCourseId: null as string | null }
+        }
+
+        const parsed = parseScopedMessage(item.message)
+        return {
+          ...item,
+          scopedCourseId: parsed.courseId,
+          message: parsed.message
+        }
+      })
+      .filter((item) => item.senderRole !== 'admin' || item.scopedCourseId === targetCourseId)
+      .sort((left, right) => new Date(left.updatedAt).getTime() - new Date(right.updatedAt).getTime())
 
     const unreadSummary = conversationItems.reduce(
       (summary, item) => {
@@ -213,8 +297,8 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      hasResponse: Boolean(checkin),
-      response: checkin || null,
+      hasResponse: Boolean(checkin) && hasScopedMatchForAdmin,
+      response: hasScopedMatchForAdmin ? (checkin || null) : null,
       conversation: conversationItems,
       unreadSummary: shouldMarkAsRead ? { checkins: 0, reflections: 0, total: 0 } : unreadSummary
     })
@@ -241,8 +325,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+    const courseId = String(body?.courseId || '').trim()
     const inputMethod = body?.inputMethod === 'voice' ? 'voice' : body?.inputMethod === 'text' ? 'text' : null
     const message = String(body?.message || '').trim()
+
+    if (currentUser.role === 'admin' && !courseId) {
+      return NextResponse.json({ error: 'Please choose a course before submitting.' }, { status: 400 })
+    }
 
     if (!inputMethod) {
       return NextResponse.json({ error: 'inputMethod must be text or voice' }, { status: 400 })
@@ -258,6 +347,10 @@ export async function POST(request: NextRequest) {
 
     const dayStart = getUtcDayStart()
 
+    const messageToSave = currentUser.role === 'admin' && courseId
+      ? encodeScopedMessage(courseId, message)
+      : message
+
     const checkin = await prismaWithGreeting.dailyGreetingCheckin.upsert({
       where: {
         userId_responseDate: {
@@ -266,13 +359,13 @@ export async function POST(request: NextRequest) {
         }
       },
       update: {
-        message,
+        message: messageToSave,
         inputMethod
       },
       create: {
         userId: currentUser.id,
         responseDate: dayStart,
-        message,
+        message: messageToSave,
         inputMethod
       },
       select: {

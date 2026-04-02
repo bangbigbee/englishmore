@@ -106,6 +106,7 @@ const QUICK_REFLECTION_MESSAGES = [
   'I learned something useful and feel more confident.',
   'It was a good day, and I am grateful for the progress.'
 ] as const
+const REFLECTION_AFTER_5PM_MESSAGE = 'You should reflect your day after 5 PM.'
 
 export default function Home() {
   const { data: session } = useSession()
@@ -157,6 +158,22 @@ export default function Home() {
   const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null)
   const pronunciationDoneAudioPrimedRef = useRef(false)
   const [congratsEnrollment, setCongratsEnrollment] = useState<{ id: string; title: string } | null>(null)
+  const [selectedAdminDailyActivityCourseId, setSelectedAdminDailyActivityCourseId] = useState('')
+
+  const isAdminDailyActivity = session?.user?.role === 'admin'
+  const canReflectNow = () => {
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        hour: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Ho_Chi_Minh'
+      }).formatToParts(new Date())
+      const hour = Number(parts.find((part) => part.type === 'hour')?.value || '0')
+      return hour >= 17
+    } catch {
+      return new Date().getHours() >= 17
+    }
+  }
 
   useEffect(() => {
     if (!session) {
@@ -180,9 +197,23 @@ export default function Home() {
     const fetchAvailableCourses = async () => {
       try {
         setLoadingCourses(true)
-        const res = await fetch('/api/courses')
+        const endpoint = session.user?.role === 'admin' ? '/api/admin/courses' : '/api/courses'
+        const res = await fetch(endpoint)
         if (!res.ok) return
         const data = await res.json()
+        if (session.user?.role === 'admin') {
+          const adminCourses = Array.isArray(data)
+            ? data.map((item) => ({
+                id: String(item?.id || ''),
+                title: String(item?.title || ''),
+                registrationDeadline: String(item?.registrationDeadline || new Date().toISOString()),
+                enrolledCount: Number(item?._count?.enrollments || 0),
+                maxStudents: Number(item?.maxStudents || 0)
+              }))
+            : []
+          setAvailableCourses(adminCourses.filter((course) => course.id && course.title))
+          return
+        }
         setAvailableCourses(Array.isArray(data) ? data : [])
       } catch {
         setAvailableCourses([])
@@ -201,11 +232,24 @@ export default function Home() {
         return
       }
 
+      if (session.user?.role === 'admin' && !selectedAdminDailyActivityCourseId) {
+        setGreetingMessage('')
+        setHasGreetingToday(false)
+        setGreetingConversation([])
+        setClassActivityUnread({ checkins: 0, reflections: 0, total: 0 })
+        return
+      }
+
       try {
         if (showLoading) {
           setGreetingConversationLoading(true)
         }
-        const res = await fetch('/api/member/daily-greeting')
+        const params = new URLSearchParams()
+        if (session.user?.role === 'admin' && selectedAdminDailyActivityCourseId) {
+          params.set('courseId', selectedAdminDailyActivityCourseId)
+        }
+        const query = params.toString()
+        const res = await fetch(`/api/member/daily-greeting${query ? `?${query}` : ''}`)
         if (!res.ok) {
           setGreetingMessage('')
           setHasGreetingToday(false)
@@ -332,8 +376,23 @@ export default function Home() {
         setEditReflectionStatus('')
         return
       }
+
+      if (session.user?.role === 'admin' && !selectedAdminDailyActivityCourseId) {
+        setHasReflectionToday(false)
+        setReflectionMessage('')
+        setShowCustomReflectionInput(false)
+        setEditReflectionMessage('')
+        setIsEditingReflection(false)
+        setEditReflectionStatus('')
+        return
+      }
       try {
-        const res = await fetch('/api/member/daily-reflection')
+        const params = new URLSearchParams()
+        if (session.user?.role === 'admin' && selectedAdminDailyActivityCourseId) {
+          params.set('courseId', selectedAdminDailyActivityCourseId)
+        }
+        const query = params.toString()
+        const res = await fetch(`/api/member/daily-reflection${query ? `?${query}` : ''}`)
         if (!res.ok) {
           setHasReflectionToday(false)
           setReflectionMessage('')
@@ -387,7 +446,25 @@ export default function Home() {
     return () => {
       window.clearInterval(conversationRefreshInterval)
     }
-  }, [session])
+  }, [session, selectedAdminDailyActivityCourseId])
+
+  useEffect(() => {
+    if (!isAdminDailyActivity) {
+      if (selectedAdminDailyActivityCourseId) {
+        setSelectedAdminDailyActivityCourseId('')
+      }
+      return
+    }
+
+    if (!selectedAdminDailyActivityCourseId && availableCourses.length > 0) {
+      setSelectedAdminDailyActivityCourseId(availableCourses[0].id)
+      return
+    }
+
+    if (selectedAdminDailyActivityCourseId && !availableCourses.some((course) => course.id === selectedAdminDailyActivityCourseId)) {
+      setSelectedAdminDailyActivityCourseId(availableCourses[0]?.id || '')
+    }
+  }, [availableCourses, isAdminDailyActivity, selectedAdminDailyActivityCourseId])
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -1031,6 +1108,11 @@ export default function Home() {
       return
     }
 
+    if (isAdminDailyActivity && !selectedAdminDailyActivityCourseId) {
+      setGreetingError('Please choose a course before sending a check-in.')
+      return
+    }
+
     setGreetingError('')
     setGreetingStatus('Saving your check-in...')
     setIsSavingGreeting(true)
@@ -1043,7 +1125,8 @@ export default function Home() {
         },
         body: JSON.stringify({
           inputMethod: method,
-          message: normalizedMessage
+          message: normalizedMessage,
+          ...(isAdminDailyActivity && selectedAdminDailyActivityCourseId ? { courseId: selectedAdminDailyActivityCourseId } : {})
         })
       })
 
@@ -1060,7 +1143,12 @@ export default function Home() {
       setEditCheckinMessage(normalizedMessage)
       setGreetingStatus('Nice. Your check-in for today has been saved.')
 
-      const refreshRes = await fetch('/api/member/daily-greeting')
+      const params = new URLSearchParams()
+      if (isAdminDailyActivity && selectedAdminDailyActivityCourseId) {
+        params.set('courseId', selectedAdminDailyActivityCourseId)
+      }
+      const query = params.toString()
+      const refreshRes = await fetch(`/api/member/daily-greeting${query ? `?${query}` : ''}`)
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json() as {
           hasResponse?: boolean
@@ -1096,19 +1184,32 @@ export default function Home() {
   const handleSaveEditCheckin = async () => {
     const msg = editCheckinMessage.trim()
     if (!msg) return
+    if (isAdminDailyActivity && !selectedAdminDailyActivityCourseId) {
+      setEditCheckinStatus('Please choose a course first.')
+      return
+    }
     setEditCheckinStatus('Saving...')
     try {
       const res = await fetch('/api/member/daily-greeting', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputMethod: greetingMethod, message: msg })
+        body: JSON.stringify({
+          inputMethod: greetingMethod,
+          message: msg,
+          ...(isAdminDailyActivity && selectedAdminDailyActivityCourseId ? { courseId: selectedAdminDailyActivityCourseId } : {})
+        })
       })
       if (!res.ok) { setEditCheckinStatus('Save failed.'); return }
       setGreetingMessage(msg)
       setEditCheckinMessage(msg)
       setEditCheckinStatus('Your check-in has been updated.')
       setIsEditingCheckin(false)
-      const refreshRes = await fetch('/api/member/daily-greeting')
+      const params = new URLSearchParams()
+      if (isAdminDailyActivity && selectedAdminDailyActivityCourseId) {
+        params.set('courseId', selectedAdminDailyActivityCourseId)
+      }
+      const query = params.toString()
+      const refreshRes = await fetch(`/api/member/daily-greeting${query ? `?${query}` : ''}`)
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json() as {
           conversation?: DailyGreetingConversationItem[]
@@ -1129,6 +1230,14 @@ export default function Home() {
   const submitReflection = async (message: string) => {
     const msg = message.trim()
     if (!msg) { setReflectionError('Please enter your reflection.'); return }
+    if (!canReflectNow()) {
+      setReflectionError(REFLECTION_AFTER_5PM_MESSAGE)
+      return
+    }
+    if (isAdminDailyActivity && !selectedAdminDailyActivityCourseId) {
+      setReflectionError('Please choose a course before sending a reflection.')
+      return
+    }
     setReflectionError('')
     setReflectionStatus('Saving...')
     setIsSavingReflection(true)
@@ -1136,7 +1245,10 @@ export default function Home() {
       const res = await fetch('/api/member/daily-reflection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg })
+        body: JSON.stringify({
+          message: msg,
+          ...(isAdminDailyActivity && selectedAdminDailyActivityCourseId ? { courseId: selectedAdminDailyActivityCourseId } : {})
+        })
       })
       const data = await res.json().catch(() => ({})) as { error?: string }
       if (!res.ok) { setReflectionError(data?.error || 'Could not save your reflection.'); setReflectionStatus(''); return }
@@ -1144,7 +1256,12 @@ export default function Home() {
       setReflectionMessage(msg)
       setEditReflectionMessage(msg)
       setReflectionStatus('Your reflection for today has been saved.')
-      const refreshRes = await fetch('/api/member/daily-greeting')
+      const params = new URLSearchParams()
+      if (isAdminDailyActivity && selectedAdminDailyActivityCourseId) {
+        params.set('courseId', selectedAdminDailyActivityCourseId)
+      }
+      const query = params.toString()
+      const refreshRes = await fetch(`/api/member/daily-greeting${query ? `?${query}` : ''}`)
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json() as {
           conversation?: DailyGreetingConversationItem[]
@@ -1180,6 +1297,14 @@ export default function Home() {
       setEditReflectionStatus('Please enter your reflection.')
       return
     }
+    if (!canReflectNow()) {
+      setEditReflectionStatus(REFLECTION_AFTER_5PM_MESSAGE)
+      return
+    }
+    if (isAdminDailyActivity && !selectedAdminDailyActivityCourseId) {
+      setEditReflectionStatus('Please choose a course first.')
+      return
+    }
 
     setEditReflectionStatus('Saving...')
     setIsSavingReflection(true)
@@ -1187,7 +1312,10 @@ export default function Home() {
       const res = await fetch('/api/member/daily-reflection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg })
+        body: JSON.stringify({
+          message: msg,
+          ...(isAdminDailyActivity && selectedAdminDailyActivityCourseId ? { courseId: selectedAdminDailyActivityCourseId } : {})
+        })
       })
       const data = await res.json().catch(() => ({})) as { error?: string }
       if (!res.ok) {
@@ -1201,7 +1329,12 @@ export default function Home() {
       setIsEditingReflection(false)
       setEditReflectionStatus('Your reflection has been updated.')
 
-      const refreshRes = await fetch('/api/member/daily-greeting')
+      const params = new URLSearchParams()
+      if (isAdminDailyActivity && selectedAdminDailyActivityCourseId) {
+        params.set('courseId', selectedAdminDailyActivityCourseId)
+      }
+      const query = params.toString()
+      const refreshRes = await fetch(`/api/member/daily-greeting${query ? `?${query}` : ''}`)
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json() as {
           conversation?: DailyGreetingConversationItem[]
@@ -1255,6 +1388,25 @@ export default function Home() {
 
         {canUseDailyActivity && (
           <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
+            {isAdminDailyActivity && (
+              <div className="mb-4 rounded-xl border border-[#14532d]/20 bg-white/90 px-4 py-3">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-[#14532d]">Course for Daily Activity</label>
+                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <select
+                    value={selectedAdminDailyActivityCourseId}
+                    onChange={(event) => setSelectedAdminDailyActivityCourseId(event.target.value)}
+                    className="w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d] sm:max-w-sm"
+                  >
+                    <option value="">Choose a course</option>
+                    {availableCourses.map((course) => (
+                      <option key={course.id} value={course.id}>{course.title}</option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-slate-500">Admin messages will be sent in the selected course context.</p>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
               <div className="space-y-4">
                 <article className="checkin-message rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">

@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 const DAILY_ACTIVITY_ROLES = new Set(['member', 'admin'])
+const REFLECTION_AFTER_5PM_MESSAGE = 'You should reflect your day after 5 PM.'
 
 const prismaExt = prisma as typeof prisma & {
   dailyGreetingCheckin: {
@@ -23,7 +24,45 @@ const getUtcDayStart = () => {
 const getUtcNextDayStart = (date: Date) =>
   new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1))
 
-export async function GET() {
+const COURSE_SCOPE_PREFIX = '[course:'
+
+const encodeScopedMessage = (courseId: string, content: string) => `${COURSE_SCOPE_PREFIX}${courseId}] ${content}`
+
+const parseScopedMessage = (rawMessage: string) => {
+  const text = String(rawMessage || '')
+  if (!text.startsWith(COURSE_SCOPE_PREFIX)) {
+    return { courseId: null as string | null, message: text }
+  }
+
+  const endIndex = text.indexOf('] ')
+  if (endIndex <= COURSE_SCOPE_PREFIX.length) {
+    return { courseId: null as string | null, message: text }
+  }
+
+  const courseId = text.slice(COURSE_SCOPE_PREFIX.length, endIndex).trim()
+  const message = text.slice(endIndex + 2)
+  return {
+    courseId: courseId || null,
+    message
+  }
+}
+
+const canReflectNow = () => {
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      hour12: false,
+      timeZone: 'Asia/Ho_Chi_Minh'
+    }).formatToParts(new Date())
+
+    const hour = Number(parts.find((part) => part.type === 'hour')?.value || '0')
+    return hour >= 17
+  } catch {
+    return new Date().getHours() >= 17
+  }
+}
+
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -39,16 +78,29 @@ export async function GET() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
+    const courseId = String(request.nextUrl.searchParams.get('courseId') || '').trim()
+    if (currentUser.role === 'admin' && !courseId) {
+      return NextResponse.json({ hasReflection: false, reflection: null })
+    }
+
     const dayStart = getUtcDayStart()
     const nextDayStart = getUtcNextDayStart(dayStart)
 
-    const reflection = await prismaExt.dailyReflection.findFirst({
+    const reflectionRaw = await prismaExt.dailyReflection.findFirst({
       where: {
         userId: currentUser.id,
         responseDate: { gte: dayStart, lt: nextDayStart }
       },
       select: { id: true, message: true, responseDate: true, updatedAt: true }
     }) as { id: string; message: string; responseDate: Date; updatedAt: Date } | null
+
+    const parsedReflection = reflectionRaw ? parseScopedMessage(reflectionRaw.message) : null
+    const reflectionMatchesCourse =
+      currentUser.role !== 'admin' || (parsedReflection?.courseId && parsedReflection.courseId === courseId)
+
+    const reflection = reflectionRaw && reflectionMatchesCourse
+      ? { ...reflectionRaw, message: parsedReflection?.message || reflectionRaw.message }
+      : null
 
     return NextResponse.json({
       hasReflection: Boolean(reflection),
@@ -76,6 +128,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
+    const body = await request.json()
+    const courseId = String(body?.courseId || '').trim()
+    if (currentUser.role === 'admin' && !courseId) {
+      return NextResponse.json({ error: 'Please choose a course before submitting.' }, { status: 400 })
+    }
+
+    if (!canReflectNow()) {
+      return NextResponse.json({ error: REFLECTION_AFTER_5PM_MESSAGE }, { status: 400 })
+    }
+
     const dayStart = getUtcDayStart()
     const nextDayStart = getUtcNextDayStart(dayStart)
 
@@ -92,7 +154,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'You need to complete your check-in before writing a reflection.' }, { status: 400 })
     }
 
-    const body = await request.json()
     const message = String(body?.message || '').trim()
 
     if (!message) {
@@ -103,6 +164,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message must be 1000 characters or fewer' }, { status: 400 })
     }
 
+    const messageToSave = currentUser.role === 'admin' && courseId
+      ? encodeScopedMessage(courseId, message)
+      : message
+
     const reflection = await prismaExt.dailyReflection.upsert({
       where: {
         userId_responseDate: {
@@ -110,11 +175,11 @@ export async function POST(request: NextRequest) {
           responseDate: dayStart
         }
       },
-      update: { message },
+      update: { message: messageToSave },
       create: {
         userId: currentUser.id,
         responseDate: dayStart,
-        message
+        message: messageToSave
       },
       select: { id: true, message: true, responseDate: true, updatedAt: true }
     })
