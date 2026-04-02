@@ -57,7 +57,6 @@ export default function Dashboard() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [congratsEnrollment, setCongratsEnrollment] = useState<{ id: string; title: string } | null>(null)
   const [showHomeworkModal, setShowHomeworkModal] = useState(false)
   const [homeworks, setHomeworks] = useState<HomeworkItem[]>([])
   const [exercises, setExercises] = useState<ExerciseItem[]>([])
@@ -87,7 +86,6 @@ export default function Dashboard() {
         return
       }
 
-      fetchEnrollments()
       fetchHomework()
       fetchExercises()
 
@@ -144,25 +142,6 @@ export default function Dashboard() {
       setError(err instanceof Error ? err.message : 'Could not load the exercises.')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const fetchEnrollments = async () => {
-    try {
-      setError('')
-      const res = await fetch('/api/user/enrollments')
-      if (!res.ok) return
-      const data = await res.json()
-      // Show congratulations for newly active enrollments not yet acknowledged
-      const activeEnrollment = data.find((e: { id: string; status: string; course?: { title: string } }) => e.status === 'active')
-      if (activeEnrollment) {
-        const key = `congratulated_${activeEnrollment.id}`
-        if (typeof window !== 'undefined' && !localStorage.getItem(key)) {
-          setCongratsEnrollment({ id: activeEnrollment.id, title: activeEnrollment.course?.title || '' })
-        }
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not load the course information.')
     }
   }
 
@@ -519,36 +498,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {congratsEnrollment && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
-              <div className="text-5xl mb-4">🎉</div>
-              <h3 className="text-2xl font-bold text-[#14532d] mb-3">Congratulations!</h3>
-              <p className="text-gray-700 mb-2">
-                You have successfully enrolled in the course
-              </p>
-              {congratsEnrollment.title && (
-                <p className="text-lg font-semibold text-[#14532d] mb-4">
-                  &quot;{congratsEnrollment.title}&quot;
-                </p>
-              )}
-              <p className="text-sm text-gray-500 mb-6">
-                Your payment has been confirmed by the admin. Welcome to EnglishMore!
-              </p>
-              <button
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    localStorage.setItem(`congratulated_${congratsEnrollment.id}`, '1')
-                  }
-                  setCongratsEnrollment(null)
-                }}
-                className="w-full px-4 py-3 bg-[#14532d] text-white rounded-lg font-semibold hover:bg-[#166534]"
-              >
-                Start learning now
-              </button>
-            </div>
-          </div>
-        )}
+
 
         {showHomeworkModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

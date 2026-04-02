@@ -156,6 +156,7 @@ export default function Home() {
   const pronunciationRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
   const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null)
   const pronunciationDoneAudioPrimedRef = useRef(false)
+  const [congratsEnrollment, setCongratsEnrollment] = useState<{ id: string; title: string } | null>(null)
 
   useEffect(() => {
     if (!session) {
@@ -353,12 +354,31 @@ export default function Home() {
       }
     }
 
+    const fetchCongratsEnrollment = async () => {
+      if (session.user?.role !== 'member') return
+      try {
+        const res = await fetch('/api/user/enrollments')
+        if (!res.ok) return
+        const data = await res.json()
+        const activeEnrollment = data.find((e: { id: string; status: string; course?: { title: string } }) => e.status === 'active')
+        if (activeEnrollment) {
+          const key = `congratulated_${activeEnrollment.id}`
+          if (typeof window !== 'undefined' && !localStorage.getItem(key)) {
+            setCongratsEnrollment({ id: activeEnrollment.id, title: activeEnrollment.course?.title || '' })
+          }
+        }
+      } catch {
+        // Ignore errors — congratulations modal is non-critical.
+      }
+    }
+
     fetchAvailableCourses()
     fetchGreetingResponse()
     fetchMemberHomework()
     fetchAdminHomeworkReview()
     fetchMemberVocabulary()
     fetchReflection()
+    fetchCongratsEnrollment()
 
     const conversationRefreshInterval = window.setInterval(() => {
       fetchGreetingResponse(false)
@@ -2025,6 +2045,38 @@ export default function Home() {
           </section>
         )}
       </main>
+
+      {congratsEnrollment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
+            <div className="text-5xl mb-4">🎉</div>
+            <h3 className="text-2xl font-bold text-[#14532d] mb-3">Congratulations!</h3>
+            <p className="text-gray-700 mb-2">
+              You have successfully enrolled in the course
+            </p>
+            {congratsEnrollment.title && (
+              <p className="text-lg font-semibold text-[#14532d] mb-4">
+                &quot;{congratsEnrollment.title}&quot;
+              </p>
+            )}
+            <p className="text-sm text-gray-500 mb-6">
+              Your payment has been confirmed by the admin. Welcome to EnglishMore!
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem(`congratulated_${congratsEnrollment.id}`, '1')
+                }
+                setCongratsEnrollment(null)
+              }}
+              className="w-full px-4 py-3 bg-[#14532d] text-white rounded-lg font-semibold hover:bg-[#166534]"
+            >
+              Start learning now
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
