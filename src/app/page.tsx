@@ -1762,59 +1762,61 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mt-5 border-t border-[#14532d]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <Link
-                href="/my-homework"
-                className="brand-cta brand-cta-filled w-full justify-center relative"
-              >
-                {memberHomework && memberHomework.feedbackNoticeCount > 0 && (
-                  <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-500 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-3.5 w-3.5"
-                      aria-hidden="true"
-                    >
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                      <path d="M8 9h8" />
-                      <path d="M8 13h5" />
-                    </svg>
-                    <span>{memberHomework.feedbackNoticeCount}</span>
-                  </span>
-                )}
-                <span>My Homework</span>
-                <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                {memberHomework && Array.isArray(memberHomework.pendingHomework) && memberHomework.pendingHomework.length > 0 && (
-                  <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                    {memberHomework.pendingHomework.length}
-                  </span>
-                )}
-              </Link>
-              <Link
-                href="/dashboard"
-                className="brand-cta brand-cta-filled w-full justify-center relative"
-              >
-                <span>Exercise More</span>
-                <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                {memberHomework && typeof memberHomework.pendingExercisesCount === 'number' && memberHomework.pendingExercisesCount > 0 && (
-                  <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                    {memberHomework.pendingExercisesCount}
-                  </span>
-                )}
-              </Link>
-              <Link
-                href="/lecture-notes"
-                className="brand-cta brand-cta-outline w-full justify-center"
-              >
-                <span>Lecture Slide</span>
-                <span aria-hidden="true" className="brand-cta-arrow">→</span>
-              </Link>
-            </div>
+            {session?.user?.role === 'member' && (
+              <div className="mt-5 border-t border-[#14532d]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <Link
+                  href="/my-homework"
+                  className="brand-cta brand-cta-filled w-full justify-center relative"
+                >
+                  {memberHomework && memberHomework.feedbackNoticeCount > 0 && (
+                    <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-500 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="h-3.5 w-3.5"
+                        aria-hidden="true"
+                      >
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        <path d="M8 9h8" />
+                        <path d="M8 13h5" />
+                      </svg>
+                      <span>{memberHomework.feedbackNoticeCount}</span>
+                    </span>
+                  )}
+                  <span>My Homework</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                  {memberHomework && Array.isArray(memberHomework.pendingHomework) && memberHomework.pendingHomework.length > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                      {memberHomework.pendingHomework.length}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="brand-cta brand-cta-filled w-full justify-center relative"
+                >
+                  <span>Exercise More</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                  {memberHomework && typeof memberHomework.pendingExercisesCount === 'number' && memberHomework.pendingExercisesCount > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                      {memberHomework.pendingExercisesCount}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  href="/lecture-notes"
+                  className="brand-cta brand-cta-outline w-full justify-center"
+                >
+                  <span>Lecture Slide</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                </Link>
+              </div>
+            )}
           </section>
         )}
 

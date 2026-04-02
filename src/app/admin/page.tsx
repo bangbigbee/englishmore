@@ -1130,7 +1130,7 @@ export default function AdminDashboard() {
   }, [courses, vocabularyCourseFilter, newVocabularyCourseId, vocabularyImportSourceCourseId, vocabularyImportTargetCourseId])
 
   useEffect(() => {
-    if ((activeSection === 'lectureNote' || activeSection === 'homework') && selectedLectureNoteCourseId) {
+    if (activeSection === 'lectureNote' && selectedLectureNoteCourseId) {
       fetchLectureNotes(selectedLectureNoteCourseId)
     }
   }, [activeSection, selectedLectureNoteCourseId, fetchLectureNotes])
@@ -1167,10 +1167,6 @@ export default function AdminDashboard() {
     const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'vocabulary', 'referral']
     if (section === 'checkin' || section === 'reflect') {
       setActiveSection('dailyActivity')
-      return
-    }
-    if (section === 'exercise' || section === 'lectureNote') {
-      setActiveSection('homework')
       return
     }
     if (section && allowed.includes(section as AdminSection)) {
@@ -1928,28 +1924,42 @@ export default function AdminDashboard() {
             onClick={() => setActiveSection('homework')}
             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'homework' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
-            2. HOMEWORK / EXERCISE / LECTURE
+            2. HOMEWORK MANAGEMENT
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection('exercise')}
+            className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'exercise' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            3. EXERCISE MANAGEMENT
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection('lectureNote')}
+            className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'lectureNote' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+          >
+            4. LECTURE MANAGEMENT
           </button>
            <button
              type="button"
              onClick={() => setActiveSection('dailyActivity')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'dailyActivity' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             3. DAILY ACTIVITY
+             5. DAILY ACTIVITY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('vocabulary')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'vocabulary' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             4. VOCABULARY
+             6. VOCABULARY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('referral')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'referral' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             5. REFERRALS
+             7. REFERRALS
            </button>
           </div>
         </div>
@@ -2894,7 +2904,7 @@ export default function AdminDashboard() {
           })()}
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Multiple-Choice Exercises</h2>
 
           {exerciseSuccess && (
@@ -3121,7 +3131,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Student exercise results</h2>
 
           {groupedExerciseResults.length === 0 ? (
@@ -3173,7 +3183,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'lectureNote' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Lecture notes by course</h2>
 
           {lectureSuccess && (
