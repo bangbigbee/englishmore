@@ -208,6 +208,14 @@ interface AdminVocabularyItem {
   }
 }
 
+interface VocabularyImportDraftItem {
+  word: string
+  phonetic: string
+  englishDefinition: string
+  meaning: string
+  example: string
+}
+
 type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'vocabulary' | 'referral'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
@@ -503,6 +511,8 @@ export default function AdminDashboard() {
   const [vocabularyImportTargetCourseId, setVocabularyImportTargetCourseId] = useState('')
   const [importingVocabulary, setImportingVocabulary] = useState(false)
   const [importingVocabularyFromFileOrDocs, setImportingVocabularyFromFileOrDocs] = useState(false)
+  const [confirmingVocabularyImport, setConfirmingVocabularyImport] = useState(false)
+  const [vocabularyImportPreviewItems, setVocabularyImportPreviewItems] = useState<VocabularyImportDraftItem[]>([])
   const [vocabularyError, setVocabularyError] = useState('')
   const [vocabularySuccess, setVocabularySuccess] = useState('')
   const [savingVocabulary, setSavingVocabulary] = useState(false)
@@ -1049,6 +1059,7 @@ export default function AdminDashboard() {
       setVocabularySuccess('')
 
       const formData = new FormData()
+      formData.append('action', 'preview')
       formData.append('courseId', newVocabularyCourseId)
       if (docsUrl) {
         formData.append('docsUrl', docsUrl)
@@ -1067,18 +1078,85 @@ export default function AdminDashboard() {
         throw new Error(data?.error || 'Could not import vocabulary from source.')
       }
 
-      const createdCount = Number(data?.createdCount || 0)
-      const skippedCount = Number(data?.skippedCount || 0)
+      const previewItems = Array.isArray(data?.previewItems)
+        ? data.previewItems.map((item: { word?: string; phonetic?: string | null; englishDefinition?: string | null; meaning?: string; example?: string | null }) => ({
+            word: String(item?.word || ''),
+            phonetic: String(item?.phonetic || ''),
+            englishDefinition: String(item?.englishDefinition || ''),
+            meaning: String(item?.meaning || ''),
+            example: String(item?.example || '')
+          }))
+        : []
+
       const invalidCount = Number(data?.invalidCount || 0)
-      setVocabularySuccess(`Imported ${createdCount} words. Skipped ${skippedCount} duplicates and ${invalidCount} invalid rows.`)
-      setVocabularyCourseFilter(newVocabularyCourseId)
-      setVocabularyImportDocsUrl('')
-      setVocabularyImportDocxFile(null)
-      fetchVocabularyData()
+      if (previewItems.length === 0) {
+        throw new Error('No valid vocabulary rows found to preview.')
+      }
+
+      setVocabularyImportPreviewItems(previewItems)
+      setVocabularySuccess(`Preview loaded with ${previewItems.length} rows.${invalidCount > 0 ? ` ${invalidCount} invalid rows were ignored.` : ''}`)
     } catch (err) {
       setVocabularyError(err instanceof Error ? err.message : 'Could not import vocabulary from source.')
     } finally {
       setImportingVocabularyFromFileOrDocs(false)
+    }
+  }
+
+  const updateVocabularyImportPreviewItem = (index: number, field: keyof VocabularyImportDraftItem, value: string) => {
+    setVocabularyImportPreviewItems((current) =>
+      current.map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item))
+    )
+  }
+
+  const removeVocabularyImportPreviewItem = (index: number) => {
+    setVocabularyImportPreviewItems((current) => current.filter((_, itemIndex) => itemIndex !== index))
+  }
+
+  const confirmVocabularyImportPreview = async () => {
+    if (!newVocabularyCourseId) {
+      setVocabularyError('Please choose the course to import vocabulary into.')
+      return
+    }
+
+    if (vocabularyImportPreviewItems.length === 0) {
+      setVocabularyError('There are no preview rows to import.')
+      return
+    }
+
+    try {
+      setConfirmingVocabularyImport(true)
+      setVocabularyError('')
+      setVocabularySuccess('')
+
+      const formData = new FormData()
+      formData.append('action', 'commit')
+      formData.append('courseId', newVocabularyCourseId)
+      formData.append('itemsJson', JSON.stringify(vocabularyImportPreviewItems))
+
+      const res = await fetch('/api/admin/vocabulary/import-docs', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Could not save imported vocabulary.')
+      }
+
+      const createdCount = Number(data?.createdCount || 0)
+      const skippedCount = Number(data?.skippedCount || 0)
+      const invalidCount = Number(data?.invalidCount || 0)
+
+      setVocabularySuccess(`Imported ${createdCount} words. Skipped ${skippedCount} duplicates and ${invalidCount} invalid rows.`)
+      setVocabularyCourseFilter(newVocabularyCourseId)
+      setVocabularyImportPreviewItems([])
+      setVocabularyImportDocsUrl('')
+      setVocabularyImportDocxFile(null)
+      fetchVocabularyData()
+    } catch (err) {
+      setVocabularyError(err instanceof Error ? err.message : 'Could not save imported vocabulary.')
+    } finally {
+      setConfirmingVocabularyImport(false)
     }
   }
 
@@ -2336,12 +2414,116 @@ export default function AdminDashboard() {
                 disabled={importingVocabularyFromFileOrDocs}
                 className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
               >
-                {importingVocabularyFromFileOrDocs ? 'Importing...' : 'Import'}
+                {importingVocabularyFromFileOrDocs ? 'Loading preview...' : 'Preview import'}
               </button>
             </div>
 
             {vocabularyImportDocxFile && (
               <p className="mt-2 text-xs text-gray-600">Attached file: {vocabularyImportDocxFile.name}</p>
+            )}
+
+            {vocabularyImportPreviewItems.length > 0 && (
+              <div className="mt-4 rounded border border-amber-300 bg-amber-50/60 p-3">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-semibold text-amber-900">Review imported rows before saving</p>
+                  <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">
+                    {vocabularyImportPreviewItems.length} rows
+                  </span>
+                </div>
+
+                <div className="max-h-80 overflow-auto rounded border border-amber-200 bg-white">
+                  <table className="w-full border-collapse">
+                    <thead className="sticky top-0 bg-amber-100/90 backdrop-blur border-b border-amber-200">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Word</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Phonetic</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">English definition</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Meaning</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Example</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {vocabularyImportPreviewItems.map((item, index) => (
+                        <tr key={`preview-${index}`} className="border-b border-amber-100 align-top">
+                          <td className="px-3 py-2">
+                            <input
+                              type="text"
+                              value={item.word}
+                              onChange={(event) => updateVocabularyImportPreviewItem(index, 'word', event.target.value)}
+                              className="w-36 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              placeholder="Word"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <input
+                              type="text"
+                              value={item.phonetic}
+                              onChange={(event) => updateVocabularyImportPreviewItem(index, 'phonetic', event.target.value)}
+                              className="w-36 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              placeholder="Phonetic"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <input
+                              type="text"
+                              value={item.englishDefinition}
+                              onChange={(event) => updateVocabularyImportPreviewItem(index, 'englishDefinition', event.target.value)}
+                              className="w-56 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              placeholder="English definition"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <input
+                              type="text"
+                              value={item.meaning}
+                              onChange={(event) => updateVocabularyImportPreviewItem(index, 'meaning', event.target.value)}
+                              className="w-48 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              placeholder="Meaning"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <input
+                              type="text"
+                              value={item.example}
+                              onChange={(event) => updateVocabularyImportPreviewItem(index, 'example', event.target.value)}
+                              className="w-56 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              placeholder="Example"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <button
+                              type="button"
+                              onClick={() => removeVocabularyImportPreviewItem(index)}
+                              className="rounded border border-red-300 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+                            >
+                              Remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setVocabularyImportPreviewItems([])}
+                    className="rounded border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel preview
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmVocabularyImportPreview}
+                    disabled={confirmingVocabularyImport}
+                    className="rounded bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+                  >
+                    {confirmingVocabularyImport ? 'Saving...' : 'Confirm and save'}
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 
