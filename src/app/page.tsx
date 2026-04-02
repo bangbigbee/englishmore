@@ -108,6 +108,15 @@ const QUICK_REFLECTION_MESSAGES = [
 ] as const
 const REFLECTION_AFTER_5PM_MESSAGE = 'You should reflect your day after 5 PM.'
 
+const formatPhoneticForDisplay = (value: string | null | undefined) => {
+  const cleaned = String(value || '').trim()
+  if (!cleaned) return ''
+  if (cleaned.startsWith('/') && cleaned.endsWith('/')) {
+    return cleaned
+  }
+  return `/${cleaned}/`
+}
+
 export default function Home() {
   const { data: session } = useSession()
   const canUseDailyActivity = session?.user?.role === 'member' || session?.user?.role === 'admin'
@@ -1932,7 +1941,7 @@ export default function Home() {
 
                     <div className="text-center">
                       <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">{currentVocabularyItem.word}</p>
-                      <p className="mt-1 sm:mt-2 text-lg sm:text-2xl text-white/90">{currentVocabularyItem.phonetic ? `/${currentVocabularyItem.phonetic}/` : ''}</p>
+                      <p className="mt-1 sm:mt-2 text-lg sm:text-2xl text-white/90">{formatPhoneticForDisplay(currentVocabularyItem.phonetic)}</p>
                       {currentVocabularyItem.englishDefinition && (
                         <p className="mt-2 sm:mt-3 text-xs sm:text-base font-medium text-white/90">{currentVocabularyItem.englishDefinition}</p>
                       )}
