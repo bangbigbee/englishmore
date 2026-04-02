@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 
 interface CourseItem {
@@ -208,7 +208,7 @@ interface AdminVocabularyItem {
   }
 }
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'checkin' | 'reflect' | 'vocabulary' | 'referral'
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'vocabulary' | 'referral'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -521,6 +521,58 @@ export default function AdminDashboard() {
       enrollment.status
     ].some((field) => field.toLowerCase().includes(keyword))
   })
+
+  const groupedFilteredEnrollments = useMemo(() => {
+    const groups = filteredEnrollments.reduce((accumulator, enrollment) => {
+      const courseTitle = enrollment.course.title || 'Uncategorized'
+      const group = accumulator.get(courseTitle) || []
+      group.push(enrollment)
+      accumulator.set(courseTitle, group)
+      return accumulator
+    }, new Map<string, EnrollmentItem[]>())
+
+    return Array.from(groups.entries())
+      .sort(([left], [right]) => left.localeCompare(right, 'vi'))
+      .map(([courseTitle, items]) => {
+        const sortedItems = [...items].sort((left, right) => {
+          if (left.status !== right.status) {
+            return left.status === 'pending' ? -1 : 1
+          }
+
+          return new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()
+        })
+
+        return {
+          courseTitle,
+          items: sortedItems,
+          pendingCount: sortedItems.filter((item) => item.status === 'pending').length
+        }
+      })
+  }, [filteredEnrollments])
+
+  const groupedHomeworks = useMemo(() => {
+    const groups = homeworks.reduce((accumulator, homework) => {
+      const courseTitle = homework.course.title || 'Uncategorized'
+      const group = accumulator.get(courseTitle) || []
+      group.push(homework)
+      accumulator.set(courseTitle, group)
+      return accumulator
+    }, new Map<string, HomeworkItem[]>())
+
+    return Array.from(groups.entries())
+      .sort(([left], [right]) => left.localeCompare(right, 'vi'))
+      .map(([courseTitle, items]) => {
+        const sortedItems = [...items].sort(
+          (left, right) => new Date(left.dueDate).getTime() - new Date(right.dueDate).getTime()
+        )
+
+        return {
+          courseTitle,
+          items: sortedItems,
+          totalSubmissions: sortedItems.reduce((total, item) => total + Number(item._count.submissions || 0), 0)
+        }
+      })
+  }, [homeworks])
 
   const fetchCourses = async () => {
     try {
@@ -960,22 +1012,17 @@ export default function AdminDashboard() {
   }, [activeSection, fetchHomeworkSubmissions])
 
   useEffect(() => {
-    if (activeSection === 'checkin') {
+    if (activeSection === 'dailyActivity') {
       fetchCheckinData()
+      fetchReflectData()
     }
-  }, [activeSection, fetchCheckinData])
+  }, [activeSection, fetchCheckinData, fetchReflectData])
 
   useEffect(() => {
     if (activeSection === 'vocabulary') {
       fetchVocabularyData()
     }
   }, [activeSection, fetchVocabularyData])
-
-  useEffect(() => {
-    if (activeSection === 'reflect') {
-      fetchReflectData()
-    }
-  }, [activeSection, fetchReflectData])
 
   useEffect(() => {
     if (activeSection === 'referral') {
@@ -987,7 +1034,11 @@ export default function AdminDashboard() {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const section = params.get('section')
-    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'checkin', 'reflect', 'vocabulary', 'referral']
+    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'vocabulary', 'referral']
+    if (section === 'checkin' || section === 'reflect') {
+      setActiveSection('dailyActivity')
+      return
+    }
     if (section && allowed.includes(section as AdminSection)) {
       setActiveSection(section as AdminSection)
     }
@@ -1055,31 +1106,31 @@ export default function AdminDashboard() {
     }
   }
 
-  const importFromGoogleForm = async () => {
+  const importFromGoogleDocs = async () => {
     if (!newExerciseSourceFormUrl.trim()) {
-      setExerciseError('Vui lòng nhập link Google Form trước khi import')
+      setExerciseError('Vui lòng nhập link Google Docs trước khi import')
       return
     }
 
     try {
       setImportingForm(true)
-      const res = await fetch('/api/admin/exercises/import-google-form', {
+      const res = await fetch('/api/admin/exercises/import-google-docs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formUrl: newExerciseSourceFormUrl })
+        body: JSON.stringify({ docsUrl: newExerciseSourceFormUrl })
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Unable to import from Google Form')
+      if (!res.ok) throw new Error(data?.error || 'Unable to import from Google Docs')
 
       setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
       setNewExerciseTitle(String(data.title || '').trim())
       setNewExerciseDescription(String(data.description || '').trim())
       setNewExerciseSourceFormUrl(String(data.sourceFormUrl || newExerciseSourceFormUrl).trim())
       setExerciseError('')
-      setExerciseSuccess('Data imported from Google Form. You can edit it before saving.')
+      setExerciseSuccess('Data imported from Google Docs. You can edit it before saving.')
       setShowExerciseBuilder(true)
     } catch (err) {
-      setExerciseError(err instanceof Error ? err.message : 'Unable to import from Google Form')
+      setExerciseError(err instanceof Error ? err.message : 'Unable to import from Google Docs')
       setExerciseSuccess('')
     } finally {
       setImportingForm(false)
@@ -1744,37 +1795,35 @@ export default function AdminDashboard() {
            </button>
            <button
              type="button"
-             onClick={() => setActiveSection('checkin')}
-             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'checkin' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+             onClick={() => setActiveSection('dailyActivity')}
+             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'dailyActivity' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             5. DAILY CHECK-IN
-           </button>
-           <button
-             type="button"
-             onClick={() => setActiveSection('reflect')}
-             className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'reflect' ? 'bg-violet-700 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-           >
-             6. REFLECT
+             5. DAILY ACTIVITY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('vocabulary')}
              className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'vocabulary' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             7. VOCABULARY
+             6. VOCABULARY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('referral')}
              className={`rounded px-5 py-2 text-sm font-semibold ${activeSection === 'referral' ? 'bg-[#14532d] text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             8. REFERRALS
+             7. REFERRALS
            </button>
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'checkin' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Student Check-in Tracking by Course</h2>
-          <p className="text-sm text-gray-600 mb-5">Monitor daily greeting responses to evaluate engagement and prepare medal rewards.</p>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'dailyActivity' ? '' : 'hidden'}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Daily Activity</h2>
+          <p className="text-sm text-gray-600 mb-5">Track both daily check-ins and reflections in one place.</p>
+
+          <div className="mb-6 rounded-lg border border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3">
+            <h3 className="text-lg font-bold text-[#14532d]">CHECK-IN</h3>
+            <p className="mt-1 text-sm text-gray-600">Monitor daily greeting responses to evaluate engagement and prepare medal rewards.</p>
+          </div>
 
           {checkinError && (
             <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{checkinError}</div>
@@ -1943,9 +1992,11 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'reflect' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Student Reflection Tracking</h2>
-          <p className="text-sm text-gray-600 mb-5">See which students checked in today and also posted a reflection.</p>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'dailyActivity' ? '' : 'hidden'}`}>
+          <div className="mb-6 rounded-lg border border-violet-200 bg-violet-50 px-4 py-3">
+            <h3 className="text-lg font-bold text-violet-700">REFLECTION</h3>
+            <p className="mt-1 text-sm text-gray-600">See which students checked in today and also posted a reflection.</p>
+          </div>
 
           {reflectError && (
             <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{reflectError}</div>
@@ -2359,63 +2410,80 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attachment</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submissions</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {homeworks.map((homework) => (
-                  <tr key={homework.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-900">{homework.course.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{homework.title}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{homework.description || 'No description'}</td>
-                    <td className="px-4 py-3 text-sm">
-                      {homework.attachmentUrl ? (
-                        <a
-                          href={homework.attachmentUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[#14532d] hover:underline"
-                        >
-                          📎 Download
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{new Date(homework.dueDate).toLocaleDateString('en-GB')}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{homework._count.submissions}</td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-3">
-                        <button onClick={() => openEditHomework(homework)} className="text-[#14532d] hover:underline">Edit</button>
-                        <button
-                          onClick={() => deleteHomework(homework)}
-                          disabled={deletingHomeworkId === homework.id}
-                          className="text-red-600 hover:underline disabled:opacity-50"
-                        >
-                          {deletingHomeworkId === homework.id ? 'Deleting...' : 'Delete'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {homeworks.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No homework has been created yet.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          {groupedHomeworks.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-gray-300 px-4 py-8 text-center text-gray-500">
+              No homework has been created yet.
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {groupedHomeworks.map((group) => (
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#14532d]/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3">
+                    <h3 className="text-base font-bold text-[#14532d]">{group.courseTitle}</h3>
+                    <div className="flex items-center gap-2 text-xs font-semibold">
+                      <span className="rounded-full bg-white px-2.5 py-1 text-slate-600 ring-1 ring-slate-200">
+                        {group.items.length} homework
+                      </span>
+                      <span className="rounded-full bg-white px-2.5 py-1 text-slate-600 ring-1 ring-slate-200">
+                        {group.totalSubmissions} submissions
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Homework</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attachment</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due date</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submissions</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.items.map((homework) => (
+                          <tr key={homework.id} className="border-b hover:bg-gray-50">
+                            <td className="px-4 py-3 text-sm text-gray-900">{homework.title}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{homework.description || 'No description'}</td>
+                            <td className="px-4 py-3 text-sm">
+                              {homework.attachmentUrl ? (
+                                <a
+                                  href={homework.attachmentUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-[#14532d] hover:underline"
+                                >
+                                  📎 Download
+                                </a>
+                              ) : (
+                                <span className="text-gray-400">—</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-900">{new Date(homework.dueDate).toLocaleDateString('en-GB')}</td>
+                            <td className="px-4 py-3 text-sm text-gray-900">{homework._count.submissions}</td>
+                            <td className="px-4 py-3 text-sm">
+                              <div className="flex items-center gap-3">
+                                <button onClick={() => openEditHomework(homework)} className="text-[#14532d] hover:underline">Edit</button>
+                                <button
+                                  onClick={() => deleteHomework(homework)}
+                                  disabled={deletingHomeworkId === homework.id}
+                                  className="text-red-600 hover:underline disabled:opacity-50"
+                                >
+                                  {deletingHomeworkId === homework.id ? 'Deleting...' : 'Delete'}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
@@ -2687,16 +2755,16 @@ export default function AdminDashboard() {
                   type="url"
                   value={newExerciseSourceFormUrl}
                   onChange={(e) => setNewExerciseSourceFormUrl(e.target.value)}
-                  placeholder="Paste Google Form link (viewform)"
+                  placeholder="Paste Google Docs link"
                   className="w-80 max-w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <button
                   type="button"
-                  onClick={importFromGoogleForm}
+                  onClick={importFromGoogleDocs}
                   disabled={importingForm}
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {importingForm ? 'Importing...' : 'Import from Google Form'}
+                  {importingForm ? 'Importing...' : 'Import from Google Docs'}
                 </button>
                 <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50">
                   {importingDocx ? 'Importing DOCX...' : 'Import DOCX'}
@@ -3561,85 +3629,102 @@ export default function AdminDashboard() {
             </button>
           </div>
           
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEnrollments.map((enrollment) => (
-                  <tr key={enrollment.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-900">{enrollment.user.name || enrollment.user.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{enrollment.user.phone || 'Not updated'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{enrollment.user.email}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{enrollment.course.title}</td>
-                    <td className="px-4 py-3 text-sm">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
-                        enrollment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-[#14532d]/10 text-[#14532d]'
-                      }`}>
-                        {enrollment.status === 'pending' ? 'Awaiting payment' : 'Payment received'}
+          {groupedFilteredEnrollments.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-gray-300 px-4 py-8 text-center text-gray-500">
+              {enrollments.length === 0 ? 'No enrollments yet' : 'No enrollments match the current search'}
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {groupedFilteredEnrollments.map((group) => (
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#14532d]/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3">
+                    <h3 className="text-base font-bold text-[#14532d]">{group.courseTitle}</h3>
+                    <div className="flex items-center gap-2 text-xs font-semibold">
+                      <span className="rounded-full bg-white px-2.5 py-1 text-slate-600 ring-1 ring-slate-200">
+                        {group.items.length} students
                       </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
-                      {new Date(enrollment.createdAt).toLocaleDateString('vi-VN')}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex flex-wrap gap-2">
-                        <Link
-                          href={`/admin/student/${enrollment.user.id}`}
-                          className="text-[#14532d] hover:text-[#14532d] hover:underline"
-                        >
-                          Details
-                        </Link>
-                        <button
-                          onClick={() => setDeleteConfirm({ id: enrollment.user.id, name: enrollment.user.name || enrollment.user.email })}
-                          disabled={deletingUserId === enrollment.user.id}
-                          className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
-                        >
-                          {deletingUserId === enrollment.user.id ? 'Deleting...' : 'Delete'}
-                        </button>
-                        {enrollment.status === 'pending' && (
-                          <button
-                            onClick={() => setConfirmPayment({
-                              id: enrollment.id,
-                              studentName: enrollment.user.name || enrollment.user.email,
-                              courseTitle: enrollment.course.title
-                            })}
-                            disabled={updatingEnrollmentId === enrollment.id}
-                            className="text-amber-700 hover:text-amber-900 hover:underline"
-                          >
-                            {updatingEnrollmentId === enrollment.id ? 'Updating...' : 'Confirm transfer received'}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => rejectUser(enrollment.user.id, enrollment.user.name || enrollment.user.email)}
-                          disabled={rejectingUserId === enrollment.user.id}
-                          className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
-                        >
-                          {rejectingUserId === enrollment.user.id ? 'Processing...' : 'Reject student'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {filteredEnrollments.length === 0 && (
-                  <tr>
-                    <td colSpan={8} className="px-4 py-3 text-center text-gray-500">
-                      {enrollments.length === 0 ? 'No enrollments yet' : 'No enrollments match the current search'}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                      {group.pendingCount > 0 && (
+                        <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-800">
+                          {group.pendingCount} awaiting payment
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.items.map((enrollment) => (
+                          <tr key={enrollment.id} className="border-b hover:bg-gray-50">
+                            <td className="px-4 py-3 text-sm text-gray-900">{enrollment.user.name || enrollment.user.email}</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">{enrollment.user.phone || 'Not updated'}</td>
+                            <td className="px-4 py-3 text-sm text-gray-500">{enrollment.user.email}</td>
+                            <td className="px-4 py-3 text-sm">
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                enrollment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-[#14532d]/10 text-[#14532d]'
+                              }`}>
+                                {enrollment.status === 'pending' ? 'Awaiting payment' : 'Payment received'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-500">
+                              {new Date(enrollment.createdAt).toLocaleDateString('vi-VN')}
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <div className="flex flex-wrap gap-2">
+                                <Link
+                                  href={`/admin/student/${enrollment.user.id}`}
+                                  className="text-[#14532d] hover:text-[#14532d] hover:underline"
+                                >
+                                  Details
+                                </Link>
+                                <button
+                                  onClick={() => setDeleteConfirm({ id: enrollment.user.id, name: enrollment.user.name || enrollment.user.email })}
+                                  disabled={deletingUserId === enrollment.user.id}
+                                  className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
+                                >
+                                  {deletingUserId === enrollment.user.id ? 'Deleting...' : 'Delete'}
+                                </button>
+                                {enrollment.status === 'pending' && (
+                                  <button
+                                    onClick={() => setConfirmPayment({
+                                      id: enrollment.id,
+                                      studentName: enrollment.user.name || enrollment.user.email,
+                                      courseTitle: enrollment.course.title
+                                    })}
+                                    disabled={updatingEnrollmentId === enrollment.id}
+                                    className="text-amber-700 hover:text-amber-900 hover:underline"
+                                  >
+                                    {updatingEnrollmentId === enrollment.id ? 'Updating...' : 'Confirm transfer received'}
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => rejectUser(enrollment.user.id, enrollment.user.name || enrollment.user.email)}
+                                  disabled={rejectingUserId === enrollment.user.id}
+                                  className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
+                                >
+                                  {rejectingUserId === enrollment.user.id ? 'Processing...' : 'Reject student'}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
         </div>
 
         {confirmPayment && (
