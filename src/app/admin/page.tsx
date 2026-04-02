@@ -497,9 +497,12 @@ export default function AdminDashboard() {
   const [newVocabularyEnglishDefinition, setNewVocabularyEnglishDefinition] = useState('')
   const [newVocabularyMeaning, setNewVocabularyMeaning] = useState('')
   const [newVocabularyExample, setNewVocabularyExample] = useState('')
+  const [vocabularyImportDocsUrl, setVocabularyImportDocsUrl] = useState('')
+  const [vocabularyImportDocxFile, setVocabularyImportDocxFile] = useState<File | null>(null)
   const [vocabularyImportSourceCourseId, setVocabularyImportSourceCourseId] = useState('')
   const [vocabularyImportTargetCourseId, setVocabularyImportTargetCourseId] = useState('')
   const [importingVocabulary, setImportingVocabulary] = useState(false)
+  const [importingVocabularyFromFileOrDocs, setImportingVocabularyFromFileOrDocs] = useState(false)
   const [vocabularyError, setVocabularyError] = useState('')
   const [vocabularySuccess, setVocabularySuccess] = useState('')
   const [savingVocabulary, setSavingVocabulary] = useState(false)
@@ -1023,6 +1026,62 @@ export default function AdminDashboard() {
     }
   }
 
+  const importVocabularyFromDocsOrFile = async () => {
+    if (!newVocabularyCourseId) {
+      setVocabularyError('Please choose the course to import vocabulary into.')
+      return
+    }
+
+    const docsUrl = vocabularyImportDocsUrl.trim()
+    if (!docsUrl && !vocabularyImportDocxFile) {
+      setVocabularyError('Please provide a Google Docs link or attach a .docx file.')
+      return
+    }
+
+    if (vocabularyImportDocxFile && !String(vocabularyImportDocxFile.name || '').toLowerCase().endsWith('.docx')) {
+      setVocabularyError('Only .docx files are supported for local upload.')
+      return
+    }
+
+    try {
+      setImportingVocabularyFromFileOrDocs(true)
+      setVocabularyError('')
+      setVocabularySuccess('')
+
+      const formData = new FormData()
+      formData.append('courseId', newVocabularyCourseId)
+      if (docsUrl) {
+        formData.append('docsUrl', docsUrl)
+      }
+      if (vocabularyImportDocxFile) {
+        formData.append('file', vocabularyImportDocxFile)
+      }
+
+      const res = await fetch('/api/admin/vocabulary/import-docs', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data?.error || 'Could not import vocabulary from source.')
+      }
+
+      const createdCount = Number(data?.createdCount || 0)
+      const skippedCount = Number(data?.skippedCount || 0)
+      const invalidCount = Number(data?.invalidCount || 0)
+      setVocabularySuccess(`Imported ${createdCount} words. Skipped ${skippedCount} duplicates and ${invalidCount} invalid rows.`)
+      setVocabularyCourseFilter(newVocabularyCourseId)
+      setVocabularyImportDocsUrl('')
+      setVocabularyImportDocxFile(null)
+      fetchVocabularyData()
+    } catch (err) {
+      setVocabularyError(err instanceof Error ? err.message : 'Could not import vocabulary from source.')
+    } finally {
+      setImportingVocabularyFromFileOrDocs(false)
+    }
+  }
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
@@ -1071,7 +1130,7 @@ export default function AdminDashboard() {
   }, [courses, vocabularyCourseFilter, newVocabularyCourseId, vocabularyImportSourceCourseId, vocabularyImportTargetCourseId])
 
   useEffect(() => {
-    if (activeSection === 'lectureNote' && selectedLectureNoteCourseId) {
+    if ((activeSection === 'lectureNote' || activeSection === 'homework') && selectedLectureNoteCourseId) {
       fetchLectureNotes(selectedLectureNoteCourseId)
     }
   }, [activeSection, selectedLectureNoteCourseId, fetchLectureNotes])
@@ -1108,6 +1167,10 @@ export default function AdminDashboard() {
     const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'vocabulary', 'referral']
     if (section === 'checkin' || section === 'reflect') {
       setActiveSection('dailyActivity')
+      return
+    }
+    if (section === 'exercise' || section === 'lectureNote') {
+      setActiveSection('homework')
       return
     }
     if (section && allowed.includes(section as AdminSection)) {
@@ -1865,42 +1928,28 @@ export default function AdminDashboard() {
             onClick={() => setActiveSection('homework')}
             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'homework' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
           >
-            2. HOMEWORK
+            2. HOMEWORK / EXERCISE / LECTURE
           </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection('exercise')}
-            className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'exercise' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-          >
-            3. EXERCISE
-          </button>
-           <button
-             type="button"
-             onClick={() => setActiveSection('lectureNote')}
-             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'lectureNote' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-           >
-             4. LECTURE NOTES
-           </button>
            <button
              type="button"
              onClick={() => setActiveSection('dailyActivity')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'dailyActivity' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             5. DAILY ACTIVITY
+             3. DAILY ACTIVITY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('vocabulary')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'vocabulary' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             6. VOCABULARY
+             4. VOCABULARY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('referral')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'referral' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             7. REFERRALS
+             5. REFERRALS
            </button>
           </div>
         </div>
@@ -2242,6 +2291,49 @@ export default function AdminDashboard() {
             placeholder="Usage example (optional)"
             className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
           />
+
+          <div className="mb-6 rounded border border-[#14532d]/25 bg-[#14532d]/5 px-4 py-4">
+            <p className="text-sm font-semibold text-[#14532d]">Import vocabulary from Google Docs or DOCX</p>
+            <p className="mt-1 text-xs text-gray-600">The imported words will be added to the course selected in the manual form above.</p>
+            <p className="mt-1 text-xs text-gray-600">Format: WORD, PHONETIC, PART_OF_SPEECH, ENGLISH_DEFINITION, MEANING, EXAMPLE (WORD + MEANING required).</p>
+
+            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto_auto]">
+              <input
+                type="url"
+                value={vocabularyImportDocsUrl}
+                onChange={(e) => setVocabularyImportDocsUrl(e.target.value)}
+                placeholder="Paste Google Docs link"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              />
+
+              <label className="inline-flex cursor-pointer items-center justify-center rounded bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+                {vocabularyImportDocxFile ? 'Change DOCX' : 'Attach DOCX'}
+                <input
+                  type="file"
+                  accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  className="hidden"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] || null
+                    setVocabularyImportDocxFile(file)
+                    event.currentTarget.value = ''
+                  }}
+                />
+              </label>
+
+              <button
+                type="button"
+                onClick={importVocabularyFromDocsOrFile}
+                disabled={importingVocabularyFromFileOrDocs}
+                className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
+              >
+                {importingVocabularyFromFileOrDocs ? 'Importing...' : 'Import'}
+              </button>
+            </div>
+
+            {vocabularyImportDocxFile && (
+              <p className="mt-2 text-xs text-gray-600">Attached file: {vocabularyImportDocxFile.name}</p>
+            )}
+          </div>
 
           <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-4">
             <p className="text-sm font-semibold text-amber-900">Import vocabulary between courses</p>
@@ -2802,7 +2894,7 @@ export default function AdminDashboard() {
           })()}
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Multiple-Choice Exercises</h2>
 
           {exerciseSuccess && (
@@ -3029,7 +3121,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Student exercise results</h2>
 
           {groupedExerciseResults.length === 0 ? (
@@ -3081,7 +3173,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'lectureNote' ? '' : 'hidden'}`}>
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Lecture notes by course</h2>
 
           {lectureSuccess && (
