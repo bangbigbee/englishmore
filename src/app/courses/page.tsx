@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -242,7 +242,7 @@ export default function CoursesPage() {
 
         {paymentInstruction && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-xl font-bold text-[#14532d]">Payment Details</h3>
                 <button
@@ -306,7 +306,7 @@ export default function CoursesPage() {
 
         {errorModal && (
           <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+            <div className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-xl font-bold text-red-600">Registration Error</h3>
                 <button
@@ -329,7 +329,7 @@ export default function CoursesPage() {
 
         {pendingReferralCourse && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div className="w-full max-w-md rounded-lg border border-[#14532d]/40 bg-white p-6 shadow-xl">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">Ai đã giới thiệu khóa học này cho bạn?</h3>

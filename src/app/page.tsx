@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -2048,7 +2048,7 @@ export default function Home() {
 
       {congratsEnrollment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
+          <div className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-8 max-w-sm w-full text-center">
             <div className="text-5xl mb-4">🎉</div>
             <h3 className="text-2xl font-bold text-[#14532d] mb-3">Congratulations!</h3>
             <p className="text-gray-700 mb-2">

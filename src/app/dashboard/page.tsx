@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -470,7 +470,7 @@ export default function Dashboard() {
 
         {submitConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-            <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <div className="w-full max-w-md rounded-lg border border-[#14532d]/40 bg-white p-6 shadow-lg">
               <h3 className="text-lg font-bold text-gray-900">Confirm Exercise Submission</h3>
               <p className="mt-3 text-sm text-gray-700">
                 You worked on {getExerciseTitle(submitConfirm.exercise)} for <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
@@ -502,7 +502,7 @@ export default function Dashboard() {
 
         {showHomeworkModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-md w-full">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-md w-full">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-2xl font-bold text-gray-900">Submit Assignment</h3>
                 <button

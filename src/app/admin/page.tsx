@@ -2517,7 +2517,7 @@ export default function AdminDashboard() {
 
             return (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-                <div className="w-full max-w-3xl rounded-2xl bg-white p-5 shadow-2xl">
+                <div className="w-full max-w-3xl rounded-2xl border border-[#14532d]/40 bg-white p-5 shadow-2xl">
                   <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
                     <div>
                       <h3 className="text-lg font-bold text-slate-900">{selectedSubmission.homework.title}</h3>
@@ -3031,7 +3031,7 @@ export default function AdminDashboard() {
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded shadow-lg p-6 max-w-sm">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm student deletion</h3>
               <p className="text-gray-700 mb-6">
                 Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? This action cannot be undone.
@@ -3226,7 +3226,7 @@ export default function AdminDashboard() {
 
         {editingCourse && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-lg w-full">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-lg w-full">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Edit course details</h3>
 
               <div className="space-y-4">
@@ -3300,7 +3300,7 @@ export default function AdminDashboard() {
 
         {editingHomework && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-lg w-full">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-lg w-full">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Edit homework</h3>
 
               <div className="space-y-4">
@@ -3388,7 +3388,7 @@ export default function AdminDashboard() {
 
         {editingExercise && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Edit exercise</h3>
 
               <div className="mb-6">
@@ -3476,7 +3476,7 @@ export default function AdminDashboard() {
 
         {selectedExerciseResult && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">Exercise submission: {selectedExerciseResult.exerciseTitle}</h3>
@@ -3513,7 +3513,7 @@ export default function AdminDashboard() {
 
         {confirmUnpublish && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-md w-full">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-md w-full">
               <h3 className="text-lg font-bold text-gray-900 mb-3">Unpublish course</h3>
               <p className="text-gray-700 mb-6">
                 Are you sure you want to unpublish <strong>{confirmUnpublish.title}</strong>? Students will no longer see this course publicly.
@@ -3644,7 +3644,7 @@ export default function AdminDashboard() {
 
         {confirmPayment && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded shadow-lg p-6 max-w-md w-full">
+            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-md w-full">
               <h3 className="text-lg font-bold text-gray-900 mb-3">Confirm payment</h3>
               <p className="text-gray-700 mb-2">
                 Student: <strong>{confirmPayment.studentName}</strong>
