@@ -16,19 +16,21 @@ interface ProfilePayload {
   reasonToJoin: string
 }
 
+const toSentenceValue = (value: unknown) => String(value || '').trim().toLowerCase()
+
 const normalizeProfile = (raw: unknown): ProfilePayload => {
   const p = (raw ?? {}) as Partial<ProfilePayload>
   return {
     fullName: String(p.fullName || '').trim(),
     age: String(p.age || '').trim(),
     hometown: String(p.hometown || '').trim(),
-    major: String(p.major || '').trim(),
-    currentJob: String(p.currentJob || '').trim(),
+    major: toSentenceValue(p.major),
+    currentJob: toSentenceValue(p.currentJob),
     yearsOfExperience: String(p.yearsOfExperience || '').trim(),
-    hobbies: String(p.hobbies || '').trim(),
-    traitOne: String(p.traitOne || '').trim(),
-    traitTwo: String(p.traitTwo || '').trim(),
-    traitThree: String(p.traitThree || '').trim(),
+    hobbies: toSentenceValue(p.hobbies),
+    traitOne: toSentenceValue(p.traitOne),
+    traitTwo: toSentenceValue(p.traitTwo),
+    traitThree: toSentenceValue(p.traitThree),
     reasonToJoin: String(p.reasonToJoin || '').trim()
   }
 }
