@@ -4,6 +4,19 @@ import { signIn, useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
+
+const ERROR_MESSAGES: Record<string, string> = {
+  Callback: 'Google callback error. Check NEXTAUTH_URL and make sure the Google redirect URI matches the current domain.',
+  OAuthCallback: 'Google OAuth callback failed. Please verify the client ID, client secret, and redirect URI. (OAuthCallback)',
+  Configuration: 'There is a NextAuth configuration error. Please check the environment variables.',
+  AccessDenied: 'Sign-in permission was denied.',
+  OAuthSignin: 'Could not connect to Google. Please try again.',
+  OAuthAccountNotLinked: 'This email is already linked to another account.',
+  EmailInUse: 'This email is already registered. Please use another email or sign in with your existing account.',
+  DisallowedUserAgentZalo: 'Google sign-in is blocked inside the Zalo in-app browser. Please open this website in Safari or Chrome to continue.',
+  '': ''
+}
 
 export default function Login() {
   const [error, setError] = useState('')
@@ -68,48 +81,22 @@ export default function Login() {
     }
   }
 
-  const handleClearError = () => {
-    setError('')
-    // Clear error from URL
-    if (typeof window !== 'undefined') {
-      window.history.replaceState({}, document.title, window.location.pathname)
+  useEffect(() => {
+    if (shownError) {
+      toast.error(ERROR_MESSAGES[shownError] || shownError)
     }
-  }
+  }, [shownError])
 
-  const errorMessages: Record<string, string> = {
-    Callback: 'Google callback error. Check NEXTAUTH_URL and make sure the Google redirect URI matches the current domain.',
-    OAuthCallback: 'Google OAuth callback failed. Please verify the client ID, client secret, and redirect URI. (OAuthCallback)',
-    Configuration: 'There is a NextAuth configuration error. Please check the environment variables.',
-    AccessDenied: 'Sign-in permission was denied.',
-    OAuthSignin: 'Could not connect to Google. Please try again.',
-    OAuthAccountNotLinked: 'This email is already linked to another account.',
-    EmailInUse: 'This email is already registered. Please use another email or sign in with your existing account.',
-    DisallowedUserAgentZalo: 'Google sign-in is blocked inside the Zalo in-app browser. Please open this website in Safari or Chrome to continue.',
-    '': ''
-  }
+  useEffect(() => {
+    if (message) {
+      toast.error(message)
+    }
+  }, [message])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-0">
       <div className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-sm md:w-96">
         <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">Login</h2>
-
-        {shownError && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded">
-            <p className="text-red-700 text-sm">
-              Error: {errorMessages[shownError] || shownError}
-            </p>
-            <button
-              onClick={handleClearError}
-              className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-            >
-              Try again
-            </button>
-          </div>
-        )}
-
-        {message && (
-          <p className="text-left text-red-600 mb-4 text-sm">{message}</p>
-        )}
 
         <button
           onClick={handleGoogleSignIn}

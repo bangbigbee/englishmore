@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
 interface CourseItem {
@@ -1240,6 +1241,84 @@ export default function AdminDashboard() {
   }, [activeSection, fetchReferralData])
 
   useEffect(() => {
+    if (courseSuccess) {
+      toast.success(courseSuccess)
+    }
+  }, [courseSuccess])
+
+  useEffect(() => {
+    if (courseError) {
+      toast.error(courseError)
+    }
+  }, [courseError])
+
+  useEffect(() => {
+    if (homeworkSuccess) {
+      toast.success(homeworkSuccess)
+    }
+  }, [homeworkSuccess])
+
+  useEffect(() => {
+    if (homeworkError) {
+      toast.error(homeworkError)
+    }
+  }, [homeworkError])
+
+  useEffect(() => {
+    if (exerciseSuccess) {
+      toast.success(exerciseSuccess)
+    }
+  }, [exerciseSuccess])
+
+  useEffect(() => {
+    if (exerciseError) {
+      toast.error(exerciseError)
+    }
+  }, [exerciseError])
+
+  useEffect(() => {
+    if (lectureSuccess) {
+      toast.success(lectureSuccess)
+    }
+  }, [lectureSuccess])
+
+  useEffect(() => {
+    if (lectureError) {
+      toast.error(lectureError)
+    }
+  }, [lectureError])
+
+  useEffect(() => {
+    if (vocabularySuccess) {
+      toast.success(vocabularySuccess)
+    }
+  }, [vocabularySuccess])
+
+  useEffect(() => {
+    if (vocabularyError) {
+      toast.error(vocabularyError)
+    }
+  }, [vocabularyError])
+
+  useEffect(() => {
+    if (checkinError) {
+      toast.error(checkinError)
+    }
+  }, [checkinError])
+
+  useEffect(() => {
+    if (reflectError) {
+      toast.error(reflectError)
+    }
+  }, [reflectError])
+
+  useEffect(() => {
+    if (referralError) {
+      toast.error(referralError)
+    }
+  }, [referralError])
+
+  useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const section = params.get('section')
@@ -2052,10 +2131,6 @@ export default function AdminDashboard() {
             <p className="mt-1 text-sm text-gray-600">Monitor daily greeting responses to evaluate engagement and prepare medal rewards.</p>
           </div>
 
-          {checkinError && (
-            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{checkinError}</div>
-          )}
-
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
             <select
               value={checkinCourseFilter}
@@ -2156,10 +2231,6 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          {referralError && (
-            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{referralError}</div>
-          )}
-
           <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
               <p className="text-xs uppercase tracking-wide text-slate-500">Total referrals</p>
@@ -2224,10 +2295,6 @@ export default function AdminDashboard() {
             <h3 className="text-lg font-bold text-violet-700">REFLECTION</h3>
             <p className="mt-1 text-sm text-gray-600">See which students checked in today and also posted a reflection.</p>
           </div>
-
-          {reflectError && (
-            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{reflectError}</div>
-          )}
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
             <select
@@ -2301,13 +2368,6 @@ export default function AdminDashboard() {
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'vocabulary' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Student Vocabulary</h2>
           <p className="text-sm text-gray-600 mb-5">Prepare vocabulary by course to display on the homepage for students.</p>
-
-          {vocabularySuccess && (
-            <div className="mb-4 rounded border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{vocabularySuccess}</div>
-          )}
-          {vocabularyError && (
-            <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{vocabularyError}</div>
-          )}
 
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-[#14532d]/15 bg-[#14532d]/5 px-4 py-3">
             <div>
@@ -2719,13 +2779,6 @@ export default function AdminDashboard() {
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Homework Management by Course</h2>
 
-          {homeworkSuccess && (
-            <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{homeworkSuccess}</div>
-          )}
-          {homeworkError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Error: {homeworkError}</div>
-          )}
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <select
               value={newHomeworkCourseId}
@@ -3094,13 +3147,6 @@ export default function AdminDashboard() {
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Multiple-Choice Exercises</h2>
 
-          {exerciseSuccess && (
-            <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{exerciseSuccess}</div>
-          )}
-          {exerciseError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Error: {exerciseError}</div>
-          )}
-
           <div className="mb-6 rounded border border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3 text-sm text-[#14532d]">
             Total exercises created: <span className="font-semibold">{exercises.length}</span>
           </div>
@@ -3375,13 +3421,6 @@ export default function AdminDashboard() {
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'lectureNote' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Lecture notes by course</h2>
 
-          {lectureSuccess && (
-            <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">{lectureSuccess}</div>
-          )}
-          {lectureError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">Error: {lectureError}</div>
-          )}
-
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <select
               value={selectedLectureNoteCourseId}
@@ -3559,18 +3598,6 @@ export default function AdminDashboard() {
             Manage <span className="text-amber-600">Courses</span>
           </h2>
           
-          {courseSuccess && (
-            <div className="mb-4 p-3 bg-[#14532d]/10 border border-[#14532d]/40 rounded text-[#14532d]">
-              {courseSuccess}
-            </div>
-          )}
-          
-          {courseError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 rounded text-red-700">
-              Error: {courseError}
-            </div>
-          )}
-
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Course title</span>

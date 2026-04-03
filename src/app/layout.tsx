@@ -3,6 +3,7 @@ import { Geist_Mono, Nunito } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import TopNav from "@/components/TopNav";
+import { Toaster } from "sonner";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -37,6 +38,7 @@ export default function RootLayout({
         <AuthProvider>
           <TopNav />
           <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">{children}</main>
+          <Toaster richColors position="top-right" closeButton duration={3500} />
         </AuthProvider>
       </body>
     </html>

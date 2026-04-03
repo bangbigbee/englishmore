@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
 interface HomeworkItem {
@@ -67,7 +68,6 @@ export default function Dashboard() {
   const [homeworkSuccess, setHomeworkSuccess] = useState('')
   const [homeworkError, setHomeworkError] = useState('')
   const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, Record<string, string>>>({})
-  const [exerciseFeedback, setExerciseFeedback] = useState<Record<string, { type: 'success' | 'error'; message: string }>>({})
   const [submittingExerciseId, setSubmittingExerciseId] = useState<string | null>(null)
   const [startedExerciseAt, setStartedExerciseAt] = useState<Record<string, number>>({})
   const [timerTick, setTimerTick] = useState(() => Date.now())
@@ -98,6 +98,24 @@ export default function Dashboard() {
       }
     }
   }, [status, router, session?.user?.role])
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (homeworkError) {
+      toast.error(homeworkError)
+    }
+  }, [homeworkError])
+
+  useEffect(() => {
+    if (homeworkSuccess) {
+      toast.success(homeworkSuccess)
+    }
+  }, [homeworkSuccess])
 
   const fetchHomework = async () => {
     try {
@@ -159,6 +177,8 @@ export default function Dashboard() {
     }
 
     try {
+      setHomeworkError('')
+      setHomeworkSuccess('')
       const res = await fetch('/api/assignments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -189,11 +209,6 @@ export default function Dashboard() {
         [questionId]: selectedOption
       }
     }))
-    setExerciseFeedback((current) => {
-      const next = { ...current }
-      delete next[exerciseId]
-      return next
-    })
   }
 
   useEffect(() => {
@@ -224,11 +239,6 @@ export default function Dashboard() {
       ...current,
       [exerciseId]: Date.now()
     }))
-    setExerciseFeedback((current) => {
-      const next = { ...current }
-      delete next[exerciseId]
-      return next
-    })
   }
 
   const openSubmitConfirmation = (exercise: ExerciseItem) => {
@@ -236,25 +246,13 @@ export default function Dashboard() {
     const missingQuestion = exercise.questions.find((question) => !selectedAnswers[question.id])
 
     if (missingQuestion) {
-      setExerciseFeedback((current) => ({
-        ...current,
-        [exercise.id]: {
-          type: 'error',
-          message: `Please choose an answer for question ${missingQuestion.order} before submitting.`
-        }
-      }))
+      toast.error(`Please choose an answer for question ${missingQuestion.order} before submitting.`)
       return
     }
 
     const durationSeconds = getExerciseDurationSeconds(exercise.id)
     if (durationSeconds <= 0) {
-      setExerciseFeedback((current) => ({
-        ...current,
-        [exercise.id]: {
-          type: 'error',
-          message: 'Please press Start before submitting.'
-        }
-      }))
+      toast.error('Please press Start before submitting.')
       return
     }
 
@@ -282,13 +280,7 @@ export default function Dashboard() {
         throw new Error(data?.error || 'Could not submit the exercise.')
       }
 
-      setExerciseFeedback((current) => ({
-        ...current,
-        [exercise.id]: {
-          type: 'success',
-          message: `Submitted. Current result: ${data.submission.score}/${data.submission.totalQuestions}. Time: ${formatDuration(durationSeconds)}.`
-        }
-      }))
+      toast.success(`Submitted. Current result: ${data.submission.score}/${data.submission.totalQuestions}. Time: ${formatDuration(durationSeconds)}.`)
       setSubmitConfirm(null)
       setStartedExerciseAt((current) => {
         const next = { ...current }
@@ -297,13 +289,7 @@ export default function Dashboard() {
       })
       await fetchExercises()
     } catch (err) {
-      setExerciseFeedback((current) => ({
-        ...current,
-        [exercise.id]: {
-          type: 'error',
-          message: err instanceof Error ? err.message : 'Could not submit the exercise.'
-        }
-      }))
+      toast.error(err instanceof Error ? err.message : 'Could not submit the exercise.')
     } finally {
       setSubmittingExerciseId(null)
     }
@@ -332,12 +318,6 @@ export default function Dashboard() {
             Back to home
           </Link>
         </div>
-
-        {error && (
-          <div className="mb-6 rounded border border-red-300 bg-red-50 px-4 py-3 text-red-700">
-            {error}
-          </div>
-        )}
 
         <div className="grid grid-cols-1 gap-6">
           {session.user?.role === 'member' && (
@@ -381,16 +361,6 @@ export default function Dashboard() {
                           <span className="inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">Not submitted yet</span>
                         )}
                       </div>
-
-                      {exerciseFeedback[exercise.id] && (
-                        <div className={`mb-4 rounded-lg border px-4 py-3 text-sm ${
-                          exerciseFeedback[exercise.id]?.type === 'success'
-                            ? 'border-[#14532d]/30 bg-[#14532d]/10 text-[#14532d]'
-                            : 'border-red-300 bg-red-50 text-red-700'
-                        }`}>
-                          {exerciseFeedback[exercise.id]?.message}
-                        </div>
-                      )}
 
                       {!startedExerciseAt[exercise.id] ? (
                         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
@@ -520,9 +490,6 @@ export default function Dashboard() {
                 <p className="text-gray-500 mb-4">Loading homework list...</p>
               ) : (
                 <>
-                  {homeworkError && <p className="text-red-500 mb-4">{homeworkError}</p>}
-                  {homeworkSuccess && <p className="text-[#14532d] mb-4">{homeworkSuccess}</p>}
-
                   {homeworks.length === 0 ? (
                     <p className="text-[#14532d] mb-4">Nice work. You have completed all of your homework.</p>
                   ) : (

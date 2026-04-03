@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
 interface Course {
@@ -68,6 +69,19 @@ export default function CoursesPage() {
     }
   }, [status, router, session?.user?.role])
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (errorModal) {
+      toast.error(errorModal)
+      setErrorModal(null)
+    }
+  }, [errorModal])
+
   const fetchCourses = async () => {
     try {
       const res = await fetch('/api/courses')
@@ -107,6 +121,7 @@ export default function CoursesPage() {
       } else {
         setError('')
         setErrorModal(null)
+        toast.success('Đăng ký thành công. Vui lòng chuyển khoản theo hướng dẫn để được xác nhận.')
         setPaymentInstruction(data.paymentInstruction || null)
         setPendingReferralCourse(null)
         setReferrerInput('')
@@ -166,12 +181,6 @@ export default function CoursesPage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 rounded text-red-700">
-            {error}
-          </div>
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {loading ? (
             <div className="col-span-full text-center text-gray-500">Loading...</div>
@@ -302,29 +311,6 @@ export default function CoursesPage() {
                 className="mt-4 w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
               >
                 Got it, close
-              </button>
-            </div>
-          </div>
-        )}
-
-        {errorModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-            <div className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-bold text-red-600">Registration Error</h3>
-                <button
-                  onClick={() => setErrorModal(null)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none"
-                >
-                  ×
-                </button>
-              </div>
-              <p className="text-gray-700 mb-4">{errorModal}</p>
-              <button
-                onClick={() => setErrorModal(null)}
-                className="w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
-              >
-                Close
               </button>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
 interface BadgeItem {
@@ -75,6 +76,18 @@ export default function ProfilePage() {
       fetchBadges()
     }
   }, [status, router])
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (success) {
+      toast.success(success)
+    }
+  }, [success])
 
   const fetchBadges = async () => {
     try {
@@ -310,9 +323,6 @@ export default function ProfilePage() {
           </aside>
 
           <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm p-6 sm:p-8">
-
-            {error && <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-700 text-sm">{error}</div>}
-            {success && <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded text-green-700 text-sm">{success}</div>}
 
             <form onSubmit={handleSubmit} className="space-y-6">
             {/* Avatar Upload */}

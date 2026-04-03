@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
 interface HomeworkRow {
@@ -67,6 +68,18 @@ export default function MyHomeworkPage() {
       void fetchHomework()
     }
   }, [status, session?.user?.role, router])
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (success) {
+      toast.success(success)
+    }
+  }, [success])
 
   const fetchHomework = async () => {
     try {
@@ -158,9 +171,6 @@ export default function MyHomeworkPage() {
             <span aria-hidden="true" className="brand-cta-arrow">→</span>
           </Link>
         </div>
-
-        {error && <div className="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-700">{error}</div>}
-        {success && <div className="mb-4 rounded-lg border border-[#14532d]/30 bg-[#14532d]/10 px-4 py-3 text-[#14532d]">{success}</div>}
 
         <section className="mb-6 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">

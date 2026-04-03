@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
 interface LectureNoteItem {
   id: string
@@ -46,6 +47,12 @@ export default function LectureNotesPage() {
       fetchLectureNotes()
     }
   }, [status, session?.user?.role, router])
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
 
   const fetchLectureNotes = async () => {
     try {
@@ -105,10 +112,6 @@ export default function LectureNotesPage() {
             <span aria-hidden="true" className="brand-cta-arrow">→</span>
           </Link>
         </div>
-
-        {error && (
-          <div className="mb-6 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-red-700">{error}</div>
-        )}
 
         {courses.length === 0 ? (
           <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
