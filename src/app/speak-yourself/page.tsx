@@ -523,19 +523,19 @@ export default function SpeakYourselfPage() {
                 <p className={`mt-1 text-xs ${speakResult === 'pass' ? 'text-emerald-700' : 'text-amber-700'}`}>
                   {speakResult === 'pass' ? 'Great job! You can now continue to all exercises.' : 'Keep practising — try reading more slowly and clearly.'}
                 </p>
-                <div className="mt-3 border-t border-current/10 pt-3">
+                <div className="mt-3 overflow-hidden border-t border-current/10 pt-3">
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Word analysis — <span className="text-emerald-600">green = spoken correctly</span>, <span className="text-red-500">red = missed</span></p>
-                  <p className="text-sm leading-7">
+                  <div className="flex flex-wrap gap-x-1 gap-y-1 text-sm leading-6">
                     {expected.map((word, idx) => (
-                      <span key={idx} className={`mr-1 rounded px-0.5 ${matched.has(idx) ? 'text-emerald-700' : 'bg-red-100 text-red-600 line-through'}`}>
+                      <span key={idx} className={`max-w-full wrap-break-word rounded px-0.5 ${matched.has(idx) ? 'text-emerald-700' : 'bg-red-100 text-red-600 line-through'}`}>
                         {word}
                       </span>
                     ))}
-                  </p>
+                  </div>
                 </div>
                 <div className="mt-3 border-t border-current/10 pt-3">
                   <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">What the system heard</p>
-                  <p className="text-sm leading-relaxed text-slate-600 italic">{spokenText}</p>
+                  <p className="wrap-break-word text-sm leading-relaxed text-slate-600 italic">{spokenText}</p>
                 </div>
               </div>
             )
