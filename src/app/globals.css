@@ -80,6 +80,49 @@ body {
   margin-left: 0.125rem;
 }
 
+@keyframes speak-cta-mic-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.18);
+  }
+  50% {
+    transform: scale(1.08);
+    background: rgba(251, 191, 36, 0.2);
+    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.12);
+  }
+}
+
+@keyframes speak-cta-mic-glow {
+  0%,
+  100% {
+    color: #ffffff;
+    opacity: 0.96;
+  }
+  50% {
+    color: #fde68a;
+    opacity: 1;
+  }
+}
+
+.speak-cta-mic-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  margin-left: 0.1rem;
+  border-radius: 999px;
+  animation: speak-cta-mic-pulse 1.8s ease-in-out infinite;
+}
+
+.speak-cta-mic {
+  width: 1rem;
+  height: 1rem;
+  animation: speak-cta-mic-glow 1.8s ease-in-out infinite;
+}
+
 .course-ticker-wrap {
   overflow: hidden;
   padding: 12px 0;
@@ -225,6 +268,11 @@ body {
   }
 
   .review-attention-button {
+    animation: none;
+  }
+
+  .speak-cta-mic-wrap,
+  .speak-cta-mic {
     animation: none;
   }
 }
