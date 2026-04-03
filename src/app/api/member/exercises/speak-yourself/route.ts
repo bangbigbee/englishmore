@@ -122,6 +122,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => ({}))
   const profile = normalizePayload(body?.profile)
   const spokenText = String(body?.spokenText || '').trim()
+  const clientScript = String(body?.generatedScript || '').trim()
 
   const missing = Object.entries(profile)
     .filter(([, value]) => !value)
@@ -135,7 +136,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'spokenText is required' }, { status: 400 })
   }
 
-  const generatedScript = buildScript(profile)
+  // Prefer the script the client generated (may be AI-polished); fall back to server template
+  const generatedScript = clientScript || buildScript(profile)
   const accuracy = calculateSpeechAccuracy(generatedScript, spokenText)
   const passed = accuracy >= 80
 

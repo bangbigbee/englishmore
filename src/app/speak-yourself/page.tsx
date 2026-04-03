@@ -32,12 +32,25 @@ interface SpeakYourselfForm {
   reasonToJoin: string
 }
 
+interface SpeechResultItem {
+  transcript?: string
+}
+
+interface SpeechResult extends ArrayLike<SpeechResultItem> {
+  isFinal: boolean
+}
+
+interface SpeechResultEvent {
+  results: ArrayLike<SpeechResult>
+  resultIndex: number
+}
+
 interface BrowserSpeechRecognition {
   lang: string
   continuous: boolean
   interimResults: boolean
   maxAlternatives: number
-  onresult: ((event: unknown) => void) | null
+  onresult: ((event: SpeechResultEvent) => void) | null
   onerror: ((event: unknown) => void) | null
   onend: (() => void) | null
   start: () => void
@@ -69,6 +82,8 @@ export default function SpeakYourselfPage() {
   const [speakResult, setSpeakResult] = useState<'pass' | 'retry' | null>(null)
   const [speakStatus, setSpeakStatus] = useState<SpeakYourselfStatus>({ hasPassed: false, latestAttempt: null })
   const [isRecordingSpeak, setIsRecordingSpeak] = useState(false)
+  const [interimText, setInterimText] = useState('')
+  const [generatingScript, setGeneratingScript] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(false)
   const speechRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
   const spokenTextRef = useRef('')
@@ -142,7 +157,7 @@ export default function SpeakYourselfPage() {
     setSpeakForm((current) => ({ ...current, [field]: value }))
   }
 
-  const generateSpeakScript = () => {
+  const generateSpeakScript = async () => {
     const requiredFields: Array<{ field: keyof SpeakYourselfForm; label: string }> = [
       { field: 'fullName', label: 'Full name' },
       { field: 'age', label: 'Age' },
@@ -166,23 +181,27 @@ export default function SpeakYourselfPage() {
       return
     }
 
-    const script = [
-      `Hello everyone. My name is ${speakForm.fullName.trim()}.`,
-      `I am ${speakForm.age.trim()} years old, and I come from ${speakForm.hometown.trim()}.`,
-      `My background is ${speakForm.major.trim()}.`,
-      `I currently work as ${speakForm.currentJob.trim()}, and I have ${speakForm.yearsOfExperience.trim()} years of experience.`,
-      `In my free time, I enjoy ${speakForm.hobbies.trim()}.`,
-      `Three words that describe me are ${speakForm.traitOne.trim()}, ${speakForm.traitTwo.trim()}, and ${speakForm.traitThree.trim()}.`,
-      `I joined this course because ${speakForm.reasonToJoin.trim()}.`,
-      'Thank you for listening.'
-    ].join(' ')
-
-    setGeneratedSpeakScript(script)
-    setSpokenText('')
-    spokenTextRef.current = ''
-    setSpeakAccuracy(null)
-    setSpeakResult(null)
-    toast.success('Your introduction script is ready. Press Record to start speaking practice.')
+    try {
+      setGeneratingScript(true)
+      const res = await fetch('/api/member/exercises/speak-yourself/generate-script', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile: speakForm })
+      })
+      const data = await res.json().catch(() => ({})) as { script?: string; error?: string }
+      if (!res.ok) throw new Error(data?.error || 'Could not generate script.')
+      setGeneratedSpeakScript(data.script ?? '')
+      setSpokenText('')
+      setInterimText('')
+      spokenTextRef.current = ''
+      setSpeakAccuracy(null)
+      setSpeakResult(null)
+      toast.success('Your introduction script is ready. Press Record to start speaking practice.')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not generate script.')
+    } finally {
+      setGeneratingScript(false)
+    }
   }
 
   const submitSpeakAttempt = async (recognizedScript: string) => {
@@ -192,6 +211,7 @@ export default function SpeakYourselfPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile: speakForm,
+          generatedScript: generatedSpeakScript,
           spokenText: recognizedScript
         })
       })
@@ -249,36 +269,43 @@ export default function SpeakYourselfPage() {
 
     const recognition = new RecognitionConstructor()
     recognition.lang = 'en-US'
-    recognition.continuous = false
+    recognition.continuous = true
     recognition.interimResults = true
     recognition.maxAlternatives = 1
 
     spokenTextRef.current = ''
     setSpokenText('')
+    setInterimText('')
     setSpeakAccuracy(null)
     setSpeakResult(null)
 
-    recognition.onresult = (event: unknown) => {
-      const resultEvent = event as { results?: ArrayLike<ArrayLike<{ transcript?: string }>> }
-      const results = resultEvent.results
+    recognition.onresult = (event: SpeechResultEvent) => {
+      const results = event.results
       if (!results) return
 
-      const transcript = Array.from(results)
-        .map((result) => result?.[0]?.transcript || '')
-        .join(' ')
-        .trim()
-
-      spokenTextRef.current = transcript
-      setSpokenText(transcript)
+      let interimTranscript = ''
+      for (let i = event.resultIndex; i < results.length; i++) {
+        const result = results[i]
+        const transcript = result?.[0]?.transcript || ''
+        if (result.isFinal) {
+          spokenTextRef.current = (spokenTextRef.current + ' ' + transcript).trim()
+          setSpokenText(spokenTextRef.current)
+        } else {
+          interimTranscript += transcript
+        }
+      }
+      setInterimText(interimTranscript)
     }
 
     recognition.onerror = () => {
       setIsRecordingSpeak(false)
+      setInterimText('')
       toast.error('Recording failed. Please check microphone permissions and try again.')
     }
 
     recognition.onend = () => {
       setIsRecordingSpeak(false)
+      setInterimText('')
       const finalTranscript = spokenTextRef.current.trim()
       if (!finalTranscript) {
         toast.error('No speech was recognized. Please speak clearly and try again.')
@@ -346,20 +373,20 @@ export default function SpeakYourselfPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            <input value={speakForm.fullName} onChange={(event) => updateSpeakFormField('fullName', event.target.value)} placeholder="Full name" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.age} onChange={(event) => updateSpeakFormField('age', event.target.value)} placeholder="Age" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.hometown} onChange={(event) => updateSpeakFormField('hometown', event.target.value)} placeholder="Hometown" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.major} onChange={(event) => updateSpeakFormField('major', event.target.value)} placeholder="Background / Major" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.currentJob} onChange={(event) => updateSpeakFormField('currentJob', event.target.value)} placeholder="Current job" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.yearsOfExperience} onChange={(event) => updateSpeakFormField('yearsOfExperience', event.target.value)} placeholder="Years of experience" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.hobbies} onChange={(event) => updateSpeakFormField('hobbies', event.target.value)} placeholder="Hobbies" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
-            <input value={speakForm.traitOne} onChange={(event) => updateSpeakFormField('traitOne', event.target.value)} placeholder="Trait word 1" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.traitTwo} onChange={(event) => updateSpeakFormField('traitTwo', event.target.value)} placeholder="Trait word 2" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-            <input value={speakForm.traitThree} onChange={(event) => updateSpeakFormField('traitThree', event.target.value)} placeholder="Trait word 3" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
+            <input value={speakForm.fullName} onChange={(event) => updateSpeakFormField('fullName', event.target.value)} placeholder="What is your full name?" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.age} onChange={(event) => updateSpeakFormField('age', event.target.value)} placeholder="How old are you?" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.hometown} onChange={(event) => updateSpeakFormField('hometown', event.target.value)} placeholder="Where are you from?" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.major} onChange={(event) => updateSpeakFormField('major', event.target.value)} placeholder="What is your educational background or major?" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.currentJob} onChange={(event) => updateSpeakFormField('currentJob', event.target.value)} placeholder="What is your current job or role?" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.yearsOfExperience} onChange={(event) => updateSpeakFormField('yearsOfExperience', event.target.value)} placeholder="How many years of experience do you have?" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.hobbies} onChange={(event) => updateSpeakFormField('hobbies', event.target.value)} placeholder="What are your hobbies or interests?" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
+            <input value={speakForm.traitOne} onChange={(event) => updateSpeakFormField('traitOne', event.target.value)} placeholder="Describe yourself in one word (e.g. passionate)" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.traitTwo} onChange={(event) => updateSpeakFormField('traitTwo', event.target.value)} placeholder="Another word that describes you (e.g. creative)" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+            <input value={speakForm.traitThree} onChange={(event) => updateSpeakFormField('traitThree', event.target.value)} placeholder="A third word that describes you (e.g. determined)" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
             <textarea
               value={speakForm.reasonToJoin}
               onChange={(event) => updateSpeakFormField('reasonToJoin', event.target.value)}
-              placeholder="Reason for joining the course"
+              placeholder="Why did you join this English course? (e.g. I want to improve my speaking skills for work)"
               rows={3}
               className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2"
             />
@@ -368,41 +395,123 @@ export default function SpeakYourselfPage() {
           <div className="mt-4 flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={generateSpeakScript}
-              className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534]"
+              onClick={() => { void generateSpeakScript() }}
+              disabled={generatingScript}
+              className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Generate script
+              {generatingScript ? 'Generating…' : 'Generate script'}
             </button>
             <button
               type="button"
               onClick={isRecordingSpeak ? stopSpeakRecording : startSpeakRecording}
               disabled={!speechSupported || !generatedSpeakScript}
-              className="rounded bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className={`inline-flex items-center gap-2 rounded px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${isRecordingSpeak ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-700 hover:bg-blue-800'}`}
             >
-              {isRecordingSpeak ? 'Stop recording' : 'Record'}
+              {isRecordingSpeak ? (
+                <>
+                  <span className="relative flex h-3 w-3">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75"></span>
+                    <span className="relative inline-flex h-3 w-3 rounded-full bg-white"></span>
+                  </span>
+                  Stop recording
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                    <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
+                    <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
+                  </svg>
+                  Record
+                </>
+              )}
             </button>
           </div>
 
           {generatedSpeakScript && (
             <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Script</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Your script — read this aloud</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-800">{generatedSpeakScript}</p>
             </div>
           )}
 
-          {spokenText && (
+          {isRecordingSpeak && (
+            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-3 w-3">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-red-600"></span>
+                </span>
+                <p className="text-xs font-semibold uppercase tracking-wide text-red-600">Recording in progress — speak now</p>
+              </div>
+              {(spokenText || interimText) && (
+                <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                  {spokenText}{' '}
+                  <span className="text-slate-400 italic">{interimText}</span>
+                </p>
+              )}
+            </div>
+          )}
+
+          {!isRecordingSpeak && spokenText && !speakAccuracy && (
             <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Recognized speech</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Recognized speech — analysing…</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-700">{spokenText}</p>
             </div>
           )}
 
-          {speakAccuracy !== null && (
-            <div className={`mt-4 rounded-lg border p-4 ${speakResult === 'pass' ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-amber-300 bg-amber-50 text-amber-800'}`}>
-              <p className="text-sm font-semibold">Current accuracy: {speakAccuracy}%</p>
-              <p className="mt-1 text-sm">{speakResult === 'pass' ? 'Pass. You reached the required score of at least 80%.' : 'Not passed yet. You need at least 80%, please try again.'}</p>
-            </div>
-          )}
+          {speakAccuracy !== null && spokenText && generatedSpeakScript && (() => {
+            const normalize = (t: string) => t.toLowerCase().replace(/[^a-z0-9\s']/g, ' ').replace(/\s+/g, ' ').trim()
+            const expected = normalize(generatedSpeakScript).split(' ').filter(Boolean)
+            const spokenTokens = normalize(spokenText).split(' ').filter(Boolean)
+            const m = expected.length
+            const n = spokenTokens.length
+            const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0) as number[])
+            for (let i = 1; i <= m; i++) {
+              for (let j = 1; j <= n; j++) {
+                dp[i][j] = expected[i - 1] === spokenTokens[j - 1]
+                  ? dp[i - 1][j - 1] + 1
+                  : Math.max(dp[i - 1][j], dp[i][j - 1])
+              }
+            }
+            const matched = new Set<number>()
+            let ai = m, bi = n
+            while (ai > 0 && bi > 0) {
+              if (expected[ai - 1] === spokenTokens[bi - 1]) { matched.add(ai - 1); ai--; bi-- }
+              else if (dp[ai - 1][bi] >= dp[ai][bi - 1]) { ai-- } else { bi-- }
+            }
+            return (
+              <div className={`mt-4 rounded-lg border p-4 ${speakResult === 'pass' ? 'border-emerald-300 bg-emerald-50' : 'border-amber-300 bg-amber-50'}`}>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className={`text-sm font-bold ${speakResult === 'pass' ? 'text-emerald-800' : 'text-amber-800'}`}>
+                    {speakResult === 'pass' ? `Pass — ${speakAccuracy}% accuracy` : `${speakAccuracy}% accuracy — needs 80% to pass`}
+                  </p>
+                  <div className="flex h-3 w-40 overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className={`h-full rounded-full transition-all ${speakResult === 'pass' ? 'bg-emerald-500' : speakAccuracy >= 60 ? 'bg-amber-500' : 'bg-red-500'}`}
+                      style={{ width: `${speakAccuracy}%` }}
+                    />
+                  </div>
+                </div>
+                <p className={`mt-1 text-xs ${speakResult === 'pass' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {speakResult === 'pass' ? 'Great job! You can now continue to all exercises.' : 'Keep practising — try reading more slowly and clearly.'}
+                </p>
+                <div className="mt-3 border-t border-current/10 pt-3">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Word analysis — <span className="text-emerald-600">green = spoken correctly</span>, <span className="text-red-500">red = missed</span></p>
+                  <p className="text-sm leading-7">
+                    {expected.map((word, idx) => (
+                      <span key={idx} className={`mr-1 rounded px-0.5 ${matched.has(idx) ? 'text-emerald-700' : 'bg-red-100 text-red-600 line-through'}`}>
+                        {word}
+                      </span>
+                    ))}
+                  </p>
+                </div>
+                <div className="mt-3 border-t border-current/10 pt-3">
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">What the system heard</p>
+                  <p className="text-sm leading-relaxed text-slate-600 italic">{spokenText}</p>
+                </div>
+              </div>
+            )
+          })()}
 
           {!speakStatus.hasPassed && (
             <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
