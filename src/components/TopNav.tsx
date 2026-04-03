@@ -208,6 +208,9 @@ export default function TopNav() {
                 <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Exercise
                 </Link>
+                <Link href="/speak-yourself" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                  Speak Yourself
+                </Link>
                 <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Slides
                 </Link>

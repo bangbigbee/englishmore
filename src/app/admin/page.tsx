@@ -236,7 +236,7 @@ interface VocabularyImportDraftItem {
   example: string
 }
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'vocabulary' | 'referral'
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'vocabulary' | 'speakYourself' | 'referral'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -1342,7 +1342,7 @@ export default function AdminDashboard() {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const section = params.get('section')
-    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'vocabulary', 'referral']
+    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'vocabulary', 'speakYourself', 'referral']
     if (section === 'checkin' || section === 'reflect') {
       setActiveSection('dailyActivity')
       return
@@ -2151,10 +2151,17 @@ export default function AdminDashboard() {
            </button>
            <button
              type="button"
+             onClick={() => setActiveSection('speakYourself')}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'speakYourself' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             7. SPEAK YOURSELF
+           </button>
+           <button
+             type="button"
              onClick={() => setActiveSection('referral')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'referral' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             7. REFERRALS
+             8. REFERRALS
            </button>
           </div>
         </div>
@@ -3403,61 +3410,62 @@ export default function AdminDashboard() {
           )}
         </div>
 
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'speakYourself' ? '' : 'hidden'}`}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Speak Yourself results</h2>
+
+          {groupedSpeakYourselfResults.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-gray-500">
+              No Speak Yourself attempts yet
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {groupedSpeakYourselfResults.map((group) => (
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#14532d]/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3">
+                    <h4 className="text-sm font-bold text-[#14532d]">{group.courseTitle}</h4>
+                    <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
+                      {group.items.length} attempts
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Accuracy</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Result</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recognized text</th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attempted at</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.items.map((attempt) => (
+                          <tr key={attempt.id} className="border-b hover:bg-gray-50 align-top">
+                            <td className="px-4 py-3 text-sm text-gray-900">{attempt.user.name || attempt.user.email}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-gray-900">{attempt.accuracy}%</td>
+                            <td className="px-4 py-3 text-sm">
+                              <span className={`rounded px-2 py-1 text-xs font-semibold ${attempt.passed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                                {attempt.passed ? 'Pass' : 'Retry'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-700">
+                              <p className="max-w-xl whitespace-pre-wrap wrap-break-word">{attempt.recognizedText}</p>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{new Date(attempt.createdAt).toLocaleString('en-GB')}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Student exercise results</h2>
-
-          <div className="mb-8">
-            <h3 className="mb-3 text-lg font-bold text-[#14532d]">Speak Yourself results</h3>
-            {groupedSpeakYourselfResults.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-gray-500">
-                No Speak Yourself attempts yet
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {groupedSpeakYourselfResults.map((group) => (
-                  <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#14532d]/20">
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3">
-                      <h4 className="text-sm font-bold text-[#14532d]">{group.courseTitle}</h4>
-                      <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
-                        {group.items.length} attempts
-                      </span>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                      <table className="w-full border-collapse">
-                        <thead className="bg-gray-50 border-b">
-                          <tr>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Accuracy</th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Result</th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recognized text</th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attempted at</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {group.items.map((attempt) => (
-                            <tr key={attempt.id} className="border-b hover:bg-gray-50 align-top">
-                              <td className="px-4 py-3 text-sm text-gray-900">{attempt.user.name || attempt.user.email}</td>
-                              <td className="px-4 py-3 text-sm font-semibold text-gray-900">{attempt.accuracy}%</td>
-                              <td className="px-4 py-3 text-sm">
-                                <span className={`rounded px-2 py-1 text-xs font-semibold ${attempt.passed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                                  {attempt.passed ? 'Pass' : 'Retry'}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 text-sm text-gray-700">
-                                <p className="max-w-xl whitespace-pre-wrap wrap-break-word">{attempt.recognizedText}</p>
-                              </td>
-                              <td className="px-4 py-3 text-sm text-gray-600">{new Date(attempt.createdAt).toLocaleString('en-GB')}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </section>
-                ))}
-              </div>
-            )}
-          </div>
 
           {groupedExerciseResults.length === 0 ? (
             <div className="rounded-lg border border-dashed border-gray-300 px-4 py-8 text-center text-gray-500">

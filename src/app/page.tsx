@@ -1760,7 +1760,7 @@ export default function Home() {
             </div>
 
             {session?.user?.role === 'member' && (
-              <div className="mt-5 border-t border-[#14532d]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="mt-5 border-t border-[#14532d]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Link
                   href="/my-homework"
                   className="brand-cta brand-cta-filled w-full justify-center relative"
@@ -1804,6 +1804,13 @@ export default function Home() {
                       {memberHomework.pendingExercisesCount}
                     </span>
                   )}
+                </Link>
+                <Link
+                  href="/speak-yourself"
+                  className="brand-cta brand-cta-filled w-full justify-center"
+                >
+                  <span>Speak Yourself</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
                 </Link>
                 <Link
                   href="/lecture-notes"
@@ -1960,6 +1967,20 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+              </div>
+            </section>
+            <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-4 sm:p-6 shadow-lg">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-[#14532d]">Speak Yourself</h2>
+                  <p className="mt-1 text-sm text-slate-600">Complete your speaking assessment and score at least 80% to unlock every exercise.</p>
+                </div>
+                <Link
+                  href="/speak-yourself"
+                  className="inline-flex w-full items-center justify-center rounded-lg bg-[#14532d] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#166534] sm:w-auto"
+                >
+                  Open Speak Yourself
+                </Link>
               </div>
             </section>
             <section className="mt-6 sm:mt-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
