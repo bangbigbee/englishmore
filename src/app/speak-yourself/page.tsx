@@ -81,7 +81,6 @@ export default function SpeakYourselfPage() {
   const [spokenText, setSpokenText] = useState('')
   const [speakAccuracy, setSpeakAccuracy] = useState<number | null>(null)
   const [speakResult, setSpeakResult] = useState<'pass' | 'retry' | null>(null)
-  const [speakStatus, setSpeakStatus] = useState<SpeakYourselfStatus>({ hasPassed: false, latestAttempt: null })
   const [isRecordingSpeak, setIsRecordingSpeak] = useState(false)
   const [isSubmittingSpeak, setIsSubmittingSpeak] = useState(false)
   const [interimText, setInterimText] = useState('')
@@ -140,7 +139,6 @@ export default function SpeakYourselfPage() {
 
       const data = await res.json()
       const nextSpeakStatus = (data.speakYourself || { hasPassed: false, latestAttempt: null }) as SpeakYourselfStatus
-      setSpeakStatus(nextSpeakStatus)
 
       if (nextSpeakStatus.latestAttempt) {
         setGeneratedSpeakScript(nextSpeakStatus.latestAttempt.generatedScript)
@@ -251,11 +249,6 @@ export default function SpeakYourselfPage() {
 
       const attempt = data.attempt as SpeakYourselfStatus['latestAttempt']
       const passed = Boolean(data.hasPassed)
-      setSpeakStatus({
-        hasPassed: passed,
-        latestAttempt: attempt || null
-      })
-
       if (attempt) {
         setGeneratedSpeakScript(attempt.generatedScript)
         setSpokenText(attempt.recognizedText)
@@ -549,17 +542,6 @@ export default function SpeakYourselfPage() {
             )
           })()}
 
-          {!speakStatus.hasPassed && (
-            <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
-              You have not passed Speak Yourself yet. Keep practising to improve your speaking score.
-            </div>
-          )}
-
-          {speakStatus.hasPassed && (
-            <div className="mt-4 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-800">
-              You passed Speak Yourself. You can now continue to all multiple-choice exercises.
-            </div>
-          )}
         </div>
       </div>
     </div>
