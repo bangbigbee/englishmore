@@ -120,7 +120,7 @@ export async function GET() {
       description: exercise.description,
       questions: exercise.questions,
       submission: exercise.submissions[0] || null,
-      isLocked: speakFeatureEnabled ? !hasPassedSpeakYourself : false
+      isLocked: false
     })),
     speakYourself: {
       enabled: speakFeatureEnabled,

@@ -237,12 +237,6 @@ export default function Dashboard() {
   }
 
   const startExercise = (exerciseId: string) => {
-    const targetExercise = exercises.find((item) => item.id === exerciseId)
-    if (targetExercise?.isLocked) {
-      toast.error('Please pass Speak Yourself with at least 80% before moving to the next exercise.')
-      return
-    }
-
     setStartedExerciseAt((current) => ({
       ...current,
       [exerciseId]: Date.now()
@@ -250,11 +244,6 @@ export default function Dashboard() {
   }
 
   const openSubmitConfirmation = (exercise: ExerciseItem) => {
-    if (exercise.isLocked) {
-      toast.error('Exercise is locked. Please pass Speak Yourself first.')
-      return
-    }
-
     const selectedAnswers = exerciseAnswers[exercise.id] || {}
     const missingQuestion = exercise.questions.find((question) => !selectedAnswers[question.id])
 
@@ -340,8 +329,14 @@ export default function Dashboard() {
               <div className="mb-6 rounded-xl border border-[#14532d]/25 bg-[#14532d]/5 p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-bold text-[#14532d]">Speak Yourself</h3>
-                    <p className="mt-1 text-sm text-slate-600">This speaking assessment is now in its own tab. Pass with at least 80% to unlock all exercises.</p>
+                    <h3 className="inline-flex items-center gap-2 text-lg font-bold text-[#14532d]">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                        <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
+                        <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
+                      </svg>
+                      Speak Yourself
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-600">This speaking assessment is now in its own tab for pronunciation practice.</p>
                   </div>
                   <Link
                     href="/speak-yourself"
@@ -364,12 +359,6 @@ export default function Dashboard() {
                 <div className="space-y-6">
                   {exercises.map((exercise) => (
                     <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
-                      {exercise.isLocked && (
-                        <div className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-800">
-                          This exercise is locked until you pass Speak Yourself with at least 80 percent.
-                        </div>
-                      )}
-
                       {Boolean(startedExerciseAt[exercise.id]) && (
                         <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
                           ⏱ Time spent: {formatDuration(getExerciseDurationSeconds(exercise.id))}
@@ -407,7 +396,6 @@ export default function Dashboard() {
                           <button
                             type="button"
                             onClick={() => startExercise(exercise.id)}
-                            disabled={Boolean(exercise.isLocked)}
                             className="w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer disabled:opacity-50"
                           >
                             {exercise.submission ? 'Retry' : 'Start'}
@@ -431,7 +419,6 @@ export default function Dashboard() {
                                     <button
                                       key={`${question.id}-${option.key}`}
                                       type="button"
-                                      disabled={Boolean(exercise.isLocked)}
                                       onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
                                       className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
                                         isSelected
@@ -455,7 +442,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => openSubmitConfirmation(exercise)}
-                          disabled={Boolean(exercise.isLocked) || submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
+                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
                           className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
                         >
                           {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}

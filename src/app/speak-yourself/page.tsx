@@ -543,7 +543,7 @@ export default function SpeakYourselfPage() {
 
           {!speakStatus.hasPassed && (
             <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
-              You have not passed Speak Yourself yet. Multiple-choice exercises remain locked until you pass.
+              You have not passed Speak Yourself yet. Keep practising to improve your speaking score.
             </div>
           )}
 
