@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { Prisma } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
@@ -95,6 +96,11 @@ const buildScript = (payload: SpeakYourselfPayload) => {
   ].join(' ')
 }
 
+const isMissingSpeakYourselfTable = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError &&
+  error.code === 'P2021' &&
+  String(error.meta?.table || '').includes('SpeakYourselfAttempt')
+
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || !session.user) {
@@ -144,37 +150,49 @@ export async function POST(request: NextRequest) {
   const accuracy = calculateSpeechAccuracy(generatedScript, spokenText)
   const passed = accuracy >= 80
 
-  const attempt = await (prisma as unknown as { speakYourselfAttempt: { create: (args: unknown) => Promise<unknown> } }).speakYourselfAttempt.create({
-    data: {
-      userId: session.user.id,
-      courseId: activeEnrollment.courseId,
-      enrollmentId: activeEnrollment.id,
-      profilePayload: profile,
-      generatedScript,
-      recognizedText: spokenText,
-      accuracy,
-      passed
-    },
-    select: {
-      id: true,
-      accuracy: true,
-      passed: true,
-      createdAt: true,
-      generatedScript: true,
-      recognizedText: true
+  try {
+    const attempt = await (prisma as unknown as { speakYourselfAttempt: { create: (args: unknown) => Promise<unknown> } }).speakYourselfAttempt.create({
+      data: {
+        userId: session.user.id,
+        courseId: activeEnrollment.courseId,
+        enrollmentId: activeEnrollment.id,
+        profilePayload: profile,
+        generatedScript,
+        recognizedText: spokenText,
+        accuracy,
+        passed
+      },
+      select: {
+        id: true,
+        accuracy: true,
+        passed: true,
+        createdAt: true,
+        generatedScript: true,
+        recognizedText: true
+      }
+    }) as {
+      id: string
+      accuracy: number
+      passed: boolean
+      createdAt: Date
+      generatedScript: string
+      recognizedText: string
     }
-  }) as {
-    id: string
-    accuracy: number
-    passed: boolean
-    createdAt: Date
-    generatedScript: string
-    recognizedText: string
-  }
 
-  return NextResponse.json({
-    message: passed ? 'Speak Yourself passed.' : 'Speak Yourself not passed yet.',
-    attempt,
-    hasPassed: passed
-  })
+    return NextResponse.json({
+      message: passed ? 'Speak Yourself passed.' : 'Speak Yourself not passed yet.',
+      attempt,
+      hasPassed: passed
+    })
+  } catch (error) {
+    if (isMissingSpeakYourselfTable(error)) {
+      return NextResponse.json(
+        { error: 'Speak Yourself is temporarily unavailable because the database migration is not applied yet.' },
+        { status: 503 }
+      )
+    }
+
+    console.error('Speak Yourself submit error:', error)
+    return NextResponse.json({ error: 'Could not evaluate Speak Yourself. Please try again.' }, { status: 500 })
+  }
 }
