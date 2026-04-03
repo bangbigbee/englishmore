@@ -77,6 +77,19 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     return NextResponse.json({ error: 'This exercise does not belong to your course' }, { status: 404 })
   }
 
+  const latestSpeakAttempt = await prisma.speakYourselfAttempt.findFirst({
+    where: {
+      userId: session.user.id,
+      courseId: activeEnrollment.courseId
+    },
+    orderBy: { createdAt: 'desc' },
+    select: { passed: true }
+  })
+
+  if (!latestSpeakAttempt?.passed) {
+    return NextResponse.json({ error: 'Please pass Speak Yourself (>= 80%) before submitting exercises.' }, { status: 403 })
+  }
+
   if (answers.length !== exercise.questions.length) {
     return NextResponse.json({ error: `Please select all ${exercise.questions.length} answers before submitting` }, { status: 400 })
   }

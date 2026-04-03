@@ -149,6 +149,24 @@ interface ExerciseSubmissionItem {
   answers: ExerciseSubmissionAnswerItem[]
 }
 
+interface SpeakYourselfAttemptItem {
+  id: string
+  accuracy: number
+  passed: boolean
+  generatedScript: string
+  recognizedText: string
+  createdAt: string
+  user: {
+    id: string
+    name: string | null
+    email: string
+  }
+  course: {
+    id: string
+    title: string
+  }
+}
+
 interface ExerciseItem {
   id: string
   courseId: string
@@ -470,6 +488,7 @@ export default function AdminDashboard() {
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
   const [publishingExercise, setPublishingExercise] = useState(false)
   const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
+  const [speakYourselfAttempts, setSpeakYourselfAttempts] = useState<SpeakYourselfAttemptItem[]>([])
 
   // Lecture Notes states
   const [lectureNotes, setLectureNotes] = useState<LectureNote[]>([])
@@ -758,6 +777,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to fetch exercises')
       const data = await res.json()
       setExercises(data.exercises || [])
+      setSpeakYourselfAttempts(data.speakYourselfAttempts || [])
       if (!newExerciseCourseId && Array.isArray(data.courses) && data.courses.length > 0) {
         setNewExerciseCourseId(data.courses[0].id)
       }
@@ -2040,6 +2060,23 @@ export default function AdminDashboard() {
         items: [...items].sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
       }))
   }, [exerciseResults])
+
+  const groupedSpeakYourselfResults = useMemo(() => {
+    const groups = speakYourselfAttempts.reduce((accumulator, attempt) => {
+      const courseTitle = attempt.course.title || 'Uncategorized'
+      const group = accumulator.get(courseTitle) || []
+      group.push(attempt)
+      accumulator.set(courseTitle, group)
+      return accumulator
+    }, new Map<string, SpeakYourselfAttemptItem[]>())
+
+    return Array.from(groups.entries())
+      .sort(([left], [right]) => left.localeCompare(right, 'vi'))
+      .map(([courseTitle, items]) => ({
+        courseTitle,
+        items: [...items].sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
+      }))
+  }, [speakYourselfAttempts])
 
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -3368,6 +3405,59 @@ export default function AdminDashboard() {
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Student exercise results</h2>
+
+          <div className="mb-8">
+            <h3 className="mb-3 text-lg font-bold text-[#14532d]">Speak Yourself results</h3>
+            {groupedSpeakYourselfResults.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-gray-300 px-4 py-6 text-center text-gray-500">
+                No Speak Yourself attempts yet
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {groupedSpeakYourselfResults.map((group) => (
+                  <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#14532d]/20">
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3">
+                      <h4 className="text-sm font-bold text-[#14532d]">{group.courseTitle}</h4>
+                      <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
+                        {group.items.length} attempts
+                      </span>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead className="bg-gray-50 border-b">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Accuracy</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Result</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recognized text</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attempted at</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {group.items.map((attempt) => (
+                            <tr key={attempt.id} className="border-b hover:bg-gray-50 align-top">
+                              <td className="px-4 py-3 text-sm text-gray-900">{attempt.user.name || attempt.user.email}</td>
+                              <td className="px-4 py-3 text-sm font-semibold text-gray-900">{attempt.accuracy}%</td>
+                              <td className="px-4 py-3 text-sm">
+                                <span className={`rounded px-2 py-1 text-xs font-semibold ${attempt.passed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                                  {attempt.passed ? 'Pass' : 'Retry'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-700">
+                                <p className="max-w-xl whitespace-pre-wrap wrap-break-word">{attempt.recognizedText}</p>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-600">{new Date(attempt.createdAt).toLocaleString('en-GB')}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
+                ))}
+              </div>
+            )}
+          </div>
 
           {groupedExerciseResults.length === 0 ? (
             <div className="rounded-lg border border-dashed border-gray-300 px-4 py-8 text-center text-gray-500">

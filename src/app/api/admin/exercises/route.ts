@@ -59,7 +59,7 @@ export async function GET() {
   }
 
   try {
-    const [courses, exercises] = await Promise.all([
+    const [courses, exercises, speakYourselfAttempts] = await Promise.all([
       prisma.course.findMany({
         select: { id: true, title: true },
         orderBy: { createdAt: 'desc' }
@@ -125,10 +125,35 @@ export async function GET() {
           }
         },
         orderBy: [{ courseId: 'asc' }, { order: 'asc' }]
+      }),
+      prisma.speakYourselfAttempt.findMany({
+        select: {
+          id: true,
+          accuracy: true,
+          passed: true,
+          generatedScript: true,
+          recognizedText: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          course: {
+            select: {
+              id: true,
+              title: true
+            }
+          }
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 300
       })
     ])
 
-    return NextResponse.json({ courses, exercises })
+    return NextResponse.json({ courses, exercises, speakYourselfAttempts })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Could not load exercises.'
     return NextResponse.json({ error: message }, { status: 500 })

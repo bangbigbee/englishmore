@@ -101,6 +101,7 @@ model User {
   enrollments   Enrollment[]
   dailyGreetingCheckins DailyGreetingCheckin[]
   dailyReflections      DailyReflection[]
+  speakYourselfAttempts SpeakYourselfAttempt[]
 
   @@index([referrerId])
 }
@@ -158,6 +159,7 @@ model Course {
   exercises            CourseExercise[]
   lectureNotes         LectureNote[]
   vocabularies         VocabularyItem[]
+  speakYourselfAttempts SpeakYourselfAttempt[]
 }
 
 model CourseExercise {
@@ -335,12 +337,36 @@ model Enrollment {
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   payments          Payment[]
   progress          Progress[]
+  speakYourselfAttempts SpeakYourselfAttempt[]
   
   @@unique([courseId, userId])
   @@index([courseId])
   @@index([userId])
   @@index([status])
   @@index([referenceCode])
+}
+
+model SpeakYourselfAttempt {
+  id              String     @id @default(cuid())
+  userId          String
+  courseId        String
+  enrollmentId    String
+  profilePayload  Json
+  generatedScript String
+  recognizedText  String
+  accuracy        Int
+  passed          Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course          Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrollment      Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([enrollmentId])
+  @@index([userId, courseId, createdAt])
 }
 
 model Payment {

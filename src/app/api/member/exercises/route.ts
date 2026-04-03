@@ -23,8 +23,26 @@ export async function GET() {
   })
 
   if (!activeEnrollment) {
-    return NextResponse.json({ hasActiveCourse: false, exercises: [] })
+    return NextResponse.json({ hasActiveCourse: false, exercises: [], speakYourself: null })
   }
+
+  const latestSpeakAttempt = await prisma.speakYourselfAttempt.findFirst({
+    where: {
+      userId: session.user.id,
+      courseId: activeEnrollment.courseId
+    },
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      accuracy: true,
+      passed: true,
+      createdAt: true,
+      generatedScript: true,
+      recognizedText: true
+    }
+  })
+
+  const hasPassedSpeakYourself = Boolean(latestSpeakAttempt?.passed)
 
   const exercises = await prisma.courseExercise.findMany({
     where: { courseId: activeEnrollment.courseId, isDraft: false },
@@ -75,7 +93,12 @@ export async function GET() {
       title: exercise.title,
       description: exercise.description,
       questions: exercise.questions,
-      submission: exercise.submissions[0] || null
-    }))
+      submission: exercise.submissions[0] || null,
+      isLocked: !hasPassedSpeakYourself
+    })),
+    speakYourself: {
+      hasPassed: hasPassedSpeakYourself,
+      latestAttempt: latestSpeakAttempt || null
+    }
   })
 }

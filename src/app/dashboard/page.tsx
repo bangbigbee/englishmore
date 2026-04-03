@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
@@ -20,6 +20,7 @@ interface ExerciseItem {
   order: number
   title: string | null
   description: string | null
+  isLocked?: boolean
   submission: {
     id: string
     score: number
@@ -40,6 +41,58 @@ interface ExerciseItem {
     optionB: string
     optionC: string
   }>
+}
+
+interface SpeakYourselfStatus {
+  hasPassed: boolean
+  latestAttempt: {
+    id: string
+    accuracy: number
+    passed: boolean
+    createdAt: string
+    generatedScript: string
+    recognizedText: string
+  } | null
+}
+
+interface SpeakYourselfForm {
+  fullName: string
+  age: string
+  hometown: string
+  major: string
+  currentJob: string
+  yearsOfExperience: string
+  hobbies: string
+  traitOne: string
+  traitTwo: string
+  traitThree: string
+  reasonToJoin: string
+}
+
+interface BrowserSpeechRecognition {
+  lang: string
+  continuous: boolean
+  interimResults: boolean
+  maxAlternatives: number
+  onresult: ((event: unknown) => void) | null
+  onerror: ((event: unknown) => void) | null
+  onend: (() => void) | null
+  start: () => void
+  stop: () => void
+}
+
+const SPEAK_YOURSELF_INITIAL_FORM: SpeakYourselfForm = {
+  fullName: '',
+  age: '',
+  hometown: '',
+  major: '',
+  currentJob: '',
+  yearsOfExperience: '',
+  hobbies: '',
+  traitOne: '',
+  traitTwo: '',
+  traitThree: '',
+  reasonToJoin: ''
 }
 
 const formatDuration = (totalSeconds: number) => {
@@ -72,6 +125,16 @@ export default function Dashboard() {
   const [startedExerciseAt, setStartedExerciseAt] = useState<Record<string, number>>({})
   const [timerTick, setTimerTick] = useState(() => Date.now())
   const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
+  const [speakForm, setSpeakForm] = useState<SpeakYourselfForm>(SPEAK_YOURSELF_INITIAL_FORM)
+  const [generatedSpeakScript, setGeneratedSpeakScript] = useState('')
+  const [spokenText, setSpokenText] = useState('')
+  const [speakAccuracy, setSpeakAccuracy] = useState<number | null>(null)
+  const [speakResult, setSpeakResult] = useState<'pass' | 'retry' | null>(null)
+  const [speakStatus, setSpeakStatus] = useState<SpeakYourselfStatus>({ hasPassed: false, latestAttempt: null })
+  const [isRecordingSpeak, setIsRecordingSpeak] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(false)
+  const speechRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
+  const spokenTextRef = useRef('')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -117,6 +180,23 @@ export default function Dashboard() {
     }
   }, [homeworkSuccess])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const speechWindow = window as Window & {
+      SpeechRecognition?: new () => BrowserSpeechRecognition
+      webkitSpeechRecognition?: new () => BrowserSpeechRecognition
+    }
+
+    setSpeechSupported(Boolean(speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition))
+
+    return () => {
+      if (speechRecognitionRef.current) {
+        speechRecognitionRef.current.stop()
+      }
+    }
+  }, [])
+
   const fetchHomework = async () => {
     try {
       setHomeworkLoading(true)
@@ -145,6 +225,16 @@ export default function Dashboard() {
       const data = await res.json()
       const nextExercises = data.exercises || []
       setExercises(nextExercises)
+      const nextSpeakStatus = (data.speakYourself || { hasPassed: false, latestAttempt: null }) as SpeakYourselfStatus
+      setSpeakStatus(nextSpeakStatus)
+
+      if (nextSpeakStatus.latestAttempt) {
+        setGeneratedSpeakScript(nextSpeakStatus.latestAttempt.generatedScript)
+        setSpokenText(nextSpeakStatus.latestAttempt.recognizedText)
+        setSpeakAccuracy(nextSpeakStatus.latestAttempt.accuracy)
+        setSpeakResult(nextSpeakStatus.latestAttempt.passed ? 'pass' : 'retry')
+      }
+
       setExerciseAnswers((current) => {
         const mapped = Object.fromEntries(
           nextExercises.map((exercise: ExerciseItem) => [
@@ -235,6 +325,12 @@ export default function Dashboard() {
   }
 
   const startExercise = (exerciseId: string) => {
+    const targetExercise = exercises.find((item) => item.id === exerciseId)
+    if (targetExercise?.isLocked) {
+      toast.error('Please pass Speak Yourself with at least 80% before moving to the next exercise.')
+      return
+    }
+
     setStartedExerciseAt((current) => ({
       ...current,
       [exerciseId]: Date.now()
@@ -242,6 +338,11 @@ export default function Dashboard() {
   }
 
   const openSubmitConfirmation = (exercise: ExerciseItem) => {
+    if (exercise.isLocked) {
+      toast.error('Exercise is locked. Please pass Speak Yourself first.')
+      return
+    }
+
     const selectedAnswers = exerciseAnswers[exercise.id] || {}
     const missingQuestion = exercise.questions.find((question) => !selectedAnswers[question.id])
 
@@ -295,6 +396,176 @@ export default function Dashboard() {
     }
   }
 
+  const updateSpeakFormField = (field: keyof SpeakYourselfForm, value: string) => {
+    setSpeakForm((current) => ({ ...current, [field]: value }))
+  }
+
+  const generateSpeakScript = () => {
+    const requiredFields: Array<{ field: keyof SpeakYourselfForm; label: string }> = [
+      { field: 'fullName', label: 'Tên' },
+      { field: 'age', label: 'Tuổi' },
+      { field: 'hometown', label: 'Quê quán' },
+      { field: 'major', label: 'Background/Major' },
+      { field: 'currentJob', label: 'Công việc hiện tại' },
+      { field: 'yearsOfExperience', label: 'Số năm kinh nghiệm' },
+      { field: 'hobbies', label: 'Sở thích' },
+      { field: 'traitOne', label: 'Từ mô tả 1' },
+      { field: 'traitTwo', label: 'Từ mô tả 2' },
+      { field: 'traitThree', label: 'Từ mô tả 3' },
+      { field: 'reasonToJoin', label: 'Lý do tham gia khóa học' }
+    ]
+
+    const missingFields = requiredFields
+      .filter(({ field }) => !String(speakForm[field] || '').trim())
+      .map(({ label }) => label)
+
+    if (missingFields.length > 0) {
+      toast.error(`Vui lòng nhập đầy đủ: ${missingFields.join(', ')}`)
+      return
+    }
+
+    const script = [
+      `Hello everyone. My name is ${speakForm.fullName.trim()}.`,
+      `I am ${speakForm.age.trim()} years old, and I come from ${speakForm.hometown.trim()}.`,
+      `My background is ${speakForm.major.trim()}.`,
+      `I currently work as ${speakForm.currentJob.trim()}, and I have ${speakForm.yearsOfExperience.trim()} years of experience.`,
+      `In my free time, I enjoy ${speakForm.hobbies.trim()}.`,
+      `Three words that describe me are ${speakForm.traitOne.trim()}, ${speakForm.traitTwo.trim()}, and ${speakForm.traitThree.trim()}.`,
+      `I joined this course because ${speakForm.reasonToJoin.trim()}.`,
+      'Thank you for listening.'
+    ].join(' ')
+
+    setGeneratedSpeakScript(script)
+    setSpokenText('')
+    spokenTextRef.current = ''
+    setSpeakAccuracy(null)
+    setSpeakResult(null)
+    toast.success('Đã tạo script giới thiệu. Bấm Ghi âm để bắt đầu luyện nói.')
+  }
+
+  const submitSpeakAttempt = async (recognizedScript: string) => {
+    try {
+      const res = await fetch('/api/member/exercises/speak-yourself', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: speakForm,
+          spokenText: recognizedScript
+        })
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        throw new Error(data?.error || 'Could not evaluate Speak Yourself.')
+      }
+
+      const attempt = data.attempt as SpeakYourselfStatus['latestAttempt']
+      const passed = Boolean(data.hasPassed)
+      setSpeakStatus({
+        hasPassed: passed,
+        latestAttempt: attempt || null
+      })
+
+      if (attempt) {
+        setGeneratedSpeakScript(attempt.generatedScript)
+        setSpokenText(attempt.recognizedText)
+        setSpeakAccuracy(attempt.accuracy)
+        setSpeakResult(passed ? 'pass' : 'retry')
+      }
+
+      if (passed) {
+        toast.success(`Pass! Do chinh xac phat am: ${attempt?.accuracy ?? 0}%`)
+      } else {
+        toast.error(`Do chinh xac hien tai ${attempt?.accuracy ?? 0}%. Ban can dat tu 80% tro len, hay thu lai.`)
+      }
+
+      await fetchExercises()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not evaluate Speak Yourself.')
+    }
+  }
+
+  const startSpeakRecording = () => {
+    if (!generatedSpeakScript) {
+      toast.error('Vui lòng tạo script trước khi ghi âm.')
+      return
+    }
+
+    if (!speechSupported || typeof window === 'undefined') {
+      toast.error('Trình duyệt này chưa hỗ trợ SpeechRecognition. Hãy dùng Chrome hoặc Edge bản mới nhất.')
+      return
+    }
+
+    const speechWindow = window as Window & {
+      SpeechRecognition?: new () => BrowserSpeechRecognition
+      webkitSpeechRecognition?: new () => BrowserSpeechRecognition
+    }
+    const RecognitionConstructor = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition
+
+    if (!RecognitionConstructor) {
+      toast.error('Không tìm thấy công cụ ghi âm trong trình duyệt.')
+      return
+    }
+
+    const recognition = new RecognitionConstructor()
+    recognition.lang = 'en-US'
+    recognition.continuous = false
+    recognition.interimResults = true
+    recognition.maxAlternatives = 1
+
+    spokenTextRef.current = ''
+    setSpokenText('')
+    setSpeakAccuracy(null)
+    setSpeakResult(null)
+
+    recognition.onresult = (event: unknown) => {
+      const resultEvent = event as { results?: ArrayLike<ArrayLike<{ transcript?: string }>> }
+      const results = resultEvent.results
+      if (!results) return
+
+      const transcript = Array.from(results)
+        .map((result) => result?.[0]?.transcript || '')
+        .join(' ')
+        .trim()
+
+      spokenTextRef.current = transcript
+      setSpokenText(transcript)
+    }
+
+    recognition.onerror = () => {
+      setIsRecordingSpeak(false)
+      toast.error('Không thể ghi âm. Vui lòng kiểm tra quyền micro rồi thử lại.')
+    }
+
+    recognition.onend = () => {
+      setIsRecordingSpeak(false)
+      const finalTranscript = spokenTextRef.current.trim()
+      if (!finalTranscript) {
+        toast.error('Không nhận diện được giọng nói. Vui lòng nói rõ hơn và thử lại.')
+        return
+      }
+
+      void submitSpeakAttempt(finalTranscript)
+    }
+
+    speechRecognitionRef.current = recognition
+
+    try {
+      setIsRecordingSpeak(true)
+      recognition.start()
+      toast.success('Đang ghi âm... Hãy đọc script Speak Yourself của bạn.')
+    } catch {
+      setIsRecordingSpeak(false)
+      toast.error('Không thể bắt đầu ghi âm. Vui lòng thử lại.')
+    }
+  }
+
+  const stopSpeakRecording = () => {
+    if (speechRecognitionRef.current) {
+      speechRecognitionRef.current.stop()
+    }
+  }
+
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
@@ -323,6 +594,91 @@ export default function Dashboard() {
           {session.user?.role === 'member' && (
             <div className="bg-white p-6 rounded shadow-md">
               <h2 className="text-xl font-semibold mb-4">Exercises</h2>
+
+              <div className="mb-6 rounded-xl border border-[#14532d]/25 bg-[#14532d]/5 p-5">
+                <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wide text-[#14532d]">Bai 1</p>
+                    <h3 className="text-lg font-bold text-[#14532d]">Speak Yourself</h3>
+                    <p className="mt-1 text-sm text-slate-600">Nhap thong tin ca nhan, he thong se tao script tu gioi thieu. Ban ghi am va can dat tu 80% de pass.</p>
+                  </div>
+                  {!speechSupported && (
+                    <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                      Browser chua ho tro ghi am
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <input value={speakForm.fullName} onChange={(event) => updateSpeakFormField('fullName', event.target.value)} placeholder="Ten" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.age} onChange={(event) => updateSpeakFormField('age', event.target.value)} placeholder="Tuoi" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.hometown} onChange={(event) => updateSpeakFormField('hometown', event.target.value)} placeholder="Que quan" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.major} onChange={(event) => updateSpeakFormField('major', event.target.value)} placeholder="Background / Major" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.currentJob} onChange={(event) => updateSpeakFormField('currentJob', event.target.value)} placeholder="Cong viec hien tai" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.yearsOfExperience} onChange={(event) => updateSpeakFormField('yearsOfExperience', event.target.value)} placeholder="So nam kinh nghiem" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.hobbies} onChange={(event) => updateSpeakFormField('hobbies', event.target.value)} placeholder="So thich" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
+                  <input value={speakForm.traitOne} onChange={(event) => updateSpeakFormField('traitOne', event.target.value)} placeholder="Tu mo ta 1" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.traitTwo} onChange={(event) => updateSpeakFormField('traitTwo', event.target.value)} placeholder="Tu mo ta 2" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.traitThree} onChange={(event) => updateSpeakFormField('traitThree', event.target.value)} placeholder="Tu mo ta 3" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
+                  <textarea
+                    value={speakForm.reasonToJoin}
+                    onChange={(event) => updateSpeakFormField('reasonToJoin', event.target.value)}
+                    placeholder="Ly do tham gia khoa hoc"
+                    rows={3}
+                    className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2"
+                  />
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={generateSpeakScript}
+                    className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534]"
+                  >
+                    Tao script
+                  </button>
+                  <button
+                    type="button"
+                    onClick={isRecordingSpeak ? stopSpeakRecording : startSpeakRecording}
+                    disabled={!speechSupported || !generatedSpeakScript}
+                    className="rounded bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isRecordingSpeak ? 'Dung ghi am' : 'Ghi am'}
+                  </button>
+                </div>
+
+                {generatedSpeakScript && (
+                  <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Script</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-800">{generatedSpeakScript}</p>
+                  </div>
+                )}
+
+                {spokenText && (
+                  <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Noi dung he thong nghe duoc</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">{spokenText}</p>
+                  </div>
+                )}
+
+                {speakAccuracy !== null && (
+                  <div className={`mt-4 rounded-lg border p-4 ${speakResult === 'pass' ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-amber-300 bg-amber-50 text-amber-800'}`}>
+                    <p className="text-sm font-semibold">Do chinh xac hien tai: {speakAccuracy}%</p>
+                    <p className="mt-1 text-sm">{speakResult === 'pass' ? 'Pass. Ban da dat yeu cau tu 80% tro len.' : 'Chua dat. Ban can dat tu 80% tro len, vui long thu lai.'}</p>
+                  </div>
+                )}
+
+                {!speakStatus.hasPassed && (
+                  <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+                    Ban chua pass Speak Yourself. Cac bai trac nghiem ben duoi dang bi khoa cho den khi ban dat toi thieu 80%.
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-4 border-t border-gray-200 pt-4">
+                <h3 className="text-base font-semibold text-gray-900">Bai trac nghiem</h3>
+              </div>
+
               {loading ? (
                 <p className="text-gray-500">Loading exercises...</p>
               ) : exercises.length === 0 ? (
@@ -331,6 +687,12 @@ export default function Dashboard() {
                 <div className="space-y-6">
                   {exercises.map((exercise) => (
                     <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
+                      {exercise.isLocked && (
+                        <div className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-800">
+                          This exercise is locked until you pass Speak Yourself with at least 80 percent.
+                        </div>
+                      )}
+
                       {Boolean(startedExerciseAt[exercise.id]) && (
                         <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
                           ⏱ Time spent: {formatDuration(getExerciseDurationSeconds(exercise.id))}
@@ -368,7 +730,8 @@ export default function Dashboard() {
                           <button
                             type="button"
                             onClick={() => startExercise(exercise.id)}
-                            className="w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer"
+                            disabled={Boolean(exercise.isLocked)}
+                            className="w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer disabled:opacity-50"
                           >
                             {exercise.submission ? 'Retry' : 'Start'}
                           </button>
@@ -391,12 +754,13 @@ export default function Dashboard() {
                                     <button
                                       key={`${question.id}-${option.key}`}
                                       type="button"
+                                      disabled={Boolean(exercise.isLocked)}
                                       onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
                                       className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
                                         isSelected
                                           ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
                                           : 'border-gray-200 bg-white text-gray-700 hover:border-[#14532d]/40'
-                                      }`}
+                                      } disabled:opacity-50`}
                                     >
                                       <span className="mb-1 block font-semibold">{option.key}.</span>
                                       <span>{option.text}</span>
@@ -414,7 +778,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => openSubmitConfirmation(exercise)}
-                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
+                          disabled={Boolean(exercise.isLocked) || submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
                           className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
                         >
                           {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
