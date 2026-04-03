@@ -1420,13 +1420,7 @@ export default function Home() {
               <div className="space-y-4">
                 <article className="checkin-message rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#14532d]/10 text-base">☀️</span>
-                        <h3 className="text-sm font-bold text-[#14532d] sm:text-base">Morning Check-in</h3>
-                      </div>
-                      <p className="mt-1 text-xs text-slate-500">How do you feel today? Share in one short message.</p>
-                    </div>
+                    <p className="text-sm font-bold text-[#14532d] sm:text-base">How do you feel today?</p>
                     <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasGreetingToday ? 'bg-[#14532d]/12 text-[#14532d]' : 'bg-amber-100 text-amber-700'}`}>
                       {hasGreetingToday ? 'Done today' : 'Pending'}
                     </span>
@@ -1567,13 +1561,7 @@ export default function Home() {
 
                 <article className={`checkin-message rounded-2xl border bg-white px-4 py-4 shadow-sm transition-all ${hasGreetingToday ? 'border-amber-300/60' : 'border-slate-200 opacity-85'}`}>
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-base">🌙</span>
-                        <h3 className="text-sm font-bold text-amber-800 sm:text-base">Daily Reflection</h3>
-                      </div>
-                      <p className="mt-1 text-xs text-slate-500">Capture one thing you learned or felt today.</p>
-                    </div>
+                    <p className="text-sm font-bold text-amber-800 sm:text-base">How was your day?</p>
                     <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-[#14532d]/12 text-[#14532d]' : hasGreetingToday ? 'bg-amber-100 text-amber-700' : 'bg-[#14532d]/8 text-[#14532d]/70'}`}>
                       {hasReflectionToday ? 'Done today' : hasGreetingToday ? 'Ready' : 'Check-in first'}
                     </span>
