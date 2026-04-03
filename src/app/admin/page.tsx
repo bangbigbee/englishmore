@@ -1416,7 +1416,7 @@ export default function AdminDashboard() {
 
   const importFromGoogleDocs = async () => {
     if (!newExerciseSourceFormUrl.trim()) {
-      setExerciseError('Vui lòng nhập link Google Docs trước khi import')
+      setExerciseError('Please enter a Google Docs link before importing.')
       return
     }
 

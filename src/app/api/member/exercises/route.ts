@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { Prisma } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+
+const isMissingSpeakYourselfTable = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError &&
+  error.code === 'P2021' &&
+  String(error.meta?.table || '').includes('SpeakYourselfAttempt')
 
 export async function GET() {
   const session = await getServerSession(authOptions)
@@ -26,23 +32,42 @@ export async function GET() {
     return NextResponse.json({ hasActiveCourse: false, exercises: [], speakYourself: null })
   }
 
-  const latestSpeakAttempt = await prisma.speakYourselfAttempt.findFirst({
-    where: {
-      userId: session.user.id,
-      courseId: activeEnrollment.courseId
-    },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      accuracy: true,
-      passed: true,
-      createdAt: true,
-      generatedScript: true,
-      recognizedText: true
-    }
-  })
+  let speakFeatureEnabled = true
+  let latestSpeakAttempt: {
+    id: string
+    accuracy: number
+    passed: boolean
+    createdAt: Date
+    generatedScript: string
+    recognizedText: string
+  } | null = null
 
-  const hasPassedSpeakYourself = Boolean(latestSpeakAttempt?.passed)
+  try {
+    latestSpeakAttempt = await prisma.speakYourselfAttempt.findFirst({
+      where: {
+        userId: session.user.id,
+        courseId: activeEnrollment.courseId
+      },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        accuracy: true,
+        passed: true,
+        createdAt: true,
+        generatedScript: true,
+        recognizedText: true
+      }
+    })
+  } catch (error) {
+    if (!isMissingSpeakYourselfTable(error)) {
+      throw error
+    }
+    // Graceful fallback: keep legacy exercise flow working before DB migration is applied.
+    speakFeatureEnabled = false
+    latestSpeakAttempt = null
+  }
+
+  const hasPassedSpeakYourself = speakFeatureEnabled ? Boolean(latestSpeakAttempt?.passed) : true
 
   const exercises = await prisma.courseExercise.findMany({
     where: { courseId: activeEnrollment.courseId, isDraft: false },
@@ -94,9 +119,10 @@ export async function GET() {
       description: exercise.description,
       questions: exercise.questions,
       submission: exercise.submissions[0] || null,
-      isLocked: !hasPassedSpeakYourself
+      isLocked: speakFeatureEnabled ? !hasPassedSpeakYourself : false
     })),
     speakYourself: {
+      enabled: speakFeatureEnabled,
       hasPassed: hasPassedSpeakYourself,
       latestAttempt: latestSpeakAttempt || null
     }

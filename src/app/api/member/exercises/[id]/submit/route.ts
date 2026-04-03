@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { Prisma } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
@@ -21,6 +22,11 @@ function normalizeAnswers(input: SubmittedAnswer[]) {
   const invalid = normalized.find((item) => !item.questionId || !['A', 'B', 'C'].includes(item.selectedOption))
   return invalid ? null : normalized
 }
+
+const isMissingSpeakYourselfTable = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError &&
+  error.code === 'P2021' &&
+  String(error.meta?.table || '').includes('SpeakYourselfAttempt')
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions)
@@ -77,17 +83,24 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     return NextResponse.json({ error: 'This exercise does not belong to your course' }, { status: 404 })
   }
 
-  const latestSpeakAttempt = await prisma.speakYourselfAttempt.findFirst({
-    where: {
-      userId: session.user.id,
-      courseId: activeEnrollment.courseId
-    },
-    orderBy: { createdAt: 'desc' },
-    select: { passed: true }
-  })
+  try {
+    const latestSpeakAttempt = await prisma.speakYourselfAttempt.findFirst({
+      where: {
+        userId: session.user.id,
+        courseId: activeEnrollment.courseId
+      },
+      orderBy: { createdAt: 'desc' },
+      select: { passed: true }
+    })
 
-  if (!latestSpeakAttempt?.passed) {
-    return NextResponse.json({ error: 'Please pass Speak Yourself (>= 80%) before submitting exercises.' }, { status: 403 })
+    if (!latestSpeakAttempt?.passed) {
+      return NextResponse.json({ error: 'Please pass Speak Yourself (>= 80%) before submitting exercises.' }, { status: 403 })
+    }
+  } catch (error) {
+    if (!isMissingSpeakYourselfTable(error)) {
+      throw error
+    }
+    // Graceful fallback for environments where the new table is not migrated yet.
   }
 
   if (answers.length !== exercise.questions.length) {

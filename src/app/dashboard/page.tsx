@@ -420,7 +420,7 @@ export default function Dashboard() {
       .map(({ label }) => label)
 
     if (missingFields.length > 0) {
-      toast.error(`Vui lòng nhập đầy đủ: ${missingFields.join(', ')}`)
+      toast.error(`Please complete all required fields: ${missingFields.join(', ')}`)
       return
     }
 
@@ -440,7 +440,7 @@ export default function Dashboard() {
     spokenTextRef.current = ''
     setSpeakAccuracy(null)
     setSpeakResult(null)
-    toast.success('Đã tạo script giới thiệu. Bấm Ghi âm để bắt đầu luyện nói.')
+    toast.success('Your introduction script is ready. Press Record to start speaking practice.')
   }
 
   const submitSpeakAttempt = async (recognizedScript: string) => {
@@ -474,9 +474,9 @@ export default function Dashboard() {
       }
 
       if (passed) {
-        toast.success(`Pass! Do chinh xac phat am: ${attempt?.accuracy ?? 0}%`)
+        toast.success(`Pass! Pronunciation accuracy: ${attempt?.accuracy ?? 0}%`)
       } else {
-        toast.error(`Do chinh xac hien tai ${attempt?.accuracy ?? 0}%. Ban can dat tu 80% tro len, hay thu lai.`)
+        toast.error(`Current accuracy is ${attempt?.accuracy ?? 0}%. You need at least 80%, please try again.`)
       }
 
       await fetchExercises()
@@ -487,7 +487,7 @@ export default function Dashboard() {
 
   const startSpeakRecording = () => {
     if (!generatedSpeakScript) {
-      toast.error('Vui lòng tạo script trước khi ghi âm.')
+      toast.error('Please generate the script before recording.')
       return
     }
 
@@ -534,14 +534,14 @@ export default function Dashboard() {
 
     recognition.onerror = () => {
       setIsRecordingSpeak(false)
-      toast.error('Không thể ghi âm. Vui lòng kiểm tra quyền micro rồi thử lại.')
+      toast.error('Recording failed. Please check microphone permissions and try again.')
     }
 
     recognition.onend = () => {
       setIsRecordingSpeak(false)
       const finalTranscript = spokenTextRef.current.trim()
       if (!finalTranscript) {
-        toast.error('Không nhận diện được giọng nói. Vui lòng nói rõ hơn và thử lại.')
+        toast.error('No speech was recognized. Please speak clearly and try again.')
         return
       }
 
@@ -553,10 +553,10 @@ export default function Dashboard() {
     try {
       setIsRecordingSpeak(true)
       recognition.start()
-      toast.success('Đang ghi âm... Hãy đọc script Speak Yourself của bạn.')
+      toast.success('Recording... Please read your Speak Yourself script.')
     } catch {
       setIsRecordingSpeak(false)
-      toast.error('Không thể bắt đầu ghi âm. Vui lòng thử lại.')
+      toast.error('Could not start recording. Please try again.')
     }
   }
 
@@ -598,32 +598,32 @@ export default function Dashboard() {
               <div className="mb-6 rounded-xl border border-[#14532d]/25 bg-[#14532d]/5 p-5">
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-[#14532d]">Bai 1</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-[#14532d]">Exercise 1</p>
                     <h3 className="text-lg font-bold text-[#14532d]">Speak Yourself</h3>
-                    <p className="mt-1 text-sm text-slate-600">Nhap thong tin ca nhan, he thong se tao script tu gioi thieu. Ban ghi am va can dat tu 80% de pass.</p>
+                    <p className="mt-1 text-sm text-slate-600">Enter your personal details, generate your introduction script, then record your speech and reach at least 80% to pass.</p>
                   </div>
                   {!speechSupported && (
                     <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                      Browser chua ho tro ghi am
+                      This browser does not support speech recording
                     </span>
                   )}
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <input value={speakForm.fullName} onChange={(event) => updateSpeakFormField('fullName', event.target.value)} placeholder="Ten" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-                  <input value={speakForm.age} onChange={(event) => updateSpeakFormField('age', event.target.value)} placeholder="Tuoi" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-                  <input value={speakForm.hometown} onChange={(event) => updateSpeakFormField('hometown', event.target.value)} placeholder="Que quan" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.fullName} onChange={(event) => updateSpeakFormField('fullName', event.target.value)} placeholder="Full name" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.age} onChange={(event) => updateSpeakFormField('age', event.target.value)} placeholder="Age" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.hometown} onChange={(event) => updateSpeakFormField('hometown', event.target.value)} placeholder="Hometown" className="rounded border border-gray-300 px-3 py-2 text-sm" />
                   <input value={speakForm.major} onChange={(event) => updateSpeakFormField('major', event.target.value)} placeholder="Background / Major" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-                  <input value={speakForm.currentJob} onChange={(event) => updateSpeakFormField('currentJob', event.target.value)} placeholder="Cong viec hien tai" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-                  <input value={speakForm.yearsOfExperience} onChange={(event) => updateSpeakFormField('yearsOfExperience', event.target.value)} placeholder="So nam kinh nghiem" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-                  <input value={speakForm.hobbies} onChange={(event) => updateSpeakFormField('hobbies', event.target.value)} placeholder="So thich" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
-                  <input value={speakForm.traitOne} onChange={(event) => updateSpeakFormField('traitOne', event.target.value)} placeholder="Tu mo ta 1" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-                  <input value={speakForm.traitTwo} onChange={(event) => updateSpeakFormField('traitTwo', event.target.value)} placeholder="Tu mo ta 2" className="rounded border border-gray-300 px-3 py-2 text-sm" />
-                  <input value={speakForm.traitThree} onChange={(event) => updateSpeakFormField('traitThree', event.target.value)} placeholder="Tu mo ta 3" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
+                  <input value={speakForm.currentJob} onChange={(event) => updateSpeakFormField('currentJob', event.target.value)} placeholder="Current job" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.yearsOfExperience} onChange={(event) => updateSpeakFormField('yearsOfExperience', event.target.value)} placeholder="Years of experience" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.hobbies} onChange={(event) => updateSpeakFormField('hobbies', event.target.value)} placeholder="Hobbies" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
+                  <input value={speakForm.traitOne} onChange={(event) => updateSpeakFormField('traitOne', event.target.value)} placeholder="Trait word 1" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.traitTwo} onChange={(event) => updateSpeakFormField('traitTwo', event.target.value)} placeholder="Trait word 2" className="rounded border border-gray-300 px-3 py-2 text-sm" />
+                  <input value={speakForm.traitThree} onChange={(event) => updateSpeakFormField('traitThree', event.target.value)} placeholder="Trait word 3" className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2" />
                   <textarea
                     value={speakForm.reasonToJoin}
                     onChange={(event) => updateSpeakFormField('reasonToJoin', event.target.value)}
-                    placeholder="Ly do tham gia khoa hoc"
+                    placeholder="Reason for joining the course"
                     rows={3}
                     className="rounded border border-gray-300 px-3 py-2 text-sm md:col-span-2"
                   />
@@ -635,7 +635,7 @@ export default function Dashboard() {
                     onClick={generateSpeakScript}
                     className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534]"
                   >
-                    Tao script
+                    Generate script
                   </button>
                   <button
                     type="button"
@@ -643,7 +643,7 @@ export default function Dashboard() {
                     disabled={!speechSupported || !generatedSpeakScript}
                     className="rounded bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {isRecordingSpeak ? 'Dung ghi am' : 'Ghi am'}
+                    {isRecordingSpeak ? 'Stop recording' : 'Record'}
                   </button>
                 </div>
 
@@ -656,27 +656,27 @@ export default function Dashboard() {
 
                 {spokenText && (
                   <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Noi dung he thong nghe duoc</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Recognized speech</p>
                     <p className="mt-2 text-sm leading-relaxed text-slate-700">{spokenText}</p>
                   </div>
                 )}
 
                 {speakAccuracy !== null && (
                   <div className={`mt-4 rounded-lg border p-4 ${speakResult === 'pass' ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-amber-300 bg-amber-50 text-amber-800'}`}>
-                    <p className="text-sm font-semibold">Do chinh xac hien tai: {speakAccuracy}%</p>
-                    <p className="mt-1 text-sm">{speakResult === 'pass' ? 'Pass. Ban da dat yeu cau tu 80% tro len.' : 'Chua dat. Ban can dat tu 80% tro len, vui long thu lai.'}</p>
+                    <p className="text-sm font-semibold">Current accuracy: {speakAccuracy}%</p>
+                    <p className="mt-1 text-sm">{speakResult === 'pass' ? 'Pass. You reached the required score of at least 80%.' : 'Not passed yet. You need at least 80%, please try again.'}</p>
                   </div>
                 )}
 
                 {!speakStatus.hasPassed && (
                   <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
-                    Ban chua pass Speak Yourself. Cac bai trac nghiem ben duoi dang bi khoa cho den khi ban dat toi thieu 80%.
+                    You have not passed Speak Yourself yet. The exercises below stay locked until you reach at least 80%.
                   </div>
                 )}
               </div>
 
               <div className="mb-4 border-t border-gray-200 pt-4">
-                <h3 className="text-base font-semibold text-gray-900">Bai trac nghiem</h3>
+                <h3 className="text-base font-semibold text-gray-900">Multiple-choice exercises</h3>
               </div>
 
               {loading ? (

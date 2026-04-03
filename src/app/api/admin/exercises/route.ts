@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
+import { Prisma } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
@@ -52,6 +53,11 @@ function validateQuestions(questions: ExerciseQuestionInput[]) {
   return null
 }
 
+const isMissingSpeakYourselfTable = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError &&
+  error.code === 'P2021' &&
+  String(error.meta?.table || '').includes('SpeakYourselfAttempt')
+
 export async function GET() {
   const auth = await requireAdmin()
   if (!auth.ok) {
@@ -59,7 +65,7 @@ export async function GET() {
   }
 
   try {
-    const [courses, exercises, speakYourselfAttempts] = await Promise.all([
+    const [courses, exercises] = await Promise.all([
       prisma.course.findMany({
         select: { id: true, title: true },
         orderBy: { createdAt: 'desc' }
@@ -125,8 +131,22 @@ export async function GET() {
           }
         },
         orderBy: [{ courseId: 'asc' }, { order: 'asc' }]
-      }),
-      prisma.speakYourselfAttempt.findMany({
+      })
+    ])
+
+    let speakYourselfAttempts: Array<{
+      id: string
+      accuracy: number
+      passed: boolean
+      generatedScript: string
+      recognizedText: string
+      createdAt: Date
+      user: { id: string; name: string | null; email: string }
+      course: { id: string; title: string }
+    }> = []
+
+    try {
+      speakYourselfAttempts = await prisma.speakYourselfAttempt.findMany({
         select: {
           id: true,
           accuracy: true,
@@ -151,7 +171,12 @@ export async function GET() {
         orderBy: { createdAt: 'desc' },
         take: 300
       })
-    ])
+    } catch (error) {
+      if (!isMissingSpeakYourselfTable(error)) {
+        throw error
+      }
+      speakYourselfAttempts = []
+    }
 
     return NextResponse.json({ courses, exercises, speakYourselfAttempts })
   } catch (error) {
