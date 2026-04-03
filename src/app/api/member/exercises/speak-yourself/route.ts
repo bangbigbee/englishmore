@@ -124,16 +124,19 @@ export async function POST(request: NextRequest) {
   const spokenText = String(body?.spokenText || '').trim()
   const clientScript = String(body?.generatedScript || '').trim()
 
-  const missing = Object.entries(profile)
-    .filter(([, value]) => !value)
-    .map(([field]) => field)
-
-  if (missing.length > 0) {
-    return NextResponse.json({ error: `Missing required fields: ${missing.join(', ')}` }, { status: 400 })
-  }
-
   if (!spokenText) {
     return NextResponse.json({ error: 'spokenText is required' }, { status: 400 })
+  }
+
+  // If the client already has an AI-generated or previously saved script, use it directly.
+  // Only require profile fields when no script has been generated yet.
+  if (!clientScript) {
+    const missing = Object.entries(profile)
+      .filter(([, value]) => !value)
+      .map(([field]) => field)
+    if (missing.length > 0) {
+      return NextResponse.json({ error: `Missing required fields: ${missing.join(', ')}` }, { status: 400 })
+    }
   }
 
   // Prefer the script the client generated (may be AI-polished); fall back to server template

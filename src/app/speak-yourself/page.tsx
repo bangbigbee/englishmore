@@ -15,6 +15,7 @@ interface SpeakYourselfStatus {
     createdAt: string
     generatedScript: string
     recognizedText: string
+    profilePayload?: Partial<SpeakYourselfForm> | null
   } | null
 }
 
@@ -82,6 +83,7 @@ export default function SpeakYourselfPage() {
   const [speakResult, setSpeakResult] = useState<'pass' | 'retry' | null>(null)
   const [speakStatus, setSpeakStatus] = useState<SpeakYourselfStatus>({ hasPassed: false, latestAttempt: null })
   const [isRecordingSpeak, setIsRecordingSpeak] = useState(false)
+  const [isSubmittingSpeak, setIsSubmittingSpeak] = useState(false)
   const [interimText, setInterimText] = useState('')
   const [generatingScript, setGeneratingScript] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(false)
@@ -145,6 +147,23 @@ export default function SpeakYourselfPage() {
         setSpokenText(nextSpeakStatus.latestAttempt.recognizedText)
         setSpeakAccuracy(nextSpeakStatus.latestAttempt.accuracy)
         setSpeakResult(nextSpeakStatus.latestAttempt.passed ? 'pass' : 'retry')
+        // Restore form so user can re-record without re-filling all fields
+        const saved = nextSpeakStatus.latestAttempt.profilePayload
+        if (saved) {
+          setSpeakForm((current) => ({
+            fullName: String(saved.fullName || current.fullName),
+            age: String(saved.age || current.age),
+            hometown: String(saved.hometown || current.hometown),
+            major: String(saved.major || current.major),
+            currentJob: String(saved.currentJob || current.currentJob),
+            yearsOfExperience: String(saved.yearsOfExperience || current.yearsOfExperience),
+            hobbies: String(saved.hobbies || current.hobbies),
+            traitOne: String(saved.traitOne || current.traitOne),
+            traitTwo: String(saved.traitTwo || current.traitTwo),
+            traitThree: String(saved.traitThree || current.traitThree),
+            reasonToJoin: String(saved.reasonToJoin || current.reasonToJoin)
+          }))
+        }
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not load Speak Yourself status.')
@@ -205,6 +224,7 @@ export default function SpeakYourselfPage() {
   }
 
   const submitSpeakAttempt = async (recognizedScript: string) => {
+    setIsSubmittingSpeak(true)
     try {
       const res = await fetch('/api/member/exercises/speak-yourself', {
         method: 'POST',
@@ -242,6 +262,8 @@ export default function SpeakYourselfPage() {
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not evaluate Speak Yourself.')
+    } finally {
+      setIsSubmittingSpeak(false)
     }
   }
 
@@ -452,10 +474,16 @@ export default function SpeakYourselfPage() {
             </div>
           )}
 
-          {!isRecordingSpeak && spokenText && !speakAccuracy && (
+          {!isRecordingSpeak && isSubmittingSpeak && (
             <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">Recognized speech — analysing…</p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">{spokenText}</p>
+              <div className="flex items-center gap-2 text-slate-500">
+                <svg className="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+                <p className="text-xs font-semibold uppercase tracking-wide">Analysing your speech…</p>
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600 italic">{spokenText}</p>
             </div>
           )}
 

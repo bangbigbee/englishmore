@@ -55,7 +55,8 @@ export async function GET() {
         passed: true,
         createdAt: true,
         generatedScript: true,
-        recognizedText: true
+        recognizedText: true,
+        profilePayload: true
       }
     })
   } catch (error) {
