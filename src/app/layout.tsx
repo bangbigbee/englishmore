@@ -38,7 +38,7 @@ export default function RootLayout({
         <AuthProvider>
           <TopNav />
           <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">{children}</main>
-          <Toaster richColors position="top-right" closeButton duration={3500} />
+          <Toaster richColors position="top-right" closeButton duration={8000} />
         </AuthProvider>
       </body>
     </html>

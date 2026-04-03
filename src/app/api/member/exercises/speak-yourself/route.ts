@@ -186,10 +186,21 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     if (isMissingSpeakYourselfTable(error)) {
-      return NextResponse.json(
-        { error: 'Speak Yourself is temporarily unavailable because the database migration is not applied yet.' },
-        { status: 503 }
-      )
+      // Graceful fallback: evaluate result without DB persistence if migration is missing.
+      return NextResponse.json({
+        message: passed ? 'Speak Yourself passed. (temporary mode: result not saved)' : 'Speak Yourself not passed yet. (temporary mode: result not saved)',
+        warning: 'Speak Yourself migration is not applied yet, so this attempt could not be stored in database.',
+        attempt: {
+          id: 'temporary-no-save',
+          accuracy,
+          passed,
+          createdAt: new Date(),
+          generatedScript,
+          recognizedText: spokenText
+        },
+        hasPassed: passed,
+        persisted: false
+      })
     }
 
     console.error('Speak Yourself submit error:', error)
