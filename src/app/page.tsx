@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -119,6 +119,9 @@ const formatPhoneticForDisplay = (value: string | null | undefined) => {
 
 export default function Home() {
   const { data: session } = useSession()
+  const triggerGoogleSignIn = () => {
+    void signIn('google', { callbackUrl: '/' })
+  }
   const canUseDailyActivity = session?.user?.role === 'member' || session?.user?.role === 'admin'
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
@@ -2000,73 +2003,229 @@ export default function Home() {
             </section>
           </>
         ) : (
-          <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
-            <div>
-              <h1 className="sr-only">EnglishMore</h1>
-              <p className="max-w-xl text-base sm:text-lg text-slate-600">
-                Practice makes perfect!
-              </p>
-              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
-                {session?.user?.role !== 'admin' && (
-                  <div className="group relative inline-block">
-                    <a
-                      href="https://www.facebook.com/bangbigbee"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="brand-cta brand-cta-filled"
-                    >
-                      <span>Get Advice</span>
-                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                    </a>
-                    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
-                      talk directly with the teacher about course content and schedule
-                    </span>
-                  </div>
-                )}
-                <Link
-                  href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/login'}
-                  className="brand-cta brand-cta-outline"
-                >
-                  <span>{session?.user?.role === 'admin' ? 'Admin Panel' : session ? 'Enroll Now' : 'Log in'}</span>
-                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                </Link>
-                {session?.user?.role === 'admin' && (
+          <>
+            <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
+              <div>
+                <h1 className="sr-only">EnglishMore</h1>
+                <p className="max-w-xl text-base sm:text-lg text-slate-600">
+                  Practice makes perfect!
+                </p>
+                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
+                  {session?.user?.role !== 'admin' && (
+                    <div className="group relative inline-block">
+                      <a
+                        href="https://www.facebook.com/bangbigbee"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="brand-cta brand-cta-filled"
+                      >
+                        <span>Get Advice</span>
+                        <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                      </a>
+                      <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
+                        talk directly with the teacher about course content and schedule
+                      </span>
+                    </div>
+                  )}
                   <Link
-                    href="/admin?section=homework"
-                    className="brand-cta brand-cta-filled relative"
+                    href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/login'}
+                    className="brand-cta brand-cta-outline"
                   >
-                    <span className="inline-flex items-center gap-1.5">
-                      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
-                        <path d="M20 4H4a2 2 0 0 0-2 2v15l4-4h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
-                      </svg>
-                      <span>{adminHomeworkReview?.unreadStudentMessageCount || 0}</span>
-                    </span>
-                    <span>Homework Review</span>
+                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : session ? 'Enroll Now' : 'Log in'}</span>
                     <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                    <span className="absolute -top-2 -right-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
-                      {adminHomeworkReview?.pendingTeacherReplyCount || 0}
-                    </span>
                   </Link>
-                )}
+                  {session?.user?.role === 'admin' && (
+                    <Link
+                      href="/admin?section=homework"
+                      className="brand-cta brand-cta-filled relative"
+                    >
+                      <span className="inline-flex items-center gap-1.5">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current">
+                          <path d="M20 4H4a2 2 0 0 0-2 2v15l4-4h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
+                        </svg>
+                        <span>{adminHomeworkReview?.unreadStudentMessageCount || 0}</span>
+                      </span>
+                      <span>Homework Review</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                      <span className="absolute -top-2 -right-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                        {adminHomeworkReview?.pendingTeacherReplyCount || 0}
+                      </span>
+                    </Link>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
-              <img
-                src="/uploads/hero.png"
-                alt="Study illustration"
-                className="h-80 w-full object-cover rounded-2xl"
-                onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
-              />
-              <a
-                href="https://www.facebook.com/bangbigbee"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
-              >
-                Lead teacher: Nguyen Tri Bang
-              </a>
-            </div>
-          </section>
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
+                <img
+                  src="/uploads/hero.png"
+                  alt="Study illustration"
+                  className="h-80 w-full object-cover rounded-2xl"
+                  onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
+                />
+                <a
+                  href="https://www.facebook.com/bangbigbee"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
+                >
+                  Lead teacher: Nguyen Tri Bang
+                </a>
+              </div>
+            </section>
+
+            <section className="mt-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#14532d]/15 bg-white/80 px-4 py-3">
+                <div>
+                  <p className="text-sm font-bold text-[#14532d]">Preview student tools</p>
+                  <p className="mt-1 text-xs text-slate-500">Sign in with Google to check in, practise vocabulary, and open speaking activities.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={triggerGoogleSignIn}
+                  className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
+                >
+                  Continue with Google
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
+                <div className="space-y-4">
+                  <article className="rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-bold text-[#14532d] sm:text-base">How do you feel today?</p>
+                      <span className="inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">Pending</span>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {QUICK_CHECKIN_MESSAGES.map((message) => (
+                        <button
+                          key={message}
+                          type="button"
+                          onClick={triggerGoogleSignIn}
+                          className="rounded-full border border-[#14532d]/35 bg-[#14532d]/5 px-2.5 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10"
+                        >
+                          {message}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        onClick={triggerGoogleSignIn}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#14532d] transition hover:underline"
+                      >
+                        ✍️ Type it manually
+                      </button>
+                    </div>
+                  </article>
+
+                  <article className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm opacity-90">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-bold text-amber-800 sm:text-base">How was your day?</p>
+                      <span className="inline-flex rounded-full bg-[#14532d]/8 px-2.5 py-1 text-[11px] font-semibold text-[#14532d]/70">Check-in first</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={triggerGoogleSignIn}
+                      className="mt-3 block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-left text-xs text-slate-500 transition hover:border-amber-300 hover:bg-amber-50"
+                    >
+                      Complete your check-in first, then reflection opens automatically.
+                    </button>
+                  </article>
+                </div>
+
+                <div className="rounded-2xl border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-amber-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
+                  <div className="mb-3">
+                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
+                    <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={triggerGoogleSignIn}
+                    className="mt-3 block w-full rounded-2xl border border-dashed border-slate-200 bg-white/80 px-4 py-10 text-center text-xs text-slate-500 transition hover:border-[#14532d]/25 hover:bg-white"
+                  >
+                    Sign in with Google to join the class activity feed.
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-1 gap-3 border-t border-[#14532d]/20 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
+                  <span>My Homework</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                </button>
+                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
+                  <span>Exercise More</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                </button>
+                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
+                  <span>Speak Yourself</span>
+                  <span aria-hidden="true" className="speak-cta-mic-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="speak-cta-mic">
+                      <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
+                      <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
+                    </svg>
+                  </span>
+                </button>
+                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-outline w-full justify-center">
+                  <span>Lecture Slide</span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                </button>
+              </div>
+            </section>
+
+            <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
+                <span className="rounded-full bg-[#14532d]/10 px-3 py-1 text-xs font-semibold text-[#14532d]">English &amp; More 04</span>
+              </div>
+              <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 py-4 text-white sm:px-4 sm:py-5 md:px-6 md:py-6">
+                <div className="mb-3 flex items-center justify-between gap-1 sm:mb-4">
+                  <button type="button" onClick={triggerGoogleSignIn} className="rounded-full px-2 py-1 text-base font-bold transition hover:bg-white/20 sm:text-lg" aria-label="Previous vocabulary">
+                    {'<'}
+                  </button>
+                  <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+                    <button type="button" onClick={triggerGoogleSignIn} className="inline-flex items-center justify-center rounded-full bg-white/15 p-2 transition hover:bg-white/25 sm:p-3" aria-label="Speak vocabulary">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-current sm:h-6 sm:w-6">
+                        <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
+                      </svg>
+                    </button>
+                    <button type="button" onClick={triggerGoogleSignIn} className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/25 sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current shrink-0 sm:h-5 sm:w-5">
+                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.5 14.53 16 12 16s-4.52-1.5-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.063.54-.92 1.14.72 3.44 3.82 5.96 7.81 5.96s7.09-2.52 7.81-5.96c.14-.6-.31-1.14-.92-1.14z" />
+                      </svg>
+                      <span>Try it</span>
+                    </button>
+                  </div>
+                  <button type="button" onClick={triggerGoogleSignIn} className="rounded-full px-2 py-1 text-base font-bold transition hover:bg-white/20 sm:text-lg" aria-label="Next vocabulary">
+                    {'>'}
+                  </button>
+                </div>
+
+                <button type="button" onClick={triggerGoogleSignIn} className="block w-full text-center">
+                  <p className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">laboratory</p>
+                  <p className="mt-1 text-lg text-white/90 sm:mt-2 sm:text-2xl">/ˈlæbrətɔːri/</p>
+                  <p className="mt-2 text-xs font-medium text-white/90 sm:mt-3 sm:text-base">[noun] a room or building used for scientific research, experiments, testing, etc.</p>
+                  <p className="mt-3 text-base font-semibold sm:mt-5 sm:text-2xl">phòng thí nghiệm</p>
+                  <p className="mt-2 text-xs italic text-white/90 sm:mt-4 sm:text-base">&quot;They work in a laboratory studying growth patterns.&quot;</p>
+                </button>
+              </div>
+            </section>
+
+            <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-4 shadow-lg sm:p-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-[#14532d]">Speak Yourself</h2>
+                  <p className="mt-1 text-sm text-slate-600">Complete your speaking assessment and practise your self-introduction with AI feedback.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={triggerGoogleSignIn}
+                  className="inline-flex w-full items-center justify-center rounded-lg bg-[#14532d] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#166534] sm:w-auto"
+                >
+                  Open Speak Yourself
+                </button>
+              </div>
+            </section>
+          </>
         )}
 
         {session?.user?.role === 'member' && (
