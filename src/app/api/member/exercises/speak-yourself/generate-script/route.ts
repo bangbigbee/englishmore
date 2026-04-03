@@ -33,6 +33,43 @@ const normalizeProfile = (raw: unknown): ProfilePayload => {
   }
 }
 
+const finalizeSentence = (text: string) => {
+  const value = String(text || '').trim().replace(/[.!?]+$/g, '')
+  if (!value) return ''
+  return `${value}.`
+}
+
+const buildReasonSentence = (reasonRaw: string) => {
+  const reason = String(reasonRaw || '').trim()
+  const normalized = reason.toLowerCase()
+
+  if (!reason) {
+    return 'I joined this course because I want to improve my English speaking skills.'
+  }
+
+  if (/^(better english|improve english|english)$/i.test(reason)) {
+    return 'I joined this course because I want to improve my English.'
+  }
+
+  if (/^because\b/i.test(reason)) {
+    return finalizeSentence(`I joined this course ${reason}`)
+  }
+
+  if (/^to\b/i.test(reason)) {
+    return finalizeSentence(`I joined this course ${reason}`)
+  }
+
+  if (/^i\b/i.test(reason)) {
+    return finalizeSentence(`I joined this course because ${reason}`)
+  }
+
+  if (normalized.split(/\s+/).filter(Boolean).length <= 4) {
+    return 'I joined this course because I want to improve my English.'
+  }
+
+  return finalizeSentence(`I joined this course because ${reason}`)
+}
+
 /** Template fallback — used when no OPENAI_API_KEY is set */
 const buildTemplate = (p: ProfilePayload): string => {
   const article = (word: string) => /^[aeiou]/i.test(word) ? 'an' : 'a'
@@ -43,9 +80,34 @@ const buildTemplate = (p: ProfilePayload): string => {
     `Currently, I work as ${article(p.currentJob)} ${p.currentJob}, and I have ${p.yearsOfExperience} years of experience in this field.`,
     `In my free time, I enjoy ${p.hobbies}.`,
     `Three words that best describe me are: ${p.traitOne}, ${p.traitTwo}, and ${p.traitThree}.`,
-    `I joined this course because ${p.reasonToJoin}.`,
+    buildReasonSentence(p.reasonToJoin),
     'Thank you for listening.'
   ].join(' ')
+}
+
+type ChatCompletionResponse = { choices?: Array<{ message?: { content?: string } }> }
+
+const callOpenAI = async (apiKey: string, messages: Array<{ role: 'system' | 'user'; content: string }>) => {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages,
+      temperature: 0.35,
+      max_tokens: 420
+    })
+  })
+
+  if (!response.ok) {
+    return null
+  }
+
+  const data = await response.json() as ChatCompletionResponse
+  return data.choices?.[0]?.message?.content?.trim() || null
 }
 
 export async function POST(request: NextRequest) {
@@ -63,13 +125,18 @@ export async function POST(request: NextRequest) {
   }
 
   const apiKey = process.env.OPENAI_API_KEY
+  const templateScript = buildTemplate(profile)
 
   if (!apiKey) {
-    return NextResponse.json({ script: buildTemplate(profile) })
+    return NextResponse.json({
+      script: templateScript,
+      source: 'template',
+      warning: 'OPENAI_API_KEY is missing, so the system used the built-in template.'
+    })
   }
 
   try {
-    const prompt = `You are an English writing assistant. A student provided the following personal information to create a self-introduction speech for an English class:
+    const draftPrompt = `You are an English writing assistant. Create a fluent self-introduction speech based on the student profile below.
 
 - Full name: ${profile.fullName}
 - Age: ${profile.age}
@@ -81,30 +148,53 @@ export async function POST(request: NextRequest) {
 - Three personality traits: ${profile.traitOne}, ${profile.traitTwo}, ${profile.traitThree}
 - Reason for joining the course: ${profile.reasonToJoin}
 
-Write a natural, grammatically correct self-introduction speech in English (about 8–10 sentences). Use simple vocabulary appropriate for an intermediate English learner. Start with "Hello everyone." and end with "Thank you for listening." Return ONLY the speech text, no extra commentary.`
+Rules:
+- 8 to 10 short sentences.
+- Natural, grammatical English for an intermediate learner.
+- Keep facts accurate to the provided profile.
+- Start exactly with "Hello everyone." and end exactly with "Thank you for listening."
+- If the reason is a short fragment (example: "better English"), rewrite it into a full natural sentence.
+- Return only the final speech text.`
 
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+    const draft = await callOpenAI(apiKey, [
+      {
+        role: 'system',
+        content: 'You write clear, grammatical, learner-friendly spoken English.'
       },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.6,
-        max_tokens: 400
-      })
-    })
+      {
+        role: 'user',
+        content: draftPrompt
+      }
+    ])
 
-    if (!res.ok) {
-      return NextResponse.json({ script: buildTemplate(profile) })
+    if (!draft) {
+      return NextResponse.json({
+        script: templateScript,
+        source: 'template',
+        warning: 'OpenAI request failed, so the system used the built-in template.'
+      })
     }
 
-    const data = await res.json() as { choices?: Array<{ message?: { content?: string } }> }
-    const script = data.choices?.[0]?.message?.content?.trim() || buildTemplate(profile)
-    return NextResponse.json({ script })
+    const polished = await callOpenAI(apiKey, [
+      {
+        role: 'system',
+        content: 'You are a strict English grammar editor.'
+      },
+      {
+        role: 'user',
+        content: `Polish the grammar, punctuation, and phrasing of this speech without changing its meaning. Keep it natural and easy to speak aloud. Return only the corrected speech text.\n\n${draft}`
+      }
+    ])
+
+    return NextResponse.json({
+      script: polished || draft,
+      source: 'ai'
+    })
   } catch {
-    return NextResponse.json({ script: buildTemplate(profile) })
+    return NextResponse.json({
+      script: templateScript,
+      source: 'template',
+      warning: 'Unexpected error while generating script, so the system used the built-in template.'
+    })
   }
 }

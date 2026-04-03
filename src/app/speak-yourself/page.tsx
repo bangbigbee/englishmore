@@ -207,7 +207,12 @@ export default function SpeakYourselfPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profile: speakForm })
       })
-      const data = await res.json().catch(() => ({})) as { script?: string; error?: string }
+      const data = await res.json().catch(() => ({})) as {
+        script?: string
+        error?: string
+        source?: 'ai' | 'template'
+        warning?: string
+      }
       if (!res.ok) throw new Error(data?.error || 'Could not generate script.')
       setGeneratedSpeakScript(data.script ?? '')
       setSpokenText('')
@@ -215,6 +220,9 @@ export default function SpeakYourselfPage() {
       spokenTextRef.current = ''
       setSpeakAccuracy(null)
       setSpeakResult(null)
+      if (data.source === 'template') {
+        toast.warning(data.warning || 'Using template mode. Add or verify OPENAI_API_KEY to get AI-polished grammar.')
+      }
       toast.success('Your introduction script is ready. Press Record to start speaking practice.')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not generate script.')
