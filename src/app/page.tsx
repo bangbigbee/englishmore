@@ -1983,13 +1983,34 @@ export default function Home() {
                       </span>
                     </div>
                   )}
-                  <Link
-                    href={session?.user?.role === 'admin' ? '/admin' : '/courses'}
-                    className={`brand-cta ${session?.user?.role === 'admin' ? 'brand-cta-outline' : 'brand-cta-register'}`}
-                  >
-                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Ngay'}</span>
-                    <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                  </Link>
+                  {session?.user?.role === 'admin' ? (
+                    <Link
+                      href="/admin"
+                      className="brand-cta brand-cta-outline"
+                    >
+                      <span>Admin Panel</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </Link>
+                  ) : session ? (
+                    <Link
+                      href="/courses"
+                      className="brand-cta brand-cta-register"
+                    >
+                      <span>Đăng Ký Ngay</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void signIn('google', { callbackUrl: '/courses' })
+                      }}
+                      className="brand-cta brand-cta-register"
+                    >
+                      <span>Đăng Ký Ngay</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </button>
+                  )}
                   {session?.user?.role === 'admin' && (
                     <Link
                       href="/admin?section=homework"
