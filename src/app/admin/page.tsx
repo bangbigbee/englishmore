@@ -3802,10 +3802,6 @@ export default function AdminDashboard() {
                   Xóa nhanh
                 </button>
               </div>
-              <div className="rounded border border-gray-200 bg-gray-50 p-3 text-xs text-gray-700">
-                <p className="mb-2 font-semibold text-gray-800">Xem trước hiển thị cho học viên</p>
-                <LinkifiedText text={newCourseDescription || 'Chưa có mô tả chi tiết.'} preserveLineBreaks />
-              </div>
             </label>
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Registration deadline</span>
@@ -4025,10 +4021,6 @@ export default function AdminDashboard() {
                   >
                     Xóa nhanh
                   </button>
-                </div>
-                <div className="rounded border border-gray-200 bg-gray-50 p-3 text-xs text-gray-700">
-                  <p className="mb-2 font-semibold text-gray-800">Xem trước hiển thị cho học viên</p>
-                  <LinkifiedText text={editCourseDescription || 'Chưa có mô tả chi tiết.'} preserveLineBreaks />
                 </div>
                 <input
                   type="text"
