@@ -204,7 +204,6 @@ export default function Home() {
   const [isListening, setIsListening] = useState(false)
   const [speechSupported, setSpeechSupported] = useState(false)
   const [memberVocabularyItems, setMemberVocabularyItems] = useState<MemberVocabularyItem[]>([])
-  const [memberVocabularyCourseTitle, setMemberVocabularyCourseTitle] = useState('')
   const [memberVocabularyIndex, setMemberVocabularyIndex] = useState(0)
   const [memberVocabularyLoading, setMemberVocabularyLoading] = useState(false)
   const [memberVocabularyError, setMemberVocabularyError] = useState('')
@@ -395,7 +394,6 @@ export default function Home() {
     const fetchMemberVocabulary = async () => {
       if (session.user?.role !== 'member') {
         setMemberVocabularyItems([])
-        setMemberVocabularyCourseTitle('')
         return
       }
 
@@ -405,7 +403,6 @@ export default function Home() {
         const res = await fetch('/api/member/vocabulary')
         if (!res.ok) {
           setMemberVocabularyItems([])
-          setMemberVocabularyCourseTitle('')
           setMemberVocabularyError('Could not load the vocabulary data.')
           return
         }
@@ -413,11 +410,9 @@ export default function Home() {
         const data = await res.json()
         const items = Array.isArray(data?.items) ? data.items : []
         setMemberVocabularyItems(items)
-        setMemberVocabularyCourseTitle(String(data?.courseTitle || ''))
         setMemberVocabularyIndex(0)
       } catch {
         setMemberVocabularyItems([])
-        setMemberVocabularyCourseTitle('')
         setMemberVocabularyError('Could not load the vocabulary data.')
       } finally {
         setMemberVocabularyLoading(false)
@@ -1410,7 +1405,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-3 sm:px-6 sm:pt-4 lg:px-8">
         {showRegistrationProcessingTicker && (
           <section className="mb-3 overflow-hidden rounded-lg border border-[#14532d]/25 bg-white shadow-sm">
             <div className="homework-alert-wrap">
@@ -1874,11 +1869,6 @@ export default function Home() {
               <div className="rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
-                  {memberVocabularyCourseTitle && (
-                    <span className="rounded-full bg-[#14532d]/10 px-3 py-1 text-xs font-semibold text-[#14532d]">
-                      {memberVocabularyCourseTitle}
-                    </span>
-                  )}
                 </div>
 
                 {memberVocabularyLoading ? (
@@ -1974,20 +1964,6 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-              </div>
-            </section>
-            <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-4 sm:p-6 shadow-lg">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-[#14532d]">Speak Yourself</h2>
-                  <p className="mt-1 text-sm text-slate-600">Complete your speaking assessment and score at least 80% to unlock every exercise.</p>
-                </div>
-                <Link
-                  href="/speak-yourself"
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-[#14532d] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#166534] sm:w-auto"
-                >
-                  Open Speak Yourself
-                </Link>
               </div>
             </section>
             <section className="mt-6 sm:mt-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
@@ -2240,22 +2216,6 @@ export default function Home() {
                   <p className="mt-2 text-xs font-medium text-white/90 sm:mt-3 sm:text-base">[noun] a room or building used for scientific research, experiments, testing, etc.</p>
                   <p className="mt-3 text-base font-semibold sm:mt-5 sm:text-2xl">phòng thí nghiệm</p>
                   <p className="mt-2 text-xs italic text-white/90 sm:mt-4 sm:text-base">&quot;They work in a laboratory studying growth patterns.&quot;</p>
-                </button>
-              </div>
-            </section>
-
-            <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-4 shadow-lg sm:p-6">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-[#14532d]">Speak Yourself</h2>
-                  <p className="mt-1 text-sm text-slate-600">Complete your speaking assessment and practise your self-introduction with AI feedback.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={triggerGoogleSignIn}
-                  className="inline-flex w-full items-center justify-center rounded-lg bg-[#14532d] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#166534] sm:w-auto"
-                >
-                  Open Speak Yourself
                 </button>
               </div>
             </section>

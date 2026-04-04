@@ -405,6 +405,26 @@ export default function CoursesPage() {
                             Mọi thông tin thêm, vui lòng liên hệ Mr. Nguyễn Trí Bằng qua số điện thoại 0915091093. Hoặc nhắn tin về Facebook:
                             <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="ml-1 text-amber-700 hover:underline">https://www.facebook.com/bangbigbee</a>
                           </p>
+
+                          <div className="border-t border-slate-200 pt-4">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!isPendingPayment) {
+                                  handleOpenReferral(course)
+                                }
+                              }}
+                              disabled={
+                                isPendingPayment ||
+                                registering === course.id ||
+                                course.enrolledCount >= course.maxStudents ||
+                                (!getEnrollmentStatus(course.id) && hasExistingEnrollment)
+                              }
+                              className="w-full rounded-lg bg-[#14532d] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              {registering === course.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -481,7 +501,7 @@ export default function CoursesPage() {
 
         {pendingReferralCourse && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md rounded-lg border-2 border-orange-400 bg-white p-6 shadow-[0_18px_48px_rgba(234,88,12,0.22)]">
+            <div className="w-full max-w-md rounded-lg border-2 border-[#14532d] bg-white p-6 shadow-[0_18px_48px_rgba(20,83,45,0.22)]">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-bold text-orange-700">Ai đã giới thiệu khóa học này cho bạn?</h3>
