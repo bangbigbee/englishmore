@@ -117,12 +117,63 @@ const formatPhoneticForDisplay = (value: string | null | undefined) => {
   return `/${cleaned}/`
 }
 
+function LockedFeatureButton({
+  label,
+  variant,
+  icon = 'arrow'
+}: {
+  label: string
+  variant: 'filled' | 'outline'
+  icon?: 'arrow' | 'mic'
+}) {
+  return (
+    <div className="group relative" tabIndex={0} aria-label={`${label}. Đăng ký học viên để mở tính năng này.`}>
+      <div
+        className={[
+          'brand-cta w-full justify-center cursor-not-allowed opacity-55 grayscale-[0.15]',
+          variant === 'outline' ? 'brand-cta-outline' : 'brand-cta-filled',
+          'group-focus-visible:ring-2 group-focus-visible:ring-[#14532d]/30 group-focus-visible:ring-offset-2'
+        ].join(' ')}
+        aria-hidden="true"
+      >
+        <span>{label}</span>
+        {icon === 'mic' ? (
+          <span aria-hidden="true" className="speak-cta-mic-wrap">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="speak-cta-mic"
+            >
+              <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
+              <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
+            </svg>
+          </span>
+        ) : (
+          <span aria-hidden="true" className="brand-cta-arrow">→</span>
+        )}
+      </div>
+
+      <div className="pointer-events-none invisible absolute left-1/2 top-full z-20 mt-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-[#14532d]/15 bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 opacity-0 shadow-xl transition duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+        <Link
+          href="/courses"
+          className="pointer-events-auto font-semibold text-[#14532d] underline decoration-[#14532d]/45 underline-offset-2 transition hover:text-[#0f3f22]"
+        >
+          Đăng ký
+        </Link>{' '}
+        học viên để mở tính năng này.
+      </div>
+    </div>
+  )
+}
+
 export default function Home() {
   const { data: session } = useSession()
   const triggerGoogleSignIn = () => {
     void signIn('google', { callbackUrl: '/' })
   }
   const canUseDailyActivity = session?.user?.role === 'member' || session?.user?.role === 'admin'
+  const isPendingMemberRegistration = session?.user?.role === 'user'
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
@@ -2112,28 +2163,47 @@ export default function Home() {
               </div>
 
               <div className="mt-5 grid grid-cols-1 gap-3 border-t border-[#14532d]/20 pt-4 sm:grid-cols-2 lg:grid-cols-4">
-                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
-                  <span>My Homework</span>
-                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                </button>
-                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
-                  <span>Exercise More</span>
-                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                </button>
-                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
-                  <span>Speak Yourself</span>
-                  <span aria-hidden="true" className="speak-cta-mic-wrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="speak-cta-mic">
-                      <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
-                      <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
-                    </svg>
-                  </span>
-                </button>
-                <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-outline w-full justify-center">
-                  <span>Lecture Slide</span>
-                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                </button>
+                {isPendingMemberRegistration ? (
+                  <>
+                    <LockedFeatureButton label="My Homework" variant="filled" />
+                    <LockedFeatureButton label="Exercise More" variant="filled" />
+                    <LockedFeatureButton label="Speak Yourself" variant="filled" icon="mic" />
+                    <LockedFeatureButton label="Lecture Slide" variant="outline" />
+                  </>
+                ) : (
+                  <>
+                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
+                      <span>My Homework</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </button>
+                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
+                      <span>Exercise More</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </button>
+                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
+                      <span>Speak Yourself</span>
+                      <span aria-hidden="true" className="speak-cta-mic-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="speak-cta-mic">
+                          <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
+                          <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
+                        </svg>
+                      </span>
+                    </button>
+                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-outline w-full justify-center">
+                      <span>Lecture Slide</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </button>
+                  </>
+                )}
               </div>
+              {isPendingMemberRegistration && (
+                <p className="mt-3 text-center text-xs text-slate-500 sm:hidden">
+                  <Link href="/courses" className="font-semibold text-[#14532d] underline decoration-[#14532d]/45 underline-offset-2">
+                    Đăng ký
+                  </Link>{' '}
+                  học viên để mở các tính năng này.
+                </p>
+              )}
             </section>
 
             <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
