@@ -100,7 +100,7 @@ body {
   border-radius: 999px;
   box-shadow: 0 2px 8px rgba(234,88,12,0.18);
   padding: 0.625rem 1.25rem;
-  animation: spin-border 2.8s linear infinite;
+  animation: spin-border 1.6s linear infinite;
   background:
     linear-gradient(#fff, #fff) padding-box,
     conic-gradient(from var(--angle), #ea580c, #fb923c, #fbbf24, #fb923c, #ea580c) border-box;
