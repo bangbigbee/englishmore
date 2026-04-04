@@ -2074,20 +2074,6 @@ export default function Home() {
             </section>
 
             <section className="mt-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#14532d]/15 bg-white/80 px-4 py-3">
-                <div>
-                  <p className="text-sm font-bold text-[#14532d]">Preview student tools</p>
-                  <p className="mt-1 text-xs text-slate-500">Sign in with Google to check in, practise vocabulary, and open speaking activities.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={triggerGoogleSignIn}
-                  className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-600"
-                >
-                  Continue with Google
-                </button>
-              </div>
-
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
                 <div className="space-y-4">
                   <article className="rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
