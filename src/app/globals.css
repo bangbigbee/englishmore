@@ -153,6 +153,7 @@ body {
 }
 
 .course-select-card {
+  position: relative;
   border-radius: 1rem;
   padding: 1.5px;
   background: linear-gradient(120deg, #fed7aa, #fb923c, #f59e0b, #fb923c, #fdba74);
@@ -175,6 +176,7 @@ body {
 }
 
 .course-select-card.is-hovered-right {
+  z-index: 4;
   transform: translateX(12px);
 }
 

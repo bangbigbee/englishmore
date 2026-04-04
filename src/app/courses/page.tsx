@@ -293,7 +293,7 @@ export default function CoursesPage() {
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto lg:pr-1">
+          <aside className="lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto lg:overflow-x-visible lg:pr-4">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-lg font-bold text-[#14532d]">Danh sách khóa học</h2>
               <span className="text-xs text-slate-500">{courses.length} khóa</span>
@@ -353,29 +353,28 @@ export default function CoursesPage() {
                 return (
                   <div>
                     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-4">
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <h2 className="text-2xl font-bold text-[#14532d]">{selectedCourse.title}</h2>
                         <p className="mt-2 text-sm text-slate-600">
                           <LinkifiedText text={selectedCourse.description || 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'} />
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleOpenReferral(selectedCourse)}
-                        disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
-                        className="rounded-full border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
-                      </button>
-                    </div>
-
-                    <div className="mt-5 rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4">
-                      <p className="text-sm text-slate-700">
-                        <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
-                      </p>
-                      <p className={`mt-1 text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
-                        {getAvailabilityText(selectedCourse)}
-                      </p>
+                      <div className="w-full rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4 sm:w-auto sm:min-w-[250px]">
+                        <p className="text-sm text-slate-700">
+                          <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
+                        </p>
+                        <p className={`mt-1 text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
+                          {getAvailabilityText(selectedCourse)}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenReferral(selectedCourse)}
+                          disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
+                          className="mt-3 w-full rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
+                        </button>
+                      </div>
                     </div>
 
                     <div className="mt-5 space-y-5 text-slate-700">

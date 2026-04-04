@@ -1995,6 +1995,7 @@ export default function Home() {
                     <Link
                       href="/courses"
                       className="brand-cta brand-cta-register"
+                      style={{ color: '#f59e0b' }}
                     >
                       <span>Đăng Ký Ngay</span>
                       <span aria-hidden="true" className="brand-cta-arrow">→</span>
