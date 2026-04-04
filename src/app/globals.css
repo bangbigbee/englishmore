@@ -140,6 +140,43 @@ body {
   }
 }
 
+@keyframes course-border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.course-select-card {
+  border-radius: 1rem;
+  padding: 1.5px;
+  background: linear-gradient(120deg, #fed7aa, #fb923c, #f59e0b, #fb923c, #fdba74);
+  background-size: 260% 260%;
+  animation: course-border-flow 9s ease infinite;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+}
+
+.course-select-card-inner {
+  border-radius: calc(1rem - 1.5px);
+  background: #ffffff;
+  padding: 0.95rem 0.95rem 1rem;
+}
+
+.course-select-card.is-active {
+  box-shadow: 0 10px 26px rgba(249, 115, 22, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-select-card {
+    animation: none;
+  }
+}
+
 .speak-cta-mic-wrap {
   display: inline-flex;
   align-items: center;

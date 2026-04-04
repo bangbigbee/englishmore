@@ -126,7 +126,6 @@ export default function Home() {
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
-  const [loadingCourses, setLoadingCourses] = useState(false)
   const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
   const [greetingMessage, setGreetingMessage] = useState('')
@@ -208,7 +207,6 @@ export default function Home() {
 
     const fetchAvailableCourses = async () => {
       try {
-        setLoadingCourses(true)
         const endpoint = session.user?.role === 'admin' ? '/api/admin/courses' : '/api/courses'
         const res = await fetch(endpoint)
         if (!res.ok) return
@@ -229,8 +227,6 @@ export default function Home() {
         setAvailableCourses(Array.isArray(data) ? data : [])
       } catch {
         setAvailableCourses([])
-      } finally {
-        setLoadingCourses(false)
       }
     }
 
@@ -490,11 +486,6 @@ export default function Home() {
 
     setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition))
   }, [])
-
-  const tickerCourses = useMemo(() => {
-    if (availableCourses.length === 0) return []
-    return [...availableCourses, ...availableCourses]
-  }, [availableCourses])
 
   const normalizePronunciationText = (value: string) =>
     value
@@ -1825,42 +1816,6 @@ export default function Home() {
           </section>
         )}
 
-        {session && session.user?.role !== 'member' && (
-          <section className="mb-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
-            <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Open Courses</h2>
-              {availableCourses.length > 0 && (
-                <Link href="/courses" className="text-sm font-semibold text-amber-700 hover:underline">
-                  View all
-                </Link>
-              )}
-            </div>
-
-            {loadingCourses ? (
-              <p className="px-4 py-4 text-sm text-slate-500">Loading courses...</p>
-            ) : availableCourses.length === 0 ? (
-              <p className="px-4 py-4 text-sm text-slate-500">There are no new courses right now.</p>
-            ) : (
-              <div className="course-ticker-wrap">
-                <div className="course-ticker-track">
-                  {tickerCourses.map((course, index) => (
-                    <Link
-                      key={`${course.id}-${index}`}
-                      href="/courses"
-                      className="course-ticker-item"
-                    >
-                      <span className="course-ticker-title">{course.title}</span>
-                      <span className="course-ticker-meta">
-                        {Math.max(course.maxStudents - course.enrolledCount, 0)} seats left • Register by {new Date(course.registrationDeadline).toLocaleDateString('en-GB')}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
         {session?.user?.role === 'member' ? (
           <>
             <section>
@@ -2029,10 +1984,10 @@ export default function Home() {
                     </div>
                   )}
                   <Link
-                    href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
+                    href={session?.user?.role === 'admin' ? '/admin' : '/courses'}
                     className={`brand-cta ${session?.user?.role === 'admin' ? 'brand-cta-outline' : 'brand-cta-register'}`}
                   >
-                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : session ? 'Enroll Now' : 'Đăng Ký Ngay'}</span>
+                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : 'Đăng Ký Ngay'}</span>
                     <span aria-hidden="true" className="brand-cta-arrow">→</span>
                   </Link>
                   {session?.user?.role === 'admin' && (
@@ -2213,42 +2168,6 @@ export default function Home() {
               </div>
             </section>
           </>
-        )}
-
-        {session?.user?.role === 'member' && (
-          <section className="mt-8 overflow-hidden rounded-2xl border border-[#14532d]/25 bg-white shadow-sm">
-            <div className="flex items-center justify-between border-b border-[#14532d]/20 bg-[#14532d]/10 px-4 py-3">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Open Courses</h2>
-              {availableCourses.length > 0 && (
-                <Link href="/courses" className="text-sm font-semibold text-amber-700 hover:underline">
-                  View all
-                </Link>
-              )}
-            </div>
-
-            {loadingCourses ? (
-              <p className="px-4 py-4 text-sm text-slate-500">Loading courses...</p>
-            ) : availableCourses.length === 0 ? (
-              <p className="px-4 py-4 text-sm text-slate-500">There are no new courses right now.</p>
-            ) : (
-              <div className="course-ticker-wrap">
-                <div className="course-ticker-track">
-                  {tickerCourses.map((course, index) => (
-                    <Link
-                      key={`${course.id}-${index}`}
-                      href="/courses"
-                      className="course-ticker-item"
-                    >
-                      <span className="course-ticker-title">{course.title}</span>
-                      <span className="course-ticker-meta">
-                        {Math.max(course.maxStudents - course.enrolledCount, 0)} seats left • Register by {new Date(course.registrationDeadline).toLocaleDateString('en-GB')}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </section>
         )}
 
         {session?.user?.role !== 'member' && (
