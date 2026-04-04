@@ -26,6 +26,8 @@ interface UserProfile {
   image: string | null
   bio: string | null
   studentId: string | null
+  courseEnrollmentStatus: string | null
+  courseTitle: string | null
   referrer: {
     id: string
     name: string | null
@@ -397,6 +399,30 @@ export default function ProfilePage() {
                 disabled
                 className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Khóa học</label>
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="text"
+                  value={
+                    !profile?.courseEnrollmentStatus
+                      ? 'No active course'
+                      : profile.courseEnrollmentStatus === 'pending'
+                      ? 'Waiting to be confirmed'
+                      : profile.courseTitle || 'No active course'
+                  }
+                  disabled
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
+                />
+                {profile?.courseEnrollmentStatus === 'pending' && (
+                  <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">Pending</span>
+                )}
+                {profile?.courseEnrollmentStatus === 'active' && (
+                  <span className="shrink-0 rounded-full bg-[#14532d]/10 px-2.5 py-1 text-xs font-semibold text-[#14532d]">Active</span>
+                )}
+              </div>
             </div>
 
             {/* Phone */}

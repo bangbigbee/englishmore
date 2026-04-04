@@ -50,8 +50,8 @@ export async function GET() {
           orderBy: { createdAt: 'desc' }
         },
         enrollments: {
-          select: { studentId: true, createdAt: true },
-          where: { studentId: { not: null } },
+          select: { studentId: true, status: true, course: { select: { title: true } }, createdAt: true },
+          where: { status: { not: 'dropped' } },
           orderBy: { createdAt: 'desc' },
           take: 1
         }
@@ -65,6 +65,8 @@ export async function GET() {
     return NextResponse.json({
       ...user,
       studentId: user.enrollments[0]?.studentId || null,
+      courseEnrollmentStatus: user.enrollments[0]?.status || null,
+      courseTitle: user.enrollments[0]?.course?.title || null,
       referrer: user.referrer
         ? {
             id: user.referrer.id,
