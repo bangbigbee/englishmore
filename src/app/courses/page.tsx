@@ -48,21 +48,6 @@ interface PendingReferralCourse {
 
 const DEFAULT_COURSE_DESCRIPTION = 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'
 
-const getCourseDescriptionPreview = (description?: string) => {
-  const normalized = String(description || '').replace(/\s+/g, ' ').trim()
-  const fallback = DEFAULT_COURSE_DESCRIPTION
-
-  if (!normalized) {
-    return fallback
-  }
-
-  if (normalized.length <= 180) {
-    return normalized
-  }
-
-  return `${normalized.slice(0, 177)}...`
-}
-
 export default function CoursesPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -245,9 +230,6 @@ export default function CoursesPage() {
                   <div className="rounded-[calc(1rem-1.5px)] overflow-hidden bg-white">
                     <div className="px-5 py-5 sm:px-7 sm:py-6">
                       <h2 className="text-2xl font-bold text-[#14532d]">{course.title}</h2>
-                      <p className="mt-2 text-sm text-slate-600">
-                        <LinkifiedText text={getCourseDescriptionPreview(course.description)} />
-                      </p>
 
                       <div className="mt-3 flex flex-wrap items-center gap-3">
                         <button

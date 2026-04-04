@@ -3771,7 +3771,6 @@ export default function AdminDashboard() {
               <span className="text-sm font-medium text-gray-700">Course title</span>
               <input
                 type="text"
-                placeholder="Course title"
                 value={newCourseTitle}
                 onChange={(e) => setNewCourseTitle(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
@@ -3780,7 +3779,6 @@ export default function AdminDashboard() {
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Course description (shown in course detail)</span>
               <textarea
-                placeholder="Nhập mô tả chi tiết khóa học. Có thể xuống dòng theo từng mục để hiển thị rõ ràng cho học viên."
                 value={newCourseDescription}
                 onChange={(e) => setNewCourseDescription(e.target.value)}
                 rows={6}
@@ -3809,7 +3807,6 @@ export default function AdminDashboard() {
                 type="text"
                 value={newDeadline}
                 onChange={(e) => setNewDeadline(e.target.value)}
-                placeholder="dd/mm/yyyy"
                 inputMode="numeric"
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
               />
@@ -3820,7 +3817,6 @@ export default function AdminDashboard() {
                 type="number"
                 min={1}
                 max={10}
-                placeholder="Từ 1 đến 10"
                 value={newCourseMaxStudents}
                 onChange={(e) => setNewCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
@@ -3996,14 +3992,12 @@ export default function AdminDashboard() {
                   type="text"
                   value={editCourseTitle}
                   onChange={(e) => setEditCourseTitle(e.target.value)}
-                  placeholder="Course title"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <textarea
                   value={editCourseDescription}
                   onChange={(e) => setEditCourseDescription(e.target.value)}
                   rows={10}
-                  placeholder="Nhập mô tả chi tiết khóa học. Có thể xuống dòng theo từng mục để hiển thị rõ ràng cho học viên."
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
                 <div className="flex flex-wrap items-center gap-2">
@@ -4026,7 +4020,6 @@ export default function AdminDashboard() {
                   type="text"
                   value={editCourseDeadline}
                   onChange={(e) => setEditCourseDeadline(e.target.value)}
-                  placeholder="dd/mm/yyyy"
                   inputMode="numeric"
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
@@ -4038,7 +4031,6 @@ export default function AdminDashboard() {
                     max={10}
                     value={editCourseMaxStudents}
                     onChange={(e) => setEditCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
-                    placeholder="Từ 1 đến 10"
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   />
                 </label>
@@ -4050,7 +4042,6 @@ export default function AdminDashboard() {
                     step={1000}
                     value={editCoursePrice}
                     onChange={(e) => setEditCoursePrice(Math.max(0, Math.round(Number(e.target.value) || 0)))}
-                    placeholder="Ví dụ: 4200000"
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   />
                 </label>
@@ -4062,7 +4053,6 @@ export default function AdminDashboard() {
                     max={30}
                     value={editCourseCompletedSessions}
                     onChange={(e) => setEditCourseCompletedSessions(Math.min(30, Math.max(0, Number(e.target.value) || 0)))}
-                    placeholder="From 0 to 30"
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   />
                 </label>
