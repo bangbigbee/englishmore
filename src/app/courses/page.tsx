@@ -318,11 +318,10 @@ export default function CoursesPage() {
 
         {pendingReferralCourse && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md rounded-lg border border-[#14532d]/40 bg-white p-6 shadow-xl">
+            <div className="w-full max-w-md rounded-lg border-2 border-orange-400 bg-white p-6 shadow-[0_18px_48px_rgba(234,88,12,0.22)]">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Ai đã giới thiệu khóa học này cho bạn?</h3>
-                  <p className="mt-1 text-sm text-gray-600">Không bắt buộc: nhập mã học viên hoặc email của người giới thiệu trước khi đăng ký <strong>{pendingReferralCourse.title}</strong>.</p>
+                  <h3 className="text-xl font-bold text-orange-700">Ai đã giới thiệu khóa học này cho bạn?</h3>
                 </div>
                 <button
                   type="button"
@@ -330,19 +329,19 @@ export default function CoursesPage() {
                     setPendingReferralCourse(null)
                     setReferrerInput('')
                   }}
-                  className="text-2xl leading-none text-gray-400 hover:text-gray-600"
+                  className="text-2xl leading-none text-orange-300 hover:text-orange-600"
                 >
                   ×
                 </button>
               </div>
 
-              <label className="block text-sm font-medium text-gray-700">Mã học viên hoặc email người giới thiệu</label>
+              <label className="block text-sm font-medium text-orange-700">Mã học viên hoặc email người giới thiệu</label>
               <input
                 type="text"
                 value={referrerInput}
                 onChange={(event) => setReferrerInput(event.target.value)}
                 placeholder="Không bắt buộc"
-                className="mt-2 block w-full rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d]"
+                className="mt-2 block w-full rounded-lg border border-orange-200 px-4 py-2 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
               />
               <p className="mt-2 text-xs text-gray-500">Để trống nếu bạn không được ai giới thiệu.</p>
 

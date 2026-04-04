@@ -2007,8 +2007,9 @@ export default function Home() {
             <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
               <div>
                 <h1 className="sr-only">EnglishMore</h1>
-                <p className="max-w-xl text-base sm:text-lg text-slate-600">
-                  Practice makes perfect!
+                <p className="max-w-xl text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight" style={{fontFamily: 'var(--font-nunito, sans-serif)'}}>
+                  <span className="text-orange-500">Speak</span>{' '}
+                  <span className="text-green-900">your mind and more</span>
                 </p>
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
                   {session?.user?.role !== 'admin' && (
@@ -2028,10 +2029,10 @@ export default function Home() {
                     </div>
                   )}
                   <Link
-                    href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/login'}
-                    className="brand-cta brand-cta-outline"
+                    href={session?.user?.role === 'admin' ? '/admin' : session ? '/courses' : '/register'}
+                    className={`brand-cta ${session?.user?.role === 'admin' ? 'brand-cta-outline' : 'brand-cta-register'}`}
                   >
-                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : session ? 'Enroll Now' : 'Log in'}</span>
+                    <span>{session?.user?.role === 'admin' ? 'Admin Panel' : session ? 'Enroll Now' : 'Đăng Ký Ngay'}</span>
                     <span aria-hidden="true" className="brand-cta-arrow">→</span>
                   </Link>
                   {session?.user?.role === 'admin' && (

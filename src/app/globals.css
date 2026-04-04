@@ -80,6 +80,40 @@ body {
   margin-left: 0.125rem;
 }
 
+/* ── Animated conic-gradient border for register CTA ── */
+@keyframes spin-border {
+  to { --angle: 360deg; }
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.brand-cta-register {
+  position: relative;
+  border: none;
+  background: #fff;
+  color: #ea580c;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(234,88,12,0.18);
+  padding: 0.625rem 1.25rem;
+  animation: spin-border 2.8s linear infinite;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    conic-gradient(from var(--angle), #ea580c, #fb923c, #fbbf24, #fb923c, #ea580c) border-box;
+  border: 2.5px solid transparent;
+}
+
+.brand-cta-register:hover {
+  background:
+    linear-gradient(#fff9f5, #fff9f5) padding-box,
+    conic-gradient(from var(--angle), #ea580c, #fb923c, #fbbf24, #fb923c, #ea580c) border-box;
+  transform: translateY(-1px);
+}
+
 @keyframes speak-cta-mic-pulse {
   0%,
   100% {
