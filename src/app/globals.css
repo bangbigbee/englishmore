@@ -152,11 +152,24 @@ body {
   }
 }
 
+@keyframes course-detail-page-turn {
+  0% {
+    opacity: 0.6;
+    transform: perspective(1200px) rotateY(7deg) translateX(14px);
+    transform-origin: left center;
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0deg) translateX(0);
+    transform-origin: left center;
+  }
+}
+
 .course-select-card {
   position: relative;
   border-radius: 1rem;
   padding: 1.5px;
-  background: linear-gradient(120deg, #fed7aa, #fb923c, #f59e0b, #fb923c, #fdba74);
+  background: linear-gradient(120deg, #14532d, #166534, #15803d, #166534, #14532d);
   background-size: 260% 260%;
   animation: course-border-flow 9s ease infinite;
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
@@ -172,7 +185,7 @@ body {
 }
 
 .course-select-card.is-active {
-  box-shadow: 0 10px 26px rgba(249, 115, 22, 0.28);
+  box-shadow: 0 10px 26px rgba(20, 83, 45, 0.28);
 }
 
 .course-select-card.is-hovered-right {
@@ -185,6 +198,14 @@ body {
   filter: grayscale(0.2);
 }
 
+.course-detail-shell {
+  perspective: 1200px;
+}
+
+.course-detail-page-turn {
+  animation: course-detail-page-turn 360ms ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .course-select-card {
     animation: none;
@@ -193,6 +214,10 @@ body {
 
   .course-select-card.is-hovered-right {
     transform: none;
+  }
+
+  .course-detail-page-turn {
+    animation: none;
   }
 }
 

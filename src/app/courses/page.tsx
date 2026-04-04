@@ -326,7 +326,7 @@ export default function CoursesPage() {
                           onClick={() => setSelectedCourseId(course.id)}
                           className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-orange-600 hover:text-orange-700"
                         >
-                          {isSelected ? 'Đang xem' : 'Xem thêm'}
+                          Đăng Ký Ngay
                           <span aria-hidden="true">→</span>
                         </button>
                       </div>
@@ -337,7 +337,7 @@ export default function CoursesPage() {
             )}
           </aside>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto">
+          <section className="course-detail-shell rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto">
             {!selectedCourse ? (
               <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">
                 Chọn một khóa học ở cột bên trái để xem thông tin chi tiết.
@@ -347,11 +347,12 @@ export default function CoursesPage() {
                 const enrollment = getEnrollmentStatus(selectedCourse.id)
                 const isFull = selectedCourse.enrolledCount >= selectedCourse.maxStudents
                 const blockedByExistingEnrollment = !enrollment && hasExistingEnrollment
+                const isPendingPayment = enrollment?.status === 'pending'
                 const tuition = getCourseTuition(selectedCourse)
                 const courseCurrency = selectedCourse.currency || 'VND'
 
                 return (
-                  <div>
+                  <div key={selectedCourse.id} className="course-detail-page-turn">
                     <div className="border-b border-slate-200 pb-4">
                       <h2 className="text-2xl font-bold text-[#14532d]">{selectedCourse.title}</h2>
                       <p className="mt-2 text-sm text-slate-600">
@@ -361,18 +362,35 @@ export default function CoursesPage() {
                       <div className="mt-3 flex flex-wrap items-center gap-3">
                         <button
                           type="button"
-                          onClick={() => handleOpenReferral(selectedCourse)}
-                          disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
+                          onClick={() => {
+                            if (!isPendingPayment) {
+                              handleOpenReferral(selectedCourse)
+                            }
+                          }}
+                          disabled={
+                            isPendingPayment ||
+                            registering === selectedCourse.id ||
+                            selectedCourse.enrolledCount >= selectedCourse.maxStudents ||
+                            (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)
+                          }
                           className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
                         </button>
-                        <p className="text-sm text-slate-700">
-                          <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
-                        </p>
-                        <p className={`text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
-                          {getAvailabilityText(selectedCourse)}
-                        </p>
+                        {isPendingPayment ? (
+                          <p className="text-sm font-medium text-amber-700">
+                            You&apos;ve already registered. Please wait while your payment is being confirmed.
+                          </p>
+                        ) : (
+                          <>
+                            <p className="text-sm text-slate-700">
+                              <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
+                            </p>
+                            <p className={`text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
+                              {getAvailabilityText(selectedCourse)}
+                            </p>
+                          </>
+                        )}
                       </div>
                     </div>
 
