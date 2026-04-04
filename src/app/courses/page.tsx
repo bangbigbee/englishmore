@@ -352,32 +352,27 @@ export default function CoursesPage() {
 
                 return (
                   <div>
-                    <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-4">
-                      <div className="min-w-0 flex-1">
-                        <h2 className="text-2xl font-bold text-[#14532d]">{selectedCourse.title}</h2>
-                        <p className="mt-2 text-sm text-slate-600">
-                          <LinkifiedText text={selectedCourse.description || 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'} />
+                    <div className="border-b border-slate-200 pb-4">
+                      <h2 className="text-2xl font-bold text-[#14532d]">{selectedCourse.title}</h2>
+                      <p className="mt-2 text-sm text-slate-600">
+                        <LinkifiedText text={selectedCourse.description || 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'} />
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenReferral(selectedCourse)}
+                          disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
+                          className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
+                        </button>
+                        <p className="text-sm text-slate-700">
+                          <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
                         </p>
-                      </div>
-                      <div className="w-full sm:w-auto sm:min-w-[320px]">
-                        <div className="flex justify-start sm:justify-end">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenReferral(selectedCourse)}
-                            disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
-                            className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
-                          </button>
-                        </div>
-                        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm sm:justify-end">
-                          <p className="text-slate-700">
-                            <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
-                          </p>
-                          <p className={`font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
-                            {getAvailabilityText(selectedCourse)}
-                          </p>
-                        </div>
+                        <p className={`text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
+                          {getAvailabilityText(selectedCourse)}
+                        </p>
                       </div>
                     </div>
 
