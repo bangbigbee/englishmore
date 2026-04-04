@@ -359,21 +359,25 @@ export default function CoursesPage() {
                           <LinkifiedText text={selectedCourse.description || 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'} />
                         </p>
                       </div>
-                      <div className="w-full rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4 sm:w-auto sm:min-w-[250px]">
-                        <p className="text-sm text-slate-700">
-                          <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
-                        </p>
-                        <p className={`mt-1 text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
-                          {getAvailabilityText(selectedCourse)}
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => handleOpenReferral(selectedCourse)}
-                          disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
-                          className="mt-3 w-full rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
-                        </button>
+                      <div className="w-full sm:w-auto sm:min-w-[320px]">
+                        <div className="flex justify-start sm:justify-end">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenReferral(selectedCourse)}
+                            disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
+                            className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
+                          </button>
+                        </div>
+                        <div className="mt-2 flex flex-wrap items-center gap-3 text-sm sm:justify-end">
+                          <p className="text-slate-700">
+                            <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
+                          </p>
+                          <p className={`font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
+                            {getAvailabilityText(selectedCourse)}
+                          </p>
+                        </div>
                       </div>
                     </div>
 

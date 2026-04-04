@@ -429,6 +429,7 @@ export default function AdminDashboard() {
   const [editCourseCompletedSessions, setEditCourseCompletedSessions] = useState(0)
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
+  const [courseDetailPreview, setCourseDetailPreview] = useState<{ title: string; description: string | null } | null>(null)
   const [summary, setSummary] = useState<DashboardSummary>({
     totalUsers: 0,
     totalStudents: 0,
@@ -3805,7 +3806,13 @@ export default function AdminDashboard() {
                   <tr key={course.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">
-                      <LinkifiedText text={course.description || 'No description yet'} />
+                      <button
+                        type="button"
+                        onClick={() => setCourseDetailPreview({ title: course.title, description: course.description })}
+                        className="font-semibold text-[#14532d] hover:underline"
+                      >
+                        Detail
+                      </button>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
@@ -3881,6 +3888,38 @@ export default function AdminDashboard() {
             </table>
           </div>
         </div>
+
+        {courseDetailPreview && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-2xl rounded border border-[#14532d]/40 bg-white p-6 shadow-lg">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <h3 className="text-xl font-bold text-gray-900">Course detail: {courseDetailPreview.title}</h3>
+                <button
+                  type="button"
+                  onClick={() => setCourseDetailPreview(null)}
+                  className="text-2xl leading-none text-gray-400 hover:text-gray-600"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="max-h-[65vh] overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+                <LinkifiedText text={courseDetailPreview.description || 'No description yet'} preserveLineBreaks />
+              </div>
+
+              <div className="mt-5 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setCourseDetailPreview(null)}
+                  className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {editingCourse && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
