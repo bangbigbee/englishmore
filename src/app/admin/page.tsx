@@ -3766,7 +3766,7 @@ export default function AdminDashboard() {
             Manage <span className="text-amber-600">Courses</span>
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4 items-start">
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Course title</span>
               <input
@@ -3781,7 +3781,7 @@ export default function AdminDashboard() {
               <textarea
                 value={newCourseDescription}
                 onChange={(e) => setNewCourseDescription(e.target.value)}
-                rows={6}
+                rows={4}
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
               />
               <div className="flex flex-wrap items-center gap-2">
@@ -3835,14 +3835,15 @@ export default function AdminDashboard() {
               />
               <span className="text-xs text-gray-500">Ví dụ: 4200000</span>
             </label>
-            <div className="flex items-end">
-              <button
-                onClick={publishCourse}
-                className="w-full px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
-              >
-                Publish course
-              </button>
-            </div>
+          </div>
+
+          <div className="mb-6 flex justify-end">
+            <button
+              onClick={publishCourse}
+              className="px-6 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] font-medium"
+            >
+              Publish course
+            </button>
           </div>
 
           <div className="overflow-x-auto">
