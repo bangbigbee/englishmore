@@ -128,6 +128,7 @@ export default function CoursesPage() {
   const [pendingReferralCourse, setPendingReferralCourse] = useState<PendingReferralCourse | null>(null)
   const [referrerInput, setReferrerInput] = useState('')
   const [selectedCourseId, setSelectedCourseId] = useState<string>('')
+  const [hoveredCourseId, setHoveredCourseId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -262,7 +263,16 @@ export default function CoursesPage() {
     setPaymentInstruction(buildInstructionFromEnrollment(course))
   }
 
-  const selectedCourse = courses.find((course) => course.id === selectedCourseId) || null
+  const handleOpenReferral = (course: Course) => {
+    setPendingReferralCourse({ id: course.id, title: course.title })
+    setReferrerInput('')
+    setErrorModal(null)
+  }
+
+  const getAvailabilityText = (course: Course) => (course.enrolledCount >= course.maxStudents ? 'Đã đầy chỗ' : 'Vẫn còn chỗ')
+
+  const activeCourseId = hoveredCourseId || selectedCourseId
+  const selectedCourse = courses.find((course) => course.id === activeCourseId) || null
 
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -294,19 +304,23 @@ export default function CoursesPage() {
             ) : courses.length === 0 ? (
               <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Chưa có khóa học đang mở.</div>
             ) : (
-              <div className="space-y-4">
+              <div className={`space-y-4 ${hoveredCourseId ? 'course-list-has-hover' : ''}`} onMouseLeave={() => setHoveredCourseId(null)}>
                 {courses.map((course) => {
-                  const isSelected = selectedCourseId === course.id
+                  const isSelected = activeCourseId === course.id
+                  const isMuted = Boolean(hoveredCourseId) && hoveredCourseId !== course.id
+                  const isHovered = hoveredCourseId === course.id
                   return (
-                    <article key={course.id} className={`course-select-card ${isSelected ? 'is-active' : ''}`}>
+                    <article
+                      key={course.id}
+                      onMouseEnter={() => setHoveredCourseId(course.id)}
+                      className={`course-select-card ${isSelected ? 'is-active' : ''} ${isMuted ? 'is-muted' : ''} ${isHovered ? 'is-hovered-right' : ''}`}
+                    >
                       <div className="course-select-card-inner">
                         <p className="text-sm font-bold text-[#14532d]">{course.title}</p>
                         <p className="mt-2 text-xs text-slate-600">
                           Hạn đăng ký: {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                         </p>
-                        <p className="mt-1 text-xs text-slate-600">
-                          Sĩ số: {course.enrolledCount}/{course.maxStudents}
-                        </p>
+                        <p className={`mt-1 text-xs font-semibold ${course.enrolledCount >= course.maxStudents ? 'text-red-600' : 'text-emerald-600'}`}>{getAvailabilityText(course)}</p>
                         <button
                           type="button"
                           onClick={() => setSelectedCourseId(course.id)}
@@ -347,19 +361,20 @@ export default function CoursesPage() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => setSelectedCourseId('')}
-                        className="rounded-full border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50"
+                        onClick={() => handleOpenReferral(selectedCourse)}
+                        disabled={registering === selectedCourse.id || selectedCourse.enrolledCount >= selectedCourse.maxStudents || (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)}
+                        className="rounded-full border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        Thu gọn
+                        {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
                       </button>
                     </div>
 
                     <div className="mt-5 rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4">
                       <p className="text-sm text-slate-700">
-                        <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')} • <strong>Đã đăng ký:</strong> {selectedCourse.enrolledCount}/{selectedCourse.maxStudents}
+                        <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
                       </p>
-                      <p className="mt-1 text-sm text-slate-700">
-                        <strong>Đã xác nhận:</strong> {selectedCourse.successfulCount} • <strong>Chờ xác nhận:</strong> {selectedCourse.pendingCount}
+                      <p className={`mt-1 text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
+                        {getAvailabilityText(selectedCourse)}
                       </p>
                     </div>
 
@@ -424,11 +439,7 @@ export default function CoursesPage() {
                         </div>
                       ) : (
                         <button
-                          onClick={() => {
-                            setPendingReferralCourse({ id: selectedCourse.id, title: selectedCourse.title })
-                            setReferrerInput('')
-                            setErrorModal(null)
-                          }}
+                          onClick={() => handleOpenReferral(selectedCourse)}
                           disabled={registering === selectedCourse.id}
                           className="w-full rounded bg-[#14532d] px-4 py-3 font-semibold text-white hover:bg-[#166534] disabled:opacity-50"
                         >

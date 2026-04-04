@@ -23,11 +23,13 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { title, description, registrationDeadline, isPublished, maxStudents, completedSessions } = body
+  const { title, description, registrationDeadline, isPublished, maxStudents, completedSessions, price, currency } = body
 
   const data: {
     title?: string
     description?: string | null
+    price?: number
+    currency?: string
     registrationDeadline?: Date
     isPublished?: boolean
     maxStudents?: number
@@ -45,6 +47,22 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   if (description !== undefined) {
     const normalizedDescription = String(description).trim()
     data.description = normalizedDescription || null
+  }
+
+  if (price !== undefined) {
+    const parsedPrice = Number(price)
+    if (!Number.isInteger(parsedPrice) || parsedPrice < 0) {
+      return NextResponse.json({ error: 'Price must be a non-negative integer' }, { status: 400 })
+    }
+    data.price = parsedPrice
+  }
+
+  if (currency !== undefined) {
+    const normalizedCurrency = String(currency).trim().toUpperCase()
+    if (!normalizedCurrency) {
+      return NextResponse.json({ error: 'Currency is required when provided' }, { status: 400 })
+    }
+    data.currency = normalizedCurrency
   }
 
   if (registrationDeadline !== undefined) {

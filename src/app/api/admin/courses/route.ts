@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   if (auth.status !== 200) return NextResponse.json(auth.body, { status: auth.status })
 
   const body = await request.json()
-  const { title, description, registrationDeadline, maxStudents } = body
+  const { title, description, registrationDeadline, maxStudents, price, currency } = body
 
   if (!title || !registrationDeadline) {
     return NextResponse.json({ error: 'Title and registrationDeadline are required' }, { status: 400 })
@@ -49,10 +49,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Seat count must be an integer between 1 and 10' }, { status: 400 })
   }
 
+  const parsedPrice = Number(price ?? 0)
+  if (!Number.isInteger(parsedPrice) || parsedPrice < 0) {
+    return NextResponse.json({ error: 'Price must be a non-negative integer' }, { status: 400 })
+  }
+
+  const normalizedCurrency = String(currency || 'VND').trim().toUpperCase() || 'VND'
+
   const course = await prisma.course.create({
     data: {
       title,
       description: description || null,
+      price: parsedPrice,
+      currency: normalizedCurrency,
       registrationDeadline: new Date(registrationDeadline),
       maxStudents: parsedMaxStudents,
       isPublished: true

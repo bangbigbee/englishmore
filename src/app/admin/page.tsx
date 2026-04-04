@@ -11,6 +11,8 @@ interface CourseItem {
   id: string
   title: string
   description: string | null
+  price: number
+  currency: string
   registrationDeadline: string
   maxStudents: number
   completedSessions: number
@@ -412,6 +414,7 @@ export default function AdminDashboard() {
   const [newCourseDescription, setNewCourseDescription] = useState('')
   const [newDeadline, setNewDeadline] = useState('')
   const [newCourseMaxStudents, setNewCourseMaxStudents] = useState(10)
+  const [newCoursePrice, setNewCoursePrice] = useState(4200000)
   const [courseError, setCourseError] = useState('')
   const [courseSuccess, setCourseSuccess] = useState('')
   const [enrollments, setEnrollments] = useState<EnrollmentItem[]>([])
@@ -422,6 +425,7 @@ export default function AdminDashboard() {
   const [editCourseDescription, setEditCourseDescription] = useState('')
   const [editCourseDeadline, setEditCourseDeadline] = useState('')
   const [editCourseMaxStudents, setEditCourseMaxStudents] = useState(10)
+  const [editCoursePrice, setEditCoursePrice] = useState(0)
   const [editCourseCompletedSessions, setEditCourseCompletedSessions] = useState(0)
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
@@ -1743,6 +1747,11 @@ export default function AdminDashboard() {
       return
     }
 
+    if (!Number.isInteger(newCoursePrice) || newCoursePrice < 0) {
+      setCourseError('Học phí phải là số nguyên không âm')
+      return
+    }
+
     try {
       const res = await fetch('/api/admin/courses', {
         method: 'POST',
@@ -1751,7 +1760,9 @@ export default function AdminDashboard() {
           title: newCourseTitle,
           description: newCourseDescription,
           registrationDeadline: parsedNewDeadline,
-          maxStudents: newCourseMaxStudents
+          maxStudents: newCourseMaxStudents,
+          price: newCoursePrice,
+          currency: 'VND'
         })
       })
       if (!res.ok) {
@@ -1764,6 +1775,7 @@ export default function AdminDashboard() {
       setNewCourseDescription('')
       setNewDeadline('')
       setNewCourseMaxStudents(10)
+      setNewCoursePrice(4200000)
       fetchCourses()
     } catch (err) {
       setCourseError(err instanceof Error ? err.message : 'An error occurred')
@@ -1777,6 +1789,7 @@ export default function AdminDashboard() {
     setEditCourseDescription(course.description || '')
     setEditCourseDeadline(formatDateToDdMmYyyy(course.registrationDeadline))
     setEditCourseMaxStudents(course.maxStudents || 10)
+    setEditCoursePrice(course.price || 0)
     setEditCourseCompletedSessions(course.completedSessions || 0)
     setCourseError('')
   }
@@ -1804,6 +1817,11 @@ export default function AdminDashboard() {
       return
     }
 
+    if (!Number.isInteger(editCoursePrice) || editCoursePrice < 0) {
+      setCourseError('Học phí phải là số nguyên không âm')
+      return
+    }
+
     try {
       setSavingCourseId(editingCourse.id)
       const res = await fetch(`/api/admin/courses/${editingCourse.id}`, {
@@ -1814,6 +1832,8 @@ export default function AdminDashboard() {
           description: editCourseDescription,
           registrationDeadline: parsedEditDeadline,
           maxStudents: editCourseMaxStudents,
+          price: editCoursePrice,
+          currency: 'VND',
           completedSessions: editCourseCompletedSessions
         })
       })
@@ -3696,7 +3716,7 @@ export default function AdminDashboard() {
             Manage <span className="text-amber-600">Courses</span>
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-6">
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Course title</span>
               <input
@@ -3741,6 +3761,18 @@ export default function AdminDashboard() {
               />
               <span className="text-xs text-gray-500">Each course supports up to 10 students.</span>
             </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Học phí (VND)</span>
+              <input
+                type="number"
+                min={0}
+                step={1000}
+                value={newCoursePrice}
+                onChange={(e) => setNewCoursePrice(Math.max(0, Math.round(Number(e.target.value) || 0)))}
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              />
+              <span className="text-xs text-gray-500">Ví dụ: 4200000</span>
+            </label>
             <div className="flex items-end">
               <button
                 onClick={publishCourse}
@@ -3759,6 +3791,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registration deadline</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số chỗ</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Học phí</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Progress</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Visibility</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Successful</th>
@@ -3778,6 +3811,7 @@ export default function AdminDashboard() {
                       {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">{course.maxStudents}/10</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">{course.price.toLocaleString('vi-VN')} {course.currency || 'VND'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">
                       <div className="w-40">
                         <div className="mb-1 flex items-center justify-between text-xs text-gray-600">
@@ -3838,7 +3872,7 @@ export default function AdminDashboard() {
                 ))}
                 {courses.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="px-4 py-3 text-center text-gray-500">
+                    <td colSpan={11} className="px-4 py-3 text-center text-gray-500">
                       No courses yet
                     </td>
                   </tr>
@@ -3885,6 +3919,18 @@ export default function AdminDashboard() {
                     value={editCourseMaxStudents}
                     onChange={(e) => setEditCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
                     placeholder="Từ 1 đến 10"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-gray-700">Học phí (VND)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={1000}
+                    value={editCoursePrice}
+                    onChange={(e) => setEditCoursePrice(Math.max(0, Math.round(Number(e.target.value) || 0)))}
+                    placeholder="Ví dụ: 4200000"
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   />
                 </label>

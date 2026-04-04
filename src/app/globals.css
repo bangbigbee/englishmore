@@ -159,6 +159,9 @@ body {
   background-size: 260% 260%;
   animation: course-border-flow 9s ease infinite;
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 260ms ease, opacity 220ms ease, filter 220ms ease, box-shadow 260ms ease;
 }
 
 .course-select-card-inner {
@@ -171,9 +174,23 @@ body {
   box-shadow: 0 10px 26px rgba(249, 115, 22, 0.28);
 }
 
+.course-select-card.is-hovered-right {
+  transform: translateX(12px);
+}
+
+.course-list-has-hover .course-select-card.is-muted {
+  opacity: 0.55;
+  filter: grayscale(0.2);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .course-select-card {
     animation: none;
+    transition: none;
+  }
+
+  .course-select-card.is-hovered-right {
+    transform: none;
   }
 }
 
