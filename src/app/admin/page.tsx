@@ -402,6 +402,55 @@ const parseApiResponse = async (response: Response) => {
   }
 }
 
+const COURSE_DESCRIPTION_TEMPLATE = [
+  '1. Khóa học này dành cho ai?',
+  '- Sinh viên, người đi làm đã học tiếng Anh nhiều lần nhưng chưa tự tin khi giao tiếp.',
+  '- Những bạn muốn nâng cao khả năng phát âm, thực hành các tình huống thực tế để sử dụng trong giao tiếp, công việc.',
+  '',
+  '2. Khóa học có gì đặc biệt?',
+  '- Học viên sẽ được rèn luyện phát âm đúng ngay từ đầu để tự tin nghe và nói về sau.',
+  '- Chương trình học không nặng ngữ pháp, tập trung vào giao tiếp nghe - nói hiệu quả, giúp bạn áp dụng ngay vào công việc và cuộc sống. Ngữ pháp sẽ được bổ túc và hoàn thiện song song trong và sau quá trình học.',
+  '- Môi trường rèn luyện liên tục: bên cạnh giờ học trên lớp, bạn sẽ được luyện tập thêm 1-1 với giáo viên để duy trì động lực và đảm bảo đầu ra khóa học.',
+  '- Bên cạnh ngôn ngữ, bạn còn học được kỹ năng giao tiếp, tư duy phát triển bản thân và những kinh nghiệm, trải nghiệm trong nhiều lĩnh vực khác.',
+  '',
+  '3. Ai là người giảng dạy?',
+  '- Thầy Nguyễn Trí Bằng, 7 năm công tác tại Đại học Bách Khoa - ĐH Đà Nẵng trong lĩnh vực khoa học kỹ thuật, làm việc với 03 chương trình đào tạo quốc tế (02 chương trình tiên tiến Việt - Mỹ, chương trình đào tạo Kỹ sư Chất lượng Cao Việt Pháp).',
+  '- 5 năm kinh nghiệm dạy tiếng Anh.',
+  '- 2 năm kinh nghiệm trong lĩnh vực công nghệ Blockchain.',
+  '- Nhiều năm kinh nghiệm làm việc trong môi trường quốc tế, tham gia các hội nghị và sự kiện tại Singapore, Hàn Quốc, giúp mang đến góc nhìn và trải nghiệm thực tế cho học viên.',
+  '',
+  '4. Lịch học và thời lượng như thế nào?',
+  '- Học trực tuyến qua Zoom, linh hoạt thời gian mà vẫn đảm bảo tương tác như lớp học trực tiếp.',
+  '- 02 phiên/tuần, 02 giờ/phiên.',
+  '- Thời lượng: 25-30 phiên.',
+  '- Lịch học dự kiến: Thứ Hai + Thứ Năm, 19:30 - 21:30 (sẽ thống nhất lại vào buổi học đầu tiên).',
+  '',
+  '5. Học phí',
+  '- Toàn bộ khóa học: 4.200.000 VND.',
+  '- Có ưu đãi học phí 10% nếu đăng ký nhóm từ 2 bạn trở lên.',
+  '- Sau phiên học thứ 3, nếu cảm thấy phù hợp với khóa học: chuyển học phí theo hướng dẫn từ admin.',
+  '',
+  '6. Tôi chưa từng học tiếng Anh bài bản, có theo kịp không?',
+  '- Hoàn toàn có thể. Khóa học được thiết kế cho cả người mới bắt đầu nên bạn sẽ được hướng dẫn từng bước một.',
+  '- Mỗi học viên đều được hỗ trợ thực hành, sửa lỗi 1-1 để tiến bộ nhanh nhất.',
+  '',
+  '7. Sau khi hoàn thành khóa học này, tôi có thể đạt được những kỹ năng gì?',
+  '- Phát âm chuẩn.',
+  '- Tự tin sử dụng tiếng Anh để đọc hiểu tài liệu và giao tiếp cơ bản khi làm việc, phỏng vấn, du lịch nước ngoài, gặp gỡ đối tác quốc tế.',
+  '- Biết giới thiệu bản thân, thuyết trình các bài phát biểu ngắn, giao tiếp các tình huống thường ngày khi đi công tác, trên máy bay, nghỉ dưỡng...',
+  '- Biết được phương pháp học tiếng Anh phù hợp với bản thân để tiếp tục rèn luyện trong tương lai.',
+  '',
+  '8. Tôi có thể đăng ký và bắt đầu học như thế nào?',
+  '- Tham gia khóa học bằng cách điền thông tin vào mẫu đăng ký.',
+  '- Sau khi đăng ký, bạn sẽ được hướng dẫn tham gia lớp và các thông tin liên quan.',
+  '',
+  '9. Tôi cần chuẩn bị gì khi tham gia khóa học?',
+  '- Laptop, máy tính cá nhân có microphone, camera.',
+  '- Internet ổn định.',
+  '- Bút, sổ tay ghi chép.',
+  '- Kênh Youtube để đăng bài tập.'
+].join('\n')
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -3729,14 +3778,34 @@ export default function AdminDashboard() {
               />
             </label>
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-gray-700">Course description</span>
+              <span className="text-sm font-medium text-gray-700">Course description (shown in course detail)</span>
               <textarea
-                placeholder="Course description"
+                placeholder="Nhập mô tả chi tiết khóa học. Có thể xuống dòng theo từng mục để hiển thị rõ ràng cho học viên."
                 value={newCourseDescription}
                 onChange={(e) => setNewCourseDescription(e.target.value)}
-                rows={2}
+                rows={6}
                 className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
               />
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setNewCourseDescription(COURSE_DESCRIPTION_TEMPLATE)}
+                  className="rounded border border-[#14532d]/30 bg-[#14532d]/5 px-3 py-1.5 text-xs font-medium text-[#14532d] hover:bg-[#14532d]/10"
+                >
+                  Chèn mẫu 9 mục
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNewCourseDescription('')}
+                  className="rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                >
+                  Xóa nhanh
+                </button>
+              </div>
+              <div className="rounded border border-gray-200 bg-gray-50 p-3 text-xs text-gray-700">
+                <p className="mb-2 font-semibold text-gray-800">Xem trước hiển thị cho học viên</p>
+                <LinkifiedText text={newCourseDescription || 'Chưa có mô tả chi tiết.'} preserveLineBreaks />
+              </div>
             </label>
             <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Registration deadline</span>
@@ -3937,10 +4006,30 @@ export default function AdminDashboard() {
                 <textarea
                   value={editCourseDescription}
                   onChange={(e) => setEditCourseDescription(e.target.value)}
-                  rows={4}
-                  placeholder="Course description"
+                  rows={10}
+                  placeholder="Nhập mô tả chi tiết khóa học. Có thể xuống dòng theo từng mục để hiển thị rõ ràng cho học viên."
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditCourseDescription(COURSE_DESCRIPTION_TEMPLATE)}
+                    className="rounded border border-[#14532d]/30 bg-[#14532d]/5 px-3 py-1.5 text-xs font-medium text-[#14532d] hover:bg-[#14532d]/10"
+                  >
+                    Chèn mẫu 9 mục
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditCourseDescription('')}
+                    className="rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                  >
+                    Xóa nhanh
+                  </button>
+                </div>
+                <div className="rounded border border-gray-200 bg-gray-50 p-3 text-xs text-gray-700">
+                  <p className="mb-2 font-semibold text-gray-800">Xem trước hiển thị cho học viên</p>
+                  <LinkifiedText text={editCourseDescription || 'Chưa có mô tả chi tiết.'} preserveLineBreaks />
+                </div>
                 <input
                   type="text"
                   value={editCourseDeadline}

@@ -46,74 +46,22 @@ interface PendingReferralCourse {
   title: string
 }
 
-const COURSE_DETAIL_SECTIONS = [
-  {
-    title: '1. Khóa học này dành cho ai?',
-    points: [
-      'Sinh viên, người đi làm đã học tiếng Anh nhiều lần nhưng chưa tự tin khi giao tiếp.',
-      'Những bạn muốn nâng cao khả năng phát âm, thực hành các tình huống thực tế để sử dụng trong giao tiếp, công việc.'
-    ]
-  },
-  {
-    title: '2. Khóa học có gì đặc biệt?',
-    points: [
-      'Học viên sẽ được rèn luyện phát âm đúng ngay từ đầu để tự tin nghe và nói về sau.',
-      'Chương trình học không nặng ngữ pháp, tập trung vào giao tiếp nghe - nói hiệu quả, giúp bạn áp dụng ngay vào công việc và cuộc sống. Ngữ pháp sẽ được bổ túc và hoàn thiện song song trong và sau quá trình học.',
-      'Môi trường rèn luyện liên tục: bên cạnh giờ học trên lớp, bạn sẽ được luyện tập thêm 1-1 với giáo viên để duy trì động lực và đảm bảo đầu ra khóa học.',
-      'Bên cạnh ngôn ngữ, bạn còn học được kỹ năng giao tiếp, tư duy phát triển bản thân và những kinh nghiệm, trải nghiệm trong nhiều lĩnh vực khác.'
-    ]
-  },
-  {
-    title: '3. Ai là người giảng dạy?',
-    points: [
-      'Thầy Nguyễn Trí Bằng, 7 năm công tác tại Đại học Bách Khoa - ĐH Đà Nẵng trong lĩnh vực khoa học kỹ thuật, làm việc với 03 chương trình đào tạo quốc tế (02 chương trình tiên tiến Việt - Mỹ, chương trình đào tạo Kỹ sư Chất lượng Cao Việt Pháp).',
-      '5 năm kinh nghiệm dạy tiếng Anh.',
-      '2 năm kinh nghiệm trong lĩnh vực công nghệ Blockchain.',
-      'Nhiều năm kinh nghiệm làm việc trong môi trường quốc tế, tham gia các hội nghị và sự kiện tại Singapore, Hàn Quốc, giúp mang đến góc nhìn và trải nghiệm thực tế cho học viên.'
-    ]
-  },
-  {
-    title: '4. Lịch học và thời lượng như thế nào?',
-    points: [
-      'Học trực tuyến qua Zoom, linh hoạt thời gian mà vẫn đảm bảo tương tác như lớp học trực tiếp.',
-      '02 phiên/tuần, 02 giờ/phiên.',
-      'Thời lượng: 25-30 phiên.',
-      'Lịch học dự kiến: Thứ Hai + Thứ Năm, 19:30 - 21:30 (sẽ thống nhất lại vào buổi học đầu tiên).'
-    ]
-  },
-  {
-    title: '6. Tôi chưa từng học tiếng Anh bài bản, có theo kịp không?',
-    points: [
-      'Hoàn toàn có thể. Khóa học được thiết kế cho cả người mới bắt đầu nên bạn sẽ được hướng dẫn từng bước một.',
-      'Mỗi học viên đều được hỗ trợ thực hành, sửa lỗi 1-1 để tiến bộ nhanh nhất.'
-    ]
-  },
-  {
-    title: '7. Sau khi hoàn thành khóa học này, tôi có thể đạt được những kỹ năng gì?',
-    points: [
-      'Phát âm chuẩn.',
-      'Tự tin sử dụng tiếng Anh để đọc hiểu tài liệu và giao tiếp cơ bản khi làm việc, phỏng vấn, du lịch nước ngoài, gặp gỡ đối tác quốc tế.',
-      'Biết giới thiệu bản thân, thuyết trình các bài phát biểu ngắn, giao tiếp các tình huống thường ngày khi đi công tác, trên máy bay, nghỉ dưỡng...',
-      'Biết được phương pháp học tiếng Anh phù hợp với bản thân để tiếp tục rèn luyện trong tương lai.'
-    ]
-  },
-  {
-    title: '8. Tôi có thể đăng ký và bắt đầu học như thế nào?',
-    points: [
-      'Tham gia khóa học bằng cách điền thông tin vào mẫu bên dưới.',
-      'Sau khi đăng ký, bạn sẽ được hướng dẫn tham gia lớp và các thông tin liên quan.'
-    ]
-  },
-  {
-    title: '9. Tôi cần chuẩn bị gì khi tham gia khóa học?',
-    points: [
-      'Laptop, máy tính cá nhân có microphone, camera.',
-      'Internet ổn định.',
-      'Bút, sổ tay ghi chép.',
-      'Kênh Youtube để đăng bài tập.'
-    ]
+const DEFAULT_COURSE_DESCRIPTION = 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'
+
+const getCourseDescriptionPreview = (description?: string) => {
+  const normalized = String(description || '').replace(/\s+/g, ' ').trim()
+  const fallback = DEFAULT_COURSE_DESCRIPTION
+
+  if (!normalized) {
+    return fallback
   }
-] as const
+
+  if (normalized.length <= 180) {
+    return normalized
+  }
+
+  return `${normalized.slice(0, 177)}...`
+}
 
 export default function CoursesPage() {
   const { data: session, status } = useSession()
@@ -298,7 +246,7 @@ export default function CoursesPage() {
                     <div className="px-5 py-5 sm:px-7 sm:py-6">
                       <h2 className="text-2xl font-bold text-[#14532d]">{course.title}</h2>
                       <p className="mt-2 text-sm text-slate-600">
-                        <LinkifiedText text={course.description || 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'} />
+                        <LinkifiedText text={getCourseDescriptionPreview(course.description)} />
                       </p>
 
                       <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -370,36 +318,16 @@ export default function CoursesPage() {
 
                       {isExpanded && (
                         <div className="space-y-5 px-5 pb-6 pt-1 text-slate-700 sm:px-7">
-                          {COURSE_DETAIL_SECTIONS.slice(0, 4).map((section) => (
-                            <div key={section.title}>
-                              <h3 className="text-lg font-semibold text-[#14532d]">{section.title}</h3>
-                              <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
-                                {section.points.map((point) => (
-                                  <li key={point}>{point}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-
-                          <div>
-                            <h3 className="text-lg font-semibold text-[#14532d]">5. Học phí</h3>
-                            <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
-                              <li>Toàn bộ khóa học: {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}</li>
-                              <li>Có ưu đãi học phí 10% nếu đăng ký nhóm từ 2 bạn trở lên.</li>
-                              <li>Sau phiên học thứ 3, nếu cảm thấy phù hợp với khóa học: chuyển học phí về số tài khoản 19033113602011 - Techcombank - Nguyen Tri Bang.</li>
-                            </ul>
+                          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                            <LinkifiedText text={String(course.description || '').trim() || DEFAULT_COURSE_DESCRIPTION} preserveLineBreaks />
                           </div>
 
-                          {COURSE_DETAIL_SECTIONS.slice(4).map((section) => (
-                            <div key={section.title}>
-                              <h3 className="text-lg font-semibold text-[#14532d]">{section.title}</h3>
-                              <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
-                                {section.points.map((point) => (
-                                  <li key={point}>{point}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
+                          <div>
+                            <h3 className="text-lg font-semibold text-[#14532d]">Học phí</h3>
+                            <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
+                              <li>Toàn bộ khóa học: {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}</li>
+                            </ul>
+                          </div>
 
                           <p className="text-sm text-slate-600">
                             Mọi thông tin thêm, vui lòng liên hệ Mr. Nguyễn Trí Bằng qua số điện thoại 0915091093. Hoặc nhắn tin về Facebook:
