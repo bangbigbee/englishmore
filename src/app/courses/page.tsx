@@ -127,8 +127,7 @@ export default function CoursesPage() {
   const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null)
   const [pendingReferralCourse, setPendingReferralCourse] = useState<PendingReferralCourse | null>(null)
   const [referrerInput, setReferrerInput] = useState('')
-  const [selectedCourseId, setSelectedCourseId] = useState<string>('')
-  const [hoveredCourseId, setHoveredCourseId] = useState<string | null>(null)
+  const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -155,17 +154,6 @@ export default function CoursesPage() {
       setErrorModal(null)
     }
   }, [errorModal])
-
-  useEffect(() => {
-    if (courses.length === 0) {
-      setSelectedCourseId('')
-      return
-    }
-
-    if (!selectedCourseId || !courses.some((course) => course.id === selectedCourseId)) {
-      setSelectedCourseId(courses[0].id)
-    }
-  }, [courses, selectedCourseId])
 
   const fetchCourses = async () => {
     try {
@@ -271,9 +259,6 @@ export default function CoursesPage() {
 
   const getAvailabilityText = (course: Course) => (course.enrolledCount >= course.maxStudents ? 'Đã đầy chỗ' : 'Vẫn còn chỗ')
 
-  const activeCourseId = hoveredCourseId || selectedCourseId
-  const selectedCourse = courses.find((course) => course.id === activeCourseId) || null
-
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
@@ -285,78 +270,35 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Available Courses</h1>
           <p className="mt-2 text-xs sm:text-sm text-gray-600">Choose the course you want to join.</p>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <aside className="lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto lg:overflow-x-visible lg:pr-4">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[#14532d]">Danh sách khóa học</h2>
-              <span className="text-xs text-slate-500">{courses.length} khóa</span>
-            </div>
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+        {loading ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Đang tải danh sách khóa học...</div>
+        ) : courses.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Chưa có khóa học đang mở.</div>
+        ) : (
+          <div className="space-y-6">
+            {courses.map((course) => {
+              const enrollment = getEnrollmentStatus(course.id)
+              const isFull = course.enrolledCount >= course.maxStudents
+              const blockedByExistingEnrollment = !enrollment && hasExistingEnrollment
+              const isPendingPayment = enrollment?.status === 'pending'
+              const tuition = getCourseTuition(course)
+              const courseCurrency = course.currency || 'VND'
+              const isExpanded = expandedCourseId === course.id
 
-            {loading ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Đang tải danh sách khóa học...</div>
-            ) : courses.length === 0 ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Chưa có khóa học đang mở.</div>
-            ) : (
-              <div className={`space-y-4 ${hoveredCourseId ? 'course-list-has-hover' : ''}`} onMouseLeave={() => setHoveredCourseId(null)}>
-                {courses.map((course) => {
-                  const isSelected = activeCourseId === course.id
-                  const isMuted = Boolean(hoveredCourseId) && hoveredCourseId !== course.id
-                  const isHovered = hoveredCourseId === course.id
-                  return (
-                    <article
-                      key={course.id}
-                      onMouseEnter={() => setHoveredCourseId(course.id)}
-                      className={`course-select-card ${isSelected ? 'is-active' : ''} ${isMuted ? 'is-muted' : ''} ${isHovered ? 'is-hovered-right' : ''}`}
-                    >
-                      <div className="course-select-card-inner">
-                        <p className="text-sm font-bold text-[#14532d]">{course.title}</p>
-                        <p className="mt-2 text-xs text-slate-600">
-                          Hạn đăng ký: {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
-                        </p>
-                        <p className={`mt-1 text-xs font-semibold ${course.enrolledCount >= course.maxStudents ? 'text-red-600' : 'text-emerald-600'}`}>{getAvailabilityText(course)}</p>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedCourseId(course.id)}
-                          className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-orange-600 hover:text-orange-700"
-                        >
-                          Đăng Ký Ngay
-                          <span aria-hidden="true">→</span>
-                        </button>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            )}
-          </aside>
-
-          <section className="course-detail-shell rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto">
-            {!selectedCourse ? (
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">
-                Chọn một khóa học ở cột bên trái để xem thông tin chi tiết.
-              </div>
-            ) : (
-              (() => {
-                const enrollment = getEnrollmentStatus(selectedCourse.id)
-                const isFull = selectedCourse.enrolledCount >= selectedCourse.maxStudents
-                const blockedByExistingEnrollment = !enrollment && hasExistingEnrollment
-                const isPendingPayment = enrollment?.status === 'pending'
-                const tuition = getCourseTuition(selectedCourse)
-                const courseCurrency = selectedCourse.currency || 'VND'
-
-                return (
-                  <div key={selectedCourse.id} className="course-detail-page-turn">
-                    <div className="border-b border-slate-200 pb-4">
-                      <h2 className="text-2xl font-bold text-[#14532d]">{selectedCourse.title}</h2>
+              return (
+                <div key={course.id} className="course-select-card">
+                  <div className="rounded-[calc(1rem-1.5px)] overflow-hidden bg-white">
+                    <div className="px-5 py-5 sm:px-7 sm:py-6">
+                      <h2 className="text-2xl font-bold text-[#14532d]">{course.title}</h2>
                       <p className="mt-2 text-sm text-slate-600">
-                        <LinkifiedText text={selectedCourse.description || 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'} />
+                        <LinkifiedText text={course.description || 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'} />
                       </p>
 
                       <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -364,18 +306,18 @@ export default function CoursesPage() {
                           type="button"
                           onClick={() => {
                             if (!isPendingPayment) {
-                              handleOpenReferral(selectedCourse)
+                              handleOpenReferral(course)
                             }
                           }}
                           disabled={
                             isPendingPayment ||
-                            registering === selectedCourse.id ||
-                            selectedCourse.enrolledCount >= selectedCourse.maxStudents ||
-                            (!getEnrollmentStatus(selectedCourse.id) && hasExistingEnrollment)
+                            registering === course.id ||
+                            course.enrolledCount >= course.maxStudents ||
+                            (!getEnrollmentStatus(course.id) && hasExistingEnrollment)
                           }
                           className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
+                          {registering === course.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
                         </button>
                         {isPendingPayment ? (
                           <p className="text-sm font-medium text-amber-700">
@@ -384,91 +326,94 @@ export default function CoursesPage() {
                         ) : (
                           <>
                             <p className="text-sm text-slate-700">
-                              <strong>Hạn đăng ký:</strong> {new Date(selectedCourse.registrationDeadline).toLocaleDateString('vi-VN')}
+                              <strong>Hạn đăng ký:</strong> {new Date(course.registrationDeadline).toLocaleDateString('vi-VN')}
                             </p>
-                            <p className={`text-sm font-semibold ${selectedCourse.enrolledCount >= selectedCourse.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
-                              {getAvailabilityText(selectedCourse)}
+                            <p className={`text-sm font-semibold ${course.enrolledCount >= course.maxStudents ? 'text-red-700' : 'text-emerald-700'}`}>
+                              {getAvailabilityText(course)}
                             </p>
                           </>
                         )}
                       </div>
-                    </div>
 
-                    <div className="mt-5 space-y-5 text-slate-700">
-                      {COURSE_DETAIL_SECTIONS.slice(0, 4).map((section) => (
-                        <div key={section.title}>
-                          <h3 className="text-lg font-semibold text-[#14532d]">{section.title}</h3>
-                          <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
-                            {section.points.map((point) => (
-                              <li key={point}>{point}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#14532d]">5. Học phí</h3>
-                        <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
-                          <li>Toàn bộ khóa học: {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}</li>
-                          <li>Có ưu đãi học phí 10% nếu đăng ký nhóm từ 2 bạn trở lên.</li>
-                          <li>Sau phiên học thứ 3, nếu cảm thấy phù hợp với khóa học: chuyển học phí về số tài khoản 19033113602011 - Techcombank - Nguyen Tri Bang.</li>
-                        </ul>
-                      </div>
-
-                      {COURSE_DETAIL_SECTIONS.slice(4).map((section) => (
-                        <div key={section.title}>
-                          <h3 className="text-lg font-semibold text-[#14532d]">{section.title}</h3>
-                          <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
-                            {section.points.map((point) => (
-                              <li key={point}>{point}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-
-                      <p className="text-sm text-slate-600">
-                        Mọi thông tin thêm, vui lòng liên hệ Mr. Nguyễn Trí Bằng qua số điện thoại 0915091093. Hoặc nhắn tin về Facebook:
-                        <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="ml-1 text-amber-700 hover:underline">https://www.facebook.com/bangbigbee</a>
-                      </p>
-                    </div>
-
-                    <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
                       {isFull ? (
-                        <div className="rounded border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">Khóa học này đã đủ số lượng học viên.</div>
+                        <div className="mt-4 rounded border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">Khóa học này đã đủ số lượng học viên.</div>
                       ) : enrollment ? (
-                        <div className="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                        <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
                           {enrollment.status === 'pending' ? (
                             <p>Đang chờ xác nhận vào lớp <strong>&quot;{enrollment.course?.title}&quot;</strong>.</p>
                           ) : (
                             <p><strong>Trạng thái:</strong> Đăng ký thành công.</p>
                           )}
                           <button
-                            onClick={() => openPaymentInfo(selectedCourse)}
+                            onClick={() => openPaymentInfo(course)}
                             className="mt-3 inline-block rounded border border-[#14532d]/30 bg-white px-3 py-1.5 text-xs text-[#14532d] hover:bg-[#14532d]/10"
                           >
                             Xem thông tin chuyển khoản
                           </button>
                         </div>
                       ) : blockedByExistingEnrollment ? (
-                        <div className="rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
+                        <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
                           Bạn đã có khóa học đang xử lý. Vui lòng chờ xác nhận trước khi đăng ký thêm.
                         </div>
-                      ) : (
-                        <button
-                          onClick={() => handleOpenReferral(selectedCourse)}
-                          disabled={registering === selectedCourse.id}
-                          className="w-full rounded bg-[#14532d] px-4 py-3 font-semibold text-white hover:bg-[#166534] disabled:opacity-50"
-                        >
-                          {registering === selectedCourse.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
-                        </button>
+                      ) : null}
+                    </div>
+
+                    <div className="border-t border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedCourseId(isExpanded ? null : course.id)}
+                        className="flex w-full items-center justify-between px-5 py-3 text-sm font-semibold text-[#14532d] hover:bg-slate-50 sm:px-7"
+                      >
+                        <span>{isExpanded ? 'Thu gọn' : 'Xem thêm chi tiết'}</span>
+                        <span className="text-xs">{isExpanded ? '▲' : '▼'}</span>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="space-y-5 px-5 pb-6 pt-1 text-slate-700 sm:px-7">
+                          {COURSE_DETAIL_SECTIONS.slice(0, 4).map((section) => (
+                            <div key={section.title}>
+                              <h3 className="text-lg font-semibold text-[#14532d]">{section.title}</h3>
+                              <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
+                                {section.points.map((point) => (
+                                  <li key={point}>{point}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+
+                          <div>
+                            <h3 className="text-lg font-semibold text-[#14532d]">5. Học phí</h3>
+                            <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
+                              <li>Toàn bộ khóa học: {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}</li>
+                              <li>Có ưu đãi học phí 10% nếu đăng ký nhóm từ 2 bạn trở lên.</li>
+                              <li>Sau phiên học thứ 3, nếu cảm thấy phù hợp với khóa học: chuyển học phí về số tài khoản 19033113602011 - Techcombank - Nguyen Tri Bang.</li>
+                            </ul>
+                          </div>
+
+                          {COURSE_DETAIL_SECTIONS.slice(4).map((section) => (
+                            <div key={section.title}>
+                              <h3 className="text-lg font-semibold text-[#14532d]">{section.title}</h3>
+                              <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
+                                {section.points.map((point) => (
+                                  <li key={point}>{point}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+
+                          <p className="text-sm text-slate-600">
+                            Mọi thông tin thêm, vui lòng liên hệ Mr. Nguyễn Trí Bằng qua số điện thoại 0915091093. Hoặc nhắn tin về Facebook:
+                            <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="ml-1 text-amber-700 hover:underline">https://www.facebook.com/bangbigbee</a>
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
-                )
-              })()
-            )}
-          </section>
-        </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
 
         {paymentInstruction && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
