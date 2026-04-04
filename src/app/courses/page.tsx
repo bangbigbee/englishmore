@@ -337,7 +337,7 @@ export default function CoursesPage() {
             )}
           </aside>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:h-[calc(100vh-3rem)] lg:overflow-y-auto">
             {!selectedCourse ? (
               <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">
                 Chọn một khóa học ở cột bên trái để xem thông tin chi tiết.
