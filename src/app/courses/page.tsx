@@ -46,6 +46,11 @@ interface PendingReferralCourse {
   title: string
 }
 
+interface PendingRegistrationDraft {
+  courseId: string
+  referrer: string
+}
+
 const DEFAULT_COURSE_DESCRIPTION = 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'
 
 export default function CoursesPage() {
@@ -59,6 +64,7 @@ export default function CoursesPage() {
   const [registering, setRegistering] = useState<string | null>(null)
   const [paymentInstruction, setPaymentInstruction] = useState<PaymentInstruction | null>(null)
   const [pendingReferralCourse, setPendingReferralCourse] = useState<PendingReferralCourse | null>(null)
+  const [pendingRegistrationDraft, setPendingRegistrationDraft] = useState<PendingRegistrationDraft | null>(null)
   const [referrerInput, setReferrerInput] = useState('')
   const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null)
 
@@ -123,13 +129,13 @@ export default function CoursesPage() {
       const data = await res.json()
       if (!res.ok) {
         setErrorModal(data.error || 'Failed to register')
-        setPendingReferralCourse(null)
       } else {
         setError('')
         setErrorModal(null)
         toast.success('Đăng ký thành công. Vui lòng chuyển khoản theo hướng dẫn để được xác nhận.')
-        setPaymentInstruction(data.paymentInstruction || null)
+        setPaymentInstruction(null)
         setPendingReferralCourse(null)
+        setPendingRegistrationDraft(null)
         setReferrerInput('')
         fetchEnrollments()
       }
@@ -165,7 +171,7 @@ export default function CoursesPage() {
       return matchedEnrollment.course.price
     }
 
-    return 4200000
+    return 3800000
   }
 
   const formatVnd = (amount: number) => `${amount.toLocaleString('vi-VN')} VND`
@@ -181,13 +187,31 @@ export default function CoursesPage() {
   }
 
   const openPaymentInfo = (course?: Course) => {
+    setPendingRegistrationDraft(null)
     setPaymentInstruction(buildInstructionFromEnrollment(course))
   }
 
   const handleOpenReferral = (course: Course) => {
     setPendingReferralCourse({ id: course.id, title: course.title })
+    setPendingRegistrationDraft(null)
     setReferrerInput('')
     setErrorModal(null)
+  }
+
+  const openPaymentPreviewForRegistration = (course: Course, referrer: string) => {
+    setPendingRegistrationDraft({ courseId: course.id, referrer })
+    setPaymentInstruction(buildInstructionFromEnrollment(course))
+    setPendingReferralCourse(null)
+    setReferrerInput('')
+  }
+
+  const confirmRegistrationAfterPaymentReview = async () => {
+    if (!pendingRegistrationDraft) {
+      setPaymentInstruction(null)
+      return
+    }
+
+    await registerCourse(pendingRegistrationDraft.courseId, pendingRegistrationDraft.referrer)
   }
 
   const getAvailabilityText = (course: Course) => (course.enrolledCount >= course.maxStudents ? 'Đã đầy chỗ' : 'Vẫn còn chỗ')
@@ -351,7 +375,10 @@ export default function CoursesPage() {
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-xl font-bold text-[#14532d]">Payment Details</h3>
                 <button
-                  onClick={() => setPaymentInstruction(null)}
+                  onClick={() => {
+                    setPaymentInstruction(null)
+                    setPendingRegistrationDraft(null)
+                  }}
                   className="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none"
                 >
                   ×
@@ -400,10 +427,21 @@ export default function CoursesPage() {
               </div>
 
               <button
-                onClick={() => setPaymentInstruction(null)}
+                onClick={() => {
+                  if (pendingRegistrationDraft) {
+                    void confirmRegistrationAfterPaymentReview()
+                    return
+                  }
+                  setPaymentInstruction(null)
+                }}
+                disabled={Boolean(pendingRegistrationDraft && registering === pendingRegistrationDraft.courseId)}
                 className="mt-4 w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
               >
-                Got it, close
+                {pendingRegistrationDraft
+                  ? registering === pendingRegistrationDraft.courseId
+                    ? 'Đang đăng ký...'
+                    : 'Đăng Ký'
+                  : 'Đóng'}
               </button>
             </div>
           </div>
@@ -451,7 +489,14 @@ export default function CoursesPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => registerCourse(pendingReferralCourse.id, referrerInput)}
+                  onClick={() => {
+                    const course = courses.find((item) => item.id === pendingReferralCourse.id)
+                    if (!course) {
+                      setErrorModal('Không tìm thấy khóa học để tiếp tục đăng ký.')
+                      return
+                    }
+                    openPaymentPreviewForRegistration(course, referrerInput)
+                  }}
                   disabled={registering === pendingReferralCourse.id}
                   className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
                 >
