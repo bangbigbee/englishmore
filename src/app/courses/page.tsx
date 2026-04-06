@@ -414,7 +414,7 @@ export default function CoursesPage() {
             <div className="w-full max-w-md rounded-lg border-2 border-[#14532d] bg-white p-6 shadow-[0_18px_48px_rgba(20,83,45,0.22)]">
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-orange-700">Ai đã giới thiệu khóa học này cho bạn?</h3>
+                  <h3 className="text-xl font-bold text-orange-700">Ai đã giới thiệu khóa học {pendingReferralCourse.title} này cho bạn?</h3>
                 </div>
                 <button
                   type="button"
