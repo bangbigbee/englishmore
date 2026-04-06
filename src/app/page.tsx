@@ -2140,7 +2140,6 @@ export default function Home() {
 
         {session?.user?.role !== 'member' && (
           <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-slate-900">KHÓA HỌC TIẾNG ANH GIAO TIẾP ENGLISH AND MORE</h2>
             <div className="mt-6 space-y-6 text-slate-700">
               <div className="rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
