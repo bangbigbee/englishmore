@@ -261,8 +261,60 @@ export default function Home() {
       }
     }
 
+    const fetchPublicVocabulary = async () => {
+      try {
+        setMemberVocabularyLoading(true)
+        setMemberVocabularyError('')
+        const res = await fetch('/api/vocabulary')
+        if (!res.ok) {
+          setMemberVocabularyItems([])
+          setMemberVocabularyError('Could not load the vocabulary data.')
+          return
+        }
+
+        const data = await res.json()
+        const items = Array.isArray(data?.items) ? data.items : []
+        setMemberVocabularyItems(items)
+        setMemberVocabularyIndex(0)
+      } catch {
+        setMemberVocabularyItems([])
+        setMemberVocabularyError('Could not load the vocabulary data.')
+      } finally {
+        setMemberVocabularyLoading(false)
+      }
+    }
+
+    const fetchMemberVocabulary = async () => {
+      if (session?.user?.role !== 'member') {
+        await fetchPublicVocabulary()
+        return
+      }
+
+      try {
+        setMemberVocabularyLoading(true)
+        setMemberVocabularyError('')
+        const res = await fetch('/api/member/vocabulary')
+        if (!res.ok) {
+          setMemberVocabularyItems([])
+          setMemberVocabularyError('Could not load the vocabulary data.')
+          return
+        }
+
+        const data = await res.json()
+        const items = Array.isArray(data?.items) ? data.items : []
+        setMemberVocabularyItems(items)
+        setMemberVocabularyIndex(0)
+      } catch {
+        setMemberVocabularyItems([])
+        setMemberVocabularyError('Could not load the vocabulary data.')
+      } finally {
+        setMemberVocabularyLoading(false)
+      }
+    }
+
     if (!session) {
       void fetchAvailableCourses()
+      void fetchPublicVocabulary()
       setAdminHomeworkReview(null)
       setGreetingMessage('')
       setShowCustomGreetingInput(false)
@@ -387,34 +439,6 @@ export default function Home() {
         })
       } catch {
         setAdminHomeworkReview(null)
-      }
-    }
-
-    const fetchMemberVocabulary = async () => {
-      if (session.user?.role !== 'member') {
-        setMemberVocabularyItems([])
-        return
-      }
-
-      try {
-        setMemberVocabularyLoading(true)
-        setMemberVocabularyError('')
-        const res = await fetch('/api/member/vocabulary')
-        if (!res.ok) {
-          setMemberVocabularyItems([])
-          setMemberVocabularyError('Could not load the vocabulary data.')
-          return
-        }
-
-        const data = await res.json()
-        const items = Array.isArray(data?.items) ? data.items : []
-        setMemberVocabularyItems(items)
-        setMemberVocabularyIndex(0)
-      } catch {
-        setMemberVocabularyItems([])
-        setMemberVocabularyError('Could not load the vocabulary data.')
-      } finally {
-        setMemberVocabularyLoading(false)
       }
     }
 
@@ -2080,58 +2104,68 @@ export default function Home() {
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
               </div>
-              <div className={`group relative overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 py-4 text-white sm:px-4 sm:py-5 md:px-6 md:py-6${isPendingMemberRegistration ? ' cursor-not-allowed select-none' : ''}`}>
-                {isPendingMemberRegistration && (
-                  <>
-                    <div className="absolute inset-0 z-10 rounded-2xl bg-black/30" aria-hidden="true" />
-                    <div className="pointer-events-none invisible absolute left-1/2 top-1/2 z-20 w-[min(18rem,calc(100vw-3rem))] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[#14532d]/15 bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 opacity-0 shadow-xl transition duration-200 group-hover:visible group-hover:opacity-100">
-                      <Link
-                        href="/courses"
-                        className="pointer-events-auto font-semibold text-[#14532d] underline decoration-[#14532d]/45 underline-offset-2 transition hover:text-[#0f3f22]"
-                      >
-                        Đăng ký
-                      </Link>{' '}
-                      học viên để mở tính năng này.
-                    </div>
-                  </>
-                )}
-                <div className="mb-3 flex items-center justify-between gap-1 sm:mb-4">
-                  <button type="button" onClick={isPendingMemberRegistration ? undefined : triggerGoogleSignIn} disabled={isPendingMemberRegistration} className="rounded-full px-2 py-1 text-base font-bold transition hover:bg-white/20 disabled:pointer-events-none sm:text-lg" aria-label="Previous vocabulary">
-                    {'<'}
-                  </button>
-                  <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
-                    <button type="button" onClick={isPendingMemberRegistration ? undefined : triggerGoogleSignIn} disabled={isPendingMemberRegistration} className="inline-flex items-center justify-center rounded-full bg-white/15 p-2 transition hover:bg-white/25 disabled:pointer-events-none sm:p-3" aria-label="Speak vocabulary">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-current sm:h-6 sm:w-6">
-                        <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
-                      </svg>
+              {memberVocabularyLoading ? (
+                <p className="text-sm text-slate-500">Loading vocabulary...</p>
+              ) : memberVocabularyError ? (
+                <p className="text-sm text-red-600">{memberVocabularyError}</p>
+              ) : !currentVocabularyItem ? (
+                <p className="text-sm text-slate-500">No vocabulary has been added for open courses yet.</p>
+              ) : (
+                <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 py-4 text-white sm:px-4 sm:py-5 md:px-6 md:py-6">
+                  <div className="mb-3 flex items-center justify-between gap-1 sm:mb-4">
+                    <button type="button" onClick={() => moveVocabulary('prev')} disabled={memberVocabularyItems.length <= 1} className="rounded-full px-2 py-1 text-base font-bold transition hover:bg-white/20 disabled:pointer-events-none sm:text-lg" aria-label="Previous vocabulary">
+                      {'<'}
                     </button>
-                    <button type="button" onClick={isPendingMemberRegistration ? undefined : triggerGoogleSignIn} disabled={isPendingMemberRegistration} className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/25 disabled:pointer-events-none sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current shrink-0 sm:h-5 sm:w-5">
-                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.5 14.53 16 12 16s-4.52-1.5-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.063.54-.92 1.14.72 3.44 3.82 5.96 7.81 5.96s7.09-2.52 7.81-5.96c.14-.6-.31-1.14-.92-1.14z" />
-                      </svg>
-                      <span>Try it</span>
+                    <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+                      <button type="button" onClick={() => speakVocabularyWord()} className="inline-flex items-center justify-center rounded-full bg-white/15 p-2 transition hover:bg-white/25 sm:p-3" aria-label="Speak vocabulary">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-current sm:h-6 sm:w-6">
+                          <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
+                        </svg>
+                      </button>
+                      <button type="button" onClick={() => handleTryVocabulary()} className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-white/25 sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current shrink-0 sm:h-5 sm:w-5">
+                          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.5 14.53 16 12 16s-4.52-1.5-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.063.54-.92 1.14.72 3.44 3.82 5.96 7.81 5.96s7.09-2.52 7.81-5.96c.14-.6-.31-1.14-.92-1.14z" />
+                        </svg>
+                        <span>{isPronunciationListening ? 'Listening...' : 'Try it'}</span>
+                      </button>
+                    </div>
+                    <button type="button" onClick={() => moveVocabulary('next')} disabled={memberVocabularyItems.length <= 1} className="rounded-full px-2 py-1 text-base font-bold transition hover:bg-white/20 disabled:pointer-events-none sm:text-lg" aria-label="Next vocabulary">
+                      {'>'}
                     </button>
                   </div>
-                  <button type="button" onClick={isPendingMemberRegistration ? undefined : triggerGoogleSignIn} disabled={isPendingMemberRegistration} className="rounded-full px-2 py-1 text-base font-bold transition hover:bg-white/20 disabled:pointer-events-none sm:text-lg" aria-label="Next vocabulary">
-                    {'>'}
-                  </button>
-                </div>
 
-                <button type="button" onClick={isPendingMemberRegistration ? undefined : triggerGoogleSignIn} disabled={isPendingMemberRegistration} className="block w-full text-center disabled:pointer-events-none">
-                  <p className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">laboratory</p>
-                  <p className="mt-1 text-lg text-white/90 sm:mt-2 sm:text-2xl">/ˈlæbrətɔːri/</p>
-                  <p className="mt-2 text-xs font-medium text-white/90 sm:mt-3 sm:text-base">[noun] a room or building used for scientific research, experiments, testing, etc.</p>
-                  <p className="mt-3 text-base font-semibold sm:mt-5 sm:text-2xl">phòng thí nghiệm</p>
-                  <p className="mt-2 text-xs italic text-white/90 sm:mt-4 sm:text-base">&quot;They work in a laboratory studying growth patterns.&quot;</p>
-                </button>
-              </div>
-              {isPendingMemberRegistration && (
-                <p className="mt-3 text-center text-xs text-slate-500 sm:hidden">
-                  <Link href="/courses" className="font-semibold text-[#14532d] underline decoration-[#14532d]/45 underline-offset-2">
-                    Đăng ký
-                  </Link>{' '}
-                  học viên để mở tính năng này.
-                </p>
+                  <div className="text-center">
+                    <p className="text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">{currentVocabularyItem.word}</p>
+                    <p className="mt-1 text-lg text-white/90 sm:mt-2 sm:text-2xl">{formatPhoneticForDisplay(currentVocabularyItem.phonetic)}</p>
+                    {currentVocabularyItem.englishDefinition && (
+                      <p className="mt-2 text-xs font-medium text-white/90 sm:mt-3 sm:text-base">{currentVocabularyItem.englishDefinition}</p>
+                    )}
+                    <p className="mt-3 text-base font-semibold sm:mt-5 sm:text-2xl">{currentVocabularyItem.meaning}</p>
+                    {currentVocabularyItem.example && (
+                      <p className="mt-2 text-xs italic text-white/90 sm:mt-4 sm:text-base">&quot;{currentVocabularyItem.example}&quot;</p>
+                    )}
+
+                    {pronunciationStatus && (
+                      <p className="mt-3 text-xs font-medium text-white/85 sm:mt-5 sm:text-sm">{pronunciationStatus}</p>
+                    )}
+
+                    {pronunciationScore !== null && (
+                      <div className="mt-3 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-left text-xs backdrop-blur-sm sm:mt-4 sm:rounded-2xl sm:px-4 sm:py-3 sm:text-sm">
+                        {pronunciationTranscript && (
+                          <p className="text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
+                        )}
+                        {pronunciationFeedback && (
+                          <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-amber-300`}>{pronunciationFeedback}</p>
+                        )}
+                        <p className="mt-1.5 text-[11px] text-white/70 sm:mt-2 sm:text-xs">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
+                      </div>
+                    )}
+
+                    {!speechSupported && (
+                      <p className="mt-3 text-xs text-white/70 sm:mt-4">Voice practice is not supported in this browser.</p>
+                    )}
+                  </div>
+                </div>
               )}
             </section>
           </>
