@@ -2184,7 +2184,9 @@ export default function Home() {
                 {availableCourses.length > 0 ? (
                   <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {availableCourses.map((course) => {
-                      const seatsLeft = Math.max(course.maxStudents - course.enrolledCount, 0)
+                      const availabilityText = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
+                        ? 'Đã đầy chỗ'
+                        : 'Vẫn còn chỗ'
                       const registrationDeadlineDate = new Date(course.registrationDeadline)
                       const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
                         ? 'Đang cập nhật'
@@ -2198,8 +2200,7 @@ export default function Home() {
                         <div key={course.id} className="rounded-xl border border-[#14532d]/20 bg-white p-4 shadow-sm">
                           <p className="font-semibold text-slate-900">{course.title}</p>
                           <p className="mt-2 text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
-                          <p className="mt-1 text-sm text-slate-600">Đã đăng ký: {course.enrolledCount}/{course.maxStudents || 'N/A'}</p>
-                          <p className="mt-1 text-sm font-medium text-[#14532d]">Còn lại: {course.maxStudents > 0 ? seatsLeft : 'Không giới hạn'} chỗ</p>
+                          <p className="mt-1 text-sm font-medium text-[#14532d]">{availabilityText}</p>
                         </div>
                       )
                     })}
