@@ -237,31 +237,13 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (!session) {
-      setAvailableCourses([])
-      setAdminHomeworkReview(null)
-      setGreetingMessage('')
-      setShowCustomGreetingInput(false)
-      setHasGreetingToday(false)
-      setEditCheckinMessage('')
-      setReflectionMessage('')
-      setShowCustomReflectionInput(false)
-      setHasReflectionToday(false)
-      setEditReflectionMessage('')
-      setIsEditingReflection(false)
-      setEditReflectionStatus('')
-      setGreetingConversation([])
-      setClassActivityUnread({ checkins: 0, reflections: 0, total: 0 })
-      return
-    }
-
     const fetchAvailableCourses = async () => {
       try {
-        const endpoint = session.user?.role === 'admin' ? '/api/admin/courses' : '/api/courses'
+        const endpoint = session?.user?.role === 'admin' ? '/api/admin/courses' : '/api/courses'
         const res = await fetch(endpoint)
         if (!res.ok) return
         const data = await res.json()
-        if (session.user?.role === 'admin') {
+        if (session?.user?.role === 'admin') {
           const adminCourses = Array.isArray(data)
             ? data.map((item) => ({
                 id: String(item?.id || ''),
@@ -278,6 +260,24 @@ export default function Home() {
       } catch {
         setAvailableCourses([])
       }
+    }
+
+    if (!session) {
+      void fetchAvailableCourses()
+      setAdminHomeworkReview(null)
+      setGreetingMessage('')
+      setShowCustomGreetingInput(false)
+      setHasGreetingToday(false)
+      setEditCheckinMessage('')
+      setReflectionMessage('')
+      setShowCustomReflectionInput(false)
+      setHasReflectionToday(false)
+      setEditReflectionMessage('')
+      setIsEditingReflection(false)
+      setEditReflectionStatus('')
+      setGreetingConversation([])
+      setClassActivityUnread({ checkins: 0, reflections: 0, total: 0 })
+      return
     }
 
     const fetchGreetingResponse = async (showLoading = true) => {
