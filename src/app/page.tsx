@@ -2077,111 +2077,6 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="mt-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
-                <div className="space-y-4">
-                  <article className="rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-bold text-[#14532d] sm:text-base">How do you feel today?</p>
-                      <span className="inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-700">Pending</span>
-                    </div>
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      {QUICK_CHECKIN_MESSAGES.map((message) => (
-                        <button
-                          key={message}
-                          type="button"
-                          onClick={triggerGoogleSignIn}
-                          className="rounded-full border border-[#14532d]/35 bg-[#14532d]/5 px-2.5 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10"
-                        >
-                          {message}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="mt-3">
-                      <button
-                        type="button"
-                        onClick={triggerGoogleSignIn}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#14532d] transition hover:underline"
-                      >
-                        ✍️ Type it manually
-                      </button>
-                    </div>
-                  </article>
-
-                  <article className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm opacity-90">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-bold text-amber-800 sm:text-base">How was your day?</p>
-                      <span className="inline-flex rounded-full bg-[#14532d]/8 px-2.5 py-1 text-[11px] font-semibold text-[#14532d]/70">Check-in first</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={triggerGoogleSignIn}
-                      className="mt-3 block w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-left text-xs text-slate-500 transition hover:border-amber-300 hover:bg-amber-50"
-                    >
-                      Complete your check-in first, then reflection opens automatically.
-                    </button>
-                  </article>
-                </div>
-
-                <div className="rounded-2xl border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-amber-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
-                  <div className="mb-3">
-                    <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
-                    <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={triggerGoogleSignIn}
-                    className="mt-3 block w-full rounded-2xl border border-dashed border-slate-200 bg-white/80 px-4 py-10 text-center text-xs text-slate-500 transition hover:border-[#14532d]/25 hover:bg-white"
-                  >
-                    Sign in with Google to join the class activity feed.
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-5 grid grid-cols-1 gap-3 border-t border-[#14532d]/20 pt-4 sm:grid-cols-2 lg:grid-cols-4">
-                {isPendingMemberRegistration ? (
-                  <>
-                    <LockedFeatureButton label="My Homework" variant="filled" />
-                    <LockedFeatureButton label="Exercise More" variant="filled" />
-                    <LockedFeatureButton label="Speak Yourself" variant="filled" icon="mic" />
-                    <LockedFeatureButton label="Lecture Slide" variant="outline" />
-                  </>
-                ) : (
-                  <>
-                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
-                      <span>My Homework</span>
-                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                    </button>
-                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
-                      <span>Exercise More</span>
-                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                    </button>
-                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-filled w-full justify-center">
-                      <span>Speak Yourself</span>
-                      <span aria-hidden="true" className="speak-cta-mic-wrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="speak-cta-mic">
-                          <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
-                          <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
-                        </svg>
-                      </span>
-                    </button>
-                    <button type="button" onClick={triggerGoogleSignIn} className="brand-cta brand-cta-outline w-full justify-center">
-                      <span>Lecture Slide</span>
-                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                    </button>
-                  </>
-                )}
-              </div>
-              {isPendingMemberRegistration && (
-                <p className="mt-3 text-center text-xs text-slate-500 sm:hidden">
-                  <Link href="/courses" className="font-semibold text-[#14532d] underline decoration-[#14532d]/45 underline-offset-2">
-                    Đăng ký
-                  </Link>{' '}
-                  học viên để mở các tính năng này.
-                </p>
-              )}
-            </section>
-
             <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
@@ -2247,6 +2142,41 @@ export default function Home() {
           <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-slate-900">KHÓA HỌC TIẾNG ANH GIAO TIẾP ENGLISH AND MORE</h2>
             <div className="mt-6 space-y-6 text-slate-700">
+              <div className="rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4 sm:p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-lg font-semibold text-[#14532d]">Khóa học sẵn có</h3>
+                  <Link href="/courses" className="text-sm font-semibold text-amber-700 underline-offset-2 hover:underline">
+                    Xem trang đăng ký
+                  </Link>
+                </div>
+                {availableCourses.length > 0 ? (
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {availableCourses.map((course) => {
+                      const seatsLeft = Math.max(course.maxStudents - course.enrolledCount, 0)
+                      const registrationDeadlineDate = new Date(course.registrationDeadline)
+                      const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
+                        ? 'Đang cập nhật'
+                        : registrationDeadlineDate.toLocaleDateString('vi-VN', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })
+
+                      return (
+                        <div key={course.id} className="rounded-xl border border-[#14532d]/20 bg-white p-4 shadow-sm">
+                          <p className="font-semibold text-slate-900">{course.title}</p>
+                          <p className="mt-2 text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
+                          <p className="mt-1 text-sm text-slate-600">Đã đăng ký: {course.enrolledCount}/{course.maxStudents || 'N/A'}</p>
+                          <p className="mt-1 text-sm font-medium text-[#14532d]">Còn lại: {course.maxStudents > 0 ? seatsLeft : 'Không giới hạn'} chỗ</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-500">Hiện chưa có khóa học mở đăng ký.</p>
+                )}
+              </div>
+
               <div>
                 <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">1.</span> Khóa học này dành cho ai?</h3>
                 <ul className="mt-3 list-disc space-y-2 pl-5">
