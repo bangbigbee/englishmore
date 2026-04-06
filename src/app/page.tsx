@@ -177,7 +177,6 @@ export default function Home() {
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
-  const [showAllCourseDetails, setShowAllCourseDetails] = useState(false)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
   const [greetingMessage, setGreetingMessage] = useState('')
   const [showCustomGreetingInput, setShowCustomGreetingInput] = useState(false)
@@ -2140,7 +2139,7 @@ export default function Home() {
 
         {session?.user?.role !== 'member' && (
           <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-            <div className="mt-6 space-y-6 text-slate-700">
+            <div className="text-slate-700">
               <div className="rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-lg font-semibold text-[#14532d]">Khóa học sẵn có</h3>
@@ -2175,109 +2174,6 @@ export default function Home() {
                   <p className="mt-3 text-sm text-slate-500">Hiện chưa có khóa học mở đăng ký.</p>
                 )}
               </div>
-
-              <div>
-                <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">1.</span> Khóa học này dành cho ai?</h3>
-                <ul className="mt-3 list-disc space-y-2 pl-5">
-                  <li>Sinh viên, người đi làm đã học tiếng Anh nhiều lần nhưng chưa tự tin khi giao tiếp.</li>
-                  <li>Những bạn muốn nâng cao khả năng phát âm, thực hành các tình huống thực tế để sử dụng trong giao tiếp, công việc.</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">2.</span> Khóa học có gì đặc biệt?</h3>
-                <ul className="mt-3 list-disc space-y-2 pl-5">
-                  <li>Học viên sẽ được rèn luyện phát âm đúng ngay từ đầu để tự tin nghe và nói về sau.</li>
-                  <li>Chương trình học không nặng ngữ pháp, tập trung vào giao tiếp nghe - nói hiệu quả, giúp bạn áp dụng ngay vào công việc và cuộc sống. Ngữ pháp sẽ được bổ túc và hoàn thiện song song trong và sau quá trình học.</li>
-                  <li>Môi trường rèn luyện liên tục: bên cạnh giờ học trên lớp, bạn sẽ được luyện tập thêm 1-1 với giáo viên để duy trì động lực và đảm bảo đầu ra khóa học.</li>
-                  <li>Bên cạnh ngôn ngữ, bạn còn học được kỹ năng giao tiếp, tư duy phát triển bản thân và những kinh nghiệm, trải nghiệm trong nhiều lĩnh vực khác.</li>
-                </ul>
-              </div>
-
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setShowAllCourseDetails((prev) => !prev)}
-                  className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-100"
-                >
-                  {showAllCourseDetails ? 'Thu gọn' : 'Xem thêm'}
-                </button>
-              </div>
-
-              {showAllCourseDetails && (
-                <>
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">3.</span> Ai là người giảng dạy?</h3>
-                    <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Thầy Nguyễn Trí Bằng, 7 năm công tác tại Đại học Bách Khoa - ĐH Đà Nẵng trong lĩnh vực khoa học kỹ thuật, làm việc với 03 chương trình đào tạo quốc tế (02 chương trình tiên tiến Việt - Mỹ, chương trình đào tạo Kỹ sư Chất lượng Cao Việt Pháp).</li>
-                      <li>5 năm kinh nghiệm dạy tiếng Anh.</li>
-                      <li>2 năm kinh nghiệm trong lĩnh vực công nghệ Blockchain.</li>
-                      <li>Nhiều năm kinh nghiệm làm việc trong môi trường quốc tế, tham gia các hội nghị và sự kiện tại Singapore, Hàn Quốc, giúp mang đến góc nhìn và trải nghiệm thực tế cho học viên.</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">4.</span> Lịch học và thời lượng như thế nào?</h3>
-                    <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Học trực tuyến qua Zoom, linh hoạt thời gian mà vẫn đảm bảo tương tác như lớp học trực tiếp.</li>
-                      <li>02 phiên/tuần, 02 giờ/phiên.</li>
-                      <li>Thời lượng: 25-30 phiên.</li>
-                      <li>Lịch học dự kiến: Thứ Hai + Thứ Năm, 19:30 - 21:30 (sẽ thống nhất lại vào buổi học đầu tiên).</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">5.</span> Học phí</h3>
-                    <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Toàn bộ khóa học: 4.200.000 VND.</li>
-                      <li>Có ưu đãi học phí 10% nếu đăng ký nhóm từ 2 bạn trở lên.</li>
-                      <li>Sau phiên học thứ 3, nếu cảm thấy phù hợp với khóa học: chuyển học phí về số tài khoản 19033113602011 - Techcombank - Nguyen Tri Bang.</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">6.</span> Tôi chưa từng học tiếng Anh bài bản, có theo kịp không?</h3>
-                    <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Hoàn toàn có thể. Khóa học được thiết kế cho cả người mới bắt đầu nên bạn sẽ được hướng dẫn từng bước một.</li>
-                      <li>Mỗi học viên đều được hỗ trợ thực hành, sửa lỗi 1-1 để tiến bộ nhanh nhất.</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">7.</span> Sau khi hoàn thành khóa học này, tôi có thể đạt được những kỹ năng gì?</h3>
-                    <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Phát âm chuẩn.</li>
-                      <li>Tự tin sử dụng tiếng Anh để đọc hiểu tài liệu và giao tiếp cơ bản khi làm việc, phỏng vấn, du lịch nước ngoài, gặp gỡ đối tác quốc tế.</li>
-                      <li>Biết giới thiệu bản thân, thuyết trình các bài phát biểu ngắn, giao tiếp các tình huống thường ngày khi đi công tác, trên máy bay, nghỉ dưỡng...</li>
-                      <li>Biết được phương pháp học tiếng Anh phù hợp với bản thân để tiếp tục rèn luyện trong tương lai.</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">8.</span> Tôi có thể đăng ký và bắt đầu học như thế nào?</h3>
-                    <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Tham gia khóa học bằng cách điền thông tin vào mẫu bên dưới.</li>
-                      <li>Sau khi đăng ký, bạn sẽ được hướng dẫn tham gia lớp và các thông tin liên quan.</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#14532d]"><span className="text-[#14532d]">9.</span> Tôi cần chuẩn bị gì khi tham gia khóa học?</h3>
-                    <ul className="mt-3 list-disc space-y-2 pl-5">
-                      <li>Laptop, máy tính cá nhân có microphone, camera.</li>
-                      <li>Internet ổn định.</li>
-                      <li>Bút, sổ tay ghi chép.</li>
-                      <li>Kênh Youtube để đăng bài tập.</li>
-                    </ul>
-                  </div>
-
-                  <p className="mt-4 text-sm text-slate-500">
-                    Mọi thông tin thêm, vui lòng liên hệ Mr. Nguyễn Trí Bằng qua số điện thoại 0915091093.
-                    Hoặc nhắn tin về Facebook:
-                    <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="ml-1 text-amber-700 hover:underline">https://www.facebook.com/bangbigbee</a>
-                  </p>
-                </>
-              )}
             </div>
           </section>
         )}
