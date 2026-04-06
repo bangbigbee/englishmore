@@ -1430,15 +1430,15 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-3 sm:px-6 sm:pt-4 lg:px-8">
         {showRegistrationProcessingTicker && (
-          <section className="mb-3 overflow-hidden rounded-lg border border-[#14532d]/25 bg-white shadow-sm">
+          <Link href="/courses" className="block mb-3 overflow-hidden rounded-lg border border-amber-300 bg-amber-50 shadow-sm transition hover:bg-amber-100/70">
             <div className="homework-alert-wrap">
               <div className="homework-alert-track">
-                <span className="text-sm font-bold text-[#14532d]">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-[#14532d]">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-[#14532d]">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-amber-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-amber-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-amber-700">Please wait a moment while we process your registration.</span>
               </div>
             </div>
-          </section>
+          </Link>
         )}
 
         {session?.user?.role === 'member' && memberHomework?.hasActiveCourse && (
