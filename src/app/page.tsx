@@ -2176,7 +2176,7 @@ export default function Home() {
             <div className="text-slate-700">
               <div className="bg-[#14532d]/5 p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-lg font-semibold text-[#14532d]">Khóa học sẵn có</h3>
+                  <h3 className="text-lg font-semibold text-[#14532d]">Khóa học đang mở đăng ký</h3>
                   <Link href="/courses" className="text-sm font-semibold text-amber-700 underline-offset-2 hover:underline">
                     Xem trang đăng ký
                   </Link>
