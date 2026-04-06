@@ -2174,7 +2174,7 @@ export default function Home() {
         {session?.user?.role !== 'member' && (
           <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
             <div className="text-slate-700">
-              <div className="rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 p-4 sm:p-5">
+              <div className="bg-[#14532d]/5 p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-lg font-semibold text-[#14532d]">Khóa học sẵn có</h3>
                   <Link href="/courses" className="text-sm font-semibold text-amber-700 underline-offset-2 hover:underline">
