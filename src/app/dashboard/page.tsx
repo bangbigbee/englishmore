@@ -75,12 +75,12 @@ const isListeningExercise = (exerciseType: string) => {
   return normalized === 'question_response' || normalized === 'conversation'
 }
 
-const getExerciseTypeHeading = (exerciseType: string) => {
+const getExerciseTypeLabel = (exerciseType: string) => {
   if (exerciseType === 'listening_audio') return 'Question-Response'
   if (exerciseType === 'question_response') return 'Question-Response'
   if (exerciseType === 'conversation') return 'Conversation'
-  if (exerciseType === 'multiple_choice') return 'Multiple-choice'
-  return 'Other exercises'
+  if (exerciseType === 'multiple_choice') return 'Pronunciation'
+  return 'Other'
 }
 
 const normalizeExerciseType = (exerciseType: string) => {
@@ -348,28 +348,19 @@ export default function Dashboard() {
     }
   }
 
-  const primaryExerciseTypes = ['multiple_choice', 'question_response', 'conversation'] as const
-  type ExerciseSection = {
-    key: (typeof primaryExerciseTypes)[number] | 'other'
-    title: string
-    items: ExerciseItem[]
+  const typeOrder: Record<string, number> = {
+    multiple_choice: 1,
+    question_response: 2,
+    conversation: 3
   }
 
-  const exerciseSections: ExerciseSection[] = primaryExerciseTypes
-    .map((type) => ({
-      key: type,
-      title: getExerciseTypeHeading(type),
-      items: exercises.filter((exercise) => normalizeExerciseType(exercise.exerciseType) === type)
-    }))
-
-  const unknownTypeExercises = exercises.filter((exercise) => !primaryExerciseTypes.includes(normalizeExerciseType(exercise.exerciseType) as (typeof primaryExerciseTypes)[number]))
-  if (unknownTypeExercises.length > 0) {
-    exerciseSections.push({
-      key: 'other',
-      title: 'Other exercises',
-      items: unknownTypeExercises
-    })
-  }
+  const sortedExercises = [...exercises].sort((left, right) => {
+    const leftType = normalizeExerciseType(left.exerciseType)
+    const rightType = normalizeExerciseType(right.exerciseType)
+    const typeDelta = (typeOrder[leftType] || 99) - (typeOrder[rightType] || 99)
+    if (typeDelta !== 0) return typeDelta
+    return left.order - right.order
+  })
 
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -450,19 +441,9 @@ export default function Dashboard() {
               ) : exercises.length === 0 ? (
                 <p className="text-gray-500">No exercises have been created for your course yet.</p>
               ) : (
-                <div className="space-y-8">
-                  {exerciseSections.map((section) => (
-                    <section key={section.key} className="space-y-4">
-                      <div className="border-t border-gray-200 pt-4">
-                        <h3 className="text-base font-semibold text-gray-900">{section.title}</h3>
-                      </div>
-
-                      {section.items.length === 0 ? (
-                        <p className="text-sm text-gray-500">No exercises in this type yet.</p>
-                      ) : (
-                        <div className="space-y-6">
-                          {section.items.map((exercise) => (
-                          <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
+                <div className="space-y-6">
+                  {sortedExercises.map((exercise) => (
+                    <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
                       {Boolean(startedExerciseAt[exercise.id]) && (
                         <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
                           ⏱ Time spent: {formatDuration(getExerciseDurationSeconds(exercise.id))}
@@ -471,7 +452,12 @@ export default function Dashboard() {
 
                       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
-                          <h3 className="text-lg font-bold text-[#14532d]">{getExerciseTitle(exercise)}</h3>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-lg font-bold text-[#14532d]">{getExerciseTitle(exercise)}</h3>
+                            <span className="inline-flex rounded-full border border-[#14532d]/25 bg-[#14532d]/10 px-2.5 py-0.5 text-xs font-semibold text-[#14532d]">
+                              {getExerciseTypeLabel(normalizeExerciseType(exercise.exerciseType))}
+                            </span>
+                          </div>
                           {exercise.description && (
                             <p className="mt-1 text-sm text-gray-600">
                               <LinkifiedText text={exercise.description} />
@@ -629,11 +615,7 @@ export default function Dashboard() {
                           {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
                         </button>
                       </div>
-                          </div>
-                          ))}
-                        </div>
-                      )}
-                    </section>
+                    </div>
                   ))}
                 </div>
               )}

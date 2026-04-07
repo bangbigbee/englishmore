@@ -311,7 +311,7 @@ const getExerciseTitle = (exercise: Pick<ExerciseItem, 'title' | 'order'>) => {
 const getExerciseTypeLabel = (exerciseType: string) => {
   if (exerciseType === 'question_response' || exerciseType === 'listening_audio') return 'Question-Response'
   if (exerciseType === 'conversation') return 'Conversation'
-  return 'Multiple choice'
+  return 'Pronunciation'
 }
 
 const formatDuration = (totalSeconds: number | null) => {
@@ -3512,7 +3512,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Multiple-Choice Exercises</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Exercises</h2>
 
           <div className="mb-6 rounded border border-[#14532d]/20 bg-[#14532d]/5 px-4 py-3 text-sm text-[#14532d]">
             Total exercises created: <span className="font-semibold">{exercises.length}</span>
@@ -3645,7 +3645,7 @@ export default function AdminDashboard() {
                     onChange={(e) => setNewExerciseType(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   >
-                    <option value="multiple_choice">Multiple choice thường</option>
+                    <option value="multiple_choice">Pronunciation</option>
                     <option value="question_response">Question-Response (Audio)</option>
                     <option value="conversation">Conversation (Audio)</option>
                   </select>
@@ -3817,7 +3817,7 @@ export default function AdminDashboard() {
               )}
 
               <p className="mb-4 text-sm text-gray-500">
-                {newExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu mỗi câu chỉ có 3 lựa chọn.'}
+                {newExerciseType === 'multiple_choice' && 'Pronunciation: để trống đáp án D nếu mỗi câu chỉ có 3 lựa chọn.'}
                 {newExerciseType === 'question_response' && 'Question-Response: nội dung câu hỏi là tùy chọn (có thể để trống), dùng 3 đáp án A/B/C. Học viên chỉ thấy số thứ tự câu và 3 lựa chọn.'}
                 {newExerciseType === 'conversation' && 'Conversation: nhập nội dung câu hỏi và 4 đáp án A/B/C/D (bắt buộc). Học viên thấy toàn bộ nội dung câu hỏi và đáp án.'}
               </p>
@@ -4610,7 +4610,7 @@ export default function AdminDashboard() {
                     onChange={(e) => setEditExerciseType(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   >
-                    <option value="multiple_choice">Multiple choice thường</option>
+                    <option value="multiple_choice">Pronunciation</option>
                     <option value="question_response">Question-Response (Audio)</option>
                     <option value="conversation">Conversation (Audio)</option>
                   </select>
