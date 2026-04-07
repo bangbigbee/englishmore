@@ -81,6 +81,34 @@ export default function CoursesPage() {
     }
   }, [status, router, session?.user?.role])
 
+  // Keep enrollment status fresh so the page can react when admin confirms payment.
+  useEffect(() => {
+    if (status !== 'authenticated' || session?.user?.role === 'admin') {
+      return
+    }
+
+    const intervalId = window.setInterval(() => {
+      void fetchEnrollments()
+    }, 10000)
+
+    return () => {
+      window.clearInterval(intervalId)
+    }
+  }, [status, session?.user?.role])
+
+  // When admin confirms transfer and enrollment becomes active, return learner to homepage.
+  useEffect(() => {
+    if (status !== 'authenticated' || session?.user?.role === 'admin') {
+      return
+    }
+
+    const hasConfirmedEnrollment = enrollments.some((item) => item.status === 'active')
+    if (hasConfirmedEnrollment) {
+      toast.success('Đăng ký đã được xác nhận. Đang chuyển về trang chủ...')
+      router.push('/')
+    }
+  }, [enrollments, status, session?.user?.role, router])
+
   useEffect(() => {
     if (error) {
       toast.error(error)
