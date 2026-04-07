@@ -482,24 +482,26 @@ export default function Dashboard() {
 
                       {!revealedExercises[exercise.id] ? (
                         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                          <p className="p-3 sm:p-4 text-xs sm:text-sm text-blue-800">
-                            {normalizeExerciseType(exercise.exerciseType) === 'multiple_choice'
-                              ? 'Nhấn bắt đầu để mở bài tập và bắt đầu tính giờ.'
-                              : 'Nhấn bắt đầu để mở bài nghe. Bộ đếm thời gian sẽ bắt đầu khi bạn nhấn ▶ phát audio.'}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (normalizeExerciseType(exercise.exerciseType) === 'multiple_choice') {
-                                startExercise(exercise.id)
-                              } else {
-                                revealExercise(exercise.id)
-                              }
-                            }}
-                            className="mt-2 w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer disabled:opacity-50"
-                          >
-                            {exercise.submission ? 'Retry' : 'Bắt đầu'}
-                          </button>
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-xs sm:text-sm text-blue-800 sm:pr-4">
+                              {normalizeExerciseType(exercise.exerciseType) === 'multiple_choice'
+                                ? 'Nhấn bắt đầu để mở bài tập và bắt đầu tính giờ.'
+                                : 'Nhấn bắt đầu để mở bài nghe. Bộ đếm thời gian sẽ bắt đầu khi bạn nhấn ▶ phát audio.'}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (normalizeExerciseType(exercise.exerciseType) === 'multiple_choice') {
+                                  startExercise(exercise.id)
+                                } else {
+                                  revealExercise(exercise.id)
+                                }
+                              }}
+                              className="inline-flex w-fit min-w-[7.5rem] justify-center self-start rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800 cursor-pointer disabled:opacity-50 sm:self-center"
+                            >
+                              {exercise.submission ? 'Retry' : 'Bắt đầu'}
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <div className="space-y-4">
