@@ -70,6 +70,13 @@ const getExerciseQuestionOptions = (question: ExerciseItem['questions'][number])
   ]
 }
 
+const getExerciseTypeHeading = (exerciseType: string) => {
+  if (exerciseType === 'question_response') return 'Question-Response'
+  if (exerciseType === 'conversation') return 'Conversation'
+  if (exerciseType === 'multiple_choice') return 'Multiple-choice'
+  return 'Other exercises'
+}
+
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -324,6 +331,23 @@ export default function Dashboard() {
     }
   }
 
+  const primaryExerciseTypes = ['multiple_choice', 'question_response', 'conversation'] as const
+  const exerciseSections = primaryExerciseTypes
+    .map((type) => ({
+      key: type,
+      title: getExerciseTypeHeading(type),
+      items: exercises.filter((exercise) => exercise.exerciseType === type)
+    }))
+
+  const unknownTypeExercises = exercises.filter((exercise) => !primaryExerciseTypes.includes(exercise.exerciseType as (typeof primaryExerciseTypes)[number]))
+  if (unknownTypeExercises.length > 0) {
+    exerciseSections.push({
+      key: 'other',
+      title: 'Other exercises',
+      items: unknownTypeExercises
+    })
+  }
+
   if (status === 'loading') {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
@@ -335,11 +359,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Practice Zone</h1>
-            <p className="text-lg">Hello, <span className="font-semibold">{session.user.name || session.user.email}</span></p>
-          </div>
+        <div className="mb-6 flex flex-wrap items-center justify-end gap-3">
           <Link
             href="/"
             className="inline-flex items-center rounded-md border border-[#14532d]/35 bg-white px-4 py-2 text-sm font-semibold text-[#14532d] transition hover:bg-[#14532d]/10"
@@ -359,7 +379,7 @@ export default function Dashboard() {
                   onClick={() => setActiveMemberTab('exercises')}
                   className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
                     activeMemberTab === 'exercises'
-                      ? 'bg-[#14532d] text-white'
+                      ? '-translate-y-0.5 border border-[#14532d] bg-[#14532d] text-white shadow-md'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -370,7 +390,7 @@ export default function Dashboard() {
                   onClick={() => setActiveMemberTab('speak')}
                   className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
                     activeMemberTab === 'speak'
-                      ? 'bg-[#14532d] text-white'
+                      ? '-translate-y-0.5 border border-[#14532d] bg-[#14532d] text-white shadow-md'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -402,18 +422,24 @@ export default function Dashboard() {
               ) : (
                 <>
 
-              <div className="mb-4 border-t border-gray-200 pt-4">
-                <h3 className="text-base font-semibold text-gray-900">Multiple-choice exercises</h3>
-              </div>
-
               {loading ? (
                 <p className="text-gray-500">Loading exercises...</p>
               ) : exercises.length === 0 ? (
                 <p className="text-gray-500">No exercises have been created for your course yet.</p>
               ) : (
-                <div className="space-y-6">
-                  {exercises.map((exercise) => (
-                    <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
+                <div className="space-y-8">
+                  {exerciseSections.map((section) => (
+                    <section key={section.key} className="space-y-4">
+                      <div className="border-t border-gray-200 pt-4">
+                        <h3 className="text-base font-semibold text-gray-900">{section.title}</h3>
+                      </div>
+
+                      {section.items.length === 0 ? (
+                        <p className="text-sm text-gray-500">No exercises in this type yet.</p>
+                      ) : (
+                        <div className="space-y-6">
+                          {section.items.map((exercise) => (
+                          <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
                       {Boolean(startedExerciseAt[exercise.id]) && (
                         <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
                           ⏱ Time spent: {formatDuration(getExerciseDurationSeconds(exercise.id))}
@@ -575,7 +601,11 @@ export default function Dashboard() {
                           {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
                         </button>
                       </div>
-                    </div>
+                          </div>
+                          ))}
+                        </div>
+                      )}
+                    </section>
                   ))}
                 </div>
               )}
