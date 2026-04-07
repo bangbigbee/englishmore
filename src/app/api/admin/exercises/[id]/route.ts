@@ -12,10 +12,12 @@ type ExerciseQuestionInput = {
   correctOption: string
 }
 
-const VALID_EXERCISE_TYPES = ['multiple_choice', 'listening_audio'] as const
+const VALID_EXERCISE_TYPES = ['multiple_choice', 'question_response', 'conversation'] as const
 
 function normalizeExerciseType(value: unknown) {
   const normalized = String(value || '').trim().toLowerCase()
+  // Legacy alias: listening_audio → question_response
+  if (normalized === 'listening_audio') return 'question_response'
   return VALID_EXERCISE_TYPES.includes(normalized as (typeof VALID_EXERCISE_TYPES)[number])
     ? normalized
     : 'multiple_choice'
@@ -51,7 +53,7 @@ async function requireAdmin() {
   return { ok: true, status: 200 }
 }
 
-function validateQuestions(questions: ExerciseQuestionInput[]) {
+function validateQuestions(questions: ExerciseQuestionInput[], exerciseType: string) {
   if (!Array.isArray(questions) || questions.length !== 10) {
     return 'Mỗi exercise phải có đúng 10 câu hỏi'
   }
@@ -59,7 +61,16 @@ function validateQuestions(questions: ExerciseQuestionInput[]) {
   const invalid = questions.find((item) => {
     const optionD = String(item.optionD || '').trim()
     const correctOption = String(item.correctOption || '').trim().toUpperCase()
-    const validCorrectOptions = optionD ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']
+
+    let validCorrectOptions: string[]
+    if (exerciseType === 'conversation') {
+      if (!optionD) return true
+      validCorrectOptions = ['A', 'B', 'C', 'D']
+    } else if (exerciseType === 'question_response') {
+      validCorrectOptions = ['A', 'B', 'C']
+    } else {
+      validCorrectOptions = optionD ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']
+    }
 
     return !item.question?.trim() || !item.optionA?.trim() || !item.optionB?.trim() || !item.optionC?.trim() || !validCorrectOptions.includes(correctOption)
   })
@@ -79,7 +90,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { title, description, questions, isDraft, sourceFormUrl, exerciseType, audioFileUrl } = body as {
+  const { title, description, questions, isDraft, sourceFormUrl, exerciseType, audioFileUrl, attachmentFileUrl } = body as {
     title?: string
     description?: string
     questions?: ExerciseQuestionInput[]
@@ -87,6 +98,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     sourceFormUrl?: string
     exerciseType?: string
     audioFileUrl?: string
+    attachmentFileUrl?: string
   }
 
   const normalizedTitle = String(title || '').trim()
@@ -107,14 +119,15 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   const normalizedQuestions = normalizeDraftQuestions(questions || [])
   const normalizedExerciseType = normalizeExerciseType(exerciseType)
   const normalizedAudioFileUrl = String(audioFileUrl || '').trim() || null
+  const normalizedAttachmentFileUrl = String(attachmentFileUrl || '').trim() || null
   if (!savingDraft) {
-    const questionError = validateQuestions(normalizedQuestions)
+    const questionError = validateQuestions(normalizedQuestions, normalizedExerciseType)
     if (questionError) {
       return NextResponse.json({ error: questionError }, { status: 400 })
     }
 
-    if (normalizedExerciseType === 'listening_audio' && !normalizedAudioFileUrl) {
-      return NextResponse.json({ error: 'Vui lòng tải lên file audio cho bài listening.' }, { status: 400 })
+    if ((normalizedExerciseType === 'question_response' || normalizedExerciseType === 'conversation') && !normalizedAudioFileUrl) {
+      return NextResponse.json({ error: 'Vui lòng tải lên file audio cho loại bài này.' }, { status: 400 })
     }
   }
 
@@ -130,6 +143,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
           description: String(description || '').trim() || null,
           exerciseType: normalizedExerciseType,
           audioFileUrl: normalizedAudioFileUrl,
+          attachmentFileUrl: normalizedAttachmentFileUrl,
           isDraft: savingDraft,
           sourceFormUrl: String(sourceFormUrl || '').trim() || null,
           questions: {

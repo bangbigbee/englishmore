@@ -79,6 +79,7 @@ export async function GET() {
       description: true,
       exerciseType: true,
       audioFileUrl: true,
+      attachmentFileUrl: true,
       questions: {
         select: {
           id: true,
@@ -123,6 +124,7 @@ export async function GET() {
       description: exercise.description,
       exerciseType: exercise.exerciseType,
       audioFileUrl: exercise.audioFileUrl,
+      attachmentFileUrl: exercise.attachmentFileUrl,
       questions: exercise.questions,
       submission: exercise.submissions[0] || null,
       isLocked: false

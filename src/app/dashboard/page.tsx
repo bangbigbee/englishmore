@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
@@ -22,6 +22,7 @@ interface ExerciseItem {
   description: string | null
   exerciseType: string
   audioFileUrl: string | null
+  attachmentFileUrl: string | null
   isLocked?: boolean
   submission: {
     id: string
@@ -83,8 +84,14 @@ export default function Dashboard() {
   const [exerciseAnswers, setExerciseAnswers] = useState<Record<string, Record<string, string>>>({})
   const [submittingExerciseId, setSubmittingExerciseId] = useState<string | null>(null)
   const [startedExerciseAt, setStartedExerciseAt] = useState<Record<string, number>>({})
+  const [revealedExercises, setRevealedExercises] = useState<Record<string, boolean>>({})
   const [timerTick, setTimerTick] = useState(() => Date.now())
   const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
+
+  // Refs for locked audio (no pause, no seek after first play)
+  const audioLastTime = useRef<Record<string, number>>({})
+  const audioIsLocked = useRef<Record<string, boolean>>({})
+  const audioIsSeeking = useRef<Record<string, boolean>>({})
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -249,10 +256,15 @@ export default function Dashboard() {
   }
 
   const startExercise = (exerciseId: string) => {
+    setRevealedExercises((current) => ({ ...current, [exerciseId]: true }))
     setStartedExerciseAt((current) => ({
       ...current,
       [exerciseId]: Date.now()
     }))
+  }
+
+  const revealExercise = (exerciseId: string) => {
+    setRevealedExercises((current) => ({ ...current, [exerciseId]: true }))
   }
 
   const openSubmitConfirmation = (exercise: ExerciseItem) => {
@@ -402,59 +414,122 @@ export default function Dashboard() {
                         )}
                       </div>
 
-                      {!startedExerciseAt[exercise.id] ? (
+                      {!revealedExercises[exercise.id] ? (
                         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                        <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs sm:text-sm text-blue-800">
-                          {exercise.exerciseType === 'listening_audio'
-                            ? 'Nhấn bắt đầu để mở bài nghe, phát audio và làm bài với bộ đếm thời gian.'
-                            : 'Press the button below to begin the exercise and start the timer.'}
-                        </p>
+                          <p className="p-3 sm:p-4 text-xs sm:text-sm text-blue-800">
+                            {exercise.exerciseType === 'multiple_choice'
+                              ? 'Nhấn bắt đầu để mở bài tập và bắt đầu tính giờ.'
+                              : 'Nhấn bắt đầu để mở bài nghe. Bộ đếm thời gian sẽ bắt đầu khi bạn nhấn ▶ phát audio.'}
+                          </p>
                           <button
                             type="button"
-                            onClick={() => startExercise(exercise.id)}
-                            className="w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer disabled:opacity-50"
+                            onClick={() => {
+                              if (exercise.exerciseType === 'multiple_choice') {
+                                startExercise(exercise.id)
+                              } else {
+                                revealExercise(exercise.id)
+                              }
+                            }}
+                            className="mt-2 w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer disabled:opacity-50"
                           >
-                            {exercise.submission ? 'Retry' : 'Start'}
+                            {exercise.submission ? 'Retry' : 'Bắt đầu'}
                           </button>
                         </div>
                       ) : (
                         <div className="space-y-4">
-                          {exercise.exerciseType === 'listening_audio' && exercise.audioFileUrl && (
+                          {(exercise.exerciseType === 'question_response' || exercise.exerciseType === 'conversation') && exercise.audioFileUrl && (
                             <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                              <p className="mb-3 text-sm font-medium text-emerald-900">Nghe file audio rồi chọn đáp án đúng cho từng câu.</p>
-                              <audio controls preload="metadata" className="w-full">
+                              <p className="mb-3 text-sm font-medium text-emerald-900">
+                                {startedExerciseAt[exercise.id]
+                                  ? 'Đang nghe — không thể tua hoặc dừng audio.'
+                                  : 'Nhấn ▶ để nghe và bắt đầu tính giờ. Sau khi phát, không thể dừng hoặc tua lại.'}
+                              </p>
+                              <audio
+                                preload="metadata"
+                                className="w-full"
+                                onPlay={() => {
+                                  audioIsLocked.current[exercise.id] = true
+                                  if (!startedExerciseAt[exercise.id]) {
+                                    startExercise(exercise.id)
+                                  }
+                                }}
+                                onPause={(e) => {
+                                  const audio = e.currentTarget
+                                  if (audioIsLocked.current[exercise.id] && !audio.ended) {
+                                    void audio.play()
+                                  }
+                                }}
+                                onTimeUpdate={(e) => {
+                                  const audio = e.currentTarget
+                                  if (!audioIsSeeking.current[exercise.id]) {
+                                    audioLastTime.current[exercise.id] = audio.currentTime
+                                  }
+                                }}
+                                onSeeking={(e) => {
+                                  if (!audioIsLocked.current[exercise.id]) return
+                                  if (audioIsSeeking.current[exercise.id]) return
+                                  audioIsSeeking.current[exercise.id] = true
+                                  const audio = e.currentTarget
+                                  audio.currentTime = audioLastTime.current[exercise.id] || 0
+                                  audioIsSeeking.current[exercise.id] = false
+                                }}
+                              >
                                 <source src={exercise.audioFileUrl} />
                               </audio>
                             </div>
                           )}
 
-                          {exercise.questions.map((question) => (
-                            <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
-                              <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
-                              <div className="mt-2 sm:mt-3 grid gap-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
-                                {getExerciseQuestionOptions(question).map((option) => {
-                                  const selectedOption = exerciseAnswers[exercise.id]?.[question.id]
-                                  const isSelected = selectedOption === option.key
-
-                                  return (
-                                    <button
-                                      key={`${question.id}-${option.key}`}
-                                      type="button"
-                                      onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
-                                      className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
-                                        isSelected
-                                          ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
-                                          : 'border-gray-200 bg-white text-gray-700 hover:border-[#14532d]/40'
-                                      } disabled:opacity-50`}
-                                    >
-                                      <span className="mb-1 block font-semibold">{option.key}.</span>
-                                      <span>{option.text}</span>
-                                    </button>
-                                  )
-                                })}
-                              </div>
+                          {exercise.attachmentFileUrl && (
+                            <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 flex items-center justify-between gap-3">
+                              <p className="text-sm text-blue-800">Tài liệu từ vựng đính kèm</p>
+                              <a
+                                href={exercise.attachmentFileUrl}
+                                download
+                                className="inline-flex items-center gap-1 rounded bg-blue-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-800"
+                              >
+                                Tải về
+                              </a>
                             </div>
-                          ))}
+                          )}
+
+                          {exercise.questions.map((question) => {
+                            const isQuestionResponse = exercise.exerciseType === 'question_response'
+                            const options = isQuestionResponse
+                              ? [{ key: 'A', text: question.optionA }, { key: 'B', text: question.optionB }, { key: 'C', text: question.optionC }]
+                              : getExerciseQuestionOptions(question)
+
+                            return (
+                              <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
+                                {isQuestionResponse ? (
+                                  <p className="font-semibold text-gray-900 mb-1">Câu {question.order}</p>
+                                ) : (
+                                  <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
+                                )}
+                                <div className={`mt-2 sm:mt-3 grid gap-2 ${isQuestionResponse ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4'}`}>
+                                  {options.map((option) => {
+                                    const selectedOption = exerciseAnswers[exercise.id]?.[question.id]
+                                    const isSelected = selectedOption === option.key
+
+                                    return (
+                                      <button
+                                        key={`${question.id}-${option.key}`}
+                                        type="button"
+                                        onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
+                                        className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
+                                          isSelected
+                                            ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
+                                            : 'border-gray-200 bg-white text-gray-700 hover:border-[#14532d]/40'
+                                        } disabled:opacity-50`}
+                                      >
+                                        <span className="mb-1 block font-semibold">{option.key}.</span>
+                                        <span>{option.text}</span>
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )
+                          })}
                         </div>
                       )}
 

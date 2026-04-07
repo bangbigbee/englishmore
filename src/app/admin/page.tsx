@@ -178,6 +178,7 @@ interface ExerciseItem {
   description: string | null
   exerciseType: string
   audioFileUrl: string | null
+  attachmentFileUrl: string | null
   isDraft: boolean
   sourceFormUrl: string | null
   course: { title: string }
@@ -308,7 +309,9 @@ const getExerciseTitle = (exercise: Pick<ExerciseItem, 'title' | 'order'>) => {
 }
 
 const getExerciseTypeLabel = (exerciseType: string) => {
-  return exerciseType === 'listening_audio' ? 'Listening audio' : 'Multiple choice'
+  if (exerciseType === 'question_response' || exerciseType === 'listening_audio') return 'Question-Response'
+  if (exerciseType === 'conversation') return 'Conversation'
+  return 'Multiple choice'
 }
 
 const formatDuration = (totalSeconds: number | null) => {
@@ -538,6 +541,9 @@ export default function AdminDashboard() {
   const [newExerciseAudioFileUrl, setNewExerciseAudioFileUrl] = useState<string | null>(null)
   const [newExerciseAudioFileName, setNewExerciseAudioFileName] = useState('')
   const [newExerciseAudioUploading, setNewExerciseAudioUploading] = useState(false)
+  const [newExerciseAttachFileUrl, setNewExerciseAttachFileUrl] = useState<string | null>(null)
+  const [newExerciseAttachFileName, setNewExerciseAttachFileName] = useState('')
+  const [newExerciseAttachUploading, setNewExerciseAttachUploading] = useState(false)
   const [exerciseError, setExerciseError] = useState('')
   const [exerciseSuccess, setExerciseSuccess] = useState('')
   const [editingExercise, setEditingExercise] = useState<ExerciseItem | null>(null)
@@ -546,6 +552,9 @@ export default function AdminDashboard() {
   const [editExerciseAudioFileUrl, setEditExerciseAudioFileUrl] = useState<string | null>(null)
   const [editExerciseAudioFileName, setEditExerciseAudioFileName] = useState('')
   const [editExerciseAudioUploading, setEditExerciseAudioUploading] = useState(false)
+  const [editExerciseAttachFileUrl, setEditExerciseAttachFileUrl] = useState<string | null>(null)
+  const [editExerciseAttachFileName, setEditExerciseAttachFileName] = useState('')
+  const [editExerciseAttachUploading, setEditExerciseAttachUploading] = useState(false)
   const [savingExerciseId, setSavingExerciseId] = useState<string | null>(null)
   const [selectedExerciseResult, setSelectedExerciseResult] = useState<(ExerciseSubmissionItem & { exerciseTitle: string; courseTitle: string }) | null>(null)
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
@@ -1439,6 +1448,8 @@ export default function AdminDashboard() {
     setNewExerciseSourceFormUrl('')
     setNewExerciseAudioFileUrl(null)
     setNewExerciseAudioFileName('')
+    setNewExerciseAttachFileUrl(null)
+    setNewExerciseAttachFileName('')
   }
 
   const uploadExerciseAudio = async (file: File) => {
@@ -1497,6 +1508,62 @@ export default function AdminDashboard() {
     }
   }
 
+  const uploadExerciseAttachment = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch('/api/admin/exercises/upload-attachment', {
+      method: 'POST',
+      body: formData
+    })
+
+    const data = await parseApiResponse(response)
+    if (!response.ok) {
+      throw new Error(data?.error || 'Could not upload the attachment file.')
+    }
+
+    return {
+      url: String(data?.url || '').trim(),
+      fileName: String(data?.fileName || file.name || '').trim()
+    }
+  }
+
+  const handleNewExerciseAttachSelected = async (file: File) => {
+    try {
+      setNewExerciseAttachUploading(true)
+      setExerciseError('')
+      setExerciseSuccess('')
+
+      const uploaded = await uploadExerciseAttachment(file)
+      setNewExerciseAttachFileUrl(uploaded.url)
+      setNewExerciseAttachFileName(uploaded.fileName)
+      setExerciseSuccess('Attachment file uploaded successfully.')
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Could not upload the attachment file.')
+      setExerciseSuccess('')
+    } finally {
+      setNewExerciseAttachUploading(false)
+    }
+  }
+
+  const handleEditExerciseAttachSelected = async (file: File) => {
+    try {
+      setEditExerciseAttachUploading(true)
+      setExerciseError('')
+      setExerciseSuccess('')
+
+      const uploaded = await uploadExerciseAttachment(file)
+      setEditExerciseAttachFileUrl(uploaded.url)
+      setEditExerciseAttachFileName(uploaded.fileName)
+      setExerciseSuccess('Attachment file uploaded successfully.')
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Could not upload the attachment file.')
+      setExerciseSuccess('')
+    } finally {
+      setEditExerciseAttachUploading(false)
+    }
+  }
+
   const createExercise = async (saveAsDraft: boolean) => {
     if (!newExerciseCourseId) {
       setExerciseError('Please choose a course for the exercise.')
@@ -1524,6 +1591,7 @@ export default function AdminDashboard() {
           description: newExerciseDescription,
           exerciseType: newExerciseType,
           audioFileUrl: newExerciseAudioFileUrl,
+          attachmentFileUrl: newExerciseAttachFileUrl,
           sourceFormUrl: newExerciseSourceFormUrl,
           isDraft: saveAsDraft,
           questions: newExerciseQuestions
@@ -1629,6 +1697,8 @@ export default function AdminDashboard() {
     setEditExerciseType(exercise.exerciseType || 'multiple_choice')
     setEditExerciseAudioFileUrl(exercise.audioFileUrl)
     setEditExerciseAudioFileName(exercise.audioFileUrl ? 'Current audio file' : '')
+    setEditExerciseAttachFileUrl(exercise.attachmentFileUrl)
+    setEditExerciseAttachFileName(exercise.attachmentFileUrl ? 'Current attachment file' : '')
     setEditExerciseQuestions(exercise.questions.map((question) => ({
       question: question.question,
       optionA: question.optionA,
@@ -1658,6 +1728,7 @@ export default function AdminDashboard() {
           description: editExerciseDescription,
           exerciseType: editExerciseType,
           audioFileUrl: editExerciseAudioFileUrl,
+          attachmentFileUrl: editExerciseAttachFileUrl,
           questions: editExerciseQuestions
         })
       })
@@ -3516,7 +3587,8 @@ export default function AdminDashboard() {
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   >
                     <option value="multiple_choice">Multiple choice thường</option>
-                    <option value="listening_audio">Listening test với audio</option>
+                    <option value="question_response">Question-Response (Audio)</option>
+                    <option value="conversation">Conversation (Audio)</option>
                   </select>
                 </div>
 
@@ -3554,7 +3626,7 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     <p className="mt-3 text-sm text-gray-600">
-                      {newExerciseAudioFileUrl ? newExerciseAudioFileName || 'Audio uploaded' : 'Chỉ bắt buộc khi chọn loại listening test.'}
+                      {newExerciseAudioFileUrl ? newExerciseAudioFileName || 'Audio uploaded' : (newExerciseType === 'multiple_choice' ? 'Không cần audio cho loại này.' : 'Bắt buộc cho loại này.')}
                     </p>
                     {newExerciseAudioFileUrl && (
                       <audio controls preload="metadata" className="mt-3 w-full">
@@ -3564,6 +3636,52 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
+
+              {(newExerciseType === 'question_response' || newExerciseType === 'conversation') && (
+                <div className="mb-6">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Attachment file <span className="text-gray-400 font-normal">(PPT, DOCX, PDF — vocabulary handout)</span></label>
+                  <div className="rounded-xl border border-dashed border-gray-300 p-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className="inline-flex cursor-pointer items-center rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800">
+                        {newExerciseAttachUploading ? 'Uploading...' : 'Upload file'}
+                        <input
+                          type="file"
+                          accept=".pptx,.ppt,.docx,.doc,.pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,application/pdf"
+                          className="hidden"
+                          disabled={newExerciseAttachUploading}
+                          onChange={(event) => {
+                            const file = event.target.files?.[0]
+                            if (file) {
+                              void handleNewExerciseAttachSelected(file)
+                            }
+                            event.currentTarget.value = ''
+                          }}
+                        />
+                      </label>
+                      {newExerciseAttachFileUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewExerciseAttachFileUrl(null)
+                            setNewExerciseAttachFileName('')
+                          }}
+                          className="text-sm text-red-600 hover:underline"
+                        >
+                          Remove file
+                        </button>
+                      )}
+                    </div>
+                    <p className="mt-3 text-sm text-gray-600">
+                      {newExerciseAttachFileUrl ? newExerciseAttachFileName || 'File uploaded' : 'Tùy chọn — học viên có thể tải về để xem từ vựng.'}
+                    </p>
+                    {newExerciseAttachFileUrl && (
+                      <a href={newExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-blue-700 hover:underline">
+                        {newExerciseAttachFileName || 'Download attachment'}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
@@ -3576,7 +3694,11 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <p className="mb-4 text-sm text-gray-500">Để trống đáp án D nếu mỗi câu chỉ có 3 lựa chọn.</p>
+              <p className="mb-4 text-sm text-gray-500">
+                {newExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu mỗi câu chỉ có 3 lựa chọn.'}
+                {newExerciseType === 'question_response' && 'Question-Response: nhập nội dung câu hỏi (dùng để chấm điểm) và 3 đáp án A/B/C. Học viên sẽ chỉ thấy số thứ tự câu và 3 lựa chọn.'}
+                {newExerciseType === 'conversation' && 'Conversation: nhập nội dung câu hỏi và 4 đáp án A/B/C/D (bắt buộc). Học viên thấy toàn bộ nội dung câu hỏi và đáp án.'}
+              </p>
 
               <div className="space-y-4">
                 {newExerciseQuestions.map((question, index) => (
@@ -3611,13 +3733,15 @@ export default function AdminDashboard() {
                         placeholder="Answer C"
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
-                      <input
-                        type="text"
-                        value={question.optionD}
-                        onChange={(e) => updateNewExerciseQuestion(index, 'optionD', e.target.value)}
-                        placeholder="Answer D (optional)"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                      />
+                      {newExerciseType !== 'question_response' && (
+                        <input
+                          type="text"
+                          value={question.optionD}
+                          onChange={(e) => updateNewExerciseQuestion(index, 'optionD', e.target.value)}
+                          placeholder={newExerciseType === 'conversation' ? 'Answer D (bắt buộc)' : 'Answer D (optional)'}
+                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                        />
+                      )}
                       <select
                         value={question.correctOption}
                         onChange={(e) => updateNewExerciseQuestion(index, 'correctOption', e.target.value)}
@@ -3626,7 +3750,9 @@ export default function AdminDashboard() {
                         <option value="A">Correct answer: A</option>
                         <option value="B">Correct answer: B</option>
                         <option value="C">Correct answer: C</option>
-                        <option value="D">Correct answer: D</option>
+                        {newExerciseType !== 'question_response' && (
+                          <option value="D">Correct answer: D</option>
+                        )}
                       </select>
                     </div>
                   </div>
@@ -4363,7 +4489,8 @@ export default function AdminDashboard() {
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   >
                     <option value="multiple_choice">Multiple choice thường</option>
-                    <option value="listening_audio">Listening test với audio</option>
+                    <option value="question_response">Question-Response (Audio)</option>
+                    <option value="conversation">Conversation (Audio)</option>
                   </select>
                 </div>
 
@@ -4412,6 +4539,52 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              {(editExerciseType === 'question_response' || editExerciseType === 'conversation') && (
+                <div className="mb-6">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Attachment file <span className="text-gray-400 font-normal">(PPT, DOCX, PDF — vocabulary handout)</span></label>
+                  <div className="rounded-xl border border-dashed border-gray-300 p-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className="inline-flex cursor-pointer items-center rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800">
+                        {editExerciseAttachUploading ? 'Uploading...' : (editExerciseAttachFileUrl ? 'Replace file' : 'Upload file')}
+                        <input
+                          type="file"
+                          accept=".pptx,.ppt,.docx,.doc,.pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,application/pdf"
+                          className="hidden"
+                          disabled={editExerciseAttachUploading}
+                          onChange={(event) => {
+                            const file = event.target.files?.[0]
+                            if (file) {
+                              void handleEditExerciseAttachSelected(file)
+                            }
+                            event.currentTarget.value = ''
+                          }}
+                        />
+                      </label>
+                      {editExerciseAttachFileUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditExerciseAttachFileUrl(null)
+                            setEditExerciseAttachFileName('')
+                          }}
+                          className="text-sm text-red-600 hover:underline"
+                        >
+                          Remove file
+                        </button>
+                      )}
+                    </div>
+                    <p className="mt-3 text-sm text-gray-600">
+                      {editExerciseAttachFileUrl ? editExerciseAttachFileName || 'File attached' : 'Tùy chọn — học viên có thể tải về để xem từ vựng.'}
+                    </p>
+                    {editExerciseAttachFileUrl && (
+                      <a href={editExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-blue-700 hover:underline">
+                        {editExerciseAttachFileName || 'Download attachment'}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
                 <textarea
@@ -4422,7 +4595,11 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <p className="mb-4 text-sm text-gray-500">Để trống đáp án D nếu câu hỏi chỉ có 3 lựa chọn.</p>
+              <p className="mb-4 text-sm text-gray-500">
+                {editExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu câu hỏi chỉ có 3 lựa chọn.'}
+                {editExerciseType === 'question_response' && 'Question-Response: 3 đáp án A/B/C. Học viên chỉ thấy số thứ tự câu.'}
+                {editExerciseType === 'conversation' && 'Conversation: 4 đáp án A/B/C/D (bắt buộc). Học viên thấy toàn bộ nội dung.'}
+              </p>
 
               <div className="space-y-4">
                 {editExerciseQuestions.map((question, index) => (
@@ -4453,12 +4630,15 @@ export default function AdminDashboard() {
                         onChange={(e) => updateEditExerciseQuestion(index, 'optionC', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
-                      <input
-                        type="text"
-                        value={question.optionD}
-                        onChange={(e) => updateEditExerciseQuestion(index, 'optionD', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                      />
+                      {editExerciseType !== 'question_response' && (
+                        <input
+                          type="text"
+                          value={question.optionD}
+                          onChange={(e) => updateEditExerciseQuestion(index, 'optionD', e.target.value)}
+                          placeholder={editExerciseType === 'conversation' ? 'Answer D (bắt buộc)' : 'Answer D (optional)'}
+                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                        />
+                      )}
                       <select
                         value={question.correctOption}
                         onChange={(e) => updateEditExerciseQuestion(index, 'correctOption', e.target.value)}
@@ -4467,7 +4647,9 @@ export default function AdminDashboard() {
                         <option value="A">Correct answer: A</option>
                         <option value="B">Correct answer: B</option>
                         <option value="C">Correct answer: C</option>
-                        <option value="D">Correct answer: D</option>
+                        {editExerciseType !== 'question_response' && (
+                          <option value="D">Correct answer: D</option>
+                        )}
                       </select>
                     </div>
                   </div>

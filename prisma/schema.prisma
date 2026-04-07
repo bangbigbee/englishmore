@@ -170,6 +170,7 @@ model CourseExercise {
   description String?
   exerciseType String            @default("multiple_choice")
   audioFileUrl String?
+  attachmentFileUrl String?
   isDraft     Boolean            @default(false)
   sourceFormUrl String?
   createdAt   DateTime           @default(now())
@@ -224,6 +225,15 @@ model ExerciseSubmission {
 }
 
 model ExerciseAudioFile {
+  id           String   @id @default(cuid())
+  originalName String
+  mimeType     String
+  data         Bytes
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ExerciseAttachmentFile {
   id           String   @id @default(cuid())
   originalName String
   mimeType     String
