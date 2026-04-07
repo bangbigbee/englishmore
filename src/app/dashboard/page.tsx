@@ -70,6 +70,11 @@ const getExerciseQuestionOptions = (question: ExerciseItem['questions'][number])
   ]
 }
 
+const isListeningExercise = (exerciseType: string) => {
+  const normalized = normalizeExerciseType(exerciseType)
+  return normalized === 'question_response' || normalized === 'conversation'
+}
+
 const getExerciseTypeHeading = (exerciseType: string) => {
   if (exerciseType === 'listening_audio') return 'Question-Response'
   if (exerciseType === 'question_response') return 'Question-Response'
@@ -102,6 +107,8 @@ export default function Dashboard() {
   const [timerTick, setTimerTick] = useState(() => Date.now())
   const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
   const [activeMemberTab, setActiveMemberTab] = useState<MemberTab>('exercises')
+  const [audioCompletedByExercise, setAudioCompletedByExercise] = useState<Record<string, boolean>>({})
+  const [lockedExercises, setLockedExercises] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -146,6 +153,47 @@ export default function Dashboard() {
       toast.success(homeworkSuccess)
     }
   }, [homeworkSuccess])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    try {
+      const raw = window.localStorage.getItem('exercise-lockout-v1')
+      if (!raw) return
+      const parsed = JSON.parse(raw) as Record<string, boolean>
+      setLockedExercises(parsed)
+    } catch {
+      // ignore localStorage parse errors
+    }
+  }, [])
+
+  const persistLockedExercises = (next: Record<string, boolean>) => {
+    setLockedExercises(next)
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('exercise-lockout-v1', JSON.stringify(next))
+    }
+  }
+
+  const lockExerciseAndRedirect = (exerciseId: string) => {
+    persistLockedExercises({
+      ...lockedExercises,
+      [exerciseId]: true
+    })
+    setSubmitConfirm(null)
+    setStartedExerciseAt((current) => {
+      const next = { ...current }
+      delete next[exerciseId]
+      return next
+    })
+    setRevealedExercises((current) => {
+      const next = { ...current }
+      delete next[exerciseId]
+      return next
+    })
+    toast.error('Bạn đã nộp trước khi nghe hết audio. Bài này đã bị khóa.')
+    router.push('/dashboard')
+    router.refresh()
+  }
 
   const fetchHomework = async () => {
     try {
@@ -233,6 +281,10 @@ export default function Dashboard() {
   }
 
   const updateExerciseAnswer = (exerciseId: string, questionId: string, selectedOption: string) => {
+    if (lockedExercises[exerciseId]) {
+      return
+    }
+
     setExerciseAnswers((current) => ({
       ...current,
       [exerciseId]: {
@@ -266,6 +318,10 @@ export default function Dashboard() {
   }
 
   const startExercise = (exerciseId: string) => {
+    if (lockedExercises[exerciseId]) {
+      return
+    }
+
     setRevealedExercises((current) => ({ ...current, [exerciseId]: true }))
     setStartedExerciseAt((current) => ({
       ...current,
@@ -274,6 +330,10 @@ export default function Dashboard() {
   }
 
   const revealExercise = (exerciseId: string) => {
+    if (lockedExercises[exerciseId]) {
+      return
+    }
+
     setRevealedExercises((current) => ({ ...current, [exerciseId]: true }))
   }
 
@@ -297,6 +357,16 @@ export default function Dashboard() {
 
   const submitExercise = async (exercise: ExerciseItem, durationSeconds: number) => {
     const selectedAnswers = exerciseAnswers[exercise.id] || {}
+
+    if (lockedExercises[exercise.id]) {
+      toast.error('Bài này đã bị khóa và không thể nộp lại.')
+      return
+    }
+
+    if (isListeningExercise(exercise.exerciseType) && !audioCompletedByExercise[exercise.id]) {
+      lockExerciseAndRedirect(exercise.id)
+      return
+    }
 
     try {
       setSubmittingExerciseId(exercise.id)
@@ -475,6 +545,11 @@ export default function Dashboard() {
                         ) : (
                           <span className="inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">Not submitted yet</span>
                         )}
+                        {lockedExercises[exercise.id] && (
+                          <span className="inline-flex w-fit rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700">
+                            Locked due to early submit
+                          </span>
+                        )}
                       </div>
 
                       {!revealedExercises[exercise.id] ? (
@@ -493,6 +568,7 @@ export default function Dashboard() {
                                 revealExercise(exercise.id)
                               }
                             }}
+                            disabled={lockedExercises[exercise.id]}
                             className="mt-2 w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer disabled:opacity-50"
                           >
                             {exercise.submission ? 'Retry' : 'Bắt đầu'}
@@ -516,6 +592,16 @@ export default function Dashboard() {
                                     if (!startedExerciseAt[exercise.id]) {
                                       startExercise(exercise.id)
                                     }
+                                    setAudioCompletedByExercise((current) => ({
+                                      ...current,
+                                      [exercise.id]: false
+                                    }))
+                                  }}
+                                  onEnded={() => {
+                                    setAudioCompletedByExercise((current) => ({
+                                      ...current,
+                                      [exercise.id]: true
+                                    }))
                                   }}
                                   onPause={(e) => {
                                     const audio = e.currentTarget
@@ -573,6 +659,7 @@ export default function Dashboard() {
                                         key={`${question.id}-${option.key}`}
                                         type="button"
                                         onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
+                                        disabled={lockedExercises[exercise.id]}
                                         className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
                                           isSelected
                                             ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
@@ -596,7 +683,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => openSubmitConfirmation(exercise)}
-                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
+                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id] || lockedExercises[exercise.id]}
                           className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
                         >
                           {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
@@ -630,7 +717,7 @@ export default function Dashboard() {
         </div>
 
         {submitConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent p-4">
             <div className="w-full max-w-md rounded-lg border border-[#14532d]/40 bg-white p-6 shadow-lg">
               <h3 className="text-lg font-bold text-gray-900">Confirm Exercise Submission</h3>
               <p className="mt-3 text-sm text-gray-700">
