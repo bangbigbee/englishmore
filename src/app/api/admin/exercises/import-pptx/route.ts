@@ -44,18 +44,32 @@ function normalizeLine(line: string) {
 }
 
 function extractSlideTexts(xml: string) {
-  const textRuns: string[] = []
-  const regex = /<a:t[^>]*>([\s\S]*?)<\/a:t>/g
+  // PPTX often splits one visible line into many <a:t> runs.
+  // We must merge runs inside the same <a:p> paragraph to preserve full sentences.
+  const lines: string[] = []
+  const paragraphRegex = /<a:p\b[\s\S]*?<\/a:p>/g
 
-  let match: RegExpExecArray | null
-  while ((match = regex.exec(xml)) !== null) {
-    const text = normalizeLine(decodeXmlEntities(String(match[1] || '')))
-    if (text) {
-      textRuns.push(text)
+  let paragraphMatch: RegExpExecArray | null
+  while ((paragraphMatch = paragraphRegex.exec(xml)) !== null) {
+    const paragraph = String(paragraphMatch[0] || '')
+    const runRegex = /<a:t[^>]*>([\s\S]*?)<\/a:t>/g
+    const parts: string[] = []
+
+    let runMatch: RegExpExecArray | null
+    while ((runMatch = runRegex.exec(paragraph)) !== null) {
+      const part = decodeXmlEntities(String(runMatch[1] || ''))
+      if (part.trim()) {
+        parts.push(part)
+      }
+    }
+
+    const merged = normalizeLine(parts.join(' '))
+    if (merged) {
+      lines.push(merged)
     }
   }
 
-  return textRuns
+  return lines
 }
 
 function parseQuestionFromLines(lines: string[]): ExtractedQuestion | null {
