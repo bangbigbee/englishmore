@@ -14,7 +14,8 @@ const ALLOWED_TYPES: Record<string, string> = {
   'audio/webm': 'webm'
 }
 
-const MAX_SIZE = 20 * 1024 * 1024
+// Keep under serverless payload limits on deployment platforms.
+const MAX_SIZE = 4 * 1024 * 1024
 
 function getExtensionFromName(name: string) {
   const ext = name.split('.').pop()?.toLowerCase() || ''
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: 'File too large. Maximum size is 20 MB.' }, { status: 400 })
+      return NextResponse.json({ error: 'File audio quá lớn. Vui lòng dùng file tối đa 4MB.' }, { status: 400 })
     }
 
     const bytes = await file.arrayBuffer()
@@ -81,6 +82,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[Exercise Audio Upload] Error:', error)
     const detail = error instanceof Error ? error.message : String(error)
+    if (detail.includes('FUNCTION_PAYLOAD_TOO_LARGE') || detail.includes('Payload Too Large')) {
+      return NextResponse.json({ error: 'File audio vượt quá giới hạn upload của hệ thống. Vui lòng giảm kích thước xuống <= 4MB.' }, { status: 413 })
+    }
     return NextResponse.json({ error: 'Failed to upload audio file', details: detail }, { status: 500 })
   }
 }

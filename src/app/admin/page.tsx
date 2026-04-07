@@ -1454,6 +1454,11 @@ export default function AdminDashboard() {
   }
 
   const uploadExerciseAudio = async (file: File) => {
+    const maxAudioSize = 4 * 1024 * 1024
+    if (file.size > maxAudioSize) {
+      throw new Error('File audio vượt quá 4MB. Vui lòng nén hoặc cắt ngắn file trước khi upload.')
+    }
+
     const formData = new FormData()
     formData.append('file', file)
 
@@ -3680,7 +3685,7 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     <p className="mt-3 text-sm text-gray-600">
-                      {newExerciseAudioFileUrl ? newExerciseAudioFileName || 'Audio uploaded' : (newExerciseType === 'multiple_choice' ? 'Không cần audio cho loại này.' : 'Bắt buộc cho loại này.')}
+                      {newExerciseAudioFileUrl ? newExerciseAudioFileName || 'Audio uploaded' : (newExerciseType === 'multiple_choice' ? 'Không cần audio cho loại này.' : 'Bắt buộc cho loại này. Dung lượng tối đa 4MB.')}
                     </p>
                     {newExerciseAudioFileUrl && (
                       <audio controls preload="metadata" className="mt-3 w-full">
@@ -4645,7 +4650,7 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     <p className="mt-3 text-sm text-gray-600">
-                      {editExerciseAudioFileUrl ? editExerciseAudioFileName || 'Audio uploaded' : 'Không có audio được gắn cho exercise này.'}
+                      {editExerciseAudioFileUrl ? editExerciseAudioFileName || 'Audio uploaded' : 'Không có audio được gắn cho exercise này. Dung lượng tối đa 4MB.'}
                     </p>
                     {editExerciseAudioFileUrl && (
                       <audio controls preload="metadata" className="mt-3 w-full">
