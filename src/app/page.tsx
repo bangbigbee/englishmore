@@ -200,12 +200,11 @@ export default function Home() {
   const [editReflectionMessage, setEditReflectionMessage] = useState('')
   const [editReflectionStatus, setEditReflectionStatus] = useState('')
   const [greetingConversation, setGreetingConversation] = useState<DailyGreetingConversationItem[]>([])
-  const [isListening, setIsListening] = useState(false)
-  const [speechSupported, setSpeechSupported] = useState(false)
   const [memberVocabularyItems, setMemberVocabularyItems] = useState<MemberVocabularyItem[]>([])
   const [memberVocabularyIndex, setMemberVocabularyIndex] = useState(0)
   const [memberVocabularyLoading, setMemberVocabularyLoading] = useState(false)
   const [memberVocabularyError, setMemberVocabularyError] = useState('')
+  const [speechSupported, setSpeechSupported] = useState(false)
   const [isPronunciationListening, setIsPronunciationListening] = useState(false)
   const [pronunciationStatus, setPronunciationStatus] = useState('')
   const [pronunciationFeedback, setPronunciationFeedback] = useState('')
@@ -526,6 +525,19 @@ export default function Home() {
   }, [session, selectedAdminDailyActivityCourseId])
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const win = window as Window & {
+      SpeechRecognition?: SpeechRecognitionFactory
+      webkitSpeechRecognition?: SpeechRecognitionFactory
+    }
+
+    setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition))
+  }, [])
+
+  useEffect(() => {
     if (!isAdminDailyActivity) {
       if (selectedAdminDailyActivityCourseId) {
         setSelectedAdminDailyActivityCourseId('')
@@ -542,19 +554,6 @@ export default function Home() {
       setSelectedAdminDailyActivityCourseId(availableCourses[0]?.id || '')
     }
   }, [availableCourses, isAdminDailyActivity, selectedAdminDailyActivityCourseId])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const win = window as Window & {
-      SpeechRecognition?: SpeechRecognitionFactory
-      webkitSpeechRecognition?: SpeechRecognitionFactory
-    }
-
-    setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition))
-  }, [])
 
   const normalizePronunciationText = (value: string) =>
     value
@@ -726,77 +725,6 @@ export default function Home() {
     }
 
     return 'bg-[#14532d] ring-[#14532d]/20'
-  }
-
-  const startVoiceCapture = (target: 'checkin' | 'reflection' = 'checkin') => {
-    if (typeof window === 'undefined') {
-      if (target === 'reflection') {
-        setReflectionError('This browser does not support voice input.')
-      } else {
-        setGreetingError('This browser does not support voice input.')
-      }
-      return
-    }
-
-    const win = window as Window & {
-      SpeechRecognition?: SpeechRecognitionFactory
-      webkitSpeechRecognition?: SpeechRecognitionFactory
-    }
-
-    const RecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition
-    if (!RecognitionCtor) {
-      if (target === 'reflection') {
-        setReflectionError('This browser does not support voice input.')
-      } else {
-        setGreetingError('This browser does not support voice input.')
-      }
-      return
-    }
-
-    if (target === 'reflection') {
-      setReflectionError('')
-      setReflectionStatus('Listening... Please say your reflection now.')
-    } else {
-      setGreetingError('')
-      setGreetingStatus('Listening... Please say your check-in now.')
-    }
-    setIsListening(true)
-
-    const recognition = new RecognitionCtor()
-    recognition.lang = 'en-US'
-    recognition.interimResults = false
-    recognition.continuous = false
-
-    recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
-        .map((result) => result?.[0]?.transcript || '')
-        .join(' ')
-        .trim()
-
-      if (transcript) {
-        if (target === 'reflection') {
-          setReflectionMessage((prev) => `${prev}${prev ? ' ' : ''}${transcript}`.trim())
-          setReflectionStatus('Voice input captured. You can still edit the text before submitting.')
-        } else {
-          setGreetingMessage((prev) => `${prev}${prev ? ' ' : ''}${transcript}`.trim())
-          setGreetingStatus('Voice input captured. You can still edit the text before submitting.')
-        }
-      }
-    }
-
-    recognition.onerror = () => {
-      if (target === 'reflection') {
-        setReflectionError('Voice input is unavailable right now. Please try again or switch to text mode.')
-      } else {
-        setGreetingError('Voice input is unavailable right now. Please try again or switch to text mode.')
-      }
-    }
-
-    recognition.onend = () => {
-      setIsListening(false)
-    }
-
-    recognition.start()
   }
 
   const currentVocabularyItem = memberVocabularyItems.length > 0
@@ -1244,7 +1172,7 @@ export default function Home() {
   }
 
   const handleSubmitGreeting = async () => {
-    await submitGreeting(greetingMessage, greetingMethod)
+    await submitGreeting(greetingMessage, 'text')
   }
 
   const handleQuickGreetingSubmit = async (message: string) => {
@@ -1266,7 +1194,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          inputMethod: greetingMethod,
+          inputMethod: 'text',
           message: msg,
           ...(isAdminDailyActivity && selectedAdminDailyActivityCourseId ? { courseId: selectedAdminDailyActivityCourseId } : {})
         })
@@ -1591,18 +1519,6 @@ export default function Home() {
                           <div className="mt-3 flex flex-wrap items-center gap-2">
                             <button
                               type="button"
-                              onClick={() => {
-                                setGreetingMethod('voice')
-                                startVoiceCapture()
-                              }}
-                              disabled={!speechSupported || isListening}
-                              className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-semibold text-orange-800 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                              {isListening ? '🎙️ Listening...' : '🎙️ Voice'}
-                            </button>
-
-                            <button
-                              type="button"
                               onClick={() => void handleSubmitGreeting()}
                               disabled={isSavingGreeting}
                               className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
@@ -1611,10 +1527,6 @@ export default function Home() {
                             </button>
                           </div>
                         </>
-                      )}
-
-                      {!speechSupported && showCustomGreetingInput && (
-                        <p className="mt-2 text-xs font-medium text-orange-700">Voice input is not supported in this browser. Please use text mode.</p>
                       )}
                       {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
                       {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
@@ -1732,14 +1644,6 @@ export default function Home() {
                           <div className="mt-3 flex flex-wrap items-center gap-2">
                             <button
                               type="button"
-                              onClick={() => startVoiceCapture('reflection')}
-                              disabled={!speechSupported || isListening}
-                              className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-semibold text-orange-800 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                              {isListening ? '🎙️ Listening...' : '🎙️ Voice'}
-                            </button>
-                            <button
-                              type="button"
                               onClick={() => void handleSubmitReflection()}
                               disabled={isSavingReflection}
                               className="rounded-md bg-orange-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-70"
@@ -1748,10 +1652,6 @@ export default function Home() {
                             </button>
                           </div>
                         </>
-                      )}
-
-                      {!speechSupported && showCustomReflectionInput && (
-                        <p className="mt-2 text-xs font-medium text-orange-700">Voice input is not supported in this browser. Please use text mode.</p>
                       )}
                       {reflectionStatus && <p className="mt-2 text-sm font-medium text-orange-700">{reflectionStatus}</p>}
                       {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
