@@ -60,6 +60,10 @@ function validateQuestions(questions: ExerciseQuestionInput[], exerciseType: str
   }
 
   const invalid = questions.find((item) => {
+    const questionText = String(item.question || '').trim()
+    const optionAText = String(item.optionA || '').trim()
+    const optionBText = String(item.optionB || '').trim()
+    const optionCText = String(item.optionC || '').trim()
     const optionD = String(item.optionD || '').trim()
     const correctOption = String(item.correctOption || '').trim().toUpperCase()
 
@@ -74,7 +78,10 @@ function validateQuestions(questions: ExerciseQuestionInput[], exerciseType: str
       validCorrectOptions = optionD ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']
     }
 
-    return !item.question?.trim() || !item.optionA?.trim() || !item.optionB?.trim() || !item.optionC?.trim() || !validCorrectOptions.includes(correctOption)
+    const questionRequired = exerciseType !== 'question_response'
+    const optionsRequired = exerciseType !== 'question_response'
+
+    return (questionRequired && !questionText) || (optionsRequired && (!optionAText || !optionBText || !optionCText)) || !validCorrectOptions.includes(correctOption)
   })
 
   if (invalid) {

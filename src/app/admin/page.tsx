@@ -3696,7 +3696,7 @@ export default function AdminDashboard() {
 
               <p className="mb-4 text-sm text-gray-500">
                 {newExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu mỗi câu chỉ có 3 lựa chọn.'}
-                {newExerciseType === 'question_response' && 'Question-Response: nhập nội dung câu hỏi (dùng để chấm điểm) và 3 đáp án A/B/C. Học viên sẽ chỉ thấy số thứ tự câu và 3 lựa chọn.'}
+                {newExerciseType === 'question_response' && 'Question-Response: nội dung câu hỏi là tùy chọn (có thể để trống), dùng 3 đáp án A/B/C. Học viên chỉ thấy số thứ tự câu và 3 lựa chọn.'}
                 {newExerciseType === 'conversation' && 'Conversation: nhập nội dung câu hỏi và 4 đáp án A/B/C/D (bắt buộc). Học viên thấy toàn bộ nội dung câu hỏi và đáp án.'}
               </p>
 
@@ -3709,7 +3709,7 @@ export default function AdminDashboard() {
                         value={question.question}
                         onChange={(e) => updateNewExerciseQuestion(index, 'question', e.target.value)}
                         rows={2}
-                        placeholder="Enter the question"
+                        placeholder={newExerciseType === 'question_response' ? 'Question text (optional)' : 'Enter the question'}
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
                       <input
@@ -4597,7 +4597,7 @@ export default function AdminDashboard() {
 
               <p className="mb-4 text-sm text-gray-500">
                 {editExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu câu hỏi chỉ có 3 lựa chọn.'}
-                {editExerciseType === 'question_response' && 'Question-Response: 3 đáp án A/B/C. Học viên chỉ thấy số thứ tự câu.'}
+                {editExerciseType === 'question_response' && 'Question-Response: nội dung câu hỏi là tùy chọn (có thể để trống), dùng 3 đáp án A/B/C. Học viên chỉ thấy số thứ tự câu.'}
                 {editExerciseType === 'conversation' && 'Conversation: 4 đáp án A/B/C/D (bắt buộc). Học viên thấy toàn bộ nội dung.'}
               </p>
 
