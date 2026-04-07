@@ -1666,8 +1666,7 @@ export default function Home() {
 
               <div className="rounded-lg border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-orange-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
                 <div className="mb-3">
-                  <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
-                  <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
+                  <h3 className="text-sm font-bold text-slate-900 sm:text-base">Live Feed</h3>
                 </div>
                 <div className="mt-3 max-h-72 space-y-2.5 overflow-y-auto pr-1 sm:max-h-80">
                   {greetingConversationLoading ? (
