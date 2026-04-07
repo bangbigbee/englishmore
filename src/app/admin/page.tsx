@@ -572,6 +572,10 @@ export default function AdminDashboard() {
   const [importSelectedExerciseIds, setImportSelectedExerciseIds] = useState<Set<string>>(new Set())
   const [importingFromCourse, setImportingFromCourse] = useState(false)
   const [importFromCourseError, setImportFromCourseError] = useState('')
+  const [quickCopyExercise, setQuickCopyExercise] = useState<ExerciseItem | null>(null)
+  const [quickCopyTargetCourseId, setQuickCopyTargetCourseId] = useState('')
+  const [quickCopyLoading, setQuickCopyLoading] = useState(false)
+  const [quickCopyError, setQuickCopyError] = useState('')
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
   const [publishingExercise, setPublishingExercise] = useState(false)
   const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
@@ -1784,6 +1788,39 @@ export default function AdminDashboard() {
       setImportFromCourseError(err instanceof Error ? err.message : 'Không thể import exercise')
     } finally {
       setImportingFromCourse(false)
+    }
+  }
+
+  const quickCopyToTarget = async () => {
+    if (!quickCopyExercise) return
+    if (!quickCopyTargetCourseId) {
+      setQuickCopyError('Vui lòng chọn khóa học đích')
+      return
+    }
+    if (quickCopyTargetCourseId === quickCopyExercise.courseId) {
+      setQuickCopyError('Khóa học đích phải khác khóa học nguồn')
+      return
+    }
+    try {
+      setQuickCopyLoading(true)
+      setQuickCopyError('')
+      const res = await fetch('/api/admin/exercises/copy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exerciseIds: [quickCopyExercise.id], targetCourseId: quickCopyTargetCourseId })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể copy exercise')
+      const fetched = await fetch('/api/admin/exercises')
+      const fetchedData = await fetched.json()
+      setExercises(fetchedData.exercises || [])
+      setQuickCopyExercise(null)
+      setQuickCopyTargetCourseId('')
+      setExerciseSuccess(`Đã copy "${getExerciseTitle(quickCopyExercise)}" sang khóa học đích (trạng thái Draft).`)
+    } catch (err) {
+      setQuickCopyError(err instanceof Error ? err.message : 'Không thể copy exercise')
+    } finally {
+      setQuickCopyLoading(false)
     }
   }
 
@@ -3615,6 +3652,16 @@ export default function AdminDashboard() {
                         )}
                         <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Edit</button>
                         <button
+                          onClick={() => {
+                            setQuickCopyExercise(exercise)
+                            setQuickCopyTargetCourseId('')
+                            setQuickCopyError('')
+                          }}
+                          className="text-indigo-600 hover:underline"
+                        >
+                          Copy
+                        </button>
+                        <button
                           onClick={() => deleteExercise(exercise)}
                           disabled={deletingExerciseId === exercise.id}
                           className="text-red-600 hover:underline disabled:opacity-50"
@@ -5083,6 +5130,63 @@ export default function AdminDashboard() {
                   className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 disabled:opacity-50"
                 >
                   {updatingEnrollmentId === confirmPayment.id ? 'Processing...' : 'OK'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {quickCopyExercise && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
+              <div className="flex items-center justify-between border-b px-6 py-4">
+                <h3 className="text-base font-bold text-gray-900">Copy exercise sang khóa học khác</h3>
+                <button
+                  type="button"
+                  onClick={() => setQuickCopyExercise(null)}
+                  className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-4 px-6 py-5">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Exercise đang được copy</p>
+                  <p className="font-semibold text-gray-900 text-sm">{getExerciseTitle(quickCopyExercise)}</p>
+                  <p className="text-xs text-gray-400">{quickCopyExercise.course.title} · {getExerciseTypeLabel(quickCopyExercise.exerciseType)}</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-sm font-medium text-gray-700">Chọn khóa học đích</label>
+                  <select
+                    value={quickCopyTargetCourseId}
+                    onChange={(e) => { setQuickCopyTargetCourseId(e.target.value); setQuickCopyError('') }}
+                    className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  >
+                    <option value="">-- Chọn khóa học --</option>
+                    {courses
+                      .filter((c) => c.id !== quickCopyExercise.courseId)
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>{c.title}</option>
+                      ))}
+                  </select>
+                </div>
+                {quickCopyError && <p className="text-sm text-red-600">{quickCopyError}</p>}
+              </div>
+              <div className="flex justify-end gap-3 border-t px-6 py-4">
+                <button
+                  type="button"
+                  onClick={() => setQuickCopyExercise(null)}
+                  className="rounded px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void quickCopyToTarget()}
+                  disabled={quickCopyLoading}
+                  className="rounded bg-[#14532d] px-5 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                >
+                  {quickCopyLoading ? 'Đang copy...' : 'Copy'}
                 </button>
               </div>
             </div>
