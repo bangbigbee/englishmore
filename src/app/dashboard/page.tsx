@@ -106,6 +106,7 @@ export default function Dashboard() {
   const [revealedExercises, setRevealedExercises] = useState<Record<string, boolean>>({})
   const [timerTick, setTimerTick] = useState(() => Date.now())
   const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
+  const [listenReminderExerciseTitle, setListenReminderExerciseTitle] = useState<string | null>(null)
   const [activeMemberTab, setActiveMemberTab] = useState<MemberTab>('exercises')
   const [audioCompletedByExercise, setAudioCompletedByExercise] = useState<Record<string, boolean>>({})
 
@@ -152,28 +153,6 @@ export default function Dashboard() {
       toast.success(homeworkSuccess)
     }
   }, [homeworkSuccess])
-
-  const redirectToExerciseMore = (exerciseId: string) => {
-    setSubmitConfirm(null)
-    setStartedExerciseAt((current) => {
-      const next = { ...current }
-      delete next[exerciseId]
-      return next
-    })
-    setRevealedExercises((current) => {
-      const next = { ...current }
-      delete next[exerciseId]
-      return next
-    })
-    setAudioCompletedByExercise((current) => ({
-      ...current,
-      [exerciseId]: false
-    }))
-    setActiveMemberTab('exercises')
-    toast.error('Bạn cần nghe hết audio trước khi nộp. Vui lòng làm lại từ đầu.')
-    router.push('/dashboard')
-    router.refresh()
-  }
 
   const fetchHomework = async () => {
     try {
@@ -320,6 +299,11 @@ export default function Dashboard() {
       return
     }
 
+    if (isListeningExercise(exercise.exerciseType) && !audioCompletedByExercise[exercise.id]) {
+      setListenReminderExerciseTitle(getExerciseTitle(exercise))
+      return
+    }
+
     setSubmitConfirm({ exercise, durationSeconds })
   }
 
@@ -327,7 +311,7 @@ export default function Dashboard() {
     const selectedAnswers = exerciseAnswers[exercise.id] || {}
 
     if (isListeningExercise(exercise.exerciseType) && !audioCompletedByExercise[exercise.id]) {
-      redirectToExerciseMore(exercise.id)
+      setListenReminderExerciseTitle(getExerciseTitle(exercise))
       return
     }
 
@@ -696,6 +680,26 @@ export default function Dashboard() {
                   className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534] disabled:opacity-50"
                 >
                   {submittingExerciseId === submitConfirm.exercise.id ? 'Sending...' : 'Send result'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {listenReminderExerciseTitle && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 p-4">
+            <div className="w-full max-w-md rounded-lg border border-amber-300 bg-white p-6 shadow-lg">
+              <h3 className="text-lg font-bold text-amber-800">Chưa nghe hết audio</h3>
+              <p className="mt-3 text-sm text-gray-700">
+                Bạn cần nghe hết file audio của <span className="font-semibold">{listenReminderExerciseTitle}</span> trước khi nhấn submit.
+              </p>
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setListenReminderExerciseTitle(null)}
+                  className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]"
+                >
+                  Tiếp tục nghe
                 </button>
               </div>
             </div>
