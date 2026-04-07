@@ -337,7 +337,13 @@ export default function Dashboard() {
   }
 
   const primaryExerciseTypes = ['multiple_choice', 'question_response', 'conversation'] as const
-  const exerciseSections = primaryExerciseTypes
+  type ExerciseSection = {
+    key: (typeof primaryExerciseTypes)[number] | 'other'
+    title: string
+    items: ExerciseItem[]
+  }
+
+  const exerciseSections: ExerciseSection[] = primaryExerciseTypes
     .map((type) => ({
       key: type,
       title: getExerciseTypeHeading(type),
