@@ -83,13 +83,27 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     return NextResponse.json({ error: `Please select all ${exercise.questions.length} answers before submitting` }, { status: 400 })
   }
 
+  const questionIds = new Set(exercise.questions.map((question) => question.id))
+  const submittedQuestionIds = answers.map((item) => item.questionId)
+
+  const staleQuestionId = submittedQuestionIds.find((questionId) => !questionIds.has(questionId))
+  if (staleQuestionId) {
+    return NextResponse.json(
+      { error: 'This exercise has been updated. Please reload the page and submit again.' },
+      { status: 409 }
+    )
+  }
+
+  if (new Set(submittedQuestionIds).size !== submittedQuestionIds.length) {
+    return NextResponse.json({ error: 'Invalid answer payload: duplicated question detected' }, { status: 400 })
+  }
+
   const answerMap = new Map(answers.map((item) => [item.questionId, item.selectedOption]))
   const missingAnswer = exercise.questions.find((question) => !answerMap.has(question.id))
   if (missingAnswer) {
     return NextResponse.json({ error: 'At least one question is still unanswered' }, { status: 400 })
   }
 
-  const questionIds = new Set(exercise.questions.map((question) => question.id))
   const invalidAnswer = answers.find((item) => !questionIds.has(item.questionId))
   if (invalidAnswer) {
     return NextResponse.json({ error: 'One or more answers do not belong to this exercise' }, { status: 400 })
