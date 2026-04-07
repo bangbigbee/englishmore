@@ -687,7 +687,7 @@ export default function Dashboard() {
         )}
 
         {listenReminderExerciseTitle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent p-4">
             <div className="w-full max-w-md rounded-lg border border-amber-300 bg-white p-6 shadow-lg">
               <h3 className="text-lg font-bold text-amber-800">Chưa nghe hết audio</h3>
               <p className="mt-3 text-sm text-gray-700">
