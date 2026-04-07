@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
@@ -102,11 +102,6 @@ export default function Dashboard() {
   const [timerTick, setTimerTick] = useState(() => Date.now())
   const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
   const [activeMemberTab, setActiveMemberTab] = useState<MemberTab>('exercises')
-
-  // Refs for locked audio (no pause, no seek after first play)
-  const audioLastTime = useRef<Record<string, number>>({})
-  const audioIsLocked = useRef<Record<string, boolean>>({})
-  const audioIsSeeking = useRef<Record<string, boolean>>({})
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -512,39 +507,33 @@ export default function Dashboard() {
                                   ? 'Đang nghe — không thể tua hoặc dừng audio.'
                                   : 'Nhấn ▶ để nghe và bắt đầu tính giờ. Sau khi phát, không thể dừng hoặc tua lại.'}
                               </p>
-                              <audio
-                                controls
-                                preload="metadata"
-                                className="w-full"
-                                onPlay={() => {
-                                  audioIsLocked.current[exercise.id] = true
-                                  if (!startedExerciseAt[exercise.id]) {
-                                    startExercise(exercise.id)
-                                  }
-                                }}
-                                onPause={(e) => {
-                                  const audio = e.currentTarget
-                                  if (audioIsLocked.current[exercise.id] && !audio.ended) {
-                                    void audio.play()
-                                  }
-                                }}
-                                onTimeUpdate={(e) => {
-                                  const audio = e.currentTarget
-                                  if (!audioIsSeeking.current[exercise.id]) {
-                                    audioLastTime.current[exercise.id] = audio.currentTime
-                                  }
-                                }}
-                                onSeeking={(e) => {
-                                  if (!audioIsLocked.current[exercise.id]) return
-                                  if (audioIsSeeking.current[exercise.id]) return
-                                  audioIsSeeking.current[exercise.id] = true
-                                  const audio = e.currentTarget
-                                  audio.currentTime = audioLastTime.current[exercise.id] || 0
-                                  audioIsSeeking.current[exercise.id] = false
-                                }}
-                              >
-                                <source src={exercise.audioFileUrl} />
-                              </audio>
+                              <div className="relative">
+                                <audio
+                                  controls
+                                  preload="metadata"
+                                  className="w-full"
+                                  onPlay={() => {
+                                    if (!startedExerciseAt[exercise.id]) {
+                                      startExercise(exercise.id)
+                                    }
+                                  }}
+                                  onPause={(e) => {
+                                    const audio = e.currentTarget
+                                    if (startedExerciseAt[exercise.id] && !audio.ended) {
+                                      void audio.play()
+                                    }
+                                  }}
+                                >
+                                  <source src={exercise.audioFileUrl} />
+                                </audio>
+                                {startedExerciseAt[exercise.id] && (
+                                  <div
+                                    className="absolute inset-0 z-10 cursor-not-allowed"
+                                    title="Audio controls are locked after the first play."
+                                    aria-hidden="true"
+                                  />
+                                )}
+                              </div>
                             </div>
                           )}
 
