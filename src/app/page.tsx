@@ -2045,7 +2045,6 @@ export default function Home() {
                     <Link
                       href="/courses"
                       className="brand-cta brand-cta-register"
-                      style={{ color: '#f59e0b' }}
                     >
                       <span>Đăng Ký Ngay</span>
                       <span aria-hidden="true" className="brand-cta-arrow">→</span>
@@ -2093,7 +2092,7 @@ export default function Home() {
                   href="https://www.facebook.com/bangbigbee"
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-4 inline-block text-sm font-semibold text-orange-500 hover:underline"
+                  className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
                 >
                   Lead teacher: Nguyen Tri Bang
                 </a>

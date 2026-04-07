@@ -95,22 +95,22 @@ body {
   position: relative;
   border: none;
   background: #fff;
-  color: #ea580c;
+  color: #f59e0b;
   font-weight: 700;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(234,88,12,0.18);
+  box-shadow: 0 2px 8px rgba(245,158,11,0.18);
   padding: 0.625rem 1.25rem;
   animation: spin-border 1.6s linear infinite;
   background:
     linear-gradient(#fff, #fff) padding-box,
-    conic-gradient(from var(--angle), #ea580c, #f97316, #fdba74, #f97316, #ea580c) border-box;
+    conic-gradient(from var(--angle), #f59e0b, #fbbf24, #fde68a, #fbbf24, #f59e0b) border-box;
   border: 2.5px solid transparent;
 }
 
 .brand-cta-register:hover {
   background:
-    linear-gradient(#fff9f5, #fff9f5) padding-box,
-    conic-gradient(from var(--angle), #ea580c, #f97316, #fdba74, #f97316, #ea580c) border-box;
+    linear-gradient(#fffbeb, #fffbeb) padding-box,
+    conic-gradient(from var(--angle), #f59e0b, #fbbf24, #fde68a, #fbbf24, #f59e0b) border-box;
   transform: translateY(-1px);
 }
 
