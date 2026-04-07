@@ -108,7 +108,6 @@ export default function Dashboard() {
   const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
   const [activeMemberTab, setActiveMemberTab] = useState<MemberTab>('exercises')
   const [audioCompletedByExercise, setAudioCompletedByExercise] = useState<Record<string, boolean>>({})
-  const [lockedExercises, setLockedExercises] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -154,31 +153,7 @@ export default function Dashboard() {
     }
   }, [homeworkSuccess])
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    try {
-      const raw = window.localStorage.getItem('exercise-lockout-v1')
-      if (!raw) return
-      const parsed = JSON.parse(raw) as Record<string, boolean>
-      setLockedExercises(parsed)
-    } catch {
-      // ignore localStorage parse errors
-    }
-  }, [])
-
-  const persistLockedExercises = (next: Record<string, boolean>) => {
-    setLockedExercises(next)
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('exercise-lockout-v1', JSON.stringify(next))
-    }
-  }
-
-  const lockExerciseAndRedirect = (exerciseId: string) => {
-    persistLockedExercises({
-      ...lockedExercises,
-      [exerciseId]: true
-    })
+  const redirectToExerciseMore = (exerciseId: string) => {
     setSubmitConfirm(null)
     setStartedExerciseAt((current) => {
       const next = { ...current }
@@ -190,7 +165,12 @@ export default function Dashboard() {
       delete next[exerciseId]
       return next
     })
-    toast.error('Bạn đã nộp trước khi nghe hết audio. Bài này đã bị khóa.')
+    setAudioCompletedByExercise((current) => ({
+      ...current,
+      [exerciseId]: false
+    }))
+    setActiveMemberTab('exercises')
+    toast.error('Bạn cần nghe hết audio trước khi nộp. Vui lòng làm lại từ đầu.')
     router.push('/dashboard')
     router.refresh()
   }
@@ -281,10 +261,6 @@ export default function Dashboard() {
   }
 
   const updateExerciseAnswer = (exerciseId: string, questionId: string, selectedOption: string) => {
-    if (lockedExercises[exerciseId]) {
-      return
-    }
-
     setExerciseAnswers((current) => ({
       ...current,
       [exerciseId]: {
@@ -318,10 +294,6 @@ export default function Dashboard() {
   }
 
   const startExercise = (exerciseId: string) => {
-    if (lockedExercises[exerciseId]) {
-      return
-    }
-
     setRevealedExercises((current) => ({ ...current, [exerciseId]: true }))
     setStartedExerciseAt((current) => ({
       ...current,
@@ -330,10 +302,6 @@ export default function Dashboard() {
   }
 
   const revealExercise = (exerciseId: string) => {
-    if (lockedExercises[exerciseId]) {
-      return
-    }
-
     setRevealedExercises((current) => ({ ...current, [exerciseId]: true }))
   }
 
@@ -358,13 +326,8 @@ export default function Dashboard() {
   const submitExercise = async (exercise: ExerciseItem, durationSeconds: number) => {
     const selectedAnswers = exerciseAnswers[exercise.id] || {}
 
-    if (lockedExercises[exercise.id]) {
-      toast.error('Bài này đã bị khóa và không thể nộp lại.')
-      return
-    }
-
     if (isListeningExercise(exercise.exerciseType) && !audioCompletedByExercise[exercise.id]) {
-      lockExerciseAndRedirect(exercise.id)
+      redirectToExerciseMore(exercise.id)
       return
     }
 
@@ -545,11 +508,6 @@ export default function Dashboard() {
                         ) : (
                           <span className="inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">Not submitted yet</span>
                         )}
-                        {lockedExercises[exercise.id] && (
-                          <span className="inline-flex w-fit rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700">
-                            Locked due to early submit
-                          </span>
-                        )}
                       </div>
 
                       {!revealedExercises[exercise.id] ? (
@@ -568,7 +526,6 @@ export default function Dashboard() {
                                 revealExercise(exercise.id)
                               }
                             }}
-                            disabled={lockedExercises[exercise.id]}
                             className="mt-2 w-full rounded-lg bg-blue-700 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-blue-800 cursor-pointer disabled:opacity-50"
                           >
                             {exercise.submission ? 'Retry' : 'Bắt đầu'}
@@ -659,7 +616,6 @@ export default function Dashboard() {
                                         key={`${question.id}-${option.key}`}
                                         type="button"
                                         onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
-                                        disabled={lockedExercises[exercise.id]}
                                         className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
                                           isSelected
                                             ? 'border-[#14532d] bg-[#14532d]/10 text-[#14532d]'
@@ -683,7 +639,7 @@ export default function Dashboard() {
                         <button
                           type="button"
                           onClick={() => openSubmitConfirmation(exercise)}
-                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id] || lockedExercises[exercise.id]}
+                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
                           className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
                         >
                           {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
