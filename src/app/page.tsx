@@ -666,7 +666,7 @@ export default function Home() {
       const barClass = item.minutes === 0
         ? 'bg-slate-300'
         : item.minutes <= 15
-          ? 'bg-orange-500'
+          ? 'bg-amber-500'
           : 'bg-[#4db463]'
 
       // 60 minutes = 100%, cap at 100%
@@ -713,7 +713,7 @@ export default function Home() {
 
   const getActivityBubbleStyle = (item: DailyGreetingConversationItem) => {
     if (item.entryType === 'reflection') {
-      return 'border-orange-200 bg-orange-50/95 text-orange-950 shadow-orange-100'
+      return 'border-amber-200 bg-amber-50/95 text-amber-950 shadow-amber-100'
     }
 
     return 'border-[#14532d]/20 bg-[#14532d]/5 text-[#14532d] shadow-[#14532d]/10'
@@ -721,7 +721,7 @@ export default function Home() {
 
   const getActivityDotStyle = (item: DailyGreetingConversationItem) => {
     if (item.entryType === 'reflection') {
-      return 'bg-orange-500 ring-orange-200'
+      return 'bg-amber-500 ring-amber-200'
     }
 
     return 'bg-[#14532d] ring-[#14532d]/20'
@@ -1534,10 +1534,10 @@ export default function Home() {
                   )}
                 </article>
 
-                <article className={`checkin-message rounded-lg border bg-white px-4 py-4 shadow-sm transition-all ${hasGreetingToday ? 'border-orange-300/60' : 'border-slate-200 opacity-85'}`}>
+                <article className={`checkin-message rounded-lg border bg-white px-4 py-4 shadow-sm transition-all ${hasGreetingToday ? 'border-amber-300/60' : 'border-slate-200 opacity-85'}`}>
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm font-bold text-orange-800 sm:text-base">How was your day?</p>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-[#14532d]/12 text-[#14532d]' : hasGreetingToday ? 'bg-orange-100 text-orange-700' : 'bg-[#14532d]/8 text-[#14532d]/70'}`}>
+                    <p className="text-sm font-bold text-amber-800 sm:text-base">How was your day?</p>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-[#14532d]/12 text-[#14532d]' : hasGreetingToday ? 'bg-amber-100 text-amber-700' : 'bg-[#14532d]/8 text-[#14532d]/70'}`}>
                       {hasReflectionToday ? 'Done today' : hasGreetingToday ? 'Ready' : 'Check-in first'}
                     </span>
                   </div>
@@ -1547,7 +1547,7 @@ export default function Home() {
                       Complete your check-in first, then reflection opens automatically.
                     </div>
                   ) : hasReflectionToday ? (
-                    <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 px-3 py-2.5">
+                    <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2.5">
                       <button
                         type="button"
                         onClick={() => {
@@ -1555,7 +1555,7 @@ export default function Home() {
                           setEditReflectionStatus('')
                           setIsEditingReflection(true)
                         }}
-                        className="text-xs font-semibold text-orange-700 underline-offset-2 hover:underline"
+                        className="text-xs font-semibold text-amber-700 underline-offset-2 hover:underline"
                       >
                         You already reflected today. Edit it
                       </button>
@@ -1570,7 +1570,7 @@ export default function Home() {
                             value={editReflectionMessage}
                             onChange={(event) => setEditReflectionMessage(event.target.value)}
                             placeholder="Update your reflection..."
-                            className="min-h-24 w-full rounded-lg border border-orange-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-orange-500"
+                            className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
                             maxLength={1000}
                           />
                           <p className="mt-1 text-xs text-slate-500">{editReflectionMessage.trim().length}/1000</p>
@@ -1579,7 +1579,7 @@ export default function Home() {
                               type="button"
                               onClick={handleSaveEditReflection}
                               disabled={isSavingReflection}
-                              className="rounded-md bg-orange-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-70"
+                              className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
                             >
                               {isSavingReflection ? 'Saving...' : 'Save reflection'}
                             </button>
@@ -1595,7 +1595,7 @@ export default function Home() {
                               Cancel
                             </button>
                           </div>
-                          {editReflectionStatus && <p className="mt-2 text-sm font-medium text-orange-700">{editReflectionStatus}</p>}
+                          {editReflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{editReflectionStatus}</p>}
                         </div>
                       ) : null}
                     </div>
@@ -1608,7 +1608,7 @@ export default function Home() {
                             type="button"
                             onClick={() => void handleQuickReflectionSubmit(message)}
                             disabled={isSavingReflection}
-                            className="rounded-full border border-orange-300 bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {message}
                           </button>
@@ -1624,7 +1624,7 @@ export default function Home() {
                               setReflectionStatus('')
                               setReflectionError('')
                             }}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-orange-700 transition hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 transition hover:underline"
                           >
                             ✍️ Type it manually
                           </button>
@@ -1636,7 +1636,7 @@ export default function Home() {
                               value={reflectionMessage}
                               onChange={(event) => setReflectionMessage(event.target.value)}
                               placeholder="Write your reflection for today..."
-                              className="min-h-24 w-full rounded-lg border border-orange-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-orange-500"
+                              className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
                               maxLength={1000}
                             />
                             <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
@@ -1646,15 +1646,19 @@ export default function Home() {
                               type="button"
                               onClick={() => void handleSubmitReflection()}
                               disabled={isSavingReflection}
-                              className="rounded-md bg-orange-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-70"
+                              className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
                             >
                               {isSavingReflection ? 'Saving...' : 'Reflect now'}
                             </button>
                           </div>
                         </>
                       )}
-                      {reflectionStatus && <p className="mt-2 text-sm font-medium text-orange-700">{reflectionStatus}</p>}
-                      {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
+                      {reflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{reflectionStatus}</p>}
+                      {reflectionError && (
+                        <p className={`mt-2 text-sm font-medium ${reflectionError === REFLECTION_AFTER_5PM_MESSAGE ? 'text-amber-700' : 'text-red-600'}`}>
+                          {reflectionError}
+                        </p>
+                      )}
                     </>
                   )}
                 </article>
