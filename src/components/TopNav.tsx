@@ -161,15 +161,15 @@ export default function TopNav() {
       </div>
 
       {session && (
-        <div className={`fixed inset-0 z-50 transition ${isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMenuOpen}>
+        <div className={`fixed inset-0 z-50 isolate transition ${isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMenuOpen}>
           <button
             type="button"
             onClick={() => setIsMenuOpen(false)}
-            className={`absolute inset-0 bg-slate-950/30 transition-opacity ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+            className={`absolute inset-0 z-0 bg-slate-950/35 transition-opacity ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
             aria-label="Close menu overlay"
           />
 
-          <aside className={`absolute right-0 top-0 flex h-full w-[min(22rem,88vw)] flex-col border-l border-[#14532d]/15 bg-white shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <aside className={`absolute right-0 top-0 z-10 flex h-full w-[min(22rem,88vw)] flex-col border-l border-[#14532d]/15 bg-white shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
             <div className="border-b border-[#14532d]/10 bg-linear-to-b from-[#14532d]/8 to-white px-5 py-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
@@ -197,7 +197,7 @@ export default function TopNav() {
               </div>
             </div>
 
-            <nav className="flex-1 px-3 py-4">
+            <nav className="flex-1 bg-white px-3 py-4">
               <div className="space-y-1">
                 <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Profile
