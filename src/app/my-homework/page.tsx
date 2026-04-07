@@ -212,26 +212,28 @@ export default function MyHomeworkPage() {
                         {!expandedDetailByHomework[item.id] && (
                           <p className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-slate-700">
                             <span>{getDescriptionPreview(item.description)}</span>
+                            {' '}
+                            <button
+                              type="button"
+                              onClick={() => toggleHomeworkDetail(item.id)}
+                              className="font-semibold text-amber-800 underline decoration-amber-500 underline-offset-2 hover:text-amber-900"
+                            >
+                              See more
+                            </button>
                           </p>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => toggleHomeworkDetail(item.id)}
-                          className="mt-2 inline-flex items-center gap-2 rounded-md border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100"
-                        >
-                          {expandedDetailByHomework[item.id] ? 'Thu gọn' : 'Xem chi tiết'}
-                          <span
-                            aria-hidden="true"
-                            className={`transition-transform duration-200 ${expandedDetailByHomework[item.id] ? 'rotate-180' : ''}`}
-                          >
-                            v
-                          </span>
-                        </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-amber-200 bg-white px-4 py-3">
                             <p className="text-sm text-slate-700 leading-relaxed">
                               <LinkifiedText text={item.description} />
                             </p>
+                            <button
+                              type="button"
+                              onClick={() => toggleHomeworkDetail(item.id)}
+                              className="mt-2 text-xs font-semibold text-amber-800 underline decoration-amber-500 underline-offset-2 hover:text-amber-900"
+                            >
+                              See less
+                            </button>
                           </div>
                         )}
                       </div>
@@ -286,26 +288,28 @@ export default function MyHomeworkPage() {
                         {!expandedDetailByHomework[item.id] && (
                           <p className="rounded-lg border border-emerald-200 bg-white px-3 py-2 text-sm text-slate-700">
                             <span>{getDescriptionPreview(item.description)}</span>
+                            {' '}
+                            <button
+                              type="button"
+                              onClick={() => toggleHomeworkDetail(item.id)}
+                              className="font-semibold text-emerald-800 underline decoration-emerald-500 underline-offset-2 hover:text-emerald-900"
+                            >
+                              See more
+                            </button>
                           </p>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => toggleHomeworkDetail(item.id)}
-                          className="mt-2 inline-flex items-center gap-2 rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-sm font-semibold text-emerald-800 hover:bg-emerald-100"
-                        >
-                          {expandedDetailByHomework[item.id] ? 'Thu gọn' : 'Xem chi tiết'}
-                          <span
-                            aria-hidden="true"
-                            className={`transition-transform duration-200 ${expandedDetailByHomework[item.id] ? 'rotate-180' : ''}`}
-                          >
-                            v
-                          </span>
-                        </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-emerald-200 bg-white px-4 py-3">
                             <p className="text-sm text-slate-700 leading-relaxed">
                               <LinkifiedText text={item.description} />
                             </p>
+                            <button
+                              type="button"
+                              onClick={() => toggleHomeworkDetail(item.id)}
+                              className="mt-2 text-xs font-semibold text-emerald-800 underline decoration-emerald-500 underline-offset-2 hover:text-emerald-900"
+                            >
+                              See less
+                            </button>
                           </div>
                         )}
                       </div>
