@@ -20,6 +20,8 @@ interface ExerciseItem {
   order: number
   title: string | null
   description: string | null
+  exerciseType: string
+  audioFileUrl: string | null
   isLocked?: boolean
   submission: {
     id: string
@@ -40,6 +42,7 @@ interface ExerciseItem {
     optionA: string
     optionB: string
     optionC: string
+    optionD: string | null
   }>
 }
 
@@ -53,6 +56,15 @@ const formatDuration = (totalSeconds: number) => {
 const getExerciseTitle = (exercise: Pick<ExerciseItem, 'title' | 'order'>) => {
   const trimmed = String(exercise.title || '').trim()
   return trimmed || `Exercise ${exercise.order}`
+}
+
+const getExerciseQuestionOptions = (question: ExerciseItem['questions'][number]) => {
+  return [
+    { key: 'A', text: question.optionA },
+    { key: 'B', text: question.optionB },
+    { key: 'C', text: question.optionC },
+    ...(question.optionD ? [{ key: 'D', text: question.optionD }] : [])
+  ]
 }
 
 export default function Dashboard() {
@@ -392,7 +404,11 @@ export default function Dashboard() {
 
                       {!startedExerciseAt[exercise.id] ? (
                         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-                        <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs sm:text-sm text-blue-800">Press the button below to begin the exercise and start the timer.</p>
+                        <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs sm:text-sm text-blue-800">
+                          {exercise.exerciseType === 'listening_audio'
+                            ? 'Nhấn bắt đầu để mở bài nghe, phát audio và làm bài với bộ đếm thời gian.'
+                            : 'Press the button below to begin the exercise and start the timer.'}
+                        </p>
                           <button
                             type="button"
                             onClick={() => startExercise(exercise.id)}
@@ -403,15 +419,20 @@ export default function Dashboard() {
                         </div>
                       ) : (
                         <div className="space-y-4">
+                          {exercise.exerciseType === 'listening_audio' && exercise.audioFileUrl && (
+                            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                              <p className="mb-3 text-sm font-medium text-emerald-900">Nghe file audio rồi chọn đáp án đúng cho từng câu.</p>
+                              <audio controls preload="metadata" className="w-full">
+                                <source src={exercise.audioFileUrl} />
+                              </audio>
+                            </div>
+                          )}
+
                           {exercise.questions.map((question) => (
                             <div key={question.id} className="rounded-lg bg-gray-50 p-4 border border-gray-100">
                               <p className="font-semibold text-gray-900">{question.order}. {question.question}</p>
-                              <div className="mt-2 sm:mt-3 grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                                {[
-                                  { key: 'A', text: question.optionA },
-                                  { key: 'B', text: question.optionB },
-                                  { key: 'C', text: question.optionC }
-                                ].map((option) => {
+                              <div className="mt-2 sm:mt-3 grid gap-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+                                {getExerciseQuestionOptions(question).map((option) => {
                                   const selectedOption = exerciseAnswers[exercise.id]?.[question.id]
                                   const isSelected = selectedOption === option.key
 

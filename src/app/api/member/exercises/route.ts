@@ -77,6 +77,8 @@ export async function GET() {
       order: true,
       title: true,
       description: true,
+      exerciseType: true,
+      audioFileUrl: true,
       questions: {
         select: {
           id: true,
@@ -84,7 +86,8 @@ export async function GET() {
           question: true,
           optionA: true,
           optionB: true,
-          optionC: true
+          optionC: true,
+          optionD: true
         },
         orderBy: { order: 'asc' }
       },
@@ -118,6 +121,8 @@ export async function GET() {
       order: exercise.order,
       title: exercise.title,
       description: exercise.description,
+      exerciseType: exercise.exerciseType,
+      audioFileUrl: exercise.audioFileUrl,
       questions: exercise.questions,
       submission: exercise.submissions[0] || null,
       isLocked: false

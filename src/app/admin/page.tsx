@@ -122,6 +122,7 @@ interface ExerciseQuestionItem {
   optionA: string
   optionB: string
   optionC: string
+  optionD: string | null
   correctOption: string
 }
 
@@ -175,6 +176,8 @@ interface ExerciseItem {
   order: number
   title: string | null
   description: string | null
+  exerciseType: string
+  audioFileUrl: string | null
   isDraft: boolean
   sourceFormUrl: string | null
   course: { title: string }
@@ -187,6 +190,7 @@ interface ExerciseQuestionForm {
   optionA: string
   optionB: string
   optionC: string
+  optionD: string
   correctOption: string
 }
 
@@ -255,6 +259,7 @@ const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
     optionA: '',
     optionB: '',
     optionC: '',
+    optionD: '',
     correctOption: 'A'
   }))
 
@@ -300,6 +305,10 @@ const HOMEWORK_SUBMISSION_GROUP_STYLES = [
 const getExerciseTitle = (exercise: Pick<ExerciseItem, 'title' | 'order'>) => {
   const trimmed = String(exercise.title || '').trim()
   return trimmed || `Exercise ${exercise.order}`
+}
+
+const getExerciseTypeLabel = (exerciseType: string) => {
+  return exerciseType === 'listening_audio' ? 'Listening audio' : 'Multiple choice'
 }
 
 const formatDuration = (totalSeconds: number | null) => {
@@ -524,11 +533,19 @@ export default function AdminDashboard() {
   const [exercises, setExercises] = useState<ExerciseItem[]>([])
   const [newExerciseCourseId, setNewExerciseCourseId] = useState('')
   const [newExerciseTitle, setNewExerciseTitle] = useState('')
+  const [newExerciseType, setNewExerciseType] = useState('multiple_choice')
   const [newExerciseQuestions, setNewExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
+  const [newExerciseAudioFileUrl, setNewExerciseAudioFileUrl] = useState<string | null>(null)
+  const [newExerciseAudioFileName, setNewExerciseAudioFileName] = useState('')
+  const [newExerciseAudioUploading, setNewExerciseAudioUploading] = useState(false)
   const [exerciseError, setExerciseError] = useState('')
   const [exerciseSuccess, setExerciseSuccess] = useState('')
   const [editingExercise, setEditingExercise] = useState<ExerciseItem | null>(null)
+  const [editExerciseType, setEditExerciseType] = useState('multiple_choice')
   const [editExerciseQuestions, setEditExerciseQuestions] = useState<ExerciseQuestionForm[]>(buildEmptyExerciseQuestions())
+  const [editExerciseAudioFileUrl, setEditExerciseAudioFileUrl] = useState<string | null>(null)
+  const [editExerciseAudioFileName, setEditExerciseAudioFileName] = useState('')
+  const [editExerciseAudioUploading, setEditExerciseAudioUploading] = useState(false)
   const [savingExerciseId, setSavingExerciseId] = useState<string | null>(null)
   const [selectedExerciseResult, setSelectedExerciseResult] = useState<(ExerciseSubmissionItem & { exerciseTitle: string; courseTitle: string }) | null>(null)
   const [showExerciseBuilder, setShowExerciseBuilder] = useState(false)
@@ -1414,6 +1431,72 @@ export default function AdminDashboard() {
     setEditExerciseQuestions((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item))
   }
 
+  const resetNewExerciseForm = () => {
+    setNewExerciseTitle('')
+    setNewExerciseType('multiple_choice')
+    setNewExerciseQuestions(buildEmptyExerciseQuestions())
+    setNewExerciseDescription('')
+    setNewExerciseSourceFormUrl('')
+    setNewExerciseAudioFileUrl(null)
+    setNewExerciseAudioFileName('')
+  }
+
+  const uploadExerciseAudio = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch('/api/admin/exercises/upload-audio', {
+      method: 'POST',
+      body: formData
+    })
+
+    const data = await parseApiResponse(response)
+    if (!response.ok) {
+      throw new Error(data?.error || 'Could not upload the audio file.')
+    }
+
+    return {
+      url: String(data?.url || '').trim(),
+      fileName: String(data?.fileName || file.name || '').trim()
+    }
+  }
+
+  const handleNewExerciseAudioSelected = async (file: File) => {
+    try {
+      setNewExerciseAudioUploading(true)
+      setExerciseError('')
+      setExerciseSuccess('')
+
+      const uploaded = await uploadExerciseAudio(file)
+      setNewExerciseAudioFileUrl(uploaded.url)
+      setNewExerciseAudioFileName(uploaded.fileName)
+      setExerciseSuccess('Audio file uploaded successfully.')
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Could not upload the audio file.')
+      setExerciseSuccess('')
+    } finally {
+      setNewExerciseAudioUploading(false)
+    }
+  }
+
+  const handleEditExerciseAudioSelected = async (file: File) => {
+    try {
+      setEditExerciseAudioUploading(true)
+      setExerciseError('')
+      setExerciseSuccess('')
+
+      const uploaded = await uploadExerciseAudio(file)
+      setEditExerciseAudioFileUrl(uploaded.url)
+      setEditExerciseAudioFileName(uploaded.fileName)
+      setExerciseSuccess('Audio file uploaded successfully.')
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Could not upload the audio file.')
+      setExerciseSuccess('')
+    } finally {
+      setEditExerciseAudioUploading(false)
+    }
+  }
+
   const createExercise = async (saveAsDraft: boolean) => {
     if (!newExerciseCourseId) {
       setExerciseError('Please choose a course for the exercise.')
@@ -1439,6 +1522,8 @@ export default function AdminDashboard() {
           courseId: newExerciseCourseId,
           title: newExerciseTitle,
           description: newExerciseDescription,
+          exerciseType: newExerciseType,
+          audioFileUrl: newExerciseAudioFileUrl,
           sourceFormUrl: newExerciseSourceFormUrl,
           isDraft: saveAsDraft,
           questions: newExerciseQuestions
@@ -1452,10 +1537,7 @@ export default function AdminDashboard() {
       if (saveAsDraft) {
         setShowExerciseBuilder(true)
       } else {
-        setNewExerciseTitle('')
-        setNewExerciseQuestions(buildEmptyExerciseQuestions())
-        setNewExerciseDescription('')
-        setNewExerciseSourceFormUrl('')
+        resetNewExerciseForm()
         setShowExerciseBuilder(false)
       }
       fetchExerciseData()
@@ -1487,6 +1569,9 @@ export default function AdminDashboard() {
       setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
       setNewExerciseTitle(String(data.title || '').trim())
       setNewExerciseDescription(String(data.description || '').trim())
+      setNewExerciseType('multiple_choice')
+      setNewExerciseAudioFileUrl(null)
+      setNewExerciseAudioFileName('')
       setNewExerciseSourceFormUrl(String(data.sourceFormUrl || newExerciseSourceFormUrl).trim())
       setExerciseError('')
       setExerciseSuccess('Data imported from Google Docs. You can edit it before saving.')
@@ -1524,6 +1609,9 @@ export default function AdminDashboard() {
       setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
       setNewExerciseTitle(String(data.title || '').trim())
       setNewExerciseDescription(String(data.description || '').trim())
+      setNewExerciseType('multiple_choice')
+      setNewExerciseAudioFileUrl(null)
+      setNewExerciseAudioFileName('')
       setExerciseSuccess('Data imported from DOCX. You can edit it before saving.')
       setShowExerciseBuilder(true)
     } catch (err) {
@@ -1538,11 +1626,15 @@ export default function AdminDashboard() {
     setEditingExercise(exercise)
     setEditExerciseTitle(getExerciseTitle(exercise))
     setEditExerciseDescription(exercise.description || '')
+    setEditExerciseType(exercise.exerciseType || 'multiple_choice')
+    setEditExerciseAudioFileUrl(exercise.audioFileUrl)
+    setEditExerciseAudioFileName(exercise.audioFileUrl ? 'Current audio file' : '')
     setEditExerciseQuestions(exercise.questions.map((question) => ({
       question: question.question,
       optionA: question.optionA,
       optionB: question.optionB,
       optionC: question.optionC,
+      optionD: question.optionD || '',
       correctOption: question.correctOption
     })))
     setExerciseError('')
@@ -1561,7 +1653,13 @@ export default function AdminDashboard() {
       const res = await fetch(`/api/admin/exercises/${editingExercise.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: editExerciseTitle, description: editExerciseDescription, questions: editExerciseQuestions })
+        body: JSON.stringify({
+          title: editExerciseTitle,
+          description: editExerciseDescription,
+          exerciseType: editExerciseType,
+          audioFileUrl: editExerciseAudioFileUrl,
+          questions: editExerciseQuestions
+        })
       })
       const data = await parseApiResponse(res)
       if (!res.ok) throw new Error(data?.error || 'Unable to update exercise')
@@ -3271,6 +3369,7 @@ export default function AdminDashboard() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exercise</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Questions</th>
@@ -3282,6 +3381,12 @@ export default function AdminDashboard() {
                   <tr key={exercise.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{getExerciseTitle(exercise)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      <div className="flex flex-col gap-1">
+                        <span>{getExerciseTypeLabel(exercise.exerciseType)}</span>
+                        {exercise.audioFileUrl && <span className="text-xs text-[#14532d]">Audio attached</span>}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`rounded px-2 py-1 text-xs font-semibold ${exercise.isDraft ? 'bg-amber-100 text-amber-800' : 'bg-[#14532d]/10 text-[#14532d]'}`}>
                         {exercise.isDraft ? 'Draft' : 'Published'}
@@ -3307,7 +3412,7 @@ export default function AdminDashboard() {
                 ))}
                 {exercises.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No exercises yet</td>
+                    <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No exercises yet</td>
                   </tr>
                 )}
               </tbody>
@@ -3365,8 +3470,7 @@ export default function AdminDashboard() {
               <button
                 type="button"
                 onClick={() => {
-                  setNewExerciseTitle('')
-                  setNewExerciseQuestions(buildEmptyExerciseQuestions())
+                  resetNewExerciseForm()
                   setExerciseError('')
                 }}
                 className="px-6 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 font-medium"
@@ -3403,6 +3507,64 @@ export default function AdminDashboard() {
                 />
               </div>
 
+              <div className="mb-6 grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Exercise type</label>
+                  <select
+                    value={newExerciseType}
+                    onChange={(e) => setNewExerciseType(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  >
+                    <option value="multiple_choice">Multiple choice thường</option>
+                    <option value="listening_audio">Listening test với audio</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Audio file</label>
+                  <div className="rounded-xl border border-dashed border-gray-300 p-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className="inline-flex cursor-pointer items-center rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]">
+                        {newExerciseAudioUploading ? 'Uploading audio...' : 'Upload audio'}
+                        <input
+                          type="file"
+                          accept="audio/*,.mp3,.m4a,.wav,.ogg,.webm"
+                          className="hidden"
+                          disabled={newExerciseAudioUploading}
+                          onChange={(event) => {
+                            const file = event.target.files?.[0]
+                            if (file) {
+                              void handleNewExerciseAudioSelected(file)
+                            }
+                            event.currentTarget.value = ''
+                          }}
+                        />
+                      </label>
+                      {newExerciseAudioFileUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewExerciseAudioFileUrl(null)
+                            setNewExerciseAudioFileName('')
+                          }}
+                          className="text-sm text-red-600 hover:underline"
+                        >
+                          Remove audio
+                        </button>
+                      )}
+                    </div>
+                    <p className="mt-3 text-sm text-gray-600">
+                      {newExerciseAudioFileUrl ? newExerciseAudioFileName || 'Audio uploaded' : 'Chỉ bắt buộc khi chọn loại listening test.'}
+                    </p>
+                    {newExerciseAudioFileUrl && (
+                      <audio controls preload="metadata" className="mt-3 w-full">
+                        <source src={newExerciseAudioFileUrl} />
+                      </audio>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
                 <textarea
@@ -3413,6 +3575,8 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
               </div>
+
+              <p className="mb-4 text-sm text-gray-500">Để trống đáp án D nếu mỗi câu chỉ có 3 lựa chọn.</p>
 
               <div className="space-y-4">
                 {newExerciseQuestions.map((question, index) => (
@@ -3447,6 +3611,13 @@ export default function AdminDashboard() {
                         placeholder="Answer C"
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
+                      <input
+                        type="text"
+                        value={question.optionD}
+                        onChange={(e) => updateNewExerciseQuestion(index, 'optionD', e.target.value)}
+                        placeholder="Answer D (optional)"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
                       <select
                         value={question.correctOption}
                         onChange={(e) => updateNewExerciseQuestion(index, 'correctOption', e.target.value)}
@@ -3455,6 +3626,7 @@ export default function AdminDashboard() {
                         <option value="A">Correct answer: A</option>
                         <option value="B">Correct answer: B</option>
                         <option value="C">Correct answer: C</option>
+                        <option value="D">Correct answer: D</option>
                       </select>
                     </div>
                   </div>
@@ -4182,6 +4354,64 @@ export default function AdminDashboard() {
                 />
               </div>
 
+              <div className="mb-6 grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Exercise type</label>
+                  <select
+                    value={editExerciseType}
+                    onChange={(e) => setEditExerciseType(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  >
+                    <option value="multiple_choice">Multiple choice thường</option>
+                    <option value="listening_audio">Listening test với audio</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Audio file</label>
+                  <div className="rounded-xl border border-dashed border-gray-300 p-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className="inline-flex cursor-pointer items-center rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]">
+                        {editExerciseAudioUploading ? 'Uploading audio...' : 'Replace audio'}
+                        <input
+                          type="file"
+                          accept="audio/*,.mp3,.m4a,.wav,.ogg,.webm"
+                          className="hidden"
+                          disabled={editExerciseAudioUploading}
+                          onChange={(event) => {
+                            const file = event.target.files?.[0]
+                            if (file) {
+                              void handleEditExerciseAudioSelected(file)
+                            }
+                            event.currentTarget.value = ''
+                          }}
+                        />
+                      </label>
+                      {editExerciseAudioFileUrl && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditExerciseAudioFileUrl(null)
+                            setEditExerciseAudioFileName('')
+                          }}
+                          className="text-sm text-red-600 hover:underline"
+                        >
+                          Remove audio
+                        </button>
+                      )}
+                    </div>
+                    <p className="mt-3 text-sm text-gray-600">
+                      {editExerciseAudioFileUrl ? editExerciseAudioFileName || 'Audio uploaded' : 'Không có audio được gắn cho exercise này.'}
+                    </p>
+                    {editExerciseAudioFileUrl && (
+                      <audio controls preload="metadata" className="mt-3 w-full">
+                        <source src={editExerciseAudioFileUrl} />
+                      </audio>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
                 <textarea
@@ -4191,6 +4421,8 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
               </div>
+
+              <p className="mb-4 text-sm text-gray-500">Để trống đáp án D nếu câu hỏi chỉ có 3 lựa chọn.</p>
 
               <div className="space-y-4">
                 {editExerciseQuestions.map((question, index) => (
@@ -4221,6 +4453,12 @@ export default function AdminDashboard() {
                         onChange={(e) => updateEditExerciseQuestion(index, 'optionC', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
+                      <input
+                        type="text"
+                        value={question.optionD}
+                        onChange={(e) => updateEditExerciseQuestion(index, 'optionD', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
                       <select
                         value={question.correctOption}
                         onChange={(e) => updateEditExerciseQuestion(index, 'correctOption', e.target.value)}
@@ -4229,6 +4467,7 @@ export default function AdminDashboard() {
                         <option value="A">Correct answer: A</option>
                         <option value="B">Correct answer: B</option>
                         <option value="C">Correct answer: C</option>
+                        <option value="D">Correct answer: D</option>
                       </select>
                     </div>
                   </div>

@@ -168,6 +168,8 @@ model CourseExercise {
   order       Int
   title       String
   description String?
+  exerciseType String            @default("multiple_choice")
+  audioFileUrl String?
   isDraft     Boolean            @default(false)
   sourceFormUrl String?
   createdAt   DateTime           @default(now())
@@ -189,6 +191,7 @@ model ExerciseQuestion {
   optionA       String
   optionB       String
   optionC       String
+  optionD       String?
   correctOption String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -218,6 +221,15 @@ model ExerciseSubmission {
   @@unique([exerciseId, userId])
   @@index([exerciseId])
   @@index([userId])
+}
+
+model ExerciseAudioFile {
+  id           String   @id @default(cuid())
+  originalName String
+  mimeType     String
+  data         Bytes
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model ExerciseSubmissionAnswer {

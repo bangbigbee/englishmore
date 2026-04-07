@@ -9,18 +9,33 @@ type ExerciseQuestionInput = {
   optionA: string
   optionB: string
   optionC: string
+  optionD?: string
   correctOption: string
+}
+
+const VALID_EXERCISE_TYPES = ['multiple_choice', 'listening_audio'] as const
+
+function normalizeExerciseType(value: unknown) {
+  const normalized = String(value || '').trim().toLowerCase()
+  return VALID_EXERCISE_TYPES.includes(normalized as (typeof VALID_EXERCISE_TYPES)[number])
+    ? normalized
+    : 'multiple_choice'
 }
 
 const normalizeDraftQuestions = (questions: ExerciseQuestionInput[]) => {
   const rows = Array.from({ length: 10 }, (_, index) => {
     const item = questions[index]
+    const optionD = String(item?.optionD || '').trim()
+    const normalizedCorrectOption = String(item?.correctOption || '').toUpperCase()
+    const availableCorrectOptions = optionD ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']
+
     return {
       question: String(item?.question || '').trim(),
       optionA: String(item?.optionA || '').trim(),
       optionB: String(item?.optionB || '').trim(),
       optionC: String(item?.optionC || '').trim(),
-      correctOption: ['A', 'B', 'C'].includes(String(item?.correctOption || '').toUpperCase()) ? String(item.correctOption).toUpperCase() : 'A'
+      optionD,
+      correctOption: availableCorrectOptions.includes(normalizedCorrectOption) ? normalizedCorrectOption : 'A'
     }
   })
 
@@ -43,11 +58,15 @@ function validateQuestions(questions: ExerciseQuestionInput[]) {
   }
 
   const invalid = questions.find((item) => {
-    return !item.question?.trim() || !item.optionA?.trim() || !item.optionB?.trim() || !item.optionC?.trim() || !['A', 'B', 'C'].includes(item.correctOption)
+    const optionD = String(item.optionD || '').trim()
+    const correctOption = String(item.correctOption || '').trim().toUpperCase()
+    const validCorrectOptions = optionD ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']
+
+    return !item.question?.trim() || !item.optionA?.trim() || !item.optionB?.trim() || !item.optionC?.trim() || !validCorrectOptions.includes(correctOption)
   })
 
   if (invalid) {
-    return 'Vui lòng nhập đầy đủ nội dung cho cả 10 câu hỏi và chọn đáp án đúng'
+    return 'Vui lòng nhập đầy đủ nội dung cho cả 10 câu hỏi và chọn đáp án đúng hợp lệ'
   }
 
   return null
@@ -77,6 +96,8 @@ export async function GET() {
           order: true,
           title: true,
           description: true,
+          exerciseType: true,
+          audioFileUrl: true,
           isDraft: true,
           sourceFormUrl: true,
           course: { select: { title: true } },
@@ -88,6 +109,7 @@ export async function GET() {
               optionA: true,
               optionB: true,
               optionC: true,
+              optionD: true,
               correctOption: true
             },
             orderBy: { order: 'asc' }
@@ -192,13 +214,15 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { courseId, title, description, questions, isDraft, sourceFormUrl } = body as {
+  const { courseId, title, description, questions, isDraft, sourceFormUrl, exerciseType, audioFileUrl } = body as {
     courseId?: string
     title?: string
     description?: string
     questions?: ExerciseQuestionInput[]
     isDraft?: boolean
     sourceFormUrl?: string
+    exerciseType?: string
+    audioFileUrl?: string
   }
 
   if (!courseId) {
@@ -212,11 +236,17 @@ export async function POST(request: NextRequest) {
 
   const creatingDraft = Boolean(isDraft)
   const normalizedQuestions = normalizeDraftQuestions(questions || [])
+  const normalizedExerciseType = normalizeExerciseType(exerciseType)
+  const normalizedAudioFileUrl = String(audioFileUrl || '').trim() || null
 
   if (!creatingDraft) {
     const questionError = validateQuestions(normalizedQuestions)
     if (questionError) {
       return NextResponse.json({ error: questionError }, { status: 400 })
+    }
+
+    if (normalizedExerciseType === 'listening_audio' && !normalizedAudioFileUrl) {
+      return NextResponse.json({ error: 'Vui lòng tải lên file audio cho bài listening.' }, { status: 400 })
     }
   }
 
@@ -233,6 +263,8 @@ export async function POST(request: NextRequest) {
         order: (latestExercise?.order || 0) + 1,
         title: normalizedTitle,
         description: String(description || '').trim() || null,
+        exerciseType: normalizedExerciseType,
+        audioFileUrl: normalizedAudioFileUrl,
         isDraft: creatingDraft,
         sourceFormUrl: String(sourceFormUrl || '').trim() || null,
         questions: {
@@ -242,6 +274,7 @@ export async function POST(request: NextRequest) {
             optionA: item.optionA,
             optionB: item.optionB,
             optionC: item.optionC,
+            optionD: item.optionD || null,
             correctOption: item.correctOption
           }))
         }

@@ -18,7 +18,7 @@ function normalizeAnswers(input: SubmittedAnswer[]) {
     selectedOption: String(item.selectedOption || '').trim().toUpperCase()
   }))
 
-  const invalid = normalized.find((item) => !item.questionId || !['A', 'B', 'C'].includes(item.selectedOption))
+  const invalid = normalized.find((item) => !item.questionId || !['A', 'B', 'C', 'D'].includes(item.selectedOption))
   return invalid ? null : normalized
 }
 
@@ -57,7 +57,8 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   const exercise = await prisma.courseExercise.findFirst({
     where: {
       id,
-      courseId: activeEnrollment.courseId
+      courseId: activeEnrollment.courseId,
+      isDraft: false
     },
     select: {
       id: true,
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         select: {
           id: true,
           order: true,
+          optionD: true,
           correctOption: true
         },
         orderBy: { order: 'asc' }
@@ -91,6 +93,16 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   const invalidAnswer = answers.find((item) => !questionIds.has(item.questionId))
   if (invalidAnswer) {
     return NextResponse.json({ error: 'One or more answers do not belong to this exercise' }, { status: 400 })
+  }
+
+  const answerOutsideAllowedOptions = exercise.questions.find((question) => {
+    const selectedOption = answerMap.get(question.id) || ''
+    const allowedOptions = question.optionD ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']
+    return !allowedOptions.includes(selectedOption)
+  })
+
+  if (answerOutsideAllowedOptions) {
+    return NextResponse.json({ error: `Question ${answerOutsideAllowedOptions.order} has an invalid answer choice` }, { status: 400 })
   }
 
   const evaluatedAnswers = exercise.questions.map((question) => {
