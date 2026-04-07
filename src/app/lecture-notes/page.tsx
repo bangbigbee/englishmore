@@ -127,11 +127,6 @@ export default function LectureNotesPage() {
           <>
             {selectedCourse && (
               <section className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-lg">
-                <div className="mb-5 rounded-2xl bg-linear-to-r from-amber-500 via-amber-500 to-orange-500 px-4 py-4 text-white shadow-[0_10px_24px_rgba(245,158,11,0.28)]">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[#14532d]">Current Course</p>
-                  <h2 className="mt-1 text-xl sm:text-2xl font-extrabold">{selectedCourse.courseTitle}</h2>
-                </div>
-
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   {Array.from({ length: 30 }, (_, index) => index + 1).map((sessionNumber) => {
                     const note = notesMap.get(sessionNumber)
