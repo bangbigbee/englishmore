@@ -565,6 +565,7 @@ export default function AdminDashboard() {
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
   const [importingDocx, setImportingDocx] = useState(false)
+  const [importingPptx, setImportingPptx] = useState(false)
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
   const [publishingExercise, setPublishingExercise] = useState(false)
   const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
@@ -1687,6 +1688,46 @@ export default function AdminDashboard() {
       setExerciseSuccess('')
     } finally {
       setImportingDocx(false)
+    }
+  }
+
+  const importFromPptxFile = async (file: File) => {
+    const normalizedName = String(file?.name || '').toLowerCase()
+    if (!normalizedName.endsWith('.pptx')) {
+      setExerciseError('Please choose a .pptx file.')
+      return
+    }
+
+    try {
+      setImportingPptx(true)
+      setExerciseError('')
+      setExerciseSuccess('')
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await fetch('/api/admin/exercises/import-pptx', {
+        method: 'POST',
+        body: formData
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Unable to import from PPTX')
+
+      setNewExerciseQuestions(data.questions || buildEmptyExerciseQuestions())
+      setNewExerciseTitle(String(data.title || '').trim())
+      setNewExerciseDescription(String(data.description || '').trim())
+      setNewExerciseType('conversation')
+      setNewExerciseAudioFileUrl(null)
+      setNewExerciseAudioFileName('')
+      setNewExerciseAttachFileUrl(null)
+      setNewExerciseAttachFileName('')
+      setExerciseSuccess('Data imported from PPTX. You can edit it before saving.')
+      setShowExerciseBuilder(true)
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Unable to import from PPTX')
+      setExerciseSuccess('')
+    } finally {
+      setImportingPptx(false)
     }
   }
 
@@ -3577,6 +3618,22 @@ export default function AdminDashboard() {
                       const file = event.target.files?.[0]
                       if (file) {
                         void importFromDocxFile(file)
+                      }
+                      event.currentTarget.value = ''
+                    }}
+                  />
+                </label>
+                <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-emerald-700 text-white rounded hover:bg-emerald-800 disabled:opacity-50">
+                  {importingPptx ? 'Importing PPTX...' : 'Import Slide (PPTX)'}
+                  <input
+                    type="file"
+                    accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                    className="hidden"
+                    disabled={importingPptx}
+                    onChange={(event) => {
+                      const file = event.target.files?.[0]
+                      if (file) {
+                        void importFromPptxFile(file)
                       }
                       event.currentTarget.value = ''
                     }}
