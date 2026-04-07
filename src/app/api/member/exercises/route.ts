@@ -4,6 +4,10 @@ import { Prisma } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+function normalizeExerciseType(type: string) {
+  return type === 'listening_audio' ? 'question_response' : type
+}
+
 const isMissingSpeakYourselfTable = (error: unknown) =>
   error instanceof Prisma.PrismaClientKnownRequestError &&
   error.code === 'P2021' &&
@@ -122,7 +126,7 @@ export async function GET() {
       order: exercise.order,
       title: exercise.title,
       description: exercise.description,
-      exerciseType: exercise.exerciseType,
+      exerciseType: normalizeExerciseType(exercise.exerciseType),
       audioFileUrl: exercise.audioFileUrl,
       attachmentFileUrl: exercise.attachmentFileUrl,
       questions: exercise.questions,

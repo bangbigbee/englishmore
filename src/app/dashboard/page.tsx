@@ -71,10 +71,15 @@ const getExerciseQuestionOptions = (question: ExerciseItem['questions'][number])
 }
 
 const getExerciseTypeHeading = (exerciseType: string) => {
+  if (exerciseType === 'listening_audio') return 'Question-Response'
   if (exerciseType === 'question_response') return 'Question-Response'
   if (exerciseType === 'conversation') return 'Conversation'
   if (exerciseType === 'multiple_choice') return 'Multiple-choice'
   return 'Other exercises'
+}
+
+const normalizeExerciseType = (exerciseType: string) => {
+  return exerciseType === 'listening_audio' ? 'question_response' : exerciseType
 }
 
 export default function Dashboard() {
@@ -336,10 +341,10 @@ export default function Dashboard() {
     .map((type) => ({
       key: type,
       title: getExerciseTypeHeading(type),
-      items: exercises.filter((exercise) => exercise.exerciseType === type)
+      items: exercises.filter((exercise) => normalizeExerciseType(exercise.exerciseType) === type)
     }))
 
-  const unknownTypeExercises = exercises.filter((exercise) => !primaryExerciseTypes.includes(exercise.exerciseType as (typeof primaryExerciseTypes)[number]))
+  const unknownTypeExercises = exercises.filter((exercise) => !primaryExerciseTypes.includes(normalizeExerciseType(exercise.exerciseType) as (typeof primaryExerciseTypes)[number]))
   if (unknownTypeExercises.length > 0) {
     exerciseSections.push({
       key: 'other',
@@ -474,14 +479,14 @@ export default function Dashboard() {
                       {!revealedExercises[exercise.id] ? (
                         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                           <p className="p-3 sm:p-4 text-xs sm:text-sm text-blue-800">
-                            {exercise.exerciseType === 'multiple_choice'
+                            {normalizeExerciseType(exercise.exerciseType) === 'multiple_choice'
                               ? 'Nhấn bắt đầu để mở bài tập và bắt đầu tính giờ.'
                               : 'Nhấn bắt đầu để mở bài nghe. Bộ đếm thời gian sẽ bắt đầu khi bạn nhấn ▶ phát audio.'}
                           </p>
                           <button
                             type="button"
                             onClick={() => {
-                              if (exercise.exerciseType === 'multiple_choice') {
+                              if (normalizeExerciseType(exercise.exerciseType) === 'multiple_choice') {
                                 startExercise(exercise.id)
                               } else {
                                 revealExercise(exercise.id)
@@ -494,7 +499,7 @@ export default function Dashboard() {
                         </div>
                       ) : (
                         <div className="space-y-4">
-                          {(exercise.exerciseType === 'question_response' || exercise.exerciseType === 'conversation') && exercise.audioFileUrl && (
+                          {(normalizeExerciseType(exercise.exerciseType) === 'question_response' || normalizeExerciseType(exercise.exerciseType) === 'conversation') && exercise.audioFileUrl && (
                             <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
                               <p className="mb-3 text-sm font-medium text-emerald-900">
                                 {startedExerciseAt[exercise.id]
@@ -502,6 +507,7 @@ export default function Dashboard() {
                                   : 'Nhấn ▶ để nghe và bắt đầu tính giờ. Sau khi phát, không thể dừng hoặc tua lại.'}
                               </p>
                               <audio
+                                controls
                                 preload="metadata"
                                 className="w-full"
                                 onPlay={() => {
@@ -550,7 +556,7 @@ export default function Dashboard() {
                           )}
 
                           {exercise.questions.map((question) => {
-                            const isQuestionResponse = exercise.exerciseType === 'question_response'
+                            const isQuestionResponse = normalizeExerciseType(exercise.exerciseType) === 'question_response'
                             const options = isQuestionResponse
                               ? [{ key: 'A', text: question.optionA }, { key: 'B', text: question.optionB }, { key: 'C', text: question.optionC }]
                               : getExerciseQuestionOptions(question)
