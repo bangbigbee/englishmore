@@ -1710,7 +1710,7 @@ export default function AdminDashboard() {
     setExerciseError('')
   }
 
-  const saveEditedExercise = async () => {
+  const saveEditedExercise = async (publishNow = false) => {
     if (!editingExercise) return
 
     if (!editExerciseTitle.trim()) {
@@ -1729,18 +1729,56 @@ export default function AdminDashboard() {
           exerciseType: editExerciseType,
           audioFileUrl: editExerciseAudioFileUrl,
           attachmentFileUrl: editExerciseAttachFileUrl,
+          isDraft: publishNow ? false : editingExercise.isDraft,
           questions: editExerciseQuestions
         })
       })
       const data = await parseApiResponse(res)
       if (!res.ok) throw new Error(data?.error || 'Unable to update exercise')
 
-      setExerciseSuccess('Exercise updated.')
+      setExerciseSuccess(publishNow ? 'Exercise published.' : 'Exercise updated.')
       setExerciseError('')
       setEditingExercise(null)
       fetchExerciseData()
     } catch (err) {
       setExerciseError(err instanceof Error ? err.message : 'Unable to update exercise')
+      setExerciseSuccess('')
+    } finally {
+      setSavingExerciseId(null)
+    }
+  }
+
+  const publishDraftExercise = async (exercise: ExerciseItem) => {
+    try {
+      setSavingExerciseId(exercise.id)
+      const res = await fetch(`/api/admin/exercises/${exercise.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: getExerciseTitle(exercise),
+          description: exercise.description || '',
+          exerciseType: exercise.exerciseType,
+          audioFileUrl: exercise.audioFileUrl,
+          attachmentFileUrl: exercise.attachmentFileUrl,
+          isDraft: false,
+          questions: exercise.questions.map((question) => ({
+            question: question.question,
+            optionA: question.optionA,
+            optionB: question.optionB,
+            optionC: question.optionC,
+            optionD: question.optionD || '',
+            correctOption: question.correctOption
+          }))
+        })
+      })
+      const data = await parseApiResponse(res)
+      if (!res.ok) throw new Error(data?.error || 'Unable to publish draft')
+
+      setExerciseSuccess('Exercise published.')
+      setExerciseError('')
+      fetchExerciseData()
+    } catch (err) {
+      setExerciseError(err instanceof Error ? err.message : 'Unable to publish draft')
       setExerciseSuccess('')
     } finally {
       setSavingExerciseId(null)
@@ -3469,6 +3507,15 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-900">{exercise.questions.length}</td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex items-center gap-3">
+                        {exercise.isDraft && (
+                          <button
+                            onClick={() => publishDraftExercise(exercise)}
+                            disabled={savingExerciseId === exercise.id}
+                            className="text-blue-700 hover:underline disabled:opacity-50"
+                          >
+                            {savingExerciseId === exercise.id ? 'Publishing...' : 'Publish'}
+                          </button>
+                        )}
                         <button onClick={() => openEditExercise(exercise)} className="text-[#14532d] hover:underline">Edit</button>
                         <button
                           onClick={() => deleteExercise(exercise)}
@@ -4664,8 +4711,17 @@ export default function AdminDashboard() {
                 >
                   Cancel
                 </button>
+                {editingExercise.isDraft && (
+                  <button
+                    onClick={() => saveEditedExercise(true)}
+                    disabled={savingExerciseId === editingExercise.id}
+                    className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800 disabled:opacity-50"
+                  >
+                    {savingExerciseId === editingExercise.id ? 'Publishing...' : 'Publish'}
+                  </button>
+                )}
                 <button
-                  onClick={saveEditedExercise}
+                  onClick={() => saveEditedExercise(false)}
                   disabled={savingExerciseId === editingExercise.id}
                   className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
                 >
