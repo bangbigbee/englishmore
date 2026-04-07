@@ -47,6 +47,8 @@ interface ExerciseItem {
   }>
 }
 
+type MemberTab = 'exercises' | 'speak'
+
 const formatDuration = (totalSeconds: number) => {
   const safeSeconds = Math.max(0, Math.floor(totalSeconds))
   const minutes = Math.floor(safeSeconds / 60)
@@ -87,6 +89,7 @@ export default function Dashboard() {
   const [revealedExercises, setRevealedExercises] = useState<Record<string, boolean>>({})
   const [timerTick, setTimerTick] = useState(() => Date.now())
   const [submitConfirm, setSubmitConfirm] = useState<{ exercise: ExerciseItem; durationSeconds: number } | null>(null)
+  const [activeMemberTab, setActiveMemberTab] = useState<MemberTab>('exercises')
 
   // Refs for locked audio (no pause, no seek after first play)
   const audioLastTime = useRef<Record<string, number>>({})
@@ -348,28 +351,56 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-6">
           {session.user?.role === 'member' && (
             <div className="bg-white p-6 rounded shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Exercises</h2>
+              <h2 className="text-xl font-semibold mb-4">Exercise More</h2>
 
-              <div className="mb-6 rounded-xl border border-[#14532d]/25 bg-[#14532d]/5 p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h3 className="inline-flex items-center gap-2 text-lg font-bold text-[#14532d]">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
-                        <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
-                        <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
-                      </svg>
-                      Speak Yourself
-                    </h3>
-                    <p className="mt-1 text-sm text-slate-600">This speaking assessment is now in its own tab for pronunciation practice.</p>
-                  </div>
-                  <Link
-                    href="/speak-yourself"
-                    className="inline-flex items-center rounded-md bg-[#14532d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#166534]"
-                  >
-                    Open Speak Yourself
-                  </Link>
-                </div>
+              <div className="mb-6 flex flex-wrap gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveMemberTab('exercises')}
+                  className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
+                    activeMemberTab === 'exercises'
+                      ? 'bg-[#14532d] text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Exercises
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveMemberTab('speak')}
+                  className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
+                    activeMemberTab === 'speak'
+                      ? 'bg-[#14532d] text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Speak Yourself
+                </button>
               </div>
+
+              {activeMemberTab === 'speak' ? (
+                <div className="rounded-xl border border-[#14532d]/25 bg-[#14532d]/5 p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 className="inline-flex items-center gap-2 text-lg font-bold text-[#14532d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                          <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
+                          <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
+                        </svg>
+                        Speak Yourself
+                      </h3>
+                      <p className="mt-1 text-sm text-slate-600">This speaking assessment is now in its own tab for pronunciation practice.</p>
+                    </div>
+                    <Link
+                      href="/speak-yourself"
+                      className="inline-flex items-center rounded-md bg-[#14532d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#166534]"
+                    >
+                      Open Speak Yourself
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <>
 
               <div className="mb-4 border-t border-gray-200 pt-4">
                 <h3 className="text-base font-semibold text-gray-900">Multiple-choice exercises</h3>
@@ -547,6 +578,8 @@ export default function Dashboard() {
                     </div>
                   ))}
                 </div>
+              )}
+                </>
               )}
             </div>
           )}
