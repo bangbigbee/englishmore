@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -154,7 +154,7 @@ function LockedFeatureButton({
         )}
       </div>
 
-      <div className="pointer-events-none invisible absolute left-1/2 top-full z-20 mt-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 rounded-2xl border border-[#14532d]/15 bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 opacity-0 shadow-xl transition duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+      <div className="pointer-events-none invisible absolute left-1/2 top-full z-20 mt-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 rounded-lg border border-[#14532d]/15 bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 opacity-0 shadow-xl transition duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
         <Link
           href="/courses"
           className="pointer-events-auto font-semibold text-[#14532d] underline decoration-[#14532d]/45 underline-offset-2 transition hover:text-[#0f3f22]"
@@ -504,7 +504,7 @@ export default function Home() {
           }
         }
       } catch {
-        // Ignore errors — congratulations modal is non-critical.
+        // Ignore errors - congratulations modal is non-critical.
       }
     }
 
@@ -667,7 +667,7 @@ export default function Home() {
       const barClass = item.minutes === 0
         ? 'bg-slate-300'
         : item.minutes <= 15
-          ? 'bg-amber-500'
+          ? 'bg-orange-500'
           : 'bg-[#4db463]'
 
       // 60 minutes = 100%, cap at 100%
@@ -714,7 +714,7 @@ export default function Home() {
 
   const getActivityBubbleStyle = (item: DailyGreetingConversationItem) => {
     if (item.entryType === 'reflection') {
-      return 'border-amber-200 bg-amber-50/95 text-amber-950 shadow-amber-100'
+      return 'border-orange-200 bg-orange-50/95 text-orange-950 shadow-orange-100'
     }
 
     return 'border-[#14532d]/20 bg-[#14532d]/5 text-[#14532d] shadow-[#14532d]/10'
@@ -722,7 +722,7 @@ export default function Home() {
 
   const getActivityDotStyle = (item: DailyGreetingConversationItem) => {
     if (item.entryType === 'reflection') {
-      return 'bg-amber-500 ring-amber-200'
+      return 'bg-orange-500 ring-orange-200'
     }
 
     return 'bg-[#14532d] ring-[#14532d]/20'
@@ -1430,12 +1430,12 @@ export default function Home() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-3 sm:px-6 sm:pt-4 lg:px-8">
         {showRegistrationProcessingTicker && (
-          <Link href="/courses" className="block mb-3 overflow-hidden rounded-lg border border-amber-300 bg-amber-50 shadow-sm transition hover:bg-amber-100/70">
+          <Link href="/courses" className="block mb-3 overflow-hidden rounded-lg border border-orange-300 bg-orange-50 shadow-sm transition hover:bg-orange-100/70">
             <div className="homework-alert-wrap">
               <div className="homework-alert-track">
-                <span className="text-sm font-bold text-amber-700">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-amber-700">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-amber-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-orange-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-orange-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-orange-700">Please wait a moment while we process your registration.</span>
               </div>
             </div>
           </Link>
@@ -1459,9 +1459,9 @@ export default function Home() {
         )}
 
         {canUseDailyActivity && (
-          <section className="mb-8 rounded-xl border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-amber-50 px-4 py-4 sm:px-5 sm:py-5">
+          <section className="mb-8 rounded-md border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-orange-50 px-4 py-4 sm:px-5 sm:py-5">
             {isAdminDailyActivity && (
-              <div className="mb-4 rounded-xl border border-[#14532d]/20 bg-white/90 px-4 py-3">
+              <div className="mb-4 rounded-md border border-[#14532d]/20 bg-white/90 px-4 py-3">
                 <label className="block text-xs font-semibold uppercase tracking-wide text-[#14532d]">Course for Daily Activity</label>
                 <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
                   <select
@@ -1481,16 +1481,16 @@ export default function Home() {
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
               <div className="space-y-4">
-                <article className="checkin-message rounded-2xl border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
+                <article className="checkin-message rounded-lg border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-sm font-bold text-[#14532d] sm:text-base">How do you feel today?</p>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasGreetingToday ? 'bg-[#14532d]/12 text-[#14532d]' : 'bg-amber-100 text-amber-700'}`}>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasGreetingToday ? 'bg-[#14532d]/12 text-[#14532d]' : 'bg-orange-100 text-orange-700'}`}>
                       {hasGreetingToday ? 'Done today' : 'Pending'}
                     </span>
                   </div>
 
                   {hasGreetingToday ? (
-                    <div className="mt-3 rounded-xl border border-[#14532d]/20 bg-[#14532d]/5 px-3 py-2.5">
+                    <div className="mt-3 rounded-md border border-[#14532d]/20 bg-[#14532d]/5 px-3 py-2.5">
                       <button
                         type="button"
                         onClick={() => {
@@ -1596,7 +1596,7 @@ export default function Home() {
                                 startVoiceCapture()
                               }}
                               disabled={!speechSupported || isListening}
-                              className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                              className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-semibold text-orange-800 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                               {isListening ? '🎙️ Listening...' : '🎙️ Voice'}
                             </button>
@@ -1614,7 +1614,7 @@ export default function Home() {
                       )}
 
                       {!speechSupported && showCustomGreetingInput && (
-                        <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
+                        <p className="mt-2 text-xs font-medium text-orange-700">Voice input is not supported in this browser. Please use text mode.</p>
                       )}
                       {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
                       {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
@@ -1622,20 +1622,20 @@ export default function Home() {
                   )}
                 </article>
 
-                <article className={`checkin-message rounded-2xl border bg-white px-4 py-4 shadow-sm transition-all ${hasGreetingToday ? 'border-amber-300/60' : 'border-slate-200 opacity-85'}`}>
+                <article className={`checkin-message rounded-lg border bg-white px-4 py-4 shadow-sm transition-all ${hasGreetingToday ? 'border-orange-300/60' : 'border-slate-200 opacity-85'}`}>
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm font-bold text-amber-800 sm:text-base">How was your day?</p>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-[#14532d]/12 text-[#14532d]' : hasGreetingToday ? 'bg-amber-100 text-amber-700' : 'bg-[#14532d]/8 text-[#14532d]/70'}`}>
+                    <p className="text-sm font-bold text-orange-800 sm:text-base">How was your day?</p>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-[#14532d]/12 text-[#14532d]' : hasGreetingToday ? 'bg-orange-100 text-orange-700' : 'bg-[#14532d]/8 text-[#14532d]/70'}`}>
                       {hasReflectionToday ? 'Done today' : hasGreetingToday ? 'Ready' : 'Check-in first'}
                     </span>
                   </div>
 
                   {!hasGreetingToday ? (
-                    <div className="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-xs text-slate-500">
+                    <div className="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-xs text-slate-500">
                       Complete your check-in first, then reflection opens automatically.
                     </div>
                   ) : hasReflectionToday ? (
-                    <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+                    <div className="mt-3 rounded-md border border-orange-200 bg-orange-50 px-3 py-2.5">
                       <button
                         type="button"
                         onClick={() => {
@@ -1643,7 +1643,7 @@ export default function Home() {
                           setEditReflectionStatus('')
                           setIsEditingReflection(true)
                         }}
-                        className="text-xs font-semibold text-amber-700 underline-offset-2 hover:underline"
+                        className="text-xs font-semibold text-orange-700 underline-offset-2 hover:underline"
                       >
                         You already reflected today. Edit it
                       </button>
@@ -1658,7 +1658,7 @@ export default function Home() {
                             value={editReflectionMessage}
                             onChange={(event) => setEditReflectionMessage(event.target.value)}
                             placeholder="Update your reflection..."
-                            className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
+                            className="min-h-24 w-full rounded-lg border border-orange-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-orange-500"
                             maxLength={1000}
                           />
                           <p className="mt-1 text-xs text-slate-500">{editReflectionMessage.trim().length}/1000</p>
@@ -1667,7 +1667,7 @@ export default function Home() {
                               type="button"
                               onClick={handleSaveEditReflection}
                               disabled={isSavingReflection}
-                              className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
+                              className="rounded-md bg-orange-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-70"
                             >
                               {isSavingReflection ? 'Saving...' : 'Save reflection'}
                             </button>
@@ -1683,7 +1683,7 @@ export default function Home() {
                               Cancel
                             </button>
                           </div>
-                          {editReflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{editReflectionStatus}</p>}
+                          {editReflectionStatus && <p className="mt-2 text-sm font-medium text-orange-700">{editReflectionStatus}</p>}
                         </div>
                       ) : null}
                     </div>
@@ -1696,7 +1696,7 @@ export default function Home() {
                             type="button"
                             onClick={() => void handleQuickReflectionSubmit(message)}
                             disabled={isSavingReflection}
-                            className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="rounded-full border border-orange-300 bg-orange-50 px-2.5 py-1 text-xs font-semibold text-orange-700 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {message}
                           </button>
@@ -1712,7 +1712,7 @@ export default function Home() {
                               setReflectionStatus('')
                               setReflectionError('')
                             }}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 transition hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-orange-700 transition hover:underline"
                           >
                             ✍️ Type it manually
                           </button>
@@ -1724,7 +1724,7 @@ export default function Home() {
                               value={reflectionMessage}
                               onChange={(event) => setReflectionMessage(event.target.value)}
                               placeholder="Write your reflection for today..."
-                              className="min-h-24 w-full rounded-lg border border-amber-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-amber-500"
+                              className="min-h-24 w-full rounded-lg border border-orange-300/50 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-orange-500"
                               maxLength={1000}
                             />
                             <p className="mt-1 text-xs text-slate-500">{reflectionMessage.trim().length}/1000</p>
@@ -1734,7 +1734,7 @@ export default function Home() {
                               type="button"
                               onClick={() => startVoiceCapture('reflection')}
                               disabled={!speechSupported || isListening}
-                              className="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                              className="rounded-md border border-orange-300 bg-orange-50 px-3 py-1.5 text-sm font-semibold text-orange-800 transition hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                               {isListening ? '🎙️ Listening...' : '🎙️ Voice'}
                             </button>
@@ -1742,7 +1742,7 @@ export default function Home() {
                               type="button"
                               onClick={() => void handleSubmitReflection()}
                               disabled={isSavingReflection}
-                              className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-70"
+                              className="rounded-md bg-orange-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-70"
                             >
                               {isSavingReflection ? 'Saving...' : 'Reflect now'}
                             </button>
@@ -1751,16 +1751,16 @@ export default function Home() {
                       )}
 
                       {!speechSupported && showCustomReflectionInput && (
-                        <p className="mt-2 text-xs font-medium text-amber-700">Voice input is not supported in this browser. Please use text mode.</p>
+                        <p className="mt-2 text-xs font-medium text-orange-700">Voice input is not supported in this browser. Please use text mode.</p>
                       )}
-                      {reflectionStatus && <p className="mt-2 text-sm font-medium text-amber-700">{reflectionStatus}</p>}
+                      {reflectionStatus && <p className="mt-2 text-sm font-medium text-orange-700">{reflectionStatus}</p>}
                       {reflectionError && <p className="mt-2 text-sm font-medium text-red-600">{reflectionError}</p>}
                     </>
                   )}
                 </article>
               </div>
 
-              <div className="rounded-2xl border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-amber-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
+              <div className="rounded-lg border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-orange-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
                 <div className="mb-3">
                   <h3 className="text-sm font-bold text-slate-900 sm:text-base">💬 Class Conversation</h3>
                   <p className="mt-1 text-[11px] text-slate-500">Live feed from classmates&apos; check-ins and reflections.</p>
@@ -1769,12 +1769,12 @@ export default function Home() {
                   {greetingConversationLoading ? (
                     <p className="text-xs text-slate-500">Loading class activity...</p>
                   ) : greetingConversation.length === 0 ? (
-                    <p className="rounded-2xl border border-dashed border-slate-200 bg-white/80 px-4 py-5 text-center text-xs text-slate-500">No check-ins or reflections have been posted by the class yet today.</p>
+                    <p className="rounded-lg border border-dashed border-slate-200 bg-white/80 px-4 py-5 text-center text-xs text-slate-500">No check-ins or reflections have been posted by the class yet today.</p>
                   ) : (
                     greetingConversation.map((item) => (
                       <article
                         key={item.id}
-                        className={`checkin-message rounded-2xl border px-3 py-3 text-xs shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:px-4 sm:text-sm ${getActivityBubbleStyle(item)}`}
+                        className={`checkin-message rounded-lg border px-3 py-3 text-xs shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:px-4 sm:text-sm ${getActivityBubbleStyle(item)}`}
                       >
                         <div className="flex items-start gap-3">
                           {item.studentImage ? (
@@ -1817,7 +1817,7 @@ export default function Home() {
                   className="brand-cta brand-cta-filled w-full justify-center relative"
                 >
                   {memberHomework && memberHomework.feedbackNoticeCount > 0 && (
-                    <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-500 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
+                    <span className="absolute -left-2 -top-2 inline-flex items-center gap-1 rounded-full border border-orange-300 bg-orange-500 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -1846,7 +1846,7 @@ export default function Home() {
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="brand-cta brand-cta-filled w-full justify-center relative"
+                  className="brand-cta brand-cta-outline w-full justify-center relative"
                 >
                   <span>Exercise More</span>
                   <span aria-hidden="true" className="brand-cta-arrow">→</span>
@@ -1889,7 +1889,7 @@ export default function Home() {
           <>
             <section>
               <h1 className="sr-only">EnglishMore</h1>
-              <div className="rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
+              <div className="rounded-lg border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
                 </div>
@@ -1901,7 +1901,7 @@ export default function Home() {
                 ) : !currentVocabularyItem ? (
                   <p className="text-sm text-slate-500">No vocabulary has been added for your current course yet.</p>
                 ) : (
-                  <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 sm:px-4 py-4 sm:py-5 md:px-6 md:py-6 text-white">
+                  <div className="overflow-hidden rounded-lg bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 sm:px-4 py-4 sm:py-5 md:px-6 md:py-6 text-white">
                     <div className="mb-3 sm:mb-4 flex items-center justify-between gap-1">
                       <button
                         type="button"
@@ -1970,12 +1970,12 @@ export default function Home() {
                       )}
 
                       {pronunciationScore !== null && (
-                        <div className="mt-3 sm:mt-4 rounded-xl sm:rounded-2xl border border-white/20 bg-white/10 px-3 sm:px-4 py-2 sm:py-3 text-left backdrop-blur-sm text-xs sm:text-sm">
+                        <div className="mt-3 sm:mt-4 rounded-md sm:rounded-lg border border-white/20 bg-white/10 px-3 sm:px-4 py-2 sm:py-3 text-left backdrop-blur-sm text-xs sm:text-sm">
                           {pronunciationTranscript && (
                             <p className="text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
                           )}
                           {pronunciationFeedback && (
-                            <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-amber-300`}>{pronunciationFeedback}</p>
+                            <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-orange-300`}>{pronunciationFeedback}</p>
                           )}
                           <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-white/70">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
                         </div>
@@ -1989,7 +1989,7 @@ export default function Home() {
                 )}
               </div>
             </section>
-            <section className="mt-6 sm:mt-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
+            <section className="mt-6 sm:mt-8 rounded-lg border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Weekly Activity</h2>
               <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
                 {weeklyActivityRows.map((item) => (
@@ -2012,8 +2012,8 @@ export default function Home() {
             <section className="grid gap-6 md:gap-8 md:grid-cols-2 md:items-center">
               <div>
                 <h1 className="sr-only">EnglishMore</h1>
-                <p className="max-w-xl text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight" style={{fontFamily: 'var(--font-nunito, sans-serif)'}}>
-                  <span className="text-amber-500">Speak</span>{' '}
+                <p className="max-w-xl text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight" style={{fontFamily: 'var(--font-outfit, sans-serif)'}}>
+                  <span className="text-orange-500">Speak</span>{' '}
                   <span className="text-green-900">your mind and more</span>
                 </p>
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
@@ -2082,25 +2082,25 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
+              <div className="rounded-lg border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
                 <img
                   src="/uploads/hero.png"
                   alt="Study illustration"
-                  className="h-80 w-full object-cover rounded-2xl"
+                  className="h-80 w-full object-cover rounded-lg"
                   onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
                 />
                 <a
                   href="https://www.facebook.com/bangbigbee"
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
+                  className="mt-4 inline-block text-sm font-semibold text-orange-500 hover:underline"
                 >
                   Lead teacher: Nguyen Tri Bang
                 </a>
               </div>
             </section>
 
-            <section className="mt-6 rounded-3xl border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
+            <section className="mt-6 rounded-lg border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
               </div>
@@ -2111,7 +2111,7 @@ export default function Home() {
               ) : !currentVocabularyItem ? (
                 <p className="text-sm text-slate-500">No vocabulary has been added for open courses yet.</p>
               ) : (
-                <div className="overflow-hidden rounded-2xl bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 py-4 text-white sm:px-4 sm:py-5 md:px-6 md:py-6">
+                <div className="overflow-hidden rounded-lg bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 py-4 text-white sm:px-4 sm:py-5 md:px-6 md:py-6">
                   <div className="mb-3 flex items-center justify-between gap-1 sm:mb-4">
                     <button type="button" onClick={() => moveVocabulary('prev')} disabled={memberVocabularyItems.length <= 1} className="rounded-full px-2 py-1 text-base font-bold transition hover:bg-white/20 disabled:pointer-events-none sm:text-lg" aria-label="Previous vocabulary">
                       {'<'}
@@ -2150,12 +2150,12 @@ export default function Home() {
                     )}
 
                     {pronunciationScore !== null && (
-                      <div className="mt-3 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-left text-xs backdrop-blur-sm sm:mt-4 sm:rounded-2xl sm:px-4 sm:py-3 sm:text-sm">
+                      <div className="mt-3 rounded-md border border-white/20 bg-white/10 px-3 py-2 text-left text-xs backdrop-blur-sm sm:mt-4 sm:rounded-lg sm:px-4 sm:py-3 sm:text-sm">
                         {pronunciationTranscript && (
                           <p className="text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
                         )}
                         {pronunciationFeedback && (
-                          <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-amber-300`}>{pronunciationFeedback}</p>
+                          <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-orange-300`}>{pronunciationFeedback}</p>
                         )}
                         <p className="mt-1.5 text-[11px] text-white/70 sm:mt-2 sm:text-xs">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
                       </div>
@@ -2172,12 +2172,12 @@ export default function Home() {
         )}
 
         {session?.user?.role !== 'member' && (
-          <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <section className="mt-10 rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
             <div className="text-slate-700">
               <div className="bg-[#14532d]/5 p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="text-lg font-semibold text-[#14532d]">Khóa học đang mở đăng ký</h3>
-                  <Link href="/courses" className="text-sm font-semibold text-amber-700 underline-offset-2 hover:underline">
+                  <Link href="/courses" className="text-sm font-semibold text-orange-700 underline-offset-2 hover:underline">
                     Xem trang đăng ký
                   </Link>
                 </div>
@@ -2197,7 +2197,7 @@ export default function Home() {
                           })
 
                       return (
-                        <div key={course.id} className="rounded-xl border border-[#14532d]/20 bg-white p-4 shadow-sm">
+                        <div key={course.id} className="rounded-md border border-[#14532d]/20 bg-white p-4 shadow-sm">
                           <p className="font-semibold text-slate-900">{course.title}</p>
                           <p className="mt-2 text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
                           <p className="mt-1 text-sm font-medium text-[#14532d]">{availabilityText}</p>
@@ -2248,4 +2248,5 @@ export default function Home() {
     </div>
   )
 }
+
 

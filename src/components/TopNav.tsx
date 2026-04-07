@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import Image from 'next/image'
 import { signIn, signOut, useSession } from 'next-auth/react'
@@ -119,7 +119,7 @@ export default function TopNav() {
   }, [isMenuOpen])
 
   return (
-    <header className="bg-transparent px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3">
+    <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-[#14532d]/10 px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 transition-all">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4">
         <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 leading-none sm:gap-3">
           <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.4rem]">
@@ -151,7 +151,7 @@ export default function TopNav() {
             <button
               onClick={() => signIn('google', { callbackUrl: '/' })}
               disabled={status === 'loading'}
-              className="inline-flex items-center gap-2 rounded-md bg-[#184d0d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#1f6111] disabled:opacity-70"
+              className="inline-flex items-center gap-2 rounded-md bg-[#14532d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#166534] shadow-sm hover:shadow-md disabled:opacity-70"
             >
               Log in
               <BookIcon />
@@ -199,25 +199,25 @@ export default function TopNav() {
 
             <nav className="flex-1 px-3 py-4">
               <div className="space-y-1">
-                <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Profile
                 </Link>
-                <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Homework
                 </Link>
-                <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Exercise
                 </Link>
-                <Link href="/speak-yourself" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/speak-yourself" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Speak Yourself
                 </Link>
-                <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Slides
                 </Link>
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="flex w-full items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50 hover:text-amber-800"
+                  className="flex w-full items-center gap-2 rounded-md px-4 py-3 text-sm font-semibold text-[#ea580c] transition hover:bg-[#fff7ed] hover:text-[#c2410c]"
                 >
                   <LogoutIcon />
                   Log out

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Nunito } from "next/font/google";
+import { Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import TopNav from "@/components/TopNav";
 import { Toaster } from "sonner";
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 const geistMono = Geist_Mono({
@@ -32,9 +32,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${nunito.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${outfit.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[#fdfdfc]">
         <AuthProvider>
           <TopNav />
           <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">{children}</main>
