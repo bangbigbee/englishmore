@@ -94,7 +94,7 @@ export default function LectureNotesPage() {
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <p className="text-slate-500">Loading lecture notes...</p>
+        <p className="text-slate-500">Loading lecture slides...</p>
       </div>
     )
   }
@@ -104,7 +104,10 @@ export default function LectureNotesPage() {
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">Lecture Notes</h1>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
+              <span className="text-[#14532d]">Lecture</span>{' '}
+              <span className="text-amber-500">Slide</span>
+            </h1>
             <p className="mt-2 text-sm sm:text-base text-slate-600">Lecture materials for each class session in your current course.</p>
           </div>
           <Link href="/" className="brand-cta brand-cta-outline">
@@ -122,20 +125,6 @@ export default function LectureNotesPage() {
           </div>
         ) : (
           <>
-            <section className="mb-6 rounded-2xl border border-emerald-200 bg-white p-4 shadow-sm">
-              <label htmlFor="courseFilter" className="mb-2 block text-sm font-semibold text-emerald-800">Choose a course</label>
-              <select
-                id="courseFilter"
-                value={selectedCourse?.courseId || ''}
-                onChange={(event) => setSelectedCourseId(event.target.value)}
-                className="w-full max-w-xl rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-slate-800 outline-none focus:border-emerald-500"
-              >
-                {courses.map((course) => (
-                  <option key={course.courseId} value={course.courseId}>{course.courseTitle}</option>
-                ))}
-              </select>
-            </section>
-
             {selectedCourse && (
               <section className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 shadow-lg">
                 <div className="mb-5 rounded-2xl bg-linear-to-r from-amber-500 via-amber-500 to-orange-500 px-4 py-4 text-white shadow-[0_10px_24px_rgba(245,158,11,0.28)]">
