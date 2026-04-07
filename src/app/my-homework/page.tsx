@@ -37,6 +37,13 @@ interface HomeworkSummaryResponse {
   allHomework?: HomeworkRow[]
 }
 
+const getDescriptionPreview = (value: string, maxLength = 120) => {
+  const normalized = String(value || '').replace(/\s+/g, ' ').trim()
+  if (!normalized) return ''
+  if (normalized.length <= maxLength) return normalized
+  return `${normalized.slice(0, maxLength).trim()}...`
+}
+
 export default function MyHomeworkPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -202,13 +209,23 @@ export default function MyHomeworkPage() {
                     <p className="mt-1 text-sm text-slate-500">Due: <span className="font-medium text-amber-800">{new Date(item.dueDate).toLocaleDateString('en-GB')}</span></p>
                     {item.description && (
                       <div className="mt-3">
+                        {!expandedDetailByHomework[item.id] && (
+                          <p className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-slate-700">
+                            <span>{getDescriptionPreview(item.description)}</span>
+                          </p>
+                        )}
                         <button
                           type="button"
                           onClick={() => toggleHomeworkDetail(item.id)}
-                          className="inline-flex items-center gap-2 rounded-md border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100"
+                          className="mt-2 inline-flex items-center gap-2 rounded-md border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100"
                         >
-                          Description
-                          <span aria-hidden="true">{expandedDetailByHomework[item.id] ? '−' : '+'}</span>
+                          {expandedDetailByHomework[item.id] ? 'Thu gọn' : 'Xem chi tiết'}
+                          <span
+                            aria-hidden="true"
+                            className={`transition-transform duration-200 ${expandedDetailByHomework[item.id] ? 'rotate-180' : ''}`}
+                          >
+                            v
+                          </span>
                         </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-amber-200 bg-white px-4 py-3">
@@ -266,13 +283,23 @@ export default function MyHomeworkPage() {
                     <p className="mt-1 text-sm text-slate-500">Submitted: <span className="font-medium text-emerald-800">{item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</span></p>
                     {item.description && (
                       <div className="mt-3">
+                        {!expandedDetailByHomework[item.id] && (
+                          <p className="rounded-lg border border-emerald-200 bg-white px-3 py-2 text-sm text-slate-700">
+                            <span>{getDescriptionPreview(item.description)}</span>
+                          </p>
+                        )}
                         <button
                           type="button"
                           onClick={() => toggleHomeworkDetail(item.id)}
-                          className="inline-flex items-center gap-2 rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-sm font-semibold text-emerald-800 hover:bg-emerald-100"
+                          className="mt-2 inline-flex items-center gap-2 rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-sm font-semibold text-emerald-800 hover:bg-emerald-100"
                         >
-                          Description
-                          <span aria-hidden="true">{expandedDetailByHomework[item.id] ? '−' : '+'}</span>
+                          {expandedDetailByHomework[item.id] ? 'Thu gọn' : 'Xem chi tiết'}
+                          <span
+                            aria-hidden="true"
+                            className={`transition-transform duration-200 ${expandedDetailByHomework[item.id] ? 'rotate-180' : ''}`}
+                          >
+                            v
+                          </span>
                         </button>
                         {expandedDetailByHomework[item.id] && (
                           <div className="mt-2 rounded-lg border border-emerald-200 bg-white px-4 py-3">
