@@ -497,7 +497,7 @@ export default function Dashboard() {
                                   revealExercise(exercise.id)
                                 }
                               }}
-                              className="inline-flex w-fit min-w-[7.5rem] justify-center self-start rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800 cursor-pointer disabled:opacity-50 sm:self-center"
+                              className="inline-flex w-fit min-w-30 justify-center self-start rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800 cursor-pointer disabled:opacity-50 sm:self-center"
                             >
                               {exercise.submission ? 'Retry' : 'Bắt đầu'}
                             </button>
