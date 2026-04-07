@@ -566,6 +566,12 @@ export default function AdminDashboard() {
   const [importingForm, setImportingForm] = useState(false)
   const [importingDocx, setImportingDocx] = useState(false)
   const [importingPptx, setImportingPptx] = useState(false)
+  const [showImportExerciseModal, setShowImportExerciseModal] = useState(false)
+  const [importSourceCourseId, setImportSourceCourseId] = useState('')
+  const [importTargetCourseId, setImportTargetCourseId] = useState('')
+  const [importSelectedExerciseIds, setImportSelectedExerciseIds] = useState<Set<string>>(new Set())
+  const [importingFromCourse, setImportingFromCourse] = useState(false)
+  const [importFromCourseError, setImportFromCourseError] = useState('')
   const [savingExerciseDraft, setSavingExerciseDraft] = useState(false)
   const [publishingExercise, setPublishingExercise] = useState(false)
   const [deletingExerciseId, setDeletingExerciseId] = useState<string | null>(null)
@@ -1733,6 +1739,51 @@ export default function AdminDashboard() {
       setExerciseSuccess('')
     } finally {
       setImportingPptx(false)
+    }
+  }
+
+  const importFromCourse = async () => {
+    if (!importSourceCourseId) {
+      setImportFromCourseError('Vui lòng chọn khóa học nguồn')
+      return
+    }
+    if (!importTargetCourseId) {
+      setImportFromCourseError('Vui lòng chọn khóa học đích')
+      return
+    }
+    if (importSourceCourseId === importTargetCourseId) {
+      setImportFromCourseError('Khóa học nguồn và đích không được trùng nhau')
+      return
+    }
+    if (importSelectedExerciseIds.size === 0) {
+      setImportFromCourseError('Vui lòng chọn ít nhất 1 exercise để import')
+      return
+    }
+    try {
+      setImportingFromCourse(true)
+      setImportFromCourseError('')
+      const res = await fetch('/api/admin/exercises/copy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          exerciseIds: Array.from(importSelectedExerciseIds),
+          targetCourseId: importTargetCourseId
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Không thể import exercise')
+      const fetched = await fetch('/api/admin/exercises')
+      const fetcedData = await fetched.json()
+      setExercises(fetcedData.exercises || [])
+      setShowImportExerciseModal(false)
+      setImportSourceCourseId('')
+      setImportTargetCourseId('')
+      setImportSelectedExerciseIds(new Set())
+      setExerciseSuccess(`Đã import ${data.copied} exercise thành công (trạng thái Draft).`)
+    } catch (err) {
+      setImportFromCourseError(err instanceof Error ? err.message : 'Không thể import exercise')
+    } finally {
+      setImportingFromCourse(false)
     }
   }
 
@@ -3596,6 +3647,20 @@ export default function AdminDashboard() {
               {showExerciseBuilder ? 'Hide exercise form' : 'Create exercise'}
             </button>
 
+            <button
+              type="button"
+              onClick={() => {
+                setShowImportExerciseModal(true)
+                setImportFromCourseError('')
+                setImportSourceCourseId('')
+                setImportTargetCourseId('')
+                setImportSelectedExerciseIds(new Set())
+              }}
+              className="px-6 py-2 bg-white border border-[#14532d] text-[#14532d] rounded hover:bg-[#14532d]/5 font-medium"
+            >
+              Import từ khóa học khác
+            </button>
+
             {showExerciseBuilder && (
               <button
                 type="button"
@@ -5018,6 +5083,130 @@ export default function AdminDashboard() {
                   className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 disabled:opacity-50"
                 >
                   {updatingEnrollmentId === confirmPayment.id ? 'Processing...' : 'OK'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showImportExerciseModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-2xl rounded-lg bg-white shadow-xl">
+              <div className="flex items-center justify-between border-b px-6 py-4">
+                <h3 className="text-lg font-bold text-gray-900">Import exercise từ khóa học khác</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowImportExerciseModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-5 px-6 py-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Khóa học nguồn</label>
+                    <select
+                      value={importSourceCourseId}
+                      onChange={(e) => {
+                        setImportSourceCourseId(e.target.value)
+                        setImportSelectedExerciseIds(new Set())
+                        setImportFromCourseError('')
+                      }}
+                      className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    >
+                      <option value="">-- Chọn khóa học --</option>
+                      {courses.map((c) => (
+                        <option key={c.id} value={c.id}>{c.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Khóa học đích</label>
+                    <select
+                      value={importTargetCourseId}
+                      onChange={(e) => {
+                        setImportTargetCourseId(e.target.value)
+                        setImportFromCourseError('')
+                      }}
+                      className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    >
+                      <option value="">-- Chọn khóa học --</option>
+                      {courses.map((c) => (
+                        <option key={c.id} value={c.id}>{c.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {importSourceCourseId && (
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <label className="text-sm font-medium text-gray-700">Chọn exercise để import</label>
+                      <button
+                        type="button"
+                        className="text-xs text-[#14532d] hover:underline"
+                        onClick={() => {
+                          const ids = exercises
+                            .filter((ex) => ex.courseId === importSourceCourseId)
+                            .map((ex) => ex.id)
+                          setImportSelectedExerciseIds(new Set(ids))
+                        }}
+                      >
+                        Chọn tất cả
+                      </button>
+                    </div>
+                    <div className="max-h-56 overflow-y-auto rounded border border-gray-200 divide-y">
+                      {exercises
+                        .filter((ex) => ex.courseId === importSourceCourseId)
+                        .map((ex) => (
+                          <label key={ex.id} className="flex cursor-pointer items-center gap-3 px-4 py-2.5 hover:bg-gray-50">
+                            <input
+                              type="checkbox"
+                              checked={importSelectedExerciseIds.has(ex.id)}
+                              onChange={(e) => {
+                                setImportSelectedExerciseIds((prev) => {
+                                  const next = new Set(prev)
+                                  if (e.target.checked) next.add(ex.id)
+                                  else next.delete(ex.id)
+                                  return next
+                                })
+                              }}
+                              className="h-4 w-4 accent-[#14532d]"
+                            />
+                            <span className="flex-1 text-sm text-gray-800">{getExerciseTitle(ex)}</span>
+                            <span className="text-xs text-gray-400">{getExerciseTypeLabel(ex.exerciseType)}</span>
+                          </label>
+                        ))}
+                      {exercises.filter((ex) => ex.courseId === importSourceCourseId).length === 0 && (
+                        <p className="px-4 py-3 text-sm text-gray-500">Không có exercise nào trong khóa học này</p>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs text-gray-500">Đã chọn {importSelectedExerciseIds.size} exercise</p>
+                  </div>
+                )}
+
+                {importFromCourseError && (
+                  <p className="text-sm text-red-600">{importFromCourseError}</p>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-3 border-t px-6 py-4">
+                <button
+                  type="button"
+                  onClick={() => setShowImportExerciseModal(false)}
+                  className="rounded px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void importFromCourse()}
+                  disabled={importingFromCourse}
+                  className="rounded bg-[#14532d] px-5 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                >
+                  {importingFromCourse ? 'Đang import...' : `Import ${importSelectedExerciseIds.size > 0 ? `(${importSelectedExerciseIds.size})` : ''}`}
                 </button>
               </div>
             </div>
