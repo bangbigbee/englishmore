@@ -608,14 +608,16 @@ export default function Dashboard() {
 
                       <div className="mt-4 sm:mt-5 flex flex-col gap-2 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-xs sm:text-sm text-gray-500">Update your answers and resubmit if you improve your result.</p>
-                        <button
-                          type="button"
-                          onClick={() => openSubmitConfirmation(exercise)}
-                          disabled={submittingExerciseId === exercise.id || !startedExerciseAt[exercise.id]}
-                          className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
-                        >
-                          {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
-                        </button>
+                        {startedExerciseAt[exercise.id] && (
+                          <button
+                            type="button"
+                            onClick={() => openSubmitConfirmation(exercise)}
+                            disabled={submittingExerciseId === exercise.id}
+                            className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
+                          >
+                            {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
