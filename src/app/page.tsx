@@ -2013,7 +2013,7 @@ export default function Home() {
               <div>
                 <h1 className="sr-only">EnglishMore</h1>
                 <p className="max-w-xl text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight" style={{fontFamily: 'var(--font-outfit, sans-serif)'}}>
-                  <span className="text-orange-500">Speak</span>{' '}
+                  <span className="text-amber-500">Speak</span>{' '}
                   <span className="text-green-900">your mind and more</span>
                 </p>
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
