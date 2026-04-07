@@ -3591,56 +3591,6 @@ export default function AdminDashboard() {
               {showExerciseBuilder ? 'Hide exercise form' : 'Create exercise'}
             </button>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="url"
-                  value={newExerciseSourceFormUrl}
-                  onChange={(e) => setNewExerciseSourceFormUrl(e.target.value)}
-                  placeholder="Paste Google Docs link"
-                  className="w-80 max-w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-                <button
-                  type="button"
-                  onClick={importFromGoogleDocs}
-                  disabled={importingForm}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {importingForm ? 'Importing...' : 'Import from Google Docs'}
-                </button>
-                <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50">
-                  {importingDocx ? 'Importing DOCX...' : 'Import DOCX'}
-                  <input
-                    type="file"
-                    accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    className="hidden"
-                    disabled={importingDocx}
-                    onChange={(event) => {
-                      const file = event.target.files?.[0]
-                      if (file) {
-                        void importFromDocxFile(file)
-                      }
-                      event.currentTarget.value = ''
-                    }}
-                  />
-                </label>
-                <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-emerald-700 text-white rounded hover:bg-emerald-800 disabled:opacity-50">
-                  {importingPptx ? 'Importing PPTX...' : 'Import Slide (PPTX)'}
-                  <input
-                    type="file"
-                    accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
-                    className="hidden"
-                    disabled={importingPptx}
-                    onChange={(event) => {
-                      const file = event.target.files?.[0]
-                      if (file) {
-                        void importFromPptxFile(file)
-                      }
-                      event.currentTarget.value = ''
-                    }}
-                  />
-                </label>
-              </div>
-
             {showExerciseBuilder && (
               <button
                 type="button"
@@ -3787,6 +3737,30 @@ export default function AdminDashboard() {
                 </div>
               )}
 
+              {newExerciseType === 'conversation' && (
+                <div className="mb-6">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Import conversation from slide</label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-emerald-700 text-white rounded hover:bg-emerald-800 disabled:opacity-50">
+                      {importingPptx ? 'Importing PPTX...' : 'Import Slide (PPTX)'}
+                      <input
+                        type="file"
+                        accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                        className="hidden"
+                        disabled={importingPptx}
+                        onChange={(event) => {
+                          const file = event.target.files?.[0]
+                          if (file) {
+                            void importFromPptxFile(file)
+                          }
+                          event.currentTarget.value = ''
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+              )}
+
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
                 <textarea
@@ -3797,6 +3771,45 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
               </div>
+
+              {newExerciseType === 'multiple_choice' && (
+                <div className="mb-6">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">Import question set</label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      type="url"
+                      value={newExerciseSourceFormUrl}
+                      onChange={(e) => setNewExerciseSourceFormUrl(e.target.value)}
+                      placeholder="Paste Google Docs link"
+                      className="w-80 max-w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    />
+                    <button
+                      type="button"
+                      onClick={importFromGoogleDocs}
+                      disabled={importingForm}
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {importingForm ? 'Importing...' : 'Import from Google Docs'}
+                    </button>
+                    <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50">
+                      {importingDocx ? 'Importing DOCX...' : 'Import DOCX'}
+                      <input
+                        type="file"
+                        accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        className="hidden"
+                        disabled={importingDocx}
+                        onChange={(event) => {
+                          const file = event.target.files?.[0]
+                          if (file) {
+                            void importFromDocxFile(file)
+                          }
+                          event.currentTarget.value = ''
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+              )}
 
               <p className="mb-4 text-sm text-gray-500">
                 {newExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu mỗi câu chỉ có 3 lựa chọn.'}
