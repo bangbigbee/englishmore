@@ -35,6 +35,8 @@ npm run dev
 ## Deployment Notes
 
 - `npm run build` now runs `prisma migrate deploy` automatically before building.
+- If your deploy provider uses a pooled `DATABASE_URL`, set `DIRECT_URL` to the direct Postgres connection string so migrations can run successfully.
+- If migration cannot run during build, the build will continue and the app will stay in fallback mode for features that need newer schema.
 - If you need to skip this step (for example, preview builds without DB access), set `SKIP_PRISMA_MIGRATE=1`.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser.
