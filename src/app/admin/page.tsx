@@ -265,6 +265,27 @@ interface ActivityPointResponse {
   warning?: string
 }
 
+const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
+  daily_checkin: 'Complete a daily check-in message.',
+  daily_reflection: 'Write your daily reflection.',
+  exercise_completion: 'Submit an exercise for the first time.',
+  homework_on_time: 'Submit homework on or before the due date.',
+  badge_first_checkin: 'Complete your very first daily check-in.',
+  badge_checkin_streak_3: 'Check in for 3 consecutive days.',
+  badge_checkin_streak_7: 'Keep your check-in streak going for 7 days straight.',
+  badge_checkin_30: 'Check in 30 times in total.',
+  badge_first_reflection: 'Write your very first daily reflection.',
+  badge_reflection_streak_3: 'Reflect for 3 consecutive days without a break.',
+  badge_reflection_10: 'Complete 10 daily reflections total.',
+  badge_first_submit: 'Submit your very first homework assignment.',
+  badge_on_time_3: 'Submit homework on time at least 3 times.',
+  badge_submit_5: 'Submit 5 or more homework assignments.',
+  badge_all_rounder: 'Check in, reflect, and submit homework in the same day.'
+}
+
+const getActivityPointDescription = (activityKey: string) =>
+  ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
+
 type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
@@ -2819,7 +2840,7 @@ export default function AdminDashboard() {
               <thead className="bg-[#14532d]/8 border-b border-[#14532d]/20">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Activity</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Key</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Description</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Points</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Active</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Action</th>
@@ -2829,7 +2850,7 @@ export default function AdminDashboard() {
                 {activityPointRules.map((rule) => (
                   <tr key={rule.activityKey} className="border-b border-slate-200 hover:bg-slate-50">
                     <td className="px-4 py-3 text-sm font-semibold text-gray-900">{rule.label}</td>
-                    <td className="px-4 py-3 text-xs text-gray-600">{rule.activityKey}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{getActivityPointDescription(rule.activityKey)}</td>
                     <td className="px-4 py-3">
                       <input
                         type="number"
