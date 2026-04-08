@@ -443,7 +443,7 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-6">
                   {sortedExercises.map((exercise) => (
-                    <div key={exercise.id} className="rounded-xl border border-gray-200 p-5">
+                    <div key={exercise.id} className="rounded-xl border border-[#14532d]/25 p-5">
                       {Boolean(startedExerciseAt[exercise.id]) && (
                         <div className="mb-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
                           ⏱ Time spent: {formatDuration(getExerciseDurationSeconds(exercise.id))}
@@ -481,7 +481,7 @@ export default function Dashboard() {
                       </div>
 
                       {!revealedExercises[exercise.id] ? (
-                        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                        <div className="rounded-lg border border-blue-300 bg-blue-50 p-4">
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <p className="text-xs sm:text-sm text-blue-800 sm:pr-4">
                               {normalizeExerciseType(exercise.exerciseType) === 'multiple_choice'
@@ -606,16 +606,16 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      <div className="mt-4 sm:mt-5 flex flex-col gap-2 sm:gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="mt-4 sm:mt-5 flex flex-col gap-2 sm:gap-3">
                         <p className="text-xs sm:text-sm text-gray-500">Update your answers and resubmit if you improve your result.</p>
                         {startedExerciseAt[exercise.id] && (
                           <button
                             type="button"
                             onClick={() => openSubmitConfirmation(exercise)}
                             disabled={submittingExerciseId === exercise.id}
-                            className="w-full sm:w-auto rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
+                            className="w-full sm:w-auto self-start rounded-lg bg-[#14532d] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#166534] disabled:opacity-50 cursor-pointer"
                           >
-                            {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit Exercise' : 'Submit Exercise'}
+                            {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit' : 'Submit'}
                           </button>
                         )}
                       </div>
