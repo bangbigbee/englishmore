@@ -32,6 +32,11 @@ npx prisma migrate dev
 npm run dev
 ```
 
+## Deployment Notes
+
+- `npm run build` now runs `prisma migrate deploy` automatically before building.
+- If you need to skip this step (for example, preview builds without DB access), set `SKIP_PRISMA_MIGRATE=1`.
+
 Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Technologies
