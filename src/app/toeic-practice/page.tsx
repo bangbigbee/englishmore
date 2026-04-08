@@ -98,8 +98,10 @@ function PracticeLoginModal({ onClose }: { onClose: () => void }) {
 						Dăng nhập với Google
 					</button>
 					<button
-						className="w-full py-2 px-4 rounded bg-orange-600 text-white font-semibold hover:bg-orange-700"
+						className="w-full py-2 px-4 rounded" style={{ backgroundColor: '#ea580c', color: 'white', fontWeight: 600 }}
 						onClick={onClose}
+						onMouseOver={e => (e.currentTarget.style.backgroundColor = '#c2410c')}
+						onMouseOut={e => (e.currentTarget.style.backgroundColor = '#ea580c')}
 					>
 						Tiếp tục mà không cần đăng nhập
 					</button>
