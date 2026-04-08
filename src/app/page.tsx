@@ -2132,9 +2132,9 @@ export default function Home() {
                 {availableCourses.map((course) => {
                   const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
                   const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
-                  const referralEntryUrl = `/courses?openReferralCourseId=${encodeURIComponent(course.id)}`
-                  const guestLoginWithRedirectUrl = `/login?callbackUrl=${encodeURIComponent(referralEntryUrl)}`
-                  const registerHref = session ? referralEntryUrl : guestLoginWithRedirectUrl
+                  const courseDetailEntryUrl = `/courses?openCourseId=${encodeURIComponent(course.id)}`
+                  const guestLoginWithRedirectUrl = `/login?callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
+                  const registerHref = session ? courseDetailEntryUrl : guestLoginWithRedirectUrl
                   const registrationDeadlineDate = new Date(course.registrationDeadline)
                   const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
                     ? 'Đang cập nhật'

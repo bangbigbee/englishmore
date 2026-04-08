@@ -129,9 +129,9 @@ export default function CoursesPage() {
     }
 
     const targetCourseId = typeof window !== 'undefined'
-      ? new URLSearchParams(window.location.search).get('openReferralCourseId')
+      ? new URLSearchParams(window.location.search).get('openCourseId')
       : null
-    if (!targetCourseId || pendingReferralCourse) {
+    if (!targetCourseId) {
       return
     }
 
@@ -140,9 +140,9 @@ export default function CoursesPage() {
       return
     }
 
-    handleOpenReferral(targetCourse)
+    setExpandedCourseId(targetCourse.id)
     router.replace('/courses')
-  }, [status, loading, session?.user?.role, courses, pendingReferralCourse, router])
+  }, [status, loading, session?.user?.role, courses, router])
 
   const fetchCourses = async () => {
     try {
