@@ -2014,6 +2014,14 @@ export default function Home() {
                       <span aria-hidden="true" className="brand-cta-arrow">→</span>
                     </button>
                   )}
+                    {/* Button Luyện TOEIC */}
+                    <Link
+                      href="/toeic-practice"
+                      className="brand-cta brand-cta-outline"
+                    >
+                      <span>Luyện TOEIC</span>
+                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                    </Link>
                   {session?.user?.role === 'admin' && (
                     <Link
                       href="/admin?section=homework"
