@@ -1966,6 +1966,9 @@ export default function Home() {
                   <span className="text-amber-500">Speak</span>{' '}
                   <span className="text-green-900">your mind and more</span>
                 </p>
+                <p className="mt-3 max-w-xl text-base sm:text-lg font-medium text-[#14532d]">
+                  Bạn muốn học tốt tiếng Anh và hơn thế nữa...?
+                </p>
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
                   {session?.user?.role !== 'admin' && (
                     <div className="group relative inline-block">
@@ -1975,7 +1978,7 @@ export default function Home() {
                         rel="noreferrer"
                         className="brand-cta brand-cta-filled"
                       >
-                        <span>Get Advice</span>
+                        <span>Tư Vấn Ngay</span>
                         <span aria-hidden="true" className="brand-cta-arrow">→</span>
                       </a>
                       <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max -translate-x-1/2 rounded bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow transition group-hover:opacity-100">
@@ -2042,7 +2045,7 @@ export default function Home() {
                   href="https://www.facebook.com/bangbigbee"
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-4 inline-block text-sm font-semibold text-amber-500 hover:underline"
+                  className="mt-4 inline-block text-sm font-semibold text-[#14532d] hover:underline"
                 >
                   Lead teacher: Nguyen Tri Bang
                 </a>
