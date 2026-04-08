@@ -14,6 +14,6 @@ export function showApToast(points: number, reason?: string) {
   toast.success(message, {
     position: 'top-right',
     duration: 6000,
-    icon: '⭐'
+    icon: '🎉'
   })
 }
