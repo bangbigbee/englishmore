@@ -77,30 +77,6 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 								Luyện tập &rarr;
 							</button>
 						</div>
-
-					function PracticeLoginModal({ onClose }: { onClose: () => void }) {
-						return (
-							<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-								<div className="bg-white rounded-lg shadow-lg p-6 w-80">
-									<h2 className="text-lg font-bold mb-4 text-center">Bạn cần đăng nhập để lưu tiến trình</h2>
-									<div className="space-y-3">
-										<button
-											className="w-full py-2 px-4 rounded bg-green-900 text-white font-semibold hover:bg-green-800"
-											onClick={() => signIn('google', { callbackUrl: '/toeic-practice' })}
-										>
-											Đăng nhập với Google
-										</button>
-										<button
-											className="w-full py-2 px-4 rounded bg-orange-600 text-white font-semibold hover:bg-orange-700"
-											onClick={onClose}
-										>
-											Tiếp tục mà không cần đăng nhập
-										</button>
-									</div>
-								</div>
-							</div>
-						);
-					}
 					</div>
 				))}
 			</div>
