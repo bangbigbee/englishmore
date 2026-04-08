@@ -2123,44 +2123,45 @@ export default function Home() {
         )}
 
         {session?.user?.role !== 'member' && (
-          <section className="open-courses-shimmer mt-10 rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
-            <div className="text-slate-700">
-              <div className="bg-[#14532d]/5 p-4 sm:p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-lg font-semibold text-[#14532d]">Khóa học đang mở đăng ký</h3>
-                  <Link href="/courses" className="text-sm font-semibold text-orange-700 underline-offset-2 hover:underline">
-                    Xem trang đăng ký
-                  </Link>
-                </div>
-                {availableCourses.length > 0 ? (
-                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {availableCourses.map((course) => {
-                      const availabilityText = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
-                        ? 'Đã đầy chỗ'
-                        : 'Vẫn còn chỗ'
-                      const registrationDeadlineDate = new Date(course.registrationDeadline)
-                      const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
-                        ? 'Đang cập nhật'
-                        : registrationDeadlineDate.toLocaleDateString('vi-VN', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                          })
-
-                      return (
-                        <div key={course.id} className="rounded-md border border-[#14532d]/20 bg-white p-4 shadow-sm">
-                          <p className="font-semibold text-amber-500">{course.title}</p>
-                          <p className="mt-2 text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
-                          <p className="mt-1 text-sm font-medium text-[#14532d]">{availabilityText}</p>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <p className="mt-3 text-sm text-slate-500">Hiện chưa có khóa học mở đăng ký.</p>
-                )}
-              </div>
+          <section className="open-courses-shimmer mt-10 rounded-2xl border border-[#14532d]/20 bg-linear-to-br from-[#14532d]/6 via-white to-orange-50 p-5 shadow-sm sm:p-6">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-xl font-bold text-[#14532d] sm:text-2xl">Khóa học đang mở đăng ký</h3>
             </div>
+            {availableCourses.length > 0 ? (
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {availableCourses.map((course) => {
+                  const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
+                  const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
+                  const registrationDeadlineDate = new Date(course.registrationDeadline)
+                  const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
+                    ? 'Đang cập nhật'
+                    : registrationDeadlineDate.toLocaleDateString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      })
+
+                  return (
+                    <div key={course.id} className="rounded-xl border border-[#14532d]/25 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                      <p className="text-xl font-extrabold leading-tight text-amber-500">{course.title}</p>
+                      <p className="mt-3 text-base text-slate-700">Hạn đăng ký: {registrationDeadlineText}</p>
+                      <p className={`mt-1 text-base font-semibold ${isFull ? 'text-red-700' : 'text-[#14532d]'}`}>{availabilityText}</p>
+                      <div className="mt-4">
+                        <Link
+                          href="/courses"
+                          className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold transition ${isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534]'}`}
+                          aria-disabled={isFull}
+                        >
+                          Đăng Ký Ngay
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <p className="mt-4 text-base text-slate-600">Hiện chưa có khóa học mở đăng ký.</p>
+            )}
           </section>
         )}
       </main>
