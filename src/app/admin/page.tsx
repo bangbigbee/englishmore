@@ -243,7 +243,23 @@ interface VocabularyImportDraftItem {
   example: string
 }
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'vocabulary' | 'speakYourself' | 'referral'
+interface ActivityPointRuleItem {
+  id: string
+  activityKey: string
+  label: string
+  points: number
+  isActive: boolean
+  updatedAt: string
+}
+
+interface ActivityPointMemberRow {
+  id: string
+  name: string | null
+  email: string
+  activityPoints: number
+}
+
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -609,6 +625,11 @@ export default function AdminDashboard() {
   const [reflectLoading, setReflectLoading] = useState(false)
   const [reflectError, setReflectError] = useState('')
   const [reflectSummary, setReflectSummary] = useState<{ totalStudents: number; reflectedToday: number }>({ totalStudents: 0, reflectedToday: 0 })
+  const [activityPointRules, setActivityPointRules] = useState<ActivityPointRuleItem[]>([])
+  const [activityPointMembers, setActivityPointMembers] = useState<ActivityPointMemberRow[]>([])
+  const [activityPointLoading, setActivityPointLoading] = useState(false)
+  const [activityPointError, setActivityPointError] = useState('')
+  const [savingActivityPointKey, setSavingActivityPointKey] = useState('')
   const [vocabularyItems, setVocabularyItems] = useState<AdminVocabularyItem[]>([])
   const [vocabularyCourseFilter, setVocabularyCourseFilter] = useState('')
   const [newVocabularyCourseId, setNewVocabularyCourseId] = useState('')
@@ -937,6 +958,68 @@ export default function AdminDashboard() {
       setReflectLoading(false)
     }
   }, [reflectCourseFilter])
+
+  const fetchActivityPointData = useCallback(async () => {
+    try {
+      setActivityPointLoading(true)
+      setActivityPointError('')
+
+      const res = await fetch('/api/admin/activity-points')
+      if (!res.ok) throw new Error('Failed to fetch activity points settings')
+
+      const data = await res.json()
+      setActivityPointRules(Array.isArray(data.rules) ? data.rules : [])
+      setActivityPointMembers(Array.isArray(data.members) ? data.members : [])
+    } catch (err) {
+      setActivityPointError(err instanceof Error ? err.message : 'Could not load activity points data.')
+      setActivityPointRules([])
+      setActivityPointMembers([])
+    } finally {
+      setActivityPointLoading(false)
+    }
+  }, [])
+
+  const updateActivityPointRule = async (rule: ActivityPointRuleItem, nextPoints: number, nextIsActive: boolean) => {
+    try {
+      setSavingActivityPointKey(rule.activityKey)
+      setActivityPointError('')
+
+      const res = await fetch('/api/admin/activity-points', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          activityKey: rule.activityKey,
+          points: nextPoints,
+          isActive: nextIsActive
+        })
+      })
+
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      if (!res.ok) {
+        throw new Error(data?.error || 'Could not update activity point rule.')
+      }
+
+      setActivityPointRules((current) =>
+        current.map((item) =>
+          item.activityKey === rule.activityKey
+            ? {
+                ...item,
+                points: nextPoints,
+                isActive: nextIsActive,
+                updatedAt: new Date().toISOString()
+              }
+            : item
+        )
+      )
+      toast.success('Activity points rule updated.')
+    } catch (err) {
+      setActivityPointError(err instanceof Error ? err.message : 'Could not update activity point rule.')
+    } finally {
+      setSavingActivityPointKey('')
+    }
+  }
 
   const fetchVocabularyData = useCallback(async () => {
     try {
@@ -1340,6 +1423,12 @@ export default function AdminDashboard() {
   }, [activeSection, fetchCheckinData, fetchReflectData])
 
   useEffect(() => {
+    if (activeSection === 'activityPoints') {
+      fetchActivityPointData()
+    }
+  }, [activeSection, fetchActivityPointData])
+
+  useEffect(() => {
     if (activeSection === 'vocabulary') {
       fetchVocabularyData()
     }
@@ -1430,10 +1519,16 @@ export default function AdminDashboard() {
   }, [referralError])
 
   useEffect(() => {
+    if (activityPointError) {
+      toast.error(activityPointError)
+    }
+  }, [activityPointError])
+
+  useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const section = params.get('section')
-    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'vocabulary', 'speakYourself', 'referral']
+    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'activityPoints', 'vocabulary', 'speakYourself', 'referral']
     if (section === 'checkin' || section === 'reflect') {
       setActiveSection('dailyActivity')
       return
@@ -2555,24 +2650,31 @@ export default function AdminDashboard() {
            </button>
            <button
              type="button"
+             onClick={() => setActiveSection('activityPoints')}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'activityPoints' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             6. ACTIVITY POINTS
+           </button>
+           <button
+             type="button"
              onClick={() => setActiveSection('vocabulary')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'vocabulary' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             6. VOCABULARY
+             7. VOCABULARY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('speakYourself')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'speakYourself' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             7. SPEAK YOURSELF
+             8. SPEAK YOURSELF
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('referral')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'referral' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             8. REFERRALS
+             9. REFERRALS
            </button>
           </div>
         </div>
@@ -2664,6 +2766,99 @@ export default function AdminDashboard() {
                 {!checkinLoading && checkinRows.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-3 text-center text-gray-500">No students match the current filter.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'activityPoints' ? '' : 'hidden'}`}>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Activity Points (AP)</h2>
+              <p className="mt-1 text-sm text-gray-600">Configure AP for each activity and track member points.</p>
+            </div>
+            <button
+              type="button"
+              onClick={fetchActivityPointData}
+              className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]"
+            >
+              {activityPointLoading ? 'Loading...' : 'Refresh'}
+            </button>
+          </div>
+
+          <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {activityPointRules.map((rule) => (
+              <div key={rule.activityKey} className="rounded-lg border border-[#14532d]/20 bg-[#14532d]/5 p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-[#14532d]">{rule.label}</p>
+                    <p className="text-xs text-gray-500">Key: {rule.activityKey}</p>
+                  </div>
+                  <label className="inline-flex items-center gap-2 text-xs font-semibold text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={rule.isActive}
+                      onChange={(event) => {
+                        void updateActivityPointRule(rule, rule.points, event.target.checked)
+                      }}
+                      disabled={savingActivityPointKey === rule.activityKey}
+                      className="h-4 w-4 rounded border-gray-300 text-[#14532d] focus:ring-[#14532d]"
+                    />
+                    Active
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min={0}
+                    max={1000}
+                    value={rule.points}
+                    onChange={(event) => {
+                      const nextPoints = Number(event.target.value)
+                      setActivityPointRules((current) =>
+                        current.map((item) => item.activityKey === rule.activityKey ? { ...item, points: Number.isNaN(nextPoints) ? 0 : nextPoints } : item)
+                      )
+                    }}
+                    className="w-28 rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#14532d]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void updateActivityPointRule(rule, Math.max(0, rule.points), rule.isActive)
+                    }}
+                    disabled={savingActivityPointKey === rule.activityKey}
+                    className="rounded bg-amber-500 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
+                  >
+                    {savingActivityPointKey === rule.activityKey ? 'Saving...' : 'Save AP'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="overflow-x-auto rounded-lg border border-slate-200">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">AP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activityPointMembers.map((member) => (
+                  <tr key={member.id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900">{member.name || 'No name'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{member.email}</td>
+                    <td className="px-4 py-3 text-sm font-bold text-amber-600">{member.activityPoints}</td>
+                  </tr>
+                ))}
+                {!activityPointLoading && activityPointMembers.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="px-4 py-3 text-center text-gray-500">No members found.</td>
                   </tr>
                 )}
               </tbody>

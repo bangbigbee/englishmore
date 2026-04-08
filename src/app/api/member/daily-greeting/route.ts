@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
 
 const DAILY_ACTIVITY_ROLES = new Set(['member', 'admin'])
 
@@ -351,6 +352,17 @@ export async function POST(request: NextRequest) {
       ? encodeScopedMessage(courseId, message)
       : message
 
+    const existingCheckinRaw = await prismaWithGreeting.dailyGreetingCheckin.findFirst({
+      where: {
+        userId: currentUser.id,
+        responseDate: {
+          gte: dayStart,
+          lt: getUtcNextDayStart(dayStart)
+        }
+      },
+      select: { id: true }
+    }) as { id: string } | null
+
     const checkin = await prismaWithGreeting.dailyGreetingCheckin.upsert({
       where: {
         userId_responseDate: {
@@ -377,7 +389,22 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    return NextResponse.json({ success: true, checkin })
+    let awardedAp = 0
+    let totalAp = 0
+
+    if (!existingCheckinRaw && currentUser.role === 'member') {
+      const dayKey = dayStart.toISOString().slice(0, 10)
+      const awardResult = await awardActivityPoints({
+        userId: currentUser.id,
+        activityKey: ACTIVITY_POINT_KEYS.dailyCheckin,
+        referenceKey: `${ACTIVITY_POINT_KEYS.dailyCheckin}:${currentUser.id}:${dayKey}`
+      })
+
+      awardedAp = awardResult.awardedAp
+      totalAp = awardResult.totalAp
+    }
+
+    return NextResponse.json({ success: true, checkin, awardedAp, totalAp })
   } catch (error) {
     console.error('Error saving daily greeting checkin:', error)
     return NextResponse.json({ error: 'Failed to save daily greeting checkin' }, { status: 500 })

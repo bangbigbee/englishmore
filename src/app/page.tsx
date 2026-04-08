@@ -4,6 +4,7 @@ import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 interface AvailableCourse {
   id: string
@@ -220,6 +221,16 @@ export default function Home() {
   const [selectedAdminDailyActivityCourseId, setSelectedAdminDailyActivityCourseId] = useState('')
 
   const isAdminDailyActivity = session?.user?.role === 'admin'
+
+  const showActivityPointToast = (points: number) => {
+    toast.custom(() => (
+      <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 shadow-md">
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-lg text-white">⭐</span>
+        <p className="text-sm font-semibold text-amber-800">Good job, you&apos;ve got {points} AP.</p>
+      </div>
+    ))
+  }
+
   const canReflectNow = () => {
     try {
       const parts = new Intl.DateTimeFormat('en-GB', {
@@ -1130,11 +1141,17 @@ export default function Home() {
         })
       })
 
+      const data = await res.json().catch(() => ({})) as { error?: string; awardedAp?: number }
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
         setGreetingError(data?.error || 'Could not save your check-in. Please try again.')
         setGreetingStatus('')
         return
+      }
+
+      const awardedAp = Number(data?.awardedAp || 0)
+      if (awardedAp > 0) {
+        showActivityPointToast(awardedAp)
       }
 
       setHasGreetingToday(true)
@@ -1250,8 +1267,14 @@ export default function Home() {
           ...(isAdminDailyActivity && selectedAdminDailyActivityCourseId ? { courseId: selectedAdminDailyActivityCourseId } : {})
         })
       })
-      const data = await res.json().catch(() => ({})) as { error?: string }
+      const data = await res.json().catch(() => ({})) as { error?: string; awardedAp?: number }
       if (!res.ok) { setReflectionError(data?.error || 'Could not save your reflection.'); setReflectionStatus(''); return }
+
+      const awardedAp = Number(data?.awardedAp || 0)
+      if (awardedAp > 0) {
+        showActivityPointToast(awardedAp)
+      }
+
       setHasReflectionToday(true)
       setReflectionMessage(msg)
       setEditReflectionMessage(msg)

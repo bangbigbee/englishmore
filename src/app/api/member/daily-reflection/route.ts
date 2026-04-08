@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
 
 const DAILY_ACTIVITY_ROLES = new Set(['member', 'admin'])
 const REFLECTION_AFTER_5PM_MESSAGE = 'You should reflect your day after 5 PM.'
@@ -168,6 +169,14 @@ export async function POST(request: NextRequest) {
       ? encodeScopedMessage(courseId, message)
       : message
 
+    const existingReflectionRaw = await prismaExt.dailyReflection.findFirst({
+      where: {
+        userId: currentUser.id,
+        responseDate: { gte: dayStart, lt: nextDayStart }
+      },
+      select: { id: true }
+    }) as { id: string } | null
+
     const reflection = await prismaExt.dailyReflection.upsert({
       where: {
         userId_responseDate: {
@@ -184,7 +193,22 @@ export async function POST(request: NextRequest) {
       select: { id: true, message: true, responseDate: true, updatedAt: true }
     })
 
-    return NextResponse.json({ success: true, reflection })
+    let awardedAp = 0
+    let totalAp = 0
+
+    if (!existingReflectionRaw && currentUser.role === 'member') {
+      const dayKey = dayStart.toISOString().slice(0, 10)
+      const awardResult = await awardActivityPoints({
+        userId: currentUser.id,
+        activityKey: ACTIVITY_POINT_KEYS.dailyReflection,
+        referenceKey: `${ACTIVITY_POINT_KEYS.dailyReflection}:${currentUser.id}:${dayKey}`
+      })
+
+      awardedAp = awardResult.awardedAp
+      totalAp = awardResult.totalAp
+    }
+
+    return NextResponse.json({ success: true, reflection, awardedAp, totalAp })
   } catch (error) {
     console.error('Error saving daily reflection:', error)
     return NextResponse.json({ error: 'Failed to save reflection' }, { status: 500 })

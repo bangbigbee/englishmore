@@ -91,6 +91,7 @@ model User {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @default(now())
   classActivityLastReadAt DateTime?
+  activityPoints Int         @default(0)
   referrer      User?        @relation("UserReferrals", fields: [referrerId], references: [id])
   referredUsers User[]       @relation("UserReferrals")
   accounts      Account[]
@@ -102,6 +103,7 @@ model User {
   dailyGreetingCheckins DailyGreetingCheckin[]
   dailyReflections      DailyReflection[]
   speakYourselfAttempts SpeakYourselfAttempt[]
+  activityPointLogs     ActivityPointLog[]
 
   @@index([referrerId])
 }
@@ -508,6 +510,31 @@ model DailyReflection {
 
   @@unique([userId, responseDate])
   @@index([responseDate])
+}
+
+model ActivityPointRule {
+  id          String   @id @default(cuid())
+  activityKey String   @unique
+  label       String
+  points      Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ActivityPointLog {
+  id           String   @id @default(cuid())
+  userId       String
+  activityKey  String
+  points       Int
+  referenceKey String   @unique
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([activityKey])
+  @@index([createdAt])
 }
 
 model VocabularyItem {
