@@ -70,7 +70,8 @@ export default function CoursesPage() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/login')
+      const callbackUrl = `/courses${typeof window !== 'undefined' ? window.location.search : ''}`
+      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)
     } else if (status === 'authenticated') {
       if (session?.user?.role === 'admin') {
         router.push('/admin')
@@ -121,6 +122,27 @@ export default function CoursesPage() {
       setErrorModal(null)
     }
   }, [errorModal])
+
+  useEffect(() => {
+    if (status !== 'authenticated' || loading || session?.user?.role === 'admin') {
+      return
+    }
+
+    const targetCourseId = typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search).get('openReferralCourseId')
+      : null
+    if (!targetCourseId || pendingReferralCourse) {
+      return
+    }
+
+    const targetCourse = courses.find((course) => course.id === targetCourseId)
+    if (!targetCourse) {
+      return
+    }
+
+    handleOpenReferral(targetCourse)
+    router.replace('/courses')
+  }, [status, loading, session?.user?.role, courses, pendingReferralCourse, router])
 
   const fetchCourses = async () => {
     try {

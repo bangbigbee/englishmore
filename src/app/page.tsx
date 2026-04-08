@@ -2132,6 +2132,9 @@ export default function Home() {
                 {availableCourses.map((course) => {
                   const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
                   const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
+                  const referralEntryUrl = `/courses?openReferralCourseId=${encodeURIComponent(course.id)}`
+                  const guestLoginWithRedirectUrl = `/login?callbackUrl=${encodeURIComponent(referralEntryUrl)}`
+                  const registerHref = session ? referralEntryUrl : guestLoginWithRedirectUrl
                   const registrationDeadlineDate = new Date(course.registrationDeadline)
                   const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
                     ? 'Đang cập nhật'
@@ -2148,7 +2151,7 @@ export default function Home() {
                       <p className={`mt-1 text-base font-semibold ${isFull ? 'text-red-700' : 'text-[#14532d]'}`}>{availabilityText}</p>
                       <div className="mt-4">
                         <Link
-                          href="/courses"
+                          href={registerHref}
                           className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold transition ${isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534]'}`}
                           aria-disabled={isFull}
                         >

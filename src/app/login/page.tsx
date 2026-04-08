@@ -54,7 +54,10 @@ export default function Login() {
     setError('')
     setMessage('')
     try {
-      await signIn('google', { callbackUrl: '/' })
+      const callbackUrl = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('callbackUrl') || '/'
+        : '/'
+      await signIn('google', { callbackUrl })
     } catch {
       setError('Google sign in failed')
       setGoogleLoading(false)
