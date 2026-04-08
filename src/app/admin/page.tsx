@@ -2814,56 +2814,73 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {activityPointRules.map((rule) => (
-              <div key={rule.activityKey} className="rounded-lg border border-[#14532d]/20 bg-[#14532d]/5 p-4">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-bold text-[#14532d]">{rule.label}</p>
-                    <p className="text-xs text-gray-500">Key: {rule.activityKey}</p>
-                  </div>
-                  <label className="inline-flex items-center gap-2 text-xs font-semibold text-gray-700">
-                    <input
-                      type="checkbox"
-                      checked={rule.isActive}
-                      onChange={(event) => {
-                        void updateActivityPointRule(rule, rule.points, event.target.checked)
-                      }}
-                      disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
-                      className="h-4 w-4 rounded border-gray-300 text-[#14532d] focus:ring-[#14532d]"
-                    />
-                    Active
-                  </label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={0}
-                    max={1000}
-                    value={rule.points}
-                    onChange={(event) => {
-                      const nextPoints = Number(event.target.value)
-                      setActivityPointRules((current) =>
-                        current.map((item) => item.activityKey === rule.activityKey ? { ...item, points: Number.isNaN(nextPoints) ? 0 : nextPoints } : item)
-                      )
-                    }}
-                    disabled={!isActivityPointDbReady}
-                    className="w-28 rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#14532d]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      void updateActivityPointRule(rule, Math.max(0, rule.points), rule.isActive)
-                    }}
-                    disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
-                    className="rounded bg-amber-500 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
-                  >
-                    {savingActivityPointKey === rule.activityKey ? 'Saving...' : 'Save AP'}
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="mb-6 overflow-x-auto rounded-lg border border-[#14532d]/20">
+            <table className="w-full border-collapse">
+              <thead className="bg-[#14532d]/8 border-b border-[#14532d]/20">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Activity</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Key</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Points</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Active</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#14532d]">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activityPointRules.map((rule) => (
+                  <tr key={rule.activityKey} className="border-b border-slate-200 hover:bg-slate-50">
+                    <td className="px-4 py-3 text-sm font-semibold text-gray-900">{rule.label}</td>
+                    <td className="px-4 py-3 text-xs text-gray-600">{rule.activityKey}</td>
+                    <td className="px-4 py-3">
+                      <input
+                        type="number"
+                        min={0}
+                        max={1000}
+                        value={rule.points}
+                        onChange={(event) => {
+                          const nextPoints = Number(event.target.value)
+                          setActivityPointRules((current) =>
+                            current.map((item) => item.activityKey === rule.activityKey ? { ...item, points: Number.isNaN(nextPoints) ? 0 : nextPoints } : item)
+                          )
+                        }}
+                        disabled={!isActivityPointDbReady}
+                        className="w-24 rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#14532d]"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <label className="inline-flex items-center gap-2 text-xs font-semibold text-gray-700">
+                        <input
+                          type="checkbox"
+                          checked={rule.isActive}
+                          onChange={(event) => {
+                            void updateActivityPointRule(rule, rule.points, event.target.checked)
+                          }}
+                          disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
+                          className="h-4 w-4 rounded border-gray-300 text-[#14532d] focus:ring-[#14532d]"
+                        />
+                        Active
+                      </label>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void updateActivityPointRule(rule, Math.max(0, rule.points), rule.isActive)
+                        }}
+                        disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
+                        className="rounded bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
+                      >
+                        {savingActivityPointKey === rule.activityKey ? 'Saving...' : 'Save AP'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {!activityPointLoading && activityPointRules.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-3 text-center text-sm text-gray-500">No AP rules found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
 
           <div className="mb-4 flex items-center gap-3">
