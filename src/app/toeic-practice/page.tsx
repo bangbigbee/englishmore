@@ -10,9 +10,11 @@ const TABS = [
 ];
 
 import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 export default function ToeicHomePage() {
 	const [tab, setTab] = useState("grammar");
 	const [showModal, setShowModal] = useState(false);
+	const { data: session } = useSession();
 
 	return (
 		<div className="max-w-6xl mx-auto py-8 px-2 sm:px-6">
@@ -32,7 +34,9 @@ export default function ToeicHomePage() {
 				))}
 			</div>
 			<div className="mt-6">
-				{tab === "grammar" && <ToeicGrammarTab onPracticeClick={() => setShowModal(true)} />}
+				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={() => {
+					 if (!session) setShowModal(true);
+				 }} />}
 				{tab === "vocabulary" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
 				{tab === "listening" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
 				{tab === "reading" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
@@ -90,7 +94,7 @@ function PracticeLoginModal({ onClose }: { onClose: () => void }) {
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
 			<div className="bg-white rounded-2xl shadow-xl p-6 w-[350px]">
 				<div className="flex items-center justify-between mb-2">
-					<h2 className="text-xl font-semibold text-gray-900">Đăng nhập để lưu tiến độ học tập</h2>
+					<h2 className="text-base font-semibold text-gray-900">Đăng nhập để lưu tiến độ học tập</h2>
 					<button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl px-1">×</button>
 				</div>
 				<div className="text-sm text-gray-500 mb-5 leading-relaxed">Đăng nhập để theo dõi tiến độ và nhận điểm hoạt động tích cực.</div>
