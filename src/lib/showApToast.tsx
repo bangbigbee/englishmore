@@ -13,5 +13,5 @@ export function showApToast(points: number) {
       <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-lg text-white">⭐</span>
       <p className="text-sm font-semibold text-amber-800">Congratulations! You&apos;ve got {points} APs</p>
     </div>
-  ))
+  ), { position: 'top-right' })
 }
