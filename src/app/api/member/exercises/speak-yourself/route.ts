@@ -107,7 +107,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } })
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      role: true
+    }
+  })
   if (!currentUser || currentUser.role !== 'member') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
