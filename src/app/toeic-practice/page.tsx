@@ -77,8 +77,6 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 								Luyện tập &rarr;
 							</button>
 						</div>
-					// Modal đăng nhập hoặc tiếp tục
-					import { signIn } from "next-auth/react";
 
 					function PracticeLoginModal({ onClose }: { onClose: () => void }) {
 						return (
