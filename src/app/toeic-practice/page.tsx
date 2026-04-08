@@ -9,6 +9,7 @@ const TABS = [
 	{ key: "actual-test", label: "Actual Test" },
 ];
 
+import { signIn } from "next-auth/react";
 export default function ToeicHomePage() {
 	const [tab, setTab] = useState("grammar");
 	const [showModal, setShowModal] = useState(false);
