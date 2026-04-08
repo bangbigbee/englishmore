@@ -638,6 +638,7 @@ export default function AdminDashboard() {
   const [activityPointWarning, setActivityPointWarning] = useState('')
   const [isActivityPointDbReady, setIsActivityPointDbReady] = useState(true)
   const [savingActivityPointKey, setSavingActivityPointKey] = useState('')
+  const [apCourseFilter, setApCourseFilter] = useState('')
   const [vocabularyItems, setVocabularyItems] = useState<AdminVocabularyItem[]>([])
   const [vocabularyCourseFilter, setVocabularyCourseFilter] = useState('')
   const [newVocabularyCourseId, setNewVocabularyCourseId] = useState('')
@@ -974,7 +975,8 @@ export default function AdminDashboard() {
       setActivityPointWarning('')
       setIsActivityPointDbReady(true)
 
-      const res = await fetch('/api/admin/activity-points')
+      const url = apCourseFilter ? `/api/admin/activity-points?courseId=${encodeURIComponent(apCourseFilter)}` : '/api/admin/activity-points'
+      const res = await fetch(url)
       if (!res.ok) throw new Error('Failed to fetch activity points settings')
 
       const data = await res.json() as ActivityPointResponse
@@ -992,7 +994,7 @@ export default function AdminDashboard() {
     } finally {
       setActivityPointLoading(false)
     }
-  }, [])
+  }, [apCourseFilter])
 
   const updateActivityPointRule = async (rule: ActivityPointRuleItem, nextPoints: number, nextIsActive: boolean) => {
     if (!isActivityPointDbReady) {
@@ -1452,7 +1454,7 @@ export default function AdminDashboard() {
     if (activeSection === 'activityPoints') {
       fetchActivityPointData()
     }
-  }, [activeSection, fetchActivityPointData])
+  }, [activeSection, fetchActivityPointData, apCourseFilter])
 
   useEffect(() => {
     if (activeSection === 'vocabulary') {
@@ -2669,43 +2671,36 @@ export default function AdminDashboard() {
           </button>
            <button
              type="button"
-             onClick={() => setActiveSection('dailyActivity')}
-             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'dailyActivity' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
-           >
-             5. DAILY ACTIVITY
-           </button>
-           <button
-             type="button"
              onClick={() => setActiveSection('activityPoints')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'activityPoints' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             6. ACTIVITY POINTS
+             5. ACTIVITY POINTS
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('vocabulary')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'vocabulary' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             7. VOCABULARY
+             6. VOCABULARY
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('speakYourself')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'speakYourself' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             8. SPEAK YOURSELF
+             7. SPEAK YOURSELF
            </button>
            <button
              type="button"
              onClick={() => setActiveSection('referral')}
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'referral' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
            >
-             9. REFERRALS
+             8. REFERRALS
            </button>
           </div>
         </div>
 
-        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'dailyActivity' ? '' : 'hidden'}`}>
+        <div className="hidden">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Daily Activity</h2>
           <p className="text-sm text-gray-600 mb-5">Track both daily check-ins and reflections in one place.</p>
 
@@ -2869,6 +2864,20 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mb-4 flex items-center gap-3">
+            <label className="text-sm font-medium text-gray-700">Lọc theo khóa học:</label>
+            <select
+              value={apCourseFilter}
+              onChange={(e) => setApCourseFilter(e.target.value)}
+              className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            >
+              <option value="">Tất cả khóa học</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
+            </select>
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-slate-200">

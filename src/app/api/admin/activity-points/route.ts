@@ -31,11 +31,14 @@ async function requireAdmin() {
   return { ok: true, status: 200 as const }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const auth = await requireAdmin()
   if (!auth.ok) {
     return NextResponse.json({ error: auth.status === 401 ? 'Unauthorized' : 'Forbidden' }, { status: auth.status })
   }
+
+  const { searchParams } = new URL(request.url)
+  const courseId = searchParams.get('courseId')?.trim() || ''
 
   try {
     await ensureDefaultActivityPointRules()
@@ -54,7 +57,12 @@ export async function GET() {
 
     const memberRows = await prisma.user.findMany({
       where: {
-        role: 'member'
+        role: 'member',
+        ...(courseId ? {
+          enrollments: {
+            some: { courseId }
+          }
+        } : {})
       },
       orderBy: [
         { activityPoints: 'desc' },
@@ -84,7 +92,10 @@ export async function GET() {
     console.warn('Activity points tables/columns not ready. Falling back to defaults.', error)
 
     const fallbackMembers = await prisma.user.findMany({
-      where: { role: 'member' },
+      where: {
+        role: 'member',
+        ...(courseId ? { enrollments: { some: { courseId } } } : {})
+      },
       orderBy: { createdAt: 'asc' },
       select: {
         id: true,
