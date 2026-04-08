@@ -78,18 +78,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'This homework does not belong to your course' }, { status: 400 })
   }
 
-  const existingSubmission = await prisma.homeworkSubmission.findUnique({
-    where: {
-      homeworkId_userId: {
-        homeworkId,
-        userId: session.user.id
-      }
-    },
-    select: {
-      id: true
-    }
-  })
-
   const assignment = await prisma.homeworkSubmission.upsert({
     where: {
       homeworkId_userId: {
@@ -127,7 +115,7 @@ export async function POST(request: NextRequest) {
   let awardedAp = 0
   let totalAp = 0
 
-  if (!existingSubmission && isOnTimeHomeworkSubmission(assignment.submittedAt, homework.dueDate)) {
+  if (isOnTimeHomeworkSubmission(assignment.submittedAt, homework.dueDate)) {
     try {
       const awardResult = await awardActivityPoints({
         userId: session.user.id,
