@@ -15,7 +15,13 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const currentUser = await prisma.user.findUnique({ where: { id: session.user?.id as string } })
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user?.id as string },
+    select: {
+      id: true,
+      role: true
+    }
+  })
   if (!currentUser || currentUser.role !== 'member') {
     return NextResponse.json({ items: [], courseTitle: '' })
   }
