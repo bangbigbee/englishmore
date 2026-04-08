@@ -11,10 +11,14 @@ const TABS = [
 
 export default function ToeicHomePage() {
 	const [tab, setTab] = useState("grammar");
+	const [showModal, setShowModal] = useState(false);
 
 	return (
 		<div className="max-w-6xl mx-auto py-8 px-2 sm:px-6">
-			<h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">Luyện thi TOEIC</h1>
+			<h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+				<span className="text-green-900">Luyện thi</span>{' '}
+				<span className="text-orange-600">TOEIC</span>
+			</h1>
 			<div className="flex gap-2 sm:gap-4 border-b mb-8 overflow-x-auto">
 				{TABS.map((t) => (
 					<button
@@ -27,17 +31,18 @@ export default function ToeicHomePage() {
 				))}
 			</div>
 			<div className="mt-6">
-				{tab === "grammar" && <ToeicGrammarTab />}
+				{tab === "grammar" && <ToeicGrammarTab onPracticeClick={() => setShowModal(true)} />}
 				{tab === "vocabulary" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
 				{tab === "listening" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
 				{tab === "reading" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
 				{tab === "actual-test" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
 			</div>
+			{showModal && <PracticeLoginModal onClose={() => setShowModal(false)} />}
 		</div>
 	);
 }
 
-function ToeicGrammarTab() {
+function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 	// Chỉ còn 5 chủ đề, style xanh lá đậm, bỏ số lượng câu hỏi
 	const grammarTopics = [
 		{ title: "Basic Grammar", subtitle: "Ngữ pháp cơ bản" },
@@ -64,8 +69,39 @@ function ToeicGrammarTab() {
 							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
 						</div>
 						<div className="flex justify-end">
-							<button className="text-green-900 font-semibold text-sm hover:underline">Luyện tập &rarr;</button>
+							<button
+								className="text-green-900 font-semibold text-sm hover:underline"
+								onClick={onPracticeClick}
+							>
+								Luyện tập &rarr;
+							</button>
 						</div>
+					// Modal đăng nhập hoặc tiếp tục
+					import { signIn } from "next-auth/react";
+
+					function PracticeLoginModal({ onClose }: { onClose: () => void }) {
+						return (
+							<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+								<div className="bg-white rounded-lg shadow-lg p-6 w-80">
+									<h2 className="text-lg font-bold mb-4 text-center">Bạn cần đăng nhập để lưu tiến trình</h2>
+									<div className="space-y-3">
+										<button
+											className="w-full py-2 px-4 rounded bg-green-900 text-white font-semibold hover:bg-green-800"
+											onClick={() => signIn('google', { callbackUrl: '/toeic-practice' })}
+										>
+											Đăng nhập với Google
+										</button>
+										<button
+											className="w-full py-2 px-4 rounded bg-orange-600 text-white font-semibold hover:bg-orange-700"
+											onClick={onClose}
+										>
+											Tiếp tục mà không cần đăng nhập
+										</button>
+									</div>
+								</div>
+							</div>
+						);
+					}
 					</div>
 				))}
 			</div>
