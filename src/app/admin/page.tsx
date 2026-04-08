@@ -5355,7 +5355,7 @@ export default function AdminDashboard() {
                                     disabled={updatingEnrollmentId === enrollment.id}
                                     className="text-amber-700 hover:text-amber-900 hover:underline"
                                   >
-                                    {updatingEnrollmentId === enrollment.id ? 'Updating...' : 'Confirm transfer received'}
+                                    {updatingEnrollmentId === enrollment.id ? 'Updating...' : 'Confirm'}
                                   </button>
                                 )}
                                 <button
