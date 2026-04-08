@@ -4,6 +4,22 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
 
+function isOnTimeHomeworkSubmission(submittedAt: Date, dueDate: Date) {
+  const isDateOnlyDueDate =
+    dueDate.getUTCHours() === 0 &&
+    dueDate.getUTCMinutes() === 0 &&
+    dueDate.getUTCSeconds() === 0 &&
+    dueDate.getUTCMilliseconds() === 0
+
+  if (isDateOnlyDueDate) {
+    const nextDayUtc = new Date(dueDate)
+    nextDayUtc.setUTCDate(nextDayUtc.getUTCDate() + 1)
+    return submittedAt.getTime() < nextDayUtc.getTime()
+  }
+
+  return submittedAt.getTime() <= dueDate.getTime()
+}
+
 function isHomeworkMessageStorageMissing(error: unknown) {
   if (!error || typeof error !== 'object') return false
   const maybeCode = (error as { code?: unknown }).code
@@ -111,7 +127,7 @@ export async function POST(request: NextRequest) {
   let awardedAp = 0
   let totalAp = 0
 
-  if (!existingSubmission && assignment.submittedAt.getTime() <= homework.dueDate.getTime()) {
+  if (!existingSubmission && isOnTimeHomeworkSubmission(assignment.submittedAt, homework.dueDate)) {
     try {
       const awardResult = await awardActivityPoints({
         userId: session.user.id,
