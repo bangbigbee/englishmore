@@ -50,18 +50,6 @@ export default function RootLayout({
               }
             }}
           />
-          <Toaster
-            id="ap-toast"
-            position="top-right"
-            closeButton
-            duration={6000}
-            offset={72}
-            toastOptions={{
-              style: {
-                maxWidth: '420px'
-              }
-            }}
-          />
         </AuthProvider>
       </body>
     </html>
