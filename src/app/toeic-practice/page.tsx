@@ -88,22 +88,36 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 function PracticeLoginModal({ onClose }: { onClose: () => void }) {
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-			<div className="bg-white rounded-lg shadow-lg p-6 w-80">
-				<h2 className="text-lg font-bold mb-4 text-center">Bạn cần đăng nhập để lưu tiến trình</h2>
+			<div className="bg-white rounded-2xl shadow-xl p-6 w-[350px]">
+				<div className="flex items-center justify-between mb-2">
+					<h2 className="text-xl font-semibold text-gray-900">Lưu tiến độ học tập</h2>
+					<button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl px-1">×</button>
+				</div>
+				<div className="text-sm text-gray-500 mb-5 leading-relaxed">Đăng nhập hoặc đăng ký để lưu tiến độ, theo dõi thành tích và nhận XP!</div>
 				<div className="space-y-3">
 					<button
-						className="w-full py-2 px-4 rounded bg-green-900 text-white font-semibold hover:bg-green-800"
-						onClick={() => signIn("google", { callbackUrl: "/toeic-practice" })}
+						className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-gradient-to-r from-sky-400 to-blue-400 text-white font-medium text-base shadow-sm hover:from-sky-500 hover:to-blue-500 transition"
+						onClick={() => signIn('google', { callbackUrl: '/toeic-practice' })}
 					>
-						Dăng nhập với Google
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+							<path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-3A2.25 2.25 0 0 0 8.25 5.25V9m7.5 0v10.5A2.25 2.25 0 0 1 13.5 21h-3A2.25 2.25 0 0 1 8.25 19.5V9m7.5 0H8.25m7.5 0a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 15.75 21H8.25a2.25 2.25 0 0 1-2.25-2.25v-7.5A2.25 2.25 0 0 1 8.25 9" />
+						</svg>
+						Đăng nhập
 					</button>
 					<button
-						className="w-full py-2 px-4 rounded" style={{ backgroundColor: '#ea580c', color: 'white', fontWeight: 600 }}
-						onClick={onClose}
-						onMouseOver={e => (e.currentTarget.style.backgroundColor = '#c2410c')}
-						onMouseOut={e => (e.currentTarget.style.backgroundColor = '#ea580c')}
+						className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium text-base hover:bg-gray-50 transition"
+						onClick={() => alert('Chức năng đăng ký tài khoản mới sẽ sớm có!')}
 					>
-						Tiếp tục mà không cần đăng nhập
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+							<path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 19.5a7.5 7.5 0 0 1 15 0v.75A2.25 2.25 0 0 1 17.25 22.5h-10.5A2.25 2.25 0 0 1 4.5 20.25v-.75Z" />
+						</svg>
+						Đăng ký tài khoản mới
+					</button>
+					<button
+						className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-gray-100 text-gray-500 font-medium text-base hover:bg-gray-200 transition"
+						onClick={onClose}
+					>
+						Tiếp tục mà không đăng nhập
 					</button>
 				</div>
 			</div>
