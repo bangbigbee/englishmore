@@ -243,6 +243,19 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
           <aside className="space-y-6 lg:sticky lg:top-6 self-start">
+            <div className="rounded-xl border-2 border-amber-200 bg-amber-50 p-4 shadow-sm">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-amber-700">Activity Points (AP)</h2>
+              <div className="mt-3 flex items-center gap-2">
+                <input
+                  type="text"
+                  value={`${profile?.activityPoints ?? 0} points`}
+                  disabled
+                  className="block w-full rounded-lg border border-amber-200 bg-white px-4 py-2 text-slate-700"
+                />
+                <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">AP</span>
+              </div>
+            </div>
+
             <div className="rounded-xl border-2 border-slate-200 bg-white p-4 shadow-sm">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700">Achievements</h2>
@@ -431,19 +444,6 @@ export default function ProfilePage() {
                 {profile?.courseEnrollmentStatus === 'active' && (
                   <span className="shrink-0 rounded-full bg-[#14532d]/10 px-2.5 py-1 text-xs font-semibold text-[#14532d]">Active</span>
                 )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Activity Points (AP)</label>
-              <div className="mt-1 flex items-center gap-2">
-                <input
-                  type="text"
-                  value={`${profile?.activityPoints ?? 0} points`}
-                  disabled
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
-                />
-                <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">AP</span>
               </div>
             </div>
 
