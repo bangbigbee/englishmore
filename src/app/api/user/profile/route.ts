@@ -10,53 +10,68 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        image: true,
-        bio: true,
-        referrer: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            enrollments: {
-              select: { studentId: true, createdAt: true },
-              where: { studentId: { not: null } },
-              orderBy: { createdAt: 'desc' },
-              take: 1
-            }
+    const baseSelect = {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      image: true,
+      bio: true,
+      referrer: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          enrollments: {
+            select: { studentId: true, createdAt: true },
+            where: { studentId: { not: null } },
+            orderBy: { createdAt: 'desc' },
+            take: 1
+          }
+        }
+      },
+      referredUsers: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          createdAt: true,
+          enrollments: {
+            select: { studentId: true, createdAt: true },
+            where: { studentId: { not: null } },
+            orderBy: { createdAt: 'desc' },
+            take: 1
           }
         },
-        referredUsers: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            createdAt: true,
-            enrollments: {
-              select: { studentId: true, createdAt: true },
-              where: { studentId: { not: null } },
-              orderBy: { createdAt: 'desc' },
-              take: 1
-            }
-          },
-          orderBy: { createdAt: 'desc' }
-        },
-        enrollments: {
-          select: { studentId: true, status: true, course: { select: { title: true } }, createdAt: true },
-          where: { status: { not: 'dropped' } },
-          orderBy: { createdAt: 'desc' },
-          take: 1
-        }
+        orderBy: { createdAt: 'desc' }
+      },
+      enrollments: {
+        select: { studentId: true, status: true, course: { select: { title: true } }, createdAt: true },
+        where: { status: { not: 'dropped' } },
+        orderBy: { createdAt: 'desc' },
+        take: 1
       }
-    })
+    }
+
+    let user: Awaited<ReturnType<typeof prisma.user.findUnique>>
+
+    try {
+      user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: {
+          ...baseSelect,
+          activityPoints: true
+        }
+      })
+    } catch (error) {
+      console.warn('Profile query fallback without activityPoints column.', error)
+      user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: baseSelect
+      })
+    }
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -64,6 +79,9 @@ export async function GET() {
 
     return NextResponse.json({
       ...user,
+      activityPoints: typeof (user as { activityPoints?: unknown }).activityPoints === 'number'
+        ? (user as { activityPoints: number }).activityPoints
+        : 0,
       studentId: user.enrollments[0]?.studentId || null,
       courseEnrollmentStatus: user.enrollments[0]?.status || null,
       courseTitle: user.enrollments[0]?.course?.title || null,

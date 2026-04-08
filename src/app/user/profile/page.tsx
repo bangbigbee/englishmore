@@ -22,6 +22,7 @@ interface UserProfile {
   id: string
   name: string | null
   email: string
+  activityPoints: number
   phone: string | null
   image: string | null
   bio: string | null
@@ -198,7 +199,15 @@ export default function ProfilePage() {
       }
 
       const updated = await res.json()
-      setProfile(updated)
+      setProfile((current) => {
+        if (!current) {
+          return updated
+        }
+        return {
+          ...current,
+          ...updated
+        }
+      })
       setSelectedFile(null)
 
       // Refresh session to sync name and image across app
@@ -422,6 +431,19 @@ export default function ProfilePage() {
                 {profile?.courseEnrollmentStatus === 'active' && (
                   <span className="shrink-0 rounded-full bg-[#14532d]/10 px-2.5 py-1 text-xs font-semibold text-[#14532d]">Active</span>
                 )}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Activity Points (AP)</label>
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="text"
+                  value={`${profile?.activityPoints ?? 0} points`}
+                  disabled
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
+                />
+                <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">AP</span>
               </div>
             </div>
 

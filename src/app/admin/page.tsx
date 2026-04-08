@@ -259,6 +259,12 @@ interface ActivityPointMemberRow {
   activityPoints: number
 }
 
+interface ActivityPointResponse {
+  rules?: ActivityPointRuleItem[]
+  members?: ActivityPointMemberRow[]
+  warning?: string
+}
+
 type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
@@ -629,6 +635,8 @@ export default function AdminDashboard() {
   const [activityPointMembers, setActivityPointMembers] = useState<ActivityPointMemberRow[]>([])
   const [activityPointLoading, setActivityPointLoading] = useState(false)
   const [activityPointError, setActivityPointError] = useState('')
+  const [activityPointWarning, setActivityPointWarning] = useState('')
+  const [isActivityPointDbReady, setIsActivityPointDbReady] = useState(true)
   const [savingActivityPointKey, setSavingActivityPointKey] = useState('')
   const [vocabularyItems, setVocabularyItems] = useState<AdminVocabularyItem[]>([])
   const [vocabularyCourseFilter, setVocabularyCourseFilter] = useState('')
@@ -963,23 +971,35 @@ export default function AdminDashboard() {
     try {
       setActivityPointLoading(true)
       setActivityPointError('')
+      setActivityPointWarning('')
+      setIsActivityPointDbReady(true)
 
       const res = await fetch('/api/admin/activity-points')
       if (!res.ok) throw new Error('Failed to fetch activity points settings')
 
-      const data = await res.json()
+      const data = await res.json() as ActivityPointResponse
       setActivityPointRules(Array.isArray(data.rules) ? data.rules : [])
       setActivityPointMembers(Array.isArray(data.members) ? data.members : [])
+      const warning = String(data.warning || '').trim()
+      setActivityPointWarning(warning)
+      setIsActivityPointDbReady(!warning)
     } catch (err) {
       setActivityPointError(err instanceof Error ? err.message : 'Could not load activity points data.')
       setActivityPointRules([])
       setActivityPointMembers([])
+      setActivityPointWarning('')
+      setIsActivityPointDbReady(true)
     } finally {
       setActivityPointLoading(false)
     }
   }, [])
 
   const updateActivityPointRule = async (rule: ActivityPointRuleItem, nextPoints: number, nextIsActive: boolean) => {
+    if (!isActivityPointDbReady) {
+      setActivityPointWarning('Activity points database is not ready yet. Please run migration.')
+      return
+    }
+
     try {
       setSavingActivityPointKey(rule.activityKey)
       setActivityPointError('')
@@ -998,6 +1018,12 @@ export default function AdminDashboard() {
 
       const data = await res.json().catch(() => ({})) as { error?: string }
       if (!res.ok) {
+        if (res.status === 409) {
+          const warningMessage = data?.error || 'Activity points database is not ready yet. Please run migration.'
+          setActivityPointWarning(warningMessage)
+          setIsActivityPointDbReady(false)
+          return
+        }
         throw new Error(data?.error || 'Could not update activity point rule.')
       }
 
@@ -2778,6 +2804,11 @@ export default function AdminDashboard() {
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Activity Points (AP)</h2>
               <p className="mt-1 text-sm text-gray-600">Configure AP for each activity and track member points.</p>
+              {activityPointWarning && (
+                <p className="mt-2 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  {activityPointWarning}
+                </p>
+              )}
             </div>
             <button
               type="button"
@@ -2803,7 +2834,7 @@ export default function AdminDashboard() {
                       onChange={(event) => {
                         void updateActivityPointRule(rule, rule.points, event.target.checked)
                       }}
-                      disabled={savingActivityPointKey === rule.activityKey}
+                      disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
                       className="h-4 w-4 rounded border-gray-300 text-[#14532d] focus:ring-[#14532d]"
                     />
                     Active
@@ -2822,6 +2853,7 @@ export default function AdminDashboard() {
                         current.map((item) => item.activityKey === rule.activityKey ? { ...item, points: Number.isNaN(nextPoints) ? 0 : nextPoints } : item)
                       )
                     }}
+                    disabled={!isActivityPointDbReady}
                     className="w-28 rounded border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#14532d]"
                   />
                   <button
@@ -2829,7 +2861,7 @@ export default function AdminDashboard() {
                     onClick={() => {
                       void updateActivityPointRule(rule, Math.max(0, rule.points), rule.isActive)
                     }}
-                    disabled={savingActivityPointKey === rule.activityKey}
+                    disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
                     className="rounded bg-amber-500 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
                   >
                     {savingActivityPointKey === rule.activityKey ? 'Saving...' : 'Save AP'}
