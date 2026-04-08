@@ -1999,7 +1999,7 @@ export default function Home() {
                       href="/courses"
                       className="brand-cta brand-cta-register"
                     >
-                      <span>Đăng Ký Ngay</span>
+                      <span>Đăng Ký</span>
                       <span aria-hidden="true" className="brand-cta-arrow">→</span>
                     </Link>
                   ) : (
@@ -2010,7 +2010,7 @@ export default function Home() {
                       }}
                       className="brand-cta brand-cta-register"
                     >
-                      <span>Đăng Ký Ngay</span>
+                      <span>Đăng Ký</span>
                       <span aria-hidden="true" className="brand-cta-arrow">→</span>
                     </button>
                   )}
@@ -2047,7 +2047,7 @@ export default function Home() {
                   rel="noreferrer"
                   className="mt-4 inline-block text-sm font-semibold text-[#14532d] hover:underline"
                 >
-                  Lead teacher: Nguyen Tri Bang
+                  Lead Teacher: Nguyen Tri Bang - 10 years of teaching experience.
                 </a>
               </div>
             </section>
@@ -2088,7 +2088,7 @@ export default function Home() {
                           className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold transition ${isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534]'}`}
                           aria-disabled={isFull}
                         >
-                          Đăng Ký Ngay
+                          Đăng Ký
                         </Link>
                       </div>
                     </div>
