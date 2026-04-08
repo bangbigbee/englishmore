@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
+import { showApToast } from '@/lib/showApToast'
 
 interface HomeworkRow {
   id: string
@@ -138,6 +139,9 @@ export default function MyHomeworkPage() {
       if (!res.ok) {
         throw new Error(data.error || 'Could not save the homework.')
       }
+
+      const awardedAp = Number(data?.awardedAp || 0)
+      showApToast(awardedAp)
 
       setSuccess(isUpdate ? 'Submitted homework updated.' : 'Homework submitted successfully.')
       setNotesByHomework((current) => ({ ...current, [homeworkId]: '' }))

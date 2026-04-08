@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
+import { showApToast } from '@/lib/showApToast'
 
 interface HomeworkItem {
   id: string
@@ -333,7 +334,10 @@ export default function Dashboard() {
         throw new Error(data?.error || 'Could not submit the exercise.')
       }
 
-      toast.success(`Submitted. Current result: ${data.submission.score}/${data.submission.totalQuestions}. Time: ${formatDuration(durationSeconds)}.`)
+      const awardedAp = Number(data?.awardedAp || 0)
+      showApToast(awardedAp)
+
+      toast.success(`Đã nộp. Kết quả: ${data.submission.score}/${data.submission.totalQuestions}. Thời gian: ${formatDuration(durationSeconds)}.`)
       setSubmitConfirm(null)
       setStartedExerciseAt((current) => {
         const next = { ...current }

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { showApToast } from '@/lib/showApToast'
 
 interface AvailableCourse {
   id: string
@@ -223,12 +224,7 @@ export default function Home() {
   const isAdminDailyActivity = session?.user?.role === 'admin'
 
   const showActivityPointToast = (points: number) => {
-    toast.custom(() => (
-      <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 shadow-md">
-        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-lg text-white">⭐</span>
-        <p className="text-sm font-semibold text-amber-800">Good job, you&apos;ve got {points} AP.</p>
-      </div>
-    ))
+    showApToast(points)
   }
 
   const canReflectNow = () => {
