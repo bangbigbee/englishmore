@@ -194,9 +194,9 @@ export default function MyHomeworkPage() {
         </div>
 
         <section className="mb-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-amber-700">Pending Homework</p>
-            <p className="mt-2 text-3xl font-black text-amber-800">{pendingHomework.length}</p>
+          <div className="rounded-2xl border border-[#14532d]/45 bg-white p-4 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-[#14532d]">Pending Homework</p>
+            <p className="mt-2 text-3xl font-black text-[#14532d]">{pendingHomework.length}</p>
           </div>
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-emerald-700">Submitted Homework</p>
@@ -211,40 +211,40 @@ export default function MyHomeworkPage() {
           </section>
         ) : (
           <div className="grid gap-6 xl:grid-cols-2">
-            <section className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+            <section className="rounded-2xl border border-[#14532d]/45 bg-white p-5 shadow-sm">
               <div className="space-y-4">
                 {pendingHomework.length === 0 && (
                   <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-800">You have submitted all required homework.</p>
                 )}
 
                 {pendingHomework.map((item) => (
-                  <article key={item.id} className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                  <article key={item.id} className="rounded-xl border border-[#14532d]/35 bg-white p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
-                    <p className="mt-1 text-sm text-slate-500">Due: <span className="font-medium text-amber-800">{new Date(item.dueDate).toLocaleDateString('en-GB')}</span></p>
+                    <p className="mt-1 text-sm text-slate-500">Due: <span className="font-medium text-[#14532d]">{new Date(item.dueDate).toLocaleDateString('en-GB')}</span></p>
                     {item.description && (
                       <div className="mt-3">
                         {!expandedDetailByHomework[item.id] && (
-                          <p className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-slate-700">
+                          <p className="rounded-lg border border-[#14532d]/30 bg-white px-3 py-2 text-sm text-slate-700">
                             <span>{getDescriptionPreview(item.description)}</span>
                             {' '}
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="font-semibold text-amber-800 underline decoration-amber-500 underline-offset-2 hover:text-amber-900"
+                              className="font-semibold text-[#14532d] underline decoration-[#14532d]/55 underline-offset-2 hover:text-[#0f3f22]"
                             >
                               See more
                             </button>
                           </p>
                         )}
                         {expandedDetailByHomework[item.id] && (
-                          <div className="mt-2 rounded-lg border border-amber-200 bg-white px-4 py-3">
+                          <div className="mt-2 rounded-lg border border-[#14532d]/30 bg-white px-4 py-3">
                             <p className="text-sm text-slate-700 leading-relaxed">
                               <LinkifiedText text={item.description} />
                             </p>
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="mt-2 text-xs font-semibold text-amber-800 underline decoration-amber-500 underline-offset-2 hover:text-amber-900"
+                              className="mt-2 text-xs font-semibold text-[#14532d] underline decoration-[#14532d]/55 underline-offset-2 hover:text-[#0f3f22]"
                             >
                               See less
                             </button>
@@ -273,7 +273,7 @@ export default function MyHomeworkPage() {
                       onChange={(e) => setNotesByHomework((current) => ({ ...current, [item.id]: e.target.value }))}
                       rows={4}
                       placeholder="Write your homework message..."
-                      className="mt-1 w-full rounded-lg border border-amber-300 bg-white px-3 py-2 outline-none focus:border-amber-500"
+                      className="mt-1 w-full rounded-lg border border-[#14532d]/45 bg-white px-3 py-2 outline-none focus:border-[#14532d]"
                     />
                     <button
                       onClick={() => submitOrUpdateHomework(item.id, false)}
