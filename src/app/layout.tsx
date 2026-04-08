@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 
 const outfit = Outfit({
   variable: "--font-outfit",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
