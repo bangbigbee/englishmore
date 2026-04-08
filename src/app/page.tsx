@@ -1807,10 +1807,10 @@ export default function Home() {
                   )}
                 </Link>
                 <Link
-                  href="/speak-yourself"
+                  href="/toeic-practice"
                   className="brand-cta brand-cta-filled w-full justify-center"
                 >
-                  <span>Speak Yourself</span>
+                  <span>Luyện TOEIC</span>
                   <span aria-hidden="true" className="speak-cta-mic-wrap">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

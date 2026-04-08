@@ -208,11 +208,17 @@ export default function TopNav() {
                 <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Exercise
                 </Link>
-                <Link href="/speak-yourself" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
-                  Speak Yourself
+                <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                  Luyện TOEIC
                 </Link>
                 <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
                   Slides
+                </Link>
+                <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-green-900 transition hover:bg-green-50 hover:text-green-900">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
+                  </svg>
+                  Luyện TOEIC
                 </Link>
                 <button
                   type="button"
