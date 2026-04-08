@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { authOptions } from '@/lib/auth'
 
@@ -10,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const baseSelect = {
+    const baseSelect = Prisma.validator<Prisma.UserSelect>()({
       id: true,
       name: true,
       email: true,
@@ -53,9 +54,9 @@ export async function GET() {
         orderBy: { createdAt: 'desc' },
         take: 1
       }
-    }
+    })
 
-    let user: Awaited<ReturnType<typeof prisma.user.findUnique>>
+    let user: Prisma.UserGetPayload<{ select: typeof baseSelect }> | (Prisma.UserGetPayload<{ select: typeof baseSelect & { activityPoints: true } }> & { activityPoints: number }) | null
 
     try {
       user = await prisma.user.findUnique({
