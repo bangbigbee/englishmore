@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
 
 type SubmittedAnswer = {
   questionId: string
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   const score = evaluatedAnswers.filter((item) => item.isCorrect).length
 
-  const submission = await prisma.$transaction(async (tx) => {
+  const submissionResult = await prisma.$transaction(async (tx) => {
     const existing = await tx.exerciseSubmission.findUnique({
       where: {
         exerciseId_userId: {
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     if (existing) {
       await tx.exerciseSubmissionAnswer.deleteMany({ where: { submissionId: existing.id } })
 
-      return tx.exerciseSubmission.update({
+      const updatedSubmission = await tx.exerciseSubmission.update({
         where: { id: existing.id },
         data: {
           score,
@@ -180,9 +181,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
           }
         }
       })
+
+      return {
+        submission: updatedSubmission,
+        isFirstSubmission: false
+      }
     }
 
-    return tx.exerciseSubmission.create({
+    const createdSubmission = await tx.exerciseSubmission.create({
       data: {
         exerciseId: exercise.id,
         userId: session.user.id,
@@ -212,10 +218,34 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         }
       }
     })
+
+    return {
+      submission: createdSubmission,
+      isFirstSubmission: true
+    }
   })
+
+  let awardedAp = 0
+  let totalAp = 0
+
+  if (submissionResult.isFirstSubmission) {
+    try {
+      const awardResult = await awardActivityPoints({
+        userId: session.user.id,
+        activityKey: ACTIVITY_POINT_KEYS.exerciseCompletion,
+        referenceKey: `${ACTIVITY_POINT_KEYS.exerciseCompletion}:${session.user.id}:${exercise.id}`
+      })
+      awardedAp = awardResult.awardedAp
+      totalAp = awardResult.totalAp
+    } catch (apError) {
+      console.warn('AP awarding skipped for exercise completion because AP schema is not ready.', apError)
+    }
+  }
 
   return NextResponse.json({
     message: 'Exercise submitted successfully',
-    submission
+    submission: submissionResult.submission,
+    awardedAp,
+    totalAp
   })
 }

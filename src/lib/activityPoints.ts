@@ -2,7 +2,9 @@ import { prisma } from '@/lib/prisma'
 
 export const ACTIVITY_POINT_KEYS = {
   dailyCheckin: 'daily_checkin',
-  dailyReflection: 'daily_reflection'
+  dailyReflection: 'daily_reflection',
+  homeworkOnTime: 'homework_on_time',
+  exerciseCompletion: 'exercise_completion'
 } as const
 
 export type ActivityPointKey = (typeof ACTIVITY_POINT_KEYS)[keyof typeof ACTIVITY_POINT_KEYS]
@@ -15,6 +17,14 @@ const DEFAULT_ACTIVITY_POINT_RULES: Record<ActivityPointKey, { label: string; po
   [ACTIVITY_POINT_KEYS.dailyReflection]: {
     label: 'Daily Reflection',
     points: 8
+  },
+  [ACTIVITY_POINT_KEYS.homeworkOnTime]: {
+    label: 'Homework On-time Submission',
+    points: 12
+  },
+  [ACTIVITY_POINT_KEYS.exerciseCompletion]: {
+    label: 'Exercise Completion',
+    points: 6
   }
 }
 

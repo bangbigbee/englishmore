@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
 
 function isHomeworkMessageStorageMissing(error: unknown) {
   if (!error || typeof error !== 'object') return false
@@ -20,7 +21,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } })
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      role: true
+    }
+  })
   if (!currentUser) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
@@ -54,6 +61,18 @@ export async function POST(request: NextRequest) {
   if (!homework || homework.courseId !== activeEnrollment.courseId) {
     return NextResponse.json({ error: 'This homework does not belong to your course' }, { status: 400 })
   }
+
+  const existingSubmission = await prisma.homeworkSubmission.findUnique({
+    where: {
+      homeworkId_userId: {
+        homeworkId,
+        userId: session.user.id
+      }
+    },
+    select: {
+      id: true
+    }
+  })
 
   const assignment = await prisma.homeworkSubmission.upsert({
     where: {
@@ -89,5 +108,23 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ message: 'Assignment submitted', assignment })
+  let awardedAp = 0
+  let totalAp = 0
+
+  if (!existingSubmission && assignment.submittedAt.getTime() <= homework.dueDate.getTime()) {
+    try {
+      const awardResult = await awardActivityPoints({
+        userId: session.user.id,
+        activityKey: ACTIVITY_POINT_KEYS.homeworkOnTime,
+        referenceKey: `${ACTIVITY_POINT_KEYS.homeworkOnTime}:${session.user.id}:${homeworkId}`
+      })
+
+      awardedAp = awardResult.awardedAp
+      totalAp = awardResult.totalAp
+    } catch (apError) {
+      console.warn('AP awarding skipped for homework submission because AP schema is not ready.', apError)
+    }
+  }
+
+  return NextResponse.json({ message: 'Assignment submitted', assignment, awardedAp, totalAp })
 }
