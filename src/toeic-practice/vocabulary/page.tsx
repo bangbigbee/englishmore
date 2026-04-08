@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PracticeEntryModal from "./PracticeEntryModal";
+import PracticeEntryModal from "../PracticeEntryModal";
 
 export default function VocabularyPage() {
   const [showModal, setShowModal] = useState(true);
