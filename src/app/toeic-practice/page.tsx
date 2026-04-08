@@ -38,40 +38,33 @@ export default function ToeicHomePage() {
 }
 
 function ToeicGrammarTab() {
-	// UI giống file đính kèm
+	// Chỉ còn 5 chủ đề, style xanh lá đậm, bỏ số lượng câu hỏi
 	const grammarTopics = [
-		{ title: "Actual test questions", subtitle: "Câu hỏi từ đề thi thật", count: 438 },
-		{ title: "Basic Grammar Knowledge", subtitle: "Kiến thức ngữ pháp cơ bản", count: 50 },
-		{ title: "Nouns", subtitle: "Danh từ", count: 62 },
-		{ title: "Verbs", subtitle: "Động từ", count: 45 },
-		{ title: "Active and Passive Voice", subtitle: "Câu chủ động và câu bị động", count: 20 },
-		{ title: "Adjectives", subtitle: "Tính từ", count: 45 },
-		{ title: "Adverbs", subtitle: "Trạng từ", count: 48 },
-		{ title: "Pronouns", subtitle: "Đại từ", count: 50 },
-		{ title: "Comparison Sentences", subtitle: "Câu so sánh", count: 38 },
-		{ title: "Conjunctions and Prepositions", subtitle: "Liên từ và giới từ", count: 24 },
-		{ title: "Relative Clauses", subtitle: "Mệnh đề quan hệ", count: 40 },
-		{ title: "Parts of Speech Practice", subtitle: "Bài tập từ loại", count: 50 },
-		{ title: "Mixed Verb Practice", subtitle: "Bài tập động từ hỗn hợp", count: 30 },
-		{ title: "Comprehensive Grammar Practice", subtitle: "Bài tập ngữ pháp tổng hợp", count: 60 },
+		{ title: "Basic Grammar", subtitle: "Ngữ pháp cơ bản" },
+		{ title: "Adjectives", subtitle: "Tính từ" },
+		{ title: "Relative Clause", subtitle: "Mệnh đề quan hệ" },
+		{ title: "Comparison Sentence", subtitle: "Câu so sánh" },
+		{ title: "Phrasal Verb", subtitle: "Cụm động từ" },
 	];
 	return (
 		<div>
-			<h2 className="text-lg font-bold mb-4 text-blue-900 flex items-center gap-2">
-				<span className="inline-block w-5 h-5 text-blue-500">📘</span>
+			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
+				<span className="inline-block w-5 h-5 text-green-700">📘</span>
 				Các chủ đề ngữ pháp
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{grammarTopics.map((topic) => (
-					<div key={topic.title} className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between">
+					<div
+						key={topic.title}
+						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between"
+					>
 						<div>
-							<div className="font-bold text-base text-gray-900 mb-1">{topic.title}</div>
+							<div className="font-bold text-base text-green-900 mb-1">{topic.title}</div>
 							<div className="text-sm text-gray-500 mb-2">{topic.subtitle}</div>
-							<div className="text-blue-600 font-semibold text-sm mb-1">📝 {topic.count} câu hỏi</div>
 							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
 						</div>
 						<div className="flex justify-end">
-							<button className="text-blue-600 font-semibold text-sm hover:underline">Luyện tập &rarr;</button>
+							<button className="text-green-900 font-semibold text-sm hover:underline">Luyện tập &rarr;</button>
 						</div>
 					</div>
 				))}
