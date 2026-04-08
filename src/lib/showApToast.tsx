@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 export function showApToast(points: number) {
   if (points <= 0) return
   try {
-    const audio = new Audio('/audio/tingsound.mp3')
+    const audio = new Audio('/audio/amazing-reward-sound.mp3')
     void audio.play()
   } catch {
     // ignore audio errors silently
