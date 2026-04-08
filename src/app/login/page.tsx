@@ -100,7 +100,6 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-0">
       <div className="bg-white p-6 sm:p-8 rounded shadow-md w-full max-w-sm md:w-96">
         <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">Login</h2>
-
         <button
           onClick={handleGoogleSignIn}
           disabled={googleLoading || isZaloInAppBrowser}
@@ -110,60 +109,13 @@ export default function Login() {
               : 'bg-amber-500 hover:bg-amber-600 cursor-pointer'
           }`}
         >
-          {googleLoading ? 'Connecting...' : 'Sign in with Google'}
+          {googleLoading ? 'Đang kết nối...' : 'Đăng nhập bằng Google'}
         </button>
-
         {isZaloInAppBrowser && (
           <p className="text-left text-xs text-amber-700 mb-4">
-            You are opening this page inside the Zalo browser. Please open it in an external browser to sign in with Google.
+            Bạn đang mở trang này trong trình duyệt Zalo. Vui lòng mở bằng Chrome hoặc Safari để đăng nhập bằng Google.
           </p>
         )}
-
-        <div className="relative mb-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">or</span>
-          </div>
-        </div>
-
-        <form onSubmit={handleCredentialsSignIn} className="space-y-2 sm:space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Email</label>
-            <input
-              type="email"
-              className="mt-1 block w-full rounded border border-slate-300 p-2"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Password</label>
-            <input
-              type="password"
-              className="mt-1 block w-full rounded border border-slate-300 p-2"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-slate-800 text-white p-2 rounded hover:bg-slate-900 disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign in with Email'}
-          </button>
-        </form>
-
-        <p className="mt-4 text-center text-sm text-slate-500">
-          Don&apos;t have an account yet?{' '}
-          <Link href="/register" className="font-medium text-amber-700 hover:text-amber-800">
-            Register here
-          </Link>
-        </p>
       </div>
     </div>
   )

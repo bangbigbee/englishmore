@@ -70,8 +70,13 @@ export default function CoursesPage() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      const callbackUrl = `/courses${typeof window !== 'undefined' ? window.location.search : ''}`
-      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)
+      // Force Google sign-in directly
+      if (typeof window !== 'undefined') {
+        const callbackUrl = `/courses${window.location.search}`
+        const googleUrl = `/api/auth/signin/google?callbackUrl=${encodeURIComponent(callbackUrl)}`
+        window.location.href = googleUrl
+      }
+      return
     } else if (status === 'authenticated') {
       if (session?.user?.role === 'admin') {
         router.push('/admin')
