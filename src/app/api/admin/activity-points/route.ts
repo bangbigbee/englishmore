@@ -37,48 +37,89 @@ export async function GET() {
     return NextResponse.json({ error: auth.status === 401 ? 'Unauthorized' : 'Forbidden' }, { status: auth.status })
   }
 
-  await ensureDefaultActivityPointRules()
+  try {
+    await ensureDefaultActivityPointRules()
 
-  const rulesRaw = await prismaWithActivityPoints.activityPointRule.findMany({
-    orderBy: { activityKey: 'asc' },
-    select: {
-      id: true,
-      activityKey: true,
-      label: true,
-      points: true,
-      isActive: true,
-      updatedAt: true
-    }
-  })
+    const rulesRaw = await prismaWithActivityPoints.activityPointRule.findMany({
+      orderBy: { activityKey: 'asc' },
+      select: {
+        id: true,
+        activityKey: true,
+        label: true,
+        points: true,
+        isActive: true,
+        updatedAt: true
+      }
+    })
 
-  const memberRows = await prisma.user.findMany({
-    where: {
-      role: 'member'
-    },
-    orderBy: [
-      { activityPoints: 'desc' },
-      { createdAt: 'asc' }
-    ],
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      activityPoints: true
-    },
-    take: 200
-  })
+    const memberRows = await prisma.user.findMany({
+      where: {
+        role: 'member'
+      },
+      orderBy: [
+        { activityPoints: 'desc' },
+        { createdAt: 'asc' }
+      ],
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        activityPoints: true
+      },
+      take: 200
+    })
 
-  return NextResponse.json({
-    rules: (Array.isArray(rulesRaw) ? rulesRaw : []) as Array<{
-      id: string
-      activityKey: string
-      label: string
-      points: number
-      isActive: boolean
-      updatedAt: Date
-    }>,
-    members: memberRows
-  })
+    return NextResponse.json({
+      rules: (Array.isArray(rulesRaw) ? rulesRaw : []) as Array<{
+        id: string
+        activityKey: string
+        label: string
+        points: number
+        isActive: boolean
+        updatedAt: Date
+      }>,
+      members: memberRows
+    })
+  } catch (error) {
+    console.warn('Activity points tables/columns not ready. Falling back to defaults.', error)
+
+    const fallbackMembers = await prisma.user.findMany({
+      where: { role: 'member' },
+      orderBy: { createdAt: 'asc' },
+      select: {
+        id: true,
+        name: true,
+        email: true
+      },
+      take: 200
+    })
+
+    return NextResponse.json({
+      rules: [
+        {
+          id: 'fallback_daily_checkin',
+          activityKey: ACTIVITY_POINT_KEYS.dailyCheckin,
+          label: 'Daily Check-in',
+          points: 5,
+          isActive: true,
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: 'fallback_daily_reflection',
+          activityKey: ACTIVITY_POINT_KEYS.dailyReflection,
+          label: 'Daily Reflection',
+          points: 8,
+          isActive: true,
+          updatedAt: new Date().toISOString()
+        }
+      ],
+      members: fallbackMembers.map((member) => ({
+        ...member,
+        activityPoints: 0
+      })),
+      warning: 'Activity points database is not ready yet. Please run migration.'
+    })
+  }
 }
 
 export async function PUT(request: Request) {
@@ -105,23 +146,30 @@ export async function PUT(request: Request) {
 
   const isActive = Boolean(body.isActive)
 
-  await ensureDefaultActivityPointRules()
+  let updatedRuleRaw: unknown
 
-  const updatedRuleRaw = await prismaWithActivityPoints.activityPointRule.update({
-    where: { activityKey },
-    data: {
-      points,
-      isActive
-    },
-    select: {
-      id: true,
-      activityKey: true,
-      label: true,
-      points: true,
-      isActive: true,
-      updatedAt: true
-    }
-  })
+  try {
+    await ensureDefaultActivityPointRules()
+
+    updatedRuleRaw = await prismaWithActivityPoints.activityPointRule.update({
+      where: { activityKey },
+      data: {
+        points,
+        isActive
+      },
+      select: {
+        id: true,
+        activityKey: true,
+        label: true,
+        points: true,
+        isActive: true,
+        updatedAt: true
+      }
+    })
+  } catch (error) {
+    console.warn('Failed to update activity points rule before migration is applied.', error)
+    return NextResponse.json({ error: 'Activity points DB is not ready. Please run migration first.' }, { status: 409 })
+  }
 
   return NextResponse.json({
     success: true,

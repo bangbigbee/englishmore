@@ -393,15 +393,19 @@ export async function POST(request: NextRequest) {
     let totalAp = 0
 
     if (!existingCheckinRaw && currentUser.role === 'member') {
-      const dayKey = dayStart.toISOString().slice(0, 10)
-      const awardResult = await awardActivityPoints({
-        userId: currentUser.id,
-        activityKey: ACTIVITY_POINT_KEYS.dailyCheckin,
-        referenceKey: `${ACTIVITY_POINT_KEYS.dailyCheckin}:${currentUser.id}:${dayKey}`
-      })
+      try {
+        const dayKey = dayStart.toISOString().slice(0, 10)
+        const awardResult = await awardActivityPoints({
+          userId: currentUser.id,
+          activityKey: ACTIVITY_POINT_KEYS.dailyCheckin,
+          referenceKey: `${ACTIVITY_POINT_KEYS.dailyCheckin}:${currentUser.id}:${dayKey}`
+        })
 
-      awardedAp = awardResult.awardedAp
-      totalAp = awardResult.totalAp
+        awardedAp = awardResult.awardedAp
+        totalAp = awardResult.totalAp
+      } catch (apError) {
+        console.warn('AP awarding skipped for check-in because AP schema is not ready.', apError)
+      }
     }
 
     return NextResponse.json({ success: true, checkin, awardedAp, totalAp })

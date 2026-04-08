@@ -197,15 +197,19 @@ export async function POST(request: NextRequest) {
     let totalAp = 0
 
     if (!existingReflectionRaw && currentUser.role === 'member') {
-      const dayKey = dayStart.toISOString().slice(0, 10)
-      const awardResult = await awardActivityPoints({
-        userId: currentUser.id,
-        activityKey: ACTIVITY_POINT_KEYS.dailyReflection,
-        referenceKey: `${ACTIVITY_POINT_KEYS.dailyReflection}:${currentUser.id}:${dayKey}`
-      })
+      try {
+        const dayKey = dayStart.toISOString().slice(0, 10)
+        const awardResult = await awardActivityPoints({
+          userId: currentUser.id,
+          activityKey: ACTIVITY_POINT_KEYS.dailyReflection,
+          referenceKey: `${ACTIVITY_POINT_KEYS.dailyReflection}:${currentUser.id}:${dayKey}`
+        })
 
-      awardedAp = awardResult.awardedAp
-      totalAp = awardResult.totalAp
+        awardedAp = awardResult.awardedAp
+        totalAp = awardResult.totalAp
+      } catch (apError) {
+        console.warn('AP awarding skipped for reflection because AP schema is not ready.', apError)
+      }
     }
 
     return NextResponse.json({ success: true, reflection, awardedAp, totalAp })
