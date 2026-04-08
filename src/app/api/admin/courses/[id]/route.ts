@@ -9,7 +9,10 @@ async function requireAdmin() {
     return { status: 401, body: { error: 'Unauthorized' } }
   }
 
-  const user = await prisma.user.findUnique({ where: { id: session.user?.id as string } })
+  const user = await prisma.user.findUnique({
+    where: { id: session.user?.id as string },
+    select: { role: true }
+  })
   if (!user || user.role !== 'admin') {
     return { status: 403, body: { error: 'Forbidden' } }
   }
