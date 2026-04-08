@@ -29,7 +29,19 @@ export async function GET() {
   const courses = await prisma.course.findMany({
     include: {
       enrollments: {
-        include: { user: true }
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              role: true,
+              createdAt: true,
+              updatedAt: true
+            }
+          }
+        }
       }
     },
     orderBy: { createdAt: 'desc' }
