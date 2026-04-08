@@ -1967,8 +1967,9 @@ export default function Home() {
                   <span className="text-green-900">your mind and more</span>
                 </p>
                 <p className="mt-3 max-w-xl text-base sm:text-lg font-medium text-[#14532d]">
-                  Bạn muốn học tốt tiếng Anh và hơn thế nữa...?
+                  Bạn muốn nói tốt tiếng Anh và nhiều kĩ năng giao tiếp khác?
                 </p>
+                {/* Hai button Tư Vấn và Đăng Ký */}
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
                   {session?.user?.role !== 'admin' && (
                     <div className="group relative inline-block">
@@ -2014,14 +2015,6 @@ export default function Home() {
                       <span aria-hidden="true" className="brand-cta-arrow">→</span>
                     </button>
                   )}
-                    {/* Button Luyện TOEIC */}
-                    <Link
-                      href="/toeic-practice"
-                      className="brand-cta brand-cta-outline"
-                    >
-                      <span>Luyện TOEIC</span>
-                      <span aria-hidden="true" className="brand-cta-arrow">→</span>
-                    </Link>
                   {session?.user?.role === 'admin' && (
                     <Link
                       href="/admin?section=homework"
@@ -2040,6 +2033,19 @@ export default function Home() {
                       </span>
                     </Link>
                   )}
+                </div>
+                {/* Câu hỏi TOEIC và button Luyện TOEIC */}
+                <div className="mt-6">
+                  <p className="max-w-xl text-base sm:text-lg font-medium text-[#14532d] mb-4">
+                    Hoặc bạn muốn luyện thi lấy chứng chỉ TOEIC?
+                  </p>
+                  <Link
+                    href="/toeic-practice"
+                    className="brand-cta brand-cta-outline"
+                  >
+                    <span>Luyện TOEIC</span>
+                    <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                  </Link>
                 </div>
               </div>
               <div className="rounded-lg border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
