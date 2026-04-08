@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
+import { ACTIVITY_POINT_KEYS, awardAchievementBadgePoints, awardActivityPoints, type ApRewardItem } from '@/lib/activityPoints'
 
 type SubmittedAnswer = {
   questionId: string
@@ -227,6 +227,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   let awardedAp = 0
   let totalAp = 0
+  const apRewards: ApRewardItem[] = []
 
   if (submissionResult.isFirstSubmission) {
     try {
@@ -237,15 +238,32 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       })
       awardedAp = awardResult.awardedAp
       totalAp = awardResult.totalAp
+      if (awardResult.awardedAp > 0) {
+        apRewards.push({
+          points: awardResult.awardedAp,
+          reason: 'for Exercise Completion.'
+        })
+      }
     } catch (apError) {
       console.warn('AP awarding skipped for exercise completion because AP schema is not ready.', apError)
     }
+  }
+
+  try {
+    const badgeRewards = await awardAchievementBadgePoints(session.user.id)
+    if (badgeRewards.length > 0) {
+      apRewards.push(...badgeRewards)
+      awardedAp += badgeRewards.reduce((sum, item) => sum + item.points, 0)
+    }
+  } catch (badgeApError) {
+    console.warn('Achievement AP awarding skipped for exercise submission.', badgeApError)
   }
 
   return NextResponse.json({
     message: 'Exercise submitted successfully',
     submission: submissionResult.submission,
     awardedAp,
-    totalAp
+    totalAp,
+    apRewards
   })
 }

@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
+import { ACTIVITY_POINT_KEYS, awardAchievementBadgePoints, awardActivityPoints, type ApRewardItem } from '@/lib/activityPoints'
 
 const DAILY_ACTIVITY_ROLES = new Set(['member', 'admin'])
 const REFLECTION_AFTER_5PM_MESSAGE = 'You should reflect your day after 5 PM.'
@@ -195,6 +195,7 @@ export async function POST(request: NextRequest) {
 
     let awardedAp = 0
     let totalAp = 0
+    const apRewards: ApRewardItem[] = []
 
     if (!existingReflectionRaw && currentUser.role === 'member') {
       try {
@@ -207,12 +208,30 @@ export async function POST(request: NextRequest) {
 
         awardedAp = awardResult.awardedAp
         totalAp = awardResult.totalAp
+        if (awardResult.awardedAp > 0) {
+          apRewards.push({
+            points: awardResult.awardedAp,
+            reason: 'for Daily Reflection.'
+          })
+        }
       } catch (apError) {
         console.warn('AP awarding skipped for reflection because AP schema is not ready.', apError)
       }
     }
 
-    return NextResponse.json({ success: true, reflection, awardedAp, totalAp })
+    if (currentUser.role === 'member') {
+      try {
+        const badgeRewards = await awardAchievementBadgePoints(currentUser.id)
+        if (badgeRewards.length > 0) {
+          apRewards.push(...badgeRewards)
+          awardedAp += badgeRewards.reduce((sum, item) => sum + item.points, 0)
+        }
+      } catch (badgeApError) {
+        console.warn('Achievement AP awarding skipped for reflection.', badgeApError)
+      }
+    }
+
+    return NextResponse.json({ success: true, reflection, awardedAp, totalAp, apRewards })
   } catch (error) {
     console.error('Error saving daily reflection:', error)
     return NextResponse.json({ error: 'Failed to save reflection' }, { status: 500 })

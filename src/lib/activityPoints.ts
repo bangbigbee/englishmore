@@ -1,10 +1,22 @@
 import { prisma } from '@/lib/prisma'
+import { getUserBadges } from '@/lib/achievementBadges'
 
 export const ACTIVITY_POINT_KEYS = {
   dailyCheckin: 'daily_checkin',
   dailyReflection: 'daily_reflection',
   homeworkOnTime: 'homework_on_time',
-  exerciseCompletion: 'exercise_completion'
+  exerciseCompletion: 'exercise_completion',
+  badgeFirstCheckin: 'badge_first_checkin',
+  badgeCheckinStreak3: 'badge_checkin_streak_3',
+  badgeCheckinStreak7: 'badge_checkin_streak_7',
+  badgeCheckin30: 'badge_checkin_30',
+  badgeFirstReflection: 'badge_first_reflection',
+  badgeReflectionStreak3: 'badge_reflection_streak_3',
+  badgeReflection10: 'badge_reflection_10',
+  badgeFirstSubmit: 'badge_first_submit',
+  badgeOnTime3: 'badge_on_time_3',
+  badgeSubmit5: 'badge_submit_5',
+  badgeAllRounder: 'badge_all_rounder'
 } as const
 
 export type ActivityPointKey = (typeof ACTIVITY_POINT_KEYS)[keyof typeof ACTIVITY_POINT_KEYS]
@@ -25,7 +37,70 @@ const DEFAULT_ACTIVITY_POINT_RULES: Record<ActivityPointKey, { label: string; po
   [ACTIVITY_POINT_KEYS.exerciseCompletion]: {
     label: 'Exercise Completion',
     points: 6
+  },
+  [ACTIVITY_POINT_KEYS.badgeFirstCheckin]: {
+    label: 'Achievement: First Step',
+    points: 10
+  },
+  [ACTIVITY_POINT_KEYS.badgeCheckinStreak3]: {
+    label: 'Achievement: 3-Day Streak',
+    points: 15
+  },
+  [ACTIVITY_POINT_KEYS.badgeCheckinStreak7]: {
+    label: 'Achievement: 7-Day Blazer',
+    points: 25
+  },
+  [ACTIVITY_POINT_KEYS.badgeCheckin30]: {
+    label: 'Achievement: Committed',
+    points: 30
+  },
+  [ACTIVITY_POINT_KEYS.badgeFirstReflection]: {
+    label: 'Achievement: Inner Voice',
+    points: 10
+  },
+  [ACTIVITY_POINT_KEYS.badgeReflectionStreak3]: {
+    label: 'Achievement: Deep Thinker',
+    points: 15
+  },
+  [ACTIVITY_POINT_KEYS.badgeReflection10]: {
+    label: 'Achievement: Mindful Learner',
+    points: 25
+  },
+  [ACTIVITY_POINT_KEYS.badgeFirstSubmit]: {
+    label: 'Achievement: First Submission',
+    points: 10
+  },
+  [ACTIVITY_POINT_KEYS.badgeOnTime3]: {
+    label: 'Achievement: Punctual Student',
+    points: 20
+  },
+  [ACTIVITY_POINT_KEYS.badgeSubmit5]: {
+    label: 'Achievement: Homework Hero',
+    points: 25
+  },
+  [ACTIVITY_POINT_KEYS.badgeAllRounder]: {
+    label: 'Achievement: All-Rounder',
+    points: 30
   }
+}
+
+const BADGE_ACTIVITY_KEY_MAP: Record<string, ActivityPointKey> = {
+  first_checkin: ACTIVITY_POINT_KEYS.badgeFirstCheckin,
+  checkin_streak_3: ACTIVITY_POINT_KEYS.badgeCheckinStreak3,
+  checkin_streak_7: ACTIVITY_POINT_KEYS.badgeCheckinStreak7,
+  checkin_30: ACTIVITY_POINT_KEYS.badgeCheckin30,
+  first_reflection: ACTIVITY_POINT_KEYS.badgeFirstReflection,
+  reflection_streak_3: ACTIVITY_POINT_KEYS.badgeReflectionStreak3,
+  reflection_10: ACTIVITY_POINT_KEYS.badgeReflection10,
+  first_submit: ACTIVITY_POINT_KEYS.badgeFirstSubmit,
+  on_time_3: ACTIVITY_POINT_KEYS.badgeOnTime3,
+  submit_5: ACTIVITY_POINT_KEYS.badgeSubmit5,
+  all_rounder: ACTIVITY_POINT_KEYS.badgeAllRounder
+}
+
+export interface ApRewardItem {
+  points: number
+  reason: string
 }
 
 const prismaWithActivityPoints = prisma as typeof prisma & {
@@ -142,4 +217,30 @@ export const awardActivityPoints = async ({
       totalAp: updatedUser.activityPoints
     }
   })
+}
+
+export const awardAchievementBadgePoints = async (userId: string): Promise<ApRewardItem[]> => {
+  const { badges } = await getUserBadges(userId)
+  const earnedBadges = badges.filter((badge) => badge.earned)
+  const rewards: ApRewardItem[] = []
+
+  for (const badge of earnedBadges) {
+    const activityKey = BADGE_ACTIVITY_KEY_MAP[badge.id]
+    if (!activityKey) continue
+
+    const awardResult = await awardActivityPoints({
+      userId,
+      activityKey,
+      referenceKey: `${activityKey}:${userId}`
+    })
+
+    if (awardResult.awardedAp > 0) {
+      rewards.push({
+        points: awardResult.awardedAp,
+        reason: `for ${badge.name}.`
+      })
+    }
+  }
+
+  return rewards
 }

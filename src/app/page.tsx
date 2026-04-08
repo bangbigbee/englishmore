@@ -223,8 +223,8 @@ export default function Home() {
 
   const isAdminDailyActivity = session?.user?.role === 'admin'
 
-  const showActivityPointToast = (points: number) => {
-    showApToast(points)
+  const showActivityPointToast = (points: number, reason?: string) => {
+    showApToast(points, reason)
   }
 
   const canReflectNow = () => {
@@ -1137,7 +1137,11 @@ export default function Home() {
         })
       })
 
-      const data = await res.json().catch(() => ({})) as { error?: string; awardedAp?: number }
+      const data = await res.json().catch(() => ({})) as {
+        error?: string
+        awardedAp?: number
+        apRewards?: Array<{ points?: number; reason?: string }>
+      }
 
       if (!res.ok) {
         setGreetingError(data?.error || 'Could not save your check-in. Please try again.')
@@ -1145,9 +1149,19 @@ export default function Home() {
         return
       }
 
-      const awardedAp = Number(data?.awardedAp || 0)
-      if (awardedAp > 0) {
-        showActivityPointToast(awardedAp)
+      const apRewards = Array.isArray(data?.apRewards) ? data.apRewards : []
+      if (apRewards.length > 0) {
+        for (const reward of apRewards) {
+          const points = Number(reward?.points || 0)
+          if (points > 0) {
+            showActivityPointToast(points, String(reward?.reason || '').trim())
+          }
+        }
+      } else {
+        const awardedAp = Number(data?.awardedAp || 0)
+        if (awardedAp > 0) {
+          showActivityPointToast(awardedAp)
+        }
       }
 
       setHasGreetingToday(true)
@@ -1263,12 +1277,26 @@ export default function Home() {
           ...(isAdminDailyActivity && selectedAdminDailyActivityCourseId ? { courseId: selectedAdminDailyActivityCourseId } : {})
         })
       })
-      const data = await res.json().catch(() => ({})) as { error?: string; awardedAp?: number }
+      const data = await res.json().catch(() => ({})) as {
+        error?: string
+        awardedAp?: number
+        apRewards?: Array<{ points?: number; reason?: string }>
+      }
       if (!res.ok) { setReflectionError(data?.error || 'Could not save your reflection.'); setReflectionStatus(''); return }
 
-      const awardedAp = Number(data?.awardedAp || 0)
-      if (awardedAp > 0) {
-        showActivityPointToast(awardedAp)
+      const apRewards = Array.isArray(data?.apRewards) ? data.apRewards : []
+      if (apRewards.length > 0) {
+        for (const reward of apRewards) {
+          const points = Number(reward?.points || 0)
+          if (points > 0) {
+            showActivityPointToast(points, String(reward?.reason || '').trim())
+          }
+        }
+      } else {
+        const awardedAp = Number(data?.awardedAp || 0)
+        if (awardedAp > 0) {
+          showActivityPointToast(awardedAp)
+        }
       }
 
       setHasReflectionToday(true)

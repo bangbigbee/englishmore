@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { ACTIVITY_POINT_KEYS, awardActivityPoints } from '@/lib/activityPoints'
+import { ACTIVITY_POINT_KEYS, awardAchievementBadgePoints, awardActivityPoints, type ApRewardItem } from '@/lib/activityPoints'
 
 const DAILY_ACTIVITY_ROLES = new Set(['member', 'admin'])
 
@@ -391,6 +391,7 @@ export async function POST(request: NextRequest) {
 
     let awardedAp = 0
     let totalAp = 0
+    const apRewards: ApRewardItem[] = []
 
     if (!existingCheckinRaw && currentUser.role === 'member') {
       try {
@@ -403,12 +404,30 @@ export async function POST(request: NextRequest) {
 
         awardedAp = awardResult.awardedAp
         totalAp = awardResult.totalAp
+        if (awardResult.awardedAp > 0) {
+          apRewards.push({
+            points: awardResult.awardedAp,
+            reason: 'for Daily Check-in.'
+          })
+        }
       } catch (apError) {
         console.warn('AP awarding skipped for check-in because AP schema is not ready.', apError)
       }
     }
 
-    return NextResponse.json({ success: true, checkin, awardedAp, totalAp })
+    if (currentUser.role === 'member') {
+      try {
+        const badgeRewards = await awardAchievementBadgePoints(currentUser.id)
+        if (badgeRewards.length > 0) {
+          apRewards.push(...badgeRewards)
+          awardedAp += badgeRewards.reduce((sum, item) => sum + item.points, 0)
+        }
+      } catch (badgeApError) {
+        console.warn('Achievement AP awarding skipped for check-in.', badgeApError)
+      }
+    }
+
+    return NextResponse.json({ success: true, checkin, awardedAp, totalAp, apRewards })
   } catch (error) {
     console.error('Error saving daily greeting checkin:', error)
     return NextResponse.json({ error: 'Failed to save daily greeting checkin' }, { status: 500 })

@@ -334,8 +334,18 @@ export default function Dashboard() {
         throw new Error(data?.error || 'Could not submit the exercise.')
       }
 
-      const awardedAp = Number(data?.awardedAp || 0)
-      showApToast(awardedAp)
+      const apRewards = Array.isArray(data?.apRewards) ? data.apRewards : []
+      if (apRewards.length > 0) {
+        for (const reward of apRewards) {
+          const points = Number(reward?.points || 0)
+          if (points > 0) {
+            showApToast(points, String(reward?.reason || '').trim())
+          }
+        }
+      } else {
+        const awardedAp = Number(data?.awardedAp || 0)
+        showApToast(awardedAp)
+      }
 
       toast.success(`Đã nộp. Kết quả: ${data.submission.score}/${data.submission.totalQuestions}. Thời gian: ${formatDuration(durationSeconds)}.`)
       setSubmitConfirm(null)

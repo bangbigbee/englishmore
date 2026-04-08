@@ -140,8 +140,18 @@ export default function MyHomeworkPage() {
         throw new Error(data.error || 'Could not save the homework.')
       }
 
-      const awardedAp = Number(data?.awardedAp || 0)
-      showApToast(awardedAp)
+      const apRewards = Array.isArray(data?.apRewards) ? data.apRewards : []
+      if (apRewards.length > 0) {
+        for (const reward of apRewards) {
+          const points = Number(reward?.points || 0)
+          if (points > 0) {
+            showApToast(points, String(reward?.reason || '').trim())
+          }
+        }
+      } else {
+        const awardedAp = Number(data?.awardedAp || 0)
+        showApToast(awardedAp)
+      }
 
       setSuccess(isUpdate ? 'Submitted homework updated.' : 'Homework submitted successfully.')
       setNotesByHomework((current) => ({ ...current, [homeworkId]: '' }))
