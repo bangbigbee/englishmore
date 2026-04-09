@@ -78,13 +78,24 @@ const extractGoogleDocId = (inputUrl: string) => {
 }
 
 const parseVocabularyFromText = (text: string) => {
-  const normalizedText = String(text || '').replace(/\r/g, '\n')
+  const normalizedText = String(text || '')
+    .normalize('NFC')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width characters
+    .replace(/\r/g, '\n')
   const lines = normalizedText.split('\n').map((line) => line.trim())
   const parsedItems: ParsedVocabularyItem[] = []
   let invalidCount = 0
 
   const currentMap = new Map<string, string>()
   let lastSeenTopic = 'WarmUp'
+
+  const getCleanKey = (raw: string) => {
+    return raw
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+  }
 
   const flushCurrentItem = () => {
     if (currentMap.size === 0) {
@@ -138,12 +149,7 @@ const parseVocabularyFromText = (text: string) => {
       continue
     }
 
-    const key = line
-      .slice(0, separatorIndex)
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '')
+    const key = getCleanKey(line.slice(0, separatorIndex))
     const value = line.slice(separatorIndex + 1).trim()
     if (!value) {
       continue
