@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 interface HeaderEnrollment {
