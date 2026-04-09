@@ -42,7 +42,6 @@ export default function ToeicHomePage() {
     </div>
   );
 }
-}
 
 function ToeicGrammarTab({ setShowPractice }: { setShowPractice: (v: boolean) => void }) {
   // UI giống file đính kèm
