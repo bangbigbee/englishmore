@@ -508,66 +508,91 @@ export default function CoursesPage() {
                             <span className="w-1.5 h-6 bg-emerald-500 rounded-full"></span>
                             Ưu đãi hiện có
                           </h3>
-                          <div className="rounded-2xl border border-[#14532d]/20 bg-linear-to-br from-[#14532d]/5 to-orange-50/50 p-6">
+                          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm overflow-hidden relative">
                             {(() => {
                               const tier = getPromotionTier(course)
                               const originalPrice = course.price || 4200000
-                              const discountedPrice = originalPrice * (1 - tier.discount)
-                              const savings = originalPrice - discountedPrice
-                              
-                              // Future tiers calculation
+                              const sebDiscount = (course.sebDiscountPercent ?? 30) / 100
                               const ebDiscount = (course.ebDiscountPercent ?? 15) / 100
-                              const ebPrice = originalPrice * (1 - ebDiscount)
-                              
+
+                              const phases = [
+                                {
+                                  name: 'Super Early Bird',
+                                  label: 'Ưu đãi lớn nhất',
+                                  price: Math.round(originalPrice * (1 - sebDiscount)),
+                                  color: 'emerald',
+                                  isActive: tier.name === 'Super Early Bird'
+                                },
+                                {
+                                  name: 'Early Bird',
+                                  label: 'Tiết kiệm ngay',
+                                  price: Math.round(originalPrice * (1 - ebDiscount)),
+                                  color: 'orange',
+                                  isActive: tier.name === 'Early Bird'
+                                },
+                                {
+                                  name: 'Regular',
+                                  label: 'Giá gốc',
+                                  price: originalPrice,
+                                  color: 'slate',
+                                  isActive: tier.name === 'Regular'
+                                }
+                              ]
+
                               return (
                                 <div className="space-y-6">
-                                  <div className="flex flex-col gap-4">
-                                    <div className="flex items-center justify-between">
-                                      <span className={`rounded-full px-4 py-1 text-xs font-bold text-white shadow-sm bg-linear-to-r ${tier.color}`}>
-                                        {tier.name}
-                                      </span>
-                                      <span className="text-2xl font-black text-[#14532d]">{formatVnd(discountedPrice)}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-2">
-                                        <div className="p-1 rounded-full bg-emerald-100 text-emerald-600">
-                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                                  <div className="flex flex-col sm:flex-row gap-4">
+                                    {phases.map((phase) => (
+                                      <div 
+                                        key={phase.name} 
+                                        className={`flex-1 rounded-2xl border-2 p-4 transition-all duration-300 ${
+                                          phase.isActive 
+                                            ? phase.color === 'emerald' ? 'border-emerald-500 bg-emerald-50 ring-4 ring-emerald-500/10 scale-[1.02]' :
+                                              phase.color === 'orange' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-500/10 scale-[1.02]' :
+                                              'border-slate-500 bg-slate-50 ring-4 ring-slate-500/10 scale-[1.02]'
+                                            : 'border-slate-100 bg-white opacity-50 grayscale-[0.5]'
+                                        }`}
+                                      >
+                                        <div className="flex flex-col h-full justify-between">
+                                          <div>
+                                            <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 ${
+                                              phase.isActive 
+                                                ? phase.color === 'emerald' ? 'bg-emerald-500 text-white' :
+                                                  phase.color === 'orange' ? 'bg-orange-500 text-white' :
+                                                  'bg-slate-500 text-white'
+                                                : 'bg-slate-200 text-slate-500'
+                                            }`}>
+                                              {phase.name}
+                                            </span>
+                                            <p className={`text-[10px] font-bold ${phase.isActive ? 'text-slate-600' : 'text-slate-400'}`}>
+                                              {phase.label}
+                                            </p>
+                                          </div>
+                                          <p className={`mt-3 text-lg font-black ${
+                                            phase.isActive 
+                                              ? phase.color === 'emerald' ? 'text-emerald-700' :
+                                                phase.color === 'orange' ? 'text-orange-700' :
+                                                'text-slate-700'
+                                              : 'text-slate-400'
+                                          }`}>
+                                            {formatVnd(phase.price)}
+                                          </p>
                                         </div>
-                                        <p className={`text-sm font-bold uppercase tracking-tight ${tier.textColor}`}>{tier.label}</p>
                                       </div>
-                                      {savings > 0 && (
-                                        <p className="text-sm font-bold text-orange-700">
-                                          TIẾT KIỆM NGAY: <span className="text-lg">{formatVnd(savings)}</span>
-                                        </p>
-                                      )}
-                                    </div>
+                                    ))}
                                   </div>
 
-                                  {/* Price Comparison Table */}
-                                  <div className="pt-4 border-t border-[#14532d]/10">
-                                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">So sánh mức giá các giai đoạn</h4>
-                                    <div className="grid grid-cols-2 gap-3">
-                                      {tier.name === 'Super Early Bird' && (
-                                        <div className="rounded-xl bg-white/50 p-3 border border-slate-100">
-                                          <p className="text-[10px] font-bold text-slate-500 uppercase">Giai đoạn Early Bird</p>
-                                          <p className="text-sm font-bold text-slate-700 mt-1">{formatVnd(ebPrice)}</p>
-                                          <p className="text-[10px] text-red-500 mt-0.5">+{formatVnd(ebPrice - discountedPrice)}</p>
-                                        </div>
-                                      )}
-                                      {(tier.name === 'Super Early Bird' || tier.name === 'Early Bird') && (
-                                        <div className="rounded-xl bg-white/50 p-3 border border-slate-100">
-                                          <p className="text-[10px] font-bold text-slate-500 uppercase">Giá gốc (Regular)</p>
-                                          <p className="text-sm font-bold text-slate-700 mt-1">{formatVnd(originalPrice)}</p>
-                                          <p className="text-[10px] text-red-500 mt-0.5">+{formatVnd(originalPrice - discountedPrice)}</p>
-                                        </div>
-                                      )}
-                                      {tier.name === 'Regular' && (
-                                        <div className="col-span-2 py-2 text-center text-xs font-medium text-slate-500 italic">
-                                          Đây là mức giá cuối cùng trước khi đóng link đăng ký.
-                                        </div>
-                                      )}
+                                  {tier.name !== 'Regular' && (
+                                    <div className="rounded-xl bg-orange-50 border border-orange-100 p-3 flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                                        <p className="text-sm font-bold text-orange-800">Giai đoạn hiện tại: {tier.name}</p>
+                                      </div>
+                                      <p className="text-sm font-black text-orange-900">
+                                        TIẾT KIỆM: {formatVnd(originalPrice - Math.round(originalPrice * (1 - tier.discount)))}
+                                      </p>
                                     </div>
-                                  </div>
+                                  )}
                                 </div>
                               )
                             })()}
