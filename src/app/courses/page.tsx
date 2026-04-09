@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -373,8 +373,13 @@ export default function CoursesPage() {
                         onClick={() => setExpandedCourseId(isExpanded ? null : course.id)}
                         className="flex w-full items-center justify-between px-5 py-3 text-sm font-semibold text-[#14532d] hover:bg-slate-50 sm:px-7"
                       >
-                        <span>{isExpanded ? 'Thu gọn' : 'Xem thêm chi tiết'}</span>
-                        <span className="text-xs">{isExpanded ? '▲' : '▼'}</span>
+                        <span className="shrink-0">{isExpanded ? 'Thu gọn' : 'Xem thêm chi tiết'}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-[#ea980c] text-right">
+                            Học phí: {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}
+                          </span>
+                          <span className="text-[10px] sm:text-xs shrink-0">{isExpanded ? '▲' : '▼'}</span>
+                        </div>
                       </button>
 
                       {isExpanded && (
