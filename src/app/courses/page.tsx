@@ -331,7 +331,7 @@ export default function CoursesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col h-[calc(100vh-80px)] lg:h-[calc(100vh-84px)] bg-gray-50 overflow-hidden">
       <div className="bg-white shadow-xs border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-[#14532d]">Available Courses</h1>
@@ -339,16 +339,16 @@ export default function CoursesPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex-1 min-h-0 mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 lg:px-8">
         {loading ? (
           <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Đang tải danh sách khóa học...</div>
         ) : courses.length === 0 ? (
           <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Chưa có khóa học đang mở.</div>
         ) : (
-          <div className="lg:grid lg:grid-cols-[320px_1fr] lg:gap-8">
+          <div className="h-full lg:grid lg:grid-cols-[320px_1fr] lg:gap-8 overflow-hidden">
             {/* Sidebar - Course List */}
-            <aside className="mb-8 lg:mb-0 lg:sticky lg:top-8 self-start">
-              <div className="space-y-3">
+            <aside className="mb-8 lg:mb-0 h-full overflow-y-auto custom-scrollbar pr-2">
+              <div className="space-y-3 pb-8">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 px-1">Danh sách khóa học</h2>
                 {courses.map((course) => {
                   const isActive = expandedCourseId === course.id
@@ -385,7 +385,7 @@ export default function CoursesPage() {
             </aside>
 
             {/* Main Content - Course Details */}
-            <main>
+            <main className="h-full overflow-y-auto custom-scrollbar pb-12 pr-1">
               {(() => {
                 const course = courses.find(c => c.id === expandedCourseId)
                 if (!course) return <div className="rounded-xl border-2 border-dashed border-slate-200 p-12 text-center text-slate-400">Chọn một khóa học để xem chi tiết.</div>
