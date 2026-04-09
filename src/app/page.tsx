@@ -1512,29 +1512,30 @@ export default function Home() {
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
               <div className="space-y-4">
                 <article className="checkin-message rounded-lg border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-bold text-[#14532d] sm:text-base">How do you feel today?</p>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasGreetingToday ? 'bg-[#14532d]/12 text-[#14532d]' : 'bg-orange-100 text-orange-700'}`}>
-                      {hasGreetingToday ? 'Done today' : 'Pending'}
-                    </span>
                   </div>
 
                   {hasGreetingToday ? (
                     <div className="mt-3 rounded-md border border-[#14532d]/20 bg-[#14532d]/5 px-3 py-2.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditCheckinMessage(greetingMessage)
-                          setEditCheckinStatus('')
-                          setIsEditingCheckin(true)
-                        }}
-                        className="text-xs font-normal text-slate-400 underline-offset-2 hover:underline"
-                      >
-                        You already checked in. Edit it
-                      </button>
+                      {!isEditingCheckin && (
+                        <div className="flex justify-end mb-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditCheckinMessage(greetingMessage)
+                              setEditCheckinStatus('')
+                              setIsEditingCheckin(true)
+                            }}
+                            className="text-xs font-medium text-slate-500 hover:text-[#14532d] transition"
+                          >
+                            ✏️ Edit
+                          </button>
+                        </div>
+                      )}
 
                       {!isEditingCheckin && greetingMessage && (
-                        <p className="mt-2 rounded-lg bg-white px-3 py-2 text-sm text-slate-700">{greetingMessage}</p>
+                        <p className="rounded-lg bg-white px-3 py-2 text-sm text-slate-700">{greetingMessage}</p>
                       )}
 
                       {isEditingCheckin ? (
@@ -1637,11 +1638,8 @@ export default function Home() {
                 </article>
 
                 <article className={`checkin-message rounded-lg border bg-white px-4 py-4 shadow-sm transition-all ${hasGreetingToday ? 'border-amber-300/60' : 'border-slate-200 opacity-85'}`}>
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-bold text-amber-800 sm:text-base">How was your day?</p>
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${hasReflectionToday ? 'bg-[#14532d]/12 text-[#14532d]' : hasGreetingToday ? 'bg-amber-100 text-amber-700' : 'bg-[#14532d]/8 text-[#14532d]/70'}`}>
-                      {hasReflectionToday ? 'Done today' : hasGreetingToday ? 'Ready' : 'Check-in first'}
-                    </span>
                   </div>
 
                   {!hasGreetingToday ? (
@@ -1650,20 +1648,24 @@ export default function Home() {
                     </div>
                   ) : hasReflectionToday ? (
                     <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditReflectionMessage(reflectionMessage)
-                          setEditReflectionStatus('')
-                          setIsEditingReflection(true)
-                        }}
-                        className="text-xs font-normal text-slate-400 underline-offset-2 hover:underline"
-                      >
-                        You already reflected today. Edit it
-                      </button>
+                      {!isEditingReflection && (
+                        <div className="flex justify-end mb-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditReflectionMessage(reflectionMessage)
+                              setEditReflectionStatus('')
+                              setIsEditingReflection(true)
+                            }}
+                            className="text-xs font-medium text-slate-500 hover:text-amber-700 transition"
+                          >
+                            ✏️ Edit
+                          </button>
+                        </div>
+                      )}
 
                       {!isEditingReflection && reflectionMessage && (
-                        <p className="mt-2 whitespace-pre-wrap rounded-lg bg-white px-3 py-2 text-sm text-slate-700">{reflectionMessage}</p>
+                        <p className="whitespace-pre-wrap rounded-lg bg-white px-3 py-2 text-sm text-slate-700">{reflectionMessage}</p>
                       )}
 
                       {isEditingReflection ? (
