@@ -7,7 +7,6 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
-import { showApToast } from '@/lib/showApToast'
 
 interface AvailableCourse {
   id: string
