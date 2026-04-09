@@ -7,7 +7,7 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
-import LoginModal from '@/components/LoginModal'
+import { showApToast } from '@/lib/showApToast'
 
 interface AvailableCourse {
   id: string
@@ -180,21 +180,16 @@ function HomeContent() {
   const isLoginModalOpen = searchParams.get('login') === 'true'
   const callbackUrl = searchParams.get('callbackUrl') || '/'
 
-  const openLoginModal = (customCallbackUrl?: string) => {
+  const openLoginModal = (customCallbackUrl?: string, isPractice = false) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('login', 'true')
+    if (isPractice) {
+      params.set('allowGuest', 'true')
+    }
     if (customCallbackUrl) {
       params.set('callbackUrl', customCallbackUrl)
     }
-    router.push(`/?${params.toString()}`)
-  }
-
-  const closeLoginModal = () => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.delete('login')
-    params.delete('callbackUrl')
-    const query = params.toString()
-    router.push(query ? `/?${query}` : '/')
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
   const triggerGoogleSignIn = () => {
@@ -2268,11 +2263,7 @@ function HomeContent() {
           </div>
         </div>
       )}
-      <LoginModal 
-        isOpen={isLoginModalOpen} 
-        onClose={closeLoginModal} 
-        callbackUrl={callbackUrl} 
-      />
+      {/* Global Login Modal is handled in layout via URL parameters */}
     </div>
   )
 }

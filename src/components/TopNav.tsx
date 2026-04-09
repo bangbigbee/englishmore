@@ -153,11 +153,10 @@ export default function TopNav() {
           ) : (
             <button
               onClick={() => {
-                if (pathname === '/') {
-                  router.push('/?login=true')
-                } else {
-                  signIn('google', { callbackUrl: window.location.pathname })
-                }
+                const params = new URLSearchParams(window.location.search)
+                params.set('login', 'true')
+                params.set('callbackUrl', pathname)
+                router.push(`${pathname}?${params.toString()}`, { scroll: false })
               }}
               disabled={status === 'loading'}
               className="inline-flex items-center gap-2 rounded-md bg-[#14532d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#166534] shadow-sm hover:shadow-md disabled:opacity-70"

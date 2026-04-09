@@ -20,9 +20,11 @@ interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
   callbackUrl?: string
+  allowGuest?: boolean
+  onGuest?: () => void
 }
 
-export default function LoginModal({ isOpen, onClose, callbackUrl = '/' }: LoginModalProps) {
+export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGuest = false, onGuest }: LoginModalProps) {
   const [googleLoading, setGoogleLoading] = useState(false)
   const isZaloInAppBrowser = typeof navigator !== 'undefined' && /zalo/i.test(navigator.userAgent || '')
 
@@ -126,6 +128,15 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/' }: Login
             )}
             <span>{googleLoading ? 'Đang kết nối...' : 'Tiếp tục với Google'}</span>
           </button>
+
+          {allowGuest && (
+            <button
+              onClick={onGuest}
+              className="flex w-full items-center justify-center rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900 border border-slate-200"
+            >
+              Tiếp tục mà không đăng nhập
+            </button>
+          )}
 
           {isZaloInAppBrowser && (
             <div className="rounded-lg bg-amber-50 p-3 text-xs leading-relaxed text-amber-800 border border-amber-200">

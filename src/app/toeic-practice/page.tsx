@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const TABS = [
 	{ key: "grammar", label: "Grammar" },
@@ -9,12 +11,20 @@ const TABS = [
 	{ key: "actual-test", label: "Actual Test" },
 ];
 
-import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";
 export default function ToeicHomePage() {
 	const [tab, setTab] = useState("grammar");
-	const [showModal, setShowModal] = useState(false);
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
 	const { data: session } = useSession();
+
+	const openLoginModal = () => {
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('login', 'true');
+		params.set('allowGuest', 'true');
+		params.set('callbackUrl', pathname);
+		router.push(`${pathname}?${params.toString()}`, { scroll: false });
+	};
 
 	return (
 		<div className="max-w-6xl mx-auto py-8 px-2 sm:px-6">
@@ -35,22 +45,21 @@ export default function ToeicHomePage() {
 			</div>
 			<div className="mt-6">
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={() => {
-					 if (!session) setShowModal(true);
+					 if (!session) openLoginModal();
 				 }} />}
 				{tab === "vocabulary" && <ToeicVocabularyTab onPracticeClick={() => {
-					 if (!session) setShowModal(true);
+					 if (!session) openLoginModal();
 				 }} />}
 				{tab === "listening" && <ToeicListeningTab onPracticeClick={() => {
-					 if (!session) setShowModal(true);
+					 if (!session) openLoginModal();
 				 }} />}
 				{tab === "reading" && <ToeicReadingTab onPracticeClick={() => {
-					 if (!session) setShowModal(true);
+					 if (!session) openLoginModal();
 				 }} />}
 				{tab === "actual-test" && <ToeicActualTestTab onPracticeClick={() => {
-					 if (!session) setShowModal(true);
+					 if (!session) openLoginModal();
 				 }} />}
 			</div>
-			{showModal && <PracticeLoginModal onClose={() => setShowModal(false)} />}
 		</div>
 	);
 }
@@ -255,34 +264,3 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }
 	);
 }
 
-// Modal đăng nhập hoặc tiếp tục
-function PracticeLoginModal({ onClose }: { onClose: () => void }) {
-	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-			<div className="bg-white rounded-2xl shadow-xl p-6 w-[350px]">
-				<div className="flex items-center justify-between mb-2">
-					<h2 className="text-base font-semibold text-gray-900">Đăng nhập để lưu tiến độ học tập</h2>
-					<button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl px-1">×</button>
-				</div>
-				<div className="text-sm text-gray-500 mb-5 leading-relaxed">Đăng nhập để theo dõi tiến độ và nhận điểm hoạt động tích cực.</div>
-				<div className="space-y-3">
-					<button
-						className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-green-900 text-white font-medium text-base shadow-sm hover:bg-green-800 transition"
-						onClick={() => signIn('google', { callbackUrl: '/toeic-practice' })}
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-							<path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-3A2.25 2.25 0 0 0 8.25 5.25V9m7.5 0v10.5A2.25 2.25 0 0 1 13.5 21h-3A2.25 2.25 0 0 1 8.25 19.5V9m7.5 0H8.25m7.5 0a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 15.75 21H8.25a2.25 2.25 0 0 1-2.25-2.25v-7.5A2.25 2.25 0 0 1 8.25 9" />
-						</svg>
-						Đăng nhập
-					</button>
-					<button
-						className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-gray-100 text-gray-500 font-medium text-base hover:bg-[#ea580c] hover:text-white transition"
-						onClick={onClose}
-					>
-						Tiếp tục mà không đăng nhập
-					</button>
-				</div>
-			</div>
-		</div>
-	);
-}

@@ -252,7 +252,7 @@ export default function MyHomeworkPage() {
                         )}
                       </div>
                     )}
-                    {item.attachmentUrl && (
+                    {item.attachmentUrl && item.attachmentUrl.trim() !== '' && (
                       <div className="mt-2">
                         <a
                           href={item.attachmentUrl}
@@ -328,7 +328,7 @@ export default function MyHomeworkPage() {
                         )}
                       </div>
                     )}
-                    {item.attachmentUrl && (
+                    {item.attachmentUrl && item.attachmentUrl.trim() !== '' && (
                       <div className="mt-2">
                         <a
                           href={item.attachmentUrl}

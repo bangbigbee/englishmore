@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import TopNav from "@/components/TopNav";
 import { Toaster } from "sonner";
+import LoginModalController from "./LoginModalController";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <AuthProvider>
           <TopNav />
           <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">{children}</main>
+          <LoginModalController />
           <Toaster
             richColors
             position="top-center"
