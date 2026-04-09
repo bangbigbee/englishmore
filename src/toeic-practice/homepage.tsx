@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import PracticeUnderConstruction from "./practice-under-construction";
 
 const TABS = [
   { key: "grammar", label: "Grammar" },
@@ -8,14 +10,15 @@ const TABS = [
   { key: "actual-test", label: "Actual Test" },
 ];
 
-export default function ToeicHomePage() {
   const [tab, setTab] = useState("grammar");
+  const [showPractice, setShowPractice] = useState(false);
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-2 sm:px-6">
+      {showPractice && <PracticeUnderConstruction />}
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-        <span className="text-green-900">Luyện thi</span>{' '}
-        <span style={{ color: '#ea580c', fontWeight: 700 }}>TOEIC</span>
+        <span className="text-green-900">LUYỆN THI</span>{' '}
+        <span style={{ color: '#ea980c', fontWeight: 700 }}>TOEIC</span>
       </h1>
       <div className="flex gap-2 sm:gap-4 border-b mb-8 overflow-x-auto">
         {TABS.map((t) => (
@@ -57,6 +60,9 @@ function ToeicGrammarTab() {
     { title: "Mixed Verb Practice", subtitle: "Bài tập động từ hỗn hợp", count: 30 },
     { title: "Comprehensive Grammar Practice", subtitle: "Bài tập ngữ pháp tổng hợp", count: 60 },
   ];
+  const handlePracticeClick = () => {
+    setShowPractice(true);
+  };
   return (
     <div>
       <h2 className="text-lg font-bold mb-4 text-blue-900 flex items-center gap-2">
@@ -73,7 +79,7 @@ function ToeicGrammarTab() {
               <div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
             </div>
             <div className="flex justify-end">
-              <button className="text-blue-600 font-semibold text-sm hover:underline">Luyện tập &rarr;</button>
+              <button className="text-blue-600 font-semibold text-sm hover:underline" onClick={handlePracticeClick}>Luyện tập &rarr;</button>
             </div>
           </div>
         ))}

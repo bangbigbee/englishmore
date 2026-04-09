@@ -1473,7 +1473,7 @@ export default function Home() {
                           setEditCheckinStatus('')
                           setIsEditingCheckin(true)
                         }}
-                        className="text-xs font-semibold text-[#14532d] underline-offset-2 hover:underline"
+                        className="text-xs font-normal text-slate-400 underline-offset-2 hover:underline"
                       >
                         You already checked in. Edit it
                       </button>
@@ -1542,7 +1542,7 @@ export default function Home() {
                               setGreetingStatus('')
                               setGreetingError('')
                             }}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-[#14532d] transition hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-normal text-slate-400 transition hover:underline"
                           >
                             ✍️ Type it manually
                           </button>
@@ -1602,7 +1602,7 @@ export default function Home() {
                           setEditReflectionStatus('')
                           setIsEditingReflection(true)
                         }}
-                        className="text-xs font-semibold text-amber-700 underline-offset-2 hover:underline"
+                        className="text-xs font-normal text-slate-400 underline-offset-2 hover:underline"
                       >
                         You already reflected today. Edit it
                       </button>
@@ -1671,7 +1671,7 @@ export default function Home() {
                               setReflectionStatus('')
                               setReflectionError('')
                             }}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 transition hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-normal text-slate-400 transition hover:underline"
                           >
                             ✍️ Type it manually
                           </button>
@@ -1967,7 +1967,7 @@ export default function Home() {
                   <span className="text-green-900">your mind and more</span>
                 </p>
                 <p className="mt-3 max-w-xl text-base sm:text-lg font-medium text-[#14532d]">
-                  Bạn muốn nói tốt tiếng Anh và nhiều kĩ năng giao tiếp khác?
+                  Bạn muốn nói tốt tiếng Anh và học nhiều kĩ năng giao tiếp khác?
                 </p>
                 {/* Hai button Tư Vấn và Đăng Ký */}
                 <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
@@ -2037,7 +2037,7 @@ export default function Home() {
                 {/* Câu hỏi TOEIC và button Luyện TOEIC */}
                 <div className="mt-6">
                   <p className="max-w-xl text-base sm:text-lg font-medium text-[#14532d] mb-4">
-                    Hoặc bạn muốn luyện thi lấy chứng chỉ TOEIC?
+                    Hoặc luyện thi lấy chứng chỉ TOEIC?
                   </p>
                   <Link
                     href="/toeic-practice"

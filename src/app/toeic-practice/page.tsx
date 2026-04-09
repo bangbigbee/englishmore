@@ -19,8 +19,8 @@ export default function ToeicHomePage() {
 	return (
 		<div className="max-w-6xl mx-auto py-8 px-2 sm:px-6">
 			<h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-				<span className="text-green-900">Luyện thi</span>{' '}
-				<span className="text-orange-600">TOEIC</span>
+				<span className="text-green-900">LUYỆN THI</span>{' '}
+				<span style={{ color: '#ea980c', fontWeight: 700 }}>TOEIC</span>
 			</h1>
 			<div className="flex gap-2 sm:gap-4 border-b mb-8 overflow-x-auto">
 				{TABS.map((t) => (
