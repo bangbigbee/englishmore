@@ -10,6 +10,7 @@ interface LectureNoteItem {
   id: string
   sessionNumber: number
   driveLink: string | null
+  description: string | null
   updatedAt: string
 }
 
@@ -143,6 +144,12 @@ export default function LectureNotesPage() {
                             {hasLink ? 'Ready' : 'Not uploaded yet'}
                           </span>
                         </div>
+
+                        {note?.description && (
+                          <p className="mb-3 text-sm text-slate-700 font-medium border-l-2 border-emerald-400 pl-2">
+                            {note.description}
+                          </p>
+                        )}
 
                         {hasLink ? (
                           <>

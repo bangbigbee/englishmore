@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { courseId, sessionNumber, driveLink } = body
+    const { courseId, sessionNumber, driveLink, description } = body
 
     // Validate input
     if (!courseId || sessionNumber === undefined) {
@@ -93,7 +93,8 @@ export async function POST(request: NextRequest) {
       data: {
         courseId,
         sessionNumber,
-        driveLink: driveLink || null
+        driveLink: driveLink || null,
+        description: description || null
       }
     })
 

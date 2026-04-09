@@ -23,7 +23,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { driveLink, sessionNumber } = body
+    const { driveLink, sessionNumber, description } = body
     const { id: lectureNoteId } = await context.params
 
     // Check if lecture note exists
@@ -57,7 +57,8 @@ export async function PUT(
       where: { id: lectureNoteId },
       data: {
         sessionNumber: parsedSessionNumber,
-        driveLink: driveLink || null
+        driveLink: driveLink || null,
+        description: description || null
       }
     })
 

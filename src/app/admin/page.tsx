@@ -200,6 +200,7 @@ interface LectureNote {
   courseId: string
   sessionNumber: number
   driveLink: string | null
+  description: string | null
   createdAt: string
   updatedAt: string
 }
@@ -634,11 +635,13 @@ export default function AdminDashboard() {
   const [selectedLectureNoteCourseId, setSelectedLectureNoteCourseId] = useState('')
   const [newLectureSession, setNewLectureSession] = useState('')
   const [newLectureDriveLink, setNewLectureDriveLink] = useState('')
+  const [newLectureDescription, setNewLectureDescription] = useState('')
   const [lectureError, setLectureError] = useState('')
   const [lectureSuccess, setLectureSuccess] = useState('')
   const [editingLectureNote, setEditingLectureNote] = useState<LectureNote | null>(null)
   const [editLectureSession, setEditLectureSession] = useState('')
   const [editLectureDriveLink, setEditLectureDriveLink] = useState('')
+  const [editLectureDescription, setEditLectureDescription] = useState('')
   const [savingLectureId, setSavingLectureId] = useState<string | null>(null)
   const [deletingLectureId, setDeletingLectureId] = useState<string | null>(null)
   const [checkinRows, setCheckinRows] = useState<AdminCheckinRow[]>([])
@@ -2496,7 +2499,8 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           courseId: selectedLectureNoteCourseId,
           sessionNumber: sessionNum,
-          driveLink: newLectureDriveLink || null
+          driveLink: newLectureDriveLink || null,
+          description: newLectureDescription || null
         })
       })
 
@@ -2507,6 +2511,7 @@ export default function AdminDashboard() {
 
       setNewLectureSession('')
       setNewLectureDriveLink('')
+      setNewLectureDescription('')
       setLectureSuccess('Lecture note created successfully!')
       fetchLectureNotes(selectedLectureNoteCourseId)
     } catch (err) {
@@ -2533,7 +2538,8 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionNumber: sessionNum,
-          driveLink: editLectureDriveLink || null
+          driveLink: editLectureDriveLink || null,
+          description: editLectureDescription || null
         })
       })
 
@@ -2543,8 +2549,9 @@ export default function AdminDashboard() {
       }
 
       setEditingLectureNote(null)
-  setEditLectureSession('')
+      setEditLectureSession('')
       setEditLectureDriveLink('')
+      setEditLectureDescription('')
       setLectureSuccess('Lecture note updated successfully!')
       fetchLectureNotes(selectedLectureNoteCourseId)
     } catch (err) {
@@ -4457,6 +4464,14 @@ export default function AdminDashboard() {
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
 
+            <input
+              type="text"
+              value={newLectureDescription}
+              onChange={(e) => setNewLectureDescription(e.target.value)}
+              placeholder="Mô tả học liệu (nếu có)"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+
             <button
               onClick={createLectureNote}
               className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
@@ -4470,6 +4485,7 @@ export default function AdminDashboard() {
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Session</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Google Drive link</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Updated</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -4491,6 +4507,21 @@ export default function AdminDashboard() {
                         />
                       ) : (
                         <>Session {note.sessionNumber}</>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {editingLectureNote?.id === note.id ? (
+                        <input
+                          type="text"
+                          value={editLectureDescription}
+                          onChange={(e) => setEditLectureDescription(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          placeholder="Mô tả"
+                        />
+                      ) : (
+                        <span className={note.description ? 'text-gray-900' : 'text-gray-400'}>
+                          {note.description || 'No description'}
+                        </span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">
@@ -4539,6 +4570,7 @@ export default function AdminDashboard() {
                               setEditingLectureNote(note)
                               setEditLectureSession(String(note.sessionNumber))
                               setEditLectureDriveLink(note.driveLink || '')
+                              setEditLectureDescription(note.description || '')
                             }}
                             className="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700"
                           >

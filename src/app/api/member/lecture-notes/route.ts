@@ -8,6 +8,7 @@ type LectureNoteRow = {
   courseId: string
   sessionNumber: number
   driveLink: string | null
+  description: string | null
   updatedAt: Date
 }
 
@@ -58,6 +59,7 @@ export async function GET() {
       courseId: true,
       sessionNumber: true,
       driveLink: true,
+      description: true,
       updatedAt: true
     },
     orderBy: [{ courseId: 'asc' }, { sessionNumber: 'asc' }]
@@ -77,6 +79,7 @@ export async function GET() {
       id: note.id,
       sessionNumber: note.sessionNumber,
       driveLink: note.driveLink,
+      description: note.description,
       updatedAt: note.updatedAt
     }))
   }))

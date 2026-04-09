@@ -471,6 +471,7 @@ model LectureNote {
   courseId        String
   sessionNumber   Int      // Buổi học từ 1-30
   driveLink       String?  // Link Google Drive tài liệu
+  description     String?  // Mô tả tài liệu
   
   // Timeline
   createdAt       DateTime @default(now())
