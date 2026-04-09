@@ -37,10 +37,18 @@ export default function ToeicHomePage() {
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={() => {
 					 if (!session) setShowModal(true);
 				 }} />}
-				{tab === "vocabulary" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
-				{tab === "listening" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
-				{tab === "reading" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
-				{tab === "actual-test" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
+				{tab === "vocabulary" && <ToeicVocabularyTab onPracticeClick={() => {
+					 if (!session) setShowModal(true);
+				 }} />}
+				{tab === "listening" && <ToeicListeningTab onPracticeClick={() => {
+					 if (!session) setShowModal(true);
+				 }} />}
+				{tab === "reading" && <ToeicReadingTab onPracticeClick={() => {
+					 if (!session) setShowModal(true);
+				 }} />}
+				{tab === "actual-test" && <ToeicActualTestTab onPracticeClick={() => {
+					 if (!session) setShowModal(true);
+				 }} />}
 			</div>
 			{showModal && <PracticeLoginModal onClose={() => setShowModal(false)} />}
 		</div>
@@ -79,6 +87,165 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 								onClick={onPracticeClick}
 							>
 								Luyện tập &rarr;
+							</button>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }) {
+	const vocabTopics = [
+		{ title: "General Business", subtitle: "Doanh nghiệp nói chung" },
+		{ title: "Office Issues", subtitle: "Vấn đề văn phòng" },
+		{ title: "Personnel", subtitle: "Nhân sự" },
+		{ title: "Purchasing", subtitle: "Mua sắm" },
+		{ title: "Dining Out", subtitle: "Ăn uống" },
+		{ title: "Travel", subtitle: "Du lịch" },
+	];
+	return (
+		<div>
+			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
+				<span className="inline-block w-5 h-5 text-green-700">📙</span>
+				Các chủ đề từ vựng
+			</h2>
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+				{vocabTopics.map((topic) => (
+					<div
+						key={topic.title}
+						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
+					>
+						<div>
+							<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{topic.title}</div>
+							<div className="text-sm text-gray-500 mb-2">{topic.subtitle}</div>
+							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
+						</div>
+						<div className="flex justify-end">
+							<button
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+								onClick={onPracticeClick}
+							>
+								Luyện tập &rarr;
+							</button>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void }) {
+	const listeningParts = [
+		{ title: "Part 1: Photographs", subtitle: "Mô tả tranh" },
+		{ title: "Part 2: Question-Response", subtitle: "Hỏi đáp" },
+		{ title: "Part 3: Conversations", subtitle: "Hội thoại ngắn" },
+		{ title: "Part 4: Short Talks", subtitle: "Bài nói ngắn" },
+	];
+	return (
+		<div>
+			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
+				<span className="inline-block w-5 h-5 text-green-700">🎧</span>
+				Các phần thi Listening
+			</h2>
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+				{listeningParts.map((part) => (
+					<div
+						key={part.title}
+						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
+					>
+						<div>
+							<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{part.title}</div>
+							<div className="text-sm text-gray-500 mb-2">{part.subtitle}</div>
+							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
+						</div>
+						<div className="flex justify-end mt-4">
+							<button
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+								onClick={onPracticeClick}
+							>
+								Luyện tập &rarr;
+							</button>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: () => void }) {
+	const readingParts = [
+		{ title: "Part 5: Incomplete Sentences", subtitle: "Điền vào câu trống" },
+		{ title: "Part 6: Text Completion", subtitle: "Điền vào đoạn văn" },
+		{ title: "Part 7: Reading Comprehension", subtitle: "Đọc hiểu" },
+	];
+	return (
+		<div>
+			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
+				<span className="inline-block w-5 h-5 text-green-700">📖</span>
+				Các phần thi Reading
+			</h2>
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+				{readingParts.map((part) => (
+					<div
+						key={part.title}
+						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
+					>
+						<div>
+							<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{part.title}</div>
+							<div className="text-sm text-gray-500 mb-2">{part.subtitle}</div>
+							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
+						</div>
+						<div className="flex justify-end mt-4">
+							<button
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+								onClick={onPracticeClick}
+							>
+								Luyện tập &rarr;
+							</button>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }) {
+	const testPacks = [
+		{ title: "ETS 2024", subtitle: "Bộ đề thi thực tế mới nhất 2024", count: "10 bài test" },
+		{ title: "ETS 2023", subtitle: "Bộ đề thi thực tế năm 2023", count: "10 bài test" },
+		{ title: "Hackers TOEIC", subtitle: "Bộ đề luyện tập nâng cao", count: "10 bài test" },
+	];
+	return (
+		<div>
+			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
+				<span className="inline-block w-5 h-5 text-green-700">🎓</span>
+				Đề thi thực tế (Actual Test)
+			</h2>
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+				{testPacks.map((test) => (
+					<div
+						key={test.title}
+						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group relative overflow-hidden"
+					>
+						<div className="absolute top-0 right-0 bg-[#ea980c] text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+							{test.count}
+						</div>
+						<div className="pr-12">
+							<div className="font-bold text-lg text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{test.title}</div>
+							<div className="text-sm text-gray-500 mb-2">{test.subtitle}</div>
+							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
+						</div>
+						<div className="flex justify-end mt-4">
+							<button
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors bg-green-50 px-4 py-2 rounded-lg group-hover:bg-orange-50"
+								onClick={onPracticeClick}
+							>
+								Bắt đầu thi &rarr;
 							</button>
 						</div>
 					</div>
