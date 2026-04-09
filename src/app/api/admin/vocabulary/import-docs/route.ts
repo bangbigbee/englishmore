@@ -12,6 +12,7 @@ type ParsedVocabularyItem = {
   englishDefinition: string | null
   meaning: string
   example: string | null
+  topic: string
 }
 
 type DraftVocabularyItem = {
@@ -20,6 +21,7 @@ type DraftVocabularyItem = {
   englishDefinition?: string | null
   meaning?: string
   example?: string | null
+  topic?: string
 }
 
 const getFirstValue = (map: Map<string, string>, keys: string[]) => {
@@ -97,6 +99,7 @@ const parseVocabularyFromText = (text: string) => {
       ? (partOfSpeech ? `[${partOfSpeech}] ${englishDefinitionRaw}` : englishDefinitionRaw)
       : (partOfSpeech ? `[${partOfSpeech}]` : '')
     const example = getFirstValue(currentMap, ['EXAMPLE'])
+    const topic = getFirstValue(currentMap, ['TOPIC']) || 'WarmUp'
 
     if (!word || !meaning) {
       invalidCount += 1
@@ -109,7 +112,8 @@ const parseVocabularyFromText = (text: string) => {
       phonetic: phonetic || null,
       englishDefinition: englishDefinition || null,
       meaning,
-      example: example || null
+      example: example || null,
+      topic
     })
 
     currentMap.clear()
@@ -141,8 +145,15 @@ const parseVocabularyFromText = (text: string) => {
       continue
     }
 
-    if (key === 'WORD' && currentMap.has('WORD')) {
-      flushCurrentItem()
+    if ((key === 'WORD' || key === 'TOPIC') && (currentMap.has('WORD') || currentMap.has('TOPIC'))) {
+      if (key === 'WORD' && currentMap.has('WORD')) {
+        flushCurrentItem()
+      } else if (key === 'TOPIC' && currentMap.has('TOPIC')) {
+        flushCurrentItem()
+      } else if (key === 'TOPIC' && currentMap.has('WORD')) {
+         // If we see a new TOPIC but we already have a WORD, flush the previous item
+         flushCurrentItem()
+      }
     }
 
     if (!currentMap.has(key)) {
@@ -176,7 +187,8 @@ const normalizeDraftItems = (items: DraftVocabularyItem[]) => {
       phonetic: phonetic || null,
       englishDefinition: englishDefinition || null,
       meaning,
-      example: example || null
+      example: example || null,
+      topic: String(item?.topic || 'WarmUp').trim()
     })
   }
 
@@ -221,6 +233,7 @@ const createVocabularyItems = async (courseId: string, items: ParsedVocabularyIt
           englishDefinition: item.englishDefinition,
           meaning: item.meaning,
           example: item.example,
+          topic: item.topic,
           isActive: true,
           displayOrder: baseOrder + index + 1
         }))
