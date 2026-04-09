@@ -3124,7 +3124,7 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-6 mb-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-7 mb-4">
             <select
               value={newVocabularyCourseId}
               onChange={(e) => setNewVocabularyCourseId(e.target.value)}
@@ -3161,6 +3161,13 @@ export default function AdminDashboard() {
               value={newVocabularyMeaning}
               onChange={(e) => setNewVocabularyMeaning(e.target.value)}
               placeholder="Meaning"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            />
+            <input
+              type="text"
+              value={newVocabularyTopic}
+              onChange={(e) => setNewVocabularyTopic(e.target.value)}
+              placeholder="Topic (e.g. WarmUp)"
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             />
             <button
