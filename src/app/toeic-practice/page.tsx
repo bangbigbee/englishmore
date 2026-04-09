@@ -74,16 +74,16 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 				{grammarTopics.map((topic) => (
 					<div
 						key={topic.title}
-						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between"
+						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
 					>
 						<div>
-							<div className="font-bold text-base text-green-900 mb-1">{topic.title}</div>
+							<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{topic.title}</div>
 							<div className="text-sm text-gray-500 mb-2">{topic.subtitle}</div>
 							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
 						</div>
 						<div className="flex justify-end">
 							<button
-								className="text-green-900 font-semibold text-sm hover:underline"
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
 								onClick={onPracticeClick}
 							>
 								Luyện tập &rarr;
