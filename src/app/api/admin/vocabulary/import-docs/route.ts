@@ -80,104 +80,68 @@ const extractGoogleDocId = (inputUrl: string) => {
 const parseVocabularyFromText = (text: string) => {
   const normalizedText = String(text || '')
     .normalize('NFC')
-    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width characters
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .replace(/\r/g, '\n')
-  const lines = normalizedText.split('\n').map((line) => line.trim())
-  const parsedItems: ParsedVocabularyItem[] = []
+  
+  const lines = normalizedText.split('\n').map(l => l.trim()).filter(l => l.length > 0)
+  const items: ParsedVocabularyItem[] = []
+  let currentItem: Partial<ParsedVocabularyItem> = {}
+  let lastTopic = 'WarmUp'
   let invalidCount = 0
 
-  const currentMap = new Map<string, string>()
-  let lastSeenTopic = 'WarmUp'
-
-  const getCleanKey = (raw: string) => {
-    return raw
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '')
-  }
-
-  const flushCurrentItem = () => {
-    if (currentMap.size === 0) {
-      return
+  const flush = () => {
+    if (currentItem.word && currentItem.meaning) {
+      items.push({
+        word: currentItem.word,
+        phonetic: currentItem.phonetic || null,
+        englishDefinition: currentItem.englishDefinition || null,
+        meaning: currentItem.meaning,
+        example: currentItem.example || null,
+        topic: currentItem.topic || lastTopic || 'WarmUp'
+      })
+    } else if (Object.keys(currentItem).length > 0) {
+      if (currentItem.word || currentItem.meaning) {
+        invalidCount++
+      }
     }
-
-    const word = getFirstValue(currentMap, ['WORD'])
-    const meaning = getFirstValue(currentMap, ['MEANING'])
-    const phonetic = getFirstValue(currentMap, ['PHONETIC'])
-    const partOfSpeech = getFirstValue(currentMap, ['PART_OF_SPEECH', 'PARTOFSPEECH', 'POS'])
-    const englishDefinitionRaw = getFirstValue(currentMap, ['ENGLISH_DEFINITION', 'ENGLISHDEFINITION', 'DEFINITION'])
-    const englishDefinition = englishDefinitionRaw
-      ? (partOfSpeech ? `[${partOfSpeech}] ${englishDefinitionRaw}` : englishDefinitionRaw)
-      : (partOfSpeech ? `[${partOfSpeech}]` : '')
-    const example = getFirstValue(currentMap, ['EXAMPLE'])
-    const topic = (getFirstValue(currentMap, ['TOPIC', 'CHUDE', 'CHU_DE', 'CATEGORY']) || lastSeenTopic || 'WarmUp').trim()
-    
-    // Debug log in development if needed
-    // console.log(`Parsed item: ${word}, Topic: ${topic}`)
-
-    if (!word || !meaning) {
-      invalidCount += 1
-      currentMap.clear()
-      return
-    }
-
-    parsedItems.push({
-      word,
-      phonetic: phonetic || null,
-      englishDefinition: englishDefinition || null,
-      meaning,
-      example: example || null,
-      topic
-    })
-
-    currentMap.clear()
+    currentItem = {}
   }
 
   for (const line of lines) {
-    if (!line) {
-      continue
-    }
-
     if (/^---+$/.test(line)) {
-      flushCurrentItem()
+      flush()
       continue
     }
 
-    const separatorIndex = line.indexOf(':')
-    if (separatorIndex <= 0) {
-      continue
-    }
+    const colonIdx = line.indexOf(':')
+    if (colonIdx <= 0) continue
 
-    const key = getCleanKey(line.slice(0, separatorIndex))
-    const value = line.slice(separatorIndex + 1).trim()
-    if (!value) {
-      continue
-    }
+    const key = line.slice(0, colonIdx).trim().toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+    const val = line.slice(colonIdx + 1).trim()
+    if (!val) continue
 
-    if (key === 'TOPIC' || key === 'CHU_DE' || key === 'CHUDE' || key === 'CATEGORY') {
-      lastSeenTopic = value
-    }
-
-    if ((key === 'WORD' || key === 'TOPIC') && (currentMap.has('WORD') || currentMap.has('TOPIC'))) {
-      if (key === 'WORD' && currentMap.has('WORD')) {
-        flushCurrentItem()
-      } else if (key === 'TOPIC' && currentMap.has('TOPIC')) {
-        flushCurrentItem()
-      } else if (key === 'TOPIC' && currentMap.has('WORD')) {
-         // If we see a new TOPIC but we already have a WORD, flush the previous item
-         flushCurrentItem()
-      }
-    }
-
-    if (!currentMap.has(key)) {
-      currentMap.set(key, value)
+    if (key === 'TOPIC' || key === 'CHUDE' || key === 'CHU_DE' || key === 'CATEGORY') {
+      if (currentItem.word) flush()
+      lastTopic = val
+      currentItem.topic = val
+    } else if (key === 'WORD') {
+      if (currentItem.word) flush()
+      currentItem.word = val
+    } else if (key === 'MEANING') {
+      currentItem.meaning = val
+    } else if (key === 'PHONETIC') {
+      currentItem.phonetic = val
+    } else if (key === 'EXAMPLE') {
+      currentItem.example = val
+    } else if (key === 'ENGLISH_DEFINITION' || key === 'DEFINITION' || key === 'ENGLISHDEFINITION') {
+      currentItem.englishDefinition = currentItem.englishDefinition ? `${currentItem.englishDefinition} ${val}` : val
+    } else if (key === 'PART_OF_SPEECH' || key === 'POS') {
+      const def = currentItem.englishDefinition || ''
+      currentItem.englishDefinition = `[${val}] ${def}`.trim()
     }
   }
-
-  flushCurrentItem()
-
-  return { parsedItems, invalidCount }
+  flush()
+  return { parsedItems: items, invalidCount }
 }
 
 const normalizeDraftItems = (items: DraftVocabularyItem[]) => {
