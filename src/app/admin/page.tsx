@@ -17,6 +17,10 @@ interface CourseItem {
   maxStudents: number
   completedSessions: number
   isPublished: boolean
+  sebDiscountPercent: number
+  ebDiscountPercent: number
+  sebThresholdDays: number
+  ebThresholdDays: number
   enrollments?: Array<{ status: string }>
 }
 
@@ -525,6 +529,10 @@ export default function AdminDashboard() {
   const [newDeadline, setNewDeadline] = useState('')
   const [newCourseMaxStudents, setNewCourseMaxStudents] = useState(10)
   const [newCoursePrice, setNewCoursePrice] = useState(4200000)
+  const [newCourseSebDiscount, setNewCourseSebDiscount] = useState(30)
+  const [newCourseEbDiscount, setNewCourseEbDiscount] = useState(15)
+  const [newCourseSebDays, setNewCourseSebDays] = useState(45)
+  const [newCourseEbDays, setNewCourseEbDays] = useState(15)
   const [courseError, setCourseError] = useState('')
   const [courseSuccess, setCourseSuccess] = useState('')
   const [enrollments, setEnrollments] = useState<EnrollmentItem[]>([])
@@ -536,6 +544,10 @@ export default function AdminDashboard() {
   const [editCourseDeadline, setEditCourseDeadline] = useState('')
   const [editCourseMaxStudents, setEditCourseMaxStudents] = useState(10)
   const [editCoursePrice, setEditCoursePrice] = useState(0)
+  const [editCourseSebDiscount, setEditCourseSebDiscount] = useState(30)
+  const [editCourseEbDiscount, setEditCourseEbDiscount] = useState(15)
+  const [editCourseSebDays, setEditCourseSebDays] = useState(45)
+  const [editCourseEbDays, setEditCourseEbDays] = useState(15)
   const [editCourseCompletedSessions, setEditCourseCompletedSessions] = useState(0)
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
@@ -2311,7 +2323,11 @@ export default function AdminDashboard() {
           registrationDeadline: parsedNewDeadline,
           maxStudents: newCourseMaxStudents,
           price: newCoursePrice,
-          currency: 'VND'
+          currency: 'VND',
+          sebDiscountPercent: Number(newCourseSebDiscount),
+          ebDiscountPercent: Number(newCourseEbDiscount),
+          sebThresholdDays: Number(newCourseSebDays),
+          ebThresholdDays: Number(newCourseEbDays)
         })
       })
       if (!res.ok) {
@@ -2339,6 +2355,10 @@ export default function AdminDashboard() {
     setEditCourseDeadline(formatDateToDdMmYyyy(course.registrationDeadline))
     setEditCourseMaxStudents(course.maxStudents || 10)
     setEditCoursePrice(course.price || 0)
+    setEditCourseSebDiscount(course.sebDiscountPercent ?? 30)
+    setEditCourseEbDiscount(course.ebDiscountPercent ?? 15)
+    setEditCourseSebDays(course.sebThresholdDays ?? 45)
+    setEditCourseEbDays(course.ebThresholdDays ?? 15)
     setEditCourseCompletedSessions(course.completedSessions || 0)
     setCourseError('')
   }
@@ -2383,7 +2403,11 @@ export default function AdminDashboard() {
           maxStudents: editCourseMaxStudents,
           price: editCoursePrice,
           currency: 'VND',
-          completedSessions: editCourseCompletedSessions
+          completedSessions: editCourseCompletedSessions,
+          sebDiscountPercent: Number(editCourseSebDiscount),
+          ebDiscountPercent: Number(editCourseEbDiscount),
+          sebThresholdDays: Number(editCourseSebDays),
+          ebThresholdDays: Number(editCourseEbDays)
         })
       })
 
@@ -4701,6 +4725,48 @@ export default function AdminDashboard() {
               />
               <span className="text-xs text-gray-500">Ví dụ: 4200000</span>
             </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Super EB (%)</span>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={newCourseSebDiscount}
+                onChange={(e) => setNewCourseSebDiscount(Number(e.target.value))}
+                className="px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">SEB Threshold (days)</span>
+              <input
+                type="number"
+                min={0}
+                value={newCourseSebDays}
+                onChange={(e) => setNewCourseSebDays(Number(e.target.value))}
+                className="px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Early Bird (%)</span>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={newCourseEbDiscount}
+                onChange={(e) => setNewCourseEbDiscount(Number(e.target.value))}
+                className="px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">EB Threshold (days)</span>
+              <input
+                type="number"
+                min={0}
+                value={newCourseEbDays}
+                onChange={(e) => setNewCourseEbDays(Number(e.target.value))}
+                className="px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </label>
           </div>
 
           <div className="mb-6 flex justify-end">
@@ -4923,6 +4989,50 @@ export default function AdminDashboard() {
                     className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                   />
                 </label>
+                <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-blue-700">Super EB (%)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={editCourseSebDiscount}
+                      onChange={(e) => setEditCourseSebDiscount(Number(e.target.value))}
+                      className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-blue-700">SEB Days</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={editCourseSebDays}
+                      onChange={(e) => setEditCourseSebDays(Number(e.target.value))}
+                      className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-amber-700">Early Bird (%)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={editCourseEbDiscount}
+                      onChange={(e) => setEditCourseEbDiscount(Number(e.target.value))}
+                      className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-medium text-amber-700">EB Days</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={editCourseEbDays}
+                      onChange={(e) => setEditCourseEbDays(Number(e.target.value))}
+                      className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className="mt-6 flex justify-end gap-3">

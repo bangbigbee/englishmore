@@ -26,7 +26,11 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   const { id } = await context.params
   const body = await request.json()
-  const { title, description, registrationDeadline, isPublished, maxStudents, completedSessions, price, currency } = body
+  const { 
+    title, description, registrationDeadline, isPublished, maxStudents, 
+    completedSessions, price, currency,
+    sebDiscountPercent, ebDiscountPercent, sebThresholdDays, ebThresholdDays 
+  } = body
 
   const data: {
     title?: string
@@ -37,6 +41,10 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     isPublished?: boolean
     maxStudents?: number
     completedSessions?: number
+    sebDiscountPercent?: number
+    ebDiscountPercent?: number
+    sebThresholdDays?: number
+    ebThresholdDays?: number
   } = {}
 
   if (title !== undefined) {
@@ -98,6 +106,11 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     }
     data.completedSessions = parsedCompletedSessions
   }
+
+  if (sebDiscountPercent !== undefined) data.sebDiscountPercent = Number(sebDiscountPercent)
+  if (ebDiscountPercent !== undefined) data.ebDiscountPercent = Number(ebDiscountPercent)
+  if (sebThresholdDays !== undefined) data.sebThresholdDays = Number(sebThresholdDays)
+  if (ebThresholdDays !== undefined) data.ebThresholdDays = Number(ebThresholdDays)
 
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: 'No fields to update' }, { status: 400 })

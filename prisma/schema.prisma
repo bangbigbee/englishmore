@@ -151,6 +151,12 @@ model Course {
   isPublished          Boolean      @default(false)
   isActive             Boolean      @default(true)  // Khóa còn tuyển sinh
   
+  // Early Bird Pricing Tiers (Configurable)
+  sebDiscountPercent   Int          @default(30)
+  ebDiscountPercent    Int          @default(15)
+  sebThresholdDays     Int          @default(45)
+  ebThresholdDays      Int          @default(15)
+  
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
   

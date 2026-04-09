@@ -21,7 +21,11 @@ export async function GET() {
     maxStudents: course.maxStudents,
     enrolledCount: course.enrollments.length,
     pendingCount: course.enrollments.filter(e => e.status === 'pending').length,
-     successfulCount: course.enrollments.filter(e => e.status === 'active').length
+    successfulCount: course.enrollments.filter(e => e.status === 'active').length,
+    sebDiscountPercent: course.sebDiscountPercent,
+    ebDiscountPercent: course.ebDiscountPercent,
+    sebThresholdDays: course.sebThresholdDays,
+    ebThresholdDays: course.ebThresholdDays,
   }))
 
   return NextResponse.json(formatted)

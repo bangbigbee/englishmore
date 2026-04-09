@@ -55,7 +55,10 @@ export async function POST(request: NextRequest) {
   if (auth.status !== 200) return NextResponse.json(auth.body, { status: auth.status })
 
   const body = await request.json()
-  const { title, description, registrationDeadline, maxStudents, price, currency } = body
+  const { 
+    title, description, registrationDeadline, maxStudents, price, currency,
+    sebDiscountPercent, ebDiscountPercent, sebThresholdDays, ebThresholdDays 
+  } = body
 
   if (!title || !registrationDeadline) {
     return NextResponse.json({ error: 'Title and registrationDeadline are required' }, { status: 400 })
@@ -81,7 +84,11 @@ export async function POST(request: NextRequest) {
       currency: normalizedCurrency,
       registrationDeadline: new Date(registrationDeadline),
       maxStudents: parsedMaxStudents,
-      isPublished: true
+      isPublished: true,
+      sebDiscountPercent: Number(sebDiscountPercent ?? 30),
+      ebDiscountPercent: Number(ebDiscountPercent ?? 15),
+      sebThresholdDays: Number(sebThresholdDays ?? 45),
+      ebThresholdDays: Number(ebThresholdDays ?? 15),
     }
   })
 

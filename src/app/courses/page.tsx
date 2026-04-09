@@ -18,6 +18,10 @@ interface Course {
   maxStudents: number
   successfulCount: number
   pendingCount: number
+  sebDiscountPercent: number | null
+  ebDiscountPercent: number | null
+  sebThresholdDays: number | null
+  ebThresholdDays: number | null
 }
 
 interface Enrollment {
@@ -216,17 +220,61 @@ export default function CoursesPage() {
     `?amount=${instruction.amount}&addInfo=${encodeURIComponent(instruction.transferContent)}` +
     `&accountName=${encodeURIComponent(instruction.accountName)}`
 
+  const getPromotionTier = (course: Course) => {
+    const deadline = new Date(course.registrationDeadline)
+    const now = new Date()
+    const diffTime = deadline.getTime() - now.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    const sebDays = course.sebThresholdDays ?? 45
+    const ebDays = course.ebThresholdDays ?? 15
+    const sebDiscount = (course.sebDiscountPercent ?? 30) / 100
+    const ebDiscount = (course.ebDiscountPercent ?? 15) / 100
+
+    if (diffDays > sebDays) {
+      return {
+        name: 'Super Early Bird',
+        discount: sebDiscount,
+        label: 'Ưu đãi lớn nhất',
+        color: 'from-emerald-500 to-teal-600',
+        textColor: 'text-emerald-700',
+        bgColor: 'bg-emerald-50'
+      }
+    } else if (diffDays >= ebDays) {
+      return {
+        name: 'Early Bird',
+        discount: ebDiscount,
+        label: 'Tiết kiệm ngay',
+        color: 'from-orange-400 to-amber-500',
+        textColor: 'text-orange-700',
+        bgColor: 'bg-orange-50'
+      }
+    } else {
+      return {
+        name: 'Regular',
+        discount: 0,
+        label: 'Sắp hết hạn',
+        color: 'from-slate-400 to-slate-500',
+        textColor: 'text-slate-600',
+        bgColor: 'bg-slate-50'
+      }
+    }
+  }
+
   const getCourseTuition = (course?: Course) => {
     if (typeof course?.price === 'number' && course.price > 0) {
-      return course.price
+      const tier = getPromotionTier(course)
+      return Math.round(course.price * (1 - tier.discount))
     }
 
     const matchedEnrollment = course ? enrollments.find((item) => item.courseId === course.id) : undefined
     if (typeof matchedEnrollment?.course?.price === 'number' && matchedEnrollment.course.price > 0) {
+      // Fallback logic for existing enrollments if needed, but usually we want to preserve the price at time of registration
+      // For simplicity, we just return the stored price if available
       return matchedEnrollment.course.price
     }
 
-    return 3800000
+    return 4200000
   }
 
   const formatVnd = (amount: number) => `${amount.toLocaleString('vi-VN')} VND`
@@ -375,9 +423,22 @@ export default function CoursesPage() {
                       >
                         <span className="shrink-0">{isExpanded ? 'Thu gọn' : 'Xem thêm chi tiết'}</span>
                         <div className="flex items-center gap-4">
-                          <span className="text-[#ea980c] text-right">
-                            Học phí: {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}
-                          </span>
+                          <div className="text-right flex flex-col items-end">
+                            <span className="text-[#ea980c] font-bold">
+                              {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}
+                            </span>
+                            {(() => {
+                              const tier = getPromotionTier(course)
+                              if (tier.discount > 0 && course.price) {
+                                return (
+                                  <span className="text-[10px] text-slate-400 line-through">
+                                    {formatVnd(course.price)}
+                                  </span>
+                                )
+                              }
+                              return null
+                            })()}
+                          </div>
                           <span className="text-[10px] sm:text-xs shrink-0">{isExpanded ? '▲' : '▼'}</span>
                         </div>
                       </button>
@@ -386,6 +447,26 @@ export default function CoursesPage() {
                         <div className="space-y-5 px-5 pb-6 pt-1 text-slate-700 sm:px-7">
                           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                             <LinkifiedText text={String(course.description || '').trim() || DEFAULT_COURSE_DESCRIPTION} preserveLineBreaks />
+                          </div>
+
+                          {/* Current Offers Section */}
+                          <div className="rounded-xl border border-[#14532d]/20 bg-linear-to-br from-[#14532d]/5 to-orange-50/50 p-4">
+                            <h4 className="text-sm font-bold text-[#14532d] mb-3 uppercase tracking-wider">Ưu đãi hiện có</h4>
+                            {(() => {
+                              const tier = getPromotionTier(course)
+                              const discountedPrice = (course.price || 4200000) * (1 - tier.discount)
+                              return (
+                                <div className="flex flex-col gap-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold text-white bg-linear-to-r ${tier.color}`}>
+                                      {tier.name}
+                                    </span>
+                                    <span className="text-sm font-bold text-[#14532d]">{formatVnd(discountedPrice)}</span>
+                                  </div>
+                                  <p className={`text-xs font-medium ${tier.textColor}`}>● {tier.label}</p>
+                                </div>
+                              )
+                            })()}
                           </div>
 
 

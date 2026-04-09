@@ -14,6 +14,11 @@ interface AvailableCourse {
   registrationDeadline: string
   enrolledCount: number
   maxStudents: number
+  price: number
+  sebDiscountPercent: number | null
+  ebDiscountPercent: number | null
+  sebThresholdDays: number | null
+  ebThresholdDays: number | null
 }
 
 type GreetingInputMethod = 'text' | 'voice'
@@ -210,29 +215,32 @@ function HomeContent() {
   const [greetingStatus, setGreetingStatus] = useState('')
   const [hasGreetingToday, setHasGreetingToday] = useState(false)
   const [isSavingGreeting, setIsSavingGreeting] = useState(false)
-  
-  const BASE_PRICE = 4200000
 
-  const getPromotionTier = (deadlineStr: string) => {
-    const deadline = new Date(deadlineStr)
+  const getPromotionTier = (course: AvailableCourse) => {
+    const deadline = new Date(course.registrationDeadline)
     const now = new Date()
     const diffTime = deadline.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-    if (diffDays > 45) {
+    const sebDays = course.sebThresholdDays ?? 45
+    const ebDays = course.ebThresholdDays ?? 15
+    const sebDiscount = (course.sebDiscountPercent ?? 30) / 100
+    const ebDiscount = (course.ebDiscountPercent ?? 15) / 100
+
+    if (diffDays > sebDays) {
       return {
         name: 'Super Early Bird',
-        discount: 0.3,
+        discount: sebDiscount,
         label: 'Ưu đãi lớn nhất',
         color: 'from-emerald-500 to-teal-600',
         textColor: 'text-emerald-700',
         bgColor: 'bg-emerald-50',
         daysLeft: diffDays
       }
-    } else if (diffDays >= 15) {
+    } else if (diffDays >= ebDays) {
       return {
         name: 'Early Bird',
-        discount: 0.15,
+        discount: ebDiscount,
         label: 'Tiết kiệm ngay',
         color: 'from-orange-400 to-amber-500',
         textColor: 'text-orange-700',
@@ -331,7 +339,12 @@ function HomeContent() {
                 title: String(item?.title || ''),
                 registrationDeadline: String(item?.registrationDeadline || new Date().toISOString()),
                 enrolledCount: Number(item?._count?.enrollments || 0),
-                maxStudents: Number(item?.maxStudents || 0)
+                maxStudents: Number(item?.maxStudents || 0),
+                price: Number(item?.price || 0),
+                sebDiscountPercent: item?.sebDiscountPercent ?? null,
+                ebDiscountPercent: item?.ebDiscountPercent ?? null,
+                sebThresholdDays: item?.sebThresholdDays ?? null,
+                ebThresholdDays: item?.ebThresholdDays ?? null
               }))
             : []
           setAvailableCourses(adminCourses.filter((course) => course.id && course.title))
@@ -2263,7 +2276,7 @@ function HomeContent() {
                     <div key={course.id} className="group relative overflow-hidden rounded-xl border border-[#14532d]/25 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
                       {/* Pricing Tier Badge */}
                       {(() => {
-                        const tier = getPromotionTier(course.registrationDeadline)
+                        const tier = getPromotionTier(course)
                         return (
                           <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
                             {tier.name}
@@ -2275,13 +2288,13 @@ function HomeContent() {
                       
                       <div className="mt-3 flex items-baseline gap-2">
                         {(() => {
-                          const tier = getPromotionTier(course.registrationDeadline)
-                          const discountedPrice = BASE_PRICE * (1 - tier.discount)
+                          const tier = getPromotionTier(course)
+                          const discountedPrice = course.price * (1 - tier.discount)
                           return (
                             <>
                               <span className="text-lg font-bold text-[#14532d]">{formatVND(discountedPrice)}</span>
                               {tier.discount > 0 && (
-                                <span className="text-xs text-slate-400 line-through">{formatVND(BASE_PRICE)}</span>
+                                <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
                               )}
                             </>
                           )
@@ -2291,7 +2304,7 @@ function HomeContent() {
                       <div className="mt-3 flex flex-col gap-1">
                         <p className="text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
                         {(() => {
-                          const tier = getPromotionTier(course.registrationDeadline)
+                          const tier = getPromotionTier(course)
                           return (
                             <p className={`text-[11px] font-bold uppercase tracking-tight ${tier.textColor}`}>
                               ● {tier.label}
