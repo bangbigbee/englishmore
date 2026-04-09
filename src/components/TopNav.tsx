@@ -169,27 +169,29 @@ export default function TopNav() {
             aria-label="Close menu overlay"
           />
 
-          <aside className={`absolute right-0 top-0 z-10 flex h-full w-[min(22rem,88vw)] flex-col border-l border-[#14532d]/15 bg-white shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-            <div className="border-b border-[#14532d]/10 bg-linear-to-b from-[#14532d]/8 to-white px-5 py-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#14532d]/15 bg-white text-[#14532d] shadow-sm">
+          <aside className={`absolute right-0 top-0 z-10 flex h-full w-[min(22rem,88vw)] flex-col border-l border-[#14532d] bg-[#f8fdfa] shadow-[rgba(0,0,0,0.5)_0px_0px_50px] transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className="bg-[#14532d] px-5 py-8 rounded-bl-[40px] shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+              
+              <div className="flex items-start justify-between gap-3 relative z-10">
+                <div className="flex min-w-0 items-center gap-4">
+                  <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#ea980c] bg-white text-[#14532d] shadow-md">
                     {session.user?.image && !avatarLoadFailed ? (
                       <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
                     ) : (
-                      <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
+                      <span className="text-xl font-bold text-[#14532d]">{userInitial}</span>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-slate-900">{session.user?.name || 'User'}</p>
-                    <p className="truncate text-xs text-slate-500">{session.user?.email || ''}</p>
-                    <p className="mt-1 truncate text-xs font-semibold text-[#14532d]">{enrolledCourseTitle || 'No active course yet'}</p>
+                    <p className="truncate text-lg font-bold text-white">{session.user?.name || 'User'}</p>
+                    <p className="truncate text-sm text-green-100">{session.user?.email || ''}</p>
+                    <p className="mt-1.5 inline-block rounded-md bg-[#ea980c]/20 px-2 py-0.5 text-xs font-bold text-[#fef3c7] border border-[#ea980c]/30">{enrolledCourseTitle || 'Chưa vào khóa học'}</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsMenuOpen(false)}
-                  className="shrink-0 rounded-full border border-slate-200 p-2 text-slate-500 transition hover:border-[#14532d]/20 hover:text-[#14532d]"
+                  className="shrink-0 rounded-full bg-white/10 p-2 text-white transition hover:bg-[#ea980c] hover:text-white shadow-sm"
                   aria-label="Close profile menu"
                 >
                   <CloseIcon />
@@ -197,27 +199,30 @@ export default function TopNav() {
               </div>
             </div>
 
-            <nav className="flex-1 bg-white px-3 py-4">
-              <div className="space-y-1">
-                <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+            <nav className="flex-1 overflow-y-auto px-4 py-6">
+              <div className="space-y-2">
+                <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl border border-transparent px-4 py-3.5 text-[0.95rem] font-bold text-slate-700 transition hover:border-[#ea980c] hover:bg-white hover:text-[#14532d] hover:shadow-sm">
                   Profile
                 </Link>
-                <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl border border-transparent px-4 py-3.5 text-[0.95rem] font-bold text-slate-700 transition hover:border-[#ea980c] hover:bg-white hover:text-[#14532d] hover:shadow-sm">
                   Homework
                 </Link>
-                <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl border border-transparent px-4 py-3.5 text-[0.95rem] font-bold text-slate-700 transition hover:border-[#ea980c] hover:bg-white hover:text-[#14532d] hover:shadow-sm">
                   Exercise
                 </Link>
-                <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl border border-transparent px-4 py-3.5 text-[0.95rem] font-bold text-slate-700 transition hover:border-[#ea980c] hover:bg-white hover:text-[#14532d] hover:shadow-sm">
                   Luyện TOEIC
                 </Link>
-                <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#14532d]/8 hover:text-[#14532d]">
+                <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-xl border border-transparent px-4 py-3.5 text-[0.95rem] font-bold text-slate-700 transition hover:border-[#ea980c] hover:bg-white hover:text-[#14532d] hover:shadow-sm">
                   Slides
                 </Link>
+              </div>
+              
+              <div className="mt-8 border-t border-slate-200/60 pt-6">
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="flex w-full items-center gap-2 rounded-md px-4 py-3 text-sm font-semibold text-[#ea580c] transition hover:bg-[#fff7ed] hover:text-[#c2410c]"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[#ea980c] bg-white px-4 py-3 text-[0.95rem] font-bold text-[#ea980c] transition hover:bg-[#ea980c] hover:text-white shadow-sm"
                 >
                   <LogoutIcon />
                   Log out
