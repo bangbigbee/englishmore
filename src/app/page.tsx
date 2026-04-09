@@ -218,6 +218,8 @@ export default function Home() {
   const pronunciationRecognitionRef = useRef<BrowserSpeechRecognition | null>(null)
   const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null)
   const pronunciationDoneAudioPrimedRef = useRef(false)
+  const pronunciationRewardAudioRef = useRef<HTMLAudioElement | null>(null)
+  const pronunciationRewardAudioPrimedRef = useRef(false)
   const [congratsEnrollment, setCongratsEnrollment] = useState<{ id: string; title: string } | null>(null)
   const [selectedAdminDailyActivityCourseId, setSelectedAdminDailyActivityCourseId] = useState('')
 
@@ -772,10 +774,19 @@ export default function Home() {
     pronunciationDoneAudioRef.current.setAttribute('playsinline', 'true')
     pronunciationDoneAudioRef.current.load()
 
+    pronunciationRewardAudioRef.current = new Audio('/audio/amazing-reward-sound.mp3')
+    pronunciationRewardAudioRef.current.preload = 'auto'
+    pronunciationRewardAudioRef.current.setAttribute('playsinline', 'true')
+    pronunciationRewardAudioRef.current.load()
+
     return () => {
       if (pronunciationDoneAudioRef.current) {
         pronunciationDoneAudioRef.current.pause()
         pronunciationDoneAudioRef.current = null
+      }
+      if (pronunciationRewardAudioRef.current) {
+        pronunciationRewardAudioRef.current.pause()
+        pronunciationRewardAudioRef.current = null
       }
     }
   }, [])
@@ -868,23 +879,53 @@ export default function Home() {
     }
   }
 
+  const playPronunciationRewardChime = () => {
+    if (typeof window === 'undefined' || !pronunciationRewardAudioRef.current) {
+      return
+    }
+
+    try {
+      pronunciationRewardAudioRef.current.pause()
+      pronunciationRewardAudioRef.current.currentTime = 0
+      void pronunciationRewardAudioRef.current.play().catch(() => undefined)
+    } catch {
+      return
+    }
+  }
+
   const primePronunciationDoneChime = async () => {
     if (typeof window === 'undefined' || !pronunciationDoneAudioRef.current || pronunciationDoneAudioPrimedRef.current) {
       return
     }
 
     try {
-      const audio = pronunciationDoneAudioRef.current
-      audio.muted = true
-      audio.currentTime = 0
-      await audio.play()
-      audio.pause()
-      audio.currentTime = 0
-      audio.muted = false
-      pronunciationDoneAudioPrimedRef.current = true
+      if (pronunciationDoneAudioRef.current && !pronunciationDoneAudioPrimedRef.current) {
+        const audio = pronunciationDoneAudioRef.current
+        audio.muted = true
+        audio.currentTime = 0
+        await audio.play()
+        audio.pause()
+        audio.currentTime = 0
+        audio.muted = false
+        pronunciationDoneAudioPrimedRef.current = true
+      }
+
+      if (pronunciationRewardAudioRef.current && !pronunciationRewardAudioPrimedRef.current) {
+        const rewardAudio = pronunciationRewardAudioRef.current
+        rewardAudio.muted = true
+        rewardAudio.currentTime = 0
+        await rewardAudio.play()
+        rewardAudio.pause()
+        rewardAudio.currentTime = 0
+        rewardAudio.muted = false
+        pronunciationRewardAudioPrimedRef.current = true
+      }
     } catch {
       if (pronunciationDoneAudioRef.current) {
         pronunciationDoneAudioRef.current.muted = false
+      }
+      if (pronunciationRewardAudioRef.current) {
+        pronunciationRewardAudioRef.current.muted = false
       }
     }
   }
@@ -976,6 +1017,20 @@ export default function Home() {
         setPronunciationScore(score)
         setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentVocabularyItem.word))
         setPronunciationStatus(score >= 80 ? 'Nice work. Keep practicing to make it even cleaner.' : 'Try again and compare your sound with the sample.')
+        
+        if (score === 100 && currentVocabularyItem) {
+          fetch('/api/vocabulary/pronunciation-reward', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ wordId: currentVocabularyItem.id })
+          }).then(res => res.json()).then(data => {
+            if (data.awardedAp > 0) {
+              playPronunciationRewardChime()
+              showActivityPointToast(data.awardedAp, 'for Vocabulary Pronunciation Mastery')
+            }
+          }).catch(() => undefined)
+        }
+
         pronunciationScoringTimeoutRef.current = null
       }, 420)
     }

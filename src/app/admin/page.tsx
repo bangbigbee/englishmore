@@ -280,7 +280,8 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
   badge_first_submit: 'Submit your very first homework assignment.',
   badge_on_time_3: 'Submit homework on time at least 3 times.',
   badge_submit_5: 'Submit 5 or more homework assignments.',
-  badge_all_rounder: 'Check in, reflect, and submit homework in the same day.'
+  badge_all_rounder: 'Check in, reflect, and submit homework in the same day.',
+  vocab_pronunciation: 'Học viên được tặng AP khi phát âm chính xác 100% từ vựng tại trang Luyện TOEIC.'
 }
 
 const getActivityPointDescription = (activityKey: string) =>
