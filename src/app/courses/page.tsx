@@ -388,12 +388,7 @@ export default function CoursesPage() {
                             <LinkifiedText text={String(course.description || '').trim() || DEFAULT_COURSE_DESCRIPTION} preserveLineBreaks />
                           </div>
 
-                          <div>
-                            <h3 className="text-lg font-semibold text-[#14532d]">Học phí</h3>
-                            <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm">
-                              <li>Toàn bộ khóa học: {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}</li>
-                            </ul>
-                          </div>
+
 
                           <p className="text-sm text-slate-600">
                             Mọi thông tin thêm, vui lòng liên hệ Mr. Nguyễn Trí Bằng qua số điện thoại 0915091093. Hoặc nhắn tin về Facebook:
