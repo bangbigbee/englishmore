@@ -3125,11 +3125,11 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-7 mb-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-8 mb-4">
             <select
               value={newVocabularyCourseId}
               onChange={(e) => setNewVocabularyCourseId(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              className="md:col-span-2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
               <option value="">Choose a course</option>
               {courses.map((course) => (
