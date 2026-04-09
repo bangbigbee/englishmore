@@ -210,6 +210,55 @@ function HomeContent() {
   const [greetingStatus, setGreetingStatus] = useState('')
   const [hasGreetingToday, setHasGreetingToday] = useState(false)
   const [isSavingGreeting, setIsSavingGreeting] = useState(false)
+  
+  const BASE_PRICE = 4200000
+
+  const getPromotionTier = (deadlineStr: string) => {
+    const deadline = new Date(deadlineStr)
+    const now = new Date()
+    const diffTime = deadline.getTime() - now.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    if (diffDays > 45) {
+      return {
+        name: 'Super Early Bird',
+        discount: 0.3,
+        label: 'Ưu đãi lớn nhất',
+        color: 'from-emerald-500 to-teal-600',
+        textColor: 'text-emerald-700',
+        bgColor: 'bg-emerald-50',
+        daysLeft: diffDays
+      }
+    } else if (diffDays >= 15) {
+      return {
+        name: 'Early Bird',
+        discount: 0.15,
+        label: 'Tiết kiệm ngay',
+        color: 'from-orange-400 to-amber-500',
+        textColor: 'text-orange-700',
+        bgColor: 'bg-orange-50',
+        daysLeft: diffDays
+      }
+    } else {
+      return {
+        name: 'Regular',
+        discount: 0,
+        label: 'Sắp hết hạn',
+        color: 'from-slate-400 to-slate-500',
+        textColor: 'text-slate-600',
+        bgColor: 'bg-slate-50',
+        daysLeft: diffDays
+      }
+    }
+  }
+
+  const formatVND = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount)
+  }
+
   const [isEditingCheckin, setIsEditingCheckin] = useState(false)
   const [editCheckinMessage, setEditCheckinMessage] = useState('')
   const [editCheckinStatus, setEditCheckinStatus] = useState('')
@@ -2211,17 +2260,55 @@ function HomeContent() {
                       })
 
                   return (
-                    <div key={course.id} className="rounded-xl border border-[#14532d]/25 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                      <p className="text-xl font-extrabold leading-tight text-amber-500">{course.title}</p>
-                      <p className="mt-3 text-base text-slate-700">Hạn đăng ký: {registrationDeadlineText}</p>
-                      <p className={`mt-1 text-base font-semibold ${isFull ? 'text-red-700' : 'text-[#14532d]'}`}>{availabilityText}</p>
+                    <div key={course.id} className="group relative overflow-hidden rounded-xl border border-[#14532d]/25 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                      {/* Pricing Tier Badge */}
+                      {(() => {
+                        const tier = getPromotionTier(course.registrationDeadline)
+                        return (
+                          <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
+                            {tier.name}
+                          </div>
+                        )
+                      })()}
+
+                      <p className="pr-12 text-xl font-extrabold leading-tight text-amber-500">{course.title}</p>
+                      
+                      <div className="mt-3 flex items-baseline gap-2">
+                        {(() => {
+                          const tier = getPromotionTier(course.registrationDeadline)
+                          const discountedPrice = BASE_PRICE * (1 - tier.discount)
+                          return (
+                            <>
+                              <span className="text-lg font-bold text-[#14532d]">{formatVND(discountedPrice)}</span>
+                              {tier.discount > 0 && (
+                                <span className="text-xs text-slate-400 line-through">{formatVND(BASE_PRICE)}</span>
+                              )}
+                            </>
+                          )
+                        })()}
+                      </div>
+
+                      <div className="mt-3 flex flex-col gap-1">
+                        <p className="text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
+                        {(() => {
+                          const tier = getPromotionTier(course.registrationDeadline)
+                          return (
+                            <p className={`text-[11px] font-bold uppercase tracking-tight ${tier.textColor}`}>
+                              ● {tier.label}
+                            </p>
+                          )
+                        })()}
+                      </div>
+
+                      <p className={`mt-2 text-sm font-semibold ${isFull ? 'text-red-700' : 'text-[#14532d]'}`}>{availabilityText}</p>
+                      
                       <div className="mt-4">
                         <Link
                           href={registerHref}
-                          className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-bold transition ${isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534]'}`}
+                          className={`inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-bold transition shadow-sm ${isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
                           aria-disabled={isFull}
                         >
-                          Đăng Ký
+                          Đăng Ký Ngay
                         </Link>
                       </div>
                     </div>
