@@ -2262,7 +2262,9 @@ function HomeContent() {
                   const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
                   const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
                   const courseDetailEntryUrl = `/courses?openCourseId=${encodeURIComponent(course.id)}`
-                  const registerHref = session ? courseDetailEntryUrl : `/?login=true&callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
+                  const registerHref = session 
+                    ? courseDetailEntryUrl 
+                    : `/?login=true&subtitle=${encodeURIComponent('Cần đăng nhập để tiếp tục quá trình đăng ký')}&callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
                   const registrationDeadlineDate = new Date(course.registrationDeadline)
                   const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
                     ? 'Đang cập nhật'
