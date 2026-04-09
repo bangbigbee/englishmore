@@ -4,7 +4,7 @@ import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
 
@@ -175,6 +175,7 @@ function HomeContent() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const router = useRouter()
+  const pathname = usePathname()
   
   const isLoginModalOpen = searchParams.get('login') === 'true'
   const callbackUrl = searchParams.get('callbackUrl') || '/'
