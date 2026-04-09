@@ -3294,6 +3294,15 @@ export default function AdminDashboard() {
                           <td className="px-3 py-2">
                             <input
                               type="text"
+                              value={item.topic}
+                              onChange={(event) => updateVocabularyImportPreviewItem(index, 'topic', event.target.value)}
+                              className="w-36 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              placeholder="Topic"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <input
+                              type="text"
                               value={item.example}
                               onChange={(event) => updateVocabularyImportPreviewItem(index, 'example', event.target.value)}
                               className="w-56 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
