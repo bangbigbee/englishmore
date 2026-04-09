@@ -84,6 +84,7 @@ const parseVocabularyFromText = (text: string) => {
   let invalidCount = 0
 
   const currentMap = new Map<string, string>()
+  let lastSeenTopic = 'WarmUp'
 
   const flushCurrentItem = () => {
     if (currentMap.size === 0) {
@@ -99,7 +100,7 @@ const parseVocabularyFromText = (text: string) => {
       ? (partOfSpeech ? `[${partOfSpeech}] ${englishDefinitionRaw}` : englishDefinitionRaw)
       : (partOfSpeech ? `[${partOfSpeech}]` : '')
     const example = getFirstValue(currentMap, ['EXAMPLE'])
-    const topic = getFirstValue(currentMap, ['TOPIC']) || 'WarmUp'
+    const topic = getFirstValue(currentMap, ['TOPIC']) || lastSeenTopic
 
     if (!word || !meaning) {
       invalidCount += 1
@@ -143,6 +144,10 @@ const parseVocabularyFromText = (text: string) => {
     const value = line.slice(separatorIndex + 1).trim()
     if (!value) {
       continue
+    }
+
+    if (key === 'TOPIC') {
+      lastSeenTopic = value
     }
 
     if ((key === 'WORD' || key === 'TOPIC') && (currentMap.has('WORD') || currentMap.has('TOPIC'))) {
