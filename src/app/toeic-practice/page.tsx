@@ -22,6 +22,7 @@ function ToeicPracticeContent() {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('login', 'true');
 		params.set('allowGuest', 'true');
+		params.set('subtitle', 'Đăng nhập để lưu và theo dõi tiến độ học tập của bạn');
 		params.set('callbackUrl', pathname);
 		router.push(`${pathname}?${params.toString()}`, { scroll: false });
 	};

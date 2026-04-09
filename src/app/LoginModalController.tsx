@@ -12,12 +12,14 @@ function LoginModalControllerInner() {
   const isOpen = searchParams.get('login') === 'true'
   const allowGuest = searchParams.get('allowGuest') === 'true'
   const callbackUrl = searchParams.get('callbackUrl') || pathname
+  const subtitle = searchParams.get('subtitle') || ''
 
   const handleClose = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString())
     params.delete('login')
     params.delete('allowGuest')
     params.delete('callbackUrl')
+    params.delete('subtitle')
     
     const query = params.toString()
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
@@ -34,6 +36,7 @@ function LoginModalControllerInner() {
       callbackUrl={callbackUrl}
       allowGuest={allowGuest}
       onGuest={handleGuest}
+      subtitle={subtitle}
     />
   )
 }

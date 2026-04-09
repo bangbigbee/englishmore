@@ -155,6 +155,7 @@ export default function TopNav() {
               onClick={() => {
                 const params = new URLSearchParams(window.location.search)
                 params.set('login', 'true')
+                params.set('subtitle', 'Đăng nhập để lưu và theo dõi tiến độ học tập của bạn')
                 params.set('callbackUrl', pathname)
                 router.push(`${pathname}?${params.toString()}`, { scroll: false })
               }}

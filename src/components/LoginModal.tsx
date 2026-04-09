@@ -22,9 +22,10 @@ interface LoginModalProps {
   callbackUrl?: string
   allowGuest?: boolean
   onGuest?: () => void
+  subtitle?: string
 }
 
-export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGuest = false, onGuest }: LoginModalProps) {
+export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGuest = false, onGuest, subtitle }: LoginModalProps) {
   const [googleLoading, setGoogleLoading] = useState(false)
   const isZaloInAppBrowser = typeof navigator !== 'undefined' && /zalo/i.test(navigator.userAgent || '')
 
@@ -90,7 +91,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
             Chào mừng bạn đến với <span className="text-[#14532d]">English</span><span className="text-amber-500">More</span>
           </h2>
           <p className="mt-2 text-sm text-slate-500">
-            Vui lòng đăng nhập để tiếp tục quá trình học tập của bạn.
+            {subtitle || 'Vui lòng đăng nhập để tiếp tục quá trình học tập của bạn.'}
           </p>
         </div>
 

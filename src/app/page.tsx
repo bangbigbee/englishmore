@@ -180,11 +180,14 @@ function HomeContent() {
   const isLoginModalOpen = searchParams.get('login') === 'true'
   const callbackUrl = searchParams.get('callbackUrl') || '/'
 
-  const openLoginModal = (customCallbackUrl?: string, isPractice = false) => {
+  const openLoginModal = (customCallbackUrl?: string, isPractice = false, subtitle?: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('login', 'true')
     if (isPractice) {
       params.set('allowGuest', 'true')
+    }
+    if (subtitle) {
+      params.set('subtitle', subtitle)
     }
     if (customCallbackUrl) {
       params.set('callbackUrl', customCallbackUrl)
@@ -2124,7 +2127,7 @@ function HomeContent() {
                     <button
                       type="button"
                       onClick={() => {
-                        openLoginModal('/courses')
+                        openLoginModal('/courses', false, 'Đăng nhập để bắt đầu khóa học của bạn')
                       }}
                       className="brand-cta brand-cta-register"
                     >
