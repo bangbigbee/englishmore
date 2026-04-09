@@ -169,7 +169,7 @@ export default function TopNav() {
             aria-label="Close menu overlay"
           />
 
-          <aside className={`absolute right-0 top-0 z-10 flex h-full w-[min(22rem,88vw)] flex-col border-[6px] border-[#ea980c] bg-white shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <aside className={`absolute right-0 top-0 z-10 flex h-full w-[min(22rem,88vw)] flex-col border-2 border-[#ea980c] bg-white shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
             <div className="border-b-[4px] border-[#ea980c] bg-[#14532d] px-5 py-6">
               <div className="flex items-start justify-between gap-3 relative">
                 <div className="flex min-w-0 items-center gap-3">
