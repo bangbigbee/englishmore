@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
   const englishDefinition = String(body?.englishDefinition || '').trim()
   const meaning = String(body?.meaning || '').trim()
   const example = String(body?.example || '').trim()
+  const topic = String(body?.topic || 'WarmUp').trim()
 
   if (!courseId || !word || !meaning) {
     return NextResponse.json({ error: 'courseId, word, meaning are required' }, { status: 400 })
@@ -93,6 +94,7 @@ export async function POST(request: NextRequest) {
       englishDefinition: englishDefinition || null,
       meaning,
       example: example || null,
+      topic,
       displayOrder,
       isActive: true
     },

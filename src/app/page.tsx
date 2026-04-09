@@ -50,6 +50,7 @@ interface MemberVocabularyItem {
   englishDefinition: string | null
   meaning: string
   example: string | null
+  topic?: string
   displayOrder: number
 }
 
@@ -203,6 +204,7 @@ export default function Home() {
   const [editReflectionStatus, setEditReflectionStatus] = useState('')
   const [greetingConversation, setGreetingConversation] = useState<DailyGreetingConversationItem[]>([])
   const [memberVocabularyItems, setMemberVocabularyItems] = useState<MemberVocabularyItem[]>([])
+  const [selectedVocabularyTopic, setSelectedVocabularyTopic] = useState<string | null>(null)
   const [memberVocabularyIndex, setMemberVocabularyIndex] = useState(0)
   const [memberVocabularyLoading, setMemberVocabularyLoading] = useState(false)
   const [memberVocabularyError, setMemberVocabularyError] = useState('')
@@ -736,8 +738,25 @@ export default function Home() {
     return 'bg-[#14532d] ring-[#14532d]/20'
   }
 
-  const currentVocabularyItem = memberVocabularyItems.length > 0
-    ? memberVocabularyItems[((memberVocabularyIndex % memberVocabularyItems.length) + memberVocabularyItems.length) % memberVocabularyItems.length]
+  const availableTopics = useMemo(() => {
+    const list = memberVocabularyItems.map((i) => i.topic || 'WarmUp')
+    return Array.from(new Set(list))
+  }, [memberVocabularyItems])
+
+  useEffect(() => {
+    if (availableTopics.length > 0 && (!selectedVocabularyTopic || !availableTopics.includes(selectedVocabularyTopic))) {
+      setSelectedVocabularyTopic(availableTopics[0])
+      setMemberVocabularyIndex(0)
+    }
+  }, [availableTopics, selectedVocabularyTopic])
+
+  const filteredVocabularyItems = useMemo(() => {
+    if (!selectedVocabularyTopic) return memberVocabularyItems
+    return memberVocabularyItems.filter((i) => (i.topic || 'WarmUp') === selectedVocabularyTopic)
+  }, [memberVocabularyItems, selectedVocabularyTopic])
+
+  const currentVocabularyItem = filteredVocabularyItems.length > 0
+    ? filteredVocabularyItems[((memberVocabularyIndex % filteredVocabularyItems.length) + filteredVocabularyItems.length) % filteredVocabularyItems.length]
     : null
 
   useEffect(() => {
@@ -810,10 +829,10 @@ export default function Home() {
   }, [])
 
   const moveVocabulary = (direction: 'prev' | 'next') => {
-    if (memberVocabularyItems.length <= 1) return
+    if (filteredVocabularyItems.length <= 1) return
     setMemberVocabularyIndex((current) => {
       const delta = direction === 'next' ? 1 : -1
-      return (current + delta + memberVocabularyItems.length) % memberVocabularyItems.length
+      return (current + delta + filteredVocabularyItems.length) % filteredVocabularyItems.length
     })
   }
 
@@ -1897,8 +1916,29 @@ export default function Home() {
             <section>
               <h1 className="sr-only">EnglishMore</h1>
               <div className="rounded-lg border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
+                  {availableTopics.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {availableTopics.map(topic => (
+                        <button
+                          key={topic}
+                          type="button"
+                          onClick={() => {
+                            setSelectedVocabularyTopic(topic)
+                            setMemberVocabularyIndex(0)
+                          }}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                            selectedVocabularyTopic === topic
+                              ? 'bg-[#14532d] text-white'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          }`}
+                        >
+                          {topic}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {memberVocabularyLoading ? (
@@ -1913,7 +1953,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => moveVocabulary('prev')}
-                        disabled={memberVocabularyItems.length <= 1}
+                        disabled={filteredVocabularyItems.length <= 1}
                         className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
                         aria-label="Previous vocabulary"
                       >
@@ -1953,7 +1993,7 @@ export default function Home() {
                       <button
                         type="button"
                         onClick={() => moveVocabulary('next')}
-                        disabled={memberVocabularyItems.length <= 1}
+                        disabled={filteredVocabularyItems.length <= 1}
                         className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
                         aria-label="Next vocabulary"
                       >

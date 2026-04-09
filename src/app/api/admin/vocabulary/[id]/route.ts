@@ -57,6 +57,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
   const englishDefinition = String(body?.englishDefinition || '').trim()
   const meaning = String(body?.meaning || '').trim()
   const example = String(body?.example || '').trim()
+  const topic = String(body?.topic || 'WarmUp').trim()
   const displayOrderRaw = body?.displayOrder
 
   if (!courseId || !word || !meaning) {
@@ -86,6 +87,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
         englishDefinition: englishDefinition || null,
         meaning,
         example: example || null,
+        topic,
         ...(displayOrderRaw !== undefined && displayOrderRaw !== null && displayOrderRaw !== ''
           ? { displayOrder }
           : {})

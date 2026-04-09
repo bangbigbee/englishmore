@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
       englishDefinition: true,
       meaning: true,
       example: true,
+      topic: true,
       displayOrder: true
     },
     orderBy: [

@@ -227,6 +227,7 @@ interface AdminVocabularyItem {
   englishDefinition: string | null
   meaning: string
   example: string | null
+  topic: string
   displayOrder: number
   isActive: boolean
   course: {
@@ -295,7 +296,8 @@ const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   phonetic: item?.phonetic || '',
   englishDefinition: item?.englishDefinition || '',
   meaning: item?.meaning || '',
-  example: item?.example || ''
+  example: item?.example || '',
+  topic: item?.topic || 'WarmUp'
 })
 
 const buildEmptyExerciseQuestions = (): ExerciseQuestionForm[] =>
@@ -670,6 +672,7 @@ export default function AdminDashboard() {
   const [newVocabularyEnglishDefinition, setNewVocabularyEnglishDefinition] = useState('')
   const [newVocabularyMeaning, setNewVocabularyMeaning] = useState('')
   const [newVocabularyExample, setNewVocabularyExample] = useState('')
+  const [newVocabularyTopic, setNewVocabularyTopic] = useState('WarmUp')
   const [vocabularyImportDocsUrl, setVocabularyImportDocsUrl] = useState('')
   const [vocabularyImportDocxFile, setVocabularyImportDocxFile] = useState<File | null>(null)
   const [vocabularyImportSourceCourseId, setVocabularyImportSourceCourseId] = useState('')
@@ -1132,7 +1135,8 @@ export default function AdminDashboard() {
           phonetic: newVocabularyPhonetic,
           englishDefinition: newVocabularyEnglishDefinition,
           meaning: newVocabularyMeaning,
-          example: newVocabularyExample
+          example: newVocabularyExample,
+          topic: newVocabularyTopic
         })
       })
 
@@ -1145,6 +1149,7 @@ export default function AdminDashboard() {
       setNewVocabularyEnglishDefinition('')
       setNewVocabularyMeaning('')
       setNewVocabularyExample('')
+      setNewVocabularyTopic('WarmUp')
       fetchVocabularyData()
     } catch (err) {
       setVocabularyError(err instanceof Error ? err.message : 'Could not add the vocabulary item.')
@@ -1162,6 +1167,7 @@ export default function AdminDashboard() {
     setNewVocabularyEnglishDefinition(formState.englishDefinition)
     setNewVocabularyMeaning(formState.meaning)
     setNewVocabularyExample(formState.example)
+    setNewVocabularyTopic(formState.topic)
     setVocabularyError('')
     setVocabularySuccess('')
   }
@@ -1174,6 +1180,7 @@ export default function AdminDashboard() {
     setNewVocabularyEnglishDefinition('')
     setNewVocabularyMeaning('')
     setNewVocabularyExample('')
+    setNewVocabularyTopic('WarmUp')
   }
 
   const updateVocabulary = async () => {
@@ -1200,7 +1207,8 @@ export default function AdminDashboard() {
           phonetic: newVocabularyPhonetic,
           englishDefinition: newVocabularyEnglishDefinition,
           meaning: newVocabularyMeaning,
-          example: newVocabularyExample
+          example: newVocabularyExample,
+          topic: newVocabularyTopic
         })
       })
 

@@ -545,6 +545,7 @@ model VocabularyItem {
   englishDefinition String?
   meaning      String
   example      String?
+  topic        String   @default("WarmUp")
   displayOrder Int      @default(1)
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
