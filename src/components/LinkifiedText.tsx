@@ -83,12 +83,22 @@ export default function LinkifiedText({
 
   return (
     <>
-      {lines.map((line, index) => (
-        <Fragment key={`line-${index}`}>
-          {index > 0 ? <br /> : null}
-          {renderTextWithLinks(line, linkClassName)}
-        </Fragment>
-      ))}
+      {lines.map((line, index) => {
+        const isBoldListHeading = /^\d+\.\s/.test(line.trim())
+        
+        return (
+          <Fragment key={`line-${index}`}>
+            {index > 0 ? <br /> : null}
+            {isBoldListHeading ? (
+              <span className="font-semibold text-slate-900 border-none">
+                {renderTextWithLinks(line, linkClassName)}
+              </span>
+            ) : (
+              renderTextWithLinks(line, linkClassName)
+            )}
+          </Fragment>
+        )
+      })}
     </>
   )
 }

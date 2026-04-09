@@ -491,7 +491,7 @@ export default function CoursesPage() {
                         )}
                       </div>
 
-                      <div className="px-5 py-8 sm:px-8 sm:py-10 space-y-8">
+                      <div className="px-5 pb-8 pt-4 sm:px-8 sm:pb-10 sm:pt-5 space-y-8">
                         <div>
                           <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                             <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span>
