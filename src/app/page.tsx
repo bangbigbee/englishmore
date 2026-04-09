@@ -4,8 +4,10 @@ import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
+import LoginModal from '@/components/LoginModal'
 
 interface AvailableCourse {
   id: string
@@ -172,6 +174,29 @@ function LockedFeatureButton({
 
 export default function Home() {
   const { data: session } = useSession()
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  
+  const isLoginModalOpen = searchParams.get('login') === 'true'
+  const callbackUrl = searchParams.get('callbackUrl') || '/'
+
+  const openLoginModal = (customCallbackUrl?: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('login', 'true')
+    if (customCallbackUrl) {
+      params.set('callbackUrl', customCallbackUrl)
+    }
+    router.push(`/?${params.toString()}`)
+  }
+
+  const closeLoginModal = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('login')
+    params.delete('callbackUrl')
+    const query = params.toString()
+    router.push(query ? `/?${query}` : '/')
+  }
+
   const triggerGoogleSignIn = () => {
     void signIn('google', { callbackUrl: '/' })
   }
@@ -2104,7 +2129,7 @@ export default function Home() {
                     <button
                       type="button"
                       onClick={() => {
-                        void signIn('google', { callbackUrl: '/courses' })
+                        openLoginModal('/courses')
                       }}
                       className="brand-cta brand-cta-register"
                     >
@@ -2177,8 +2202,7 @@ export default function Home() {
                   const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
                   const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
                   const courseDetailEntryUrl = `/courses?openCourseId=${encodeURIComponent(course.id)}`
-                  const guestLoginWithRedirectUrl = `/login?callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
-                  const registerHref = session ? courseDetailEntryUrl : guestLoginWithRedirectUrl
+                  const registerHref = session ? courseDetailEntryUrl : `/?login=true&callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
                   const registrationDeadlineDate = new Date(course.registrationDeadline)
                   const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
                     ? 'Đang cập nhật'
@@ -2244,6 +2268,11 @@ export default function Home() {
           </div>
         </div>
       )}
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={closeLoginModal} 
+        callbackUrl={callbackUrl} 
+      />
     </div>
   )
 }

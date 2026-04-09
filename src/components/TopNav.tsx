@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { signIn, signOut, useSession } from 'next-auth/react'
-import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 interface HeaderEnrollment {
@@ -54,6 +54,8 @@ export default function TopNav() {
   const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
 
   const userInitial = (session?.user?.name || session?.user?.email || 'U').trim().charAt(0).toUpperCase()
 
@@ -149,7 +151,13 @@ export default function TopNav() {
             </>
           ) : (
             <button
-              onClick={() => signIn('google', { callbackUrl: '/' })}
+              onClick={() => {
+                if (pathname === '/') {
+                  router.push('/?login=true')
+                } else {
+                  signIn('google', { callbackUrl: window.location.pathname })
+                }
+              }}
               disabled={status === 'loading'}
               className="inline-flex items-center gap-2 rounded-md bg-[#14532d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#166534] shadow-sm hover:shadow-md disabled:opacity-70"
             >
