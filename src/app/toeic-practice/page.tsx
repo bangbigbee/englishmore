@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -11,7 +11,7 @@ const TABS = [
 	{ key: "actual-test", label: "Actual Test" },
 ];
 
-export default function ToeicHomePage() {
+function ToeicPracticeContent() {
 	const [tab, setTab] = useState("grammar");
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -261,6 +261,14 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }
 				))}
 			</div>
 		</div>
+	);
+}
+
+export default function ToeicHomePage() {
+	return (
+		<Suspense fallback={null}>
+			<ToeicPracticeContent />
+		</Suspense>
 	);
 }
 
