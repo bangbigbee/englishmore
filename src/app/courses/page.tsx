@@ -511,20 +511,62 @@ export default function CoursesPage() {
                           <div className="rounded-2xl border border-[#14532d]/20 bg-linear-to-br from-[#14532d]/5 to-orange-50/50 p-6">
                             {(() => {
                               const tier = getPromotionTier(course)
-                              const discountedPrice = (course.price || 4200000) * (1 - tier.discount)
+                              const originalPrice = course.price || 4200000
+                              const discountedPrice = originalPrice * (1 - tier.discount)
+                              const savings = originalPrice - discountedPrice
+                              
+                              // Future tiers calculation
+                              const ebDiscount = (course.ebDiscountPercent ?? 15) / 100
+                              const ebPrice = originalPrice * (1 - ebDiscount)
+                              
                               return (
-                                <div className="flex flex-col gap-4">
-                                  <div className="flex items-center justify-between">
-                                    <span className={`rounded-full px-4 py-1 text-xs font-bold text-white shadow-sm bg-linear-to-r ${tier.color}`}>
-                                      {tier.name}
-                                    </span>
-                                    <span className="text-2xl font-black text-[#14532d]">{formatVnd(discountedPrice)}</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <div className="p-1 rounded-full bg-emerald-100 text-emerald-600">
-                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                                <div className="space-y-6">
+                                  <div className="flex flex-col gap-4">
+                                    <div className="flex items-center justify-between">
+                                      <span className={`rounded-full px-4 py-1 text-xs font-bold text-white shadow-sm bg-linear-to-r ${tier.color}`}>
+                                        {tier.name}
+                                      </span>
+                                      <span className="text-2xl font-black text-[#14532d]">{formatVnd(discountedPrice)}</span>
                                     </div>
-                                    <p className={`text-sm font-bold uppercase tracking-tight ${tier.textColor}`}>{tier.label}</p>
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <div className="p-1 rounded-full bg-emerald-100 text-emerald-600">
+                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                                        </div>
+                                        <p className={`text-sm font-bold uppercase tracking-tight ${tier.textColor}`}>{tier.label}</p>
+                                      </div>
+                                      {savings > 0 && (
+                                        <p className="text-sm font-bold text-orange-700">
+                                          TIẾT KIỆM NGAY: <span className="text-lg">{formatVnd(savings)}</span>
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Price Comparison Table */}
+                                  <div className="pt-4 border-t border-[#14532d]/10">
+                                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">So sánh mức giá các giai đoạn</h4>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      {tier.name === 'Super Early Bird' && (
+                                        <div className="rounded-xl bg-white/50 p-3 border border-slate-100">
+                                          <p className="text-[10px] font-bold text-slate-500 uppercase">Giai đoạn Early Bird</p>
+                                          <p className="text-sm font-bold text-slate-700 mt-1">{formatVnd(ebPrice)}</p>
+                                          <p className="text-[10px] text-red-500 mt-0.5">+{formatVnd(ebPrice - discountedPrice)}</p>
+                                        </div>
+                                      )}
+                                      {(tier.name === 'Super Early Bird' || tier.name === 'Early Bird') && (
+                                        <div className="rounded-xl bg-white/50 p-3 border border-slate-100">
+                                          <p className="text-[10px] font-bold text-slate-500 uppercase">Giá gốc (Regular)</p>
+                                          <p className="text-sm font-bold text-slate-700 mt-1">{formatVnd(originalPrice)}</p>
+                                          <p className="text-[10px] text-red-500 mt-0.5">+{formatVnd(originalPrice - discountedPrice)}</p>
+                                        </div>
+                                      )}
+                                      {tier.name === 'Regular' && (
+                                        <div className="col-span-2 py-2 text-center text-xs font-medium text-slate-500 italic">
+                                          Đây là mức giá cuối cùng trước khi đóng link đăng ký.
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               )
