@@ -331,7 +331,7 @@ export default function CoursesPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] lg:h-[calc(100vh-84px)] bg-gray-50 overflow-hidden">
+    <div className="flex flex-col min-h-screen lg:h-[calc(100vh-84px)] lg:min-h-0 bg-gray-50 lg:overflow-hidden">
       <div className="bg-white shadow-xs border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-[#14532d]">Available Courses</h1>
@@ -339,15 +339,15 @@ export default function CoursesPage() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex-1 lg:min-h-0 mx-auto max-w-7xl w-full px-4 py-8 sm:px-6 lg:px-8">
         {loading ? (
           <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Đang tải danh sách khóa học...</div>
         ) : courses.length === 0 ? (
           <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Chưa có khóa học đang mở.</div>
         ) : (
-          <div className="h-full lg:grid lg:grid-cols-[320px_1fr] lg:gap-8 overflow-hidden">
+          <div className="lg:h-full lg:grid lg:grid-cols-[320px_1fr] lg:gap-8 lg:overflow-hidden">
             {/* Sidebar - Course List */}
-            <aside className="mb-8 lg:mb-0 h-full overflow-y-auto custom-scrollbar pr-2">
+            <aside className="mb-8 lg:mb-0 lg:h-full lg:overflow-y-auto custom-scrollbar lg:pr-2">
               <div className="space-y-3 pb-8">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 px-1">Danh sách khóa học</h2>
                 {courses.map((course) => {
@@ -385,7 +385,7 @@ export default function CoursesPage() {
             </aside>
 
             {/* Main Content - Course Details */}
-            <main className="h-full overflow-y-auto custom-scrollbar pb-12 pr-1">
+            <main className="lg:h-full lg:overflow-y-auto custom-scrollbar pb-12 lg:pr-1">
               {(() => {
                 const course = courses.find(c => c.id === expandedCourseId)
                 if (!course) return <div className="rounded-xl border-2 border-dashed border-slate-200 p-12 text-center text-slate-400">Chọn một khóa học để xem chi tiết.</div>
@@ -550,7 +550,7 @@ export default function CoursesPage() {
                                             ? phase.color === 'emerald' ? 'border-emerald-500 bg-emerald-50 ring-4 ring-emerald-500/10 scale-[1.02]' :
                                               phase.color === 'orange' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-500/10 scale-[1.02]' :
                                               'border-slate-500 bg-slate-50 ring-4 ring-slate-500/10 scale-[1.02]'
-                                            : 'border-slate-100 bg-white opacity-50 grayscale-[0.5]'
+                                            : 'border-slate-300 bg-white opacity-60 grayscale-[0.5]'
                                         }`}
                                       >
                                         <div className="flex flex-col h-full justify-between">
