@@ -3,7 +3,7 @@
 import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
@@ -172,7 +172,7 @@ function LockedFeatureButton({
   )
 }
 
-export default function Home() {
+function HomeContent() {
   const { data: session } = useSession()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -2274,6 +2274,14 @@ export default function Home() {
         callbackUrl={callbackUrl} 
       />
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   )
 }
 
