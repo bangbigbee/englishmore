@@ -10,6 +10,7 @@ const TABS = [
   { key: "actual-test", label: "Actual Test" },
 ];
 
+export default function ToeicHomePage() {
   const [tab, setTab] = useState("grammar");
   const [showPractice, setShowPractice] = useState(false);
 
@@ -32,7 +33,7 @@ const TABS = [
         ))}
       </div>
       <div className="mt-6">
-        {tab === "grammar" && <ToeicGrammarTab />}
+        {tab === "grammar" && <ToeicGrammarTab setShowPractice={setShowPractice} />}
         {tab === "vocabulary" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
         {tab === "listening" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
         {tab === "reading" && <div className="text-center text-gray-500">(Đang phát triển...)</div>}
@@ -41,8 +42,9 @@ const TABS = [
     </div>
   );
 }
+}
 
-function ToeicGrammarTab() {
+function ToeicGrammarTab({ setShowPractice }: { setShowPractice: (v: boolean) => void }) {
   // UI giống file đính kèm
   const grammarTopics = [
     { title: "Actual test questions", subtitle: "Câu hỏi từ đề thi thật", count: 438 },
