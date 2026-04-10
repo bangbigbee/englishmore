@@ -224,23 +224,29 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
                     <section className="mt-8">
-                      <div className="mb-6 flex items-center justify-between">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-[#14532d] uppercase tracking-[0.2em] mb-1">
-                            Current Quiz
-                          </span>
-                          <h3 className="text-lg font-black text-slate-900">Câu hỏi {activeQuestionIndex + 1} của {currentLesson.questions.length}</h3>
-                        </div>
-                        <div className="flex gap-1">
-                          {currentLesson.questions.map((_, idx) => (
-                            <div 
-                              key={idx} 
-                              className={`h-1.5 rounded-full transition-all duration-300 ${
-                                idx === activeQuestionIndex ? 'w-8 bg-[#14532d]' : 
-                                idx < activeQuestionIndex ? 'w-3 bg-[#14532d]/40' : 'w-3 bg-slate-200'
-                              }`}
-                            />
-                          ))}
+                      <div className="mb-8 flex flex-col gap-4">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Tiến độ luyện tập</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {currentLesson.questions.map((_, idx) => {
+                            const isActive = idx === activeQuestionIndex
+                            const isAnswered = !!userAnswers[currentLesson.questions[idx].id]
+                            
+                            return (
+                              <button 
+                                key={idx}
+                                onClick={() => setActiveQuestionIndex(idx)}
+                                className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm transition-all duration-200 cursor-pointer border-2 ${
+                                  isActive 
+                                    ? 'bg-[#14532d] border-[#14532d] text-white shadow-lg shadow-[#14532d]/20 scale-110 z-10' 
+                                    : isAnswered
+                                      ? 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                                      : 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                                }`}
+                              >
+                                {idx + 1}
+                              </button>
+                            )
+                          })}
                         </div>
                       </div>
 
