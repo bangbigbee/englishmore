@@ -1007,7 +1007,7 @@ export default function AdminDashboard() {
     }
   }, [newExerciseCourseId])
 
-  const fetchLectureNotes = useCallback(async (courseId: string) => {
+  const fetchLectureNotes = useCallback(async (courseId: string | null) => {
     if (!courseId) return
     try {
       const res = await fetch(`/api/admin/lectures?courseId=${courseId}`)
