@@ -620,7 +620,7 @@ export default function AdminDashboard() {
   const [savingHomeworkId, setSavingHomeworkId] = useState<string | null>(null)
   const [deletingHomeworkId, setDeletingHomeworkId] = useState<string | null>(null)
   const [homeworkSubmissions, setHomeworkSubmissions] = useState<HomeworkSubmissionItem[]>([])
-  const [homeworkSubmissionCourseFilter, setHomeworkSubmissionCourseFilter] = useState('')
+  const [homeworkSubmissionCourseFilter, setHomeworkSubmissionCourseFilter] = useState<string | null>(null)
   const [homeworkSubmissionHomeworkFilter, setHomeworkSubmissionHomeworkFilter] = useState('')
   const [homeworkTeacherComments, setHomeworkTeacherComments] = useState<Record<string, string>>({})
   const [homeworkDetailSubmissionId, setHomeworkDetailSubmissionId] = useState<string | null>(null)
@@ -677,7 +677,7 @@ export default function AdminDashboard() {
 
   // Lecture Notes states
   const [lectureNotes, setLectureNotes] = useState<LectureNote[]>([])
-  const [selectedLectureNoteCourseId, setSelectedLectureNoteCourseId] = useState('')
+  const [selectedLectureNoteCourseId, setSelectedLectureNoteCourseId] = useState<string | null>(null)
   const [newLectureSession, setNewLectureSession] = useState('')
   const [newLectureDriveLink, setNewLectureDriveLink] = useState('')
   const [newLectureDescription, setNewLectureDescription] = useState('')
@@ -690,7 +690,7 @@ export default function AdminDashboard() {
   const [savingLectureId, setSavingLectureId] = useState<string | null>(null)
   const [deletingLectureId, setDeletingLectureId] = useState<string | null>(null)
   const [checkinRows, setCheckinRows] = useState<AdminCheckinRow[]>([])
-  const [checkinCourseFilter, setCheckinCourseFilter] = useState('')
+  const [checkinCourseFilter, setCheckinCourseFilter] = useState<string | null>(null)
   const [checkinLoading, setCheckinLoading] = useState(false)
   const [checkinError, setCheckinError] = useState('')
   const [checkinSummary, setCheckinSummary] = useState<{ totalStudents: number; checkedInToday: number }>({
@@ -701,7 +701,7 @@ export default function AdminDashboard() {
     enrollmentId: string; userId: string; studentName: string; phone: string; email: string
     courseId: string; courseTitle: string; reflectedToday: boolean; message: string; updatedAt: string | null
   }>>([])
-  const [reflectCourseFilter, setReflectCourseFilter] = useState('')
+  const [reflectCourseFilter, setReflectCourseFilter] = useState<string | null>(null)
   const [reflectLoading, setReflectLoading] = useState(false)
   const [reflectError, setReflectError] = useState('')
   const [reflectSummary, setReflectSummary] = useState<{ totalStudents: number; reflectedToday: number }>({ totalStudents: 0, reflectedToday: 0 })
@@ -712,9 +712,9 @@ export default function AdminDashboard() {
   const [activityPointWarning, setActivityPointWarning] = useState('')
   const [isActivityPointDbReady, setIsActivityPointDbReady] = useState(true)
   const [savingActivityPointKey, setSavingActivityPointKey] = useState('')
-  const [apCourseFilter, setApCourseFilter] = useState('')
+  const [apCourseFilter, setApCourseFilter] = useState<string | null>(null)
   const [vocabularyItems, setVocabularyItems] = useState<AdminVocabularyItem[]>([])
-  const [vocabularyCourseFilter, setVocabularyCourseFilter] = useState('')
+  const [vocabularyCourseFilter, setVocabularyCourseFilter] = useState<string | null>(null)
   const [newVocabularyCourseId, setNewVocabularyCourseId] = useState('')
   const [newVocabularyWord, setNewVocabularyWord] = useState('')
   const [newVocabularyPhonetic, setNewVocabularyPhonetic] = useState('')
@@ -959,7 +959,7 @@ export default function AdminDashboard() {
       if (!newHomeworkCourseId && Array.isArray(data.courses) && data.courses.length > 0) {
         setNewHomeworkCourseId(data.courses[0].id)
       }
-      if (!homeworkSubmissionCourseFilter && Array.isArray(data.courses) && data.courses.length > 0) {
+      if (homeworkSubmissionCourseFilter === null && Array.isArray(data.courses) && data.courses.length > 0) {
         setHomeworkSubmissionCourseFilter(data.courses[0].id)
       }
     } catch (err) {
@@ -1610,19 +1610,19 @@ export default function AdminDashboard() {
   }, [status, session, router, fetchHomeworkData, fetchExerciseData])
 
   useEffect(() => {
-    if (!selectedLectureNoteCourseId && courses.length > 0) {
+    if (selectedLectureNoteCourseId === null && courses.length > 0) {
       setSelectedLectureNoteCourseId(courses[0].id)
     }
   }, [courses, selectedLectureNoteCourseId])
 
   useEffect(() => {
-    if (!checkinCourseFilter && courses.length > 0) {
+    if (checkinCourseFilter === null && courses.length > 0) {
       setCheckinCourseFilter(courses[0].id)
     }
   }, [courses, checkinCourseFilter])
 
   useEffect(() => {
-    if (!vocabularyCourseFilter && courses.length > 0) {
+    if (vocabularyCourseFilter === null && courses.length > 0) {
       setVocabularyCourseFilter(courses[0].id)
     }
     if (!newVocabularyCourseId && courses.length > 0) {
@@ -2964,7 +2964,7 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
             <select
-              value={checkinCourseFilter}
+              value={checkinCourseFilter || ''}
               onChange={(e) => setCheckinCourseFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
@@ -3139,7 +3139,7 @@ export default function AdminDashboard() {
           <div className="mb-4 flex items-center gap-3">
             <label className="text-sm font-medium text-gray-700">Lọc theo khóa học:</label>
             <select
-              value={apCourseFilter}
+              value={apCourseFilter || ''}
               onChange={(e) => setApCourseFilter(e.target.value)}
               className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
@@ -3437,7 +3437,7 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
             <select
-              value={reflectCourseFilter}
+              value={reflectCourseFilter || ''}
               onChange={(e) => setReflectCourseFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-violet-600"
             >
@@ -3781,7 +3781,7 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_auto] mb-4">
             <select
-              value={vocabularyCourseFilter}
+              value={vocabularyCourseFilter || ''}
               onChange={(e) => setVocabularyCourseFilter(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
             >
@@ -4079,7 +4079,7 @@ export default function AdminDashboard() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <select
-              value={homeworkSubmissionCourseFilter}
+              value={homeworkSubmissionCourseFilter || ''}
               onChange={(e) => {
                 setHomeworkSubmissionCourseFilter(e.target.value)
                 setHomeworkSubmissionHomeworkFilter('')
