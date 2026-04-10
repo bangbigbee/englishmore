@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import LinkifiedText from '@/components/LinkifiedText'
@@ -58,7 +58,7 @@ interface PendingRegistrationDraft {
 
 const DEFAULT_COURSE_DESCRIPTION = 'Khóa học giao tiếp thực hành, tối ưu cho người cần dùng tiếng Anh trong học tập và công việc.'
 
-export default function CoursesPage() {
+function CoursesContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -793,5 +793,13 @@ export default function CoursesPage() {
         </AnimatePresence>
       </div>
     </div>
+  )
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-white"><div className="h-8 w-8 animate-spin rounded-full border-4 border-[#14532d] border-t-transparent"></div></div>}>
+      <CoursesContent />
+    </Suspense>
   )
 }
