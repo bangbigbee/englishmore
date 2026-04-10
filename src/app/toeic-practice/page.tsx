@@ -18,12 +18,12 @@ function ToeicPracticeContent() {
 	const pathname = usePathname();
 	const { data: session } = useSession();
 
-	const openLoginModal = () => {
+	const openLoginModal = (destination?: string) => {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('login', 'true');
 		params.set('allowGuest', 'true');
 		params.set('subtitle', 'Đăng nhập để lưu và theo dõi tiến độ học tập của bạn');
-		params.set('callbackUrl', pathname);
+		params.set('callbackUrl', destination || pathname);
 		router.push(`${pathname}?${params.toString()}`, { scroll: false });
 	};
 
@@ -47,7 +47,7 @@ function ToeicPracticeContent() {
 			<div className="mt-6">
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
 					 if (!session) {
-						 openLoginModal();
+						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
 					 } else if (slug) {
 						 router.push(`/toeic-practice/grammar/${slug}`);
 					 }

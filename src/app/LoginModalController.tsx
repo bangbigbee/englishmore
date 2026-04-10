@@ -27,7 +27,10 @@ function LoginModalControllerInner() {
 
   const handleGuest = useCallback(() => {
     handleClose()
-  }, [handleClose])
+    if (callbackUrl && callbackUrl !== pathname) {
+      router.push(callbackUrl)
+    }
+  }, [handleClose, callbackUrl, pathname, router])
 
   return (
     <LoginModal

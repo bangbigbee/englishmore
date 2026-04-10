@@ -749,8 +749,10 @@ export default function AdminDashboard() {
 
   const [showTopicModal, setShowTopicModal] = useState(false)
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '' })
+  const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
   const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '' })
+  const [editingToeicLesson, setEditingToeicLesson] = useState<AdminToeicLesson | null>(null)
   const [showQuestionModal, setShowQuestionModal] = useState(false)
   const [questionForm, setQuestionForm] = useState({
     question: '',
@@ -761,6 +763,11 @@ export default function AdminDashboard() {
     correctOption: 'A',
     explanation: ''
   })
+  const [editingToeicQuestion, setEditingToeicQuestion] = useState<AdminToeicQuestion | null>(null)
+  const [deletingToeicId, setDeletingToeicId] = useState<string | null>(null)
+  const [savingToeicTopic, setSavingToeicTopic] = useState(false)
+  const [savingToeicLesson, setSavingToeicLesson] = useState(false)
+  const [savingToeicQuestion, setSavingToeicQuestion] = useState(false)
 
   const deleteUserAccount = async (userId: string) => {
     try {
@@ -1233,50 +1240,102 @@ export default function AdminDashboard() {
 
   const createToeicTopic = async () => {
     try {
-      const res = await fetch('/api/admin/toeic/topics', {
-        method: 'POST',
+      setSavingToeicTopic(true)
+      const res = await fetch(editingToeicTopic ? `/api/admin/toeic/topics/${editingToeicTopic.id}` : '/api/admin/toeic/topics', {
+        method: editingToeicTopic ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(topicForm)
       })
-      if (!res.ok) throw new Error('Failed to create topic')
-      toast.success('Topic created successfully')
+      if (!res.ok) throw new Error('Failed to save topic')
+      toast.success(editingToeicTopic ? 'Topic updated successfully' : 'Topic created successfully')
       setShowTopicModal(false)
       setTopicForm({ title: '', subtitle: '', slug: '' })
+      setEditingToeicTopic(null)
       fetchToeicTopics()
     } catch (err) {
       setToeicError(String(err))
+    } finally {
+      setSavingToeicTopic(false)
+    }
+  }
+
+  const deleteToeicTopic = async (topicId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!confirm('Are you sure you want to delete this topic and all its lessons?')) return
+    try {
+      setDeletingToeicId(topicId)
+      const res = await fetch(`/api/admin/toeic/topics/${topicId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete topic')
+      toast.success('Topic deleted successfully')
+      if (selectedToeicTopic?.id === topicId) {
+        setSelectedToeicTopic(null)
+        setToeicLessons([])
+        setSelectedToeicLesson(null)
+        setToeicQuestions([])
+      }
+      fetchToeicTopics()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error')
+    } finally {
+      setDeletingToeicId(null)
     }
   }
 
   const createToeicLesson = async () => {
     if (!selectedToeicTopic) return
     try {
-      const res = await fetch('/api/admin/toeic/lessons', {
-        method: 'POST',
+      setSavingToeicLesson(true)
+      const res = await fetch(editingToeicLesson ? `/api/admin/toeic/lessons/${editingToeicLesson.id}` : '/api/admin/toeic/lessons', {
+        method: editingToeicLesson ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...lessonForm, topicId: selectedToeicTopic.id })
       })
-      if (!res.ok) throw new Error('Failed to create lesson')
-      toast.success('Lesson created successfully')
+      if (!res.ok) throw new Error('Failed to save lesson')
+      toast.success(editingToeicLesson ? 'Lesson updated successfully' : 'Lesson created successfully')
       setShowLessonModal(false)
       setLessonForm({ title: '', order: 0, content: '' })
+      setEditingToeicLesson(null)
       fetchToeicLessons(selectedToeicTopic.id)
     } catch (err) {
       setToeicError(String(err))
+    } finally {
+      setSavingToeicLesson(false)
+    }
+  }
+
+  const deleteToeicLesson = async (lessonId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!confirm('Are you sure you want to delete this lesson and its quiz?')) return
+    try {
+      setDeletingToeicId(lessonId)
+      const res = await fetch(`/api/admin/toeic/lessons/${lessonId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete lesson')
+      toast.success('Lesson deleted successfully')
+      if (selectedToeicLesson?.id === lessonId) {
+        setSelectedToeicLesson(null)
+        setToeicQuestions([])
+      }
+      if (selectedToeicTopic) fetchToeicLessons(selectedToeicTopic.id)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error')
+    } finally {
+      setDeletingToeicId(null)
     }
   }
 
   const createToeicQuestion = async () => {
     if (!selectedToeicLesson) return
     try {
-      const res = await fetch('/api/admin/toeic/questions', {
-        method: 'POST',
+      setSavingToeicQuestion(true)
+      const res = await fetch(editingToeicQuestion ? `/api/admin/toeic/questions/${editingToeicQuestion.id}` : '/api/admin/toeic/questions', {
+        method: editingToeicQuestion ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...questionForm, lessonId: selectedToeicLesson.id })
       })
-      if (!res.ok) throw new Error('Failed to create question')
-      toast.success('Question created successfully')
+      if (!res.ok) throw new Error('Failed to save question')
+      toast.success(editingToeicQuestion ? 'Question updated successfully' : 'Question created successfully')
       setShowQuestionModal(false)
+      setEditingToeicQuestion(null)
       setQuestionForm({
         question: '',
         optionA: '',
@@ -1289,6 +1348,23 @@ export default function AdminDashboard() {
       fetchToeicQuestions(selectedToeicLesson.id)
     } catch (err) {
       setToeicError(String(err))
+    } finally {
+      setSavingToeicQuestion(false)
+    }
+  }
+
+  const deleteToeicQuestion = async (questionId: string) => {
+    if (!confirm('Are you sure you want to delete this question?')) return
+    try {
+      setDeletingToeicId(questionId)
+      const res = await fetch(`/api/admin/toeic/questions/${questionId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete question')
+      toast.success('Question deleted successfully')
+      if (selectedToeicLesson) fetchToeicQuestions(selectedToeicLesson.id)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error')
+    } finally {
+      setDeletingToeicId(null)
     }
   }
 
@@ -3268,6 +3344,7 @@ export default function AdminDashboard() {
               <button
                 onClick={() => {
                   setTopicForm({ title: '', subtitle: '', slug: '' })
+                  setEditingToeicTopic(null)
                   setShowTopicModal(true)
                 }}
                 className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]"
@@ -3294,13 +3371,33 @@ export default function AdminDashboard() {
                       setToeicQuestions([])
                       fetchToeicLessons(topic.id)
                     }}
-                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors relative group ${
                       selectedToeicTopic?.id === topic.id
                         ? 'bg-[#14532d]/10 border-[#14532d] ring-1 ring-[#14532d]'
                         : 'bg-white hover:bg-gray-100 border-gray-200'
                     }`}
                   >
-                    <div className="font-bold text-gray-900">{topic.title}</div>
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug })
+                          setEditingToeicTopic(topic)
+                          setShowTopicModal(true)
+                        }}
+                        className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                      </button>
+                      <button
+                        onClick={(e) => deleteToeicTopic(topic.id, e)}
+                        disabled={deletingToeicId === topic.id}
+                        className="p-1 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
+                    </div>
+                    <div className="font-bold text-gray-900 pr-12">{topic.title}</div>
                     <div className="text-xs text-gray-500 mt-1 truncate">{topic.subtitle || 'No subtitle'}</div>
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">/{topic.slug}</span>
@@ -3319,6 +3416,7 @@ export default function AdminDashboard() {
                   <button
                     onClick={() => {
                       setLessonForm({ title: '', order: toeicLessons.length + 1, content: '' })
+                      setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
                     className="text-xs px-2 py-1 bg-[#14532d] text-white rounded hover:bg-[#166534]"
@@ -3344,19 +3442,39 @@ export default function AdminDashboard() {
                         setSelectedToeicLesson(lesson)
                         fetchToeicQuestions(lesson.id)
                       }}
-                      className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                      className={`p-3 rounded-lg border cursor-pointer transition-colors relative group ${
                         selectedToeicLesson?.id === lesson.id
                           ? 'bg-[#14532d]/10 border-[#14532d] ring-1 ring-[#14532d]'
                           : 'bg-white hover:bg-gray-100 border-gray-200'
                       }`}
                     >
-                      <div className="flex justify-between items-start">
+                      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '' })
+                            setEditingToeicLesson(lesson)
+                            setShowLessonModal(true)
+                          }}
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                        </button>
+                        <button
+                          onClick={(e) => deleteToeicLesson(lesson.id, e)}
+                          disabled={deletingToeicId === lesson.id}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </div>
+                      <div className="flex justify-between items-start pr-12">
                         <span className="text-[10px] font-bold text-gray-400 uppercase">Lesson {lesson.order}</span>
                         <span className="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded border border-emerald-100">
                           {lesson._count?.questions || 0} questions
                         </span>
                       </div>
-                      <div className="font-bold text-gray-900 mt-1">{lesson.title}</div>
+                      <div className="font-bold text-gray-900 mt-1 pr-12">{lesson.title}</div>
                       <div className="text-[11px] text-gray-500 mt-1 line-clamp-1">{lesson.content || 'No content'}</div>
                     </div>
                   ))
@@ -3380,6 +3498,7 @@ export default function AdminDashboard() {
                         correctOption: 'A',
                         explanation: ''
                       })
+                      setEditingToeicQuestion(null)
                       setShowQuestionModal(true)
                     }}
                     className="text-xs px-2 py-1 bg-[#14532d] text-white rounded hover:bg-[#166534]"
@@ -3401,15 +3520,42 @@ export default function AdminDashboard() {
                   toeicQuestions.map((q, idx) => (
                     <div
                       key={q.id}
-                      className="p-3 rounded-lg border bg-white border-gray-200"
+                      className="p-3 rounded-lg border bg-white border-gray-200 relative group"
                     >
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => {
+                            setQuestionForm({
+                              question: q.question,
+                              optionA: q.optionA,
+                              optionB: q.optionB,
+                              optionC: q.optionC,
+                              optionD: q.optionD || '',
+                              correctOption: q.correctOption,
+                              explanation: q.explanation || ''
+                            })
+                            setEditingToeicQuestion(q)
+                            setShowQuestionModal(true)
+                          }}
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                        </button>
+                        <button
+                          onClick={() => deleteToeicQuestion(q.id)}
+                          disabled={deletingToeicId === q.id}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded disabled:opacity-50"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </div>
+                      <div className="flex justify-between items-start mb-2 pr-12">
                         <span className="text-[10px] font-bold text-gray-400 uppercase">Question {idx + 1}</span>
                         <span className="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-100 font-bold">
                           Key: {q.correctOption}
                         </span>
                       </div>
-                      <div className="text-sm font-semibold text-gray-900">{q.question}</div>
+                      <div className="text-sm font-semibold text-gray-900 pr-12">{q.question}</div>
                       <div className="mt-2 grid grid-cols-2 gap-1 text-[11px] text-gray-600">
                         <div className={q.correctOption === 'A' ? 'font-bold text-emerald-600' : ''}>A: {q.optionA}</div>
                         <div className={q.correctOption === 'B' ? 'font-bold text-emerald-600' : ''}>B: {q.optionB}</div>
@@ -6391,7 +6537,9 @@ export default function AdminDashboard() {
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 className="relative w-full max-w-lg rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Create New TOEIC Topic</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">
+                  {editingToeicTopic ? 'Edit TOEIC Topic' : 'Create New TOEIC Topic'}
+                </h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Topic Title</label>
@@ -6433,9 +6581,10 @@ export default function AdminDashboard() {
                   </button>
                   <button
                     onClick={createToeicTopic}
-                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534]"
+                    disabled={savingToeicTopic}
+                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534] disabled:opacity-50"
                   >
-                    Create Topic
+                    {savingToeicTopic ? 'Saving...' : editingToeicTopic ? 'Update Topic' : 'Create Topic'}
                   </button>
                 </div>
               </motion.div>
@@ -6457,7 +6606,9 @@ export default function AdminDashboard() {
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 className="relative w-full max-w-2xl rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Add Lesson to: {selectedToeicTopic?.title}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">
+                  {editingToeicLesson ? 'Edit Lesson' : `Add Lesson to: ${selectedToeicTopic?.title}`}
+                </h3>
                 <div className="space-y-4">
                   <div className="grid grid-cols-4 gap-4">
                     <div className="col-span-3">
@@ -6500,9 +6651,10 @@ export default function AdminDashboard() {
                   </button>
                   <button
                     onClick={createToeicLesson}
-                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534]"
+                    disabled={savingToeicLesson}
+                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534] disabled:opacity-50"
                   >
-                    Save Lesson
+                    {savingToeicLesson ? 'Saving...' : editingToeicLesson ? 'Update Lesson' : 'Save Lesson'}
                   </button>
                 </div>
               </motion.div>
@@ -6525,7 +6677,9 @@ export default function AdminDashboard() {
                 className="relative w-full max-w-2xl rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
               >
                 <div className="max-h-[85vh] overflow-y-auto pr-2">
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">Add Question to: {selectedToeicLesson?.title}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">
+                  {editingToeicQuestion ? 'Edit Question' : `Add Question to: ${selectedToeicLesson?.title}`}
+                </h3>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Question Prompt</label>
@@ -6583,10 +6737,10 @@ export default function AdminDashboard() {
                           onChange={(e) => setQuestionForm({ ...questionForm, correctOption: e.target.value })}
                           className="w-full rounded-lg border-amber-300 focus:border-amber-500 focus:ring-amber-500 font-bold"
                         >
-                          <option value="A">Plan A</option>
-                          <option value="B">Plan B</option>
-                          <option value="C">Plan C</option>
-                          <option value="D">Plan D</option>
+                          <option value="A">Option A</option>
+                          <option value="B">Option B</option>
+                          <option value="C">Option C</option>
+                          <option value="D">Option D</option>
                         </select>
                       </div>
                     </div>
@@ -6608,12 +6762,13 @@ export default function AdminDashboard() {
                     >
                       Cancel
                     </button>
-                    <button
-                      onClick={createToeicQuestion}
-                      className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534]"
-                    >
-                      Save Question
-                    </button>
+                  <button
+                    onClick={createToeicQuestion}
+                    disabled={savingToeicQuestion}
+                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534] disabled:opacity-50"
+                  >
+                    {savingToeicQuestion ? 'Saving...' : editingToeicQuestion ? 'Update Question' : 'Save Question'}
+                  </button>
                   </div>
                 </div>
               </motion.div>
