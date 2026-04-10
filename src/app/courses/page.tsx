@@ -362,7 +362,7 @@ export default function CoursesPage() {
                       onClick={() => setExpandedCourseId(course.id)}
                       className={`w-full text-left transition-all duration-300 rounded-xl border p-4 shadow-sm hover:shadow-md ${
                         isActive 
-                          ? 'border-[#14532d] bg-linear-to-br from-[#14532d]/10 to-white ring-2 ring-inset ring-[#14532d]' 
+                          ? 'border-[#14532d] bg-linear-to-br from-[#14532d]/10 to-white' 
                           : 'border-slate-200 bg-white hover:border-[#14532d]/30'
                       }`}
                     >
