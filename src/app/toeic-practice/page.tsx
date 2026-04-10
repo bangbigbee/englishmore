@@ -28,16 +28,12 @@ function ToeicPracticeContent() {
 	};
 
 	return (
-		<div className="max-w-6xl mx-auto py-8 px-2 sm:px-6">
-			<h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-				<span className="text-green-900">LUYỆN THI</span>{' '}
-				<span style={{ color: '#ea980c', fontWeight: 700 }}>TOEIC</span>
-			</h1>
+		<div className="max-w-6xl mx-auto py-2 px-2 sm:px-6">
 			<div className="flex gap-2 sm:gap-4 border-b mb-8 overflow-x-auto">
 				{TABS.map((t) => (
 					<button
 						key={t.key}
-						className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none ${tab === t.key ? "border-blue-600 text-blue-700 bg-white" : "border-transparent text-gray-500 hover:text-blue-600"}`}
+						className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none ${tab === t.key ? "border-[#14532d] text-[#14532d] bg-white" : "border-transparent text-gray-500 hover:text-[#14532d]"}`}
 						onClick={() => setTab(t.key)}
 					>
 						{t.label}
@@ -109,6 +105,7 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 					topics.map((topic) => (
 						<div
 							key={topic.id}
+							onClick={() => onPracticeClick(topic.slug)}
 							className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
 						>
 							<div>
@@ -153,6 +150,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 				{vocabTopics.map((topic) => (
 					<div
 						key={topic.title}
+						onClick={onPracticeClick}
 						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
 					>
 						<div>
@@ -192,6 +190,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 				{listeningParts.map((part) => (
 					<div
 						key={part.title}
+						onClick={onPracticeClick}
 						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
 					>
 						<div>
@@ -230,6 +229,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 				{readingParts.map((part) => (
 					<div
 						key={part.title}
+						onClick={onPracticeClick}
 						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
 					>
 						<div>
@@ -268,6 +268,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }
 				{testPacks.map((test) => (
 					<div
 						key={test.title}
+						onClick={onPracticeClick}
 						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group relative overflow-hidden"
 					>
 						<div className="absolute top-0 right-0 bg-[#ea980c] text-white text-xs font-bold px-3 py-1 rounded-bl-lg">

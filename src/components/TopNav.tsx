@@ -125,13 +125,22 @@ export default function TopNav() {
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-[#14532d]/10 px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 transition-all">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4">
         <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 leading-none sm:gap-3">
-          <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.4rem]">
-            <span className="text-[#14532d]">English</span>
-            <span className="text-amber-500">More</span>
-          </span>
-          <span className="block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm">
-            Speak your mind and more
-          </span>
+          {pathname.startsWith('/toeic-practice') ? (
+            <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.2rem]">
+              <span className="text-[#14532d]">LUYỆN THI</span>{' '}
+              <span className="text-amber-500">TOEIC</span>
+            </span>
+          ) : (
+            <>
+              <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.4rem]">
+                <span className="text-[#14532d]">English</span>
+                <span className="text-amber-500">More</span>
+              </span>
+              <span className="hidden sm:block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm">
+                Speak your mind and more
+              </span>
+            </>
+          )}
         </Link>
 
         <div className="shrink-0 flex items-center gap-1.5 sm:gap-3">
