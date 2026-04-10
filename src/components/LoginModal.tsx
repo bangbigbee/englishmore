@@ -118,7 +118,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
                 className={`group relative flex w-full items-center justify-center gap-3 rounded-xl px-4 py-3.5 text-sm font-bold border-2 transition-all duration-200 ${
                   googleLoading || isZaloInAppBrowser
                     ? 'border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed'
-                    : 'border-amber-500 bg-amber-500 text-white hover:bg-white hover:text-amber-600 shadow-md hover:shadow-lg'
+                    : 'border-amber-500 bg-amber-500 text-white hover:bg-white hover:text-amber-600 shadow-md hover:shadow-lg cursor-pointer'
                 }`}
               >
                 {googleLoading ? (
@@ -149,7 +149,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               {allowGuest && (
                 <button
                   onClick={onGuest}
-                  className="flex w-full items-center justify-center rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900 border border-slate-200"
+                  className="flex w-full items-center justify-center rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900 border border-slate-200 cursor-pointer"
                 >
                   Tiếp tục mà không đăng nhập
                 </button>
@@ -163,11 +163,6 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               )}
             </div>
 
-            <div className="mt-8 text-center">
-              <p className="text-xs text-slate-400">
-                Bằng việc tiếp tục, bạn đồng ý với Điều khoản và Chính sách của chúng tôi.
-              </p>
-            </div>
           </motion.div>
         </div>
       )}
