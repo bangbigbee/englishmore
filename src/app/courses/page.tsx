@@ -346,9 +346,9 @@ export default function CoursesPage() {
         ) : courses.length === 0 ? (
           <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Chưa có khóa học đang mở.</div>
         ) : (
-          <div className="lg:h-full lg:grid lg:grid-cols-[320px_1fr] lg:gap-8 lg:overflow-hidden">
+          <div className="lg:h-full lg:grid lg:grid-cols-[320px_1fr] lg:gap-8">
             {/* Sidebar - Course List */}
-            <aside className="mb-8 lg:mb-0 lg:h-full lg:overflow-y-auto custom-scrollbar lg:px-2">
+            <aside className="relative z-10 mb-8 lg:mb-0 lg:h-full lg:overflow-y-auto custom-scrollbar lg:px-2">
               <div className="space-y-3 pb-8">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 px-1">Danh sách khóa học</h2>
                 {courses.map((course) => {
@@ -359,6 +359,7 @@ export default function CoursesPage() {
                   return (
                     <button
                       key={course.id}
+                      type="button"
                       onClick={() => setExpandedCourseId(course.id)}
                       className={`w-full text-left transition-all duration-300 rounded-xl border p-4 shadow-sm hover:shadow-md ${
                         isActive 
