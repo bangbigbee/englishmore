@@ -1,5 +1,5 @@
 "use client";
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
@@ -45,8 +45,12 @@ function ToeicPracticeContent() {
 				))}
 			</div>
 			<div className="mt-6">
-				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={() => {
-					 if (!session) openLoginModal();
+				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
+					 if (!session) {
+						 openLoginModal();
+					 } else if (slug) {
+						 router.push(`/toeic-practice/grammar/${slug}`);
+					 }
 				 }} />}
 				{tab === "vocabulary" && <ToeicVocabularyTab onPracticeClick={() => {
 					 if (!session) openLoginModal();
@@ -65,15 +69,31 @@ function ToeicPracticeContent() {
 	);
 }
 
-function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
-	// Chỉ còn 5 chủ đề, style xanh lá đậm, bỏ số lượng câu hỏi
-	const grammarTopics = [
-		{ title: "Basic Grammar", subtitle: "Ngữ pháp cơ bản" },
-		{ title: "Adjectives", subtitle: "Tính từ" },
-		{ title: "Relative Clause", subtitle: "Mệnh đề quan hệ" },
-		{ title: "Comparison Sentence", subtitle: "Câu so sánh" },
-		{ title: "Phrasal Verb", subtitle: "Cụm động từ" },
-	];
+function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+	const [topics, setTopics] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchTopics = async () => {
+			try {
+				const res = await fetch('/api/toeic/grammar');
+				if (res.ok) {
+					const data = await res.json();
+					setTopics(data);
+				}
+			} catch (error) {
+				console.error('Failed to fetch topics:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchTopics();
+	}, []);
+
+	if (loading) {
+		return <div className="py-12 text-center text-gray-500 italic">Đang tải các chủ đề...</div>;
+	}
+
 	return (
 		<div>
 			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
@@ -81,26 +101,34 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 				Các chủ đề ngữ pháp
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-				{grammarTopics.map((topic) => (
-					<div
-						key={topic.title}
-						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
-					>
-						<div>
-							<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{topic.title}</div>
-							<div className="text-sm text-gray-500 mb-2">{topic.subtitle}</div>
-							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
-						</div>
-						<div className="flex justify-end">
-							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
-								onClick={onPracticeClick}
-							>
-								Luyện tập &rarr;
-							</button>
-						</div>
+				{topics.length === 0 ? (
+					<div className="col-span-full py-12 text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">
+						Chưa có chủ đề nào được cập nhật.
 					</div>
-				))}
+				) : (
+					topics.map((topic) => (
+						<div
+							key={topic.id}
+							className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
+						>
+							<div>
+								<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{topic.title}</div>
+								<div className="text-sm text-gray-500 mb-2">{topic.subtitle || 'Ngữ pháp TOEIC'}</div>
+								<div className="text-xs text-gray-400 mb-2">
+									{topic._count?.lessons || 0} bài học bài bản
+								</div>
+							</div>
+							<div className="flex justify-end">
+								<button
+									className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+									onClick={() => onPracticeClick(topic.slug)}
+								>
+									Luyện tập &rarr;
+								</button>
+							</div>
+						</div>
+					))
+				)}
 			</div>
 		</div>
 	);

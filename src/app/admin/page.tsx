@@ -274,6 +274,35 @@ interface ActivityPointResponse {
   warning?: string
 }
 
+interface AdminToeicTopic {
+  id: string
+  title: string
+  subtitle: string | null
+  slug: string
+  _count?: { lessons: number }
+}
+
+interface AdminToeicLesson {
+  id: string
+  topicId: string
+  title: string
+  order: number
+  content: string | null
+  _count?: { questions: number }
+}
+
+interface AdminToeicQuestion {
+  id: string
+  lessonId: string
+  question: string
+  optionA: string
+  optionB: string
+  optionC: string
+  optionD: string | null
+  correctOption: string
+  explanation: string | null
+}
+
 const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
   daily_checkin: 'Complete a daily check-in message.',
   daily_reflection: 'Write your daily reflection.',
@@ -296,7 +325,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral'
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -707,6 +736,31 @@ export default function AdminDashboard() {
   const [editingVocabulary, setEditingVocabulary] = useState<AdminVocabularyItem | null>(null)
   const [updatingVocabularyId, setUpdatingVocabularyId] = useState<string | null>(null)
   const [deletingVocabularyId, setDeletingVocabularyId] = useState<string | null>(null)
+
+  // TOEIC states
+  const [toeicTopics, setToeicTopics] = useState<AdminToeicTopic[]>([])
+  const [selectedToeicTopic, setSelectedToeicTopic] = useState<AdminToeicTopic | null>(null)
+  const [toeicLessons, setToeicLessons] = useState<AdminToeicLesson[]>([])
+  const [selectedToeicLesson, setSelectedToeicLesson] = useState<AdminToeicLesson | null>(null)
+  const [toeicQuestions, setToeicQuestions] = useState<AdminToeicQuestion[]>([])
+  const [toeicLoading, setToeicLoading] = useState(false)
+  const [toeicError, setToeicError] = useState('')
+  const [toeicSuccess, setToeicSuccess] = useState('')
+
+  const [showTopicModal, setShowTopicModal] = useState(false)
+  const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '' })
+  const [showLessonModal, setShowLessonModal] = useState(false)
+  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '' })
+  const [showQuestionModal, setShowQuestionModal] = useState(false)
+  const [questionForm, setQuestionForm] = useState({
+    question: '',
+    optionA: '',
+    optionB: '',
+    optionC: '',
+    optionD: '',
+    correctOption: 'A',
+    explanation: ''
+  })
 
   const deleteUserAccount = async (userId: string) => {
     try {
@@ -1134,6 +1188,109 @@ export default function AdminDashboard() {
       setReferralLoading(false)
     }
   }, [])
+
+  const fetchToeicTopics = useCallback(async () => {
+    try {
+      setToeicLoading(true)
+      const res = await fetch('/api/admin/toeic/topics')
+      if (!res.ok) throw new Error('Failed to fetch TOEIC topics')
+      const data = await res.json()
+      setToeicTopics(data)
+    } catch (err) {
+      setToeicError(err instanceof Error ? err.message : 'Could not load TOEIC topics')
+    } finally {
+      setToeicLoading(false)
+    }
+  }, [])
+
+  const fetchToeicLessons = useCallback(async (topicId: string) => {
+    try {
+      setToeicLoading(true)
+      const res = await fetch(`/api/admin/toeic/lessons?topicId=${topicId}`)
+      if (!res.ok) throw new Error('Failed to fetch TOEIC lessons')
+      const data = await res.json()
+      setToeicLessons(data)
+    } catch (err) {
+      setToeicError(err instanceof Error ? err.message : 'Could not load TOEIC lessons')
+    } finally {
+      setToeicLoading(false)
+    }
+  }, [])
+
+  const fetchToeicQuestions = useCallback(async (lessonId: string) => {
+    try {
+      setToeicLoading(true)
+      const res = await fetch(`/api/admin/toeic/questions?lessonId=${lessonId}`)
+      if (!res.ok) throw new Error('Failed to fetch TOEIC questions')
+      const data = await res.json()
+      setToeicQuestions(data)
+    } catch (err) {
+      setToeicError(err instanceof Error ? err.message : 'Could not load TOEIC questions')
+    } finally {
+      setToeicLoading(false)
+    }
+  }, [])
+
+  const createToeicTopic = async () => {
+    try {
+      const res = await fetch('/api/admin/toeic/topics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(topicForm)
+      })
+      if (!res.ok) throw new Error('Failed to create topic')
+      toast.success('Topic created successfully')
+      setShowTopicModal(false)
+      setTopicForm({ title: '', subtitle: '', slug: '' })
+      fetchToeicTopics()
+    } catch (err) {
+      setToeicError(String(err))
+    }
+  }
+
+  const createToeicLesson = async () => {
+    if (!selectedToeicTopic) return
+    try {
+      const res = await fetch('/api/admin/toeic/lessons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...lessonForm, topicId: selectedToeicTopic.id })
+      })
+      if (!res.ok) throw new Error('Failed to create lesson')
+      toast.success('Lesson created successfully')
+      setShowLessonModal(false)
+      setLessonForm({ title: '', order: 0, content: '' })
+      fetchToeicLessons(selectedToeicTopic.id)
+    } catch (err) {
+      setToeicError(String(err))
+    }
+  }
+
+  const createToeicQuestion = async () => {
+    if (!selectedToeicLesson) return
+    try {
+      const res = await fetch('/api/admin/toeic/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...questionForm, lessonId: selectedToeicLesson.id })
+      })
+      if (!res.ok) throw new Error('Failed to create question')
+      toast.success('Question created successfully')
+      setShowQuestionModal(false)
+      setQuestionForm({
+        question: '',
+        optionA: '',
+        optionB: '',
+        optionC: '',
+        optionD: '',
+        correctOption: 'A',
+        explanation: ''
+      })
+      fetchToeicQuestions(selectedToeicLesson.id)
+    } catch (err) {
+      setToeicError(String(err))
+    }
+  }
 
   const createVocabulary = async () => {
     if (!newVocabularyCourseId || !newVocabularyWord.trim() || !newVocabularyMeaning.trim()) {
@@ -1604,10 +1761,28 @@ export default function AdminDashboard() {
   }, [activityPointError])
 
   useEffect(() => {
+    if (toeicError) {
+      toast.error(toeicError)
+    }
+  }, [toeicError])
+
+  useEffect(() => {
+    if (toeicSuccess) {
+      toast.success(toeicSuccess)
+    }
+  }, [toeicSuccess])
+
+  useEffect(() => {
+    if (activeSection === 'toeic') {
+      fetchToeicTopics()
+    }
+  }, [activeSection, fetchToeicTopics])
+
+  useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const section = params.get('section')
-    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'activityPoints', 'vocabulary', 'speakYourself', 'referral']
+    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'activityPoints', 'vocabulary', 'speakYourself', 'referral', 'toeic']
     if (section === 'checkin' || section === 'reflect') {
       setActiveSection('dailyActivity')
       return
@@ -2964,7 +3139,6 @@ export default function AdminDashboard() {
               <option value="">Tất cả khóa học</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
-              ))}
             </select>
           </div>
 
@@ -3066,6 +3240,184 @@ export default function AdminDashboard() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* TOEIC Management Section */}
+        <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'toeic' ? '' : 'hidden'}`}>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 pb-4 border-b">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">TOEIC Practice Management</h2>
+              <p className="mt-1 text-sm text-gray-600">Manage Grammar topics, lessons, and interactive quiz questions.</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={fetchToeicTopics}
+                className="rounded border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
+              >
+                Refresh
+              </button>
+              <button
+                onClick={() => {
+                  setTopicForm({ title: '', subtitle: '', slug: '' })
+                  setShowTopicModal(true)
+                }}
+                className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]"
+              >
+                + New Topic
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Topics column */}
+            <div className="border rounded-lg bg-gray-50 flex flex-col h-[700px]">
+              <div className="p-3 border-b bg-white font-bold text-gray-700 flex justify-between items-center">
+                <span>Grammar Topics</span>
+                <span className="text-xs font-normal text-gray-500">{toeicTopics.length} topics</span>
+              </div>
+              <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                {toeicTopics.map((topic) => (
+                  <div
+                    key={topic.id}
+                    onClick={() => {
+                      setSelectedToeicTopic(topic)
+                      setSelectedToeicLesson(null)
+                      setToeicQuestions([])
+                      fetchToeicLessons(topic.id)
+                    }}
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                      selectedToeicTopic?.id === topic.id
+                        ? 'bg-[#14532d]/10 border-[#14532d] ring-1 ring-[#14532d]'
+                        : 'bg-white hover:bg-gray-100 border-gray-200'
+                    }`}
+                  >
+                    <div className="font-bold text-gray-900">{topic.title}</div>
+                    <div className="text-xs text-gray-500 mt-1 truncate">{topic.subtitle || 'No subtitle'}</div>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">/{topic.slug}</span>
+                      <span className="text-[10px] font-medium text-emerald-700">{topic._count?.lessons || 0} lessons</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Lessons column */}
+            <div className="border rounded-lg bg-gray-50 flex flex-col h-[700px]">
+              <div className="p-3 border-b bg-white font-bold text-gray-700 flex justify-between items-center">
+                <span>Lessons</span>
+                {selectedToeicTopic && (
+                  <button
+                    onClick={() => {
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '' })
+                      setShowLessonModal(true)
+                    }}
+                    className="text-xs px-2 py-1 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+                  >
+                    + Add Lesson
+                  </button>
+                )}
+              </div>
+              <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                {!selectedToeicTopic ? (
+                  <div className="h-full flex items-center justify-center text-sm text-gray-400 italic text-center p-4">
+                    Select a topic to view and manage lessons.
+                  </div>
+                ) : toeicLessons.length === 0 ? (
+                  <div className="h-full flex items-center justify-center text-sm text-gray-400 italic text-center p-4">
+                    No lessons found for this topic.
+                  </div>
+                ) : (
+                  toeicLessons.map((lesson) => (
+                    <div
+                      key={lesson.id}
+                      onClick={() => {
+                        setSelectedToeicLesson(lesson)
+                        fetchToeicQuestions(lesson.id)
+                      }}
+                      className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                        selectedToeicLesson?.id === lesson.id
+                          ? 'bg-[#14532d]/10 border-[#14532d] ring-1 ring-[#14532d]'
+                          : 'bg-white hover:bg-gray-100 border-gray-200'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Lesson {lesson.order}</span>
+                        <span className="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded border border-emerald-100">
+                          {lesson._count?.questions || 0} questions
+                        </span>
+                      </div>
+                      <div className="font-bold text-gray-900 mt-1">{lesson.title}</div>
+                      <div className="text-[11px] text-gray-500 mt-1 line-clamp-1">{lesson.content || 'No content'}</div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Questions column */}
+            <div className="border rounded-lg bg-gray-50 flex flex-col h-[700px]">
+              <div className="p-3 border-b bg-white font-bold text-gray-700 flex justify-between items-center">
+                <span>Quiz Questions</span>
+                {selectedToeicLesson && (
+                  <button
+                    onClick={() => {
+                      setQuestionForm({
+                        question: '',
+                        optionA: '',
+                        optionB: '',
+                        optionC: '',
+                        optionD: '',
+                        correctOption: 'A',
+                        explanation: ''
+                      })
+                      setShowQuestionModal(true)
+                    }}
+                    className="text-xs px-2 py-1 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+                  >
+                    + Add Question
+                  </button>
+                )}
+              </div>
+              <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                {!selectedToeicLesson ? (
+                  <div className="h-full flex items-center justify-center text-sm text-gray-400 italic text-center p-4">
+                    Select a lesson to view and manage quiz questions.
+                  </div>
+                ) : toeicQuestions.length === 0 ? (
+                  <div className="h-full flex items-center justify-center text-sm text-gray-400 italic text-center p-4">
+                    No questions found for this lesson.
+                  </div>
+                ) : (
+                  toeicQuestions.map((q, idx) => (
+                    <div
+                      key={q.id}
+                      className="p-3 rounded-lg border bg-white border-gray-200"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Question {idx + 1}</span>
+                        <span className="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-100 font-bold">
+                          Key: {q.correctOption}
+                        </span>
+                      </div>
+                      <div className="text-sm font-semibold text-gray-900">{q.question}</div>
+                      <div className="mt-2 grid grid-cols-2 gap-1 text-[11px] text-gray-600">
+                        <div className={q.correctOption === 'A' ? 'font-bold text-emerald-600' : ''}>A: {q.optionA}</div>
+                        <div className={q.correctOption === 'B' ? 'font-bold text-emerald-600' : ''}>B: {q.optionB}</div>
+                        <div className={q.correctOption === 'C' ? 'font-bold text-emerald-600' : ''}>C: {q.optionC}</div>
+                        {q.optionD && <div className={q.correctOption === 'D' ? 'font-bold text-emerald-600' : ''}>D: {q.optionD}</div>}
+                      </div>
+                      {q.explanation && (
+                        <div className="mt-2 pt-2 border-t text-[11px] text-gray-500 italic">
+                          {q.explanation}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -6010,6 +6362,253 @@ export default function AdminDashboard() {
                   </div>
                 </motion.div>
               </div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* TOEIC Modals */}
+        <AnimatePresence>
+          {showTopicModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowTopicModal(false)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="relative w-full max-w-lg rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Create New TOEIC Topic</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Topic Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Pronouns & Nouns"
+                      value={topicForm.title}
+                      onChange={(e) => setTopicForm({ ...topicForm, title: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle (optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Essential grammar for Part 5 & 6"
+                      value={topicForm.subtitle}
+                      onChange={(e) => setTopicForm({ ...topicForm, subtitle: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">URL Slug</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., pronouns-nouns"
+                      value={topicForm.slug}
+                      onChange={(e) => setTopicForm({ ...topicForm, slug: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                  </div>
+                </div>
+                <div className="mt-8 flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowTopicModal(false)}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={createToeicTopic}
+                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534]"
+                  >
+                    Create Topic
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {showLessonModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowLessonModal(false)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="relative w-full max-w-2xl rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Add Lesson to: {selectedToeicTopic?.title}</h3>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-4 gap-4">
+                    <div className="col-span-3">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Title</label>
+                      <input
+                        type="text"
+                        placeholder="e.g., Personal Pronouns"
+                        value={lessonForm.title}
+                        onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
+                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                      />
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+                      <input
+                        type="number"
+                        value={lessonForm.order}
+                        onChange={(e) => setLessonForm({ ...lessonForm, order: parseInt(e.target.value) || 0 })}
+                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Content (Markdown supported)</label>
+                    <textarea
+                      rows={12}
+                      placeholder="Explain the grammar rules here..."
+                      value={lessonForm.content}
+                      onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] font-mono text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="mt-8 flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowLessonModal(false)}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={createToeicLesson}
+                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534]"
+                  >
+                    Save Lesson
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {showQuestionModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowQuestionModal(false)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="relative w-full max-w-2xl rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
+              >
+                <div className="max-h-[85vh] overflow-y-auto pr-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">Add Question to: {selectedToeicLesson?.title}</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Question Prompt</label>
+                      <textarea
+                        rows={3}
+                        placeholder="e.g. Please choose the correct pronoun for the blank: ___ is my teacher."
+                        value={questionForm.question}
+                        onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
+                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-emerald-700">Option A</label>
+                        <input
+                          type="text"
+                          value={questionForm.optionA}
+                          onChange={(e) => setQuestionForm({ ...questionForm, optionA: e.target.value })}
+                          className="w-full rounded-lg border-emerald-200 focus:border-[#14532d] focus:ring-[#14532d]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-emerald-700">Option B</label>
+                        <input
+                          type="text"
+                          value={questionForm.optionB}
+                          onChange={(e) => setQuestionForm({ ...questionForm, optionB: e.target.value })}
+                          className="w-full rounded-lg border-emerald-200 focus:border-[#14532d] focus:ring-[#14532d]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-emerald-700">Option C</label>
+                        <input
+                          type="text"
+                          value={questionForm.optionC}
+                          onChange={(e) => setQuestionForm({ ...questionForm, optionC: e.target.value })}
+                          className="w-full rounded-lg border-emerald-200 focus:border-[#14532d] focus:ring-[#14532d]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-emerald-700">Option D (optional)</label>
+                        <input
+                          type="text"
+                          value={questionForm.optionD}
+                          onChange={(e) => setQuestionForm({ ...questionForm, optionD: e.target.value })}
+                          className="w-full rounded-lg border-emerald-200 focus:border-[#14532d] focus:ring-[#14532d]"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-amber-600">Correct Answer</label>
+                        <select
+                          value={questionForm.correctOption}
+                          onChange={(e) => setQuestionForm({ ...questionForm, correctOption: e.target.value })}
+                          className="w-full rounded-lg border-amber-300 focus:border-amber-500 focus:ring-amber-500 font-bold"
+                        >
+                          <option value="A">Plan A</option>
+                          <option value="B">Plan B</option>
+                          <option value="C">Plan C</option>
+                          <option value="D">Plan D</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Explanation (Show to student after answering)</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Explain why the answer is correct..."
+                        value={questionForm.explanation}
+                        onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
+                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] text-sm italic"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-8 flex justify-end gap-3 pb-2">
+                    <button
+                      onClick={() => setShowQuestionModal(false)}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={createToeicQuestion}
+                      className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534]"
+                    >
+                      Save Question
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           )}
         </AnimatePresence>

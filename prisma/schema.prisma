@@ -565,3 +565,48 @@ model VocabularyItem {
   @@index([courseId, displayOrder])
 }
 
+// TOEIC Grammar Section
+model ToeicGrammarTopic {
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String?
+  slug        String   @unique
+  lessons     ToeicGrammarLesson[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ToeicGrammarLesson {
+  id          String   @id @default(cuid())
+  topicId     String
+  title       String
+  order       Int      // Lesson 1, 2, ...
+  content     String?  @db.Text
+  questions   ToeicQuestion[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  topic       ToeicGrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId])
+  @@index([order])
+}
+
+model ToeicQuestion {
+  id            String   @id @default(cuid())
+  lessonId      String
+  question      String   @db.Text
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String?
+  correctOption String
+  explanation   String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lesson        ToeicGrammarLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+}
+
