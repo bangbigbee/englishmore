@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -61,6 +61,7 @@ const DEFAULT_COURSE_DESCRIPTION = 'Khóa học giao tiếp thực hành, tối 
 export default function CoursesPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [courses, setCourses] = useState<Course[]>([])
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [loading, setLoading] = useState(true)
@@ -72,6 +73,7 @@ export default function CoursesPage() {
   const [pendingRegistrationDraft, setPendingRegistrationDraft] = useState<PendingRegistrationDraft | null>(null)
   const [referrerInput, setReferrerInput] = useState('')
   const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -134,28 +136,30 @@ export default function CoursesPage() {
   }, [errorModal])
 
   useEffect(() => {
-    if (status !== 'authenticated' || loading || session?.user?.role === 'admin') {
+    if (status !== 'authenticated' || loading || session?.user?.role === 'admin' || isInitialized) {
       return
     }
 
-    const targetCourseId = typeof window !== 'undefined'
-      ? new URLSearchParams(window.location.search).get('openCourseId')
-      : null
-    
-    if (targetCourseId) {
-      const targetCourse = courses.find((course) => course.id === targetCourseId)
-      if (targetCourse) {
-        setExpandedCourseId(targetCourse.id)
-        router.replace('/courses')
-        return
+    if (courses.length > 0) {
+      const openCourseId = searchParams.get('openCourseId')
+      
+      if (openCourseId) {
+        const targetCourse = courses.find((course) => course.id === openCourseId)
+        if (targetCourse) {
+          setExpandedCourseId(targetCourse.id)
+          router.replace('/courses')
+          setIsInitialized(true)
+          return
+        }
       }
-    }
 
-    // Default to the first available course if nothing is selected yet
-    if (!expandedCourseId && courses.length > 0) {
-      setExpandedCourseId(courses[0].id)
+      // Default to the first available course if nothing is selected yet
+      if (!expandedCourseId) {
+        setExpandedCourseId(courses[0].id)
+      }
+      setIsInitialized(true)
     }
-  }, [status, loading, session?.user?.role, courses, router, expandedCourseId])
+  }, [status, loading, session?.user?.role, courses, router, expandedCourseId, searchParams, isInitialized])
 
   const fetchCourses = async () => {
     try {
