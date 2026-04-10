@@ -2286,36 +2286,36 @@ function HomeContent() {
                     return (
                       <div 
                         key={`${course.id}-${idx}`} 
-                        className="group relative w-[340px] shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                        className="group relative w-[310px] shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
                       >
                         <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
                           {tier.name}
                         </div>
 
-                        <p className="pr-12 text-xl font-extrabold leading-tight text-[#14532d]">{course.title}</p>
+                        <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
                         
-                        <p className="mt-2.5 text-[14px] leading-relaxed text-black line-clamp-2">
+                        <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-2">
                           {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
                         </p>
                         
-                        <div className="mt-4 flex items-baseline gap-2">
-                          <span className="text-base font-bold text-slate-900">{formatVND(discountedPrice)}</span>
+                        <div className="mt-3 flex items-baseline gap-2">
+                          <span className="text-[15px] font-bold text-slate-900">{formatVND(discountedPrice)}</span>
                           {tier.discount > 0 && (
                             <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
                           )}
                         </div>
 
-                        <div className="mt-4 space-y-1.5 border-t border-slate-100 pt-4">
-                          <p className="text-[13px] text-black">Hạn đăng ký: <span className="font-semibold">{registrationDeadlineText}</span></p>
-                          <p className={`text-[13px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
+                        <div className="mt-3 space-y-1 border-t border-slate-100 pt-3">
+                          <p className="text-[12px] text-slate-500">Hạn đăng ký: <span className="font-semibold text-slate-700">{registrationDeadlineText}</span></p>
+                          <p className={`text-[12px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
                             ● {availabilityText}
                           </p>
                         </div>
                         
-                        <div className="mt-6">
+                        <div className="mt-4">
                           <Link
                             href={registerHref}
-                            className={`flex w-full items-center justify-center rounded-xl py-3 text-sm font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
+                            className={`flex w-full items-center justify-center rounded-xl py-2.5 text-[13.5px] font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
                             aria-disabled={isFull}
                           >
                             Đăng Ký Ngay
