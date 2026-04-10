@@ -369,9 +369,14 @@ export default function CoursesPage() {
                         {course.title}
                       </p>
                       <div className="mt-2 flex items-center justify-between">
-                        <span className={`text-sm font-semibold ${isActive ? 'text-amber-600' : 'text-emerald-700'}`}>
-                          {formatVnd(tuition)}
-                        </span>
+                        {(() => {
+                          const tier = getPromotionTier(course)
+                          return (
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${tier.bgColor} ${tier.textColor} border border-current/20`}>
+                              {tier.name}
+                            </span>
+                          )
+                        })()}
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           isFull ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'
                         }`}>
@@ -420,7 +425,7 @@ export default function CoursesPage() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-2xl font-black text-amber-600">
+                            <span className="text-xl font-medium text-slate-500">
                               {courseCurrency === 'VND' ? formatVnd(tuition) : `${tuition.toLocaleString('vi-VN')} ${courseCurrency}`}
                             </span>
                             {(() => {
