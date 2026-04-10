@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
 
@@ -244,9 +245,9 @@ function HomeContent() {
         name: 'Early Bird',
         discount: ebDiscount,
         label: 'Tiết kiệm ngay',
-        color: 'from-orange-400 to-amber-500',
-        textColor: 'text-orange-700',
-        bgColor: 'bg-orange-50',
+        color: 'from-blue-500 to-indigo-600',
+        textColor: 'text-blue-700',
+        bgColor: 'bg-blue-50',
         daysLeft: diffDays
       }
     } else {
@@ -1568,12 +1569,12 @@ function HomeContent() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-3 sm:px-6 sm:pt-4 lg:px-8">
         {showRegistrationProcessingTicker && (
-          <Link href="/courses" className="block mb-3 overflow-hidden rounded-lg border border-orange-300 bg-orange-50 shadow-sm transition hover:bg-orange-100/70">
+          <Link href="/courses" className="block mb-3 overflow-hidden rounded-lg border border-blue-300 bg-blue-50 shadow-sm transition hover:bg-blue-100/70">
             <div className="homework-alert-wrap">
               <div className="homework-alert-track">
-                <span className="text-sm font-bold text-orange-700">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-orange-700">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-orange-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-blue-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-blue-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-blue-700">Please wait a moment while we process your registration.</span>
               </div>
             </div>
           </Link>
@@ -1597,7 +1598,7 @@ function HomeContent() {
         )}
 
         {canUseDailyActivity && (
-          <section className="mb-8 rounded-md border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-orange-50 px-4 py-4 sm:px-5 sm:py-5">
+          <section className="mb-8 rounded-md border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-blue-50 px-4 py-4 sm:px-5 sm:py-5">
             {isAdminDailyActivity && (
               <div className="mb-4 rounded-md border border-[#14532d]/20 bg-white/90 px-4 py-3">
                 <label className="block text-xs font-semibold uppercase tracking-wide text-[#14532d]">Course for Daily Activity</label>
@@ -1876,7 +1877,7 @@ function HomeContent() {
                 </article>
               </div>
 
-              <div className="rounded-lg border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-orange-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
+              <div className="rounded-lg border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-blue-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
                 <div className="mb-3">
                   <h3 className="text-sm font-bold text-slate-900 sm:text-base">Live Feed</h3>
                 </div>
@@ -2111,7 +2112,7 @@ function HomeContent() {
                             <p className="text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
                           )}
                           {pronunciationFeedback && (
-                            <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-orange-300`}>{pronunciationFeedback}</p>
+                            <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-blue-300`}>{pronunciationFeedback}</p>
                           )}
                           <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-white/70">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
                         </div>
@@ -2332,37 +2333,59 @@ function HomeContent() {
         )}
       </main>
 
-      {congratsEnrollment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-8 max-w-sm w-full text-center">
-            <div className="text-5xl mb-4">🎉</div>
-            <h3 className="text-2xl font-bold text-[#14532d] mb-3">Congratulations!</h3>
-            <p className="text-gray-700 mb-2">
-              You have successfully enrolled in the course
-            </p>
-            {congratsEnrollment.title && (
-              <p className="text-lg font-semibold text-[#14532d] mb-4">
-                &quot;{congratsEnrollment.title}&quot;
-              </p>
-            )}
-            <p className="text-sm text-gray-500 mb-6">
-              Your payment has been confirmed by the admin. Welcome to EnglishMore!
-            </p>
-            <button
-              type="button"
+      <AnimatePresence>
+        {congratsEnrollment && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => {
                 if (typeof window !== 'undefined') {
                   localStorage.setItem(`congratulated_${congratsEnrollment.id}`, '1')
                 }
                 setCongratsEnrollment(null)
               }}
-              className="w-full px-4 py-3 bg-[#14532d] text-white rounded-lg font-semibold hover:bg-[#166534]"
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+              className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-8 max-w-sm w-full text-center"
             >
-              Start learning now
-            </button>
+              <div className="text-5xl mb-4">🎉</div>
+              <h3 className="text-2xl font-bold text-[#14532d] mb-3">Congratulations!</h3>
+              <p className="text-gray-700 mb-2">
+                You have successfully enrolled in the course
+              </p>
+              {congratsEnrollment.title && (
+                <p className="text-lg font-semibold text-[#14532d] mb-4">
+                  &quot;{congratsEnrollment.title}&quot;
+                </p>
+              )}
+              <p className="text-sm text-gray-500 mb-6">
+                Your payment has been confirmed by the admin. Welcome to EnglishMore!
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem(`congratulated_${congratsEnrollment.id}`, '1')
+                  }
+                  setCongratsEnrollment(null)
+                }}
+                className="w-full px-4 py-3 bg-[#14532d] text-white rounded-lg font-semibold hover:bg-[#166534]"
+              >
+                Start learning now
+              </button>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
       {/* Global Login Modal is handled in layout via URL parameters */}
     </div>
   )

@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 
@@ -340,9 +341,9 @@ const HOMEWORK_SUBMISSION_GROUP_STYLES = [
     title: 'text-[#14532d]'
   },
   {
-    wrap: 'border-amber-300/70',
-    header: 'border-amber-200 bg-amber-50',
-    title: 'text-amber-800'
+    wrap: 'border-blue-300/70',
+    header: 'border-blue-200 bg-blue-50',
+    title: 'text-blue-800'
   },
   {
     wrap: 'border-blue-300/70',
@@ -4630,32 +4631,49 @@ export default function AdminDashboard() {
         </div>
 
         {/* Delete Confirmation Modal */}
-        {deleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm student deletion</h3>
-              <p className="text-gray-700 mb-6">
-                Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? This action cannot be undone.
-              </p>
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => setDeleteConfirm(null)}
-                  disabled={deletingUserId === deleteConfirm.id}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => deleteUserAccount(deleteConfirm.id)}
-                  disabled={deletingUserId === deleteConfirm.id}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
-                >
-                  {deletingUserId === deleteConfirm.id ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
+        <AnimatePresence>
+          {deleteConfirm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setDeleteConfirm(null)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                className="relative rounded border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-sm"
+              >
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm student deletion</h3>
+                <p className="text-gray-700 mb-6">
+                  Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? This action cannot be undone.
+                </p>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setDeleteConfirm(null)}
+                    disabled={deletingUserId === deleteConfirm.id}
+                    className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => deleteUserAccount(deleteConfirm.id)}
+                    disabled={deletingUserId === deleteConfirm.id}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {deletingUserId === deleteConfirm.id ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
+              </motion.div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
 
         {/* Course Management Section */}
         <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
@@ -4899,560 +4917,697 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {courseDetailPreview && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-2xl rounded border border-[#14532d]/40 bg-white p-6 shadow-lg">
-              <div className="mb-4 flex items-start justify-between gap-3">
-                <h3 className="text-xl font-bold text-gray-900">Course detail: {courseDetailPreview.title}</h3>
-                <button
-                  type="button"
-                  onClick={() => setCourseDetailPreview(null)}
-                  className="text-2xl leading-none text-gray-400 hover:text-gray-600"
-                  aria-label="Close"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="max-h-[65vh] overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
-                <LinkifiedText text={courseDetailPreview.description || 'No description yet'} preserveLineBreaks />
-              </div>
-
-              <div className="mt-5 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setCourseDetailPreview(null)}
-                  className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {editingCourse && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-lg w-full">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit course details</h3>
-
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  value={editCourseTitle}
-                  onChange={(e) => setEditCourseTitle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-                <label className="flex flex-col gap-2 mb-3">
-                  <span className="text-sm font-medium text-gray-700">Mô tả ngắn (hiển thị thẻ ngoài trang chủ)</span>
-                  <textarea
-                    value={editCourseShortDescription}
-                    onChange={(e) => setEditCourseShortDescription(e.target.value)}
-                    rows={2}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                </label>
-                <div className="mb-2"><span className="text-sm font-medium text-gray-700">Mô tả chi tiết</span></div>
-                <textarea
-                  value={editCourseDescription}
-                  onChange={(e) => setEditCourseDescription(e.target.value)}
-                  rows={10}
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-                <div className="flex flex-wrap items-center gap-2">
+        <AnimatePresence>
+          {courseDetailPreview && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setCourseDetailPreview(null)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                className="relative w-full max-w-2xl rounded border border-[#14532d]/40 bg-white p-6 shadow-xl"
+              >
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <h3 className="text-xl font-bold text-gray-900">Course detail: {courseDetailPreview.title}</h3>
                   <button
                     type="button"
-                    onClick={() => setEditCourseDescription(COURSE_DESCRIPTION_TEMPLATE)}
-                    className="rounded border border-[#14532d]/30 bg-[#14532d]/5 px-3 py-1.5 text-xs font-medium text-[#14532d] hover:bg-[#14532d]/10"
+                    onClick={() => setCourseDetailPreview(null)}
+                    className="text-2xl leading-none text-gray-400 hover:text-gray-600"
+                    aria-label="Close"
                   >
-                    Chèn mẫu 9 mục
+                    ×
                   </button>
+                </div>
+
+                <div className="max-h-[65vh] overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
+                  <LinkifiedText text={courseDetailPreview.description || 'No description yet'} preserveLineBreaks />
+                </div>
+
+                <div className="mt-5 flex justify-end">
                   <button
                     type="button"
-                    onClick={() => setEditCourseDescription('')}
-                    className="rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                    onClick={() => setCourseDetailPreview(null)}
+                    className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]"
                   >
-                    Xóa nhanh
+                    Close
                   </button>
                 </div>
-                <input
-                  type="text"
-                  value={editCourseDeadline}
-                  onChange={(e) => setEditCourseDeadline(e.target.value)}
-                  inputMode="numeric"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-gray-700">Maximum students</span>
-                  <input
-                    type="number"
-                    min={1}
-                    max={10}
-                    value={editCourseMaxStudents}
-                    onChange={(e) => setEditCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                </label>
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-gray-700">Học phí (VND)</span>
-                  <input
-                    type="number"
-                    min={0}
-                    step={1000}
-                    value={editCoursePrice}
-                    onChange={(e) => setEditCoursePrice(Math.max(0, Math.round(Number(e.target.value) || 0)))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                </label>
-                <label className="block">
-                  <span className="mb-2 block text-sm font-medium text-gray-700">Completed sessions (0-30)</span>
-                  <input
-                    type="number"
-                    min={0}
-                    max={30}
-                    value={editCourseCompletedSessions}
-                    onChange={(e) => setEditCourseCompletedSessions(Math.min(30, Math.max(0, Number(e.target.value) || 0)))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  />
-                </label>
-                <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
-                  <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-blue-700">Super EB (%)</span>
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={editCourseSebDiscount}
-                      onChange={(e) => setEditCourseSebDiscount(Number(e.target.value))}
-                      className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-blue-700">SEB Days</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={editCourseSebDays}
-                      onChange={(e) => setEditCourseSebDays(Number(e.target.value))}
-                      className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-amber-700">Early Bird (%)</span>
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={editCourseEbDiscount}
-                      onChange={(e) => setEditCourseEbDiscount(Number(e.target.value))}
-                      className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-2 block text-sm font-medium text-amber-700">EB Days</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={editCourseEbDays}
-                      onChange={(e) => setEditCourseEbDays(Number(e.target.value))}
-                      className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end gap-3">
-                <button
-                  onClick={() => setEditingCourse(null)}
-                  disabled={savingCourseId === editingCourse.id}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveEditedCourse}
-                  disabled={savingCourseId === editingCourse.id}
-                  className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {savingCourseId === editingCourse.id ? 'Saving...' : 'Save changes'}
-                </button>
-              </div>
+              </motion.div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
 
-        {editingHomework && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-lg w-full">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit homework</h3>
-
-              <div className="space-y-4">
-                <select
-                  value={editHomeworkCourseId}
-                  onChange={(e) => setEditHomeworkCourseId(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+        <AnimatePresence>
+          {editingCourse && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setEditingCourse(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <div className="flex min-h-full items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 md:p-8 max-w-lg w-full"
                 >
-                  {courses.map((course) => (
-                    <option key={course.id} value={course.id}>{course.title}</option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  value={editHomeworkTitle}
-                  onChange={(e) => setEditHomeworkTitle(e.target.value)}
-                  placeholder="Homework title"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-                <textarea
-                  value={editHomeworkDescription}
-                  onChange={(e) => setEditHomeworkDescription(e.target.value)}
-                  rows={3}
-                  placeholder="Homework description"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-                <input
-                  type="text"
-                  value={editHomeworkDueDate}
-                  onChange={(e) => setEditHomeworkDueDate(e.target.value)}
-                  placeholder="dd/mm/yyyy"
-                  inputMode="numeric"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Attach a file <span className="text-gray-400 font-normal">(image, audio, PDF, Word, PowerPoint, Excel — max 20 MB)</span>
-                  </label>
-                  {editHomeworkAttachmentUrl && !editHomeworkAttachment && (
-                    <div className="mb-2 flex items-center gap-2 text-sm text-gray-600">
-                      <span>Current:</span>
-                      <a href={editHomeworkAttachmentUrl} target="_blank" rel="noopener noreferrer" className="text-[#14532d] hover:underline truncate max-w-50">
-                        📎 {editHomeworkAttachmentUrl.split('/').pop()}
-                      </a>
-                      <button
-                        type="button"
-                        onClick={() => setEditHomeworkAttachmentUrl(null)}
-                        className="text-red-500 hover:text-red-700 text-xs"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
-                    onChange={(e) => setEditHomeworkAttachment(e.target.files?.[0] ?? null)}
-                    className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#14532d]/10 file:text-[#14532d] file:font-medium hover:file:bg-[#14532d]/20"
-                  />
-                  {editHomeworkAttachment && (
-                    <p className="mt-1 text-xs text-gray-500">New file: {editHomeworkAttachment.name}</p>
-                  )}
-                </div>
-              </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">Edit course details</h3>
 
-              <div className="mt-6 flex justify-end gap-3">
-                <button
-                  onClick={() => setEditingHomework(null)}
-                  disabled={savingHomeworkId === editingHomework.id || editHomeworkAttachmentUploading}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveEditedHomework}
-                  disabled={savingHomeworkId === editingHomework.id || editHomeworkAttachmentUploading}
-                  className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {editHomeworkAttachmentUploading ? 'Uploading...' : savingHomeworkId === editingHomework.id ? 'Saving...' : 'Save changes'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+                  <div className="space-y-5">
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-medium text-gray-700">Course title</span>
+                      <input
+                        type="text"
+                        value={editCourseTitle}
+                        onChange={(e) => setEditCourseTitle(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                    </label>
 
-        {editingExercise && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Edit exercise</h3>
-
-              <div className="mb-6">
-                <label className="mb-2 block text-sm font-medium text-gray-700">Exercise title</label>
-                <input
-                  type="text"
-                  value={editExerciseTitle}
-                  onChange={(e) => setEditExerciseTitle(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-              </div>
-
-              <div className="mb-6 grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">Exercise type</label>
-                  <select
-                    value={editExerciseType}
-                    onChange={(e) => setEditExerciseType(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  >
-                    <option value="multiple_choice">Pronunciation</option>
-                    <option value="question_response">Question-Response (Audio)</option>
-                    <option value="conversation">Conversation (Audio)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-700">Audio file</label>
-                  <div className="rounded-xl border border-dashed border-gray-300 p-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <label className="inline-flex cursor-pointer items-center rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]">
-                        {editExerciseAudioUploading ? 'Uploading audio...' : 'Replace audio'}
-                        <input
-                          type="file"
-                          accept="audio/*,.mp3,.m4a,.wav,.ogg,.webm"
-                          className="hidden"
-                          disabled={editExerciseAudioUploading}
-                          onChange={(event) => {
-                            const file = event.target.files?.[0]
-                            if (file) {
-                              void handleEditExerciseAudioSelected(file)
-                            }
-                            event.currentTarget.value = ''
-                          }}
-                        />
-                      </label>
-                      {editExerciseAudioFileUrl && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditExerciseAudioFileUrl(null)
-                            setEditExerciseAudioFileName('')
-                          }}
-                          className="text-sm text-red-600 hover:underline"
-                        >
-                          Remove audio
-                        </button>
-                      )}
-                    </div>
-                    <p className="mt-3 text-sm text-gray-600">
-                      {editExerciseAudioFileUrl ? editExerciseAudioFileName || 'Audio uploaded' : 'Không có audio được gắn cho exercise này. Dung lượng tối đa 4MB.'}
-                    </p>
-                    {editExerciseAudioFileUrl && (
-                      <audio controls preload="metadata" className="mt-3 w-full">
-                        <source src={editExerciseAudioFileUrl} />
-                      </audio>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {(editExerciseType === 'question_response' || editExerciseType === 'conversation') && (
-                <div className="mb-6">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">Attachment file <span className="text-gray-400 font-normal">(PPT, DOCX, PDF — vocabulary handout)</span></label>
-                  <div className="rounded-xl border border-dashed border-gray-300 p-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <label className="inline-flex cursor-pointer items-center rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800">
-                        {editExerciseAttachUploading ? 'Uploading...' : (editExerciseAttachFileUrl ? 'Replace file' : 'Upload file')}
-                        <input
-                          type="file"
-                          accept=".pptx,.ppt,.docx,.doc,.pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,application/pdf"
-                          className="hidden"
-                          disabled={editExerciseAttachUploading}
-                          onChange={(event) => {
-                            const file = event.target.files?.[0]
-                            if (file) {
-                              void handleEditExerciseAttachSelected(file)
-                            }
-                            event.currentTarget.value = ''
-                          }}
-                        />
-                      </label>
-                      {editExerciseAttachFileUrl && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditExerciseAttachFileUrl(null)
-                            setEditExerciseAttachFileName('')
-                          }}
-                          className="text-sm text-red-600 hover:underline"
-                        >
-                          Remove file
-                        </button>
-                      )}
-                    </div>
-                    <p className="mt-3 text-sm text-gray-600">
-                      {editExerciseAttachFileUrl ? editExerciseAttachFileName || 'File attached' : 'Tùy chọn — học viên có thể tải về để xem từ vựng.'}
-                    </p>
-                    {editExerciseAttachFileUrl && (
-                      <a href={editExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-blue-700 hover:underline">
-                        {editExerciseAttachFileName || 'Download attachment'}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="mb-6">
-                <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
-                <textarea
-                  value={editExerciseDescription}
-                  onChange={(e) => setEditExerciseDescription(e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                />
-              </div>
-
-              <p className="mb-4 text-sm text-gray-500">
-                {editExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu câu hỏi chỉ có 3 lựa chọn.'}
-                {editExerciseType === 'question_response' && 'Question-Response: nội dung câu hỏi là tùy chọn (có thể để trống), dùng 3 đáp án A/B/C. Học viên chỉ thấy số thứ tự câu.'}
-                {editExerciseType === 'conversation' && 'Conversation: 4 đáp án A/B/C/D (bắt buộc). Học viên thấy toàn bộ nội dung.'}
-              </p>
-
-              <div className="space-y-4">
-                {editExerciseQuestions.map((question, index) => (
-                  <div key={`edit-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
-                    <h4 className="font-bold text-[#14532d] mb-3">Question {index + 1}</h4>
-                    <div className="space-y-3">
+                    <label className="flex flex-col gap-2">
+                      <span className="text-sm font-medium text-gray-700">Mô tả ngắn (hiển thị thẻ ngoài trang chủ)</span>
                       <textarea
-                        value={question.question}
-                        onChange={(e) => updateEditExerciseQuestion(index, 'question', e.target.value)}
+                        value={editCourseShortDescription}
+                        onChange={(e) => setEditCourseShortDescription(e.target.value)}
                         rows={2}
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
+                    </label>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-medium text-gray-700">Mô tả chi tiết</span>
+                      <textarea
+                        value={editCourseDescription}
+                        onChange={(e) => setEditCourseDescription(e.target.value)}
+                        rows={10}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d] mb-2"
+                      />
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditCourseDescription(COURSE_DESCRIPTION_TEMPLATE)}
+                          className="rounded border border-[#14532d]/30 bg-[#14532d]/5 px-3 py-1.5 text-xs font-medium text-[#14532d] hover:bg-[#14532d]/10"
+                        >
+                          Chèn mẫu 9 mục
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditCourseDescription('')}
+                          className="rounded border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+                        >
+                          Xóa nhanh
+                        </button>
+                      </div>
+                    </label>
+
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-medium text-gray-700">Registration deadline (text)</span>
                       <input
                         type="text"
-                        value={question.optionA}
-                        onChange={(e) => updateEditExerciseQuestion(index, 'optionA', e.target.value)}
+                        value={editCourseDeadline}
+                        onChange={(e) => setEditCourseDeadline(e.target.value)}
+                        placeholder="e.g. 30/05/2026"
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       />
-                      <input
-                        type="text"
-                        value={question.optionB}
-                        onChange={(e) => updateEditExerciseQuestion(index, 'optionB', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                      />
-                      <input
-                        type="text"
-                        value={question.optionC}
-                        onChange={(e) => updateEditExerciseQuestion(index, 'optionC', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                      />
-                      {editExerciseType !== 'question_response' && (
+                    </label>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="block">
+                        <span className="mb-2 block text-sm font-medium text-gray-700">Maximum students</span>
                         <input
-                          type="text"
-                          value={question.optionD}
-                          onChange={(e) => updateEditExerciseQuestion(index, 'optionD', e.target.value)}
-                          placeholder={editExerciseType === 'conversation' ? 'Answer D (bắt buộc)' : 'Answer D (optional)'}
+                          type="number"
+                          min={1}
+                          max={20}
+                          value={editCourseMaxStudents}
+                          onChange={(e) => setEditCourseMaxStudents(Math.min(20, Math.max(1, Number(e.target.value) || 1)))}
                           className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                         />
+                      </label>
+                      <label className="block">
+                        <span className="mb-2 block text-sm font-medium text-gray-700">Completed (0-30)</span>
+                        <input
+                          type="number"
+                          min={0}
+                          max={30}
+                          value={editCourseCompletedSessions}
+                          onChange={(e) => setEditCourseCompletedSessions(Math.min(30, Math.max(0, Number(e.target.value) || 0)))}
+                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                        />
+                      </label>
+                    </div>
+
+                    <label className="block pb-2">
+                      <span className="mb-2 block text-sm font-medium text-gray-700">Học phí (VND)</span>
+                      <input
+                        type="number"
+                        min={0}
+                        step={1000}
+                        value={editCoursePrice}
+                        onChange={(e) => setEditCoursePrice(Math.max(0, Math.round(Number(e.target.value) || 0)))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                      />
+                    </label>
+
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-5">
+                      <label className="block">
+                        <span className="mb-2 block text-sm font-medium text-blue-700">Super EB (%)</span>
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={editCourseSebDiscount}
+                          onChange={(e) => setEditCourseSebDiscount(Number(e.target.value))}
+                          className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="mb-2 block text-sm font-medium text-blue-700">SEB Days</span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={editCourseSebDays}
+                          onChange={(e) => setEditCourseSebDays(Number(e.target.value))}
+                          className="w-full px-4 py-2 border border-blue-200 bg-blue-50/30 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="mb-2 block text-sm font-medium text-amber-700">Early Bird (%)</span>
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={editCourseEbDiscount}
+                          onChange={(e) => setEditCourseEbDiscount(Number(e.target.value))}
+                          className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="mb-2 block text-sm font-medium text-amber-700">EB Days</span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={editCourseEbDays}
+                          onChange={(e) => setEditCourseEbDays(Number(e.target.value))}
+                          className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="mt-10 flex justify-end gap-3 pb-2">
+                    <button
+                      onClick={() => setEditingCourse(null)}
+                      disabled={savingCourseId === editingCourse.id}
+                      className="px-6 py-2 bg-gray-100 text-gray-700 font-medium rounded hover:bg-gray-200 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={saveEditedCourse}
+                      disabled={savingCourseId === editingCourse.id}
+                      className="px-6 py-2 bg-[#14532d] text-white font-medium rounded hover:bg-[#166534] shadow-md transition-colors disabled:opacity-50"
+                    >
+                      {savingCourseId === editingCourse.id ? 'Saving...' : 'Save changes'}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {editingHomework && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setEditingHomework(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <div className="flex min-h-full items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-lg w-full"
+                >
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Edit homework</h3>
+
+                  <div className="space-y-4">
+                    <select
+                      value={editHomeworkCourseId}
+                      onChange={(e) => setEditHomeworkCourseId(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    >
+                      {courses.map((course) => (
+                        <option key={course.id} value={course.id}>{course.title}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="text"
+                      value={editHomeworkTitle}
+                      onChange={(e) => setEditHomeworkTitle(e.target.value)}
+                      placeholder="Homework title"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    />
+                    <textarea
+                      value={editHomeworkDescription}
+                      onChange={(e) => setEditHomeworkDescription(e.target.value)}
+                      rows={3}
+                      placeholder="Homework description"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    />
+                    <input
+                      type="text"
+                      value={editHomeworkDueDate}
+                      onChange={(e) => setEditHomeworkDueDate(e.target.value)}
+                      placeholder="dd/mm/yyyy"
+                      inputMode="numeric"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Attach a file <span className="text-gray-400 font-normal">(image, audio, PDF, Word, PowerPoint, Excel — max 20 MB)</span>
+                      </label>
+                      {editHomeworkAttachmentUrl && !editHomeworkAttachment && (
+                        <div className="mb-2 flex items-center gap-2 text-sm text-gray-600">
+                          <span>Current:</span>
+                          <a href={editHomeworkAttachmentUrl} target="_blank" rel="noopener noreferrer" className="text-[#14532d] hover:underline truncate max-w-50">
+                            📎 {editHomeworkAttachmentUrl.split('/').pop()}
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => setEditHomeworkAttachmentUrl(null)}
+                            className="text-red-500 hover:text-red-700 text-xs"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       )}
+                      <input
+                        type="file"
+                        accept="image/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                        onChange={(e) => setEditHomeworkAttachment(e.target.files?.[0] ?? null)}
+                        className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#14532d]/10 file:text-[#14532d] file:font-medium hover:file:bg-[#14532d]/20"
+                      />
+                      {editHomeworkAttachment && (
+                        <p className="mt-1 text-xs text-gray-500">New file: {editHomeworkAttachment.name}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-end gap-3">
+                    <button
+                      onClick={() => setEditingHomework(null)}
+                      disabled={savingHomeworkId === editingHomework.id || editHomeworkAttachmentUploading}
+                      className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={saveEditedHomework}
+                      disabled={savingHomeworkId === editingHomework.id || editHomeworkAttachmentUploading}
+                      className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
+                    >
+                      {editHomeworkAttachmentUploading ? 'Uploading...' : savingHomeworkId === editingHomework.id ? 'Saving...' : 'Save changes'}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {editingExercise && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setEditingExercise(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <div className="flex min-h-full items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 md:p-8 max-w-4xl w-full"
+                >
+                  <h3 className="text-xl font-bold text-gray-900 mb-6">Edit exercise</h3>
+
+                  <div className="mb-6">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">Exercise title</label>
+                    <input
+                      type="text"
+                      value={editExerciseTitle}
+                      onChange={(e) => setEditExerciseTitle(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    />
+                  </div>
+
+                  <div className="mb-6 grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700">Exercise type</label>
                       <select
-                        value={question.correctOption}
-                        onChange={(e) => updateEditExerciseQuestion(index, 'correctOption', e.target.value)}
+                        value={editExerciseType}
+                        onChange={(e) => setEditExerciseType(e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                       >
-                        <option value="A">Correct answer: A</option>
-                        <option value="B">Correct answer: B</option>
-                        <option value="C">Correct answer: C</option>
-                        {editExerciseType !== 'question_response' && (
-                          <option value="D">Correct answer: D</option>
-                        )}
+                        <option value="multiple_choice">Pronunciation</option>
+                        <option value="question_response">Question-Response (Audio)</option>
+                        <option value="conversation">Conversation (Audio)</option>
                       </select>
                     </div>
-                  </div>
-                ))}
-              </div>
 
-              <div className="mt-6 flex justify-end gap-3">
-                <button
-                  onClick={() => setEditingExercise(null)}
-                  disabled={savingExerciseId === editingExercise.id}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                {editingExercise.isDraft && (
-                  <button
-                    onClick={() => saveEditedExercise(true)}
-                    disabled={savingExerciseId === editingExercise.id}
-                    className="px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800 disabled:opacity-50"
-                  >
-                    {savingExerciseId === editingExercise.id ? 'Publishing...' : 'Publish'}
-                  </button>
-                )}
-                <button
-                  onClick={() => saveEditedExercise(false)}
-                  disabled={savingExerciseId === editingExercise.id}
-                  className="px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {savingExerciseId === editingExercise.id ? 'Saving...' : 'Save changes'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {selectedExerciseResult && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="mb-6 flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">Exercise submission: {selectedExerciseResult.exerciseTitle}</h3>
-                  <p className="text-sm text-gray-600">{selectedExerciseResult.user.name || selectedExerciseResult.user.email} - {selectedExerciseResult.courseTitle}</p>
-                  <p className="mt-1 text-sm font-semibold text-[#14532d]">Score: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
-                  <p className="mt-1 text-sm text-gray-600">Time spent: {formatDuration(selectedExerciseResult.durationSeconds)}</p>
-                </div>
-                <button
-                  onClick={() => setSelectedExerciseResult(null)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {selectedExerciseResult.answers.map((answer) => (
-                  <div key={answer.id} className="rounded-xl border border-gray-200 p-4">
-                    <p className="font-semibold text-gray-900">{answer.question.order}. {answer.question.question}</p>
-                    <div className="mt-3 grid gap-3 md:grid-cols-2">
-                      <div className={`rounded-lg px-4 py-3 text-sm ${answer.isCorrect ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-red-50 text-red-700'}`}>
-                        Student selected: {answer.selectedOption}
-                      </div>
-                      <div className="rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-700">
-                        Correct answer: {answer.question.correctOption}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700">Audio file</label>
+                      <div className="rounded-xl border border-dashed border-gray-300 p-4">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <label className="inline-flex cursor-pointer items-center rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534]">
+                            {editExerciseAudioUploading ? 'Uploading audio...' : 'Replace audio'}
+                            <input
+                              type="file"
+                              accept="audio/*,.mp3,.m4a,.wav,.ogg,.webm"
+                              className="hidden"
+                              disabled={editExerciseAudioUploading}
+                              onChange={(event) => {
+                                const file = event.target.files?.[0]
+                                if (file) {
+                                  void handleEditExerciseAudioSelected(file)
+                                }
+                                event.currentTarget.value = ''
+                              }}
+                            />
+                          </label>
+                          {editExerciseAudioFileUrl && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditExerciseAudioFileUrl(null)
+                                setEditExerciseAudioFileName('')
+                              }}
+                              className="text-sm text-red-600 hover:underline"
+                            >
+                              Remove audio
+                            </button>
+                          )}
+                        </div>
+                        <p className="mt-3 text-sm text-gray-600">
+                          {editExerciseAudioFileUrl ? editExerciseAudioFileName || 'Audio uploaded' : 'Không có audio được gắn cho exercise này. Dung lượng tối đa 4MB.'}
+                        </p>
+                        {editExerciseAudioFileUrl && (
+                          <audio controls preload="metadata" className="mt-3 w-full">
+                            <source src={editExerciseAudioFileUrl} />
+                          </audio>
+                        )}
                       </div>
                     </div>
                   </div>
-                ))}
+
+                  {(editExerciseType === 'question_response' || editExerciseType === 'conversation') && (
+                    <div className="mb-6">
+                      <label className="mb-2 block text-sm font-medium text-gray-700">Attachment file <span className="text-gray-400 font-normal">(PPT, DOCX, PDF — vocabulary handout)</span></label>
+                      <div className="rounded-xl border border-dashed border-gray-300 p-4">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <label className="inline-flex cursor-pointer items-center rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800">
+                            {editExerciseAttachUploading ? 'Uploading...' : (editExerciseAttachFileUrl ? 'Replace file' : 'Upload file')}
+                            <input
+                              type="file"
+                              accept=".pptx,.ppt,.docx,.doc,.pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,application/pdf"
+                              className="hidden"
+                              disabled={editExerciseAttachUploading}
+                              onChange={(event) => {
+                                const file = event.target.files?.[0]
+                                if (file) {
+                                  void handleEditExerciseAttachSelected(file)
+                                }
+                                event.currentTarget.value = ''
+                              }}
+                            />
+                          </label>
+                          {editExerciseAttachFileUrl && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditExerciseAttachFileUrl(null)
+                                setEditExerciseAttachFileName('')
+                              }}
+                              className="text-sm text-red-600 hover:underline"
+                            >
+                              Remove file
+                            </button>
+                          )}
+                        </div>
+                        <p className="mt-3 text-sm text-gray-600">
+                          {editExerciseAttachFileUrl ? editExerciseAttachFileName || 'File attached' : 'Tùy chọn — học viên có thể tải về để xem từ vựng.'}
+                        </p>
+                        {editExerciseAttachFileUrl && (
+                          <a href={editExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-blue-700 hover:underline">
+                            {editExerciseAttachFileName || 'Download attachment'}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mb-6">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">Exercise description</label>
+                    <textarea
+                      value={editExerciseDescription}
+                      onChange={(e) => setEditExerciseDescription(e.target.value)}
+                      rows={3}
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                    />
+                  </div>
+
+                  <p className="mb-4 text-sm text-gray-500">
+                    {editExerciseType === 'multiple_choice' && 'Để trống đáp án D nếu câu hỏi chỉ có 3 lựa chọn.'}
+                    {editExerciseType === 'question_response' && 'Question-Response: nội dung câu hỏi là tùy chọn (có thể để trống), dùng 3 đáp án A/B/C. Học viên chỉ thấy số thứ tự câu.'}
+                    {editExerciseType === 'conversation' && 'Conversation: 4 đáp án A/B/C/D (bắt buộc). Học viên thấy toàn bộ nội dung.'}
+                  </p>
+
+                  <div className="space-y-4">
+                    {editExerciseQuestions.map((question, index) => (
+                      <div key={`edit-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
+                        <h4 className="font-bold text-[#14532d] mb-3">Question {index + 1}</h4>
+                        <div className="space-y-3">
+                          <textarea
+                            value={question.question}
+                            onChange={(e) => updateEditExerciseQuestion(index, 'question', e.target.value)}
+                            rows={2}
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          />
+                          <input
+                            type="text"
+                            value={question.optionA}
+                            onChange={(e) => updateEditExerciseQuestion(index, 'optionA', e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          />
+                          <input
+                            type="text"
+                            value={question.optionB}
+                            onChange={(e) => updateEditExerciseQuestion(index, 'optionB', e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          />
+                          <input
+                            type="text"
+                            value={question.optionC}
+                            onChange={(e) => updateEditExerciseQuestion(index, 'optionC', e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          />
+                          {editExerciseType !== 'question_response' && (
+                            <input
+                              type="text"
+                              value={question.optionD}
+                              onChange={(e) => updateEditExerciseQuestion(index, 'optionD', e.target.value)}
+                              placeholder={editExerciseType === 'conversation' ? 'Answer D (bắt buộc)' : 'Answer D (optional)'}
+                              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                            />
+                          )}
+                          <select
+                            value={question.correctOption}
+                            onChange={(e) => updateEditExerciseQuestion(index, 'correctOption', e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                          >
+                            <option value="A">Correct answer: A</option>
+                            <option value="B">Correct answer: B</option>
+                            <option value="C">Correct answer: C</option>
+                            {editExerciseType !== 'question_response' && (
+                              <option value="D">Correct answer: D</option>
+                            )}
+                          </select>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 flex justify-end gap-3 pb-2">
+                    <button
+                      onClick={() => setEditingExercise(null)}
+                      disabled={savingExerciseId === editingExercise.id}
+                      className="px-6 py-2 bg-gray-100 text-gray-700 font-medium rounded hover:bg-gray-200 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    {editingExercise.isDraft && (
+                      <button
+                        onClick={() => saveEditedExercise(true)}
+                        disabled={savingExerciseId === editingExercise.id}
+                        className="px-6 py-2 bg-blue-700 text-white font-medium rounded hover:bg-blue-800 shadow-sm transition-colors disabled:opacity-50"
+                      >
+                        {savingExerciseId === editingExercise.id ? 'Publishing...' : 'Publish'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => saveEditedExercise(false)}
+                      disabled={savingExerciseId === editingExercise.id}
+                      className="px-6 py-2 bg-[#14532d] text-white font-medium rounded hover:bg-[#166534] shadow-md transition-colors disabled:opacity-50"
+                    >
+                      {savingExerciseId === editingExercise.id ? 'Saving...' : 'Save changes'}
+                    </button>
+                  </div>
+                </motion.div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
 
-        {confirmUnpublish && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-md w-full">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Unpublish course</h3>
-              <p className="text-gray-700 mb-6">
-                Are you sure you want to unpublish <strong>{confirmUnpublish.title}</strong>? Students will no longer see this course publicly.
-              </p>
+        <AnimatePresence>
+          {selectedExerciseResult && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedExerciseResult(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <div className="flex min-h-full items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 md:p-8 max-w-3xl w-full"
+                >
+                  <div className="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">Exercise submission: {selectedExerciseResult.exerciseTitle}</h3>
+                      <p className="text-sm text-gray-600">{selectedExerciseResult.user.name || selectedExerciseResult.user.email} · {selectedExerciseResult.courseTitle}</p>
+                      <p className="mt-1 text-sm font-semibold text-[#14532d]">Score: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
+                      <p className="mt-1 text-sm text-gray-600">Time spent: {formatDuration(selectedExerciseResult.durationSeconds)}</p>
+                    </div>
+                    <button
+                      onClick={() => setSelectedExerciseResult(null)}
+                      className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                    >
+                      ×
+                    </button>
+                  </div>
 
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setConfirmUnpublish(null)}
-                  disabled={savingCourseId === confirmUnpublish.id}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => unpublishCourse(confirmUnpublish.id, confirmUnpublish.title)}
-                  disabled={savingCourseId === confirmUnpublish.id}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
-                >
-                  {savingCourseId === confirmUnpublish.id ? 'Processing...' : 'Confirm'}
-                </button>
+                  <div className="space-y-4">
+                    {selectedExerciseResult.answers.map((answer) => (
+                      <div key={answer.id} className="rounded-xl border border-gray-200 p-4">
+                        <p className="font-semibold text-gray-900">{answer.question.order}. {answer.question.question}</p>
+                        <div className="mt-3 grid gap-3 md:grid-cols-2">
+                          <div className={`rounded-lg px-4 py-3 text-sm ${answer.isCorrect ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-red-50 text-red-700'}`}>
+                            Student selected: {answer.selectedOption}
+                          </div>
+                          <div className="rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-700">
+                            Correct answer: {answer.question.correctOption}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-10 flex justify-end pb-2">
+                    <button
+                      onClick={() => setSelectedExerciseResult(null)}
+                      className="px-6 py-2 bg-[#14532d] text-white font-medium rounded hover:bg-[#166534] shadow-md transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </motion.div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {confirmUnpublish && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setConfirmUnpublish(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <div className="flex min-h-full items-center justify-center p-4 text-center">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full text-left"
+                >
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Unpublish course</h3>
+                  <p className="text-gray-700 mb-6">
+                    Are you sure you want to unpublish <strong>{confirmUnpublish.title}</strong>? Students will no longer see this course publicly.
+                  </p>
+
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={() => setConfirmUnpublish(null)}
+                      disabled={savingCourseId === confirmUnpublish.id}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => unpublishCourse(confirmUnpublish.id, confirmUnpublish.title)}
+                      disabled={savingCourseId === confirmUnpublish.id}
+                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 shadow-sm transition-colors disabled:opacity-50"
+                    >
+                      {savingCourseId === confirmUnpublish.id ? 'Processing...' : 'Confirm'}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* Enrollments Management Section */}
         <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
@@ -5574,218 +5729,171 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {confirmPayment && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-md w-full">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Confirm payment</h3>
-              <p className="text-gray-700 mb-2">
-                Student: <strong>{confirmPayment.studentName}</strong>
-              </p>
-              <p className="text-gray-700 mb-4">
-                Course: <strong>{confirmPayment.courseTitle}</strong>
-              </p>
-              <p className="text-gray-800 mb-6">Have you received the payment?</p>
+        <AnimatePresence>
+          {confirmPayment && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setConfirmPayment(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <div className="flex min-h-full items-center justify-center p-4 text-center">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full text-left"
+                >
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm payment</h3>
+                  <div className="space-y-2 mb-6 text-gray-800">
+                    <p>Student: <strong>{confirmPayment.studentName}</strong></p>
+                    <p>Course: <strong>{confirmPayment.courseTitle}</strong></p>
+                    <p className="pt-2 text-[#14532d] font-medium">Have you received the payment?</p>
+                  </div>
 
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setConfirmPayment(null)}
-                  disabled={updatingEnrollmentId === confirmPayment.id}
-                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded hover:bg-gray-400 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => confirmBankTransfer(confirmPayment.id)}
-                  disabled={updatingEnrollmentId === confirmPayment.id}
-                  className="px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 disabled:opacity-50"
-                >
-                  {updatingEnrollmentId === confirmPayment.id ? 'Processing...' : 'OK'}
-                </button>
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={() => setConfirmPayment(null)}
+                      disabled={updatingEnrollmentId === confirmPayment.id}
+                      className="px-5 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => confirmBankTransfer(confirmPayment.id)}
+                      disabled={updatingEnrollmentId === confirmPayment.id}
+                      className="px-5 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 shadow-sm transition-colors disabled:opacity-50"
+                    >
+                      {updatingEnrollmentId === confirmPayment.id ? 'Processing...' : 'Confirm Payment'}
+                    </button>
+                  </div>
+                </motion.div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
 
-        {quickCopyExercise && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-              <div className="flex items-center justify-between border-b px-6 py-4">
-                <h3 className="text-base font-bold text-gray-900">Copy exercise sang khóa học khác</h3>
-                <button
-                  type="button"
-                  onClick={() => setQuickCopyExercise(null)}
-                  className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+        <AnimatePresence>
+          {quickCopyExercise && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setQuickCopyExercise(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <div className="flex min-h-full items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative w-full max-w-md rounded-lg bg-white shadow-xl overflow-hidden"
                 >
-                  ✕
-                </button>
-              </div>
-              <div className="space-y-4 px-6 py-5">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Exercise đang được copy</p>
-                  <p className="font-semibold text-gray-900 text-sm">{getExerciseTitle(quickCopyExercise)}</p>
-                  <p className="text-xs text-gray-400">{quickCopyExercise.course.title} · {getExerciseTypeLabel(quickCopyExercise.exerciseType)}</p>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-sm font-medium text-gray-700">Chọn khóa học đích</label>
-                  <select
-                    value={quickCopyTargetCourseId}
-                    onChange={(e) => { setQuickCopyTargetCourseId(e.target.value); setQuickCopyError('') }}
-                    className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                  >
-                    <option value="">-- Chọn khóa học --</option>
-                    {courses
-                      .filter((c) => c.id !== quickCopyExercise.courseId)
-                      .map((c) => (
-                        <option key={c.id} value={c.id}>{c.title}</option>
-                      ))}
-                  </select>
-                </div>
-                {quickCopyError && <p className="text-sm text-red-600">{quickCopyError}</p>}
-              </div>
-              <div className="flex justify-end gap-3 border-t px-6 py-4">
-                <button
-                  type="button"
-                  onClick={() => setQuickCopyExercise(null)}
-                  className="rounded px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void quickCopyToTarget()}
-                  disabled={quickCopyLoading}
-                  className="rounded bg-[#14532d] px-5 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {quickCopyLoading ? 'Đang copy...' : 'Copy'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showImportExerciseModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-2xl rounded-lg bg-white shadow-xl">
-              <div className="flex items-center justify-between border-b px-6 py-4">
-                <h3 className="text-lg font-bold text-gray-900">Import exercise từ khóa học khác</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowImportExerciseModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-xl leading-none"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="space-y-5 px-6 py-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-gray-700">Khóa học nguồn</label>
-                    <select
-                      value={importSourceCourseId}
-                      onChange={(e) => {
-                        setImportSourceCourseId(e.target.value)
-                        setImportSelectedExerciseIds(new Set())
-                        setImportFromCourseError('')
-                      }}
-                      className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  <div className="flex items-center justify-between border-b px-6 py-4 bg-gray-50/50">
+                    <h3 className="text-base font-bold text-gray-900">Copy exercise sang khóa học khác</h3>
+                    <button
+                      type="button"
+                      onClick={() => setQuickCopyExercise(null)}
+                      className="text-gray-400 hover:text-gray-600 text-xl leading-none transition-colors"
                     >
-                      <option value="">-- Chọn khóa học --</option>
-                      {courses.map((c) => (
-                        <option key={c.id} value={c.id}>{c.title}</option>
-                      ))}
-                    </select>
+                      ✕
+                    </button>
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-gray-700">Khóa học đích</label>
-                    <select
-                      value={importTargetCourseId}
-                      onChange={(e) => {
-                        setImportTargetCourseId(e.target.value)
-                        setImportFromCourseError('')
-                      }}
-                      className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
-                    >
-                      <option value="">-- Chọn khóa học --</option>
-                      {courses.map((c) => (
-                        <option key={c.id} value={c.id}>{c.title}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {importSourceCourseId && (
-                  <div>
-                    <div className="mb-2 flex items-center justify-between">
-                      <label className="text-sm font-medium text-gray-700">Chọn exercise để import</label>
-                      <button
-                        type="button"
-                        className="text-xs text-[#14532d] hover:underline"
-                        onClick={() => {
-                          const ids = exercises
-                            .filter((ex) => ex.courseId === importSourceCourseId)
-                            .map((ex) => ex.id)
-                          setImportSelectedExerciseIds(new Set(ids))
-                        }}
+                  <div className="space-y-4 px-6 py-6">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Exercise đang chọn</p>
+                      <div className="p-3 bg-[#14532d]/5 rounded-lg border border-[#14532d]/10">
+                        <p className="font-bold text-gray-900 text-sm">{getExerciseTitle(quickCopyExercise)}</p>
+                        <p className="text-xs text-gray-600 mt-1">{quickCopyExercise.course.title} · {getExerciseTypeLabel(quickCopyExercise.exerciseType)}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 pt-2">
+                      <label className="text-sm font-semibold text-gray-700">Chọn khóa học đích</label>
+                      <select
+                        value={quickCopyTargetCourseId}
+                        onChange={(e) => { setQuickCopyTargetCourseId(e.target.value); setQuickCopyError('') }}
+                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] bg-white transition-all shadow-sm"
                       >
-                        Chọn tất cả
-                      </button>
+                        <option value="">-- Chọn khóa học --</option>
+                        {courses
+                          .filter((c) => c.id !== quickCopyExercise.courseId)
+                          .map((c) => (
+                            <option key={c.id} value={c.id}>{c.title}</option>
+                          ))}
+                      </select>
                     </div>
-                    <div className="max-h-56 overflow-y-auto rounded border border-gray-200 divide-y">
-                      {exercises
-                        .filter((ex) => ex.courseId === importSourceCourseId)
-                        .map((ex) => (
-                          <label key={ex.id} className="flex cursor-pointer items-center gap-3 px-4 py-2.5 hover:bg-gray-50">
-                            <input
-                              type="checkbox"
-                              checked={importSelectedExerciseIds.has(ex.id)}
-                              onChange={(e) => {
-                                setImportSelectedExerciseIds((prev) => {
-                                  const next = new Set(prev)
-                                  if (e.target.checked) next.add(ex.id)
-                                  else next.delete(ex.id)
-                                  return next
-                                })
-                              }}
-                              className="h-4 w-4 accent-[#14532d]"
-                            />
-                            <span className="flex-1 text-sm text-gray-800">{getExerciseTitle(ex)}</span>
-                            <span className="text-xs text-gray-400">{getExerciseTypeLabel(ex.exerciseType)}</span>
-                          </label>
-                        ))}
-                      {exercises.filter((ex) => ex.courseId === importSourceCourseId).length === 0 && (
-                        <p className="px-4 py-3 text-sm text-gray-500">Không có exercise nào trong khóa học này</p>
-                      )}
-                    </div>
-                    <p className="mt-1 text-xs text-gray-500">Đã chọn {importSelectedExerciseIds.size} exercise</p>
+                    {quickCopyError && <p className="text-sm text-red-600 bg-red-50 p-2 rounded">{quickCopyError}</p>}
                   </div>
-                )}
-
-                {importFromCourseError && (
-                  <p className="text-sm text-red-600">{importFromCourseError}</p>
-                )}
-              </div>
-
-              <div className="flex justify-end gap-3 border-t px-6 py-4">
-                <button
-                  type="button"
-                  onClick={() => setShowImportExerciseModal(false)}
-                  className="rounded px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void importFromCourse()}
-                  disabled={importingFromCourse}
-                  className="rounded bg-[#14532d] px-5 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {importingFromCourse ? 'Đang import...' : `Import ${importSelectedExerciseIds.size > 0 ? `(${importSelectedExerciseIds.size})` : ''}`}
-                </button>
+                  <div className="flex justify-end gap-3 border-t px-6 py-4 bg-gray-50/50">
+                    <button
+                      type="button"
+                      onClick={() => setQuickCopyExercise(null)}
+                      className="rounded-md px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors"
+                    >
+                      Hủy
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void quickCopyToTarget()}
+                      disabled={quickCopyLoading || !quickCopyTargetCourseId}
+                      className="rounded-md bg-[#14532d] px-6 py-2 text-sm font-medium text-white hover:bg-[#166534] shadow-md transition-all disabled:opacity-50"
+                    >
+                      {quickCopyLoading ? 'Đang copy...' : 'Copy Ngay'}
+                    </button>
+                  </div>
+                </motion.div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showImportExerciseModal && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowImportExerciseModal(false)}
+                    </div>
+                  )}
+
+                  {importFromCourseError && (
+                    <p className="text-sm text-red-600">{importFromCourseError}</p>
+                  )}
+                </div>
+
+                <div className="flex justify-end gap-3 border-t px-6 py-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowImportExerciseModal(false)}
+                    className="rounded px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void importFromCourse()}
+                    disabled={importingFromCourse}
+                    className="rounded bg-[#14532d] px-5 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                  >
+                    {importingFromCourse ? 'Đang import...' : `Import ${importSelectedExerciseIds.size > 0 ? `(${importSelectedExerciseIds.size})` : ''}`}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

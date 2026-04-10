@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
 import LinkifiedText from '@/components/LinkifiedText'
 
 interface Course {
@@ -248,9 +249,9 @@ export default function CoursesPage() {
         name: 'Early Bird',
         discount: ebDiscount,
         label: 'Tiết kiệm ngay',
-        color: 'from-orange-400 to-amber-500',
-        textColor: 'text-orange-700',
-        bgColor: 'bg-orange-50'
+        color: 'from-blue-500 to-indigo-600',
+        textColor: 'text-blue-700',
+        bgColor: 'bg-blue-50'
       }
     } else {
       return {
@@ -361,11 +362,11 @@ export default function CoursesPage() {
                       onClick={() => setExpandedCourseId(course.id)}
                       className={`w-full text-left transition-all duration-200 rounded-xl border p-4 shadow-sm hover:shadow-md ${
                         isActive 
-                          ? 'border-amber-500 bg-linear-to-br from-amber-50 to-white ring-1 ring-amber-500' 
-                          : 'border-slate-200 bg-white hover:border-amber-300'
+                          ? 'border-[#14532d] bg-linear-to-br from-[#14532d]/10 to-white ring-1 ring-[#14532d]' 
+                          : 'border-slate-200 bg-white hover:border-[#14532d]/30'
                       }`}
                     >
-                      <p className={`font-bold leading-tight ${isActive ? 'text-amber-700' : 'text-slate-800'}`}>
+                      <p className={`font-bold leading-tight ${isActive ? 'text-[#14532d]' : 'text-slate-800'}`}>
                         {course.title}
                       </p>
                       <div className="mt-2 flex items-center justify-between">
@@ -462,7 +463,7 @@ export default function CoursesPage() {
                           </button>
                           
                           {isPendingPayment && (
-                            <p className="mt-4 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                            <p className="mt-4 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 p-4 rounded-lg">
                               Bạn đã đăng ký khóa học này. Vui lòng chờ admin xác nhận chuyển khoản.
                             </p>
                           )}
@@ -499,7 +500,7 @@ export default function CoursesPage() {
                       <div className="px-5 pb-8 pt-4 sm:px-8 sm:pb-10 sm:pt-5 space-y-8">
                         <div>
                           <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span>
+                            <span className="w-1.5 h-6 bg-[#14532d] rounded-full"></span>
                             Thông tin chi tiết
                           </h3>
                           <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
@@ -510,7 +511,7 @@ export default function CoursesPage() {
                         {/* Current Offers Section */}
                         <div>
                           <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-emerald-500 rounded-full"></span>
+                            <span className="w-1.5 h-6 bg-emerald-700 rounded-full"></span>
                             Ưu đãi hiện có
                           </h3>
                           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm overflow-hidden relative">
@@ -520,7 +521,7 @@ export default function CoursesPage() {
                               const sebDiscount = (course.sebDiscountPercent ?? 30) / 100
                               const ebDiscount = (course.ebDiscountPercent ?? 15) / 100
 
-                              const phases = [
+                                  const phases = [
                                 {
                                   name: 'Super Early Bird',
                                   label: 'Ưu đãi lớn nhất',
@@ -532,7 +533,7 @@ export default function CoursesPage() {
                                   name: 'Early Bird',
                                   label: 'Tiết kiệm ngay',
                                   price: Math.round(originalPrice * (1 - ebDiscount)),
-                                  color: 'orange',
+                                  color: 'blue',
                                   isActive: tier.name === 'Early Bird'
                                 },
                                 {
@@ -553,7 +554,7 @@ export default function CoursesPage() {
                                         className={`flex-1 rounded-2xl border-2 p-4 transition-all duration-300 ${
                                           phase.isActive 
                                             ? phase.color === 'emerald' ? 'border-emerald-500 bg-emerald-50 ring-4 ring-emerald-500/10 scale-[1.02]' :
-                                              phase.color === 'orange' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-500/10 scale-[1.02]' :
+                                              phase.color === 'blue' ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-500/10 scale-[1.02]' :
                                               'border-slate-500 bg-slate-50 ring-4 ring-slate-500/10 scale-[1.02]'
                                             : 'border-slate-300 bg-white opacity-60 grayscale-[0.5]'
                                         }`}
@@ -563,7 +564,7 @@ export default function CoursesPage() {
                                             <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 ${
                                               phase.isActive 
                                                 ? phase.color === 'emerald' ? 'bg-emerald-500 text-white' :
-                                                  phase.color === 'orange' ? 'bg-orange-500 text-white' :
+                                                  phase.color === 'blue' ? 'bg-blue-500 text-white' :
                                                   'bg-slate-500 text-white'
                                                 : 'bg-slate-200 text-slate-500'
                                             }`}>
@@ -576,7 +577,7 @@ export default function CoursesPage() {
                                           <p className={`mt-3 text-lg font-black ${
                                             phase.isActive 
                                               ? phase.color === 'emerald' ? 'text-emerald-700' :
-                                                phase.color === 'orange' ? 'text-orange-700' :
+                                                phase.color === 'blue' ? 'text-blue-700' :
                                                 'text-slate-700'
                                               : 'text-slate-400'
                                           }`}>
@@ -588,12 +589,12 @@ export default function CoursesPage() {
                                   </div>
 
                                   {tier.name !== 'Regular' && (
-                                    <div className="rounded-xl bg-orange-50 border border-orange-100 p-3 flex items-center justify-between">
+                                    <div className="rounded-xl bg-blue-50 border border-blue-100 p-3 flex items-center justify-between">
                                       <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
-                                        <p className="text-sm font-bold text-orange-800">Giai đoạn hiện tại: {tier.name}</p>
+                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                                        <p className="text-sm font-bold text-blue-800">Giai đoạn hiện tại: {tier.name}</p>
                                       </div>
-                                      <p className="text-sm font-black text-orange-900">
+                                      <p className="text-sm font-black text-[#14532d]">
                                         TIẾT KIỆM: {formatVnd(originalPrice - Math.round(originalPrice * (1 - tier.discount)))}
                                       </p>
                                     </div>
@@ -606,9 +607,9 @@ export default function CoursesPage() {
 
                         <div className="pt-6 border-t border-slate-100">
                           <p className="text-sm text-slate-600 leading-relaxed">
-                            Mọi thông tin thêm, vui lòng liên hệ <strong>Mr. Nguyễn Trí Bằng</strong> qua số điện thoại <a href="tel:0915091093" className="text-amber-700 hover:underline">0915091093</a>. 
+                            Mọi thông tin thêm, vui lòng liên hệ <strong>Mr. Nguyễn Trí Bằng</strong> qua số điện thoại <a href="tel:0915091093" className="text-[#14532d] hover:underline font-semibold">0915091093</a>. 
                             Hoặc nhắn tin về Facebook:
-                            <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="block mt-2 font-medium text-amber-700 hover:underline">facebook.com/bangbigbee</a>
+                            <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="block mt-2 font-medium text-[#14532d] hover:underline">facebook.com/bangbigbee</a>
                           </p>
                         </div>
                       </div>
@@ -620,143 +621,171 @@ export default function CoursesPage() {
           </div>
         )}
 
-        {paymentInstruction && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-xl font-bold text-[#14532d]">Payment Details</h3>
-                <button
-                  onClick={() => {
-                    setPaymentInstruction(null)
-                    setPendingRegistrationDraft(null)
-                  }}
-                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none"
-                >
-                  ×
-                </button>
-              </div>
-
-              <p className="text-green-700 bg-green-50 border border-green-200 rounded p-3 text-sm mb-4">
-                Please use the exact transfer message below so the admin can confirm your payment.
-              </p>
-
-              <div className="flex justify-center mb-4">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={getQrUrl(paymentInstruction)}
-                  alt="Bank transfer QR code"
-                  className="w-56 h-56 rounded border border-gray-200"
-                />
-              </div>
-
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-600">Bank:</span>
-                  <span className="font-semibold">{paymentInstruction.bankName}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-600">Account number:</span>
-                  <span className="font-mono font-semibold">{paymentInstruction.accountNumber}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-600">Account name:</span>
-                  <span className="font-semibold">{paymentInstruction.accountName}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-600">Amount:</span>
-                  <span className="font-semibold text-red-600">{paymentInstruction.amount.toLocaleString('vi-VN')} VND</span>
-                </div>
-                <div className="py-2">
-                  <p className="text-gray-600 mb-1">Transfer message:</p>
-                  <div className="rounded border-2 border-[#14532d] bg-green-50 p-3 text-center">
-                    <span className="font-mono text-sm font-normal tracking-wider text-[#14532d]">
-                      <LinkifiedText text={paymentInstruction.transferContent} preserveLineBreaks={false} linkClassName="break-all font-medium text-[#14532d] underline underline-offset-2 hover:text-[#166534]" />
-                    </span>
-                  </div>
-                  <p className="text-sm text-[#14532d] font-semibold mt-1">Example: Nguyen Van A - 0934567890</p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  if (pendingRegistrationDraft) {
-                    void confirmRegistrationAfterPaymentReview()
-                    return
-                  }
-                  setPaymentInstruction(null)
-                }}
-                disabled={Boolean(pendingRegistrationDraft && registering === pendingRegistrationDraft.courseId)}
-                className="mt-4 w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+        <AnimatePresence>
+          {paymentInstruction && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
               >
-                {pendingRegistrationDraft
-                  ? registering === pendingRegistrationDraft.courseId
-                    ? 'Đang đăng ký...'
-                    : 'Đăng Ký'
-                  : 'Đóng'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {pendingReferralCourse && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md rounded-lg border-2 border-[#14532d] bg-white p-6 shadow-[0_18px_48px_rgba(20,83,45,0.22)]">
-              <div className="mb-4 flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-bold text-orange-700">Ai đã giới thiệu khóa học {pendingReferralCourse.title} này cho bạn?</h3>
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-bold text-[#14532d]">Payment Details</h3>
+                  <button
+                    onClick={() => {
+                      setPaymentInstruction(null)
+                      setPendingRegistrationDraft(null)
+                    }}
+                    className="text-gray-400 hover:text-gray-600 text-2xl font-bold leading-none"
+                  >
+                    ×
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPendingReferralCourse(null)
-                    setReferrerInput('')
-                  }}
-                  className="text-2xl leading-none text-orange-300 hover:text-orange-600"
-                >
-                  ×
-                </button>
-              </div>
 
-              <label className="block text-sm font-medium text-orange-700">Mã học viên hoặc email người giới thiệu</label>
-              <input
-                type="text"
-                value={referrerInput}
-                onChange={(event) => setReferrerInput(event.target.value)}
-                placeholder="Không bắt buộc"
-                className="mt-2 block w-full rounded-lg border border-orange-200 px-4 py-2 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-              />
-              <p className="mt-2 text-xs text-gray-500">Để trống nếu bạn không được ai giới thiệu.</p>
+                <p className="text-green-700 bg-green-50 border border-green-200 rounded p-3 text-sm mb-4">
+                  Please use the exact transfer message below so the admin can confirm your payment.
+                </p>
 
-              <div className="mt-6 flex justify-end gap-3">
+                <div className="flex justify-center mb-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={getQrUrl(paymentInstruction)}
+                    alt="Bank transfer QR code"
+                    className="w-56 h-56 rounded border border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between py-1 border-b border-gray-100">
+                    <span className="text-gray-600">Bank:</span>
+                    <span className="font-semibold">{paymentInstruction.bankName}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-gray-100">
+                    <span className="text-gray-600">Account number:</span>
+                    <span className="font-mono font-semibold">{paymentInstruction.accountNumber}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-gray-100">
+                    <span className="text-gray-600">Account name:</span>
+                    <span className="font-semibold">{paymentInstruction.accountName}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-gray-100">
+                    <span className="text-gray-600">Amount:</span>
+                    <span className="font-semibold text-red-600">{paymentInstruction.amount.toLocaleString('vi-VN')} VND</span>
+                  </div>
+                  <div className="py-2">
+                    <p className="text-gray-600 mb-1">Transfer message:</p>
+                    <div className="rounded border-2 border-[#14532d] bg-green-50 p-3 text-center">
+                      <span className="font-mono text-sm font-normal tracking-wider text-[#14532d]">
+                        <LinkifiedText text={paymentInstruction.transferContent} preserveLineBreaks={false} linkClassName="break-all font-medium text-[#14532d] underline underline-offset-2 hover:text-[#166534]" />
+                      </span>
+                    </div>
+                    <p className="text-sm text-[#14532d] font-semibold mt-1">Example: Nguyen Van A - 0934567890</p>
+                  </div>
+                </div>
+
                 <button
-                  type="button"
                   onClick={() => {
-                    setPendingReferralCourse(null)
-                    setReferrerInput('')
-                  }}
-                  className="rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const course = courses.find((item) => item.id === pendingReferralCourse.id)
-                    if (!course) {
-                      setErrorModal('Không tìm thấy khóa học để tiếp tục đăng ký.')
+                    if (pendingRegistrationDraft) {
+                      void confirmRegistrationAfterPaymentReview()
                       return
                     }
-                    openPaymentPreviewForRegistration(course, referrerInput)
+                    setPaymentInstruction(null)
                   }}
-                  disabled={registering === pendingReferralCourse.id}
-                  className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                  disabled={Boolean(pendingRegistrationDraft && registering === pendingRegistrationDraft.courseId)}
+                  className="mt-4 w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
                 >
-                  {registering === pendingReferralCourse.id ? 'Đang đăng ký...' : 'Tiếp tục'}
+                  {pendingRegistrationDraft
+                    ? registering === pendingRegistrationDraft.courseId
+                      ? 'Đang đăng ký...'
+                      : 'Đăng Ký'
+                    : 'Đóng'}
                 </button>
-              </div>
+              </motion.div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {pendingReferralCourse && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => {
+                  setPendingReferralCourse(null)
+                  setReferrerInput('')
+                }}
+                className="absolute inset-0 bg-black/40 backdrop-blur-xs"
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                className="relative w-full max-w-md rounded-lg border-2 border-[#14532d] bg-white p-6 shadow-[0_18px_48px_rgba(20,83,45,0.22)]"
+              >
+                <div className="mb-4 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-[#14532d]">Ai đã giới thiệu khóa học {pendingReferralCourse.title} này cho bạn?</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPendingReferralCourse(null)
+                      setReferrerInput('')
+                    }}
+                    className="text-2xl leading-none text-[#14532d]/30 hover:text-[#14532d]"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <label className="block text-sm font-medium text-slate-700">Mã học viên hoặc email người giới thiệu</label>
+                <input
+                  type="text"
+                  value={referrerInput}
+                  onChange={(event) => setReferrerInput(event.target.value)}
+                  placeholder="Không bắt buộc"
+                  className="mt-2 block w-full rounded-lg border border-slate-200 px-4 py-2 outline-none focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d]"
+                />
+                <p className="mt-2 text-xs text-gray-500">Để trống nếu bạn không được ai giới thiệu.</p>
+
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPendingReferralCourse(null)
+                      setReferrerInput('')
+                    }}
+                    className="rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const course = courses.find((item) => item.id === pendingReferralCourse.id)
+                      if (!course) {
+                        setErrorModal('Không tìm thấy khóa học để tiếp tục đăng ký.')
+                        return
+                      }
+                      openPaymentPreviewForRegistration(course, referrerInput)
+                    }}
+                    disabled={registering === pendingReferralCourse.id}
+                    className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                  >
+                    {registering === pendingReferralCourse.id ? 'Đang đăng ký...' : 'Tiếp tục'}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

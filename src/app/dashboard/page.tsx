@@ -1,10 +1,11 @@
-﻿'use client'
+'use client'
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
 import LinkifiedText from '@/components/LinkifiedText'
 import { showApToast } from '@/lib/showApToast'
 
@@ -656,112 +657,163 @@ export default function Dashboard() {
           )}
         </div>
 
-        {submitConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent p-4">
-            <div className="w-full max-w-md rounded-lg border border-[#14532d]/40 bg-white p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-900">Confirm Exercise Submission</h3>
-              <p className="mt-3 text-sm text-gray-700">
-                You worked on {getExerciseTitle(submitConfirm.exercise)} for <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
-                Do you want to submit this result?
-              </p>
-              <div className="mt-6 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setSubmitConfirm(null)}
-                  disabled={submittingExerciseId === submitConfirm.exercise.id}
-                  className="rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300 disabled:opacity-50"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  onClick={() => submitExercise(submitConfirm.exercise, submitConfirm.durationSeconds)}
-                  disabled={submittingExerciseId === submitConfirm.exercise.id}
-                  className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534] disabled:opacity-50"
-                >
-                  {submittingExerciseId === submitConfirm.exercise.id ? 'Sending...' : 'Send result'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {listenReminderExerciseTitle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent p-4">
-            <div className="w-full max-w-md rounded-lg border border-amber-300 bg-white p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-amber-800">Chưa nghe hết audio</h3>
-              <p className="mt-3 text-sm text-gray-700">
-                Bạn cần nghe hết file audio của <span className="font-semibold">{listenReminderExerciseTitle}</span> trước khi nhấn submit.
-              </p>
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setListenReminderExerciseTitle(null)}
-                  className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]"
-                >
-                  Tiếp tục nghe
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-
-
-        {showHomeworkModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="rounded border border-[#14532d]/40 bg-white shadow-lg p-6 max-w-md w-full">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold text-gray-900">Submit Assignment</h3>
-                <button
-                  onClick={() => setShowHomeworkModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
-                >
-                  ×
-                </button>
-              </div>
-
-              {homeworkLoading ? (
-                <p className="text-gray-500 mb-4">Loading homework list...</p>
-              ) : (
-                <>
-                  {homeworks.length === 0 ? (
-                    <p className="text-[#14532d] mb-4">Nice work. You have completed all of your homework.</p>
-                  ) : (
-                    <select
-                      value={selectedHomeworkId}
-                      onChange={(e) => setSelectedHomeworkId(e.target.value)}
-                      className="w-full p-2 mb-4 border rounded"
-                    >
-                      {homeworks.map((homework) => (
-                        <option key={homework.id} value={homework.id}>
-                          {homework.title} - Due {new Date(homework.dueDate).toLocaleDateString('en-GB')}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-
-                  <textarea
-                    placeholder="Submission note"
-                    value={homeworkNote}
-                    onChange={(e) => setHomeworkNote(e.target.value)}
-                    className="w-full p-2 mb-4 border rounded"
-                    rows={4}
-                  />
-
+        <AnimatePresence>
+          {submitConfirm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSubmitConfirm(null)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                className="relative w-full max-w-md rounded-lg border border-[#14532d]/40 bg-white p-6 shadow-lg"
+              >
+                <h3 className="text-lg font-bold text-gray-900">Confirm Exercise Submission</h3>
+                <p className="mt-3 text-sm text-gray-700">
+                  You worked on {getExerciseTitle(submitConfirm.exercise)} for <span className="font-semibold text-[#14532d]">{formatDuration(submitConfirm.durationSeconds)}</span>.
+                  Do you want to submit this result?
+                </p>
+                <div className="mt-6 flex justify-end gap-3">
                   <button
                     type="button"
-                    onClick={submitHomework}
-                    disabled={homeworks.length === 0}
-                    className="w-full bg-[#14532d] text-white p-2 rounded disabled:opacity-50"
+                    onClick={() => setSubmitConfirm(null)}
+                    disabled={submittingExerciseId === submitConfirm.exercise.id}
+                    className="rounded bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300 disabled:opacity-50"
                   >
-                    Submit
+                    Back
                   </button>
-                </>
-              )}
+                  <button
+                    type="button"
+                    onClick={() => submitExercise(submitConfirm.exercise, submitConfirm.durationSeconds)}
+                    disabled={submittingExerciseId === submitConfirm.exercise.id}
+                    className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534] disabled:opacity-50"
+                  >
+                    {submittingExerciseId === submitConfirm.exercise.id ? 'Sending...' : 'Send result'}
+                  </button>
+                </div>
+              </motion.div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {listenReminderExerciseTitle && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setListenReminderExerciseTitle(null)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-xs"
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                className="relative w-full max-w-md rounded-lg border border-amber-300 bg-white p-6 shadow-lg"
+              >
+                <h3 className="text-lg font-bold text-amber-800">Chưa nghe hết audio</h3>
+                <p className="mt-3 text-sm text-gray-700">
+                  Bạn cần nghe hết file audio của <span className="font-semibold">{listenReminderExerciseTitle}</span> trước khi nhấn submit.
+                </p>
+                <div className="mt-6 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setListenReminderExerciseTitle(null)}
+                    className="rounded bg-[#14532d] px-4 py-2 text-white hover:bg-[#166534]"
+                  >
+                    Tiếp tục nghe
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+
+
+        <AnimatePresence>
+          {showHomeworkModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowHomeworkModal(false)}
+                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                className="relative rounded border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-2xl font-bold text-gray-900">Submit Assignment</h3>
+                  <button
+                    onClick={() => setShowHomeworkModal(false)}
+                    className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {homeworkLoading ? (
+                  <p className="text-gray-500 mb-4">Loading homework list...</p>
+                ) : (
+                  <>
+                    {homeworks.length === 0 ? (
+                      <p className="text-[#14532d] mb-4">Nice work. You have completed all of your homework.</p>
+                    ) : (
+                      <select
+                        value={selectedHomeworkId}
+                        onChange={(e) => setSelectedHomeworkId(e.target.value)}
+                        className="w-full p-2 mb-4 border rounded"
+                      >
+                        {homeworks.map((homework) => (
+                          <option key={homework.id} value={homework.id}>
+                            {homework.title} - Due {new Date(homework.dueDate).toLocaleDateString('en-GB')}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+
+                    <textarea
+                      placeholder="Submission note"
+                      value={homeworkNote}
+                      onChange={(e) => setHomeworkNote(e.target.value)}
+                      className="w-full p-2 mb-4 border rounded"
+                      rows={4}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={submitHomework}
+                      disabled={homeworks.length === 0}
+                      className="w-full bg-[#14532d] text-white p-2 rounded disabled:opacity-50"
+                    >
+                      Submit
+                    </button>
+                  </>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
