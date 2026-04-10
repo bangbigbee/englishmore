@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect, use } from 'react'
+import React, { useState, useEffect, use, useCallback } from 'react'
+import { useSession } from 'next-auth/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -43,6 +44,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
   const [showLessonContent, setShowLessonContent] = useState(false)
+  const { data: session, status } = useSession()
+  const [isSyncing, setIsSyncing] = useState(false)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -66,6 +69,108 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     fetchTopic()
   }, [slug])
 
+  // Persistence Logic: Load
+  const loadProgress = useCallback(async (lessonId: string) => {
+    if (status === 'loading') return
+
+    if (status === 'authenticated') {
+      try {
+        const res = await fetch(`/api/toeic/progress?lessonId=${lessonId}`)
+        if (res.ok) {
+          const data = await res.json()
+          const answers: Record<string, string> = {}
+          const results: Record<string, boolean> = {}
+          
+          Object.keys(data).forEach(qId => {
+            answers[qId] = data[qId].selected
+            results[qId] = true // Since it's in DB, we've already "checked" it
+          })
+          
+          setUserAnswers(prev => ({ ...prev, ...answers }))
+          setShowResults(prev => ({ ...prev, ...results }))
+        }
+      } catch (error) {
+        console.error('Error loading DB progress:', error)
+      }
+    } else {
+      // Guest: Load from LocalStorage
+      try {
+        const stored = localStorage.getItem('toeic_guest_progress')
+        if (stored) {
+          const allData = JSON.parse(stored)
+          const lessonData = allData[lessonId] || {}
+          
+          const answers: Record<string, string> = {}
+          const results: Record<string, boolean> = {}
+          
+          Object.keys(lessonData).forEach(qId => {
+            answers[qId] = lessonData[qId].selected
+            results[qId] = true
+          })
+          
+          setUserAnswers(prev => ({ ...prev, ...answers }))
+          setShowResults(prev => ({ ...prev, ...results }))
+        }
+      } catch (error) {
+        console.error('Error loading local progress:', error)
+      }
+    }
+  }, [status, session])
+
+  // Persistence Logic: Sync guest data to account
+  useEffect(() => {
+    const syncData = async () => {
+      if (status !== 'authenticated' || isSyncing) return
+      
+      const stored = localStorage.getItem('toeic_guest_progress')
+      if (!stored) return
+
+      try {
+        setIsSyncing(true)
+        const allData = JSON.parse(stored)
+        const flatAnswers: any[] = []
+        
+        Object.keys(allData).forEach(lId => {
+          Object.keys(allData[lId]).forEach(qId => {
+            flatAnswers.push({
+              questionId: qId,
+              selectedOption: allData[lId][qId].selected,
+              isCorrect: allData[lId][qId].isCorrect
+            })
+          })
+        })
+
+        if (flatAnswers.length > 0) {
+          const res = await fetch('/api/toeic/progress/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answers: flatAnswers })
+          })
+          
+          if (res.ok) {
+            localStorage.removeItem('toeic_guest_progress')
+            toast.success('Đã đồng bộ tiến độ luyện tập vào tài khoản của bạn!')
+            // Trigger a reload of current lesson progress
+            if (selectedLessonId) loadProgress(selectedLessonId)
+          }
+        }
+      } catch (error) {
+        console.error('Error syncing progress:', error)
+      } finally {
+        setIsSyncing(false)
+      }
+    }
+    
+    syncData()
+  }, [status, selectedLessonId, loadProgress, isSyncing])
+
+  // Load progress when lesson changes
+  useEffect(() => {
+    if (selectedLessonId) {
+      loadProgress(selectedLessonId)
+    }
+  }, [selectedLessonId, loadProgress])
+
   const currentLesson = topic?.lessons.find(l => l.id === selectedLessonId)
 
   const handleSelectOption = (questionId: string, option: string) => {
@@ -73,12 +178,50 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     setUserAnswers(prev => ({ ...prev, [questionId]: option }))
   }
 
-  const handleCheckAnswer = (questionId: string) => {
+  const handleCheckAnswer = async (questionId: string) => {
     if (!userAnswers[questionId]) {
       toast.warning('Vui lòng chọn một đáp án!')
       return
     }
+    
+    const q = currentLesson?.questions.find(quest => quest.id === questionId)
+    if (!q) return
+
+    const selectedOption = userAnswers[questionId]
+    const isCorrect = selectedOption === q.correctOption
+
     setShowResults(prev => ({ ...prev, [questionId]: true }))
+
+    // Persist
+    if (status === 'authenticated') {
+      try {
+        const res = await fetch('/api/toeic/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ questionId, selectedOption, isCorrect })
+        })
+        const data = await res.json()
+        if (res.ok && data.awardedPoints) {
+          toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} điểm chuyên cần cho bài học này.`)
+        }
+      } catch (error) {
+        console.error('Error saving progress:', error)
+      }
+    } else {
+      // Guest: Save to LocalStorage
+      try {
+        const stored = localStorage.getItem('toeic_guest_progress') || '{}'
+        const allData = JSON.parse(stored)
+        if (!selectedLessonId) return
+        
+        if (!allData[selectedLessonId]) allData[selectedLessonId] = {}
+        allData[selectedLessonId][questionId] = { selected: selectedOption, isCorrect }
+        
+        localStorage.setItem('toeic_guest_progress', JSON.stringify(allData))
+      } catch (error) {
+        console.error('Error saving local progress:', error)
+      }
+    }
   }
 
   if (loading) {
@@ -370,7 +513,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     </div>
                                     {q.explanation && (
                                       <div className="ml-4 pl-4 border-l border-current/20 hidden lg:block">
-                                        <p className="text-xs italic opacity-80 max-w-xs line-clamp-2">{q.explanation}</p>
+                                        <p className="text-xs italic opacity-80">{q.explanation}</p>
                                       </div>
                                     )}
                                   </div>
