@@ -19,6 +19,7 @@ interface AvailableCourse {
   ebDiscountPercent: number | null
   sebThresholdDays: number | null
   ebThresholdDays: number | null
+  description?: string | null
 }
 
 type GreetingInputMethod = 'text' | 'voice'
@@ -344,7 +345,8 @@ function HomeContent() {
                 sebDiscountPercent: item?.sebDiscountPercent ?? null,
                 ebDiscountPercent: item?.ebDiscountPercent ?? null,
                 sebThresholdDays: item?.sebThresholdDays ?? null,
-                ebThresholdDays: item?.ebThresholdDays ?? null
+                ebThresholdDays: item?.ebThresholdDays ?? null,
+                description: item?.description ?? null
               }))
             : []
           setAvailableCourses(adminCourses.filter((course) => course.id && course.title))
@@ -2252,12 +2254,12 @@ function HomeContent() {
         )}
 
         {session?.user?.role !== 'member' && (
-          <section className="mt-10 px-1">
-            <div className="mb-5">
-              <h3 className="text-xl font-bold tracking-tight text-slate-800">Khóa học đang mở đăng ký</h3>
+          <section className="open-courses-shimmer mt-10 rounded-2xl border border-[#14532d]/20 bg-linear-to-br from-[#14532d]/6 via-white to-orange-50 p-5 shadow-sm sm:p-6">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-xl font-bold text-[#14532d] sm:text-2xl">Khóa học đang mở đăng ký</h3>
             </div>
             {availableCourses.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {availableCourses.map((course) => {
                   const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
                   const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
@@ -2273,40 +2275,60 @@ function HomeContent() {
                         month: '2-digit',
                         year: 'numeric'
                       })
-                  const tier = getPromotionTier(course)
-                  const discountedPrice = course.price * (1 - tier.discount)
 
                   return (
-                    <div key={course.id} className="group flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/80 bg-white p-4 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-[0_12px_24px_-8px_rgba(20,83,45,0.15)]">
-                      <div>
-                        <div className="mb-2.5 flex flex-wrap items-center gap-1.5">
-                          <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${isFull ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
-                            {availabilityText}
-                          </span>
-                          {tier.discount > 0 && (
-                            <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tier.bgColor} ${tier.textColor} border border-${tier.textColor}/20`}>
-                              {tier.name}
-                            </span>
-                          )}
-                          <span className="inline-flex items-center rounded-md bg-slate-50 border border-slate-200 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">
-                             ⏳ {registrationDeadlineText}
-                          </span>
-                        </div>
+                    <div key={course.id} className="group relative overflow-hidden rounded-xl border border-[#14532d]/25 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+                      {/* Pricing Tier Badge */}
+                      {(() => {
+                        const tier = getPromotionTier(course)
+                        return (
+                          <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
+                            {tier.name}
+                          </div>
+                        )
+                      })()}
 
-                        <p className="mt-1 text-[16px] font-bold leading-snug text-slate-800 transition-colors group-hover:text-[#14532d]">{course.title}</p>
-                        
-                        <div className="mt-2.5 flex items-baseline gap-2">
-                          <span className="text-lg font-extrabold text-[#14532d] tracking-tight">{formatVND(discountedPrice)}</span>
-                          {tier.discount > 0 && (
-                            <span className="text-xs font-medium text-slate-400 line-through">{formatVND(course.price)}</span>
-                          )}
-                        </div>
+                      <p className="pr-12 text-xl font-extrabold leading-tight text-amber-500">{course.title}</p>
+                      
+                      {course.description && (
+                        <p className="mt-2 text-sm text-slate-500 line-clamp-2">
+                          {course.description}
+                        </p>
+                      )}
+                      
+                      <div className="mt-3 flex items-baseline gap-2">
+                        {(() => {
+                          const tier = getPromotionTier(course)
+                          const discountedPrice = course.price * (1 - tier.discount)
+                          return (
+                            <>
+                              <span className="text-base font-medium text-slate-700">{formatVND(discountedPrice)}</span>
+                              {tier.discount > 0 && (
+                                <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
+                              )}
+                            </>
+                          )
+                        })()}
                       </div>
+
+                      <div className="mt-3 flex flex-col gap-1">
+                        <p className="text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
+                        {(() => {
+                          const tier = getPromotionTier(course)
+                          return (
+                            <p className={`text-[11px] font-bold uppercase tracking-tight ${tier.textColor}`}>
+                              ● {tier.label}
+                            </p>
+                          )
+                        })()}
+                      </div>
+
+                      <p className={`mt-2 text-sm font-semibold ${isFull ? 'text-red-700' : 'text-[#14532d]'}`}>{availabilityText}</p>
                       
                       <div className="mt-4">
                         <Link
                           href={registerHref}
-                          className={`flex w-full items-center justify-center rounded-lg py-2.5 text-[13px] font-bold transition-all ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-slate-50 text-[#14532d] border border-slate-200 hover:border-[#14532d] hover:bg-[#14532d] hover:text-white hover:shadow-md'}`}
+                          className={`inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-bold transition shadow-sm ${isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
                           aria-disabled={isFull}
                         >
                           Đăng Ký Ngay
@@ -2317,7 +2339,7 @@ function HomeContent() {
                 })}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">Hiện chưa có khóa học mở đăng ký.</p>
+              <p className="mt-4 text-base text-slate-600">Hiện chưa có khóa học mở đăng ký.</p>
             )}
           </section>
         )}
