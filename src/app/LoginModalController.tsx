@@ -26,9 +26,13 @@ function LoginModalControllerInner() {
   }, [router, pathname, searchParams])
 
   const handleGuest = useCallback(() => {
-    handleClose()
+    // If we have a different target, navigate there directly.
+    // Navigating to a new path will naturally clear the search params from the old path.
     if (callbackUrl && callbackUrl !== pathname) {
       router.push(callbackUrl)
+    } else {
+      // If no target or same target, just close the modal.
+      handleClose()
     }
   }, [handleClose, callbackUrl, pathname, router])
 
