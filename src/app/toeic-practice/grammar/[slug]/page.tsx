@@ -203,6 +203,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         const data = await res.json()
         if (res.ok && data.awardedPoints) {
           toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} điểm chuyên cần cho bài học này.`)
+          // Play reward sound
+          const audio = new Audio('/audio/amazing-reward-sound.mp3')
+          audio.play().catch(e => console.error('Error playing reward sound:', e))
         }
       } catch (error) {
         console.error('Error saving progress:', error)

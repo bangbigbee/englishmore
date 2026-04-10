@@ -91,7 +91,6 @@ export async function POST(request: NextRequest) {
     })
 
     if (user?.role === 'member') {
-      // Find the lesson for this question
       const question = await prisma.toeicQuestion.findUnique({
         where: { id: questionId },
         select: { lessonId: true }
@@ -99,47 +98,21 @@ export async function POST(request: NextRequest) {
 
       if (question) {
         const lessonId = question.lessonId
-        
-        // Count total questions in lesson
-        const totalQuestions = await prisma.toeicQuestion.count({
-          where: { lessonId }
-        })
-
-        // Count user's unique answers in this lesson
+        const totalQuestions = await prisma.toeicQuestion.count({ where: { lessonId } })
         const userAnswersCount = await prisma.toeicAnswer.count({
-          where: {
-            userId,
-            question: { lessonId }
-          }
+          where: { userId, question: { lessonId } }
         })
 
-        // If completed (all questions answered at least once)
         if (userAnswersCount >= totalQuestions && totalQuestions > 0) {
-          const referenceKey = `TOEIC_LESSON_${lessonId}`
-          
-          // Try to award points (once per lesson)
-          const existingLog = await prisma.activityPointLog.findUnique({
-            where: { referenceKey }
+          const { awardActivityPoints, ACTIVITY_POINT_KEYS } = await import('@/lib/activityPoints')
+          const result = await awardActivityPoints({
+            userId,
+            activityKey: ACTIVITY_POINT_KEYS.toeicPractice,
+            referenceKey: `TOEIC_LESSON_${lessonId}`
           })
-
-          if (!existingLog) {
-            // Award points
-            const pointsToAdd = 10
-            await prisma.$transaction([
-              prisma.user.update({
-                where: { id: userId },
-                data: { activityPoints: { increment: pointsToAdd } }
-              }),
-              prisma.activityPointLog.create({
-                data: {
-                  userId,
-                  activityKey: 'TOEIC_PRACTICE',
-                  points: pointsToAdd,
-                  referenceKey
-                }
-              })
-            ])
-            return NextResponse.json({ success: true, awardedPoints: pointsToAdd })
+          
+          if (result.awardedAp > 0) {
+            return NextResponse.json({ success: true, awardedPoints: result.awardedAp })
           }
         }
       }

@@ -17,7 +17,8 @@ export const ACTIVITY_POINT_KEYS = {
   badgeOnTime3: 'badge_on_time_3',
   badgeSubmit5: 'badge_submit_5',
   badgeAllRounder: 'badge_all_rounder',
-  vocabPronunciation: 'vocab_pronunciation'
+  vocabPronunciation: 'vocab_pronunciation',
+  toeicPractice: 'toeic_practice'
 } as const
 
 export type ActivityPointKey = (typeof ACTIVITY_POINT_KEYS)[keyof typeof ACTIVITY_POINT_KEYS]
@@ -86,6 +87,10 @@ const DEFAULT_ACTIVITY_POINT_RULES: Record<ActivityPointKey, { label: string; po
   [ACTIVITY_POINT_KEYS.badgeAllRounder]: {
     label: 'Achievement: All-Rounder',
     points: 30
+  },
+  [ACTIVITY_POINT_KEYS.toeicPractice]: {
+    label: 'TOEIC Practice Completion',
+    points: 10
   }
 }
 
