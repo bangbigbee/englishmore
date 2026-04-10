@@ -3139,6 +3139,7 @@ export default function AdminDashboard() {
               <option value="">Tất cả khóa học</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>{course.title}</option>
+              ))}
             </select>
           </div>
 
