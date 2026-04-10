@@ -2943,6 +2943,13 @@ export default function AdminDashboard() {
            >
              8. REFERRALS
            </button>
+           <button
+             type="button"
+             onClick={() => setActiveSection('toeic')}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'toeic' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-[#ea980c] text-white hover:bg-[#d4890a]'}`}
+           >
+             9. TOEIC
+           </button>
           </div>
         </div>
 
