@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
@@ -746,6 +746,8 @@ export default function AdminDashboard() {
   const [toeicLoading, setToeicLoading] = useState(false)
   const [toeicError, setToeicError] = useState('')
   const [toeicSuccess, setToeicSuccess] = useState('')
+  const [importingToeicDocx, setImportingToeicDocx] = useState(false)
+  const toeicFileInputRef = useRef<HTMLInputElement>(null)
 
   const [showTopicModal, setShowTopicModal] = useState(false)
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '' })
@@ -1133,7 +1135,7 @@ export default function AdminDashboard() {
           setIsActivityPointDbReady(false)
           return
         }
-        throw new Error(data?.error || 'Could not update activity point rule.')
+        throw new Error(data?.error || 'Could not update the activity point rule.')
       }
 
       setActivityPointRules((current) =>
@@ -1150,7 +1152,7 @@ export default function AdminDashboard() {
       )
       toast.success('Activity points rule updated.')
     } catch (err) {
-      setActivityPointError(err instanceof Error ? err.message : 'Could not update activity point rule.')
+      setActivityPointError(err instanceof Error ? err.message : 'Could not update the activity point rule.')
     } finally {
       setSavingActivityPointKey('')
     }
@@ -1223,6 +1225,48 @@ export default function AdminDashboard() {
       setToeicLoading(false)
     }
   }, [])
+
+  const handleToeicDocxImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !selectedToeicLesson) return
+
+    try {
+      setImportingToeicDocx(true)
+      setToeicError('')
+      
+      const formData = new FormData()
+      formData.append('file', file)
+
+      // Step 1: Parse DOCX
+      const parseRes = await fetch('/api/admin/toeic/questions/import-docx', {
+        method: 'POST',
+        body: formData
+      })
+      const parseData = await parseRes.json()
+      if (!parseRes.ok) throw new Error(parseData.error || 'Failed to parse DOCX')
+
+      // Step 2: Bulk create
+      const bulkRes = await fetch('/api/admin/toeic/questions/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lessonId: selectedToeicLesson.id,
+          questions: parseData.questions
+        })
+      })
+      const bulkData = await bulkRes.json()
+      if (!bulkRes.ok) throw new Error(bulkData.error || 'Failed to bulk create questions')
+
+      toast.success(`Successfully imported ${bulkData.count} questions`)
+      fetchToeicQuestions(selectedToeicLesson.id)
+    } catch (err) {
+      setToeicError(err instanceof Error ? err.message : 'Error importing questions')
+      toast.error('Import failed')
+    } finally {
+      setImportingToeicDocx(false)
+      if (toeicFileInputRef.current) toeicFileInputRef.current.value = ''
+    }
+  }
 
   const fetchToeicQuestions = useCallback(async (lessonId: string) => {
     try {
@@ -3480,24 +3524,58 @@ export default function AdminDashboard() {
               <div className="p-3 border-b bg-white font-bold text-gray-700 flex justify-between items-center">
                 <span>Quiz Questions</span>
                 {selectedToeicLesson && (
-                  <button
-                    onClick={() => {
-                      setQuestionForm({
-                        question: '',
-                        optionA: '',
-                        optionB: '',
-                        optionC: '',
-                        optionD: '',
-                        correctOption: 'A',
-                        explanation: ''
-                      })
-                      setEditingToeicQuestion(null)
-                      setShowQuestionModal(true)
-                    }}
-                    className="text-xs px-2 py-1 bg-[#14532d] text-white rounded hover:bg-[#166534]"
-                  >
-                    + Add Question
-                  </button>
+                  <div className="flex gap-2">
+                    <input
+                      type="file"
+                      ref={toeicFileInputRef}
+                      onChange={handleToeicDocxImport}
+                      accept=".docx"
+                      className="hidden"
+                    />
+                    <div className="relative group/tooltip">
+                      <button
+                        onClick={() => toeicFileInputRef.current?.click()}
+                        disabled={importingToeicDocx}
+                        className="text-xs px-2 py-1 bg-amber-600 text-white rounded hover:bg-amber-700 disabled:opacity-50"
+                      >
+                        {importingToeicDocx ? 'Importing...' : 'Import Quizz'}
+                      </button>
+                      
+                      {/* Hover Tips Tooltip */}
+                      <div className="absolute right-0 bottom-full mb-2 w-64 p-3 bg-gray-900 text-white text-[10px] rounded-lg shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
+                        <div className="font-bold border-b border-gray-700 pb-1 mb-1">Cấu trúc file .docx:</div>
+                        <div className="space-y-1">
+                          <p><span className="text-amber-400">Câu 1:</span> [Nội dung câu hỏi]</p>
+                          <p><span className="text-amber-400">A.</span> [Lựa chọn A]</p>
+                          <p><span className="text-amber-400">C.</span> [Lựa chọn C]</p>
+                          <p><span className="text-amber-400">D.</span> [Lựa chọn D] (Tùy chọn)</p>
+                          <p><span className="text-amber-400">B.</span> [Lựa chọn B]</p>
+                          <p><span className="text-amber-400">Đáp án:</span> [A/B/C/D]</p>
+                          <p><span className="text-amber-400">Giải thích:</span> [Giải thích] (Tùy chọn)</p>
+                        </div>
+                        <div className="absolute top-full right-4 transform translate-y-[-50%] rotate-45 w-2 h-2 bg-gray-900"></div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setQuestionForm({
+                          question: '',
+                          optionA: '',
+                          optionB: '',
+                          optionC: '',
+                          optionD: '',
+                          correctOption: 'A',
+                          explanation: ''
+                        })
+                        setEditingToeicQuestion(null)
+                        setShowQuestionModal(true)
+                      }}
+                      className="text-xs px-2 py-1 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+                    >
+                      + Add Question
+                    </button>
+                  </div>
                 )}
               </div>
               <div className="flex-1 overflow-y-auto p-2 space-y-2">
