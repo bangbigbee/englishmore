@@ -147,7 +147,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setShowLessonContent(lesson.questions.length === 0)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
-                className={`w-full text-left p-4 rounded-xl transition-all duration-200 group flex items-start gap-4 ${
+                className={`w-full text-left p-4 rounded-xl transition-all duration-200 group flex items-start gap-4 cursor-pointer ${
                   selectedLessonId === lesson.id
                     ? 'bg-[#14532d] text-white shadow-lg shadow-[#14532d]/20 ring-1 ring-[#14532d]'
                     : 'hover:bg-slate-100 text-slate-700 hover:translate-x-1'
@@ -192,7 +192,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     {currentLesson.questions.length > 0 && (
                       <button 
                         onClick={() => setShowLessonContent(!showLessonContent)}
-                        className="text-xs font-bold text-[#14532d] hover:bg-[#14532d]/5 px-3 py-1.5 rounded-lg border border-[#14532d]/20 transition-all flex items-center gap-2"
+                        className="text-xs font-bold text-[#14532d] hover:bg-[#14532d]/5 px-3 py-1.5 rounded-lg border border-[#14532d]/20 transition-all flex items-center gap-2 cursor-pointer"
                       >
                         <svg className={`w-4 h-4 transition-transform ${showLessonContent ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -307,7 +307,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       key={opt.label}
                                       onClick={() => handleSelectOption(q.id, opt.label)}
                                       disabled={isShowingResult}
-                                      className={buttonClass}
+                                      className={buttonClass + " cursor-pointer"}
                                     >
                                       <span className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-xl font-black text-lg ${
                                         selectedOption === opt.label 
@@ -327,7 +327,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   <button
                                     onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
                                     disabled={activeQuestionIndex === 0}
-                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2"
+                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer"
                                   >
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                     Trước đó
@@ -335,7 +335,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   <button
                                     onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
                                     disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2"
+                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer"
                                   >
                                     Tiếp theo
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
@@ -345,7 +345,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 {!isShowingResult ? (
                                   <button
                                     onClick={() => handleCheckAnswer(q.id)}
-                                    className="w-full md:w-auto px-10 py-4 bg-[#14532d] text-white font-black rounded-2xl hover:bg-[#166534] shadow-xl shadow-[#14532d]/30 transition-all hover:-translate-y-1 active:scale-95"
+                                    className="w-full md:w-auto px-10 py-4 bg-[#14532d] text-white font-black rounded-2xl hover:bg-[#166534] shadow-xl shadow-[#14532d]/30 transition-all hover:-translate-y-1 active:scale-95 cursor-pointer"
                                   >
                                     Kiểm tra đáp án
                                   </button>

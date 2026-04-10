@@ -33,7 +33,7 @@ function ToeicPracticeContent() {
 				{TABS.map((t) => (
 					<button
 						key={t.key}
-						className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none ${tab === t.key ? "border-[#14532d] text-[#14532d] bg-white" : "border-transparent text-gray-500 hover:text-[#14532d]"}`}
+						className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none cursor-pointer ${tab === t.key ? "border-[#14532d] text-[#14532d] bg-white" : "border-transparent text-gray-500 hover:text-[#14532d]"}`}
 						onClick={() => setTab(t.key)}
 					>
 						{t.label}
@@ -117,7 +117,7 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 							</div>
 							<div className="flex justify-end">
 								<button
-									className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+									className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer"
 									onClick={() => onPracticeClick(topic.slug)}
 								>
 									Luyện tập &rarr;
@@ -160,7 +160,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 						</div>
 						<div className="flex justify-end">
 							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer"
 								onClick={onPracticeClick}
 							>
 								Luyện tập &rarr;
@@ -200,7 +200,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 						</div>
 						<div className="flex justify-end mt-4">
 							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer"
 								onClick={onPracticeClick}
 							>
 								Luyện tập &rarr;
@@ -239,7 +239,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 						</div>
 						<div className="flex justify-end mt-4">
 							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors"
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer"
 								onClick={onPracticeClick}
 							>
 								Luyện tập &rarr;
@@ -281,7 +281,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }
 						</div>
 						<div className="flex justify-end mt-4">
 							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors bg-green-50 px-4 py-2 rounded-lg group-hover:bg-orange-50"
+								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors bg-green-50 px-4 py-2 rounded-lg group-hover:bg-orange-50 cursor-pointer"
 								onClick={onPracticeClick}
 							>
 								Bắt đầu thi &rarr;

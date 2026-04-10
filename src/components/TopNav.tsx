@@ -149,7 +149,7 @@ export default function TopNav() {
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(true)}
-                className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 border-[#ea980c] bg-white text-[#14532d] shadow-sm transition hover:shadow-md"
+                className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 border-[#ea980c] bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer"
                 aria-label="Open profile menu"
               >
                 {session.user?.image && !avatarLoadFailed ? (
@@ -169,7 +169,7 @@ export default function TopNav() {
                 router.push(`${pathname}?${params.toString()}`, { scroll: false })
               }}
               disabled={status === 'loading'}
-              className="inline-flex items-center gap-2 rounded-md bg-[#14532d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#166534] shadow-sm hover:shadow-md disabled:opacity-70"
+              className="inline-flex items-center gap-2 rounded-md bg-[#14532d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#166534] shadow-sm hover:shadow-md disabled:opacity-70 cursor-pointer"
             >
               Log in
               <BookIcon />
@@ -235,7 +235,7 @@ export default function TopNav() {
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="flex w-full items-center gap-2 rounded-md px-4 py-3 mt-4 text-sm font-semibold text-[#ea980c] transition hover:bg-[#ea980c] hover:text-white"
+                  className="flex w-full items-center gap-2 rounded-md px-4 py-3 mt-4 text-sm font-semibold text-[#ea980c] transition hover:bg-[#ea980c] hover:text-white cursor-pointer"
                 >
                   <LogoutIcon />
                   Log out
