@@ -39,8 +39,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [loading, setLoading] = useState(true)
   
   // Quiz states
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
+  const [showLessonContent, setShowLessonContent] = useState(false)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -51,6 +53,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         setTopic(data)
         if (data.lessons && data.lessons.length > 0) {
           setSelectedLessonId(data.lessons[0].id)
+          setActiveQuestionIndex(0)
+          setShowLessonContent(data.lessons[0].questions.length === 0)
         }
       } catch (error) {
         console.error(error)
@@ -113,9 +117,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
-            <div>
-              <h1 className="font-bold text-slate-900 line-clamp-1">{topic.title}</h1>
-              <p className="text-xs text-slate-500">{topic.subtitle}</p>
+            <div className="flex flex-col">
+              <h1 className="font-black text-slate-900 text-sm md:text-base leading-tight">{topic.title}</h1>
+              <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest">{topic.subtitle || 'TOEIC Grammar'}</p>
             </div>
           </div>
           
@@ -139,6 +143,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 key={lesson.id}
                 onClick={() => {
                   setSelectedLessonId(lesson.id)
+                  setActiveQuestionIndex(0)
+                  setShowLessonContent(lesson.questions.length === 0)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
                 className={`w-full text-left p-4 rounded-xl transition-all duration-200 group flex items-start gap-4 ${
@@ -177,47 +183,99 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {/* Lesson Content */}
-                  <div className="mb-12">
-                    <div className="mb-8 flex items-baseline gap-3">
-                      <span className="text-4xl font-black text-[#14532d]/10 select-none">#{currentLesson.order}</span>
-                      <h2 className="text-3xl font-black text-slate-900 leading-tight">{currentLesson.title}</h2>
+                  {/* Compact Lesson Header & Toggle */}
+                  <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl font-black text-[#14532d]/20 select-none">#{currentLesson.order}</span>
+                      <h2 className="text-xl font-black text-slate-900 leading-tight">{currentLesson.title}</h2>
                     </div>
-                    
-                    <div className="prose prose-slate max-w-none prose-headings:font-black prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600">
-                      <div className="whitespace-pre-wrap text-slate-700 leading-relaxed font-medium">
-                        {currentLesson.content || 'Nội dung đang được cập nhật...'}
-                      </div>
-                    </div>
+                    {currentLesson.questions.length > 0 && (
+                      <button 
+                        onClick={() => setShowLessonContent(!showLessonContent)}
+                        className="text-xs font-bold text-[#14532d] hover:bg-[#14532d]/5 px-3 py-1.5 rounded-lg border border-[#14532d]/20 transition-all flex items-center gap-2"
+                      >
+                        <svg className={`w-4 h-4 transition-transform ${showLessonContent ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        {showLessonContent ? 'Ẩn lý thuyết' : 'Xem lý thuyết'}
+                      </button>
+                    )}
                   </div>
 
-                  {/* Quiz Section */}
+                  <AnimatePresence>
+                    {showLessonContent && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden mb-8"
+                      >
+                        <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50">
+                          <div className="prose prose-slate max-w-none prose-headings:font-black prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600">
+                            <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-sm md:text-base">
+                              {currentLesson.content || 'Nội dung đang được cập nhật...'}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
-                    <section className="mt-16 pt-16 border-t border-slate-200">
-                      <div className="mb-10 text-center">
-                        <span className="inline-block py-1 px-3 bg-[#14532d]/5 text-[#14532d] text-xs font-black uppercase tracking-widest rounded-full mb-4">
-                          Practice Quiz
-                        </span>
-                        <h3 className="text-2xl font-black text-slate-900">Kiểm tra kiến thức</h3>
-                        <p className="text-slate-500 mt-2 italic text-sm">Chọn đáp án đúng nhất cho mỗi câu hỏi bên dưới.</p>
+                    <section className="mt-8">
+                      <div className="mb-6 flex items-center justify-between">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-black text-[#14532d] uppercase tracking-[0.2em] mb-1">
+                            Current Quiz
+                          </span>
+                          <h3 className="text-lg font-black text-slate-900">Câu hỏi {activeQuestionIndex + 1} của {currentLesson.questions.length}</h3>
+                        </div>
+                        <div className="flex gap-1">
+                          {currentLesson.questions.map((_, idx) => (
+                            <div 
+                              key={idx} 
+                              className={`h-1.5 rounded-full transition-all duration-300 ${
+                                idx === activeQuestionIndex ? 'w-8 bg-[#14532d]' : 
+                                idx < activeQuestionIndex ? 'w-3 bg-[#14532d]/40' : 'w-3 bg-slate-200'
+                              }`}
+                            />
+                          ))}
+                        </div>
                       </div>
 
-                      <div className="space-y-12">
-                        {currentLesson.questions.map((q, qIndex) => {
+                      <AnimatePresence mode="wait">
+                        {(() => {
+                          const q = currentLesson.questions[activeQuestionIndex]
+                          if (!q) return null
                           const isShowingResult = showResults[q.id]
                           const selectedOption = userAnswers[q.id]
                           const isCorrect = selectedOption === q.correctOption
 
                           return (
-                            <div key={q.id} className="relative">
-                              <div className="flex items-start gap-4 mb-6">
-                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500 text-sm">
-                                  {qIndex + 1}
-                                </span>
-                                <p className="text-lg font-bold text-slate-800 pt-0.5">{q.question}</p>
+                            <motion.div
+                              key={q.id}
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -20 }}
+                              transition={{ duration: 0.2 }}
+                              className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 relative overflow-hidden"
+                            >
+                              <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
+                                <motion.div 
+                                  className="h-full bg-[#14532d]"
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${((activeQuestionIndex + 1) / currentLesson.questions.length) * 100}%` }}
+                                />
                               </div>
 
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-12">
+                              <div className="mb-8">
+                                <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug text-center">
+                                  {q.question}
+                                </p>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {[
                                   { label: 'A', value: q.optionA },
                                   { label: 'B', value: q.optionB },
@@ -226,21 +284,21 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 ].map((opt) => {
                                   if (opt.label === 'D' && !opt.value) return null
                                   
-                                  let buttonClass = "flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 "
+                                  let buttonClass = "flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200 text-left "
                                   
                                   if (isShowingResult) {
                                     if (opt.label === q.correctOption) {
-                                      buttonClass += "bg-emerald-50 border-emerald-500 text-emerald-900"
+                                      buttonClass += "bg-emerald-50 border-emerald-500 text-emerald-900 ring-4 ring-emerald-500/10"
                                     } else if (opt.label === selectedOption) {
                                       buttonClass += "bg-rose-50 border-rose-500 text-rose-900"
                                     } else {
-                                      buttonClass += "bg-white border-slate-100 opacity-50"
+                                      buttonClass += "bg-white border-slate-50 opacity-40 shadow-none scale-95"
                                     }
                                   } else {
                                     if (selectedOption === opt.label) {
-                                      buttonClass += "bg-[#14532d]/5 border-[#14532d] text-[#14532d]"
+                                      buttonClass += "bg-[#14532d] border-[#14532d] text-white shadow-lg shadow-[#14532d]/30 scale-[1.02]"
                                     } else {
-                                      buttonClass += "bg-white border-slate-200 hover:border-[#14532d]/40 hover:bg-slate-50"
+                                      buttonClass += "bg-white border-slate-100 hover:border-[#14532d]/30 hover:bg-slate-50 hover:shadow-md"
                                     }
                                   }
 
@@ -251,62 +309,82 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       disabled={isShowingResult}
                                       className={buttonClass}
                                     >
-                                      <span className={`w-8 h-8 shrink-0 flex items-center justify-center rounded-lg font-bold text-sm ${
-                                        selectedOption === opt.label ? 'bg-[#14532d] text-white' : 'bg-slate-100 text-slate-500'
+                                      <span className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-xl font-black text-lg ${
+                                        selectedOption === opt.label 
+                                          ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
+                                          : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
                                       }`}>
                                         {opt.label}
                                       </span>
-                                      <span className="font-semibold text-sm">{opt.value}</span>
+                                      <span className="font-bold text-base">{opt.value}</span>
                                     </button>
                                   )
                                 })}
                               </div>
 
-                              <div className="mt-6 flex justify-end pl-12">
+                              <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
+                                    disabled={activeQuestionIndex === 0}
+                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2"
+                                  >
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                                    Trước đó
+                                  </button>
+                                  <button
+                                    onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
+                                    disabled={activeQuestionIndex === currentLesson.questions.length - 1}
+                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2"
+                                  >
+                                    Tiếp theo
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                  </button>
+                                </div>
+
                                 {!isShowingResult ? (
                                   <button
                                     onClick={() => handleCheckAnswer(q.id)}
-                                    className="px-6 py-2 bg-[#14532d] text-white font-bold rounded-lg hover:bg-[#166534] shadow-md transition-all hover:-translate-y-0.5"
+                                    className="w-full md:w-auto px-10 py-4 bg-[#14532d] text-white font-black rounded-2xl hover:bg-[#166534] shadow-xl shadow-[#14532d]/30 transition-all hover:-translate-y-1 active:scale-95"
                                   >
-                                    Kiểm tra
+                                    Kiểm tra đáp án
                                   </button>
                                 ) : (
-                                  <motion.div
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    className="w-full"
-                                  >
-                                    <div className={`p-6 rounded-2xl border-2 ${isCorrect ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100'}`}>
-                                      <div className="flex items-center gap-2 mb-3">
-                                        {isCorrect ? (
-                                          <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                          </svg>
-                                        ) : (
-                                          <svg className="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                          </svg>
-                                        )}
-                                        <span className={`font-black uppercase text-xs tracking-widest ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
-                                          {isCorrect ? 'Chính xác!' : 'Chưa đúng rồi!'}
-                                        </span>
-                                      </div>
-                                      <div className="text-sm font-bold text-slate-800 mb-2">
-                                        Đáp án đúng: <span className="text-emerald-700 uppercase">{q.correctOption}</span>
-                                      </div>
-                                      {q.explanation && (
-                                        <div className="text-sm text-slate-600 leading-relaxed italic border-t border-emerald-200/50 pt-2">
-                                          {q.explanation}
-                                        </div>
+                                  <div className={`p-4 rounded-2xl border-2 flex items-center gap-3 ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'}`}>
+                                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                      {isCorrect ? (
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                      ) : (
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                                       )}
                                     </div>
-                                  </motion.div>
+                                    <div className="flex flex-col">
+                                      <span className="text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
+                                      <span className="font-bold text-sm">{isCorrect ? 'Chính xác! Làm tốt lắm.' : 'Chưa đúng rồi! Hãy thử lại.'}</span>
+                                    </div>
+                                    {q.explanation && (
+                                      <div className="ml-4 pl-4 border-l border-current/20 hidden lg:block">
+                                        <p className="text-xs italic opacity-80 max-w-xs line-clamp-2">{q.explanation}</p>
+                                      </div>
+                                    )}
+                                  </div>
                                 )}
                               </div>
-                            </div>
+                              
+                              {isShowingResult && q.explanation && (
+                                <motion.div 
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="mt-6 p-6 bg-slate-50 rounded-2xl border border-slate-100 lg:hidden"
+                                >
+                                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Giải thích chi tiết</p>
+                                  <p className="text-sm text-slate-600 leading-relaxed italic">{q.explanation}</p>
+                                </motion.div>
+                              )}
+                            </motion.div>
                           )
-                        })}
-                      </div>
+                        })()}
+                      </AnimatePresence>
                     </section>
                   )}
                 </motion.div>
