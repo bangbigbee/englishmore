@@ -5859,38 +5859,157 @@ export default function AdminDashboard() {
         <AnimatePresence>
           {showImportExerciseModal && (
             <div className="fixed inset-0 z-50 overflow-y-auto">
-              {/* Backdrop */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setShowImportExerciseModal(false)}
+              <div className="flex min-h-full items-center justify-center p-4">
+                {/* Backdrop */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setShowImportExerciseModal(false)}
+                  className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                />
+                
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+                  className="relative w-full max-w-4xl rounded-xl bg-white shadow-2xl overflow-hidden"
+                >
+                  <div className="flex items-center justify-between border-b px-6 py-4 bg-gray-50/50">
+                    <h2 className="text-xl font-bold text-gray-900">Import Exercise từ khóa học khác</h2>
+                    <button
+                      type="button"
+                      onClick={() => setShowImportExerciseModal(false)}
+                      className="text-gray-400 hover:text-gray-600 text-2xl leading-none transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="px-6 py-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-sm font-semibold text-gray-700">Khóa học nguồn (Lấy exercise từ đây)</label>
+                        <select
+                          value={importSourceCourseId}
+                          onChange={(e) => {
+                            setImportSourceCourseId(e.target.value)
+                            setImportSelectedExerciseIds(new Set())
+                            setImportFromCourseError('')
+                          }}
+                          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] bg-white transition-all"
+                        >
+                          <option value="">-- Chọn khóa học nguồn --</option>
+                          {courses.map((c) => (
+                            <option key={c.id} value={c.id}>{c.title}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-sm font-semibold text-gray-700">Khóa học đích (Import vào đây)</label>
+                        <select
+                          value={importTargetCourseId}
+                          onChange={(e) => {
+                            setImportTargetCourseId(e.target.value)
+                            setImportFromCourseError('')
+                          }}
+                          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d] bg-white transition-all outline-hidden"
+                        >
+                          <option value="">-- Chọn khóa học đích --</option>
+                          {courses.map((c) => (
+                            <option key={c.id} value={c.id}>{c.title}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  )}
 
-                  {importFromCourseError && (
-                    <p className="text-sm text-red-600">{importFromCourseError}</p>
-                  )}
-                </div>
+                    {importSourceCourseId && (
+                      <div className="border rounded-xl bg-gray-50/30 overflow-hidden">
+                        <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
+                          <h3 className="text-sm font-bold text-gray-900">Chọn exercise để import</h3>
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const sourceExs = exercises.filter(ex => ex.courseId === importSourceCourseId)
+                              if (importSelectedExerciseIds.size === sourceExs.length) {
+                                setImportSelectedExerciseIds(new Set())
+                              } else {
+                                setImportSelectedExerciseIds(new Set(sourceExs.map(ex => ex.id)))
+                              }
+                            }}
+                            className="text-xs font-semibold text-[#14532d] hover:underline"
+                          >
+                            {importSelectedExerciseIds.size === exercises.filter(ex => ex.courseId === importSourceCourseId).length ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
+                          </button>
+                        </div>
+                        <div className="max-h-[300px] overflow-y-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-3 custom-scrollbar">
+                          {exercises.filter(ex => ex.courseId === importSourceCourseId).length === 0 ? (
+                            <p className="col-span-2 text-sm text-gray-500 py-8 text-center bg-white rounded-lg border-2 border-dashed border-gray-100 italic">Khóa học này chưa có exercise nào.</p>
+                          ) : (
+                            exercises.filter(ex => ex.courseId === importSourceCourseId).map((ex) => {
+                              const isSelected = importSelectedExerciseIds.has(ex.id)
+                              return (
+                                <button
+                                  key={ex.id}
+                                  type="button"
+                                  onClick={() => {
+                                    const next = new Set(importSelectedExerciseIds)
+                                    if (next.has(ex.id)) next.delete(ex.id)
+                                    else next.add(ex.id)
+                                    setImportSelectedExerciseIds(next)
+                                  }}
+                                  className={`group flex items-center gap-3 p-3 rounded-xl border text-left transition-all hover:bg-white hover:shadow-md ${
+                                    isSelected ? 'border-[#14532d] bg-[#14532d]/5 ring-1 ring-[#14532d]/20' : 'border-gray-200 bg-white shadow-sm'
+                                  }`}
+                                >
+                                  <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${
+                                    isSelected ? 'bg-[#14532d] border-[#14532d]' : 'bg-white border-gray-300 group-hover:border-[#14532d]'
+                                  }`}>
+                                    {isSelected && <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className={`text-sm font-bold truncate ${isSelected ? 'text-[#14532d]' : 'text-gray-900'}`}>{getExerciseTitle(ex)}</p>
+                                    <p className="text-[10px] text-gray-500 mt-0.5">{getExerciseTypeLabel(ex.exerciseType)} · {ex.questions.length} câu hỏi</p>
+                                  </div>
+                                </button>
+                              )
+                            })
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-                <div className="flex justify-end gap-3 border-t px-6 py-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowImportExerciseModal(false)}
-                    className="rounded px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void importFromCourse()}
-                    disabled={importingFromCourse}
-                    className="rounded bg-[#14532d] px-5 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
-                  >
-                    {importingFromCourse ? 'Đang import...' : `Import ${importSelectedExerciseIds.size > 0 ? `(${importSelectedExerciseIds.size})` : ''}`}
-                  </button>
-                </div>
-              </motion.div>
+                    {importFromCourseError && (
+                      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+                        <p className="text-sm font-semibold text-red-600 flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                          {importFromCourseError}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-3 border-t px-6 py-5 bg-gray-50/50">
+                    <button
+                      type="button"
+                      onClick={() => setShowImportExerciseModal(false)}
+                      className="rounded-lg px-6 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors"
+                    >
+                      Hủy
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void importFromCourse()}
+                      disabled={importingFromCourse || !importSourceCourseId || !importTargetCourseId || importSelectedExerciseIds.size === 0}
+                      className="rounded-lg bg-[#14532d] px-8 py-2.5 text-sm font-bold text-white hover:bg-[#166534] shadow-lg shadow-[#14532d]/20 transition-all disabled:opacity-50 disabled:shadow-none"
+                    >
+                      {importingFromCourse ? 'Đang import...' : `Import ${importSelectedExerciseIds.size > 0 ? `(${importSelectedExerciseIds.size})` : ''}`}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
             </div>
           )}
         </AnimatePresence>

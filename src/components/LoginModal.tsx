@@ -156,7 +156,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               )}
 
               {isZaloInAppBrowser && (
-                <div className="rounded-lg bg-amber-50 p-3 text-xs leading-relaxed text-amber-800 border border-amber-200">
+                <div className="rounded-lg bg-blue-50 p-3 text-xs leading-relaxed text-blue-800 border border-blue-200">
                   <p className="font-bold mb-1">⚠️ Cảnh báo trình duyệt:</p>
                   Bạn đang mở trong ứng dụng Zalo. Vui lòng nhấn vào dấu ba chấm <strong>(...)</strong> và chọn <strong>"Mở bằng trình duyệt"</strong> (Safari hoặc Chrome) để có thể đăng nhập bằng Google.
                 </div>
@@ -172,7 +172,5 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
         </div>
       )}
     </AnimatePresence>
-  )
-}
   )
 }
