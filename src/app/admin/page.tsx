@@ -11,6 +11,7 @@ interface CourseItem {
   id: string
   title: string
   description: string | null
+  shortDescription: string | null
   price: number
   currency: string
   registrationDeadline: string
@@ -526,6 +527,7 @@ export default function AdminDashboard() {
   const [courses, setCourses] = useState<CourseItem[]>([])
   const [newCourseTitle, setNewCourseTitle] = useState('')
   const [newCourseDescription, setNewCourseDescription] = useState('')
+  const [newCourseShortDescription, setNewCourseShortDescription] = useState('')
   const [newDeadline, setNewDeadline] = useState('')
   const [newCourseMaxStudents, setNewCourseMaxStudents] = useState(10)
   const [newCoursePrice, setNewCoursePrice] = useState(4200000)
@@ -541,6 +543,7 @@ export default function AdminDashboard() {
   const [editingCourse, setEditingCourse] = useState<CourseItem | null>(null)
   const [editCourseTitle, setEditCourseTitle] = useState('')
   const [editCourseDescription, setEditCourseDescription] = useState('')
+  const [editCourseShortDescription, setEditCourseShortDescription] = useState('')
   const [editCourseDeadline, setEditCourseDeadline] = useState('')
   const [editCourseMaxStudents, setEditCourseMaxStudents] = useState(10)
   const [editCoursePrice, setEditCoursePrice] = useState(0)
@@ -2320,6 +2323,7 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           title: newCourseTitle,
           description: newCourseDescription,
+          shortDescription: newCourseShortDescription,
           registrationDeadline: parsedNewDeadline,
           maxStudents: newCourseMaxStudents,
           price: newCoursePrice,
@@ -2338,6 +2342,7 @@ export default function AdminDashboard() {
       setCourseSuccess(`Course "${data.title}" has been published.`)
       setNewCourseTitle('')
       setNewCourseDescription('')
+      setNewCourseShortDescription('')
       setNewDeadline('')
       setNewCourseMaxStudents(10)
       setNewCoursePrice(4200000)
@@ -2352,6 +2357,7 @@ export default function AdminDashboard() {
     setEditingCourse(course)
     setEditCourseTitle(course.title)
     setEditCourseDescription(course.description || '')
+    setEditCourseShortDescription(course.shortDescription || '')
     setEditCourseDeadline(formatDateToDdMmYyyy(course.registrationDeadline))
     setEditCourseMaxStudents(course.maxStudents || 10)
     setEditCoursePrice(course.price || 0)
@@ -2399,6 +2405,7 @@ export default function AdminDashboard() {
         body: JSON.stringify({
           title: editCourseTitle,
           description: editCourseDescription,
+          shortDescription: editCourseShortDescription,
           registrationDeadline: parsedEditDeadline,
           maxStudents: editCourseMaxStudents,
           price: editCoursePrice,
@@ -4667,6 +4674,15 @@ export default function AdminDashboard() {
               />
             </label>
             <label className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-700">Mô tả ngắn (hiển thị thẻ ngoài trang chủ)</span>
+              <textarea
+                value={newCourseShortDescription}
+                onChange={(e) => setNewCourseShortDescription(e.target.value)}
+                rows={2}
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              />
+            </label>
+            <label className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">Course description (shown in course detail)</span>
               <textarea
                 value={newCourseDescription}
@@ -4927,6 +4943,16 @@ export default function AdminDashboard() {
                   onChange={(e) => setEditCourseTitle(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
                 />
+                <label className="flex flex-col gap-2 mb-3">
+                  <span className="text-sm font-medium text-gray-700">Mô tả ngắn (hiển thị thẻ ngoài trang chủ)</span>
+                  <textarea
+                    value={editCourseShortDescription}
+                    onChange={(e) => setEditCourseShortDescription(e.target.value)}
+                    rows={2}
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+                  />
+                </label>
+                <div className="mb-2"><span className="text-sm font-medium text-gray-700">Mô tả chi tiết</span></div>
                 <textarea
                   value={editCourseDescription}
                   onChange={(e) => setEditCourseDescription(e.target.value)}

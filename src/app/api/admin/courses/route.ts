@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json()
   const { 
-    title, description, registrationDeadline, maxStudents, price, currency,
+    title, description, shortDescription, registrationDeadline, maxStudents, price, currency,
     sebDiscountPercent, ebDiscountPercent, sebThresholdDays, ebThresholdDays 
   } = body
 
@@ -80,6 +80,7 @@ export async function POST(request: NextRequest) {
     data: {
       title,
       description: description || null,
+      shortDescription: shortDescription || null,
       price: parsedPrice,
       currency: normalizedCurrency,
       registrationDeadline: new Date(registrationDeadline),

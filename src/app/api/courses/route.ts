@@ -12,6 +12,7 @@ export async function GET() {
     id: course.id,
     title: course.title,
     description: course.description,
+    shortDescription: course.shortDescription,
     price: course.price,
     currency: course.currency,
     isActive: course.isActive,

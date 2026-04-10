@@ -20,6 +20,7 @@ interface AvailableCourse {
   sebThresholdDays: number | null
   ebThresholdDays: number | null
   description?: string | null
+  shortDescription?: string | null
 }
 
 type GreetingInputMethod = 'text' | 'voice'
@@ -346,7 +347,8 @@ function HomeContent() {
                 ebDiscountPercent: item?.ebDiscountPercent ?? null,
                 sebThresholdDays: item?.sebThresholdDays ?? null,
                 ebThresholdDays: item?.ebThresholdDays ?? null,
-                description: item?.description ?? null
+                description: item?.description ?? null,
+                shortDescription: item?.shortDescription ?? null
               }))
             : []
           setAvailableCourses(adminCourses.filter((course) => course.id && course.title))
@@ -2254,92 +2256,77 @@ function HomeContent() {
         )}
 
         {session?.user?.role !== 'member' && (
-          <section className="open-courses-shimmer mt-10 rounded-2xl border border-[#14532d]/20 bg-linear-to-br from-[#14532d]/6 via-white to-orange-50 p-5 shadow-sm sm:p-6">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-xl font-bold text-[#14532d] sm:text-2xl">Khóa học đang mở đăng ký</h3>
+          <section className="mt-12 px-1">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold tracking-tight text-slate-800">Khóa học đang mở đăng ký</h3>
             </div>
+            
             {availableCourses.length > 0 ? (
-              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {availableCourses.map((course) => {
-                  const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
-                  const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
-                  const courseDetailEntryUrl = `/courses?openCourseId=${encodeURIComponent(course.id)}`
-                  const registerHref = session 
-                    ? courseDetailEntryUrl 
-                    : `/?login=true&subtitle=${encodeURIComponent('Cần đăng nhập để tiếp tục quá trình đăng ký')}&callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
-                  const registrationDeadlineDate = new Date(course.registrationDeadline)
-                  const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
-                    ? 'Đang cập nhật'
-                    : registrationDeadlineDate.toLocaleDateString('vi-VN', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                      })
+              <div className="course-ticker-wrap relative -mx-4 overflow-hidden py-4">
+                <div className="course-ticker-track flex gap-5 px-4" style={{ width: 'max-content' }}>
+                  {[...availableCourses, ...availableCourses].map((course, idx) => {
+                    const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
+                    const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
+                    const courseDetailEntryUrl = `/courses?openCourseId=${encodeURIComponent(course.id)}`
+                    const registerHref = session 
+                      ? courseDetailEntryUrl 
+                      : `/?login=true&subtitle=${encodeURIComponent('Cần đăng nhập để tiếp tục quá trình đăng ký')}&callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
+                    const registrationDeadlineDate = new Date(course.registrationDeadline)
+                    const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
+                      ? 'Đang cập nhật'
+                      : registrationDeadlineDate.toLocaleDateString('vi-VN', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
+                        })
+                    const tier = getPromotionTier(course)
+                    const discountedPrice = course.price * (1 - tier.discount)
 
-                  return (
-                    <div key={course.id} className="group relative overflow-hidden rounded-xl border border-[#14532d]/25 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                      {/* Pricing Tier Badge */}
-                      {(() => {
-                        const tier = getPromotionTier(course)
-                        return (
-                          <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
-                            {tier.name}
-                          </div>
-                        )
-                      })()}
+                    return (
+                      <div 
+                        key={`${course.id}-${idx}`} 
+                        className="group relative w-[340px] shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                      >
+                        <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
+                          {tier.name}
+                        </div>
 
-                      <p className="pr-12 text-xl font-extrabold leading-tight text-amber-500">{course.title}</p>
-                      
-                      {course.description && (
-                        <p className="mt-2 text-sm text-slate-500 line-clamp-2">
-                          {course.description}
+                        <p className="pr-12 text-xl font-extrabold leading-tight text-[#14532d]">{course.title}</p>
+                        
+                        <p className="mt-2.5 text-[14px] leading-relaxed text-black line-clamp-2">
+                          {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
                         </p>
-                      )}
-                      
-                      <div className="mt-3 flex items-baseline gap-2">
-                        {(() => {
-                          const tier = getPromotionTier(course)
-                          const discountedPrice = course.price * (1 - tier.discount)
-                          return (
-                            <>
-                              <span className="text-base font-medium text-slate-700">{formatVND(discountedPrice)}</span>
-                              {tier.discount > 0 && (
-                                <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
-                              )}
-                            </>
-                          )
-                        })()}
-                      </div>
+                        
+                        <div className="mt-4 flex items-baseline gap-2">
+                          <span className="text-base font-bold text-slate-900">{formatVND(discountedPrice)}</span>
+                          {tier.discount > 0 && (
+                            <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
+                          )}
+                        </div>
 
-                      <div className="mt-3 flex flex-col gap-1">
-                        <p className="text-sm text-slate-600">Hạn đăng ký: {registrationDeadlineText}</p>
-                        {(() => {
-                          const tier = getPromotionTier(course)
-                          return (
-                            <p className={`text-[11px] font-bold uppercase tracking-tight ${tier.textColor}`}>
-                              ● {tier.label}
-                            </p>
-                          )
-                        })()}
+                        <div className="mt-4 space-y-1.5 border-t border-slate-100 pt-4">
+                          <p className="text-[13px] text-black">Hạn đăng ký: <span className="font-semibold">{registrationDeadlineText}</span></p>
+                          <p className={`text-[13px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
+                            ● {availabilityText}
+                          </p>
+                        </div>
+                        
+                        <div className="mt-6">
+                          <Link
+                            href={registerHref}
+                            className={`flex w-full items-center justify-center rounded-xl py-3 text-sm font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
+                            aria-disabled={isFull}
+                          >
+                            Đăng Ký Ngay
+                          </Link>
+                        </div>
                       </div>
-
-                      <p className={`mt-2 text-sm font-semibold ${isFull ? 'text-red-700' : 'text-[#14532d]'}`}>{availabilityText}</p>
-                      
-                      <div className="mt-4">
-                        <Link
-                          href={registerHref}
-                          className={`inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-sm font-bold transition shadow-sm ${isFull ? 'bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
-                          aria-disabled={isFull}
-                        >
-                          Đăng Ký Ngay
-                        </Link>
-                      </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
             ) : (
-              <p className="mt-4 text-base text-slate-600">Hiện chưa có khóa học mở đăng ký.</p>
+              <p className="text-sm text-slate-500">Hiện chưa có khóa học mở đăng ký.</p>
             )}
           </section>
         )}

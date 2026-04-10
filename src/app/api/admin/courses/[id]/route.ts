@@ -27,7 +27,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   const { id } = await context.params
   const body = await request.json()
   const { 
-    title, description, registrationDeadline, isPublished, maxStudents, 
+    title, description, shortDescription, registrationDeadline, isPublished, maxStudents, 
     completedSessions, price, currency,
     sebDiscountPercent, ebDiscountPercent, sebThresholdDays, ebThresholdDays 
   } = body
@@ -35,6 +35,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   const data: {
     title?: string
     description?: string | null
+    shortDescription?: string | null
     price?: number
     currency?: string
     registrationDeadline?: Date
@@ -58,6 +59,11 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   if (description !== undefined) {
     const normalizedDescription = String(description).trim()
     data.description = normalizedDescription || null
+  }
+
+  if (shortDescription !== undefined) {
+    const normalizedShortDescription = String(shortDescription).trim()
+    data.shortDescription = normalizedShortDescription || null
   }
 
   if (price !== undefined) {

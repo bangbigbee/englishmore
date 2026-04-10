@@ -132,6 +132,7 @@ model Course {
   code                 String?      // Mã khóa học: COURSE_001
   title                String
   description          String?
+  shortDescription     String?
   price                Int          @default(0)  // Giá khóa (VNĐ)
   currency             String       @default("VND")
   
