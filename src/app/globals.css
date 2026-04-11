@@ -237,7 +237,7 @@ body {
 }
 
 .course-ticker-wrap {
-  overflow: hidden;
+  overflow-x: auto;
   padding: 12px 0;
 }
 
