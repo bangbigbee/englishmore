@@ -2300,7 +2300,7 @@ function HomeContent() {
                 return (
                   <div 
                     key={`course-${course.id}`} 
-                    className="group relative flex h-[380px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                    className="group relative flex h-[420px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
                   >
                     <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
                       {tier.name}
@@ -2308,7 +2308,7 @@ function HomeContent() {
 
                     <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
                     
-                    <p className="mt-1 text-[13px] leading-relaxed text-slate-600 line-clamp-4 flex-grow">
+                    <p className="mt-1 text-[13px] leading-relaxed text-slate-600 line-clamp-5 flex-grow">
                       {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
                     </p>
                     
@@ -2346,7 +2346,7 @@ function HomeContent() {
               {activeNews.map((news) => (
                 <div 
                   key={`news-${news.id}`} 
-                  className="group relative flex h-[380px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                  className="group relative flex h-[420px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
                 >
                   <div className="absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r from-orange-400 to-amber-500">
                     Tin Tức
@@ -2364,7 +2364,7 @@ function HomeContent() {
                     )}
                   </div>
                   
-                  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-2 flex-grow">
+                  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-4 flex-grow">
                     {news.description || 'Theo dõi những thông tin mới nhất từ EnglishMore.'}
                   </p>
 
@@ -2385,7 +2385,7 @@ function HomeContent() {
               {Array.from({ length: Math.max(0, 3 - (availableCourses.length + activeNews.length)) }).map((_, i) => (
                 <div 
                   key={`placeholder-${i}`} 
-                  className="h-[380px] w-[270px] shrink-0 snap-start rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-5 flex flex-col items-center justify-center text-center opacity-60"
+                  className="h-[420px] w-[270px] shrink-0 snap-start rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-5 flex flex-col items-center justify-center text-center opacity-60"
                 >
                   <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
                     <svg className="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
