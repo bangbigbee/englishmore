@@ -2308,7 +2308,7 @@ function HomeContent() {
 
                     <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
                     
-                    <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-2 min-h-[40px]">
+                    <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-3 flex-grow">
                       {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
                     </p>
                     
@@ -2319,7 +2319,7 @@ function HomeContent() {
                       )}
                     </div>
 
-                    <div className="mt-3 space-y-1 border-t border-slate-100 pt-3">
+                    <div className="mt-4 space-y-1 border-t border-slate-100 pt-3">
                       <p className="text-[12px] text-slate-500">Hạn đăng ký: <span className="font-semibold text-slate-700">{registrationDeadlineText}</span></p>
                       <p className={`text-[12px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
                         ● {availabilityText}
@@ -2361,7 +2361,7 @@ function HomeContent() {
                     )}
                   </div>
                   
-                  <p className="mt-3 text-[13px] leading-relaxed text-slate-600 line-clamp-2 min-h-[40px]">
+                  <p className="mt-3 text-[13px] leading-relaxed text-slate-600 line-clamp-4 flex-grow">
                     {news.description || 'Theo dõi những thông tin mới nhất từ EnglishMore.'}
                   </p>
 
