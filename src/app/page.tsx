@@ -2419,17 +2419,17 @@ function HomeContent() {
           </section>
         )}
 
-        {courseReviews.length > 0 && (
-          <section className="relative mt-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-12">
-            <div className="mb-8 text-center sm:text-left pt-6">
-              <h2 className="mb-2 text-2xl font-black uppercase tracking-tight text-[#14532d] sm:text-3xl lg:text-4xl">
-                CÁC HỌC VIÊN NÓI GÌ <span className="text-[#ea980c]">VỀ CHÚNG TÔI</span>
-              </h2>
-              <div className="h-1.5 w-16 bg-[#ea980c] sm:w-20 sm:mx-0 mx-auto" />
-            </div>
+        <section className="relative mt-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-12">
+          <div className="mb-8 text-center sm:text-left pt-6">
+            <h2 className="mb-2 text-2xl font-black uppercase tracking-tight text-[#14532d] sm:text-3xl lg:text-4xl">
+              CÁC HỌC VIÊN NÓI GÌ <span className="text-[#ea980c]">VỀ CHÚNG TÔI</span>
+            </h2>
+            <div className="h-1.5 w-16 bg-[#ea980c] sm:w-20 sm:mx-0 mx-auto" />
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courseReviews.map((review) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courseReviews.length > 0 ? (
+              courseReviews.map((review) => (
                 <div key={review.id} className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group aspect-video sm:aspect-square bg-slate-100">
                   <img
                     src={`/api/course-reviews/images/${review.id}`}
@@ -2438,10 +2438,17 @@ function HomeContent() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              ))
+            ) : (
+              // Empty placeholders
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={`placeholder-${i}`} className="relative rounded-2xl overflow-hidden border border-dashed border-slate-200 bg-slate-50/50 aspect-video sm:aspect-square flex items-center justify-center">
+                  <div className="text-slate-400 font-medium text-sm">Chưa có đánh giá nào</div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
       </main>
 
       <AnimatePresence>

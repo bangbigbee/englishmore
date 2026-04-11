@@ -5634,7 +5634,7 @@ export default function AdminDashboard() {
                           onClick={() => openReviewCourse(course)}
                           className="text-[#ea980c] hover:text-[#d4890a] hover:underline"
                         >
-                          Reviews
+                          Feedback
                         </button>
                         {course.isPublished && (
                           <button
@@ -5737,7 +5737,7 @@ export default function AdminDashboard() {
                   className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 md:p-8 max-w-2xl w-full"
                 >
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-gray-900">Manage Reviews: {reviewCourse.title}</h3>
+                    <h3 className="text-xl font-bold text-gray-900">Manage Feedback: {reviewCourse.title}</h3>
                     <button onClick={() => setReviewCourse(null)} className="text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
                   </div>
                   
@@ -5758,7 +5758,7 @@ export default function AdminDashboard() {
                     {reviewImagesLoading ? (
                       <div className="col-span-full py-8 text-center text-gray-500">Loading images...</div>
                     ) : reviewImages.length === 0 ? (
-                      <div className="col-span-full py-8 text-center text-gray-500 border border-dashed rounded-lg">No reviews uploaded yet.</div>
+                      <div className="col-span-full py-8 text-center text-gray-500 border border-dashed rounded-lg">No feedback uploaded yet.</div>
                     ) : (
                       reviewImages.map((img) => (
                         <div key={img.id} className="relative group border rounded-lg overflow-hidden bg-white aspect-square">
