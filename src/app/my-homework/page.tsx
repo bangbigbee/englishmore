@@ -267,13 +267,13 @@ export default function MyHomeworkPage() {
                         </a>
                       </div>
                     )}
-                    <label className="mt-4 block text-sm font-semibold text-slate-700">Your message</label>
+                    <label className="mt-4 block text-sm font-semibold text-slate-900">Your message</label>
                     <textarea
                       value={notesByHomework[item.id] || ''}
                       onChange={(e) => setNotesByHomework((current) => ({ ...current, [item.id]: e.target.value }))}
                       rows={4}
                       placeholder="Write your homework message..."
-                      className="mt-1 w-full rounded-lg border border-[#14532d]/45 bg-white px-3 py-2 outline-none focus:border-[#14532d]"
+                      className="mt-1 w-full rounded-lg border border-[#14532d]/45 bg-white px-3 py-2 text-slate-900 outline-none focus:border-[#14532d]"
                     />
                     <button
                       onClick={() => submitOrUpdateHomework(item.id, false)}
@@ -395,13 +395,13 @@ export default function MyHomeworkPage() {
                         )}
                       </div>
                     </div>
-                    <label className="mt-4 block text-sm font-semibold text-slate-700">Your next message</label>
+                    <label className="mt-4 block text-sm font-semibold text-slate-900">Your next message</label>
                     <textarea
                       value={notesByHomework[item.id] || ''}
                       onChange={(e) => setNotesByHomework((current) => ({ ...current, [item.id]: e.target.value }))}
                       rows={4}
                       placeholder="Write your next message..."
-                      className="mt-1 w-full rounded-lg border border-emerald-300 bg-white px-3 py-2 outline-none focus:border-emerald-500"
+                      className="mt-1 w-full rounded-lg border border-emerald-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500"
                     />
                     <button
                       onClick={() => submitOrUpdateHomework(item.id, true)}
