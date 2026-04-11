@@ -244,13 +244,8 @@ body {
 .course-ticker-track {
   display: flex;
   width: max-content;
-  gap: 12px;
-  padding: 0 12px;
-  animation: course-ticker-scroll 28s linear infinite;
-}
-
-.course-ticker-wrap:hover .course-ticker-track {
-  animation-play-state: paused;
+  gap: 20px;
+  padding: 0 4px;
 }
 
 .homework-alert-wrap {

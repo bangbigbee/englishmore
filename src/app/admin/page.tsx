@@ -176,6 +176,17 @@ interface SpeakYourselfAttemptItem {
   }
 }
 
+interface NewsItem {
+  id: string
+  title: string
+  description: string | null
+  imageUrl: string | null
+  linkUrl: string | null
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 interface ExerciseItem {
   id: string
   courseId: string
@@ -325,7 +336,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic'
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -770,6 +781,23 @@ export default function AdminDashboard() {
   const [savingToeicTopic, setSavingToeicTopic] = useState(false)
   const [savingToeicLesson, setSavingToeicLesson] = useState(false)
   const [savingToeicQuestion, setSavingToeicQuestion] = useState(false)
+
+  // News states
+  const [newsList, setNewsList] = useState<NewsItem[]>([])
+  const [newsLoading, setNewsLoading] = useState(false)
+  const [newsError, setNewsError] = useState('')
+  const [newsSuccess, setNewsSuccess] = useState('')
+  const [showNewsModal, setShowNewsModal] = useState(false)
+  const [editingNews, setEditingNews] = useState<NewsItem | null>(null)
+  const [newsForm, setNewsForm] = useState({
+    title: '',
+    description: '',
+    imageUrl: '',
+    linkUrl: '',
+    isActive: true
+  })
+  const [savingNews, setSavingNews] = useState(false)
+  const [deletingNewsId, setDeletingNewsId] = useState<string | null>(null)
 
   const deleteUserAccount = async (userId: string) => {
     try {
@@ -1409,6 +1437,49 @@ export default function AdminDashboard() {
       alert(err instanceof Error ? err.message : 'Error')
     } finally {
       setDeletingToeicId(null)
+    }
+  }
+
+  const handleSaveNews = async () => {
+    if (!newsForm.title.trim()) {
+      setNewsError('Please enter a title.')
+      return
+    }
+
+    try {
+      setSavingNews(true)
+      const res = await fetch(editingNews ? `/api/admin/news/${editingNews.id}` : '/api/admin/news', {
+        method: editingNews ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newsForm)
+      })
+      const data = await parseApiResponse(res)
+      if (!res.ok) throw new Error(data.error || 'Failed to save news')
+      
+      toast.success(editingNews ? 'News updated successfully' : 'News created successfully')
+      setShowNewsModal(false)
+      setEditingNews(null)
+      setNewsForm({ title: '', description: '', imageUrl: '', linkUrl: '', isActive: true })
+      fetchNews()
+    } catch (err) {
+      setNewsError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setSavingNews(false)
+    }
+  }
+
+  const handleDeleteNews = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this news item?')) return
+    try {
+      setDeletingNewsId(id)
+      const res = await fetch(`/api/admin/news/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete news')
+      toast.success('News deleted successfully')
+      fetchNews()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setDeletingNewsId(null)
     }
   }
 
@@ -3062,6 +3133,13 @@ export default function AdminDashboard() {
              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'toeic' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-[#ea980c] text-white hover:bg-[#d4890a]'}`}
            >
              8. TOEIC
+           </button>
+           <button
+             type="button"
+             onClick={() => setActiveSection('news')}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'news' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             9. NEWS
            </button>
           </div>
         </div>
@@ -6305,6 +6383,184 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
+
+        {/* News Section */}
+        <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'news' ? '' : 'hidden'}`}>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Manage News / Placeholders</h2>
+              <p className="text-sm text-gray-600">Items to show on landing page when courses are missing or as general updates.</p>
+            </div>
+            <button
+              onClick={() => {
+                setEditingNews(null)
+                setNewsForm({ title: '', description: '', imageUrl: '', linkUrl: '', isActive: true })
+                setShowNewsModal(true)
+              }}
+              className="px-6 py-2 bg-[#14532d] text-white font-bold rounded hover:bg-[#166534]"
+            >
+              Add News
+            </button>
+          </div>
+
+          {newsError && <p className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">{newsError}</p>}
+          {newsSuccess && <p className="mb-4 p-3 bg-green-100 text-green-700 rounded text-sm">{newsSuccess}</p>}
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {newsLoading ? (
+                  <tr><td colSpan={4} className="p-10 text-center text-gray-400">Loading...</td></tr>
+                ) : newsList.length === 0 ? (
+                  <tr><td colSpan={4} className="p-10 text-center text-gray-400">No news items found.</td></tr>
+                ) : (
+                  newsList.map((item) => (
+                    <tr key={item.id} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt="" className="w-12 h-12 object-cover rounded border" />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-100 rounded border flex items-center justify-center text-[10px] text-gray-400">No img</div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-bold text-gray-900">{item.title}</p>
+                        <p className="text-xs text-gray-500 line-clamp-1">{item.description}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${item.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                          {item.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingNews(item)
+                              setNewsForm({
+                                title: item.title,
+                                description: item.description || '',
+                                imageUrl: item.imageUrl || '',
+                                linkUrl: item.linkUrl || '',
+                                isActive: item.isActive
+                              })
+                              setShowNewsModal(true)
+                            }}
+                            className="text-blue-600 hover:text-blue-800 text-sm font-semibold"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteNews(item.id)}
+                            disabled={deletingNewsId === item.id}
+                            className="text-red-600 hover:text-red-800 text-sm font-semibold disabled:opacity-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {showNewsModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowNewsModal(false)}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-2xl"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-6">
+                  {editingNews ? 'Edit News' : 'Add New News'}
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input
+                      type="text"
+                      value={newsForm.title}
+                      onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      rows={3}
+                      value={newsForm.description}
+                      onChange={(e) => setNewsForm({ ...newsForm, description: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                    <input
+                      type="text"
+                      value={newsForm.imageUrl}
+                      onChange={(e) => setNewsForm({ ...newsForm, imageUrl: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Link URL</label>
+                    <input
+                      type="text"
+                      value={newsForm.linkUrl}
+                      onChange={(e) => setNewsForm({ ...newsForm, linkUrl: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="newsActive"
+                      checked={newsForm.isActive}
+                      onChange={(e) => setNewsForm({ ...newsForm, isActive: e.target.checked })}
+                      className="rounded border-gray-300 text-[#14532d] focus:ring-[#14532d]"
+                    />
+                    <label htmlFor="newsActive" className="text-sm font-medium text-gray-700">Display this item publicly</label>
+                  </div>
+                </div>
+                <div className="mt-8 flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowNewsModal(false)}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveNews}
+                    disabled={savingNews}
+                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534] disabled:opacity-50"
+                  >
+                    {savingNews ? 'Saving...' : editingNews ? 'Update' : 'Create'}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence>
           {confirmPayment && (

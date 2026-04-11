@@ -209,6 +209,7 @@ function HomeContent() {
   const canUseDailyActivity = session?.user?.role === 'member' || session?.user?.role === 'admin'
   const isPendingMemberRegistration = session?.user?.role === 'user'
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
+  const [activeNews, setActiveNews] = useState<any[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
@@ -329,6 +330,17 @@ function HomeContent() {
   }
 
   useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await fetch('/api/news')
+        if (!res.ok) return
+        const data = await res.json()
+        setActiveNews(data)
+      } catch (err) {
+        console.error('Error fetching news:', err)
+      }
+    }
+
     const fetchAvailableCourses = async () => {
       try {
         const endpoint = session?.user?.role === 'admin' ? '/api/admin/courses' : '/api/courses'
@@ -353,13 +365,16 @@ function HomeContent() {
               }))
             : []
           setAvailableCourses(adminCourses.filter((course) => course.id && course.title))
-          return
+        } else {
+          setAvailableCourses(Array.isArray(data) ? data : [])
         }
-        setAvailableCourses(Array.isArray(data) ? data : [])
       } catch {
         setAvailableCourses([])
       }
     }
+
+    void fetchNews()
+    void fetchAvailableCourses()
 
     const fetchPublicVocabulary = async () => {
       try {
@@ -2256,81 +2271,128 @@ function HomeContent() {
           </>
         )}
 
-        {session?.user?.role !== 'member' && (
-          <section className="mt-12 px-1">
-            <div className="mb-6">
-              <h3 className="text-xl font-bold tracking-tight text-slate-800">Khóa học đang mở đăng ký</h3>
-            </div>
-            
-            {availableCourses.length > 0 ? (
-              <div className="course-ticker-wrap relative -mx-4 overflow-hidden py-4">
-                <div className="course-ticker-track flex gap-5 px-4" style={{ width: 'max-content' }}>
-                  {[...availableCourses, ...availableCourses].map((course, idx) => {
-                    const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
-                    const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
-                    const courseDetailEntryUrl = `/courses?openCourseId=${encodeURIComponent(course.id)}`
-                    const registerHref = session 
-                      ? courseDetailEntryUrl 
-                      : `/?login=true&subtitle=${encodeURIComponent('Cần đăng nhập để tiếp tục quá trình đăng ký')}&callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
-                    const registrationDeadlineDate = new Date(course.registrationDeadline)
-                    const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
-                      ? 'Đang cập nhật'
-                      : registrationDeadlineDate.toLocaleDateString('vi-VN', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric'
-                        })
-                    const tier = getPromotionTier(course)
-                    const discountedPrice = course.price * (1 - tier.discount)
+        <section className="mt-12 px-1">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold tracking-tight text-slate-800">Khóa học đang mở đăng ký</h3>
+          </div>
+          
+          <div className="course-ticker-wrap relative -mx-4 overflow-x-auto py-4 scrollbar-hide">
+            <div className="course-ticker-track flex gap-5 px-4" style={{ width: 'max-content' }}>
+              {/* Render Available Courses */}
+              {availableCourses.map((course) => {
+                const isFull = course.maxStudents > 0 && course.enrolledCount >= course.maxStudents
+                const availabilityText = isFull ? 'Đã đầy chỗ' : 'Vẫn còn chỗ'
+                const courseDetailEntryUrl = `/courses?openCourseId=${encodeURIComponent(course.id)}`
+                const registerHref = session 
+                  ? courseDetailEntryUrl 
+                  : `/?login=true&subtitle=${encodeURIComponent('Cần đăng nhập để tiếp tục quá trình đăng ký')}&callbackUrl=${encodeURIComponent(courseDetailEntryUrl)}`
+                const registrationDeadlineDate = new Date(course.registrationDeadline)
+                const registrationDeadlineText = Number.isNaN(registrationDeadlineDate.getTime())
+                  ? 'Đang cập nhật'
+                  : registrationDeadlineDate.toLocaleDateString('vi-VN', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric'
+                    })
+                const tier = getPromotionTier(course)
+                const discountedPrice = course.price * (1 - tier.discount)
 
-                    return (
-                      <div 
-                        key={`${course.id}-${idx}`} 
-                        className="group relative w-[310px] shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                return (
+                  <div 
+                    key={`course-${course.id}`} 
+                    className="group relative w-[310px] shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                  >
+                    <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
+                      {tier.name}
+                    </div>
+
+                    <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
+                    
+                    <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-2 min-h-[40px]">
+                      {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
+                    </p>
+                    
+                    <div className="mt-3 flex items-baseline gap-2">
+                      <span className="text-[15px] font-bold text-slate-900">{formatVND(discountedPrice)}</span>
+                      {tier.discount > 0 && (
+                        <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
+                      )}
+                    </div>
+
+                    <div className="mt-3 space-y-1 border-t border-slate-100 pt-3">
+                      <p className="text-[12px] text-slate-500">Hạn đăng ký: <span className="font-semibold text-slate-700">{registrationDeadlineText}</span></p>
+                      <p className={`text-[12px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
+                        ● {availabilityText}
+                      </p>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <Link
+                        href={registerHref}
+                        className={`flex w-full items-center justify-center rounded-xl py-2.5 text-[13.5px] font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
+                        aria-disabled={isFull}
                       >
-                        <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
-                          {tier.name}
-                        </div>
+                        Đăng Ký Ngay
+                      </Link>
+                    </div>
+                  </div>
+                )
+              })}
 
-                        <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
-                        
-                        <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-2">
-                          {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
-                        </p>
-                        
-                        <div className="mt-3 flex items-baseline gap-2">
-                          <span className="text-[15px] font-bold text-slate-900">{formatVND(discountedPrice)}</span>
-                          {tier.discount > 0 && (
-                            <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
-                          )}
-                        </div>
+              {/* Render News Items */}
+              {activeNews.map((news) => (
+                <div 
+                  key={`news-${news.id}`} 
+                  className="group relative w-[310px] shrink-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                >
+                  <div className="absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r from-orange-400 to-amber-500">
+                    Tin Tức
+                  </div>
 
-                        <div className="mt-3 space-y-1 border-t border-slate-100 pt-3">
-                          <p className="text-[12px] text-slate-500">Hạn đăng ký: <span className="font-semibold text-slate-700">{registrationDeadlineText}</span></p>
-                          <p className={`text-[12px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
-                            ● {availabilityText}
-                          </p>
-                        </div>
-                        
-                        <div className="mt-4">
-                          <Link
-                            href={registerHref}
-                            className={`flex w-full items-center justify-center rounded-xl py-2.5 text-[13.5px] font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
-                            aria-disabled={isFull}
-                          >
-                            Đăng Ký Ngay
-                          </Link>
-                        </div>
+                  <p className="pr-10 text-lg font-extrabold leading-tight text-slate-800">{news.title}</p>
+                  
+                  <div className="mt-2 h-24 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:bg-gray-50 transition-colors">
+                    {news.imageUrl ? (
+                      <img src={news.imageUrl} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-slate-300">
+                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                       </div>
-                    )
-                  })}
+                    )}
+                  </div>
+                  
+                  <p className="mt-3 text-[13px] leading-relaxed text-slate-600 line-clamp-2 min-h-[40px]">
+                    {news.description || 'Theo dõi những thông tin mới nhất từ EnglishMore.'}
+                  </p>
+
+                  <div className="mt-4 border-t border-slate-100 pt-3">
+                    <a
+                      href={news.linkUrl || '#'}
+                      target={news.linkUrl ? "_blank" : "_self"}
+                      rel="noopener noreferrer"
+                      className="flex w-full items-center justify-center rounded-xl bg-white border-2 border-slate-200 py-2.5 text-[13.5px] font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300"
+                    >
+                      Xem Thêm
+                    </a>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <p className="text-sm text-slate-500">Hiện chưa có khóa học mở đăng ký.</p>
-            )}
-          </section>
-        )}
+              ))}
+
+              {/* Placeholders if total items < 3 */}
+              {Array.from({ length: Math.max(0, 3 - (availableCourses.length + activeNews.length)) }).map((_, i) => (
+                <div 
+                  key={`placeholder-${i}`} 
+                  className="w-[310px] shrink-0 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-5 flex flex-col items-center justify-center text-center opacity-60"
+                >
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
+                    <svg className="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                  </div>
+                  <p className="text-sm font-medium text-slate-400">Sắp có thêm khóa học mới</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
 
       <AnimatePresence>

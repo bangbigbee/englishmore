@@ -627,3 +627,16 @@ model ToeicAnswer {
   @@index([userId])
   @@index([questionId])
 }
+
+model LandingNews {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String?
+  linkUrl     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+}
