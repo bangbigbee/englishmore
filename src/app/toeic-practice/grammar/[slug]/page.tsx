@@ -370,30 +370,27 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
                     <section className="mt-8">
-                      <div className="mb-8 flex flex-col gap-4">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Tiến độ luyện tập</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {currentLesson.questions.map((_, idx) => {
-                            const isActive = idx === activeQuestionIndex
-                            const isAnswered = !!userAnswers[currentLesson.questions[idx].id]
-                            
-                            return (
-                              <button 
-                                key={idx}
-                                onClick={() => setActiveQuestionIndex(idx)}
-                                className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm transition-all duration-200 cursor-pointer border-2 ${
-                                  isActive 
-                                    ? 'bg-[#14532d] border-[#14532d] text-white shadow-lg shadow-[#14532d]/20 scale-110 z-10' 
-                                    : isAnswered
-                                      ? 'bg-emerald-50 border-emerald-200 text-[#14532d]'
-                                      : 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
-                                }`}
-                              >
-                                {idx + 1}
-                              </button>
-                            )
-                          })}
-                        </div>
+                      <div className="mb-6 flex flex-wrap gap-1.5 justify-center md:justify-start">
+                        {currentLesson.questions.map((_, idx) => {
+                          const isActive = idx === activeQuestionIndex
+                          const isAnswered = !!userAnswers[currentLesson.questions[idx].id]
+                          
+                          return (
+                            <button 
+                              key={idx}
+                              onClick={() => setActiveQuestionIndex(idx)}
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all duration-200 cursor-pointer border ${
+                                isActive 
+                                  ? 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10' 
+                                  : isAnswered
+                                    ? 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                                    : 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                              }`}
+                            >
+                              {idx + 1}
+                            </button>
+                          )
+                        })}
                       </div>
 
                       <AnimatePresence mode="wait">
