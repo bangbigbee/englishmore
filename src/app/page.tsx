@@ -2420,13 +2420,13 @@ function HomeContent() {
         )}
 
         <section className="mt-12 px-1 pb-12">
-          <div className="mb-6">
-            <h3 className="text-xl font-bold tracking-tight text-slate-800">
+          <div className="mb-6 px-3">
+            <h3 className="text-lg font-bold tracking-tight text-slate-800">
               Chia sẻ của học viên về <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span>
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-3">
             {courseReviews.length > 0 ? (
               courseReviews.map((review) => (
                 <div key={review.id} className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group aspect-video sm:aspect-square bg-slate-100">
