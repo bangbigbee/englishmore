@@ -596,6 +596,10 @@ export default function AdminDashboard() {
   const [savingCourseId, setSavingCourseId] = useState<string | null>(null)
   const [confirmUnpublish, setConfirmUnpublish] = useState<{ id: string; title: string } | null>(null)
   const [courseDetailPreview, setCourseDetailPreview] = useState<{ title: string; description: string | null } | null>(null)
+  const [reviewCourse, setReviewCourse] = useState<{ id: string; title: string } | null>(null)
+  const [reviewImages, setReviewImages] = useState<{ id: string; displayOrder: number }[]>([])
+  const [reviewImagesLoading, setReviewImagesLoading] = useState(false)
+  const [uploadingReview, setUploadingReview] = useState(false)
   const [summary, setSummary] = useState<DashboardSummary>({
     totalUsers: 0,
     totalStudents: 0,
@@ -2754,6 +2758,74 @@ export default function AdminDashboard() {
     setEditCourseEbDays(course.ebThresholdDays ?? 15)
     setEditCourseCompletedSessions(course.completedSessions || 0)
     setCourseError('')
+  }
+
+  const openReviewCourse = (course: CourseItem) => {
+    setReviewCourse({ id: course.id, title: course.title })
+    fetchReviewImages(course.id)
+  }
+
+  const fetchReviewImages = async (courseId: string) => {
+    setReviewImagesLoading(true)
+    try {
+      const res = await fetch(`/api/admin/course-reviews?courseId=${courseId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setReviewImages(data)
+      } else {
+        toast.error('Failed to fetch reviews')
+      }
+    } catch {
+      toast.error('Error fetching reviews')
+    } finally {
+      setReviewImagesLoading(false)
+    }
+  }
+
+  const handleReviewImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!reviewCourse || !e.target.files?.length) return
+    setUploadingReview(true)
+    const formData = new FormData()
+    formData.append('courseId', reviewCourse.id)
+    Array.from(e.target.files).forEach((file) => {
+      formData.append('file', file)
+    })
+
+    try {
+      const res = await fetch('/api/admin/course-reviews', {
+        method: 'POST',
+        body: formData
+      })
+      if (res.ok) {
+        toast.success(`Uploaded ${e.target.files.length} images`)
+        fetchReviewImages(reviewCourse.id)
+        e.target.value = ''
+      } else {
+        const errorData = await res.json()
+        toast.error(errorData.error || 'Failed to upload')
+      }
+    } catch {
+      toast.error('Error uploading images')
+    } finally {
+      setUploadingReview(false)
+    }
+  }
+
+  const deleteReviewImage = async (imageId: string) => {
+    if (!reviewCourse) return
+    try {
+      const res = await fetch(`/api/admin/course-reviews/${imageId}`, {
+        method: 'DELETE'
+      })
+      if (res.ok) {
+        toast.success('Removed image')
+        fetchReviewImages(reviewCourse.id)
+      } else {
+        toast.error('Failed to remove image')
+      }
+    } catch {
+      toast.error('Error')
+    }
   }
 
   const saveEditedCourse = async () => {
@@ -5558,6 +5630,12 @@ export default function AdminDashboard() {
                         >
                           Edit
                         </button>
+                        <button
+                          onClick={() => openReviewCourse(course)}
+                          className="text-[#ea980c] hover:text-[#d4890a] hover:underline"
+                        >
+                          Reviews
+                        </button>
                         {course.isPublished && (
                           <button
                             onClick={() => setConfirmUnpublish({ id: course.id, title: course.title })}
@@ -5637,6 +5715,68 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {reviewCourse && (
+            <div className="fixed inset-0 z-50 overflow-y-auto">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setReviewCourse(null)}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              />
+              <div className="flex min-h-full items-center justify-center p-4">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 md:p-8 max-w-2xl w-full"
+                >
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900">Manage Reviews: {reviewCourse.title}</h3>
+                    <button onClick={() => setReviewCourse(null)} className="text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Upload new images (multiple)</label>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleReviewImageUpload}
+                      disabled={uploadingReview}
+                      className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#14532d]/10 file:text-[#14532d] file:font-medium hover:file:bg-[#14532d]/20 disabled:opacity-50"
+                    />
+                    {uploadingReview && <p className="mt-2 text-sm text-amber-600">Uploading images...</p>}
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto pr-2">
+                    {reviewImagesLoading ? (
+                      <div className="col-span-full py-8 text-center text-gray-500">Loading images...</div>
+                    ) : reviewImages.length === 0 ? (
+                      <div className="col-span-full py-8 text-center text-gray-500 border border-dashed rounded-lg">No reviews uploaded yet.</div>
+                    ) : (
+                      reviewImages.map((img) => (
+                        <div key={img.id} className="relative group border rounded-lg overflow-hidden bg-white aspect-square">
+                          <img src={`/api/course-reviews/images/${img.id}`} alt="Review preview" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              onClick={() => deleteReviewImage(img.id)}
+                              className="bg-red-500 text-white text-xs px-3 py-1 rounded hover:bg-red-600"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              </div>
             </div>
           )}
         </AnimatePresence>

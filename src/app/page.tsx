@@ -210,6 +210,7 @@ function HomeContent() {
   const isPendingMemberRegistration = session?.user?.role === 'user'
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [activeNews, setActiveNews] = useState<any[]>([])
+  const [courseReviews, setCourseReviews] = useState<any[]>([])
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
@@ -373,8 +374,20 @@ function HomeContent() {
       }
     }
 
+    const fetchCourseReviews = async () => {
+      try {
+        const res = await fetch('/api/course-reviews')
+        if (!res.ok) return
+        const data = await res.json()
+        setCourseReviews(data)
+      } catch (err) {
+        console.error('Error fetching course reviews:', err)
+      }
+    }
+
     void fetchNews()
     void fetchAvailableCourses()
+    void fetchCourseReviews()
 
     const fetchPublicVocabulary = async () => {
       try {
@@ -2315,7 +2328,7 @@ function HomeContent() {
                     <div className="mt-auto space-y-2">
                       <div className="border-t border-[#14532d]/10 pt-2">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-[14px] font-bold text-slate-900">{formatVND(discountedPrice)}</span>
+                          <span className="text-[14px] font-normal text-slate-900">{formatVND(discountedPrice)}</span>
                           {tier.discount > 0 && (
                             <span className="text-[10px] text-slate-400 line-through">{formatVND(course.price)}</span>
                           )}
@@ -2342,44 +2355,8 @@ function HomeContent() {
                 )
               })}
 
-              {/* Render News Items */}
-              {activeNews.map((news) => (
-                <div 
-                  key={`news-${news.id}`} 
-                  className="group relative flex h-[260px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
-                >
-
-                  <p className="pr-10 text-lg font-extrabold leading-tight text-slate-800">{news.title}</p>
-                  
-                  <div className="mt-1 h-24 aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:bg-gray-50 transition-colors mx-auto shrink-0">
-                    {news.imageUrl ? (
-                      <img src={news.imageUrl} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-slate-300">
-                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <p className="mt-1 text-[12px] leading-snug text-slate-600 line-clamp-1">
-                    {news.description || 'Theo dõi những thông tin mới nhất từ EnglishMore.'}
-                  </p>
-
-                  <div className="mt-auto pt-3 border-t border-slate-100">
-                    <a
-                      href={news.linkUrl || '#'}
-                      target={news.linkUrl ? "_blank" : "_self"}
-                      rel="noopener noreferrer"
-                      className="flex w-full items-center justify-center rounded-lg bg-[#14532d] py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md"
-                    >
-                      Xem Thêm
-                    </a>
-                  </div>
-                </div>
-              ))}
-
               {/* Placeholders if total items < 3 */}
-              {Array.from({ length: Math.max(0, 3 - (availableCourses.length + activeNews.length)) }).map((_, i) => (
+              {Array.from({ length: Math.max(0, 3 - availableCourses.length) }).map((_, i) => (
                 <div 
                   key={`placeholder-${i}`} 
                   className="h-[260px] w-[270px] shrink-0 snap-start rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-5 flex flex-col items-center justify-center text-center opacity-60"
@@ -2393,6 +2370,78 @@ function HomeContent() {
             </div>
           </div>
         </section>
+
+        {activeNews.length > 0 && (
+          <section className="mt-12 px-1">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold tracking-tight text-[#14532d]">
+                Tin Tức
+              </h3>
+            </div>
+            
+            <div className="course-ticker-wrap relative -mx-4 overflow-x-auto snap-x snap-mandatory py-4 scroll-smooth">
+              <div className="course-ticker-track flex gap-5 px-4" style={{ width: 'max-content' }}>
+                {activeNews.map((news) => (
+                  <div 
+                    key={`news-${news.id}`} 
+                    className="group relative flex h-[260px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                  >
+                    <p className="pr-10 text-lg font-extrabold leading-tight text-slate-800">{news.title}</p>
+                    
+                    <div className="mt-1 h-[110px] w-full overflow-hidden rounded-lg bg-gray-100 group-hover:bg-gray-50 transition-colors mx-auto shrink-0">
+                      {news.imageUrl ? (
+                        <img src={news.imageUrl} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-slate-300">
+                          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <p className="mt-1 text-[12px] leading-snug text-slate-600 line-clamp-1">
+                      {news.description || 'Theo dõi những thông tin mới nhất từ EnglishMore.'}
+                    </p>
+
+                    <div className="mt-auto pt-3 border-t border-slate-100">
+                      <a
+                        href={news.linkUrl || '#'}
+                        target={news.linkUrl ? "_blank" : "_self"}
+                        rel="noopener noreferrer"
+                        className="flex w-full items-center justify-center rounded-lg bg-[#14532d] py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md"
+                      >
+                        Xem Thêm
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {courseReviews.length > 0 && (
+          <section className="relative mt-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-12">
+            <div className="mb-8 text-center sm:text-left pt-6">
+              <h2 className="mb-2 text-2xl font-black uppercase tracking-tight text-[#14532d] sm:text-3xl lg:text-4xl">
+                CÁC HỌC VIÊN NÓI GÌ <span className="text-[#ea980c]">VỀ CHÚNG TÔI</span>
+              </h2>
+              <div className="h-1.5 w-16 bg-[#ea980c] sm:w-20 sm:mx-0 mx-auto" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {courseReviews.map((review) => (
+                <div key={review.id} className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group aspect-video sm:aspect-square bg-slate-100">
+                  <img
+                    src={`/api/course-reviews/images/${review.id}`}
+                    alt="Course Review"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       <AnimatePresence>
