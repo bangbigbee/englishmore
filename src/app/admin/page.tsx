@@ -1310,6 +1310,20 @@ export default function AdminDashboard() {
     }
   }, [])
 
+  const fetchNews = useCallback(async () => {
+    try {
+      setNewsLoading(true)
+      const res = await fetch('/api/admin/news')
+      const data = await parseApiResponse(res)
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch news')
+      setNewsList(data)
+    } catch (err) {
+      setNewsError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setNewsLoading(false)
+    }
+  }, [])
+
   const createToeicTopic = async () => {
     try {
       setSavingToeicTopic(true)
@@ -1970,10 +1984,16 @@ export default function AdminDashboard() {
   }, [activeSection, fetchToeicTopics])
 
   useEffect(() => {
+    if (activeSection === 'news') {
+      void fetchNews()
+    }
+  }, [activeSection, fetchNews])
+
+  useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const section = params.get('section')
-    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'activityPoints', 'vocabulary', 'speakYourself', 'referral', 'toeic']
+    const allowed: AdminSection[] = ['course', 'homework', 'exercise', 'lectureNote', 'dailyActivity', 'activityPoints', 'vocabulary', 'speakYourself', 'referral', 'toeic', 'news']
     if (section === 'checkin' || section === 'reflect') {
       setActiveSection('dailyActivity')
       return
