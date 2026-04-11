@@ -2373,7 +2373,7 @@ function HomeContent() {
                       href={news.linkUrl || '#'}
                       target={news.linkUrl ? "_blank" : "_self"}
                       rel="noopener noreferrer"
-                      className="flex w-full items-center justify-center rounded-xl bg-white border-2 border-slate-200 py-2.5 text-[13.5px] font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300"
+                      className="flex w-full items-center justify-center rounded-lg bg-[#14532d] py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md"
                     >
                       Xem Thêm
                     </a>
