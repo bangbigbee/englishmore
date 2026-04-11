@@ -2308,7 +2308,7 @@ function HomeContent() {
 
                     <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
                     
-                    <p className="mt-1 text-[13px] leading-relaxed text-slate-600 line-clamp-2">
+                    <p className="mt-1 text-[13px] leading-relaxed text-slate-600 line-clamp-4">
                       {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
                     </p>
                     
@@ -2364,7 +2364,7 @@ function HomeContent() {
                     )}
                   </div>
                   
-                  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-3">
+                  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-4">
                     {news.description || 'Theo dõi những thông tin mới nhất từ EnglishMore.'}
                   </p>
 
