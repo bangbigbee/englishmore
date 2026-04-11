@@ -13,7 +13,9 @@ export async function GET(request: NextRequest, props: { params: Promise<{ id: s
       return new NextResponse('Not found', { status: 404 })
     }
 
-    return new NextResponse(image.data, {
+    const payload = new Uint8Array(image.data)
+    
+    return new NextResponse(payload, {
       headers: {
         'Content-Type': image.mimeType,
         'Cache-Control': 'public, max-age=31536000, immutable'
