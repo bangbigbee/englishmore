@@ -2300,7 +2300,7 @@ function HomeContent() {
                 return (
                   <div 
                     key={`course-${course.id}`} 
-                    className="group relative flex h-[400px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 pb-4 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                    className="group relative flex h-[300px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
                   >
                     <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
                       {tier.name}
@@ -2308,34 +2308,34 @@ function HomeContent() {
 
                     <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
                     
-                    <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-6">
+                    <p className="mt-1 text-[13px] leading-relaxed text-slate-600 line-clamp-2">
                       {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
                     </p>
                     
-                    <div className="mt-auto space-y-3">
-                      <div className="border-t border-[#14532d]/10 pt-3">
+                    <div className="mt-auto space-y-2">
+                      <div className="border-t border-[#14532d]/10 pt-2">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-[15px] font-bold text-slate-900">{formatVND(discountedPrice)}</span>
+                          <span className="text-[14px] font-bold text-slate-900">{formatVND(discountedPrice)}</span>
                           {tier.discount > 0 && (
-                            <span className="text-xs text-slate-400 line-through">{formatVND(course.price)}</span>
+                            <span className="text-[10px] text-slate-400 line-through">{formatVND(course.price)}</span>
                           )}
                         </div>
-                        <div className="mt-2 space-y-1">
-                          <p className="text-[12px] text-slate-500">Hạn đăng ký: <span className="font-semibold text-slate-700">{registrationDeadlineText}</span></p>
-                          <p className={`text-[12px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
+                        <div className="mt-1 space-y-0.5">
+                          <p className="text-[11px] text-slate-500">Hạn: <span className="font-semibold text-slate-700">{registrationDeadlineText}</span></p>
+                          <p className={`text-[11px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
                             ● {availabilityText}
                           </p>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="pt-3">
+                    <div className="pt-2">
                       <Link
                         href={registerHref}
-                        className={`flex w-full items-center justify-center rounded-xl py-2.5 text-[13.5px] font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
+                        className={`flex w-full items-center justify-center rounded-lg py-2 text-[13px] font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
                         aria-disabled={isFull}
                       >
-                        Đăng Ký Ngay
+                        Đăng Ký
                       </Link>
                     </div>
                   </div>
@@ -2346,7 +2346,7 @@ function HomeContent() {
               {activeNews.map((news) => (
                 <div 
                   key={`news-${news.id}`} 
-                  className="group relative flex h-[400px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 pb-4 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                  className="group relative flex h-[300px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
                 >
                   <div className="absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r from-orange-400 to-amber-500">
                     Tin Tức
@@ -2364,7 +2364,7 @@ function HomeContent() {
                     )}
                   </div>
                   
-                  <p className="mt-3 text-[13px] leading-relaxed text-slate-600 line-clamp-6">
+                  <p className="mt-2 text-[13px] leading-relaxed text-slate-600 line-clamp-3">
                     {news.description || 'Theo dõi những thông tin mới nhất từ EnglishMore.'}
                   </p>
 
@@ -2385,7 +2385,7 @@ function HomeContent() {
               {Array.from({ length: Math.max(0, 3 - (availableCourses.length + activeNews.length)) }).map((_, i) => (
                 <div 
                   key={`placeholder-${i}`} 
-                  className="h-[400px] w-[270px] shrink-0 snap-start rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-5 flex flex-col items-center justify-center text-center opacity-60"
+                  className="h-[300px] w-[270px] shrink-0 snap-start rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-5 flex flex-col items-center justify-center text-center opacity-60"
                 >
                   <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3">
                     <svg className="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
