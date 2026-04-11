@@ -238,6 +238,8 @@ body {
 
 .course-ticker-wrap {
   overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   padding: 12px 0;
 }
 
