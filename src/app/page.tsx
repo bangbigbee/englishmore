@@ -2348,9 +2348,6 @@ function HomeContent() {
                   key={`news-${news.id}`} 
                   className="group relative flex h-[420px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
                 >
-                  <div className="absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r from-orange-400 to-amber-500">
-                    Tin Tức
-                  </div>
 
                   <p className="pr-10 text-lg font-extrabold leading-tight text-slate-800">{news.title}</p>
                   
