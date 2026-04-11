@@ -2421,8 +2421,8 @@ function HomeContent() {
 
         <section className="relative mt-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-12">
           <div className="mb-8 text-center sm:text-left pt-6">
-            <h2 className="mb-2 text-2xl font-black uppercase tracking-tight text-[#14532d] sm:text-3xl lg:text-4xl">
-              CÁC HỌC VIÊN NÓI GÌ <span className="text-[#ea980c]">VỀ CHÚNG TÔI</span>
+            <h2 className="mb-2 text-2xl font-black tracking-tight text-slate-800 sm:text-3xl lg:text-4xl">
+              Chia sẻ của học viên về <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span>
             </h2>
             <div className="h-1.5 w-16 bg-[#ea980c] sm:w-20 sm:mx-0 mx-auto" />
           </div>
