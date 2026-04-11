@@ -2371,7 +2371,7 @@ function HomeContent() {
           </div>
         </section>
 
-        {activeNews.length > 0 && (
+        {false && activeNews.length > 0 && (
           <section className="mt-12 px-1">
             <div className="mb-6">
               <h3 className="text-xl font-bold tracking-tight text-[#14532d]">
@@ -2419,35 +2419,37 @@ function HomeContent() {
           </section>
         )}
 
-        <section className="mt-12 px-1 pb-12">
-          <div className="mb-6 px-3">
-            <h3 className="text-lg font-bold tracking-tight text-slate-800">
-              Chia sẻ của học viên về <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span>
-            </h3>
-          </div>
+        {false && (
+          <section className="mt-12 px-1 pb-12">
+            <div className="mb-6 px-3">
+              <h3 className="text-lg font-bold tracking-tight text-slate-800">
+                Chia sẻ của học viên về <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span>
+              </h3>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-3">
-            {courseReviews.length > 0 ? (
-              courseReviews.map((review) => (
-                <div key={review.id} className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group aspect-video sm:aspect-square bg-slate-100">
-                  <img
-                    src={`/api/course-reviews/images/${review.id}`}
-                    alt="Course Review"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-              ))
-            ) : (
-              // Empty placeholders
-              Array.from({ length: 3 }).map((_, i) => (
-                <div key={`placeholder-${i}`} className="relative rounded-2xl overflow-hidden border border-dashed border-slate-200 bg-slate-50/50 aspect-video sm:aspect-square flex items-center justify-center">
-                  <div className="text-slate-400 font-medium text-sm">Chưa có đánh giá nào</div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-3">
+              {courseReviews.length > 0 ? (
+                courseReviews.map((review) => (
+                  <div key={review.id} className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group aspect-video sm:aspect-square bg-slate-100">
+                    <img
+                      src={`/api/course-reviews/images/${review.id}`}
+                      alt="Course Review"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
+                ))
+              ) : (
+                // Empty placeholders
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={`placeholder-${i}`} className="relative rounded-2xl overflow-hidden border border-dashed border-slate-200 bg-slate-50/50 aspect-video sm:aspect-square flex items-center justify-center">
+                    <div className="text-slate-400 font-medium text-sm">Chưa có đánh giá nào</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        )}
       </main>
 
       <AnimatePresence>
