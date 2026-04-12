@@ -46,6 +46,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
   const [showLessonContent, setShowLessonContent] = useState(false)
   const [correctStreak, setCorrectStreak] = useState(0)
+  const [timerStartTime, setTimerStartTime] = useState<number | null>(null)
+  const [elapsedTime, setElapsedTime] = useState(0)
+  const [isTestCompleted, setIsTestCompleted] = useState(false)
   const { data: session, status } = useSession()
   const [isSyncing, setIsSyncing] = useState(false)
   const router = useRouter()
@@ -61,6 +64,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           setSelectedLessonId(data.lessons[0].id)
           setActiveQuestionIndex(0)
           setShowLessonContent(data.lessons[0].questions.length === 0)
+          setTimerStartTime(Date.now())
+          setElapsedTime(0)
+          setIsTestCompleted(false)
         }
       } catch (error) {
         console.error(error)
@@ -174,7 +180,28 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     }
   }, [selectedLessonId, loadProgress])
 
-  const currentLesson = topic?.lessons.find(l => l.id === selectedLessonId)
+  // Monitor progress for Test Completion and Timer Start
+  useEffect(() => {
+    if (currentLesson && currentLesson.questions.length > 0) {
+      const answeredCount = Object.keys(showResults).filter(k => currentLesson.questions.some(q => q.id === k)).length
+      if (answeredCount === currentLesson.questions.length) {
+        setIsTestCompleted(true)
+      } else if (!timerStartTime) {
+        setTimerStartTime(Date.now())
+      }
+    }
+  }, [showResults, currentLesson, timerStartTime])
+
+  // Timer interval
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (timerStartTime && !isTestCompleted) {
+      timer = setInterval(() => {
+        setElapsedTime(Math.floor((Date.now() - timerStartTime) / 1000))
+      }, 1000)
+    }
+    return () => clearInterval(timer)
+  }, [timerStartTime, isTestCompleted])
 
   const handleSelectOption = (questionId: string, option: string) => {
     if (showResults[questionId]) return
@@ -316,6 +343,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setSelectedLessonId(lesson.id)
                   setActiveQuestionIndex(0)
                   setShowLessonContent(lesson.questions.length === 0)
+                  setTimerStartTime(Date.now())
+                  setElapsedTime(0)
+                  setIsTestCompleted(false)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
                 className={`w-full text-left p-4 rounded-xl transition-all duration-200 group flex items-start gap-4 cursor-pointer ${
@@ -359,6 +389,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     <div className="flex items-center gap-3">
                       <span className="text-2xl font-black text-[#14532d]/20 select-none">#{currentLesson.order}</span>
                       <h2 className="text-xl font-black text-slate-900 leading-tight">{currentLesson.title}</h2>
+                      {!isTestCompleted && timerStartTime !== null && (
+                        <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
+                          {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
+                        </span>
+                      )}
                     </div>
                     {currentLesson.questions.length > 0 && (
                       <button 
@@ -501,18 +536,18 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   <button
                                     onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
                                     disabled={activeQuestionIndex === 0}
-                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer"
+                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm"
                                   >
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                                     Trước đó
                                   </button>
                                   <button
                                     onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
                                     disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                    className="p-4 rounded-2xl border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer"
+                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm"
                                   >
                                     Tiếp theo
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                                   </button>
                                 </div>
 
@@ -533,12 +568,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       )}
                                     </div>
                                     <div className="flex flex-col">
-                                      <span className="text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
-                                      <span className="font-bold text-sm">{isCorrect ? 'Chính xác! Làm tốt lắm.' : 'Chưa đúng rồi! Hãy thử lại.'}</span>
+                                      <span className="text-[10px] font-black  uppercase tracking-widest leading-none">Kết quả</span>
+                                      <span className="font-bold text-sm text-slate-800">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
                                     </div>
                                     {q.explanation && (
-                                      <div className="ml-4 pl-4 border-l border-current/20 hidden lg:block">
-                                        <p className="text-xs italic opacity-80">{q.explanation}</p>
+                                      <div className="ml-4 pl-4 border-l-2 border-current/30 hidden lg:block max-w-lg">
+                                        <p className="text-sm font-medium italic text-slate-700 opacity-90 leading-relaxed">{q.explanation}</p>
                                       </div>
                                     )}
                                   </div>
@@ -549,10 +584,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 <motion.div 
                                   initial={{ opacity: 0, y: 10 }}
                                   animate={{ opacity: 1, y: 0 }}
-                                  className="mt-6 p-6 bg-slate-50 rounded-2xl border border-slate-100 lg:hidden"
+                                  className="mt-6 p-5 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200 lg:hidden"
                                 >
-                                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Giải thích chi tiết</p>
-                                  <p className="text-sm text-slate-600 leading-relaxed italic">{q.explanation}</p>
+                                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Giải thích chi tiết</p>
+                                  <p className="text-[15px] font-medium text-slate-700 leading-relaxed italic">{q.explanation}</p>
                                 </motion.div>
                               )}
                             </motion.div>
@@ -571,6 +606,73 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           </div>
         </main>
       </div>
+
+      {isTestCompleted && currentLesson && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center"
+          >
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-emerald-50">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h3 className="text-2xl font-black text-slate-800 mb-2">Hoàn thành bài thi!</h3>
+            <p className="text-slate-600 mb-6 leading-relaxed">
+              {elapsedTime > 0 ? (
+                <>Chúc mừng bạn đã hoàn thành bài thi trong <strong className="text-emerald-700">{Math.floor(elapsedTime / 60)} phút {elapsedTime % 60} giây</strong>.<br/></>
+              ) : (
+                <>Bạn đã gửi toàn bộ bài thi.<br/></>
+              )}
+              Bạn đã đúng <strong className="text-emerald-700 text-xl">{currentLesson.questions.filter(q => userAnswers[q.id] === q.correctOption).length}</strong> / <strong>{currentLesson.questions.length}</strong> câu.
+            </p>
+            <p className="font-bold text-slate-700 mb-4">Bạn có muốn làm lại bài thi này?</p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  const newAnswers = { ...userAnswers };
+                  const newResults = { ...showResults };
+                  currentLesson.questions.forEach(q => {
+                    delete newAnswers[q.id];
+                    delete newResults[q.id];
+                  });
+                  setUserAnswers(newAnswers);
+                  setShowResults(newResults);
+                  setIsTestCompleted(false);
+                  setTimerStartTime(Date.now());
+                  setElapsedTime(0);
+                  setActiveQuestionIndex(0);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-colors cursor-pointer shadow-md shadow-[#14532d]/20"
+              >
+                YES (Làm lại)
+              </button>
+              {topic && topic.lessons.findIndex(l => l.id === selectedLessonId) < topic.lessons.length - 1 ? (
+                <button
+                  onClick={() => {
+                    const nextLesson = topic.lessons[topic.lessons.findIndex(l => l.id === selectedLessonId) + 1]
+                    setSelectedLessonId(nextLesson.id)
+                    setActiveQuestionIndex(0)
+                    setShowLessonContent(nextLesson.questions.length === 0)
+                    setTimerStartTime(Date.now())
+                    setElapsedTime(0)
+                    setIsTestCompleted(false)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                  className="w-full py-3.5 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors cursor-pointer"
+                >
+                  Làm bài tiếp theo &rarr;
+                </button>
+              ) : (
+                <Link href="/toeic-practice" className="w-full py-3.5 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors inline-block cursor-pointer">
+                  &larr; Trở về danh sách chủ đề
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }
