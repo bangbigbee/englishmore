@@ -66,10 +66,6 @@ export default function GallerySection() {
           Khoảnh Khắc
           <span className="text-[#ea980c]"> EnglishMore</span>
         </h2>
-        <p className="mt-4 text-xl text-gray-600 font-medium italic">
-          Khoảng cách không thể ngăn bạn học tiếng Anh. Mà là Sự Im Lặng.<br/>
-          <span className="text-lg">Just turn on your microphone and speak!</span>
-        </p>
       </div>
 
       {groups.map((group, index) => (
@@ -130,7 +126,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
 
     return (
       <section className="relative w-full">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-6 text-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
           <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
@@ -169,7 +165,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
 
     return (
       <section className="relative w-full">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-6 text-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
           <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
@@ -203,7 +199,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
 
     return (
       <section className="relative w-full h-[600px] sm:h-[800px] overflow-hidden py-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-10 text-center">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
           <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full shadow-sm">{group.title}</h3>
         </div>
         <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_100px_40px_rgba(249,250,251,1)]" />
