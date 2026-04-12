@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, use, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -44,8 +45,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
   const [showLessonContent, setShowLessonContent] = useState(false)
+  const [correctStreak, setCorrectStreak] = useState(0)
   const { data: session, status } = useSession()
   const [isSyncing, setIsSyncing] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -192,20 +195,42 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
     setShowResults(prev => ({ ...prev, [questionId]: true }))
 
+    let newStreak = 0;
+    if (isCorrect) {
+      newStreak = correctStreak + 1;
+      setCorrectStreak(newStreak);
+      if (newStreak === 1) {
+        toast('Tốt lắm, tiếp tục nào!', { icon: '✨', style: { background: '#14532d', color: '#fff', border: 'none', fontWeight: 'bold' }});
+        new Audio('/audio/toeic-correct-ting-sound.mp3').play().catch(() => {});
+      } else if (newStreak === 2) {
+        toast('Tiếp tục nào, bạn đã đúng 2 câu liên tiếp rồi!', { icon: '🔥', style: { background: '#ea980c', color: '#fff', border: 'none', fontWeight: 'bold' }});
+        new Audio('/audio/toeic-correct-ting-sound.mp3').play().catch(() => {});
+      } else if (newStreak >= 3) {
+        toast('Bạn thật tuyệt vời. Cố gắng phát huy nhé.', { icon: '🌟', style: { background: '#f59e0b', color: '#fff', border: 'none', fontWeight: 'bold' }});
+        new Audio('/audio/toeic-correct-ting-sound.mp3').play().catch(() => {});
+        if (status !== 'authenticated') {
+           setTimeout(() => {
+             const currentPath = window.location.pathname;
+             router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
+           }, 1500)
+        }
+      }
+    } else {
+      setCorrectStreak(0);
+      new Audio('/audio/toeic-incorrect-sound.mp3').play().catch(() => {});
+    }
+
     // Persist
     if (status === 'authenticated') {
       try {
         const res = await fetch('/api/toeic/progress', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ questionId, selectedOption, isCorrect })
+          body: JSON.stringify({ questionId, selectedOption, isCorrect, currentStreak: newStreak })
         })
         const data = await res.json()
         if (res.ok && data.awardedPoints) {
-          toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} điểm chuyên cần cho bài học này.`)
-          // Play reward sound
-          const audio = new Audio('/audio/amazing-reward-sound.mp3')
-          audio.play().catch(e => console.error('Error playing reward sound:', e))
+          toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} APs thông qua việc luyện tập.`)
         }
       } catch (error) {
         console.error('Error saving progress:', error)

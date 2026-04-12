@@ -213,6 +213,7 @@ function HomeContent() {
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
   const [activeNews, setActiveNews] = useState<any[]>([])
   const [courseReviews, setCourseReviews] = useState<any[]>([])
+  const [hasNewLectureSlide, setHasNewLectureSlide] = useState(false)
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
@@ -638,6 +639,36 @@ function HomeContent() {
       }
     }
 
+    const fetchLectureNotesStatus = async () => {
+      if (session.user?.role !== 'member') return
+      try {
+        const res = await fetch('/api/member/lecture-notes')
+        if (!res.ok) return
+        const data = await res.json()
+        if (data.hasActiveCourse && data.courses && data.courses.length > 0) {
+          const threeDaysAgo = new Date()
+          threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+          
+          let hasRecent = false
+          for (const course of data.courses) {
+            for (const note of course.notes) {
+              if (new Date(note.updatedAt) > threeDaysAgo) {
+                const lastVisited = localStorage.getItem('lectureNotesLastVisited')
+                if (!lastVisited || new Date(note.updatedAt).getTime() > parseInt(lastVisited)) {
+                  hasRecent = true
+                  break
+                }
+              }
+            }
+            if (hasRecent) break
+          }
+          setHasNewLectureSlide(hasRecent)
+        }
+      } catch {
+        setHasNewLectureSlide(false)
+      }
+    }
+
     fetchAvailableCourses()
     fetchGreetingResponse()
     fetchMemberHomework()
@@ -645,6 +676,7 @@ function HomeContent() {
     fetchMemberVocabulary()
     fetchReflection()
     fetchCongratsEnrollment()
+    fetchLectureNotesStatus()
 
     const conversationRefreshInterval = window.setInterval(() => {
       fetchGreetingResponse(false)
@@ -1983,7 +2015,12 @@ function HomeContent() {
                     </span>
                   )}
                   <span>My Homework</span>
-                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                  <span aria-hidden="true" className="speak-cta-mic-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="speak-cta-mic">
+                      <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.158 3.712 3.712 1.157-1.158a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                      <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                    </svg>
+                  </span>
                   {memberHomework && Array.isArray(memberHomework.pendingHomework) && memberHomework.pendingHomework.length > 0 && (
                     <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
                       {memberHomework.pendingHomework.length}
@@ -2007,24 +2044,28 @@ function HomeContent() {
                   className="brand-cta brand-cta-filled w-full justify-center"
                 >
                   <span>Luyện TOEIC</span>
-                  <span aria-hidden="true" className="speak-cta-mic-wrap">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="speak-cta-mic"
-                    >
-                      <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
-                      <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
-                    </svg>
-                  </span>
+                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
                 </Link>
                 <Link
                   href="/lecture-notes"
-                  className="brand-cta brand-cta-outline w-full justify-center"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      localStorage.setItem('lectureNotesLastVisited', Date.now().toString())
+                      setHasNewLectureSlide(false)
+                    }
+                  }}
+                  className="brand-cta brand-cta-outline w-full justify-center relative"
                 >
                   <span>Lecture Slide</span>
-                  <span aria-hidden="true" className="brand-cta-arrow">→</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 ml-1 inline-block">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                  {hasNewLectureSlide && (
+                    <span className="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 text-transparent animate-pulse shadow-sm ring-2 ring-white">
+                    </span>
+                  )}
                 </Link>
               </div>
             )}

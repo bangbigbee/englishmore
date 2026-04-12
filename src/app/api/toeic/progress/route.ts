@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { questionId, selectedOption, isCorrect } = body
+    const { questionId, selectedOption, isCorrect, currentStreak } = body
 
     if (!questionId || !selectedOption) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 })
@@ -97,6 +97,19 @@ export async function POST(request: NextRequest) {
       })
 
       if (question) {
+        let totalAwardedPoints = 0;
+        const { awardActivityPoints, ACTIVITY_POINT_KEYS } = await import('@/lib/activityPoints')
+
+        // 2.a Award for streak
+        if (isCorrect && currentStreak >= 3) {
+           const streakResult = await awardActivityPoints({
+             userId,
+             activityKey: ACTIVITY_POINT_KEYS.toeicCorrectStreak,
+             referenceKey: `TOEIC_STREAK_${userId}_${questionId}`
+           })
+           totalAwardedPoints += streakResult.awardedAp;
+        }
+
         const lessonId = question.lessonId
         const totalQuestions = await prisma.toeicQuestion.count({ where: { lessonId } })
         const userAnswersCount = await prisma.toeicAnswer.count({
@@ -104,16 +117,16 @@ export async function POST(request: NextRequest) {
         })
 
         if (userAnswersCount >= totalQuestions && totalQuestions > 0) {
-          const { awardActivityPoints, ACTIVITY_POINT_KEYS } = await import('@/lib/activityPoints')
           const result = await awardActivityPoints({
             userId,
-            activityKey: ACTIVITY_POINT_KEYS.toeicPractice,
-            referenceKey: `TOEIC_LESSON_${lessonId}`
+            activityKey: ACTIVITY_POINT_KEYS.toeicQuizComplete,
+            referenceKey: `TOEIC_QUIZ_COMPLETE_${lessonId}_${userId}`
           })
-          
-          if (result.awardedAp > 0) {
-            return NextResponse.json({ success: true, awardedPoints: result.awardedAp })
-          }
+          totalAwardedPoints += result.awardedAp;
+        }
+        
+        if (totalAwardedPoints > 0) {
+           return NextResponse.json({ success: true, awardedPoints: totalAwardedPoints })
         }
       }
     }
