@@ -83,6 +83,13 @@ export default function TeacherVideosOverlay() {
 
 function FloatingVideo({ active, onComplete }: { active: ActiveVideo, onComplete: (id: string) => void }) {
   const [ready, setReady] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    if (videoRef.current && videoRef.current.readyState >= 2) {
+      setReady(true)
+    }
+  }, [])
 
   useEffect(() => {
     if (ready) {
@@ -103,6 +110,7 @@ function FloatingVideo({ active, onComplete }: { active: ActiveVideo, onComplete
       }}
     >
       <video 
+        ref={videoRef}
         src={`/api/gallery/${active.vid.id}`}
         className="w-full h-full object-cover rounded-xl shadow-2xl border-2 border-white/30 bg-[#14532d]/50"
         style={{ transform: `${active.rotate} ${active.scale}` }}
@@ -110,7 +118,9 @@ function FloatingVideo({ active, onComplete }: { active: ActiveVideo, onComplete
         muted
         loop
         playsInline
+        onLoadedData={() => setReady(true)}
         onCanPlay={() => setReady(true)}
+        onCanPlayThrough={() => setReady(true)}
       />
     </div>
   )
