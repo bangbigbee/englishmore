@@ -200,15 +200,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
       newStreak = correctStreak + 1;
       setCorrectStreak(newStreak);
       if (newStreak === 1) {
-        toast('Tốt lắm, tiếp tục nào!', { icon: '✨', style: { background: '#14532d', color: '#fff', border: 'none', fontWeight: 'bold' }});
+        toast('Tốt lắm, tiếp tục nào!', { duration: 7000, icon: '✨', style: { background: '#14532d', color: '#fff', border: 'none', fontWeight: 'bold' }});
         new Audio('/audio/toeic-correct-ting-sound.mp3').play().catch(() => {});
       } else if (newStreak === 2) {
-        toast('Tiếp tục nào, bạn đã đúng 2 câu liên tiếp rồi!', { icon: '🔥', style: { background: '#ea980c', color: '#fff', border: 'none', fontWeight: 'bold' }});
+        toast('Tiếp tục nào, bạn đã đúng 2 câu liên tiếp rồi!', { duration: 7000, icon: '🔥', style: { background: '#ea980c', color: '#fff', border: 'none', fontWeight: 'bold' }});
         new Audio('/audio/toeic-correct-ting-sound.mp3').play().catch(() => {});
       } else if (newStreak >= 3) {
-        toast('Bạn thật tuyệt vời. Cố gắng phát huy nhé.', { icon: '🌟', style: { background: '#f59e0b', color: '#fff', border: 'none', fontWeight: 'bold' }});
+        toast('Bạn thật tuyệt vời. Cố gắng phát huy nhé.', { duration: 7000, icon: '🌟', style: { background: '#f59e0b', color: '#fff', border: 'none', fontWeight: 'bold' }});
         new Audio('/audio/toeic-correct-ting-sound.mp3').play().catch(() => {});
-        if (status !== 'authenticated') {
+        if (status !== 'authenticated' && (newStreak === 3 || newStreak === 10)) {
            setTimeout(() => {
              const currentPath = window.location.pathname;
              router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
