@@ -134,7 +134,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
             <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#f9fafb_0%,transparent_15%,transparent_85%,#f9fafb_100%)] pointer-events-none z-10" />
         <div className="mx-auto max-w-[1400px] h-[600px] sm:h-[800px] px-2 md:px-4 relative z-0 flex gap-2 md:gap-4 justify-center overflow-hidden">
           {colConfigurations.map((config, colIdx) => (
             <div 
@@ -175,7 +175,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
             <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f9fafb_0%,transparent_10%,transparent_90%,#f9fafb_100%)] pointer-events-none z-10" />
         <div className="w-full h-[600px] sm:h-[800px] flex flex-col gap-3 md:gap-4 overflow-hidden relative z-0 px-2 justify-center">
           {rowConfigurations.map((config, rowIdx) => (
             <div 
@@ -211,7 +211,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
             <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full shadow-sm">{group.title}</h3>
           </div>
         )}
-        <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_100px_40px_rgba(249,250,251,1)]" />
+        <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_60px_20px_rgba(249,250,251,1)]" />
         <div className="relative z-0 w-[120%] -ml-[10%] -mt-16 transform -rotate-[8deg] scale-110 flex flex-col gap-3 justify-center h-full">
           {rowConfigurations.map((config, rowIdx) => (
             <div 
