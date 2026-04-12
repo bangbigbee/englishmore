@@ -16,7 +16,25 @@ export async function GET() {
         course: { select: { title: true, galleryAnimation: true } }
       }
     })
-    return NextResponse.json(images)
+    const generalSettings = await prisma.course.findUnique({
+      where: { id: 'general_gallery_settings' },
+      select: { galleryAnimation: true }
+    });
+
+    const formatImages = images.map(img => {
+      if (!img.courseId) {
+         return {
+           ...img,
+           course: {
+             title: '',
+             galleryAnimation: generalSettings?.galleryAnimation || 'vertical'
+           }
+         }
+      }
+      return img;
+    });
+
+    return NextResponse.json(formatImages)
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 })
   }

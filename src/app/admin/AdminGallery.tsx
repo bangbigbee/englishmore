@@ -25,6 +25,7 @@ export default function AdminGallery() {
   const [images, setImages] = useState<GalleryImageItem[]>([])
   const [courses, setCourses] = useState<CourseItem[]>([])
   const [selectedCourseId, setSelectedCourseId] = useState<string>('')
+  const [generalAnimation, setGeneralAnimation] = useState<string>('vertical')
   
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -51,7 +52,13 @@ export default function AdminGallery() {
       ])
       
       setImages(dataImages)
-      setCourses(Array.isArray(dataCourses) ? dataCourses.map((c: any) => ({
+      
+      const gsc = Array.isArray(dataCourses) ? dataCourses.find((c: any) => c.id === 'general_gallery_settings') : null
+      if (gsc) {
+        setGeneralAnimation(gsc.galleryAnimation || 'vertical')
+      }
+
+      setCourses(Array.isArray(dataCourses) ? dataCourses.filter((c: any) => c.id !== 'general_gallery_settings').map((c: any) => ({
         id: c.id,
         title: c.title,
         galleryAnimation: c.galleryAnimation || 'vertical'
@@ -176,6 +183,21 @@ export default function AdminGallery() {
     }
   }
 
+  const handleUpdateGeneralAnimation = async (animation: string) => {
+    try {
+      const res = await fetch(`/api/admin/courses/general_gallery_settings`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ galleryAnimation: animation })
+      })
+      if (!res.ok) throw new Error('Cập nhật animation thất bại')
+      setGeneralAnimation(animation)
+      toast.success('Đã lưu cài đặt Animation chung')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Update failed')
+    }
+  }
+
   if (loading) return <div className="p-8 text-center text-gray-500">Loading gallery...</div>
 
   // Lọc hình ảnh theo mục được chọn
@@ -228,7 +250,25 @@ export default function AdminGallery() {
         </div>
       </div>
 
-      {selectedCourseId && selectedCourseDetails && (
+      {selectedCourseId === '' && (
+        <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-semibold text-blue-900">Animation Style</h3>
+            <p className="text-xs text-blue-700">Chọn cách thức hiển thị ảnh động cho Hình ảnh chung trên trang chủ.</p>
+          </div>
+          <select
+            value={generalAnimation}
+            onChange={(e) => handleUpdateGeneralAnimation(e.target.value)}
+            className="rounded bg-white border border-blue-300 px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="vertical">Dọc (Vertical Scroll)</option>
+            <option value="horizontal">Ngang (Horizontal Scroll)</option>
+            <option value="diagonal">Chéo (Diagonal Floating)</option>
+          </select>
+        </div>
+      )}
+
+      {selectedCourseId && selectedCourseId !== 'teacher' && selectedCourseDetails && (
         <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="font-semibold text-blue-900">Animation Style</h3>
@@ -245,6 +285,7 @@ export default function AdminGallery() {
           </select>
         </div>
       )}
+
 
       {error && <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{error}</div>}
 

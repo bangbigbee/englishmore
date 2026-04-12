@@ -39,7 +39,7 @@ export default function GallerySection() {
             if (!grouped[cId]) {
               grouped[cId] = {
                 courseId: cId,
-                title: img.course?.title || 'Hoạt Động Chung',
+                title: img.course?.title || '',
                 animation: img.course?.galleryAnimation || 'vertical',
                 images: []
               }
@@ -129,9 +129,11 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
 
     return (
       <section className="relative w-full">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
-          <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
-        </div>
+        {group.title && (
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
+            <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
         <div className="mx-auto max-w-[1400px] h-[600px] sm:h-[800px] px-2 md:px-4 relative z-0 flex gap-2 md:gap-4 justify-center overflow-hidden">
           {colConfigurations.map((config, colIdx) => (
@@ -168,9 +170,11 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
 
     return (
       <section className="relative w-full">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
-          <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
-        </div>
+        {group.title && (
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
+            <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
         <div className="w-full h-[600px] sm:h-[800px] flex flex-col gap-3 md:gap-4 overflow-hidden relative z-0 px-2 justify-center">
           {rowConfigurations.map((config, rowIdx) => (
@@ -202,9 +206,11 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
 
     return (
       <section className="relative w-full h-[600px] sm:h-[800px] overflow-hidden py-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
-          <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full shadow-sm">{group.title}</h3>
-        </div>
+        {group.title && (
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
+            <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full shadow-sm">{group.title}</h3>
+          </div>
+        )}
         <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_100px_40px_rgba(249,250,251,1)]" />
         <div className="relative z-0 w-[120%] -ml-[10%] -mt-16 transform -rotate-[8deg] scale-110 flex flex-col gap-3 justify-center h-full">
           {rowConfigurations.map((config, rowIdx) => (
