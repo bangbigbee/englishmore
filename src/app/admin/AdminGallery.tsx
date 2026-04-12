@@ -109,7 +109,7 @@ export default function AdminGallery() {
                     const errorData = await res.json()
                     errorMessage = errorData.error || errorMessage
                 } catch {
-                     if (res.status === 413) errorMessage = 'Dung lượng ảnh quá lớn (Limit: ~4MB)'
+                     if (res.status === 413) errorMessage = 'Dung lượng file quá lớn (Nếu deploy trên Next.js Vercel bị giới hạn cứng 4.5MB/request mặc định)'
                      else errorMessage = `Upload failed with status ${res.status}`
                 }
                 throw new Error(errorMessage)
