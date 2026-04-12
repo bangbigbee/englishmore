@@ -110,25 +110,22 @@ export default function GallerySection() {
 
 function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: number }) {
   const images = group.images
-  const createInfiniteList = (list: typeof images) => Array(40).fill(list).flat()
   
-  // Create 6 unique chunks of images using modulo
-  const colImages = Array.from({ length: 6 }, (_, colIndex) => 
-    images.filter((_, i) => i % 6 === colIndex)
-  )
-
-  // Fallback to avoid empty columns if there are very few images
-  const safeCols = colImages.map(col => col.length > 0 ? col : images)
+  // Use all images for every row/column but shifted by an offset so they don't look perfectly identical
+  const createRandomizedInfiniteList = (offset: number) => {
+    const shifted = [...images.slice(offset % images.length), ...images.slice(0, offset % images.length)]
+    return Array(40).fill(shifted).flat()
+  }
 
   // Vertical layout - 6 columns
   if (group.animation === 'vertical') {
     const colConfigurations = [
-      { images: safeCols[0], dir: 'down', delay: '0s' },
-      { images: safeCols[1], dir: 'up', delay: '-5s' },
-      { images: safeCols[2], dir: 'down', delay: '-10s' },
-      { images: safeCols[3], dir: 'up', delay: '-2s' },
-      { images: safeCols[4], dir: 'down', delay: '-15s' },
-      { images: safeCols[5], dir: 'up', delay: '-8s' }
+      { dir: 'down', delay: '0s' },
+      { dir: 'up', delay: '-5s' },
+      { dir: 'down', delay: '-10s' },
+      { dir: 'up', delay: '-2s' },
+      { dir: 'down', delay: '-15s' },
+      { dir: 'up', delay: '-8s' }
     ]
 
     return (
@@ -141,10 +138,10 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
           {colConfigurations.map((config, colIdx) => (
             <div 
               key={colIdx} 
-              className={`w-1/3 sm:w-1/4 md:w-1/6 flex flex-col gap-2 md:gap-4 animate-scroll-vertical-${config.dir}`} 
+              className={`${colIdx >= 3 ? 'hidden md:flex' : 'flex'} flex-col w-1/3 md:w-1/6 gap-2 md:gap-4 animate-scroll-vertical-${config.dir}`} 
               style={{ animationDelay: config.delay }}
             >
-              {createInfiniteList(config.images).map((image, idx) => (
+              {createRandomizedInfiniteList(colIdx).map((image, idx) => (
                 <img 
                   key={`v${colIdx}-${idx}`} 
                   src={`/api/gallery/${image.id}`} 
@@ -163,11 +160,11 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
   // Horizontal layout - 5 rows
   if (group.animation === 'horizontal') {
     const rowConfigurations = [
-      { images: safeCols[0], dir: 'right', delay: '0s', offset: '0px' },
-      { images: safeCols[1], dir: 'left', delay: '-8s', offset: '-50px' },
-      { images: safeCols[2], dir: 'right', delay: '-15s', offset: '-10px' },
-      { images: safeCols[3], dir: 'left', delay: '-4s', offset: '-80px' },
-      { images: safeCols[4], dir: 'right', delay: '-10s', offset: '0px' }
+      { dir: 'right', delay: '0s', offset: '0px' },
+      { dir: 'left', delay: '-8s', offset: '-50px' },
+      { dir: 'right', delay: '-15s', offset: '-10px' },
+      { dir: 'left', delay: '-4s', offset: '-80px' },
+      { dir: 'right', delay: '-10s', offset: '0px' }
     ]
 
     return (
@@ -183,7 +180,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
               className={`animate-scroll-horizontal-${config.dir} gap-3 md:gap-4 h-24 md:h-32 opacity-95 hover:opacity-100 transition-opacity flex-shrink-0`}
               style={{ animationDelay: config.delay, marginLeft: config.offset }}
             >
-               {createInfiniteList(config.images).map((image, idx) => (
+               {createRandomizedInfiniteList(rowIdx).map((image, idx) => (
                  <img key={`h${rowIdx}-${idx}`} src={`/api/gallery/${image.id}`} alt={group.title} className="h-full w-auto object-cover rounded-none shadow-sm transition-transform duration-300 hover:scale-[1.02]" loading="lazy" />
                ))}
             </div>
@@ -196,12 +193,12 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
   // Diagonal layout - 6 rows
   if (group.animation === 'diagonal') {
     const rowConfigurations = [
-      { images: safeCols[0], dir: 'right', delay: '0s', offset: '0px' },
-      { images: safeCols[1], dir: 'left', delay: '-10s', offset: '-100px' },
-      { images: safeCols[2], dir: 'right', delay: '-5s', offset: '-50px' },
-      { images: safeCols[3], dir: 'left', delay: '-15s', offset: '-200px' },
-      { images: safeCols[4], dir: 'right', delay: '-8s', offset: '-150px' },
-      { images: safeCols[5], dir: 'left', delay: '-2s', offset: '0px' }
+      { dir: 'right', delay: '0s', offset: '0px' },
+      { dir: 'left', delay: '-10s', offset: '-100px' },
+      { dir: 'right', delay: '-5s', offset: '-50px' },
+      { dir: 'left', delay: '-15s', offset: '-200px' },
+      { dir: 'right', delay: '-8s', offset: '-150px' },
+      { dir: 'left', delay: '-2s', offset: '0px' }
     ]
 
     return (
@@ -217,7 +214,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
               className={`animate-scroll-horizontal-${config.dir} gap-3 md:gap-4 h-24 md:h-32 opacity-90 hover:opacity-100 transition-opacity flex-shrink-0`} 
               style={{ animationDelay: config.delay, marginLeft: config.offset }}
             >
-              {createInfiniteList(config.images).map((image, idx) => (
+              {createRandomizedInfiniteList(rowIdx).map((image, idx) => (
                  <img 
                    key={`d${rowIdx}-${idx}`} 
                    src={`/api/gallery/${image.id}`} 
