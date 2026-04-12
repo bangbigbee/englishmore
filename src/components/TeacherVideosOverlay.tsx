@@ -6,8 +6,19 @@ type VideoItem = {
   id: string
 }
 
+type ActiveVideo = {
+  id: string
+  vid: VideoItem
+  left: string
+  top: string
+  rotate: string
+  scale: string
+  zIndex: number
+}
+
 export default function TeacherVideosOverlay() {
   const [videos, setVideos] = useState<VideoItem[]>([])
+  const [activeVideos, setActiveVideos] = useState<ActiveVideo[]>([])
 
   useEffect(() => {
     fetch('/api/gallery')
@@ -19,57 +30,73 @@ export default function TeacherVideosOverlay() {
       .catch(console.error)
   }, [])
 
+  useEffect(() => {
+    if (videos.length === 0) return
+
+    const addRandomVideo = () => {
+      const randomVid = videos[Math.floor(Math.random() * videos.length)]
+      const newActive: ActiveVideo = {
+        id: Math.random().toString(36).substring(7),
+        vid: randomVid,
+        left: `${Math.floor(Math.random() * 60) + 10}%`,
+        top: `${Math.floor(Math.random() * 20) - 10}%`,
+        rotate: `rotate(${Math.floor(Math.random() * 20) - 10}deg)`,
+        scale: `scale(${Math.random() * 0.2 + 0.9})`,
+        zIndex: Math.floor(Math.random() * 10) + 10
+      }
+
+      setActiveVideos(prev => [...prev, newActive])
+
+      // Xóa video sau 7 giây
+      setTimeout(() => {
+        setActiveVideos(prev => prev.filter(v => v.id !== newActive.id))
+      }, 7000)
+    }
+
+    addRandomVideo()
+    const interval = setInterval(addRandomVideo, 3000)
+
+    return () => clearInterval(interval)
+  }, [videos])
+
   if (videos.length === 0) return null
 
-  // Function to create infinite loop of videos but strictly limited to prevent browser choking
-  const createInfiniteList = (offset: number) => {
-    const shifted = [...videos.slice(offset % videos.length), ...videos.slice(0, offset % videos.length)]
-    const minCopies = Math.ceil(6 / shifted.length)
-    const evenCopies = minCopies % 2 === 0 ? minCopies : minCopies + 1
-    return Array(evenCopies).fill(shifted).flat()
-  }
-
-  const colConfigurations = [
-    { dir: 'down', delay: '0s' },
-    { dir: 'up', delay: '-5s' },
-    { dir: 'down', delay: '-10s' }
-  ]
-
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg z-10 opacity-90 group-hover:opacity-100 transition-opacity">
-      <div className="absolute inset-0 bg-[#14532d]/20 mix-blend-overlay z-0" />
-      <div className="relative z-10 w-full h-full flex gap-2 md:gap-3 justify-center px-2 py-2">
-        {colConfigurations.map((config, colIdx) => (
-          <div 
-            key={colIdx} 
-            className={`flex-1 flex flex-col gap-2 md:gap-3 animate-teacher-scroll-${config.dir}`}
-            style={{ animationDelay: config.delay }}
-          >
-            {createInfiniteList(colIdx).map((vid, idx) => (
-              <video 
-                key={`col${colIdx}-${idx}`}
-                src={`/api/gallery/${vid.id}`}
-                className="w-full h-auto object-cover rounded-md shadow-sm border border-white/20 bg-black/40"
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
-            ))}
-          </div>
-        ))}
-      </div>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
+      <div className="absolute inset-0 bg-[#14532d]/30 mix-blend-overlay" />
+      {activeVideos.map(active => (
+        <div 
+          key={active.id}
+          className="absolute w-32 h-56 sm:w-40 sm:h-72 animate-fade-in-out"
+          style={{
+            left: active.left,
+            top: active.top,
+            zIndex: active.zIndex
+          }}
+        >
+          <video 
+            src={`/api/gallery/${active.vid.id}`}
+            className="w-full h-full object-cover rounded-xl shadow-2xl border-2 border-white/30 bg-black/40"
+            style={{
+              transform: `${active.rotate} ${active.scale}`,
+            }}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        </div>
+      ))}
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes teacherScrollDown {
-          0% { transform: translateY(-50%); }
-          100% { transform: translateY(0%); }
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translateY(20px); }
+          15% { opacity: 1; transform: translateY(0px); }
+          85% { opacity: 1; transform: translateY(0px); }
+          100% { opacity: 0; transform: translateY(-20px); }
         }
-        @keyframes teacherScrollUp {
-          0% { transform: translateY(0%); }
-          100% { transform: translateY(-50%); }
+        .animate-fade-in-out {
+          animation: fadeInOut 7s ease-in-out forwards;
         }
-        .animate-teacher-scroll-down { animation: teacherScrollDown 35s linear infinite; }
-        .animate-teacher-scroll-up { animation: teacherScrollUp 35s linear infinite; }
       `}} />
     </div>
   )
