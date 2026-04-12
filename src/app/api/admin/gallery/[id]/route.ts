@@ -13,8 +13,9 @@ async function requireAdminUser() {
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   const auth = await requireAdminUser()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status })
 
@@ -31,8 +32,9 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
+  const params = await props.params;
   const auth = await requireAdminUser()
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status })
 
