@@ -2270,10 +2270,10 @@ function HomeContent() {
                   <img
                     src="/uploads/hero.png"
                     alt="Study illustration"
-                    className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 group-hover:opacity-10 z-0"
+                    className="absolute inset-0 h-full w-full object-cover z-0"
                     onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
                   />
-                  <TeacherVideosOverlay />
+                  {/* <TeacherVideosOverlay /> Tạm thời tắt để tiết kiệm dung lượng Neon */}
                 </div>
                 <a
                   href="https://www.facebook.com/bangbigbee"

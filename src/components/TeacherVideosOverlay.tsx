@@ -17,6 +17,9 @@ type ActiveVideo = {
 }
 
 export default function TeacherVideosOverlay() {
+  // Tạm thời tắt tính năng hiển thị video để tiết kiệm băng thông và dung lượng Database Neon
+  return null;
+
   const [videos, setVideos] = useState<VideoItem[]>([])
   const [activeVideos, setActiveVideos] = useState<ActiveVideo[]>([])
 
