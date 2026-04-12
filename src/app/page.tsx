@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
 import GallerySection from '@/components/GallerySection'
+import TeacherVideosOverlay from '@/components/TeacherVideosOverlay'
 
 interface AvailableCourse {
   id: string
@@ -2265,12 +2266,15 @@ function HomeContent() {
                 </div>
               </div>
               <div className="rounded-lg border border-slate-200 bg-white p-6 sm:p-8 shadow-lg">
-                <img
-                  src="/uploads/hero.png"
-                  alt="Study illustration"
-                  className="h-80 w-full object-cover rounded-lg"
-                  onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
-                />
+                <div className="relative w-full h-80 rounded-lg overflow-hidden group bg-gray-50">
+                  <img
+                    src="/uploads/hero.png"
+                    alt="Study illustration"
+                    className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 group-hover:opacity-10 z-0"
+                    onError={(e) => { ;(e.target as HTMLImageElement).style.display = 'none' }}
+                  />
+                  <TeacherVideosOverlay />
+                </div>
                 <a
                   href="https://www.facebook.com/bangbigbee"
                   target="_blank"

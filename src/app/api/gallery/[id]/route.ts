@@ -37,6 +37,24 @@ export async function GET(
 
     const payload = new Uint8Array(image.data)
     
+    // Support Range request for video
+    const range = request.headers.get('range')
+    if (range && image.mimeType?.startsWith('video/')) {
+      const parts = range.replace(/bytes=/, "").split("-")
+      const start = parseInt(parts[0], 10)
+      const end = parts[1] ? parseInt(parts[1], 10) : payload.length - 1
+      const chunksize = (end - start) + 1
+      
+      headers.set('Content-Range', `bytes ${start}-${end}/${payload.length}`)
+      headers.set('Accept-Ranges', 'bytes')
+      headers.set('Content-Length', chunksize.toString())
+      return new NextResponse(payload.slice(start, end + 1), {
+        status: 206,
+        headers,
+      })
+    }
+
+    headers.set('Content-Length', payload.length.toString())
     return new NextResponse(payload, {
       status: 200,
       headers,

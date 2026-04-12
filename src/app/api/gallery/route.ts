@@ -11,6 +11,8 @@ export async function GET() {
       select: {
         id: true,
         courseId: true,
+        section: true,
+        mimeType: true,
         course: { select: { title: true, galleryAnimation: true } }
       }
     })

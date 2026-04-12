@@ -11,8 +11,11 @@ const ALLOWED_TYPES: Record<string, string> = {
   'image/png': 'png',
   'image/gif': 'gif',
   'image/webp': 'webp',
+  'video/mp4': 'mp4',
+  'video/quicktime': 'mov',
+  'video/webm': 'webm'
 }
-const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
+const MAX_SIZE = 50 * 1024 * 1024 // 50 MB
 
 async function requireAdminUser() {
   const session = await getServerSession(authOptions)
@@ -36,6 +39,8 @@ export async function GET(request: NextRequest) {
         isActive: true,
         createdAt: true,
         courseId: true,
+        section: true,
+        mimeType: true,
         course: { select: { title: true, galleryAnimation: true } }
       }
     })
@@ -53,6 +58,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const files = formData.getAll('file') as File[]
     const courseId = formData.get('courseId') as string | null
+    const section = formData.get('section') as string | null
 
     if (!files || files.length === 0) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 })
@@ -74,6 +80,7 @@ export async function POST(request: NextRequest) {
           originalName: file.name || `image.${ext}`,
           mimeType: file.type || 'application/octet-stream',
           data: buffer,
+          section: section || 'course',
           courseId: courseId || null,
         },
         select: { id: true }

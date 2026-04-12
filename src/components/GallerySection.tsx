@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 type GalleryImage = {
   id: string
   courseId: string | null
+  section?: string
+  mimeType?: string
   course?: {
     title: string
     galleryAnimation: string
@@ -28,10 +30,11 @@ export default function GallerySection() {
         const res = await fetch('/api/gallery')
         if (res.ok) {
           const data = await res.json() as GalleryImage[]
+          const filteredData = data.filter(img => img.section !== 'teacher')
           
           const grouped: Record<string, GroupedGallery> = {}
           
-          data.forEach(img => {
+          filteredData.forEach(img => {
             const cId = img.courseId || 'general'
             if (!grouped[cId]) {
               grouped[cId] = {

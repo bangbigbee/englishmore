@@ -663,6 +663,7 @@ model LandingNews {
 model LandingGalleryImage {
   id           String   @id @default(cuid())
   courseId     String?
+  section      String   @default("course") // "course" for regular gallery, "teacher" for teacher videos
   originalName String
   mimeType     String
   data         Bytes
@@ -676,4 +677,5 @@ model LandingGalleryImage {
   @@index([isActive])
   @@index([displayOrder])
   @@index([courseId])
+  @@index([section])
 }

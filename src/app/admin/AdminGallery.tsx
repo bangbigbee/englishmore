@@ -11,6 +11,8 @@ export interface GalleryImageItem {
   displayOrder: number
   isActive: boolean
   createdAt: string
+  section?: string
+  mimeType?: string
 }
 
 interface CourseItem {
@@ -69,12 +71,6 @@ export default function AdminGallery() {
   }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!selectedCourseId) {
-      toast.error('Vui lòng chọn khóa học trước khi upload ảnh')
-      if (fileInputRef.current) fileInputRef.current.value = ''
-      return
-    }
-
     const files = e.target.files
     if (!files || files.length === 0) return
 
@@ -85,15 +81,22 @@ export default function AdminGallery() {
     for (let i = 0; i < files.length; i++) {
         const file = files[i]
 
-        if (file.size > 4 * 1024 * 1024) {
-            toast.error(`File ${file.name} is too large. Limit is 4MB.`)
+        if (file.size > 50 * 1024 * 1024) {
+            toast.error(`File ${file.name} is too large. Limit is 50MB.`)
             errorCount++
             continue
         }
 
         const formData = new FormData()
         formData.append('file', file)
-        formData.append('courseId', selectedCourseId)
+        if (selectedCourseId === 'teacher') {
+          formData.append('section', 'teacher')
+        } else if (selectedCourseId) {
+          formData.append('courseId', selectedCourseId)
+          formData.append('section', 'course')
+        } else {
+          formData.append('section', 'course') 
+        }
 
         try {
             const res = await fetch('/api/admin/gallery', {
@@ -175,12 +178,14 @@ export default function AdminGallery() {
 
   if (loading) return <div className="p-8 text-center text-gray-500">Loading gallery...</div>
 
-  // Lọc hình ảnh theo khóa học được chọn
-  const displayingImages = selectedCourseId 
-    ? images.filter(img => img.courseId === selectedCourseId)
-    : images.filter(img => !img.courseId)
+  // Lọc hình ảnh theo mục được chọn
+  const displayingImages = selectedCourseId === 'teacher'
+    ? images.filter(img => img.section === 'teacher')
+    : selectedCourseId 
+      ? images.filter(img => img.courseId === selectedCourseId && img.section !== 'teacher')
+      : images.filter(img => !img.courseId && img.section !== 'teacher')
 
-  const selectedCourseDetails = courses.find(c => c.id === selectedCourseId)
+  const selectedCourseDetails = selectedCourseId !== 'teacher' ? courses.find(c => c.id === selectedCourseId) : null
 
   return (
     <div className="space-y-6">
@@ -196,6 +201,7 @@ export default function AdminGallery() {
             onChange={(e) => setSelectedCourseId(e.target.value)}
             className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#14532d] focus:outline-none focus:ring-1 focus:ring-[#14532d]"
           >
+            <option value="teacher">🔥 -- Video Teacher Gallery --</option>
             <option value="">-- Hình ảnh chung (Không khóa học) --</option>
             {courses.map(c => (
               <option key={c.id} value={c.id}>{c.title}</option>
@@ -205,23 +211,19 @@ export default function AdminGallery() {
           <input
             type="file"
             multiple
-            accept="image/*"
+            accept="image/*,video/*"
             className="hidden"
             ref={fileInputRef}
             onChange={handleUpload}
           />
           <button
             onClick={() => {
-                if (!selectedCourseId) {
-                    toast.error('Vui lòng chọn khóa học cần thêm ảnh gallery!')
-                    return
-                }
                 fileInputRef.current?.click()
             }}
             disabled={uploading}
             className="whitespace-nowrap rounded-lg bg-[#14532d] px-4 py-2 font-semibold text-white hover:bg-[#166534] disabled:opacity-50"
           >
-            {uploading ? 'Uploading...' : 'Upload Images'}
+            {uploading ? 'Uploading...' : 'Upload Files'}
           </button>
         </div>
       </div>
@@ -251,12 +253,21 @@ export default function AdminGallery() {
           <div key={image.id} className="relative group rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
             <div className="aspect-square relative mb-2 overflow-hidden rounded bg-gray-100 flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`/api/gallery/${image.id}`}
-                alt={image.originalName}
-                className="max-h-full max-w-full object-contain"
-                loading="lazy"
-              />
+              {image.mimeType?.startsWith('video/') ? (
+                <video
+                  src={`/api/gallery/${image.id}`}
+                  className="max-h-full max-w-full object-contain"
+                  controls
+                  muted
+                />
+              ) : (
+                <img
+                  src={`/api/gallery/${image.id}`}
+                  alt={image.originalName}
+                  className="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-xs text-gray-500 truncate" title={image.originalName}>
