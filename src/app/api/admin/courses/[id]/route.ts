@@ -29,7 +29,8 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   const { 
     title, description, shortDescription, registrationDeadline, isPublished, maxStudents, 
     completedSessions, price, currency,
-    sebDiscountPercent, ebDiscountPercent, sebThresholdDays, ebThresholdDays 
+    sebDiscountPercent, ebDiscountPercent, sebThresholdDays, ebThresholdDays,
+    galleryAnimation
   } = body
 
   const data: {
@@ -46,6 +47,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     ebDiscountPercent?: number
     sebThresholdDays?: number
     ebThresholdDays?: number
+    galleryAnimation?: string
   } = {}
 
   if (title !== undefined) {
@@ -117,6 +119,13 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   if (ebDiscountPercent !== undefined) data.ebDiscountPercent = Number(ebDiscountPercent)
   if (sebThresholdDays !== undefined) data.sebThresholdDays = Number(sebThresholdDays)
   if (ebThresholdDays !== undefined) data.ebThresholdDays = Number(ebThresholdDays)
+
+  if (galleryAnimation !== undefined) {
+    if (!['vertical', 'horizontal', 'diagonal'].includes(galleryAnimation)) {
+      return NextResponse.json({ error: 'Invalid animation type' }, { status: 400 })
+    }
+    data.galleryAnimation = galleryAnimation
+  }
 
   if (Object.keys(data).length === 0) {
     return NextResponse.json({ error: 'No fields to update' }, { status: 400 })

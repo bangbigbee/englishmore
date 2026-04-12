@@ -29,7 +29,15 @@ export async function GET(request: NextRequest) {
 
     const images = await prisma.landingGalleryImage.findMany({
       orderBy: { displayOrder: 'asc' },
-      select: { id: true, originalName: true, displayOrder: true, isActive: true, createdAt: true }
+      select: {
+        id: true,
+        originalName: true,
+        displayOrder: true,
+        isActive: true,
+        createdAt: true,
+        courseId: true,
+        course: { select: { title: true, galleryAnimation: true } }
+      }
     })
     return NextResponse.json(images)
   } catch (error) {
@@ -44,6 +52,7 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
     const files = formData.getAll('file') as File[]
+    const courseId = formData.get('courseId') as string | null
 
     if (!files || files.length === 0) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 })
@@ -65,6 +74,7 @@ export async function POST(request: NextRequest) {
           originalName: file.name || `image.${ext}`,
           mimeType: file.type || 'application/octet-stream',
           data: buffer,
+          courseId: courseId || null,
         },
         select: { id: true }
       })

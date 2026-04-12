@@ -8,7 +8,11 @@ export async function GET() {
     const images = await prisma.landingGalleryImage.findMany({
       where: { isActive: true },
       orderBy: { displayOrder: 'asc' },
-      select: { id: true }
+      select: {
+        id: true,
+        courseId: true,
+        course: { select: { title: true, galleryAnimation: true } }
+      }
     })
     return NextResponse.json(images)
   } catch (error) {

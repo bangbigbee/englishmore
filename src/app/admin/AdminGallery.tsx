@@ -6,30 +6,54 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 export interface GalleryImageItem {
   id: string
+  courseId: string | null
   originalName: string
   displayOrder: number
   isActive: boolean
   createdAt: string
 }
 
+interface CourseItem {
+  id: string
+  title: string
+  galleryAnimation: string
+}
+
 export default function AdminGallery() {
   const [images, setImages] = useState<GalleryImageItem[]>([])
+  const [courses, setCourses] = useState<CourseItem[]>([])
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('')
+  
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    fetchImages()
+    fetchData()
   }, [])
 
-  const fetchImages = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true)
-      const res = await fetch('/api/admin/gallery')
-      if (!res.ok) throw new Error('Failed to fetch images')
-      const data = await res.json()
-      setImages(data)
+      const [resImages, resCourses] = await Promise.all([
+        fetch('/api/admin/gallery'),
+        fetch('/api/admin/courses')
+      ])
+      
+      if (!resImages.ok || !resCourses.ok) throw new Error('Failed to fetch data')
+      
+      const [dataImages, dataCourses] = await Promise.all([
+        resImages.json(),
+        resCourses.json()
+      ])
+      
+      setImages(dataImages)
+      setCourses(Array.isArray(dataCourses) ? dataCourses.map((c: any) => ({
+        id: c.id,
+        title: c.title,
+        galleryAnimation: c.galleryAnimation || 'vertical'
+      })) : [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Loading failed')
     } finally {
@@ -37,7 +61,20 @@ export default function AdminGallery() {
     }
   }
 
+  const fetchImages = async () => {
+    try {
+      const res = await fetch('/api/admin/gallery')
+      if (res.ok) setImages(await res.json())
+    } catch (err) {}
+  }
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!selectedCourseId) {
+      toast.error('Vui lòng chọn khóa học trước khi upload ảnh')
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      return
+    }
+
     const files = e.target.files
     if (!files || files.length === 0) return
 
@@ -56,6 +93,7 @@ export default function AdminGallery() {
 
         const formData = new FormData()
         formData.append('file', file)
+        formData.append('courseId', selectedCourseId)
 
         try {
             const res = await fetch('/api/admin/gallery', {
@@ -120,16 +158,50 @@ export default function AdminGallery() {
     }
   }
 
+  const handleUpdateCourseAnimation = async (courseId: string, animation: string) => {
+    try {
+      const res = await fetch(`/api/admin/courses/${courseId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ galleryAnimation: animation })
+      })
+      if (!res.ok) throw new Error('Cập nhật animation thất bại')
+      setCourses(courses.map(c => c.id === courseId ? { ...c, galleryAnimation: animation } : c))
+      toast.success('Đã lưu cài đặt Animation')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Update failed')
+    }
+  }
+
   if (loading) return <div className="p-8 text-center text-gray-500">Loading gallery...</div>
+
+  // Lọc hình ảnh theo khóa học được chọn
+  const displayingImages = selectedCourseId 
+    ? images.filter(img => img.courseId === selectedCourseId)
+    : images.filter(img => !img.courseId)
+
+  const selectedCourseDetails = courses.find(c => c.id === selectedCourseId)
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Manage Gallery</h2>
-          <p className="text-sm text-gray-600">Upload and manage images for the landing page gallery section.</p>
+          <p className="text-sm text-gray-600">Upload and manage images for each course's gallery section.</p>
         </div>
-        <div>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <select
+            value={selectedCourseId}
+            onChange={(e) => setSelectedCourseId(e.target.value)}
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#14532d] focus:outline-none focus:ring-1 focus:ring-[#14532d]"
+          >
+            <option value="">-- Hình ảnh chung (Không khóa học) --</option>
+            {courses.map(c => (
+              <option key={c.id} value={c.id}>{c.title}</option>
+            ))}
+          </select>
+
           <input
             type="file"
             multiple
@@ -139,19 +211,43 @@ export default function AdminGallery() {
             onChange={handleUpload}
           />
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+                if (!selectedCourseId) {
+                    toast.error('Vui lòng chọn khóa học cần thêm ảnh gallery!')
+                    return
+                }
+                fileInputRef.current?.click()
+            }}
             disabled={uploading}
-            className="rounded-lg bg-[#14532d] px-4 py-2 font-semibold text-white hover:bg-[#166534] disabled:opacity-50"
+            className="whitespace-nowrap rounded-lg bg-[#14532d] px-4 py-2 font-semibold text-white hover:bg-[#166534] disabled:opacity-50"
           >
             {uploading ? 'Uploading...' : 'Upload Images'}
           </button>
         </div>
       </div>
 
+      {selectedCourseId && selectedCourseDetails && (
+        <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-semibold text-blue-900">Animation Style</h3>
+            <p className="text-xs text-blue-700">Chọn cách thức hiển thị ảnh động cho khóa học này trên trang chủ.</p>
+          </div>
+          <select
+            value={selectedCourseDetails.galleryAnimation}
+            onChange={(e) => handleUpdateCourseAnimation(selectedCourseId, e.target.value)}
+            className="rounded bg-white border border-blue-300 px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="vertical">Dọc (Vertical Scroll)</option>
+            <option value="horizontal">Ngang (Horizontal Scroll)</option>
+            <option value="diagonal">Chéo (Diagonal Floating)</option>
+          </select>
+        </div>
+      )}
+
       {error && <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{error}</div>}
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {images.map((image) => (
+        {displayingImages.map((image) => (
           <div key={image.id} className="relative group rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
             <div className="aspect-square relative mb-2 overflow-hidden rounded bg-gray-100 flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -198,9 +294,9 @@ export default function AdminGallery() {
         ))}
       </div>
       
-      {images.length === 0 && !loading && !error && (
+      {displayingImages.length === 0 && !loading && !error && (
         <div className="rounded-xl border border-dashed border-gray-300 p-12 text-center">
-          <p className="text-gray-500">No images uploaded yet.</p>
+          <p className="text-gray-500">Chưa có hình ảnh nào cho mục này.</p>
         </div>
       )}
     </div>

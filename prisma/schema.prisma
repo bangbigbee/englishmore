@@ -152,6 +152,7 @@ model Course {
   // Trạng thái
   isPublished          Boolean      @default(false)
   isActive             Boolean      @default(true)  // Khóa còn tuyển sinh
+  galleryAnimation     String       @default("vertical") // vertical, horizontal, diagonal
   
   // Early Bird Pricing Tiers (Configurable)
   sebDiscountPercent   Int          @default(30)
@@ -171,6 +172,7 @@ model Course {
   vocabularies         VocabularyItem[]
   speakYourselfAttempts SpeakYourselfAttempt[]
   reviewImages         CourseReviewImage[]
+  galleryImages        LandingGalleryImage[] @relation("CourseGallery")
 }
 
 model CourseReviewImage {
@@ -660,6 +662,7 @@ model LandingNews {
 
 model LandingGalleryImage {
   id           String   @id @default(cuid())
+  courseId     String?
   originalName String
   mimeType     String
   data         Bytes
@@ -668,6 +671,9 @@ model LandingGalleryImage {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  course       Course?  @relation("CourseGallery", fields: [courseId], references: [id], onDelete: Cascade)
+
   @@index([isActive])
   @@index([displayOrder])
+  @@index([courseId])
 }
