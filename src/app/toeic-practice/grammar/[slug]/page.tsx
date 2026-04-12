@@ -180,6 +180,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     }
   }, [selectedLessonId, loadProgress])
 
+  const currentLesson = topic?.lessons.find(l => l.id === selectedLessonId)
+
   // Monitor progress for Test Completion and Timer Start
   useEffect(() => {
     if (currentLesson && currentLesson.questions.length > 0) {
