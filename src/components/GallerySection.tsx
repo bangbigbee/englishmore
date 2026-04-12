@@ -78,20 +78,20 @@ export default function GallerySection() {
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scrollVerticalDown {
-          0% { transform: translateY(-33.33%); }
+          0% { transform: translateY(-50%); }
           100% { transform: translateY(0%); }
         }
         @keyframes scrollVerticalUp {
           0% { transform: translateY(0%); }
-          100% { transform: translateY(-33.33%); }
+          100% { transform: translateY(-50%); }
         }
         @keyframes scrollHorizontalRight {
-          0% { transform: translateX(-33.33%); }
+          0% { transform: translateX(-50%); }
           100% { transform: translateX(0%); }
         }
         @keyframes scrollHorizontalLeft {
           0% { transform: translateX(0%); }
-          100% { transform: translateX(-33.33%); }
+          100% { transform: translateX(-50%); }
         }
 
         .animate-scroll-vertical-down { animation: scrollVerticalDown 30s linear infinite; }
@@ -110,7 +110,7 @@ export default function GallerySection() {
 
 function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: number }) {
   const images = group.images
-  const createInfiniteList = (list: typeof images) => [...list, ...list, ...list]
+  const createInfiniteList = (list: typeof images) => Array(40).fill(list).flat()
   
   // Create 6 unique chunks of images using modulo
   const colImages = Array.from({ length: 6 }, (_, colIndex) => 
@@ -137,7 +137,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
           <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
-        <div className="mx-auto max-w-[1400px] h-[400px] sm:h-[500px] px-2 md:px-4 relative z-0 flex gap-2 md:gap-4 justify-center overflow-hidden">
+        <div className="mx-auto max-w-[1400px] h-[600px] sm:h-[800px] px-2 md:px-4 relative z-0 flex gap-2 md:gap-4 justify-center overflow-hidden">
           {colConfigurations.map((config, colIdx) => (
             <div 
               key={colIdx} 
@@ -149,7 +149,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
                   key={`v${colIdx}-${idx}`} 
                   src={`/api/gallery/${image.id}`} 
                   alt={group.title} 
-                  className="w-full h-auto object-cover rounded-xl shadow-sm transition-transform duration-300 hover:scale-[1.02]" 
+                  className="w-full h-auto object-cover rounded-none shadow-sm transition-transform duration-300 hover:scale-[1.02]" 
                   loading="lazy" 
                 />
               ))}
@@ -176,7 +176,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
           <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50 pointer-events-none z-10" />
-        <div className="w-full h-[400px] sm:h-[500px] flex flex-col gap-3 md:gap-4 overflow-hidden relative z-0 px-2 justify-center">
+        <div className="w-full h-[600px] sm:h-[800px] flex flex-col gap-3 md:gap-4 overflow-hidden relative z-0 px-2 justify-center">
           {rowConfigurations.map((config, rowIdx) => (
             <div 
               key={rowIdx} 
@@ -184,7 +184,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
               style={{ animationDelay: config.delay, marginLeft: config.offset }}
             >
                {createInfiniteList(config.images).map((image, idx) => (
-                 <img key={`h${rowIdx}-${idx}`} src={`/api/gallery/${image.id}`} alt={group.title} className="h-full w-auto object-cover rounded-xl shadow-sm transition-transform duration-300 hover:scale-[1.02]" loading="lazy" />
+                 <img key={`h${rowIdx}-${idx}`} src={`/api/gallery/${image.id}`} alt={group.title} className="h-full w-auto object-cover rounded-none shadow-sm transition-transform duration-300 hover:scale-[1.02]" loading="lazy" />
                ))}
             </div>
           ))}
@@ -205,7 +205,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
     ]
 
     return (
-      <section className="relative w-full h-[500px] sm:h-[600px] overflow-hidden py-10">
+      <section className="relative w-full h-[600px] sm:h-[800px] overflow-hidden py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-10 text-center">
           <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full shadow-sm">{group.title}</h3>
         </div>
@@ -222,7 +222,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
                    key={`d${rowIdx}-${idx}`} 
                    src={`/api/gallery/${image.id}`} 
                    alt={group.title} 
-                   className="h-full w-36 md:w-48 object-cover rounded-xl shadow-md transition-transform duration-300 hover:scale-105" 
+                   className="h-full w-36 md:w-48 object-cover rounded-none shadow-md transition-transform duration-300 hover:scale-105" 
                    loading="lazy" 
                  />
                ))}
