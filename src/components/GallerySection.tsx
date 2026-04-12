@@ -60,14 +60,16 @@ export default function GallerySection() {
   }
 
   return (
-    <div className="flex flex-col gap-24 py-20 bg-gray-50 overflow-hidden relative">
+    <div className="flex flex-col gap-12 py-20 bg-gray-50 overflow-hidden relative">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 text-center">
-        <h2 className="text-3xl font-extrabold text-[#14532d] sm:text-4xl md:text-5xl uppercase tracking-tight">
-          KHOẢNH KHẮC
-          <span className="text-[#ea980c]"> ENGLISHMORE</span>
+        <h2 className="text-3xl font-extrabold text-[#14532d] sm:text-4xl md:text-5xl tracking-tight">
+          Khoảnh Khắc
+          <span className="text-[#ea980c]"> EnglishMore</span>
         </h2>
-        <p className="mt-4 text-xl text-gray-600 font-medium italic">Học tiếng Anh chưa bao giờ thú vị đến thế.</p>
-        <p className="mt-2 text-md text-gray-500 font-medium uppercase tracking-widest text-[#14532d]/60">Gallery</p>
+        <p className="mt-4 text-xl text-gray-600 font-medium italic">
+          Khoảng cách không thể ngăn bạn học tiếng Anh. Mà là Sự Im Lặng.<br/>
+          <span className="text-lg">Just turn on your microphone and speak!</span>
+        </p>
       </div>
 
       {groups.map((group, index) => (
