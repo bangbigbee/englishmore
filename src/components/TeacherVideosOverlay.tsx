@@ -21,10 +21,12 @@ export default function TeacherVideosOverlay() {
 
   if (videos.length === 0) return null
 
-  // Function to create infinite loop of images
+  // Function to create infinite loop of videos but strictly limited to prevent browser choking
   const createInfiniteList = (offset: number) => {
     const shifted = [...videos.slice(offset % videos.length), ...videos.slice(0, offset % videos.length)]
-    return Array(30).fill(shifted).flat()
+    const minCopies = Math.ceil(6 / shifted.length)
+    const evenCopies = minCopies % 2 === 0 ? minCopies : minCopies + 1
+    return Array(evenCopies).fill(shifted).flat()
   }
 
   const colConfigurations = [
@@ -47,7 +49,7 @@ export default function TeacherVideosOverlay() {
               <video 
                 key={`col${colIdx}-${idx}`}
                 src={`/api/gallery/${vid.id}`}
-                className="w-full h-auto object-cover rounded-md shadow-sm border border-white/20"
+                className="w-full h-auto object-cover rounded-md shadow-sm border border-white/20 bg-black/40"
                 autoPlay
                 muted
                 loop
