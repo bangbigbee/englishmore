@@ -171,28 +171,39 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
 
   // Diagonal layout
   if (group.animation === 'diagonal') {
+    const rowConfigurations = [
+      { images: col1Images, dir: 'right', delay: '0s', offset: '0px' },
+      { images: col2Images, dir: 'left', delay: '-10s', offset: '-100px' },
+      { images: col3Images, dir: 'right', delay: '-5s', offset: '-50px' },
+      { images: col2Images, dir: 'left', delay: '-15s', offset: '-200px' },
+      { images: col1Images, dir: 'right', delay: '-8s', offset: '-150px' },
+      { images: col3Images, dir: 'left', delay: '-2s', offset: '0px' }
+    ]
+
     return (
-      <section className="relative w-full overflow-hidden py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-12 text-center">
-          <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4">{group.title}</h3>
+      <section className="relative w-full overflow-hidden py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-16 text-center">
+          <h3 className="text-2xl font-bold text-[#14532d] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full">{group.title}</h3>
         </div>
         <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_100px_40px_rgba(249,250,251,1)]" />
-        <div className="relative z-0 w-[120%] -ml-[10%] -mt-10 transform -rotate-6 scale-110 flex flex-col gap-4">
-          <div className="animate-scroll-horizontal-right gap-4 h-64 opacity-90 hover:opacity-100 transition-opacity">
-            {createInfiniteList(col1Images).map((image, idx) => (
-               <img key={`d1-${idx}`} src={`/api/gallery/${image.id}`} alt={group.title} className="h-full w-64 object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105" loading="lazy" />
-             ))}
-          </div>
-          <div className="animate-scroll-horizontal-left gap-4 h-64 opacity-90 hover:opacity-100 transition-opacity" style={{ marginLeft: '-150px' }}>
-            {createInfiniteList(col2Images).map((image, idx) => (
-               <img key={`d2-${idx}`} src={`/api/gallery/${image.id}`} alt={group.title} className="h-full w-64 object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105" loading="lazy" />
-             ))}
-          </div>
-          <div className="animate-scroll-horizontal-right gap-4 h-64 opacity-90 hover:opacity-100 transition-opacity" style={{ animationDelay: '-5s' }}>
-            {createInfiniteList(col3Images).map((image, idx) => (
-               <img key={`d3-${idx}`} src={`/api/gallery/${image.id}`} alt={group.title} className="h-full w-64 object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105" loading="lazy" />
-             ))}
-          </div>
+        <div className="relative z-0 w-[120%] -ml-[10%] -mt-10 transform -rotate-[8deg] scale-110 flex flex-col gap-3 md:gap-5">
+          {rowConfigurations.map((config, rowIdx) => (
+            <div 
+              key={rowIdx} 
+              className={`animate-scroll-horizontal-${config.dir} gap-3 md:gap-5 h-32 md:h-48 opacity-90 hover:opacity-100 transition-opacity`} 
+              style={{ animationDelay: config.delay, marginLeft: config.offset }}
+            >
+              {createInfiniteList(config.images).map((image, idx) => (
+                 <img 
+                   key={`d${rowIdx}-${idx}`} 
+                   src={`/api/gallery/${image.id}`} 
+                   alt={group.title} 
+                   className="h-full w-48 md:w-72 object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105" 
+                   loading="lazy" 
+                 />
+               ))}
+            </div>
+          ))}
         </div>
       </section>
     )
