@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
+import AdminGallery from './AdminGallery'
 
 interface CourseItem {
   id: string
@@ -336,7 +337,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news'
+type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -3233,8 +3234,21 @@ export default function AdminDashboard() {
            >
              9. NEWS
            </button>
+           <button
+             type="button"
+             onClick={() => setActiveSection('gallery')}
+             className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-150 ${activeSection === 'gallery' ? '-translate-y-1 bg-[#14532d] text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+           >
+             GALLERY
+           </button>
           </div>
         </div>
+
+        {activeSection === 'gallery' && (
+          <div className="mt-12 bg-white rounded shadow p-6">
+            <AdminGallery />
+          </div>
+        )}
 
         <div className="hidden">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Daily Activity</h2>

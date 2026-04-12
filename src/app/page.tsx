@@ -8,6 +8,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
+import GallerySection from '@/components/GallerySection'
 
 interface AvailableCourse {
   id: string
@@ -2450,6 +2451,9 @@ function HomeContent() {
             </div>
           </section>
         )}
+
+        {/* Gallery Section */}
+        <GallerySection />
       </main>
 
       <AnimatePresence>
