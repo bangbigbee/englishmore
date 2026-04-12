@@ -41,31 +41,54 @@ export default function AdminGallery() {
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    const formData = new FormData()
+    setUploading(true)
+    let successCount = 0
+    let errorCount = 0
+
     for (let i = 0; i < files.length; i++) {
-      formData.append('file', files[i])
+        const file = files[i]
+
+        if (file.size > 4 * 1024 * 1024) {
+            toast.error(`File ${file.name} is too large. Limit is 4MB.`)
+            errorCount++
+            continue
+        }
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        try {
+            const res = await fetch('/api/admin/gallery', {
+                method: 'POST',
+                body: formData
+            })
+            if (!res.ok) {
+                let errorMessage = 'Upload failed'
+                try {
+                    const errorData = await res.json()
+                    errorMessage = errorData.error || errorMessage
+                } catch {
+                     if (res.status === 413) errorMessage = 'Dung lượng ảnh quá lớn (Limit: ~4MB)'
+                     else errorMessage = `Upload failed with status ${res.status}`
+                }
+                throw new Error(errorMessage)
+            }
+            successCount++
+        } catch (err) {
+            toast.error(`${file.name}: ${err instanceof Error ? err.message : 'Upload failed'}`)
+            errorCount++
+        }
     }
 
-    try {
-      setUploading(true)
-      const res = await fetch('/api/admin/gallery', {
-        method: 'POST',
-        body: formData
-      })
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.error || 'Upload failed')
-      }
-      toast.success('Images uploaded successfully')
-      fetchImages()
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Upload failed')
-    } finally {
-      setUploading(false)
+    if (successCount > 0) {
+        toast.success(`Successfully uploaded ${successCount} image(s)`)
+        fetchImages()
     }
+    
+    if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+    }
+    setUploading(false)
   }
 
   const handleDelete = async (id: string) => {
