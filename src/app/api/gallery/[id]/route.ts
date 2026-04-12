@@ -35,7 +35,9 @@ export async function GET(
     // if replaced, a new upload creates a new CUID.
     headers.set('Cache-Control', 'public, max-age=31536000, immutable')
 
-    return new NextResponse(image.data, {
+    const payload = new Uint8Array(image.data)
+    
+    return new NextResponse(payload, {
       status: 200,
       headers,
     })
