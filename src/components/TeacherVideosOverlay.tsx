@@ -46,11 +46,6 @@ export default function TeacherVideosOverlay() {
       }
 
       setActiveVideos(prev => [...prev, newActive])
-
-      // Xóa video sau 7 giây
-      setTimeout(() => {
-        setActiveVideos(prev => prev.filter(v => v.id !== newActive.id))
-      }, 7000)
     }
 
     addRandomVideo()
@@ -59,33 +54,17 @@ export default function TeacherVideosOverlay() {
     return () => clearInterval(interval)
   }, [videos])
 
+  const handleVideoComplete = (id: string) => {
+    setActiveVideos(prev => prev.filter(v => v.id !== id))
+  }
+
   if (videos.length === 0) return null
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
       <div className="absolute inset-0 bg-[#14532d]/30 mix-blend-overlay" />
       {activeVideos.map(active => (
-        <div 
-          key={active.id}
-          className="absolute w-32 h-56 sm:w-40 sm:h-72 animate-fade-in-out"
-          style={{
-            left: active.left,
-            top: active.top,
-            zIndex: active.zIndex
-          }}
-        >
-          <video 
-            src={`/api/gallery/${active.vid.id}`}
-            className="w-full h-full object-cover rounded-xl shadow-2xl border-2 border-white/30 bg-black/40"
-            style={{
-              transform: `${active.rotate} ${active.scale}`,
-            }}
-            autoPlay
-            muted
-            loop
-            playsInline
-          />
-        </div>
+        <FloatingVideo key={active.id} active={active} onComplete={handleVideoComplete} />
       ))}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeInOut {
@@ -98,6 +77,41 @@ export default function TeacherVideosOverlay() {
           animation: fadeInOut 7s ease-in-out forwards;
         }
       `}} />
+    </div>
+  )
+}
+
+function FloatingVideo({ active, onComplete }: { active: ActiveVideo, onComplete: (id: string) => void }) {
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (ready) {
+      const timer = setTimeout(() => {
+        onComplete(active.id)
+      }, 7000)
+      return () => clearTimeout(timer)
+    }
+  }, [ready, active.id, onComplete])
+
+  return (
+    <div 
+      className={`absolute w-32 h-56 sm:w-40 sm:h-72 ${ready ? 'animate-fade-in-out' : 'opacity-0'}`}
+      style={{
+        left: active.left,
+        top: active.top,
+        zIndex: active.zIndex
+      }}
+    >
+      <video 
+        src={`/api/gallery/${active.vid.id}`}
+        className="w-full h-full object-cover rounded-xl shadow-2xl border-2 border-white/30 bg-[#14532d]/50"
+        style={{ transform: `${active.rotate} ${active.scale}` }}
+        autoPlay
+        muted
+        loop
+        playsInline
+        onCanPlay={() => setReady(true)}
+      />
     </div>
   )
 }
