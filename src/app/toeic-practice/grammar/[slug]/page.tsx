@@ -468,7 +468,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           const q = currentLesson.questions[idx]
                           const isShowingResult = !!showResults[q.id]
                           const isCorrect = userAnswers[q.id] === q.correctOption
-                          const explanationText = status !== 'authenticated' && idx >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
 
                           let btnStyle = ''
                           if (isActive) {
@@ -500,6 +499,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           const isShowingResult = showResults[q.id]
                           const selectedOption = userAnswers[q.id]
                           const isCorrect = selectedOption === q.correctOption
+                          const explanationText = status !== 'authenticated' && activeQuestionIndex >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
 
                           return (
                             <motion.div
