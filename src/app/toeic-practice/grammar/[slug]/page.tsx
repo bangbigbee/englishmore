@@ -566,7 +566,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         {opt.label}
                                       </span>
                                       <span className="font-bold text-base">{opt.value}</span>
-                                                     <div className="mt-8 flex flex-row items-stretch justify-between gap-3 md:gap-4 w-full h-[60px] md:h-[72px]">
+                                    </button>
+                                  )
+                                })}
+                              </div>
+
+                              <div className="mt-8 flex flex-row items-stretch justify-between gap-3 md:gap-4 w-full h-[60px] md:h-[72px]">
                                 <button
                                   onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
                                   disabled={activeQuestionIndex === 0}
