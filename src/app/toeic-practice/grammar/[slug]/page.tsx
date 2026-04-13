@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, use, useCallback } from 'react'
+import React, { useState, useEffect, use, useCallback, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -52,6 +52,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const { data: session, status } = useSession()
   const [isSyncing, setIsSyncing] = useState(false)
   const router = useRouter()
+  const retryingLessonsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -81,6 +82,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   // Persistence Logic: Load
   const loadProgress = useCallback(async (lessonId: string) => {
     if (status === 'loading') return
+    if (retryingLessonsRef.current.has(lessonId)) return
 
     if (status === 'authenticated') {
       try {
@@ -653,6 +655,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
               <button
                 onClick={() => {
+                  retryingLessonsRef.current.add(currentLesson.id);
                   const newAnswers = { ...userAnswers };
                   const newResults = { ...showResults };
                   currentLesson.questions.forEach(q => {
