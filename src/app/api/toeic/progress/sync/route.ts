@@ -13,9 +13,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { answers } = body
+    const { answers, localAps } = body
 
-    if (!Array.isArray(answers) || answers.length === 0) {
+    if ((!Array.isArray(answers) || answers.length === 0) && (!localAps || localAps <= 0)) {
       return NextResponse.json({ success: true, count: 0 })
     }
 
@@ -45,6 +45,27 @@ export async function POST(request: NextRequest) {
         })
       )
     )
+
+    if (localAps && localAps > 0) {
+        const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })
+        if (user?.role === 'member') {
+            const safeAps = Math.min(parseInt(localAps, 10), 1000) // cap to 1000 to prevent abuse
+            if (!isNaN(safeAps)) {
+                await prisma.user.update({
+                    where: { id: userId },
+                    data: { activityPoints: { increment: safeAps } }
+                })
+                await prisma.activityPointLog.create({
+                    data: {
+                        userId,
+                        activityKey: 'toeic_guest_sync',
+                        points: safeAps,
+                        referenceKey: `TOEIC_SYNC_GUEST_APS_${userId}_${Date.now()}`
+                    }
+                })
+            }
+        }
+    }
 
     // After sync, we don't necessarily need to trigger AP here immediately 
     // because the user will likely answer one more question or reload to trigger the check.
