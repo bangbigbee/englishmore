@@ -8,6 +8,7 @@ declare module 'next-auth' {
       name?: string | null
       image?: string | null
       role?: string
+      tier?: string
     }
   }
   interface User {
@@ -16,5 +17,6 @@ declare module 'next-auth' {
     name?: string | null
     image?: string | null
     role?: string
+    tier?: string
   }
 }

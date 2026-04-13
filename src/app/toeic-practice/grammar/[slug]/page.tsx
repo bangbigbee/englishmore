@@ -23,6 +23,7 @@ interface ToeicLesson {
   title: string
   order: number
   content: string | null
+  accessTier: 'FREE' | 'PRO' | 'ULTRA'
   questions: ToeicQuestion[]
 }
 
@@ -434,6 +435,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               <button
                 key={lesson.id}
                 onClick={() => {
+                  const lessonTierLevel = lesson.accessTier === 'ULTRA' ? 3 : lesson.accessTier === 'PRO' ? 2 : 1;
+                  const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                  
+                  if (lessonTierLevel > userTierLevel) {
+                    toast.error(`Bài học này yêu cầu thẻ ${lesson.accessTier}. Đang chuyển hướng...`)
+                    setTimeout(() => router.push('/upgrade'), 800)
+                    return;
+                  }
+
                   setSelectedLessonId(lesson.id)
                   setActiveQuestionIndex(0)
                   setShowLessonContent(lesson.questions.length === 0)
@@ -454,14 +464,33 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 }`}>
                   {lesson.order}
                 </div>
-                <div className="min-w-0">
-                  <div className={`font-bold text-sm leading-tight ${selectedLessonId === lesson.id ? 'text-white' : 'text-slate-800'}`}>
-                    {lesson.title}
+                <div className="min-w-0 flex-1">
+                  <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-white' : 'text-slate-800'}`}>
+                    <span>{lesson.title}</span>
+                    {lesson.accessTier === 'PRO' && (
+                      <span className="shrink-0 px-1.5 py-0.5 bg-[#b49b5c] text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
+                        PRO
+                      </span>
+                    )}
+                    {lesson.accessTier === 'ULTRA' && (
+                      <span className="shrink-0 px-1.5 py-0.5 bg-purple-600 text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
+                        ULTRA
+                      </span>
+                    )}
                   </div>
                   <div className={`text-[11px] mt-1 ${selectedLessonId === lesson.id ? 'text-white/60' : 'text-slate-500'}`}>
                     {lesson.questions.length} câu hỏi luyện tập
                   </div>
                 </div>
+                {(() => {
+                  const lessonTierLevel = lesson.accessTier === 'ULTRA' ? 3 : lesson.accessTier === 'PRO' ? 2 : 1;
+                  const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                  return lessonTierLevel > userTierLevel && (
+                    <div className="shrink-0">
+                      <svg className="w-4 h-4 text-slate-400 opacity-60" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+                    </div>
+                  );
+                })()}
               </button>
             ))}
           </nav>
@@ -483,7 +512,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl font-black text-[#14532d]/20 select-none">#{currentLesson.order}</span>
-                      <h2 className="text-xl font-black text-slate-900 leading-tight">{currentLesson.title}</h2>
+                      <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
+                        <span>{currentLesson.title}</span>
+                        {currentLesson.accessTier === 'PRO' && <span className="px-2 py-0.5 bg-[#b49b5c] text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">PRO</span>}
+                        {currentLesson.accessTier === 'ULTRA' && <span className="px-2 py-0.5 bg-purple-600 text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">ULTRA</span>}
+                      </h2>
                       {!isTestCompleted && timerStartTime !== null && (
                         <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
                           {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}

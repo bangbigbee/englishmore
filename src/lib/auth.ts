@@ -60,15 +60,19 @@ export const authOptions: NextAuthOptions = {
         // Fetch fresh user data from database to sync name and image
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
-          select: { name: true, image: true }
+          select: { name: true, image: true, tier: true }
         })
         if (dbUser) {
           session.user.name = dbUser.name
           session.user.image = dbUser.image
+          session.user.tier = dbUser.tier
         }
       }
       if (token.role) {
         session.user.role = token.role as string
+      }
+      if (token.tier) {
+        session.user.tier = token.tier as string
       }
       return session
     },
@@ -81,10 +85,11 @@ export const authOptions: NextAuthOptions = {
       if (token.sub) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
-          select: { role: true }
+          select: { role: true, tier: true }
         })
         if (dbUser) {
           token.role = dbUser.role
+          token.tier = dbUser.tier
         }
       }
 
