@@ -103,10 +103,10 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
                 </svg>
               </div>
               
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900" style={{fontFamily: 'var(--font-outfit, sans-serif)'}}>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900" style={{fontFamily: 'var(--font-outfit, sans-serif)'}}>
                 Chào mừng bạn đến với <span className="text-[#14532d]">English</span><span className="text-amber-500">More</span>
               </h2>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-3 text-[15px] font-bold text-slate-700">
                 {subtitle || 'Vui lòng đăng nhập để tiếp tục quá trình học tập của bạn.'}
               </p>
             </div>
