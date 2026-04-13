@@ -49,6 +49,18 @@ enum HomeworkMessageSender {
   teacher
 }
 
+enum AccessTier {
+  FREE
+  PRO
+  ULTRA
+}
+
+enum UpgradeOrderStatus {
+  pending
+  completed
+  rejected
+}
+
 
 model Account {
   id                String  @id @default(cuid())
@@ -105,8 +117,28 @@ model User {
   speakYourselfAttempts SpeakYourselfAttempt[]
   activityPointLogs     ActivityPointLog[]
   toeicAnswers          ToeicAnswer[]
+  tier                  AccessTier   @default(FREE)
+  upgradeOrders         UpgradeOrder[]
 
   @@index([referrerId])
+}
+
+model UpgradeOrder {
+  id              String             @id @default(cuid())
+  userId          String
+  targetTier      AccessTier
+  price           Int
+  status          UpgradeOrderStatus @default(pending)
+  referenceCode   String?            @unique
+  paymentMethod   PaymentMethod?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  completedAt     DateTime?
+
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
 }
 
 model VerificationToken {
@@ -602,6 +634,7 @@ model ToeicGrammarLesson {
   title       String
   order       Int      // Lesson 1, 2, ...
   content     String?  @db.Text
+  accessTier  AccessTier @default(FREE)
   questions   ToeicQuestion[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
