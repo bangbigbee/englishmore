@@ -112,11 +112,11 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
 
           <div className="overflow-y-auto custom-scrollbar p-6 md:p-10">
             <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">
-                Nâng Tầm Tiếng Anh
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+                Nâng Tầm Tiếng Anh Cùng <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span>
               </h2>
               <p className="text-slate-500 text-sm md:text-base">
-                Mở khóa bài tập chất lượng cao, từ vựng độc quyền và bài tập có 1-0-2 giúp bạn tiết kiệm thời gian ôn luyện.
+                Lựa chọn gói Premium phù hợp để mở khóa toàn bộ kho tàng bài tập độc quyền, giải thích cực kỳ chi tiết và tính năng chấm chữa AI thông minh.
               </p>
             </div>
 
@@ -127,23 +127,31 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     Mặc định
                   </div>
-                  <h3 className="text-xl font-black text-slate-800 mb-1">Basic (FREE)</h3>
-                  <p className="text-slate-500 text-sm h-10 line-clamp-2">Điểm bắt đầu làm quen nền tảng.</p>
-                  <div className="text-3xl font-black text-slate-900 mt-4 mb-6">0đ</div>
+                  <h3 className="text-2xl font-black text-slate-800 mb-2">Basic (FREE)</h3>
+                  <p className="text-slate-500 text-sm h-12">Điểm bắt đầu hoàn hảo để làm quen với nền tảng.</p>
+                  <div className="text-3xl font-black text-slate-900 mt-4 mb-6">0đ<span className="text-base font-normal text-slate-500">/mãi mãi</span></div>
                 </div>
                 
-                <ul className="space-y-3 mb-8 flex-1 text-sm">
-                  <li className="flex items-start gap-2.5">
+                <ul className="space-y-4 mb-8 flex-1 text-sm">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-600">Truy cập mảng bài học Free</span>
+                    <span className="text-slate-600">Truy cập bộ tài liệu cơ bản</span>
                   </li>
-                  <li className="flex items-start gap-2.5">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-600">Làm Quiz giới hạn</span>
+                    <span className="text-slate-600">Luyện đề TOEIC (Giới hạn 1 đề/ngày)</span>
                   </li>
-                  <li className="flex items-start gap-2.5 opacity-40">
+                  <li className="flex items-start gap-3">
+                    <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <span className="text-slate-600">Xem điểm tổng và đáp án đúng sai</span>
+                  </li>
+                  <li className="flex items-start gap-3 opacity-40">
                     <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-500 line-through">Chữa bài chi tiết cực mạnh</span>
+                    <span className="text-slate-500 line-through">Xem giải thích chi tiết cấu trúc TOEIC</span>
+                  </li>
+                  <li className="flex items-start gap-3 opacity-40">
+                    <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                    <span className="text-slate-500 line-through">Đề thi Độc quyền mức độ Khó</span>
                   </li>
                 </ul>
                 <div className="py-3 text-center text-slate-400 text-xs font-bold uppercase tracking-widest border-t border-slate-200/60">Gói Hiện Tại</div>
@@ -158,41 +166,45 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 </div>
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
-                    <IconStar className="w-3 h-3" /> PRO Pass
+                    <IconStar className="w-4 h-4" /> PRO Pass
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 mb-1">Học Viên Lớp</h3>
-                  <p className="text-slate-500 text-sm h-10 line-clamp-2">Luyện đề thần tốc trúng tủ cao.</p>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Học Viên Lớp</h3>
+                  <p className="text-slate-500 text-sm h-12">Dành cho người thật sự muốn nâng cao điểm số hiệu quả.</p>
                   <div className="text-3xl font-black text-slate-900 mt-4 mb-6">
                     299k<span className="text-base font-normal text-slate-400">/6 tháng</span>
                   </div>
                 </div>
                 
-                <ul className="space-y-3 mb-8 flex-1 text-sm">
-                  <li className="flex items-start gap-2.5">
+                <ul className="space-y-4 mb-8 flex-1 text-sm">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-800 font-semibold">Tất cả quyền của FREE</span>
+                    <span className="text-slate-800 font-semibold">Mọi tính năng của gói FREE</span>
                   </li>
-                  <li className="flex items-start gap-2.5">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700">Mở toàn bộ Đề TOEIC <strong className="text-amber-600">PRO</strong></span>
+                    <span className="text-slate-700">Làm TOEIC <strong className="text-amber-600">Không Giới Hạn</strong></span>
                   </li>
-                  <li className="flex items-start gap-2.5">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700">Giải thích Ngoại lệ & Mẹo</span>
+                    <span className="text-slate-700">Mở khóa Giải thích Ngoại lệ & Ngữ pháp chi tiết</span>
                   </li>
-                  <li className="flex items-start gap-2.5">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700">Nhân đôi AP point (x2)</span>
+                    <span className="text-slate-700">Nhân đôi Activity Points (x2)</span>
+                  </li>
+                  <li className="flex items-start gap-3 opacity-40">
+                    <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                    <span className="text-slate-500 line-through">Chữa Speaking/Writing 1-1 AI</span>
                   </li>
                 </ul>
                 <button 
                   onClick={() => handleUpgrade('PRO')}
                   className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95"
                 >
-                  Nâng Cấp PRO Đi
+                  Nâng Cấp PRO Ngay
                 </button>
                 <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">
-                  Hoàn toàn miễn phí khi học Offline/Online.
+                  Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
                 </p>
               </div>
 
@@ -200,34 +212,38 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               <div className="bg-slate-900 rounded-2xl p-6 border border-slate-700 flex flex-col relative text-white">
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-900/40 text-purple-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-purple-500/20">
-                    <IconZap className="w-3 h-3 text-purple-400" /> ULTRA Mastery
+                    <IconZap className="w-4 h-4 text-purple-400" /> ULTRA Mastery
                   </div>
-                  <h3 className="text-xl font-black text-white mb-1">Trọn Đời (ULTRA)</h3>
-                  <p className="text-slate-400 text-sm h-10 line-clamp-2">Ông hoàng chinh phục tiếng Anh.</p>
+                  <h3 className="text-2xl font-black text-white mb-2">Trọn Đời (ULTRA)</h3>
+                  <p className="text-slate-400 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
                   <div className="text-3xl font-black text-white mt-4 mb-6">
-                    899k<span className="text-base font-normal text-slate-500">/đời</span>
+                    899k<span className="text-base font-normal text-slate-500">/trọn đời</span>
                   </div>
                 </div>
                 
-                <ul className="space-y-3 mb-8 flex-1 text-sm">
-                  <li className="flex items-start gap-2.5">
+                <ul className="space-y-4 mb-8 flex-1 text-sm">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-200 font-semibold">Gọt dũa kỹ năng từ PRO</span>
+                    <span className="text-slate-200 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
                   </li>
-                  <li className="flex items-start gap-2.5">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-300">Đề Khó - Siêu cấp Độc Quyền</span>
+                    <span className="text-slate-300">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
                   </li>
-                  <li className="flex items-start gap-2.5">
+                  <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-300">Nhân ba AP point (x3)</span>
+                    <span className="text-slate-300">Nhân ba Activity Points (x3)</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <span className="text-slate-300">Ưu tiên hỗ trợ từ Admin</span>
                   </li>
                 </ul>
                 <button 
                   onClick={() => handleUpgrade('ULTRA')}
                   className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-500/20 active:scale-95"
                 >
-                  Mua ULTRA Ngay
+                  Bứt Phá Cùng ULTRA
                 </button>
               </div>
             </div>
