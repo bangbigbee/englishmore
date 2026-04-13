@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import UpgradeModal from '@/components/UpgradeModal'
 
 interface ToeicQuestion {
   id: string
@@ -56,6 +57,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const retryingLessonsRef = useRef<Set<string>>(new Set())
   const [isReviewing, setIsReviewing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [showPricing, setShowPricing] = useState(false)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -439,8 +441,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
                   
                   if (lessonTierLevel > userTierLevel) {
-                    toast.error(`Bài học này yêu cầu thẻ ${lesson.accessTier}. Đang chuyển hướng...`)
-                    setTimeout(() => router.push('/upgrade'), 800)
+                    setShowPricing(true)
                     return;
                   }
 
@@ -466,14 +467,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-white' : 'text-slate-800'}`}>
-                    <span>{lesson.title}</span>
+                    <span className="truncate">{lesson.title}</span>
                     {lesson.accessTier === 'PRO' && (
-                      <span className="shrink-0 px-1.5 py-0.5 bg-[#b49b5c] text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
+                      <span className="shrink-0 px-1.5 py-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
                         PRO
                       </span>
                     )}
                     {lesson.accessTier === 'ULTRA' && (
-                      <span className="shrink-0 px-1.5 py-0.5 bg-purple-600 text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
+                      <span className="shrink-0 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-indigo-600 border border-indigo-500 text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
                         ULTRA
                       </span>
                     )}
@@ -514,8 +515,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       <span className="text-2xl font-black text-[#14532d]/20 select-none">#{currentLesson.order}</span>
                       <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
                         <span>{currentLesson.title}</span>
-                        {currentLesson.accessTier === 'PRO' && <span className="px-2 py-0.5 bg-[#b49b5c] text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">PRO</span>}
-                        {currentLesson.accessTier === 'ULTRA' && <span className="px-2 py-0.5 bg-purple-600 text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">ULTRA</span>}
+                        {currentLesson.accessTier === 'PRO' && <span className="px-2 py-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">PRO</span>}
+                        {currentLesson.accessTier === 'ULTRA' && <span className="px-2 py-0.5 bg-gradient-to-r from-purple-500 to-indigo-600 border border-indigo-500 text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">ULTRA</span>}
                       </h2>
                       {!isTestCompleted && timerStartTime !== null && (
                         <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
@@ -826,6 +827,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           </motion.div>
         </div>
       )}
+
+      {/* Pricing Modal for PRO/ULTRA */}
+      <UpgradeModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   )
 }
