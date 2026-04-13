@@ -183,7 +183,7 @@ function LockedFeatureButton({
 }
 
 function HomeContent() {
-  const { data: session } = useSession()
+  const { data: session, update: updateSession } = useSession()
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -1199,6 +1199,7 @@ function HomeContent() {
             if (data.awardedAp > 0) {
               playPronunciationRewardChime()
               showActivityPointToast(data.awardedAp, 'for Vocabulary Pronunciation Mastery')
+              updateSession?.()
             }
           }).catch(() => undefined)
         }

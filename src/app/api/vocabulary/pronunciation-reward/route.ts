@@ -20,11 +20,12 @@ export async function POST(request: Request) {
     }
 
     // Award Activity Points for vocabulary pronunciation mastery
-    // The reference key ensures they only get points ONCE per word per user
+    // The reference key ensures they only get points once per day per word
+    const dateStr = new Date().toISOString().split('T')[0]
     const awardResult = await awardActivityPoints({
       userId,
       activityKey: ACTIVITY_POINT_KEYS.vocabPronunciation,
-      referenceKey: `vocab_pronunciation:${wordId}:${userId}`
+      referenceKey: `vocab_pronunciation:${wordId}:${userId}:${dateStr}`
     })
 
     return NextResponse.json({
