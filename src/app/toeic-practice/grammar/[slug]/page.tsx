@@ -261,7 +261,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         })
         const data = await res.json()
         if (res.ok && data.awardedPoints) {
-          toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} APs thông qua việc luyện tập.`)
+          if (data.awardReason) {
+            toast.success(data.awardReason, { duration: 5000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } });
+          } else {
+            toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} APs.`, { duration: 5000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } })
+          }
         }
       } catch (error) {
         console.error('Error saving progress:', error)

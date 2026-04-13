@@ -100,14 +100,26 @@ export async function POST(request: NextRequest) {
         let totalAwardedPoints = 0;
         const { awardActivityPoints, ACTIVITY_POINT_KEYS } = await import('@/lib/activityPoints')
 
-        // 2.a Award for streak
-        if (isCorrect && currentStreak >= 3) {
+        let awardReason = "";
+        
+        // 2.a Award for specific streaks
+        let streakKeyToAdd: (typeof ACTIVITY_POINT_KEYS)[keyof typeof ACTIVITY_POINT_KEYS] | null = null;
+        if (isCorrect) {
+          if (currentStreak === 3) streakKeyToAdd = ACTIVITY_POINT_KEYS.toeicStreak3;
+          else if (currentStreak === 5) streakKeyToAdd = ACTIVITY_POINT_KEYS.toeicStreak5;
+          else if (currentStreak === 10) streakKeyToAdd = ACTIVITY_POINT_KEYS.toeicStreak10;
+        }
+
+        if (streakKeyToAdd) {
            const streakResult = await awardActivityPoints({
              userId,
-             activityKey: ACTIVITY_POINT_KEYS.toeicCorrectStreak,
-             referenceKey: `TOEIC_STREAK_${userId}_${questionId}`
+             activityKey: streakKeyToAdd,
+             referenceKey: `TOEIC_STREAK_${streakKeyToAdd}_${userId}_${questionId}`
            })
-           totalAwardedPoints += streakResult.awardedAp;
+           if (streakResult.awardedAp > 0) {
+             totalAwardedPoints += streakResult.awardedAp;
+             awardReason = `Excellent! You've got ${streakResult.awardedAp} APs for ${currentStreak}-point streak.`;
+           }
         }
 
         const lessonId = question.lessonId
@@ -122,11 +134,15 @@ export async function POST(request: NextRequest) {
             activityKey: ACTIVITY_POINT_KEYS.toeicQuizComplete,
             referenceKey: `TOEIC_QUIZ_COMPLETE_${lessonId}_${userId}`
           })
-          totalAwardedPoints += result.awardedAp;
+          if (result.awardedAp > 0) {
+            totalAwardedPoints += result.awardedAp;
+            if (awardReason) awardReason += " ";
+            awardReason += `Congratulations! You've got ${result.awardedAp} APs for completing the quiz.`;
+          }
         }
         
         if (totalAwardedPoints > 0) {
-           return NextResponse.json({ success: true, awardedPoints: totalAwardedPoints })
+           return NextResponse.json({ success: true, awardedPoints: totalAwardedPoints, awardReason })
         }
       }
     }
