@@ -3636,7 +3636,7 @@ export default function AdminDashboard() {
                 {selectedToeicTopic && (
                   <button
                     onClick={() => {
-                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '' })
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE' })
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
