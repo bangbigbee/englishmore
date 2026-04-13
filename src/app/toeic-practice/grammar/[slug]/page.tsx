@@ -54,6 +54,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const router = useRouter()
   const retryingLessonsRef = useRef<Set<string>>(new Set())
   const [isReviewing, setIsReviewing] = useState(false)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -373,11 +374,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
         {/* Sidebar */}
-        <aside className="w-full md:w-80 bg-white border-r border-slate-200 sticky top-16 h-fit md:h-[calc(100vh-64px)] overflow-y-auto">
-          <div className="p-4 border-b border-slate-100">
+        <aside className="w-full md:w-80 bg-white border-b md:border-b-0 md:border-r border-slate-200 md:sticky md:top-16 md:h-[calc(100vh-64px)] md:overflow-y-auto">
+          <div 
+            className="p-4 border-b border-slate-100 flex justify-between items-center cursor-pointer md:cursor-default"
+            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          >
             <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Danh sách bài học</h2>
+            <svg className={`w-5 h-5 text-slate-400 md:hidden transition-transform ${isMobileSidebarOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
-          <nav className="p-2 space-y-1">
+          <nav className={`p-2 space-y-1 ${isMobileSidebarOpen ? 'block' : 'hidden md:block'}`}>
             {topic.lessons.map((lesson) => (
               <button
                 key={lesson.id}
@@ -388,6 +395,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setTimerStartTime(Date.now())
                   setElapsedTime(0)
                   setIsTestCompleted(false)
+                  setIsMobileSidebarOpen(false)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
                 className={`w-full text-left p-4 rounded-xl transition-all duration-200 group flex items-start gap-4 cursor-pointer ${
@@ -609,11 +617,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })}
                               </div>
 
-                              <div className="mt-8 flex flex-row items-stretch justify-between gap-3 md:gap-4 w-full h-10 md:h-12">
+                              <div className="mt-8 flex flex-row items-stretch justify-between gap-2 md:gap-4 w-full">
                                 <button
                                   onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
                                   disabled={activeQuestionIndex === 0}
-                                  className="h-full w-10 md:w-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                  className="h-auto py-3 md:py-0 w-10 md:w-12 md:h-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                   aria-label="Trước đó"
                                 >
                                   <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -621,20 +629,22 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 
                                 <div className="flex-1 flex justify-center items-center w-full min-w-0">
                                   {isShowingResult && (
-                                    <div className={`h-full w-full max-w-2xl px-4 py-2 md:py-3 rounded-2xl border-2 flex items-center gap-2 md:gap-4 text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'} overflow-hidden shadow-sm`}>
-                                      <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
-                                        {isCorrect ? (
-                                          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                                        ) : (
-                                          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-                                        )}
-                                      </div>
-                                      <div className="flex flex-col shrink-0 hidden sm:flex">
-                                        <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
-                                        <span className="font-bold text-xs md:text-sm text-slate-800">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
+                                    <div className={`h-auto w-full max-w-2xl p-2 md:px-4 md:py-3 rounded-2xl border-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 md:gap-4 text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'} shadow-sm`}>
+                                      <div className="flex items-center gap-2 px-1">
+                                        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0 flex-none">
+                                          {isCorrect ? (
+                                            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                          ) : (
+                                            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                                          )}
+                                        </div>
+                                        <div className="flex flex-col shrink-0">
+                                          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
+                                          <span className="font-bold text-xs md:text-sm text-slate-800">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
+                                        </div>
                                       </div>
                                       {explanationText && (
-                                        <div className="sm:ml-2 pl-3 sm:pl-4 border-l-2 border-current/30 overflow-y-auto w-full h-full flex items-center pr-1 custom-scrollbar">
+                                        <div className="w-full sm:w-auto flex-1 sm:ml-2 sm:pl-4 sm:border-l-2 border-t-2 sm:border-t-0 p-2 sm:p-0 border-current/20 flex items-center">
                                           {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
                                               <button 
                                                 onClick={(e) => {
@@ -647,9 +657,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 {explanationText}
                                               </button>
                                           ) : (
-                                              <p className="text-xs md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed">
+                                              <div className="text-xs md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[150px] overflow-y-auto custom-scrollbar">
                                                 {explanationText}
-                                              </p>
+                                              </div>
                                           )}
                                         </div>
                                       )}
@@ -660,7 +670,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 <button
                                   onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
                                   disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                  className="h-full w-10 md:w-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                  className="h-auto py-3 md:py-0 w-10 md:w-12 md:h-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                   aria-label="Tiếp theo"
                                 >
                                   <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
