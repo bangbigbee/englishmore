@@ -44,7 +44,7 @@ export default function RootLayout({
             richColors
             position="top-center"
             closeButton
-            duration={30000}
+            duration={7000}
             offset={72}
             toastOptions={{
               style: {
