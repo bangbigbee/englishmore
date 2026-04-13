@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Outfit } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import TopNav from "@/components/TopNav";
 import { Toaster } from "sonner";
 import LoginModalController from "./LoginModalController";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin", "latin-ext"],
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#fdfdfc]">
         <AuthProvider>
