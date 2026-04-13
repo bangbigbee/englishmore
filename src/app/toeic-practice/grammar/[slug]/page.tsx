@@ -607,7 +607,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 ].map((opt) => {
                                   if (opt.label === 'D' && !opt.value) return null
                                   
-                                  let buttonClass = "flex items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-200 text-left "
+                                  let buttonClass = "flex items-center gap-3 md:gap-4 px-4 py-3 md:py-3.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
                                   
                                   if (isShowingResult) {
                                     if (opt.label === q.correctOption) {
@@ -632,14 +632,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       disabled={isShowingResult}
                                       className={buttonClass + " cursor-pointer"}
                                     >
-                                      <span className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-xl font-black text-lg ${
+                                      <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
                                         selectedOption === opt.label 
                                           ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
                                           : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
                                       }`}>
                                         {opt.label}
                                       </span>
-                                      <span className="font-bold text-base">{opt.value}</span>
+                                      <span className="font-bold text-[15px] md:text-base leading-tight md:leading-normal">{opt.value}</span>
                                     </button>
                                   )
                                 })}
