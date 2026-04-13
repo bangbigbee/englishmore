@@ -628,8 +628,29 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               )}
               Bạn đã đúng <strong className="text-emerald-700 text-xl">{currentLesson.questions.filter(q => userAnswers[q.id] === q.correctOption).length}</strong> / <strong>{currentLesson.questions.length}</strong> câu.
             </p>
-            <p className="font-bold text-slate-700 mb-4">Bạn có muốn làm lại bài thi này?</p>
             <div className="flex flex-col gap-3">
+              {topic && topic.lessons.findIndex(l => l.id === selectedLessonId) < topic.lessons.length - 1 ? (
+                <button
+                  onClick={() => {
+                    const nextLesson = topic.lessons[topic.lessons.findIndex(l => l.id === selectedLessonId) + 1]
+                    setSelectedLessonId(nextLesson.id)
+                    setActiveQuestionIndex(0)
+                    setShowLessonContent(nextLesson.questions.length === 0)
+                    setTimerStartTime(Date.now())
+                    setElapsedTime(0)
+                    setIsTestCompleted(false)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                  className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#14532d]/20"
+                >
+                  Bài Tiếp Theo &rarr;
+                </button>
+              ) : (
+                <Link href="/toeic-practice" className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 inline-block cursor-pointer shadow-md shadow-[#14532d]/20">
+                  Về danh sách chủ đề
+                </Link>
+              )}
+
               <button
                 onClick={() => {
                   const newAnswers = { ...userAnswers };
@@ -646,31 +667,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setActiveQuestionIndex(0);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-colors cursor-pointer shadow-md shadow-[#14532d]/20"
+                className="w-full py-3 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors cursor-pointer mt-1"
               >
-                YES (Làm lại)
+                Làm Lại
               </button>
-              {topic && topic.lessons.findIndex(l => l.id === selectedLessonId) < topic.lessons.length - 1 ? (
-                <button
-                  onClick={() => {
-                    const nextLesson = topic.lessons[topic.lessons.findIndex(l => l.id === selectedLessonId) + 1]
-                    setSelectedLessonId(nextLesson.id)
-                    setActiveQuestionIndex(0)
-                    setShowLessonContent(nextLesson.questions.length === 0)
-                    setTimerStartTime(Date.now())
-                    setElapsedTime(0)
-                    setIsTestCompleted(false)
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
-                  }}
-                  className="w-full py-3.5 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors cursor-pointer"
-                >
-                  Làm bài tiếp theo &rarr;
-                </button>
-              ) : (
-                <Link href="/toeic-practice" className="w-full py-3.5 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors inline-block cursor-pointer">
-                  &larr; Trở về danh sách chủ đề
-                </Link>
-              )}
             </div>
           </motion.div>
         </div>

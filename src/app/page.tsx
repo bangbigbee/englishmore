@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
 import GallerySection from '@/components/GallerySection'
 import TeacherVideosOverlay from '@/components/TeacherVideosOverlay'
+import LeaderboardSection from '@/components/LeaderboardSection'
 
 interface AvailableCourse {
   id: string
@@ -2330,6 +2331,10 @@ function HomeContent() {
           </>
         )}
 
+        {(session?.user?.role === 'member' || session?.user?.role === 'admin') && (
+          <LeaderboardSection />
+        )}
+
         <section className="mt-12 px-1">
           <div className="mb-6">
             <h3 className="text-xl font-bold tracking-tight text-slate-800">Khóa học đang mở đăng ký</h3>
@@ -2498,7 +2503,7 @@ function HomeContent() {
         )}
 
         {/* Gallery Section */}
-        <GallerySection />
+        {session?.user?.role !== 'member' && <GallerySection />}
       </main>
 
       <AnimatePresence>
