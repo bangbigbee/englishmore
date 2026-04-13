@@ -110,11 +110,13 @@ export async function POST(request: NextRequest) {
           else if (currentStreak === 10) streakKeyToAdd = ACTIVITY_POINT_KEYS.toeicStreak10;
         }
 
+        const dateStr = new Date().toISOString().split('T')[0]
+
         if (streakKeyToAdd) {
            const streakResult = await awardActivityPoints({
              userId,
              activityKey: streakKeyToAdd,
-             referenceKey: `TOEIC_STREAK_${streakKeyToAdd}_${userId}_${questionId}`
+             referenceKey: `TOEIC_STREAK_${streakKeyToAdd}_${userId}_${questionId}_${dateStr}`
            })
            if (streakResult.awardedAp > 0) {
              totalAwardedPoints += streakResult.awardedAp;
@@ -132,7 +134,7 @@ export async function POST(request: NextRequest) {
           const result = await awardActivityPoints({
             userId,
             activityKey: ACTIVITY_POINT_KEYS.toeicQuizComplete,
-            referenceKey: `TOEIC_QUIZ_COMPLETE_${lessonId}_${userId}`
+            referenceKey: `TOEIC_QUIZ_COMPLETE_${lessonId}_${userId}_${dateStr}`
           })
           if (result.awardedAp > 0) {
             totalAwardedPoints += result.awardedAp;

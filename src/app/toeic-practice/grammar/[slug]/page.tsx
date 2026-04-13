@@ -281,32 +281,42 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     // Trigger local fake AP for guests or authenticated users who are NOT members
     const isMember = status === 'authenticated' && session?.user?.role === 'member';
     if (!isMember) {
+        const todayDateStr = new Date().toISOString().split('T')[0];
+        const awardedKey = `guest_ap_awarded_${currentLesson?.id}_${todayDateStr}`;
+        const hasAwardedToday = localStorage.getItem(awardedKey) === 'true';
+
         let fakeAp = 0;
         let fakeReason = '';
-        if (isCorrect) {
-            if (newStreak === 3) { fakeAp = 2; fakeReason = "Excellent! You've got 2 APs for 3-point streak."; }
-            else if (newStreak === 5) { fakeAp = 3; fakeReason = "Excellent! You've got 3 APs for 5-point streak."; }
-            else if (newStreak === 10) { fakeAp = 5; fakeReason = "Excellent! You've got 5 APs for 10-point streak."; }
-        }
         
-        const newShowResults = { ...showResults, [questionId]: true };
-        const answeredCount = Object.keys(newShowResults).filter(k => currentLesson?.questions.some(q => q.id === k)).length;
-        if (currentLesson && answeredCount === currentLesson.questions.length && currentLesson.questions.length > 0) {
-            fakeAp += 15;
-            if (fakeReason) fakeReason += " ";
-            fakeReason += "Congratulations! You've got 15 APs for completing the quiz.";
-        }
+        if (!hasAwardedToday) {
+            if (isCorrect) {
+                if (newStreak === 3) { fakeAp = 2; fakeReason = "Excellent! You've got 2 APs for 3-point streak."; }
+                else if (newStreak === 5) { fakeAp = 3; fakeReason = "Excellent! You've got 3 APs for 5-point streak."; }
+                else if (newStreak === 10) { fakeAp = 5; fakeReason = "Excellent! You've got 5 APs for 10-point streak."; }
+            }
+            
+            const newShowResults = { ...showResults, [questionId]: true };
+            const answeredCount = Object.keys(newShowResults).filter(k => currentLesson?.questions.some(q => q.id === k)).length;
+            if (currentLesson && answeredCount === currentLesson.questions.length && currentLesson.questions.length > 0) {
+                fakeAp += 15;
+                if (fakeReason) fakeReason += " ";
+                fakeReason += "Congratulations! You've got 15 APs for completing the quiz.";
+                
+                // Mark as completed for today to prevent unlimited farming
+                localStorage.setItem(awardedKey, 'true');
+            }
 
-        if (fakeAp > 0) {
-            try {
-                const currentLocalAps = parseInt(localStorage.getItem('toeic_guest_aps') || '0', 10);
-                localStorage.setItem('toeic_guest_aps', (currentLocalAps + fakeAp).toString());
-            } catch (error) {}
+            if (fakeAp > 0) {
+                try {
+                    const currentLocalAps = parseInt(localStorage.getItem('toeic_guest_aps') || '0', 10);
+                    localStorage.setItem('toeic_guest_aps', (currentLocalAps + fakeAp).toString());
+                } catch (error) {}
 
-            setTimeout(() => {
-               new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
-               toast.success(fakeReason, { position: 'top-right', duration: 7000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } });
-            }, 1000);
+                setTimeout(() => {
+                   new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
+                   toast.success(fakeReason, { position: 'top-right', duration: 7000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } });
+                }, 1000);
+            }
         }
     }
   }
@@ -462,8 +472,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
                     <section className="mt-8">
-                      <div className="mb-6 flex flex-wrap gap-1.5 justify-center md:justify-start">
-                        {currentLesson.questions.map((_, idx) => {
+                      <div className="mb-6 flex flex-row items-center justify-between gap-4 w-full">
+                        <div className="flex flex-wrap gap-1.5 justify-start flex-1 min-w-0">
+                          {currentLesson.questions.map((_, idx) => {
                           const isActive = idx === activeQuestionIndex
                           const q = currentLesson.questions[idx]
                           const isShowingResult = !!showResults[q.id]
@@ -490,6 +501,33 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             </button>
                           )
                         })}
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            const newAnswers = { ...userAnswers };
+                            const newResults = { ...showResults };
+                            currentLesson.questions.forEach(q => {
+                              delete newAnswers[q.id];
+                              delete newResults[q.id];
+                            });
+                            setUserAnswers(newAnswers);
+                            setShowResults(newResults);
+                            setTimerStartTime(Date.now());
+                            setElapsedTime(0);
+                            setActiveQuestionIndex(0);
+                            setIsTestCompleted(false);
+                            setIsReviewing(false);
+                            if (retryingLessonsRef) {
+                               retryingLessonsRef.current.add(currentLesson.id);
+                            }
+                          }}
+                          className="group flex flex-none items-center justify-center w-8 h-8 rounded-full border-2 border-slate-200 text-slate-400 hover:text-[#14532d] hover:border-[#14532d] hover:bg-emerald-50 transition-all cursor-pointer relative"
+                          title="Làm Lại Bài"
+                        >
+                          <svg className="w-4 h-4 transition-transform group-hover:-rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                          <span className="absolute right-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-[#14532d] pointer-events-none">Làm Lại Bài</span>
+                        </button>
                       </div>
 
                       <AnimatePresence mode="wait">
@@ -571,14 +609,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })}
                               </div>
 
-                              <div className="mt-8 flex flex-row items-stretch justify-between gap-3 md:gap-4 w-full h-[60px] md:h-[72px]">
+                              <div className="mt-8 flex flex-row items-stretch justify-between gap-3 md:gap-4 w-full h-10 md:h-12">
                                 <button
                                   onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
                                   disabled={activeQuestionIndex === 0}
-                                  className="h-full px-4 md:px-6 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0"
+                                  className="h-full w-10 md:w-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                   aria-label="Trước đó"
                                 >
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                                 </button>
                                 
                                 <div className="flex-1 flex justify-center items-center w-full min-w-0">
@@ -622,10 +660,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 <button
                                   onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
                                   disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                  className="h-full px-4 md:px-6 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0"
+                                  className="h-full w-10 md:w-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                   aria-label="Tiếp theo"
                                 >
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                                 </button>
                               </div>
                             </motion.div>
