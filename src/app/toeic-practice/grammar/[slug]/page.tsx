@@ -275,45 +275,46 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
       try {
         const stored = localStorage.getItem('toeic_guest_progress') || '{}'
         const allData = JSON.parse(stored)
-        if (!selectedLessonId) return
-        
-        if (!allData[selectedLessonId]) allData[selectedLessonId] = {}
-        allData[selectedLessonId][questionId] = { selected: selectedOption, isCorrect }
-        
-        localStorage.setItem('toeic_guest_progress', JSON.stringify(allData))
-
-        // Trigger local fake AP for guests
-        const isGuestOrNonMember = status !== 'authenticated' || session?.user?.role !== 'member';
-        if (isGuestOrNonMember) {
-            let fakeAp = 0;
-            let fakeReason = '';
-            if (isCorrect) {
-                if (newStreak === 3) { fakeAp = 2; fakeReason = "Excellent! You've got 2 APs for 3-point streak."; }
-                else if (newStreak === 5) { fakeAp = 3; fakeReason = "Excellent! You've got 3 APs for 5-point streak."; }
-                else if (newStreak === 10) { fakeAp = 5; fakeReason = "Excellent! You've got 5 APs for 10-point streak."; }
-            }
-            
-            const newShowResults = { ...showResults, [questionId]: true };
-            const answeredCount = Object.keys(newShowResults).filter(k => currentLesson.questions.some(q => q.id === k)).length;
-            if (answeredCount === currentLesson.questions.length && currentLesson.questions.length > 0) {
-                fakeAp += 15;
-                if (fakeReason) fakeReason += " ";
-                fakeReason += "Congratulations! You've got 15 APs for completing the quiz.";
-            }
-
-            if (fakeAp > 0) {
-                const currentLocalAps = parseInt(localStorage.getItem('toeic_guest_aps') || '0', 10);
-                localStorage.setItem('toeic_guest_aps', (currentLocalAps + fakeAp).toString());
-
-                setTimeout(() => {
-                   new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
-                   toast.success(fakeReason, { position: 'top-right', duration: 7000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } });
-                }, 1000);
-            }
+        if (selectedLessonId) {
+            if (!allData[selectedLessonId]) allData[selectedLessonId] = {}
+            allData[selectedLessonId][questionId] = { selected: selectedOption, isCorrect }
+            localStorage.setItem('toeic_guest_progress', JSON.stringify(allData))
         }
       } catch (error) {
         console.error('Error saving local progress:', error)
       }
+    }
+
+    // Trigger local fake AP for guests or authenticated users who are NOT members
+    const isMember = status === 'authenticated' && session?.user?.role === 'member';
+    if (!isMember) {
+        let fakeAp = 0;
+        let fakeReason = '';
+        if (isCorrect) {
+            if (newStreak === 3) { fakeAp = 2; fakeReason = "Excellent! You've got 2 APs for 3-point streak."; }
+            else if (newStreak === 5) { fakeAp = 3; fakeReason = "Excellent! You've got 3 APs for 5-point streak."; }
+            else if (newStreak === 10) { fakeAp = 5; fakeReason = "Excellent! You've got 5 APs for 10-point streak."; }
+        }
+        
+        const newShowResults = { ...showResults, [questionId]: true };
+        const answeredCount = Object.keys(newShowResults).filter(k => currentLesson?.questions.some(q => q.id === k)).length;
+        if (currentLesson && answeredCount === currentLesson.questions.length && currentLesson.questions.length > 0) {
+            fakeAp += 15;
+            if (fakeReason) fakeReason += " ";
+            fakeReason += "Congratulations! You've got 15 APs for completing the quiz.";
+        }
+
+        if (fakeAp > 0) {
+            try {
+                const currentLocalAps = parseInt(localStorage.getItem('toeic_guest_aps') || '0', 10);
+                localStorage.setItem('toeic_guest_aps', (currentLocalAps + fakeAp).toString());
+            } catch (error) {}
+
+            setTimeout(() => {
+               new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
+               toast.success(fakeReason, { position: 'top-right', duration: 7000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } });
+            }, 1000);
+        }
     }
   }
 
