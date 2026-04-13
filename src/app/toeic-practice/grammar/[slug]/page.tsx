@@ -474,7 +474,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       </span>
                     )}
                     {lesson.accessTier === 'ULTRA' && (
-                      <span className="shrink-0 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-indigo-600 border border-indigo-500 text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
+                      <span className="shrink-0 px-1.5 py-0.5 bg-gradient-to-r from-emerald-500 to-[#14532d] border border-[#14532d] text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
                         ULTRA
                       </span>
                     )}
@@ -516,7 +516,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
                         <span>{currentLesson.title}</span>
                         {currentLesson.accessTier === 'PRO' && <span className="px-2 py-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">PRO</span>}
-                        {currentLesson.accessTier === 'ULTRA' && <span className="px-2 py-0.5 bg-gradient-to-r from-purple-500 to-indigo-600 border border-indigo-500 text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">ULTRA</span>}
+                        {currentLesson.accessTier === 'ULTRA' && <span className="px-2 py-0.5 bg-gradient-to-r from-emerald-500 to-[#14532d] border border-[#14532d] text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">ULTRA</span>}
                       </h2>
                       {!isTestCompleted && timerStartTime !== null && (
                         <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">

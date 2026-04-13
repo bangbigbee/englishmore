@@ -209,39 +209,39 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               </div>
 
               {/* ULTRA Tier */}
-              <div className="bg-slate-900 rounded-2xl p-6 border border-slate-700 flex flex-col relative text-white">
+              <div className="bg-[#0a2215] rounded-2xl p-6 border border-emerald-900 flex flex-col relative text-white shadow-2xl">
                 <div className="mb-6">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-900/40 text-purple-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-purple-500/20">
-                    <IconZap className="w-4 h-4 text-purple-400" /> ULTRA Mastery
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-900/60 text-emerald-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-emerald-500/30">
+                    <IconZap className="w-4 h-4 text-emerald-400" /> ULTRA Mastery
                   </div>
                   <h3 className="text-2xl font-black text-white mb-2">Trọn Đời (ULTRA)</h3>
-                  <p className="text-slate-400 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
+                  <p className="text-emerald-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
                   <div className="text-3xl font-black text-white mt-4 mb-6">
-                    899k<span className="text-base font-normal text-slate-500">/trọn đời</span>
+                    899k<span className="text-base font-normal text-emerald-100/50">/trọn đời</span>
                   </div>
                 </div>
                 
                 <ul className="space-y-4 mb-8 flex-1 text-sm">
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-200 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
+                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span className="text-emerald-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-300">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
+                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span className="text-emerald-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-300">Nhân ba Activity Points (x3)</span>
+                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span className="text-emerald-100/90">Nhân ba Activity Points (x3)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-300">Ưu tiên hỗ trợ từ Admin</span>
+                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span className="text-emerald-100/90">Ưu tiên hỗ trợ từ Admin</span>
                   </li>
                 </ul>
                 <button 
                   onClick={() => handleUpgrade('ULTRA')}
-                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-500/20 active:scale-95"
+                  className="w-full bg-gradient-to-r from-emerald-500 to-[#14532d] hover:from-emerald-600 hover:to-emerald-800 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-emerald-900/50 active:scale-95 border border-emerald-600/50"
                 >
                   Bứt Phá Cùng ULTRA
                 </button>
@@ -265,7 +265,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           
           <div className="text-center mb-6 pt-2">
             <h2 className="text-2xl font-black text-slate-800">
-              Chuyển khoản <span className={activeModal === 'PRO' ? 'text-amber-500' : 'text-purple-600'}>{activeModal}</span>
+              Chuyển khoản <span className={activeModal === 'PRO' ? 'text-amber-500' : 'text-[#14532d]'}>{activeModal}</span>
             </h2>
             <p className="text-slate-500 text-sm mt-1.5 font-medium">
               Quét mã QR dưới đây bằng App Ngân hàng
