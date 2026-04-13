@@ -322,6 +322,51 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     }
   }
 
+  const handleRestartLesson = async () => {
+    if (!currentLesson) return;
+    const lessonId = currentLesson.id;
+    
+    // Clear persistent storage properly
+    if (status === 'authenticated') {
+      try {
+        await fetch(`/api/toeic/progress?lessonId=${lessonId}`, { method: 'DELETE' });
+      } catch (e) {
+        console.error('Error clearing remote progress');
+      }
+    } else {
+      try {
+        const stored = localStorage.getItem('toeic_guest_progress');
+        if (stored) {
+          const allData = JSON.parse(stored);
+          if (allData[lessonId]) {
+            delete allData[lessonId];
+            localStorage.setItem('toeic_guest_progress', JSON.stringify(allData));
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Clear client state
+    if (retryingLessonsRef.current) {
+        retryingLessonsRef.current.add(lessonId);
+    }
+    
+    const newAnswers = { ...userAnswers };
+    const newResults = { ...showResults };
+    currentLesson.questions.forEach(q => {
+      delete newAnswers[q.id];
+      delete newResults[q.id];
+    });
+    setUserAnswers(newAnswers);
+    setShowResults(newResults);
+    
+    setIsTestCompleted(false);
+    setIsReviewing(false);
+    setTimerStartTime(Date.now());
+    setElapsedTime(0);
+    setActiveQuestionIndex(0);
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -512,24 +557,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         </div>
 
                         <button
-                          onClick={() => {
-                            const newAnswers = { ...userAnswers };
-                            const newResults = { ...showResults };
-                            currentLesson.questions.forEach(q => {
-                              delete newAnswers[q.id];
-                              delete newResults[q.id];
-                            });
-                            setUserAnswers(newAnswers);
-                            setShowResults(newResults);
-                            setTimerStartTime(Date.now());
-                            setElapsedTime(0);
-                            setActiveQuestionIndex(0);
-                            setIsTestCompleted(false);
-                            setIsReviewing(false);
-                            if (retryingLessonsRef) {
-                               retryingLessonsRef.current.add(currentLesson.id);
-                            }
-                          }}
+                          onClick={handleRestartLesson}
                           className="group flex flex-none items-center justify-center w-8 h-8 rounded-full border-2 border-slate-200 text-slate-400 hover:text-[#14532d] hover:border-[#14532d] hover:bg-emerald-50 transition-all cursor-pointer relative"
                           title="Làm Lại Bài"
                         >
@@ -745,20 +773,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
               <button
                 onClick={() => {
-                  retryingLessonsRef.current.add(currentLesson.id);
-                  const newAnswers = { ...userAnswers };
-                  const newResults = { ...showResults };
-                  currentLesson.questions.forEach(q => {
-                    delete newAnswers[q.id];
-                    delete newResults[q.id];
-                  });
-                  setUserAnswers(newAnswers);
-                  setShowResults(newResults);
-                  setIsTestCompleted(false);
-                  setIsReviewing(false);
-                  setTimerStartTime(Date.now());
-                  setElapsedTime(0);
-                  setActiveQuestionIndex(0);
+                  handleRestartLesson();
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="w-full py-3 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors cursor-pointer mt-1"

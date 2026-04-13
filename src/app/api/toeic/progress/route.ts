@@ -155,3 +155,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { searchParams } = new URL(request.url)
+  const lessonId = searchParams.get('lessonId')
+
+  if (!lessonId) {
+    return NextResponse.json({ error: 'lessonId is required' }, { status: 400 })
+  }
+
+  try {
+    // Delete all answers for this user in this lesson
+    await prisma.toeicAnswer.deleteMany({
+      where: {
+        userId: session.user.id,
+        question: {
+          lessonId: lessonId
+        }
+      }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting TOEIC progress:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  }
+}
