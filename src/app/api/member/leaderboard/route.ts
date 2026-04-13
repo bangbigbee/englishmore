@@ -6,9 +6,6 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || (session.user.role !== 'member' && session.user.role !== 'admin')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const topUsers = await prisma.user.findMany({
       where: {
@@ -17,7 +14,7 @@ export async function GET(request: NextRequest) {
       orderBy: {
         activityPoints: 'desc'
       },
-      take: 20,
+      take: 10,
       select: {
         id: true,
         name: true,
@@ -26,7 +23,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    const currentUserId = session.user.id;
+    const currentUserId = session?.user?.id || null;
 
     const maskedUsers = topUsers.map((user, index) => {
       let maskedName = 'Un***';

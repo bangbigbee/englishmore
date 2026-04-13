@@ -2331,9 +2331,7 @@ function HomeContent() {
           </>
         )}
 
-        {(session?.user?.role === 'member' || session?.user?.role === 'admin') && (
-          <LeaderboardSection />
-        )}
+        <LeaderboardSection />
 
         <section className="mt-12 px-1">
           <div className="mb-6">

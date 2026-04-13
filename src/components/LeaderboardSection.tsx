@@ -14,7 +14,6 @@ interface LeaderboardUser {
 export default function LeaderboardSection() {
   const [users, setUsers] = useState<LeaderboardUser[]>([])
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
 
   useEffect(() => {
     let active = true
@@ -40,10 +39,6 @@ export default function LeaderboardSection() {
   if (loading) return null
   if (users.length === 0) return null
 
-  const itemsPerPage = 10
-  const totalPages = Math.ceil(users.length / itemsPerPage)
-  const currentUsers = users.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-
   return (
     <section className="mt-12 px-1">
       <div className="mb-6">
@@ -61,11 +56,11 @@ export default function LeaderboardSection() {
                 <th className="px-4 py-3 font-bold text-center w-16">Hạng</th>
                 <th className="px-4 py-3 font-bold">Học Viên</th>
                 <th className="px-4 py-3 font-bold">Email</th>
-                <th className="px-4 py-3 font-bold text-right">APs</th>
+                <th className="px-4 py-3 font-bold text-right">Activity Points</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {currentUsers.map((user) => (
+              {users.map((user) => (
                 <tr 
                   key={user.id} 
                   className={`transition-colors hover:bg-slate-50 ${user.isCurrentUser ? 'bg-orange-50/60 font-bold text-[#14532d]' : ''}`}
@@ -95,32 +90,6 @@ export default function LeaderboardSection() {
             </tbody>
           </table>
         </div>
-        
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-4 py-3">
-            <span className="text-xs text-slate-500">
-              Hiển thị {((page - 1) * itemsPerPage) + 1}-{Math.min(page * itemsPerPage, users.length)} / {users.length}
-            </span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50"
-              >
-                Trang trước
-              </button>
-              <button
-                type="button"
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50"
-              >
-                Trang sau
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </section>
   )
