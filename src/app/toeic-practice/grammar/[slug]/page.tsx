@@ -566,52 +566,62 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         {opt.label}
                                       </span>
                                       <span className="font-bold text-base">{opt.value}</span>
-                                    </button>
-                                  )
-                                })}
-                              </div>
-
-                              <div className="mt-8 flex flex-col items-center gap-6 w-full">
-                                {isShowingResult && (
-                                  <div className={`p-4 rounded-2xl border-2 flex items-center gap-3 w-full max-w-2xl text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'}`}>
-                                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
-                                      {isCorrect ? (
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                                      ) : (
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                                                     <div className="mt-8 flex flex-row items-stretch justify-between gap-3 md:gap-4 w-full h-[60px] md:h-[72px]">
+                                <button
+                                  onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
+                                  disabled={activeQuestionIndex === 0}
+                                  className="h-full px-4 md:px-6 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0"
+                                  aria-label="Trước đó"
+                                >
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                </button>
+                                
+                                <div className="flex-1 flex justify-center items-center w-full min-w-0">
+                                  {isShowingResult && (
+                                    <div className={`h-full w-full max-w-2xl px-4 py-2 md:py-3 rounded-2xl border-2 flex items-center gap-2 md:gap-4 text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'} overflow-hidden shadow-sm`}>
+                                      <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
+                                        {isCorrect ? (
+                                          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        ) : (
+                                          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                                        )}
+                                      </div>
+                                      <div className="flex flex-col shrink-0 hidden sm:flex">
+                                        <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
+                                        <span className="font-bold text-xs md:text-sm text-slate-800">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
+                                      </div>
+                                      {explanationText && (
+                                        <div className="sm:ml-2 pl-3 sm:pl-4 border-l-2 border-current/30 overflow-y-auto w-full h-full flex items-center pr-1 custom-scrollbar">
+                                          {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
+                                              <button 
+                                                onClick={(e) => {
+                                                  e.preventDefault();
+                                                  const currentPath = window.location.pathname;
+                                                  router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
+                                                }}
+                                                className="text-xs md:text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none inline w-full"
+                                              >
+                                                {explanationText}
+                                              </button>
+                                          ) : (
+                                              <p className="text-xs md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed">
+                                                {explanationText}
+                                              </p>
+                                          )}
+                                        </div>
                                       )}
                                     </div>
-                                    <div className="flex flex-col shrink-0 min-w-[70px]">
-                                      <span className="text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
-                                      <span className="font-bold text-sm text-slate-800">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
-                                    </div>
-                                    {explanationText && (
-                                      <div className="ml-2 pl-4 border-l-2 border-current/30 overflow-y-auto max-h-32">
-                                        <p className="text-sm font-medium italic text-slate-700 opacity-90 leading-relaxed">{explanationText}</p>
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                              
-                                <div className="flex flex-row items-center justify-between gap-4 w-full">
-                                  <button
-                                    onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
-                                    disabled={activeQuestionIndex === 0}
-                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm min-w-[120px] justify-center shrink-0"
-                                  >
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                                    Trước đó
-                                  </button>
-                                  
-                                  <button
-                                    onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
-                                    disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm min-w-[120px] justify-center shrink-0"
-                                  >
-                                    Tiếp theo
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                                  </button>
+                                  )}
                                 </div>
+
+                                <button
+                                  onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
+                                  disabled={activeQuestionIndex === currentLesson.questions.length - 1}
+                                  className="h-full px-4 md:px-6 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0"
+                                  aria-label="Tiếp theo"
+                                >
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                </button>
                               </div>
                             </motion.div>
                           )
