@@ -211,21 +211,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     return () => clearInterval(timer)
   }, [timerStartTime, isTestCompleted])
 
-  const handleSelectOption = (questionId: string, option: string) => {
+  const handleSelectOption = async (questionId: string, option: string) => {
     if (showResults[questionId]) return
     setUserAnswers(prev => ({ ...prev, [questionId]: option }))
-  }
 
-  const handleCheckAnswer = async (questionId: string) => {
-    if (!userAnswers[questionId]) {
-      toast.warning('Vui lòng chọn một đáp án!')
-      return
-    }
-    
     const q = currentLesson?.questions.find(quest => quest.id === questionId)
     if (!q) return
 
-    const selectedOption = userAnswers[questionId]
+    const selectedOption = option
     const isCorrect = selectedOption === q.correctOption
 
     setShowResults(prev => ({ ...prev, [questionId]: true }))
@@ -475,6 +468,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           const q = currentLesson.questions[idx]
                           const isShowingResult = !!showResults[q.id]
                           const isCorrect = userAnswers[q.id] === q.correctOption
+                          const explanationText = status !== 'authenticated' && idx >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
 
                           let btnStyle = ''
                           if (isActive) {
@@ -577,65 +571,48 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })}
                               </div>
 
-                              <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
-                                    disabled={activeQuestionIndex === 0}
-                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm"
-                                  >
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                                    Trước đó
-                                  </button>
-                                  <button
-                                    onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
-                                    disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm"
-                                  >
-                                    Tiếp theo
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                                  </button>
-                                </div>
-
-                                {!isShowingResult ? (
-                                  <button
-                                    onClick={() => handleCheckAnswer(q.id)}
-                                    className="w-full md:w-auto px-10 py-4 bg-[#14532d] text-white font-black rounded-2xl hover:bg-[#166534] shadow-xl shadow-[#14532d]/30 transition-all hover:-translate-y-1 active:scale-95 cursor-pointer"
-                                  >
-                                    Kiểm tra đáp án
-                                  </button>
-                                ) : (
-                                  <div className={`p-4 rounded-2xl border-2 flex items-center gap-3 ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'}`}>
-                                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                              <div className="mt-8 flex flex-col items-center gap-6 w-full">
+                                {isShowingResult && (
+                                  <div className={`p-4 rounded-2xl border-2 flex items-center gap-3 w-full max-w-2xl text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'}`}>
+                                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
                                       {isCorrect ? (
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                       ) : (
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                                       )}
                                     </div>
-                                    <div className="flex flex-col">
-                                      <span className="text-[10px] font-black  uppercase tracking-widest leading-none">Kết quả</span>
+                                    <div className="flex flex-col shrink-0 min-w-[70px]">
+                                      <span className="text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
                                       <span className="font-bold text-sm text-slate-800">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
                                     </div>
-                                    {q.explanation && (
-                                      <div className="ml-4 pl-4 border-l-2 border-current/30 hidden lg:block max-w-lg">
-                                        <p className="text-sm font-medium italic text-slate-700 opacity-90 leading-relaxed">{q.explanation}</p>
+                                    {explanationText && (
+                                      <div className="ml-2 pl-4 border-l-2 border-current/30 overflow-y-auto max-h-32">
+                                        <p className="text-sm font-medium italic text-slate-700 opacity-90 leading-relaxed">{explanationText}</p>
                                       </div>
                                     )}
                                   </div>
                                 )}
-                              </div>
                               
-                              {isShowingResult && q.explanation && (
-                                <motion.div 
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  className="mt-6 p-5 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200 lg:hidden"
-                                >
-                                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Giải thích chi tiết</p>
-                                  <p className="text-[15px] font-medium text-slate-700 leading-relaxed italic">{q.explanation}</p>
-                                </motion.div>
-                              )}
+                                <div className="flex flex-row items-center justify-between gap-4 w-full">
+                                  <button
+                                    onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
+                                    disabled={activeQuestionIndex === 0}
+                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm min-w-[120px] justify-center shrink-0"
+                                  >
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+                                    Trước đó
+                                  </button>
+                                  
+                                  <button
+                                    onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
+                                    disabled={activeQuestionIndex === currentLesson.questions.length - 1}
+                                    className="px-5 py-3 rounded-2xl border-2 border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 hover:bg-slate-50 disabled:opacity-30 transition-all font-bold text-sm flex items-center gap-2 cursor-pointer shadow-sm min-w-[120px] justify-center shrink-0"
+                                  >
+                                    Tiếp theo
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                                  </button>
+                                </div>
+                              </div>
                             </motion.div>
                           )
                         })()}
@@ -658,8 +635,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center"
+            className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center relative"
           >
+            <button
+               onClick={() => setIsReviewing(true)}
+               className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors border-none outline-none cursor-pointer"
+               aria-label="Close"
+            >
+               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
             <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-emerald-50">
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
             </div>
