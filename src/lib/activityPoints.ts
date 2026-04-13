@@ -18,7 +18,6 @@ export const ACTIVITY_POINT_KEYS = {
   badgeSubmit5: 'badge_submit_5',
   badgeAllRounder: 'badge_all_rounder',
   vocabPronunciation: 'vocab_pronunciation',
-  toeicPractice: 'toeic_practice',
   toeicStreak3: 'toeic_streak_3',
   toeicStreak5: 'toeic_streak_5',
   toeicStreak10: 'toeic_streak_10',
@@ -91,10 +90,6 @@ const DEFAULT_ACTIVITY_POINT_RULES: Record<ActivityPointKey, { label: string; po
   [ACTIVITY_POINT_KEYS.badgeAllRounder]: {
     label: 'Achievement: All-Rounder',
     points: 30
-  },
-  [ACTIVITY_POINT_KEYS.toeicPractice]: {
-    label: 'TOEIC Practice Completion',
-    points: 10
   },
   [ACTIVITY_POINT_KEYS.toeicStreak3]: {
     label: 'TOEIC 3-Point Streak',
