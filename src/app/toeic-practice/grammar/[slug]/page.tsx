@@ -53,6 +53,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isSyncing, setIsSyncing] = useState(false)
   const router = useRouter()
   const retryingLessonsRef = useRef<Set<string>>(new Set())
+  const [isReviewing, setIsReviewing] = useState(false)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -437,19 +438,26 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       <div className="mb-6 flex flex-wrap gap-1.5 justify-center md:justify-start">
                         {currentLesson.questions.map((_, idx) => {
                           const isActive = idx === activeQuestionIndex
-                          const isAnswered = !!userAnswers[currentLesson.questions[idx].id]
+                          const q = currentLesson.questions[idx]
+                          const isShowingResult = !!showResults[q.id]
+                          const isCorrect = userAnswers[q.id] === q.correctOption
+
+                          let btnStyle = ''
+                          if (isActive) {
+                             btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
+                          } else if (isShowingResult) {
+                             btnStyle = isCorrect ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
+                          } else if (userAnswers[q.id]) {
+                             btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                          } else {
+                             btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                          }
                           
                           return (
                             <button 
                               key={idx}
                               onClick={() => setActiveQuestionIndex(idx)}
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all duration-200 cursor-pointer border ${
-                                isActive 
-                                  ? 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10' 
-                                  : isAnswered
-                                    ? 'bg-emerald-50 border-emerald-200 text-[#14532d]'
-                                    : 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
-                              }`}
+                              className={`w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center font-bold text-xs transition-all duration-200 cursor-pointer border-2 ${btnStyle}`}
                             >
                               {idx + 1}
                             </button>
@@ -611,7 +619,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         </main>
       </div>
 
-      {isTestCompleted && currentLesson && (
+      {isTestCompleted && !isReviewing && currentLesson && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -641,6 +649,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     setTimerStartTime(Date.now())
                     setElapsedTime(0)
                     setIsTestCompleted(false)
+                    setIsReviewing(false)
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
                   className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#14532d]/20"
@@ -665,6 +674,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setUserAnswers(newAnswers);
                   setShowResults(newResults);
                   setIsTestCompleted(false);
+                  setIsReviewing(false);
                   setTimerStartTime(Date.now());
                   setElapsedTime(0);
                   setActiveQuestionIndex(0);
@@ -673,6 +683,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 className="w-full py-3 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors cursor-pointer mt-1"
               >
                 Làm Lại
+              </button>
+              
+              <button
+                onClick={() => {
+                  setIsReviewing(true);
+                }}
+                className="w-full py-2 text-slate-500 hover:bg-slate-50 font-bold rounded-xl transition-colors cursor-pointer mt-1 text-sm"
+              >
+                Xem lại bài làm
               </button>
             </div>
           </motion.div>
