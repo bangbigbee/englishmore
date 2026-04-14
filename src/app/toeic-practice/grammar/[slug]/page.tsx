@@ -562,15 +562,19 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                </div>
                                {isLocked && (
                                   <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4">
-                                     <button onClick={() => setShowPricing(true)} className="group bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-md hover:shadow-lg rounded-full px-4 py-2 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
-                                       {currentLesson.theoryAccessTier === 'ULTRA' ? (
-                                          <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
-                                       ) : (
-                                          <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                       )}
-                                       <span>Nâng cấp</span>
-                                       <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.theoryAccessTier}</span>
-                                       <span>để xem lý thuyết chi tiết.</span>
+                                     <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-md hover:shadow-lg rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                       <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                         {currentLesson.theoryAccessTier === 'ULTRA' ? (
+                                            <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
+                                         ) : (
+                                            <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                         )}
+                                         <span>Nâng cấp</span>
+                                       </div>
+                                       <div className="flex items-center gap-1 whitespace-nowrap">
+                                         <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.theoryAccessTier}</span>
+                                         <span>để xem lý thuyết chi tiết.</span>
+                                       </div>
                                      </button>
                                   </div>
                                )}
@@ -748,15 +752,19 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 {explanationText}
                                               </div>
                                               <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
-                                                <button onClick={() => setShowPricing(true)} className="group bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-full px-4 py-2 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
-                                                   {currentLesson.explanationAccessTier === 'ULTRA' ? (
-                                                      <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
-                                                   ) : (
-                                                      <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                                   )}
-                                                   <span>Nâng cấp</span>
-                                                   <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.explanationAccessTier}</span>
-                                                   <span>để xem giải thích chi tiết.</span>
+                                                <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                                   <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                                     {currentLesson.explanationAccessTier === 'ULTRA' ? (
+                                                        <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
+                                                     ) : (
+                                                        <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                     )}
+                                                     <span>Nâng cấp</span>
+                                                   </div>
+                                                   <div className="flex items-center gap-1 whitespace-nowrap">
+                                                     <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.explanationAccessTier}</span>
+                                                     <span>để xem giải thích chi tiết.</span>
+                                                   </div>
                                                 </button>
                                               </div>
                                             </div>
