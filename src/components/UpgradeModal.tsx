@@ -131,6 +131,15 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
     )
   }
 
+  const getEffectiveTier = () => {
+    if (!session) return 'FREE'
+    if (session.user?.role === 'admin') return 'ULTRA'
+    if (session.user?.tier === 'ULTRA') return 'ULTRA'
+    if (session.user?.tier === 'PRO' || session.user?.role === 'member') return 'PRO'
+    return 'FREE'
+  }
+  const effectiveTier = getEffectiveTier()
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
       <LoginModal 
@@ -206,16 +215,20 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     <span className="text-slate-500 line-through">Đề thi Độc quyền mức độ Khó</span>
                   </li>
                 </ul>
-                <div className="py-3 text-center text-slate-400 text-xs font-bold uppercase tracking-widest border-t border-slate-200/60">Gói Hiện Tại</div>
+                {effectiveTier === 'FREE' && (
+                  <div className="py-3 text-center text-slate-400 text-xs font-bold uppercase tracking-widest border-t border-slate-200/60 mt-auto">Gói Hiện Tại</div>
+                )}
               </div>
 
               {/* PRO Tier */}
-              <div className="bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 border-amber-300 shadow-xl shadow-amber-500/10 flex flex-col relative transform md:-translate-y-2">
-                <div className="absolute top-0 right-6 transform -translate-y-1/2">
-                  <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
-                    Khuyên Dùng
-                  </span>
-                </div>
+              <div className={`bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 border-amber-300 flex flex-col relative transition-transform ${effectiveTier === 'FREE' ? 'transform md:-translate-y-2 shadow-xl shadow-amber-500/10' : 'shadow-md'}`}>
+                {effectiveTier === 'FREE' && (
+                  <div className="absolute top-0 right-6 transform -translate-y-1/2">
+                    <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
+                      Khuyên Dùng
+                    </span>
+                  </div>
+                )}
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     <IconStar className="w-4 h-4" /> PRO Pass
@@ -249,19 +262,32 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     <span className="text-slate-500 line-through">Chữa Speaking/Writing 1-1 AI</span>
                   </li>
                 </ul>
-                <button 
-                  onClick={() => handleUpgrade('PRO')}
-                  className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95"
-                >
-                  Nâng Cấp PRO Ngay
-                </button>
+                {effectiveTier === 'PRO' ? (
+                   <div className="py-3 text-center text-amber-600 text-xs font-bold uppercase tracking-widest border-t border-amber-200/60 mt-auto">Gói Hiện Tại</div>
+                ) : effectiveTier === 'ULTRA' ? (
+                   <div className="w-full bg-slate-100 text-slate-400 font-bold rounded-xl py-3.5 text-center mt-auto cursor-not-allowed text-sm border border-slate-200">Đã Bao Gồm</div>
+                ) : (
+                   <button 
+                     onClick={() => handleUpgrade('PRO')}
+                     className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95 mt-auto"
+                   >
+                     Nâng Cấp PRO Ngay
+                   </button>
+                )}
                 <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">
                   Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
                 </p>
               </div>
 
               {/* ULTRA Tier */}
-              <div className="bg-[#2b0c36] rounded-2xl p-6 border border-purple-900 flex flex-col relative text-white shadow-2xl">
+              <div className={`bg-[#2b0c36] rounded-2xl p-6 border border-purple-900 flex flex-col relative text-white shadow-2xl transition-transform ${effectiveTier === 'PRO' || effectiveTier === 'ULTRA' ? 'transform md:-translate-y-2' : ''}`}>
+                {(effectiveTier === 'PRO' || effectiveTier === 'ULTRA') && (
+                  <div className="absolute top-0 right-6 transform -translate-y-1/2">
+                    <span className="bg-gradient-to-r from-purple-400 to-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
+                      Khuyên Dùng
+                    </span>
+                  </div>
+                )}
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-900/60 text-purple-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-purple-500/30">
                     <IconZap className="w-4 h-4 text-purple-400" /> ULTRA Mastery
@@ -291,12 +317,16 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     <span className="text-purple-100/90">Ưu tiên hỗ trợ từ Admin</span>
                   </li>
                 </ul>
-                <button 
-                  onClick={() => handleUpgrade('ULTRA')}
-                  className="w-full bg-gradient-to-r from-purple-500 to-purple-800 hover:from-purple-600 hover:to-purple-900 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-900/50 active:scale-95 border border-purple-600/50"
-                >
-                  Bứt Phá Cùng ULTRA
-                </button>
+                {effectiveTier === 'ULTRA' ? (
+                   <div className="py-3 text-center text-purple-300 text-xs font-bold uppercase tracking-widest border-t border-purple-800/60 mt-auto">Gói Hiện Tại</div>
+                ) : (
+                   <button 
+                     onClick={() => handleUpgrade('ULTRA')}
+                     className="w-full bg-gradient-to-r from-purple-500 to-purple-800 hover:from-purple-600 hover:to-purple-900 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-900/50 active:scale-95 border border-purple-600/50 mt-auto"
+                   >
+                     Bứt Phá Cùng ULTRA
+                   </button>
+                )}
               </div>
             </div>
           </div>
