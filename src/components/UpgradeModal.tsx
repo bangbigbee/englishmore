@@ -136,7 +136,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
       <LoginModal 
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)} 
-        callbackUrl={pendingCheckout ? `/upgrade?checkout=${pendingCheckout}` : '/upgrade'}
+        callbackUrl={pendingCheckout ? `${typeof window !== 'undefined' ? window.location.pathname : '/upgrade'}?checkout=${pendingCheckout}` : (typeof window !== 'undefined' ? window.location.pathname : '/upgrade')}
       />
       {!showLoginModal && (
         <motion.div
