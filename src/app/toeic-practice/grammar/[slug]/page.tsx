@@ -517,6 +517,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
                         </span>
                       )}
+                      <button
+                        onClick={handleRestartLesson}
+                        className="group flex flex-none items-center justify-center w-8 h-8 rounded-full border-2 border-slate-200 text-slate-400 hover:text-[#14532d] hover:border-[#14532d] hover:bg-emerald-50 transition-all cursor-pointer relative md:ml-auto"
+                        title="Làm Lại Bài"
+                      >
+                        <svg className="w-4 h-4 transition-transform group-hover:-rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        <span className="absolute right-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-[#14532d] pointer-events-none z-10 bg-white px-2 py-1 rounded shadow shadow-emerald-100 hidden md:inline-block">Làm Lại Bài</span>
+                      </button>
                     </div>
                     {currentLesson.questions.length > 0 && (
                       <button 
@@ -576,47 +584,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
                     <section className="mt-8">
-                      <div className="mb-6 flex flex-row items-center justify-between gap-4 w-full">
-                        <div className="flex flex-wrap gap-1.5 justify-start flex-1 min-w-0">
-                          {currentLesson.questions.map((_, idx) => {
-                          const isActive = idx === activeQuestionIndex
-                          const q = currentLesson.questions[idx]
-                          const isShowingResult = !!showResults[q.id]
-                          const isCorrect = userAnswers[q.id] === q.correctOption
-
-                          let btnStyle = ''
-                          if (isActive) {
-                             btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
-                          } else if (isShowingResult) {
-                             btnStyle = isCorrect ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
-                          } else if (userAnswers[q.id]) {
-                             btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
-                          } else {
-                             btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
-                          }
-                          
-                          return (
-                            <button 
-                              key={idx}
-                              onClick={() => setActiveQuestionIndex(idx)}
-                              className={`w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center font-bold text-xs transition-all duration-200 cursor-pointer border-2 ${btnStyle}`}
-                            >
-                              {idx + 1}
-                            </button>
-                          )
-                        })}
-                        </div>
-
-                        <button
-                          onClick={handleRestartLesson}
-                          className="group flex flex-none items-center justify-center w-8 h-8 rounded-full border-2 border-slate-200 text-slate-400 hover:text-[#14532d] hover:border-[#14532d] hover:bg-emerald-50 transition-all cursor-pointer relative"
-                          title="Làm Lại Bài"
-                        >
-                          <svg className="w-4 h-4 transition-transform group-hover:-rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                          <span className="absolute right-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-[#14532d] pointer-events-none">Làm Lại Bài</span>
-                        </button>
-                      </div>
-
                       <AnimatePresence mode="wait">
                         {(() => {
                           const q = currentLesson.questions[activeQuestionIndex]
@@ -696,19 +663,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })}
                               </div>
 
-                              <div className="mt-8 flex flex-row items-stretch justify-between gap-2 md:gap-4 w-full">
-                                <button
-                                  onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
-                                  disabled={activeQuestionIndex === 0}
-                                  className="h-auto py-3 md:py-0 w-10 md:w-12 md:h-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
-                                  aria-label="Trước đó"
-                                >
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                                </button>
-                                
-                                <div className="flex-1 flex justify-center items-center w-full min-w-0">
-                                  {isShowingResult && (
-                                    <div className={`h-auto w-full max-w-2xl p-2 md:px-4 md:py-3 rounded-2xl border-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 md:gap-4 text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'} shadow-sm`}>
+                              {isShowingResult && (
+                                <div className="mt-8 flex justify-center w-full min-w-0">
+                                  <div className={`h-auto w-full p-3 md:px-5 md:py-4 rounded-2xl border-2 flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'} shadow-sm`}>
                                       <div className="flex items-center gap-2 px-1">
                                         <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0 flex-none">
                                           {isCorrect ? (
@@ -770,23 +727,64 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               })()}
                                         </div>
                                       )}
-                                    </div>
-                                  )}
+                                  </div>
                                 </div>
-
-                                <button
-                                  onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
-                                  disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                  className="h-auto py-3 md:py-0 w-10 md:w-12 md:h-12 rounded-lg border border-slate-200 text-slate-500 hover:border-[#14532d]/40 hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
-                                  aria-label="Tiếp theo"
-                                >
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                                </button>
-                              </div>
+                              )}
                             </motion.div>
                           )
                         })()}
                       </AnimatePresence>
+
+                      {/* Navigation Row moved to bottom */}
+                      <div className="mt-8 flex flex-row items-center justify-between gap-3 md:gap-4 w-full bg-slate-50 p-3 md:p-4 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <button
+                          onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
+                          disabled={activeQuestionIndex === 0}
+                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                          aria-label="Trước đó"
+                        >
+                          <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+
+                        <div className="flex flex-wrap flex-row justify-center items-center gap-1.5 md:gap-2 flex-1 min-w-0 overflow-y-auto max-h-[80px] custom-scrollbar scroll-smooth">
+                          {currentLesson.questions.map((_, idx) => {
+                            const isActive = idx === activeQuestionIndex
+                            const q = currentLesson.questions[idx]
+                            const isShowingResultLocal = !!showResults[q.id]
+                            const isCorrectLocal = userAnswers[q.id] === q.correctOption
+
+                            let btnStyle = ''
+                            if (isActive) {
+                               btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
+                            } else if (isShowingResultLocal) {
+                               btnStyle = isCorrectLocal ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
+                            } else if (userAnswers[q.id]) {
+                               btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                            } else {
+                               btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                            }
+                            
+                            return (
+                              <button 
+                                key={idx}
+                                onClick={() => setActiveQuestionIndex(idx)}
+                                className={`w-8 h-8 md:w-9 md:h-9 shrink-0 rounded-lg flex items-center justify-center font-bold text-xs md:text-sm transition-all duration-200 cursor-pointer border-2 ${btnStyle}`}
+                              >
+                                {idx + 1}
+                              </button>
+                            )
+                          })}
+                        </div>
+
+                        <button
+                          onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
+                          disabled={activeQuestionIndex === currentLesson.questions.length - 1}
+                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                          aria-label="Tiếp theo"
+                        >
+                          <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                      </div>
                     </section>
                   )}
                 </motion.div>
