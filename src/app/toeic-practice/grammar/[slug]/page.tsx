@@ -554,13 +554,16 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                </div>
                                {isLocked && (
                                   <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4">
-                                    <div className="bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-slate-200/60 flex flex-col items-center text-center max-w-xs transform transition-all hover:scale-105">
-                                      <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-3">
-                                        <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                      </div>
-                                      <p className="text-slate-800 mb-4 text-sm font-medium leading-relaxed">Nội dung lý thuyết yêu cầu gói <strong className="text-amber-600 font-extrabold">{currentLesson.theoryAccessTier}</strong></p>
-                                      <button onClick={() => setShowPricing(true)} className="px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all active:scale-95 w-full">Nâng Cấp Ngay</button>
-                                    </div>
+                                     <button onClick={() => setShowPricing(true)} className="group bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-md hover:shadow-lg rounded-full px-4 py-2 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                       {currentLesson.theoryAccessTier === 'ULTRA' ? (
+                                          <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
+                                       ) : (
+                                          <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                       )}
+                                       <span>Nâng cấp</span>
+                                       <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.theoryAccessTier}</span>
+                                       <span>để xem lý thuyết chi tiết.</span>
+                                     </button>
                                   </div>
                                )}
                              </div>
@@ -744,11 +747,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                           {explanationText}
                                                         </div>
                                                         <div className="relative z-10 flex py-4 flex-col items-center justify-center min-h-[100px]">
-                                                          <button onClick={() => setShowPricing(true)} className="group flex items-center gap-2 bg-white text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-full border border-slate-300 shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer">
-                                                             <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                                                               <svg className="w-3.5 h-3.5 text-amber-600 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                                             </div>
-                                                             <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">Yêu cầu {currentLesson.explanationAccessTier} để xem giải thích</span>
+                                                          <button onClick={() => setShowPricing(true)} className="group bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-full px-4 py-2 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                                             {currentLesson.explanationAccessTier === 'ULTRA' ? (
+                                                                <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
+                                                             ) : (
+                                                                <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                             )}
+                                                             <span>Nâng cấp</span>
+                                                             <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.explanationAccessTier}</span>
+                                                             <span>để xem giải thích chi tiết.</span>
                                                           </button>
                                                         </div>
                                                       </div>
