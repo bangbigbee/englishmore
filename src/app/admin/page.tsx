@@ -6396,13 +6396,7 @@ export default function AdminDashboard() {
                                 >
                                   Details
                                 </Link>
-                                <button
-                                  onClick={() => setDeleteConfirm({ id: enrollment.user.id, name: enrollment.user.name || enrollment.user.email })}
-                                  disabled={deletingUserId === enrollment.user.id}
-                                  className="text-red-600 hover:text-red-800 hover:underline disabled:opacity-50"
-                                >
-                                  {deletingUserId === enrollment.user.id ? 'Deleting...' : 'Delete'}
-                                </button>
+
                                 {enrollment.status === 'pending' && (
                                   <button
                                     onClick={() => setConfirmPayment({

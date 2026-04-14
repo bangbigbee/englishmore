@@ -61,6 +61,46 @@ export default function AdminUserManagement() {
     }
   }
 
+  const handleResetTier = async (userId: string) => {
+    if (!window.confirm('Are you sure you want to reset this user to FREE tier?')) return
+    try {
+      setLoading(true)
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset_tier' })
+      })
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to reset user tier')
+      }
+      alert('User reset to FREE successfully.')
+      fetchUsers(search, courseFilter)
+    } catch (err: any) {
+      alert(err.message || 'Error resetting user tier')
+      setLoading(false)
+    }
+  }
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) return
+    try {
+      setLoading(true)
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE'
+      })
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to delete user')
+      }
+      alert('User deleted successfully.')
+      fetchUsers(search, courseFilter)
+    } catch (err: any) {
+      alert(err.message || 'Error deleting user')
+      setLoading(false)
+    }
+  }
+
   const getTierBadge = (tier: string, expiresAt: string | null) => {
     if (tier === 'ULTRA') {
       return (
@@ -160,6 +200,7 @@ export default function AdminUserManagement() {
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Subscription Tier</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Course Enrollments</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Joined</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -208,6 +249,25 @@ export default function AdminUserManagement() {
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-500">
                     {new Date(user.createdAt).toLocaleDateString('en-GB')}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <div className="flex flex-col gap-2">
+                      <button 
+                        onClick={() => handleResetTier(user.id)}
+                        disabled={user.tier === 'FREE'}
+                        title="Đặt lại membership về FREE"
+                        className={`text-left text-amber-600 hover:text-amber-800 hover:underline ${user.tier === 'FREE' ? 'opacity-30 cursor-not-allowed hover:no-underline' : ''}`}
+                      >
+                        Reset
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="text-left text-red-600 hover:text-red-800 hover:underline"
+                        title="Xóa dữ liệu user khỏi hệ thống"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

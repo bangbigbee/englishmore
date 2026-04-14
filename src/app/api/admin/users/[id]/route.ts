@@ -73,3 +73,52 @@ export async function DELETE(
     return NextResponse.json({ error: `Internal server error: ${errorMessage}` }, { status: 500 })
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const params = await context.params
+    if (!params?.id) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
+    }
+    
+    const userId = params.id
+    const session = await getServerSession(authOptions)
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const admin = await prisma.user.findUnique({
+      where: { id: session.user?.id as string }
+    })
+
+    if (admin?.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const body = await request.json()
+    if (body.action === 'reset_tier') {
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          tier: 'FREE',
+          tierExpiresAt: null
+        },
+        select: { id: true, email: true, name: true, tier: true }
+      })
+
+      return NextResponse.json({
+        message: 'User tier reset to FREE successfully',
+        user: updatedUser
+      })
+    }
+
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+  } catch (error) {
+    console.error('Error updating user:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
