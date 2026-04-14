@@ -239,7 +239,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     Mặc định
                   </div>
-                  <h3 className="text-2xl font-black text-slate-800 mb-2">Basic (FREE)</h3>
+                  <h3 className="text-2xl font-black text-slate-800 mb-2">BASIC</h3>
                   <p className="text-slate-500 text-sm h-12">Điểm bắt đầu hoàn hảo để làm quen với nền tảng.</p>
                   <div className="text-3xl font-black text-slate-900 mt-4 mb-6">0đ<span className="text-base font-normal text-slate-500">/mãi mãi</span></div>
                 </div>
@@ -284,7 +284,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     <IconStar className="w-4 h-4" /> PRO Pass
                   </div>
-                  <h3 className="text-2xl font-black text-slate-900 mb-2">Học Viên Lớp</h3>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">PRO</h3>
                   <p className="text-slate-500 text-sm h-12">Dành cho người thật sự muốn nâng cao điểm số hiệu quả.</p>
                   <div className="text-3xl font-black text-slate-900 mt-4 mb-6">
                     {formatPrice(proPrice)}<span className="text-base font-normal text-slate-400">/{formatDuration(proDuration)}</span>
@@ -343,7 +343,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-900/60 text-purple-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-purple-700/30">
                     <IconZap className="w-4 h-4 text-purple-600" /> ULTRA Mastery
                   </div>
-                  <h3 className="text-2xl font-black text-white mb-2">Trọn Đời (ULTRA)</h3>
+                  <h3 className="text-2xl font-black text-white mb-2">ULTRA</h3>
                   <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
                   <div className="text-3xl font-black text-white mt-4 mb-6">
                     {effectiveTier === 'PRO' ? (
