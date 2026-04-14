@@ -225,7 +225,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 {effectiveTier === 'FREE' && (
                   <div className="absolute top-0 right-6 transform -translate-y-1/2">
                     <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
-                      Khuyên Dùng
+                      Nâng Cấp
                     </span>
                   </div>
                 )}
@@ -284,7 +284,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 {(effectiveTier === 'PRO' || effectiveTier === 'ULTRA') && (
                   <div className="absolute top-0 right-6 transform -translate-y-1/2">
                     <span className="bg-gradient-to-r from-purple-400 to-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
-                      Khuyên Dùng
+                      Nâng Cấp
                     </span>
                   </div>
                 )}
