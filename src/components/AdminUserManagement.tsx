@@ -64,7 +64,7 @@ export default function AdminUserManagement() {
   const getTierBadge = (tier: string, expiresAt: string | null) => {
     if (tier === 'ULTRA') {
       return (
-        <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 px-2 py-1 rounded text-[11px] font-bold uppercase tracking-wider border border-purple-200">
+        <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-900 px-2 py-1 rounded text-[11px] font-bold uppercase tracking-wider border border-purple-200">
           ULTRA (Trọn đời)
         </span>
       )
@@ -116,8 +116,8 @@ export default function AdminUserManagement() {
           <p className="text-3xl font-bold text-amber-600 mt-2">{stats.pro}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-purple-200 p-5 bg-gradient-to-br from-purple-50 to-white">
-          <p className="text-sm font-medium text-purple-600">ULTRA Tier</p>
-          <p className="text-3xl font-bold text-purple-600 mt-2">{stats.ultra}</p>
+          <p className="text-sm font-medium text-purple-800">ULTRA Tier</p>
+          <p className="text-3xl font-bold text-purple-800 mt-2">{stats.ultra}</p>
         </div>
       </div>
 

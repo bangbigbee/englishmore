@@ -155,7 +155,7 @@ export default function TopNav() {
                   </span>
                 )}
                 {session.user?.tier === 'ULTRA' && (
-                  <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-500 to-purple-800 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-400/30">
+                  <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30">
                     <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     ULTRA
                     <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
@@ -165,7 +165,7 @@ export default function TopNav() {
                   <button
                     type="button"
                     onClick={() => setIsMenuOpen(true)}
-                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-500' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer`}
+                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer`}
                     aria-label="Open profile menu"
                   >
                     {session.user?.image && !avatarLoadFailed ? (
@@ -218,14 +218,14 @@ export default function TopNav() {
                       </span>
                     )}
                     {session.user?.tier === 'ULTRA' && (
-                      <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-500 to-purple-800 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-400/30">
+                      <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30">
                         <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                         ULTRA
                         <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
                       </span>
                     )}
                     <div className="relative">
-                      <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-500' : 'border-white'} bg-white text-[#14532d] shadow-sm`}>
+                      <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-white'} bg-white text-[#14532d] shadow-sm`}>
                         {session.user?.image && !avatarLoadFailed ? (
                           <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
                         ) : (

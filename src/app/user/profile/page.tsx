@@ -356,7 +356,7 @@ export default function ProfilePage() {
                 <div className="flex items-center gap-3">
                   <div className="shrink-0 relative">
                     {imagePreview && !imagePreviewFailed ? (
-                      <div className={`h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200 border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-500' : ''}`}>
+                      <div className={`h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200 border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-700' : ''}`}>
                         <Image
                           src={imagePreview}
                           alt="Avatar preview"
@@ -366,7 +366,7 @@ export default function ProfilePage() {
                         />
                       </div>
                     ) : (
-                      <div className={`flex h-24 w-24 items-center justify-center rounded-lg bg-[#14532d]/10 text-3xl font-bold text-[#14532d] border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-500' : ''}`}>
+                      <div className={`flex h-24 w-24 items-center justify-center rounded-lg bg-[#14532d]/10 text-3xl font-bold text-[#14532d] border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-700' : ''}`}>
                         {profileInitial}
                       </div>
                     )}
