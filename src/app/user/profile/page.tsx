@@ -352,29 +352,31 @@ export default function ProfilePage() {
             {/* Avatar Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Profile photo</label>
-              <div className="flex items-end gap-4">
-                <div className="shrink-0 relative">
-                  {imagePreview && !imagePreviewFailed ? (
-                    <div className={`h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200 border-2 ${session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA' ? 'border-[#ffd700]' : 'border-transparent'}`}>
-                      <Image
-                        src={imagePreview}
-                        alt="Avatar preview"
-                        fill
-                        className="object-cover"
-                        onError={() => setImagePreviewFailed(true)}
-                      />
-                    </div>
-                  ) : (
-                    <div className={`flex h-24 w-24 items-center justify-center rounded-lg bg-[#14532d]/10 text-3xl font-bold text-[#14532d] border-2 ${session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA' ? 'border-[#ffd700]' : 'border-transparent'}`}>
-                      {profileInitial}
-                    </div>
-                  )}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   {session.user?.tier === 'PRO' && (
-                    <span className="absolute -top-2.5 -left-3 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">PRO</span>
+                    <span className="border-[2px] border-[#ea980c] text-[#ea980c] bg-white text-xs font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-md shadow-sm h-8 flex items-center justify-center">PRO</span>
                   )}
                   {session.user?.tier === 'ULTRA' && (
-                    <span className="absolute -top-2.5 -left-3 bg-gradient-to-r from-emerald-500 to-[#14532d] text-white border border-[#14532d] text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">ULTRA</span>
+                    <span className="border-[2px] border-purple-500 text-purple-600 bg-white text-xs font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-md shadow-sm h-8 flex items-center justify-center">ULTRA</span>
                   )}
+                  <div className="shrink-0 relative">
+                    {imagePreview && !imagePreviewFailed ? (
+                      <div className={`h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200 border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-500' : ''}`}>
+                        <Image
+                          src={imagePreview}
+                          alt="Avatar preview"
+                          fill
+                          className="object-cover"
+                          onError={() => setImagePreviewFailed(true)}
+                        />
+                      </div>
+                    ) : (
+                      <div className={`flex h-24 w-24 items-center justify-center rounded-lg bg-[#14532d]/10 text-3xl font-bold text-[#14532d] border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-500' : ''}`}>
+                        {profileInitial}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex-1">
                   <input

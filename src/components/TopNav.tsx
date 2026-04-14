@@ -146,25 +146,27 @@ export default function TopNav() {
         <div className="shrink-0 flex items-center gap-1.5 sm:gap-3">
           {session ? (
             <>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setIsMenuOpen(true)}
-                  className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA' ? 'border-[#ffd700]' : 'border-[#ea980c]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer`}
-                  aria-label="Open profile menu"
-                >
-                  {session.user?.image && !avatarLoadFailed ? (
-                    <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
-                  ) : (
-                    <span className="text-sm font-bold text-[#14532d]">{userInitial}</span>
-                  )}
-                </button>
+              <div className="flex items-center gap-2">
                 {session.user?.tier === 'PRO' && (
-                  <span className="absolute -top-1.5 -left-2.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[8px] font-black uppercase tracking-widest px-1 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">PRO</span>
+                  <span className="border-[2px] border-[#ea980c] text-[#ea980c] bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">PRO</span>
                 )}
                 {session.user?.tier === 'ULTRA' && (
-                  <span className="absolute -top-1.5 -left-2.5 bg-gradient-to-r from-emerald-500 to-[#14532d] text-white border border-[#14532d] text-[8px] font-black uppercase tracking-widest px-1 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">ULTRA</span>
+                  <span className="border-[2px] border-purple-500 text-purple-600 bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">ULTRA</span>
                 )}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsMenuOpen(true)}
+                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-500' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer`}
+                    aria-label="Open profile menu"
+                  >
+                    {session.user?.image && !avatarLoadFailed ? (
+                      <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
+                    ) : (
+                      <span className="text-sm font-bold text-[#14532d]">{userInitial}</span>
+                    )}
+                  </button>
+                </div>
               </div>
             </>
           ) : (
@@ -199,20 +201,22 @@ export default function TopNav() {
             <div className="border-b-[4px] border-amber-500 bg-[#14532d] px-5 py-6 shrink-0">
               <div className="flex items-start justify-between gap-3 relative">
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="relative">
-                    <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA' ? 'border-[#ffd700]' : 'border-[#ea980c]'} bg-white text-[#14532d] shadow-sm`}>
-                      {session.user?.image && !avatarLoadFailed ? (
-                        <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
-                      ) : (
-                        <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
-                      )}
-                    </div>
+                  <div className="flex items-center gap-2">
                     {session.user?.tier === 'PRO' && (
-                      <span className="absolute -top-1.5 -left-2.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">PRO</span>
+                      <span className="border-[2px] border-[#ea980c] text-[#ea980c] bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">PRO</span>
                     )}
                     {session.user?.tier === 'ULTRA' && (
-                      <span className="absolute -top-1.5 -left-2.5 bg-gradient-to-r from-emerald-500 to-[#14532d] text-white border border-[#14532d] text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">ULTRA</span>
+                      <span className="border-[2px] border-purple-500 text-purple-600 bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">ULTRA</span>
                     )}
+                    <div className="relative">
+                      <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-500' : 'border-white'} bg-white text-[#14532d] shadow-sm`}>
+                        {session.user?.image && !avatarLoadFailed ? (
+                          <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
+                        ) : (
+                          <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-base font-bold text-white">{session.user?.name || 'User'}</p>
