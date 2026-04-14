@@ -354,20 +354,6 @@ export default function ProfilePage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Profile photo</label>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3">
-                  {session.user?.tier === 'PRO' && (
-                    <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-2 h-[22px] rounded-sm text-[10px] shadow-sm cursor-default border border-[#FDB931]/50">
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                      PRO
-                      <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                    </span>
-                  )}
-                  {session.user?.tier === 'ULTRA' && (
-                    <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-500 to-purple-800 text-white font-black uppercase tracking-widest px-2 h-[22px] rounded-sm text-[10px] shadow-sm cursor-default border border-purple-400/30">
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                      ULTRA
-                      <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                    </span>
-                  )}
                   <div className="shrink-0 relative">
                     {imagePreview && !imagePreviewFailed ? (
                       <div className={`h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200 border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-500' : ''}`}>
