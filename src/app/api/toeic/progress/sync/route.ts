@@ -49,7 +49,12 @@ export async function POST(request: NextRequest) {
     if (localAps && localAps > 0) {
         const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true, tier: true } })
         if (user?.role === 'member' || user?.tier === 'PRO' || user?.tier === 'ULTRA') {
-            const safeAps = Math.min(parseInt(localAps, 10), 1000) // cap to 1000 to prevent abuse
+            let multiplier = 1
+            if (user.role === 'admin') multiplier = 10
+            else if (user.tier === 'ULTRA') multiplier = 3
+            else if (user.tier === 'PRO' || user.role === 'member') multiplier = 2
+
+            const safeAps = Math.min(parseInt(localAps, 10), 1000) * multiplier // cap to 1000 to prevent abuse
             if (!isNaN(safeAps)) {
                 await prisma.user.update({
                     where: { id: userId },

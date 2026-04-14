@@ -196,8 +196,8 @@ export const awardActivityPoints = async ({
 
     const currentUser = await txWithUser.user.findUnique({
       where: { id: userId },
-      select: { activityPoints: true }
-    }) as { activityPoints: number } | null
+      select: { activityPoints: true, tier: true, role: true }
+    }) as { activityPoints: number; tier: string; role: string } | null
 
     if (!currentUser || !rule || !rule.isActive || rule.points <= 0) {
       return {
@@ -218,11 +218,18 @@ export const awardActivityPoints = async ({
       }
     }
 
+    let multiplier = 1
+    if (currentUser.role === 'admin') multiplier = 10
+    else if (currentUser.tier === 'ULTRA') multiplier = 3
+    else if (currentUser.tier === 'PRO' || currentUser.role === 'member') multiplier = 2
+
+    const finalPoints = rule.points * multiplier
+
     await txWithActivityPoints.activityPointLog.create({
       data: {
         userId,
         activityKey,
-        points: rule.points,
+        points: finalPoints,
         referenceKey
       }
     })
@@ -231,14 +238,14 @@ export const awardActivityPoints = async ({
       where: { id: userId },
       data: {
         activityPoints: {
-          increment: rule.points
+          increment: finalPoints
         }
       },
       select: { activityPoints: true }
     }) as { activityPoints: number }
 
     return {
-      awardedAp: rule.points,
+      awardedAp: finalPoints,
       totalAp: updatedUser.activityPoints
     }
   })
