@@ -663,128 +663,148 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })}
                               </div>
 
-                              {isShowingResult && (
-                                <div className="mt-8 flex justify-center w-full min-w-0">
-                                  <div className={`h-auto w-full p-3 md:px-5 md:py-4 rounded-2xl border-2 flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 text-left ${isCorrect ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-rose-50 border-rose-100 text-rose-700'} shadow-sm`}>
-                                      <div className="flex items-center gap-2 px-1">
-                                        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0 flex-none">
-                                          {isCorrect ? (
-                                            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                                          ) : (
-                                            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-                                          )}
-                                        </div>
-                                        <div className="flex flex-col shrink-0">
-                                          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest leading-none">Kết quả</span>
-                                          <span className="font-bold text-xs md:text-sm text-slate-800">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
-                                        </div>
-                                      </div>
-                                      {explanationText && (
-                                        <div className="w-full sm:w-auto flex-1 sm:ml-2 sm:pl-4 sm:border-l-2 border-t-2 sm:border-t-0 p-2 sm:p-0 border-current/20 flex items-center">
-                                          {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
-                                              <button 
-                                                onClick={(e) => {
-                                                  e.preventDefault();
-                                                  const currentPath = window.location.pathname;
-                                                  router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
-                                                }}
-                                                className="text-xs md:text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none inline w-full"
-                                              >
-                                                {explanationText}
-                                              </button>
-                                          ) : (() => {
-                                                const explanationTierLevel = currentLesson.explanationAccessTier === 'ULTRA' ? 3 : currentLesson.explanationAccessTier === 'PRO' ? 2 : 1;
-                                                const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                                const isLocked = explanationTierLevel > userTierLevel;
-                                                
-                                                if (isLocked) {
-                                                   return (
-                                                      <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50 mt-2">
-                                                        <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-3 select-none text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">
-                                                          {explanationText}
-                                                        </div>
-                                                        <div className="relative z-10 flex py-4 flex-col items-center justify-center min-h-[100px]">
-                                                          <button onClick={() => setShowPricing(true)} className="group bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-full px-4 py-2 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
-                                                             {currentLesson.explanationAccessTier === 'ULTRA' ? (
-                                                                <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
-                                                             ) : (
-                                                                <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                                             )}
-                                                             <span>Nâng cấp</span>
-                                                             <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.explanationAccessTier}</span>
-                                                             <span>để xem giải thích chi tiết.</span>
-                                                          </button>
-                                                        </div>
-                                                      </div>
-                                                   )
-                                                }
-                                                
-                                                return (
-                                                  <div className="text-xs md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[150px] overflow-y-auto custom-scrollbar">
-                                                    {explanationText}
-                                                  </div>
-                                                )
-                                              })()}
-                                        </div>
-                                      )}
-                                  </div>
-                                </div>
-                              )}
+
                             </motion.div>
                           )
                         })()}
                       </AnimatePresence>
 
-                      {/* Navigation Row moved to bottom */}
-                      <div className="mt-8 flex flex-row items-center justify-between gap-3 md:gap-4 w-full bg-slate-50 p-3 md:p-4 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <button
-                          onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
-                          disabled={activeQuestionIndex === 0}
-                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
-                          aria-label="Trước đó"
-                        >
-                          <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                        </button>
-
-                        <div className="flex flex-wrap flex-row justify-center items-center gap-1.5 md:gap-2 flex-1 min-w-0 overflow-y-auto max-h-[80px] custom-scrollbar scroll-smooth">
-                          {currentLesson.questions.map((_, idx) => {
-                            const isActive = idx === activeQuestionIndex
-                            const q = currentLesson.questions[idx]
-                            const isShowingResultLocal = !!showResults[q.id]
-                            const isCorrectLocal = userAnswers[q.id] === q.correctOption
-
-                            let btnStyle = ''
-                            if (isActive) {
-                               btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
-                            } else if (isShowingResultLocal) {
-                               btnStyle = isCorrectLocal ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
-                            } else if (userAnswers[q.id]) {
-                               btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
-                            } else {
-                               btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
-                            }
-                            
-                            return (
-                              <button 
-                                key={idx}
-                                onClick={() => setActiveQuestionIndex(idx)}
-                                className={`w-8 h-8 md:w-9 md:h-9 shrink-0 rounded-lg flex items-center justify-center font-bold text-xs md:text-sm transition-all duration-200 cursor-pointer border-2 ${btnStyle}`}
+                      {/* Outside AnimatePresence: Result, Navigation, and Explanation */ }
+                      {(() => {
+                        const q = currentLesson.questions[activeQuestionIndex];
+                        if (!q) return null;
+                        const isShowingResultLocal = !!showResults[q.id];
+                        const isCorrectLocal = userAnswers[q.id] === q.correctOption;
+                        const explanationText = status !== 'authenticated' && activeQuestionIndex >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
+                        
+                        return (
+                          <div className="mt-6 flex flex-col gap-4 w-full">
+                            {/* Prev + Result + Next Row */}
+                            <div className="flex flex-row items-center justify-between gap-3 w-full bg-slate-50 p-2 md:p-3 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                              <button
+                                onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
+                                disabled={activeQuestionIndex === 0}
+                                className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                aria-label="Trước đó"
                               >
-                                {idx + 1}
+                                <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                               </button>
-                            )
-                          })}
-                        </div>
 
-                        <button
-                          onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
-                          disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
-                          aria-label="Tiếp theo"
-                        >
-                          <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                      </div>
+                              <div className="flex-1 flex justify-center items-center min-w-0">
+                                {isShowingResultLocal ? (
+                                  <div className={`px-4 md:px-6 py-2.5 rounded-xl border-2 flex items-center justify-center gap-2 md:gap-3 transition-all ${isCorrectLocal ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-emerald-100' : 'bg-rose-50 border-rose-200 text-rose-700 shadow-rose-100'} shadow-sm`}>
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0`}>
+                                        {isCorrectLocal ? (
+                                          <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                        ) : (
+                                          <svg className="w-4 h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col items-start leading-none">
+                                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 opacity-80 mb-0.5">Kết quả</span>
+                                      <span className="font-bold text-xs md:text-sm">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                                    Câu {activeQuestionIndex + 1} / {currentLesson.questions.length}
+                                  </div>
+                                )}
+                              </div>
+
+                              <button
+                                onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
+                                disabled={activeQuestionIndex === currentLesson.questions.length - 1}
+                                className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                aria-label="Tiếp theo"
+                              >
+                                <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                              </button>
+                            </div>
+
+                            {/* Full Width Explanation Row below the buttons */}
+                            {isShowingResultLocal && explanationText && (
+                              <div className={`w-full p-4 md:p-6 rounded-2xl border-2 shadow-sm ${isCorrectLocal ? 'bg-emerald-50/40 border-emerald-100' : 'bg-rose-50/40 border-rose-100'}`}>
+                                {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
+                                    <button 
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        const currentPath = window.location.pathname;
+                                        router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
+                                      }}
+                                      className="text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full"
+                                    >
+                                      {explanationText}
+                                    </button>
+                                ) : (() => {
+                                      const explanationTierLevel = currentLesson.explanationAccessTier === 'ULTRA' ? 3 : currentLesson.explanationAccessTier === 'PRO' ? 2 : 1;
+                                      const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                      const isLocked = explanationTierLevel > userTierLevel;
+                                      
+                                      if (isLocked) {
+                                         return (
+                                            <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                              <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-4 select-none text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
+                                                {explanationText}
+                                              </div>
+                                              <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
+                                                <button onClick={() => setShowPricing(true)} className="group bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-full px-4 py-2 flex items-center gap-1.5 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                                   {currentLesson.explanationAccessTier === 'ULTRA' ? (
+                                                      <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clipRule="evenodd" /></svg>
+                                                   ) : (
+                                                      <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                   )}
+                                                   <span>Nâng cấp</span>
+                                                   <span className="bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded">{currentLesson.explanationAccessTier}</span>
+                                                   <span>để xem giải thích chi tiết.</span>
+                                                </button>
+                                              </div>
+                                            </div>
+                                         )
+                                      }
+                                      
+                                      return (
+                                        <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
+                                          {explanationText}
+                                        </div>
+                                      )
+                                })()}
+                              </div>
+                            )}
+
+                            {/* Small Numbers Row at the very bottom without vertical scroll */}
+                            <div className="mt-2 flex flex-wrap justify-center items-center gap-1 sm:gap-1.5 w-full">
+                              {currentLesson.questions.map((_, idx) => {
+                                const isActive = idx === activeQuestionIndex
+                                const qt = currentLesson.questions[idx]
+                                const isShowingResultQt = !!showResults[qt.id]
+                                const isCorrectQt = userAnswers[qt.id] === qt.correctOption
+
+                                let btnStyle = ''
+                                if (isActive) {
+                                   btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
+                                } else if (isShowingResultQt) {
+                                   btnStyle = isCorrectQt ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
+                                } else if (userAnswers[qt.id]) {
+                                   btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                                } else {
+                                   btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                                }
+                                
+                                return (
+                                  <button 
+                                    key={idx}
+                                    onClick={() => setActiveQuestionIndex(idx)}
+                                    className={`w-6 h-6 sm:w-7 sm:h-7 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
+                                  >
+                                    {idx + 1}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        )
+                      })()}
                     </section>
                   )}
                 </motion.div>
