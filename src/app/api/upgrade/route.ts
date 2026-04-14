@@ -3,6 +3,30 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
+// GET /api/upgrade
+// Returns the status of the user's pending upgrade order
+export async function GET(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ pending: false }) // Don't throw 401 for UX flow
+    }
+
+    const pendingOrder = await prisma.upgradeOrder.findFirst({
+      where: {
+        userId: session.user.id,
+        status: "pending",
+      },
+      select: { targetTier: true, createdAt: true }
+    })
+
+    return NextResponse.json({ pending: !!pendingOrder, order: pendingOrder })
+  } catch (err: any) {
+    console.error("[UPGRADE_GET]", err)
+    return NextResponse.json({ pending: false })
+  }
+}
+
 // POST /api/upgrade
 // User submits an upgrade request after scanning the QR
 export async function POST(req: NextRequest) {

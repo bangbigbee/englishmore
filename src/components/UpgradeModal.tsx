@@ -39,6 +39,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [pendingCheckout, setPendingCheckout] = useState<'PRO' | 'ULTRA' | null>(null)
   const [pricingConfig, setPricingConfig] = useState<any>(null)
   const [feedback, setFeedback] = useState<{ type: 'error' | 'success', title: string, message: string } | null>(null)
+  const [checkingPending, setCheckingPending] = useState(false)
 
   const getEffectiveTier = () => {
     if (!session) return 'FREE'
@@ -92,12 +93,31 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
 
   if (!isOpen && !activeModal && !showLoginModal && !feedback) return null;
 
-  const handleUpgrade = (tier: 'PRO' | 'ULTRA') => {
+  const handleUpgrade = async (tier: 'PRO' | 'ULTRA') => {
     if (!session) {
       setPendingCheckout(tier)
       setShowLoginModal(true)
       return
     }
+
+    try {
+      setCheckingPending(true)
+      const res = await fetch('/api/upgrade')
+      const data = await res.json()
+      if (data.pending) {
+        setFeedback({
+          type: 'error',
+          title: 'Yêu cầu đang chờ duyệt',
+          message: 'Vui lòng chờ Quản trị viên xác nhận đăng ký.'
+        })
+        return
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setCheckingPending(false)
+    }
+
     setActiveModal(tier)
   }
 
@@ -320,9 +340,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 ) : (
                    <button 
                      onClick={() => handleUpgrade('PRO')}
-                     className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95 mt-auto"
+                     disabled={checkingPending}
+                     className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95 mt-auto disabled:opacity-75 disabled:cursor-wait"
                    >
-                     Nâng Cấp PRO Ngay
+                     {checkingPending ? 'Đang tải...' : 'Nâng Cấp PRO Ngay'}
                    </button>
                 )}
                 <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">
@@ -385,9 +406,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 ) : (
                    <button 
                      onClick={() => handleUpgrade('ULTRA')}
-                     className="w-full bg-gradient-to-r from-purple-700 to-purple-950 hover:from-purple-800 hover:to-purple-900 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-900/50 active:scale-95 border border-purple-800/50 mt-auto"
+                     disabled={checkingPending}
+                     className="w-full bg-gradient-to-r from-purple-700 to-purple-950 hover:from-purple-800 hover:to-purple-900 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-900/50 active:scale-95 border border-purple-800/50 mt-auto disabled:opacity-75 disabled:cursor-wait"
                    >
-                     Bứt Phá Cùng ULTRA
+                     {checkingPending ? 'Đang tải...' : 'Bứt Phá Cùng ULTRA'}
                    </button>
                 )}
               </div>
