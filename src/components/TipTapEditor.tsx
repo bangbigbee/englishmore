@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useEditor, EditorContent, Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { TextStyle } from '@tiptap/extension-text-style'
@@ -12,7 +12,7 @@ interface TipTapEditorProps {
   onChange: (content: string) => void
 }
 
-const MenuBar = ({ editor }: { editor: Editor | null }) => {
+const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | null, isFullscreen: boolean, toggleFullscreen: () => void }) => {
   if (!editor) {
     return null
   }
@@ -118,11 +118,33 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       >
         Clear Color
       </button>
+
+      <div className="flex-1"></div>
+      
+      <button
+        type="button"
+        onClick={toggleFullscreen}
+        className="px-3 py-1.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 ml-auto font-medium text-xs flex items-center gap-1.5 transition-colors"
+        title="Bật/Tắt Toàn màn hình"
+      >
+        {isFullscreen ? (
+           <>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>
+            Thu nhỏ
+           </>
+        ) : (
+           <>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+            Phóng to
+           </>
+        )}
+      </button>
     </div>
   )
 }
 
 export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -150,9 +172,16 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
   }, [content, editor])
 
   return (
-    <div className="w-full flex-col flex">
-      <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
+    <div className={`w-full flex flex-col ${isFullscreen ? 'fixed inset-0 z-[99999] bg-slate-900/40 backdrop-blur-sm md:p-10 p-2' : ''}`}>
+      <div className={`flex flex-col w-full h-full flex-1 ${isFullscreen ? 'max-w-6xl mx-auto shadow-2xl rounded-xl overflow-hidden bg-white' : ''}`}>
+        <MenuBar editor={editor} isFullscreen={isFullscreen} toggleFullscreen={() => setIsFullscreen(!isFullscreen)} />
+        <div className={`w-full flex flex-col ${isFullscreen ? 'flex-1 overflow-y-auto' : ''}`}>
+          <EditorContent 
+            editor={editor} 
+            className={`w-full ${isFullscreen ? 'flex-1 [&>div.ProseMirror]:min-h-full [&>div.ProseMirror]:border-none [&>div.ProseMirror]:rounded-none [&>div.ProseMirror]:border-t-0 [&>div.ProseMirror]:shadow-inner' : ''}`} 
+          />
+        </div>
+      </div>
     </div>
   )
 }
