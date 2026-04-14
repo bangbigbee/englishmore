@@ -39,6 +39,15 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [pendingCheckout, setPendingCheckout] = useState<'PRO' | 'ULTRA' | null>(null)
   const [pricingConfig, setPricingConfig] = useState<any>(null)
 
+  const getEffectiveTier = () => {
+    if (!session) return 'FREE'
+    if (session.user?.role === 'admin') return 'ULTRA'
+    if (session.user?.tier === 'ULTRA') return 'ULTRA'
+    if (session.user?.tier === 'PRO' || session.user?.role === 'member') return 'PRO'
+    return 'FREE'
+  }
+  const effectiveTier = getEffectiveTier()
+
   useEffect(() => {
     fetch('/api/public/settings?key=subscription_pricing')
       .then(res => res.json())
@@ -53,7 +62,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const proPrice = pricingConfig?.PRO?.price ?? 299000
   const proDuration = pricingConfig?.PRO?.durationMonths ?? 6
   const ultraPrice = pricingConfig?.ULTRA?.price ?? 899000
+  const ultraUpgradePrice = pricingConfig?.ULTRA?.upgradePrice ?? 599000
   const ultraDuration = pricingConfig?.ULTRA?.durationMonths ?? 120
+
+  const currentUltraPrice = effectiveTier === 'PRO' ? ultraUpgradePrice : ultraPrice
 
   const formatPrice = (price: number) => {
     if (price === 0) return 'Miễn phí'
@@ -131,14 +143,8 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
     )
   }
 
-  const getEffectiveTier = () => {
-    if (!session) return 'FREE'
-    if (session.user?.role === 'admin') return 'ULTRA'
-    if (session.user?.tier === 'ULTRA') return 'ULTRA'
-    if (session.user?.tier === 'PRO' || session.user?.role === 'member') return 'PRO'
-    return 'FREE'
+    )
   }
-  const effectiveTier = getEffectiveTier()
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
@@ -295,7 +301,19 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <h3 className="text-2xl font-black text-white mb-2">Trọn Đời (ULTRA)</h3>
                   <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
                   <div className="text-3xl font-black text-white mt-4 mb-6">
-                    {formatPrice(ultraPrice)}<span className="text-base font-normal text-purple-100/50">/{formatDuration(ultraDuration)}</span>
+                    {effectiveTier === 'PRO' ? (
+                      <div className="flex flex-col items-start gap-1">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xl line-through text-purple-300/60 font-medium">{formatPrice(ultraPrice)}</span>
+                          <span>{formatPrice(ultraUpgradePrice)}</span>
+                        </div>
+                        <div className="text-[10px] text-amber-300 mt-0.5 uppercase tracking-wider font-bold bg-amber-900/40 inline-flex px-2 py-0.5 rounded border border-amber-500/30">Đặc quyền nâng cấp cho PRO</div>
+                      </div>
+                    ) : (
+                      <>
+                        {formatPrice(ultraPrice)}<span className="text-base font-normal text-purple-100/50">/{formatDuration(ultraDuration)}</span>
+                      </>
+                    )}
                   </div>
                 </div>
                 
@@ -354,7 +372,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
             </p>
           </div>
 
-          {renderVietQR(activeModal === 'PRO' ? proPrice : ultraPrice, activeModal)}
+          {renderVietQR(activeModal === 'PRO' ? proPrice : currentUltraPrice, activeModal)}
 
           <div className="mt-6">
             <button 
@@ -368,7 +386,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     body: JSON.stringify({
                       targetTier: activeModal,
                       durationMonths: activeModal === 'PRO' ? proDuration : ultraDuration,
-                      price: activeModal === 'PRO' ? proPrice : ultraPrice,
+                      price: activeModal === 'PRO' ? proPrice : currentUltraPrice,
                     })
                   })
                   
