@@ -10,6 +10,7 @@ import LinkifiedText from '@/components/LinkifiedText'
 import AdminGallery from './AdminGallery'
 import AdminPricingSettings from '@/components/AdminPricingSettings'
 import AdminUserManagement from '@/components/AdminUserManagement'
+import TipTapEditor from '@/components/TipTapEditor'
 
 interface CourseItem {
   id: string
@@ -7073,13 +7074,10 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Content (Markdown supported)</label>
-                    <textarea
-                      rows={12}
-                      placeholder="Explain the grammar rules here..."
-                      value={lessonForm.content}
-                      onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] font-mono text-sm"
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Content (Rich Text Editor)</label>
+                    <TipTapEditor
+                      content={lessonForm.content}
+                      onChange={(html) => setLessonForm({ ...lessonForm, content: html })}
                     />
                   </div>
                 </div>

@@ -550,9 +550,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                              <div className="relative">
                                <div className={`bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50 ${isLocked ? 'blur-sm pointer-events-none opacity-40 select-none' : ''}`}>
                                  <div className="prose prose-slate max-w-none prose-headings:font-black prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600">
-                                   <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-sm md:text-base">
-                                     {currentLesson.content || 'Nội dung đang được cập nhật...'}
-                                   </div>
+                                   <div 
+                                     className="whitespace-pre-wrap text-slate-700 leading-relaxed text-sm md:text-base prose prose-sm md:prose-base max-w-none prose-headings:font-bold prose-headings:text-slate-800 prose-p:my-2 prose-a:text-[#14532d]"
+                                     dangerouslySetInnerHTML={{ __html: currentLesson.content || 'Nội dung đang được cập nhật...' }}
+                                   />
                                  </div>
                                </div>
                                {isLocked && (
