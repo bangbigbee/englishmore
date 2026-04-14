@@ -952,7 +952,7 @@ export default function AdminDashboard() {
       const res = await fetch('/api/admin/courses')
       if (!res.ok) throw new Error('Failed to fetch courses')
       const data = await res.json()
-      setCourses(data)
+      setCourses(Array.isArray(data) ? data.filter((c: any) => c.id !== 'general_gallery_settings') : data)
       setCourseError('')
     } catch (err) {
       setCourseError(err instanceof Error ? err.message : 'An error occurred')
