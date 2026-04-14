@@ -91,6 +91,7 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
         type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={`px-2 py-1 rounded ${editor.isActive('bulletList') ? 'bg-[#14532d] text-white' : 'hover:bg-gray-200'}`}
+        title="Danh sách dấu chấm"
       >
         • List
       </button>
@@ -98,8 +99,29 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
         type="button"
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={`px-2 py-1 rounded ${editor.isActive('orderedList') ? 'bg-[#14532d] text-white' : 'hover:bg-gray-200'}`}
+        title="Danh sách đánh số"
       >
         1. List
+      </button>
+      
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
+        disabled={!editor.can().sinkListItem('listItem')}
+        className="px-2 py-1 rounded text-gray-600 hover:bg-gray-200 disabled:opacity-30 flex items-center gap-1"
+        title="Thụt lề vô trong (Indent)"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" y1="12" x2="11" y2="12"></line><line x1="21" y1="6" x2="11" y2="6"></line><line x1="21" y1="18" x2="11" y2="18"></line><polyline points="3 8 7 12 3 16"></polyline></svg>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().liftListItem('listItem').run()}
+        disabled={!editor.can().liftListItem('listItem')}
+        className="px-2 py-1 rounded text-gray-600 hover:bg-gray-200 disabled:opacity-30 flex items-center gap-1"
+        title="Dịch lề ra ngoài (Outdent)"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" y1="12" x2="11" y2="12"></line><line x1="21" y1="6" x2="11" y2="6"></line><line x1="21" y1="18" x2="11" y2="18"></line><polyline points="7 8 3 12 7 16"></polyline></svg>
       </button>
 
       <div className="w-px h-6 bg-gray-300 mx-1"></div>
@@ -160,7 +182,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
     },
     editorProps: {
       attributes: {
-        className: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] border border-gray-300 rounded-b-lg p-4 max-w-none bg-white',
+        className: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] border border-gray-300 rounded-b-lg p-4 max-w-none bg-white prose-ul:list-disc prose-ol:list-decimal prose-ul:ml-5 prose-ol:ml-5 prose-li:my-1 prose-li:marker:text-gray-800 marker:font-bold',
       },
     },
   })
