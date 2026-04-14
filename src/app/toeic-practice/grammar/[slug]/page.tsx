@@ -680,7 +680,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         return (
                           <div className="mt-6 flex flex-col gap-4 w-full">
                             {/* Prev + Result + Next Row */}
-                            <div className="flex flex-row items-center justify-between gap-3 w-full bg-slate-50 p-2 md:p-3 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div className={`flex flex-row items-center justify-between gap-3 w-full p-2 md:p-3 rounded-2xl shadow-sm transition-all overflow-hidden ${isShowingResultLocal ? (isCorrectLocal ? 'bg-emerald-50 border-2 border-emerald-500/30' : 'bg-rose-50 border-2 border-rose-500/30') : 'bg-slate-50 border border-slate-200'}`}>
                               <button
                                 onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
                                 disabled={activeQuestionIndex === 0}
@@ -692,17 +692,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                               <div className="flex-1 flex justify-center items-center min-w-0">
                                 {isShowingResultLocal ? (
-                                  <div className={`px-4 md:px-6 py-2.5 rounded-xl border-2 flex items-center justify-center gap-2 md:gap-3 transition-all ${isCorrectLocal ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-emerald-100' : 'bg-rose-50 border-rose-200 text-rose-700 shadow-rose-100'} shadow-sm`}>
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0`}>
+                                  <div className={`px-2 flex items-center justify-center gap-2 md:gap-3 transition-all ${isCorrectLocal ? 'text-emerald-700' : 'text-rose-700'}`}>
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
                                         {isCorrectLocal ? (
-                                          <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                          <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
                                         ) : (
-                                          <svg className="w-4 h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                                          <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
                                         )}
                                     </div>
-                                    <div className="flex flex-col items-start leading-none">
-                                      <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 opacity-80 mb-0.5">Kết quả</span>
-                                      <span className="font-bold text-xs md:text-sm">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
+                                    <div className="flex items-center gap-1.5 md:gap-2 leading-none whitespace-nowrap">
+                                      <span className="text-[11px] md:text-sm font-black uppercase tracking-widest text-slate-500 opacity-90">Kết quả</span>
+                                      <span className="font-bold text-sm md:text-base">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
                                     </div>
                                   </div>
                                 ) : (
