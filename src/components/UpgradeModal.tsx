@@ -38,6 +38,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [pendingCheckout, setPendingCheckout] = useState<'PRO' | 'ULTRA' | null>(null)
   const [pricingConfig, setPricingConfig] = useState<any>(null)
+  const [feedback, setFeedback] = useState<{ type: 'error' | 'success', title: string, message: string } | null>(null)
 
   const getEffectiveTier = () => {
     if (!session) return 'FREE'
@@ -89,7 +90,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
     }
   }, [session])
 
-  if (!isOpen && !activeModal && !showLoginModal) return null;
+  if (!isOpen && !activeModal && !showLoginModal && !feedback) return null;
 
   const handleUpgrade = (tier: 'PRO' | 'ULTRA') => {
     if (!session) {
@@ -155,12 +156,59 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
+          onClick={() => {
+            if (feedback) {
+              setFeedback(null)
+              if (feedback.type === 'success') {
+                setActiveModal(null)
+                onClose()
+              }
+            } else {
+              onClose()
+            }
+          }}
           className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
         />
       )}
       
-      {!activeModal ? (
+      {feedback ? (
+        <motion.div 
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          className="relative bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl overflow-hidden text-center"
+        >
+          <div className="mb-6 flex justify-center">
+            {feedback.type === 'success' ? (
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <IconCheck className="w-8 h-8 text-green-600" />
+              </div>
+            ) : (
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <IconX className="w-8 h-8 text-red-600" />
+              </div>
+            )}
+          </div>
+          <h2 className="text-2xl font-black text-slate-800 mb-2">
+            {feedback.title}
+          </h2>
+          <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+            {feedback.message}
+          </p>
+          <button 
+            onClick={() => {
+              setFeedback(null)
+              if (feedback.type === 'success') {
+                setActiveModal(null)
+                onClose()
+              }
+            }}
+            className={`w-full font-bold rounded-xl py-3 transition-colors ${feedback.type === 'success' ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20'}`}
+          >
+            Đã hiểu
+          </button>
+        </motion.div>
+      ) : !activeModal ? (
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -389,15 +437,25 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   
                   const data = await res.json()
                   if (!res.ok) {
-                    alert(data.error || 'Đã có lỗi xảy ra. Bạn có thể đang có một yêu cầu khác đang chờ duyệt.')
+                    setFeedback({
+                      type: 'error',
+                      title: 'Có lỗi xảy ra',
+                      message: data.error || 'Bạn có thể đang có một yêu cầu khác đang chờ duyệt. Vui lòng kiểm tra lại.'
+                    })
                     return
                   }
                   
-                  alert('Yêu cầu nâng cấp phân quyền của bạn đã được ghi nhận. Admin sẽ đối soát và kích hoạt trong 1-2 giờ làm việc.')
-                  setActiveModal(null)
-                  onClose()
+                  setFeedback({
+                    type: 'success',
+                    title: 'Gửi yêu cầu thành công',
+                    message: 'Yêu cầu nâng cấp phân quyền của bạn đã được ghi nhận. Quản trị viên sẽ đối soát và kích hoạt trong vòng 1-2 giờ làm việc.'
+                  })
                 } catch (err) {
-                  alert('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.')
+                  setFeedback({
+                    type: 'error',
+                    title: 'Lỗi kết nối',
+                    message: 'Không thể kết nối đến máy chủ lúc này. Vui lòng thử lại sau ít phút.'
+                  })
                 } finally {
                   setSubmitting(false)
                 }
