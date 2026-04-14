@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import LoginModal from './LoginModal'
+import { useEffect } from 'react'
 
 const IconCheck = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -33,12 +35,26 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const { data: session } = useSession()
   const [activeModal, setActiveModal] = useState<'PRO' | 'ULTRA' | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [pendingCheckout, setPendingCheckout] = useState<'PRO' | 'ULTRA' | null>(null)
 
-  if (!isOpen && !activeModal) return null;
+  useEffect(() => {
+    if (typeof window !== 'undefined' && session) {
+      const params = new URLSearchParams(window.location.search)
+      const checkout = params.get('checkout')
+      if (checkout === 'PRO' || checkout === 'ULTRA') {
+        setActiveModal(checkout as 'PRO' | 'ULTRA')
+        window.history.replaceState({}, '', window.location.pathname)
+      }
+    }
+  }, [session])
+
+  if (!isOpen && !activeModal && !showLoginModal) return null;
 
   const handleUpgrade = (tier: 'PRO' | 'ULTRA') => {
     if (!session) {
-      alert('Vui lòng đăng nhập trước khi nâng cấp!')
+      setPendingCheckout(tier)
+      setShowLoginModal(true)
       return
     }
     setActiveModal(tier)
@@ -89,13 +105,20 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+        callbackUrl={pendingCheckout ? `/upgrade?checkout=${pendingCheckout}` : '/upgrade'}
       />
+      {!showLoginModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        />
+      )}
       
       {!activeModal ? (
         <motion.div
@@ -210,39 +233,39 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               </div>
 
               {/* ULTRA Tier */}
-              <div className="bg-[#0a2215] rounded-2xl p-6 border border-emerald-900 flex flex-col relative text-white shadow-2xl">
+              <div className="bg-[#2b0c36] rounded-2xl p-6 border border-purple-900 flex flex-col relative text-white shadow-2xl">
                 <div className="mb-6">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-900/60 text-emerald-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-emerald-500/30">
-                    <IconZap className="w-4 h-4 text-emerald-400" /> ULTRA Mastery
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-900/60 text-purple-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-purple-500/30">
+                    <IconZap className="w-4 h-4 text-purple-400" /> ULTRA Mastery
                   </div>
                   <h3 className="text-2xl font-black text-white mb-2">Trọn Đời (ULTRA)</h3>
-                  <p className="text-emerald-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
+                  <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
                   <div className="text-3xl font-black text-white mt-4 mb-6">
-                    899k<span className="text-base font-normal text-emerald-100/50">/trọn đời</span>
+                    899k<span className="text-base font-normal text-purple-100/50">/trọn đời</span>
                   </div>
                 </div>
                 
                 <ul className="space-y-4 mb-8 flex-1 text-sm">
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-emerald-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
+                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <span className="text-purple-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-emerald-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
+                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <span className="text-purple-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-emerald-100/90">Nhân ba Activity Points (x3)</span>
+                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <span className="text-purple-100/90">Nhân ba Activity Points (x3)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span className="text-emerald-100/90">Ưu tiên hỗ trợ từ Admin</span>
+                    <IconCheck className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                    <span className="text-purple-100/90">Ưu tiên hỗ trợ từ Admin</span>
                   </li>
                 </ul>
                 <button 
                   onClick={() => handleUpgrade('ULTRA')}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-[#14532d] hover:from-emerald-600 hover:to-emerald-800 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-emerald-900/50 active:scale-95 border border-emerald-600/50"
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-800 hover:from-purple-600 hover:to-purple-900 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-900/50 active:scale-95 border border-purple-600/50"
                 >
                   Bứt Phá Cùng ULTRA
                 </button>
@@ -266,7 +289,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           
           <div className="text-center mb-6 pt-2">
             <h2 className="text-2xl font-black text-slate-800">
-              Chuyển khoản <span className={activeModal === 'PRO' ? 'text-amber-500' : 'text-[#14532d]'}>{activeModal}</span>
+              Chuyển khoản <span className={activeModal === 'PRO' ? 'text-amber-500' : 'text-purple-600'}>{activeModal}</span>
             </h2>
             <p className="text-slate-500 text-sm mt-1.5 font-medium">
               Quét mã QR dưới đây bằng App Ngân hàng
