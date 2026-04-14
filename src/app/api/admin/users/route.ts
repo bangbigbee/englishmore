@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams
+    const search = searchParams.get('search') || ''
     const courseId = searchParams.get('courseId')
     
     const whereCondition: any = {}
