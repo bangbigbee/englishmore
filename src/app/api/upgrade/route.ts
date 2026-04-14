@@ -20,7 +20,17 @@ export async function GET(req: NextRequest) {
       select: { targetTier: true, createdAt: true }
     })
 
-    return NextResponse.json({ pending: !!pendingOrder, order: pendingOrder })
+    const latestOrder = await prisma.upgradeOrder.findFirst({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, targetTier: true, status: true, createdAt: true }
+    })
+
+    return NextResponse.json({ 
+      pending: !!pendingOrder, 
+      order: pendingOrder,
+      latestOrder
+    })
   } catch (err: any) {
     console.error("[UPGRADE_GET]", err)
     return NextResponse.json({ pending: false })

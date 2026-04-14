@@ -6,6 +6,7 @@ import TopNav from "@/components/TopNav";
 import MainWrapper from "@/components/MainWrapper";
 import { Toaster } from "sonner";
 import LoginModalController from "./LoginModalController";
+import GlobalUpgradePoller from "@/components/GlobalUpgradePoller";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -48,6 +49,7 @@ export default function RootLayout({
           <TopNav />
           <MainWrapper>{children}</MainWrapper>
           <LoginModalController />
+          <GlobalUpgradePoller />
           <Toaster
             richColors
             position="top-center"
