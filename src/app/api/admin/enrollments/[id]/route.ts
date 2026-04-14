@@ -70,6 +70,19 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
           verifiedAt: new Date()
         }
       })
+
+      // Upgrade user to PRO for 2 years when enrollment is activated
+      const twoYearsFromNow = new Date()
+      twoYearsFromNow.setFullYear(twoYearsFromNow.getFullYear() + 2)
+      
+      await tx.user.update({
+        where: { id: existing.userId },
+        data: {
+          role: 'member',
+          tier: 'PRO',
+          tierExpiresAt: twoYearsFromNow
+        }
+      })
     }
 
     return updated

@@ -60,19 +60,21 @@ export const authOptions: NextAuthOptions = {
         // Fetch fresh user data from database to sync name and image
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
-          select: { name: true, image: true, tier: true }
+          select: { name: true, image: true, tier: true, tierExpiresAt: true }
         })
         if (dbUser) {
           session.user.name = dbUser.name
           session.user.image = dbUser.image
           session.user.tier = dbUser.tier
+          session.user.tierExpiresAt = dbUser.tierExpiresAt ? dbUser.tierExpiresAt.toISOString() : null
         }
       }
       if (token.role) {
         session.user.role = token.role as string
       }
-      if (token.tier) {
+      if (token.tier !== undefined) {
         session.user.tier = token.tier as string
+        session.user.tierExpiresAt = token.tierExpiresAt as string | null
       }
       return session
     },
@@ -104,6 +106,7 @@ export const authOptions: NextAuthOptions = {
 
           token.role = dbUser.role
           token.tier = currentTier
+          token.tierExpiresAt = dbUser.tierExpiresAt ? dbUser.tierExpiresAt.toISOString() : null
         }
       }
 

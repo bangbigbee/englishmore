@@ -148,14 +148,20 @@ export default function TopNav() {
             <>
               <div className="flex items-center gap-2">
                 {session.user?.tier === 'PRO' && (
-                  <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-[#FDB931]/50">
+                  <span 
+                    className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-[#FDB931]/50"
+                    title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói PRO'}
+                  >
                     <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     PRO
                     <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
                   </span>
                 )}
                 {session.user?.tier === 'ULTRA' && (
-                  <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30">
+                  <span 
+                    className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30"
+                    title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói ULTRA'}
+                  >
                     <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     ULTRA
                     <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
@@ -211,14 +217,20 @@ export default function TopNav() {
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="flex items-center gap-2">
                     {session.user?.tier === 'PRO' && (
-                      <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-[#FDB931]/50">
+                      <span 
+                        className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-[#FDB931]/50"
+                        title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói PRO'}
+                      >
                         <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         PRO
                         <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
                       </span>
                     )}
                     {session.user?.tier === 'ULTRA' && (
-                      <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30">
+                      <span 
+                        className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30"
+                        title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói ULTRA'}
+                      >
                         <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                         ULTRA
                         <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />

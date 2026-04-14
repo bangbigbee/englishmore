@@ -18,6 +18,8 @@ export async function GET() {
       phone: true,
       image: true,
       bio: true,
+      tier: true,
+      tierExpiresAt: true,
       referrer: {
         select: {
           id: true,
