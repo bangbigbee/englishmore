@@ -3,6 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import TopNav from "@/components/TopNav";
+import MainWrapper from "@/components/MainWrapper";
 import { Toaster } from "sonner";
 import LoginModalController from "./LoginModalController";
 
@@ -45,7 +46,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#fdfdfc]">
         <AuthProvider>
           <TopNav />
-          <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">{children}</main>
+          <MainWrapper>{children}</MainWrapper>
           <LoginModalController />
           <Toaster
             richColors
