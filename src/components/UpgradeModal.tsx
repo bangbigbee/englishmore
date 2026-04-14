@@ -477,6 +477,8 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   return
                 }
                 
+                window.dispatchEvent(new Event('upgrade_order_created'))
+                
                 setFeedback({
                   type: 'success',
                   title: 'Gửi yêu cầu thành công',

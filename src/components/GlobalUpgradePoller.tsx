@@ -29,12 +29,15 @@ export default function GlobalUpgradePoller() {
   useEffect(() => {
     if (!session?.user) return
     
-    const checkRecentUpgrade = async () => {
+    let intervalId: NodeJS.Timeout | null = null
+
+    const checkStatus = async () => {
       try {
         const res = await fetch('/api/upgrade')
         if (!res.ok) return
         const data = await res.json()
         
+        // 1. Alert users if their order was recently approved
         const latestOrder = data.latestOrder
         if (latestOrder && latestOrder.status === 'approved') {
           const key = 'notified_upgrade_id'
@@ -44,15 +47,35 @@ export default function GlobalUpgradePoller() {
              setShowSuccess({ tier: latestOrder.targetTier }) // Show the modal
           }
         }
+
+        // 2. Control polling based on pending status
+        if (data.pending) {
+            if (!intervalId) {
+                intervalId = setInterval(checkStatus, 15000)
+            }
+        } else {
+            if (intervalId) {
+                clearInterval(intervalId)
+                intervalId = null
+            }
+        }
       } catch (e) {
          // ignore
       }
     }
 
-    checkRecentUpgrade()
-    const interval = setInterval(checkRecentUpgrade, 15000) // Poll every 15s
-    return () => clearInterval(interval)
-  }, [session, update])
+    // Do an initial check immediately
+    checkStatus()
+
+    // Listen to upgrade tracking events from other components
+    const onUpgradeCreated = () => checkStatus()
+    window.addEventListener('upgrade_order_created', onUpgradeCreated)
+
+    return () => {
+       if (intervalId) clearInterval(intervalId)
+       window.removeEventListener('upgrade_order_created', onUpgradeCreated)
+    }
+  }, [session?.user, update])
 
   return (
     <AnimatePresence>
