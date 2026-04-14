@@ -284,8 +284,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
       }
     }
 
-    // Trigger local fake AP for guests or authenticated users who are NOT members
-    const isMember = status === 'authenticated' && session?.user?.role === 'member';
+    // Trigger local fake AP for guests or authenticated users who are NOT members and NOT PRO/ULTRA
+    const isMember = status === 'authenticated' && (session?.user?.role === 'member' || session?.user?.tier === 'PRO' || session?.user?.tier === 'ULTRA');
     if (!isMember) {
         const todayDateStr = new Date().toISOString().split('T')[0];
         const awardedKey = `guest_ap_awarded_${currentLesson?.id}_${todayDateStr}`;

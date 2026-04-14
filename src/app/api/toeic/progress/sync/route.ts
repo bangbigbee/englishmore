@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
     )
 
     if (localAps && localAps > 0) {
-        const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })
-        if (user?.role === 'member') {
+        const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true, tier: true } })
+        if (user?.role === 'member' || user?.tier === 'PRO' || user?.tier === 'ULTRA') {
             const safeAps = Math.min(parseInt(localAps, 10), 1000) // cap to 1000 to prevent abuse
             if (!isNaN(safeAps)) {
                 await prisma.user.update({

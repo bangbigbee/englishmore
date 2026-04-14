@@ -87,10 +87,10 @@ export async function POST(request: NextRequest) {
     // 2. Check for Lesson Completion & Activity Points (Members only)
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { role: true }
+      select: { role: true, tier: true }
     })
 
-    if (user?.role === 'member') {
+    if (user?.role === 'member' || user?.tier === 'PRO' || user?.tier === 'ULTRA') {
       const question = await prisma.toeicQuestion.findUnique({
         where: { id: questionId },
         select: { lessonId: true }
