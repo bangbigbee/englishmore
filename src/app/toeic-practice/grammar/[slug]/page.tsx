@@ -463,14 +463,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-white' : 'text-slate-800'}`}>
                     <span className="truncate">{lesson.title}</span>
                     {lesson.accessTier === 'PRO' && (
-                      <span className="shrink-0 px-1.5 py-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
-                        PRO
-                      </span>
+                      <svg className="w-[18px] h-[18px] text-amber-400 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     )}
                     {lesson.accessTier === 'ULTRA' && (
-                      <span className="shrink-0 px-1.5 py-0.5 bg-gradient-to-r from-emerald-500 to-[#14532d] border border-[#14532d] text-white text-[9px] font-black uppercase tracking-widest rounded shadow-sm">
-                        ULTRA
-                      </span>
+                      <svg className="w-[18px] h-[18px] text-purple-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     )}
                   </div>
                   <div className={`text-[11px] mt-1 ${selectedLessonId === lesson.id ? 'text-white/60' : 'text-slate-500'}`}>
@@ -508,8 +504,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     <div className="flex flex-wrap items-center gap-3 w-full">
                       <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
                         <span>{currentLesson.title}</span>
-                        {currentLesson.accessTier === 'PRO' && <span className="px-2 py-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">PRO</span>}
-                        {currentLesson.accessTier === 'ULTRA' && <span className="px-2 py-0.5 bg-gradient-to-r from-emerald-500 to-[#14532d] border border-[#14532d] text-white text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">ULTRA</span>}
+                        {currentLesson.accessTier === 'PRO' && <svg className="w-6 h-6 text-amber-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                        {currentLesson.accessTier === 'ULTRA' && <svg className="w-6 h-6 text-purple-500 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                       </h2>
                       {!isTestCompleted && timerStartTime !== null && (
                         <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
