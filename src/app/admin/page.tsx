@@ -7133,6 +7133,7 @@ export default function AdminDashboard() {
                         onChange={(e) => setLessonForm({ ...lessonForm, order: parseInt(e.target.value) || 0 })}
                         className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                       />
+                    </div>
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="col-span-1">
