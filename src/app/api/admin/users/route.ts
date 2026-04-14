@@ -11,15 +11,23 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams
-    const search = searchParams.get('search') || ''
+    const courseId = searchParams.get('courseId')
     
-    const whereCondition = search ? {
-      OR: [
+    const whereCondition: any = {}
+    
+    if (search) {
+      whereCondition.OR = [
         { name: { contains: search, mode: 'insensitive' as const } },
         { email: { contains: search, mode: 'insensitive' as const } },
         { phone: { contains: search, mode: 'insensitive' as const } }
       ]
-    } : {}
+    }
+
+    if (courseId) {
+      whereCondition.enrollments = {
+        some: { courseId }
+      }
+    }
 
     const users = await prisma.user.findMany({
       where: whereCondition,

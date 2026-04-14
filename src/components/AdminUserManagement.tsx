@@ -18,17 +18,39 @@ interface UserItem {
 
 export default function AdminUserManagement() {
   const [users, setUsers] = useState<UserItem[]>([])
+  const [courses, setCourses] = useState<Array<{id: string; title: string}>>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [courseFilter, setCourseFilter] = useState('')
 
   useEffect(() => {
-    fetchUsers(search)
-  }, [search])
+    fetchCourses()
+  }, [])
 
-  const fetchUsers = async (searchTerm: string) => {
+  useEffect(() => {
+    fetchUsers(search, courseFilter)
+  }, [search, courseFilter])
+
+  const fetchCourses = async () => {
+    try {
+      const res = await fetch('/api/admin/courses')
+      if (res.ok) {
+        const data = await res.json()
+        setCourses(Array.isArray(data) ? data.filter((c: any) => c.id !== 'general_gallery_settings') : [])
+      }
+    } catch(e) {
+      console.error(e)
+    }
+  }
+
+  const fetchUsers = async (searchTerm: string, courseId: string) => {
     try {
       setLoading(true)
-      const res = await fetch(`/api/admin/users?search=${encodeURIComponent(searchTerm)}`)
+      const queryParams = new URLSearchParams()
+      if (searchTerm) queryParams.append('search', searchTerm)
+      if (courseId) queryParams.append('courseId', courseId)
+      
+      const res = await fetch(`/api/admin/users?${queryParams.toString()}`)
       if (!res.ok) throw new Error('Failed to fetch')
       const data = await res.json()
       setUsers(data.users || [])
@@ -71,22 +93,62 @@ export default function AdminUserManagement() {
     )
   }
 
+  const stats = {
+    total: users.length,
+    free: users.filter(u => u.tier === 'FREE' || !u.tier).length,
+    pro: users.filter(u => u.tier === 'PRO').length,
+    ultra: users.filter(u => u.tier === 'ULTRA').length,
+  }
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <p className="text-sm font-medium text-slate-500">Total Users</p>
+          <p className="text-3xl font-bold text-slate-800 mt-2">{stats.total}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 bg-gradient-to-br from-slate-50 to-white">
+          <p className="text-sm font-medium text-slate-500">FREE Tier</p>
+          <p className="text-3xl font-bold text-slate-700 mt-2">{stats.free}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-amber-200 p-5 bg-gradient-to-br from-amber-50 to-white">
+          <p className="text-sm font-medium text-amber-600">PRO Tier</p>
+          <p className="text-3xl font-bold text-amber-600 mt-2">{stats.pro}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-purple-200 p-5 bg-gradient-to-br from-purple-50 to-white">
+          <p className="text-sm font-medium text-purple-600">ULTRA Tier</p>
+          <p className="text-3xl font-bold text-purple-600 mt-2">{stats.ultra}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-        <div className="relative">
-          <svg className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input
-            type="text"
-            placeholder="Search name, phone, email..."
-            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#14532d] w-72"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <select
+            value={courseFilter}
+            onChange={(e) => setCourseFilter(e.target.value)}
+            className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+          >
+            <option value="">All Courses</option>
+            {courses.map(c => (
+              <option key={c.id} value={c.id}>{c.title}</option>
+            ))}
+          </select>
+          
+          <div className="relative w-full sm:w-72">
+            <svg className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search name, phone, email..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
