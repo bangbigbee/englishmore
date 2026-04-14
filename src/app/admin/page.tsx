@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import LinkifiedText from '@/components/LinkifiedText'
 import AdminGallery from './AdminGallery'
 import AdminPricingSettings from '@/components/AdminPricingSettings'
+import AdminUserManagement from '@/components/AdminUserManagement'
 
 interface CourseItem {
   id: string
@@ -341,7 +342,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing'
+type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -3175,21 +3176,28 @@ export default function AdminDashboard() {
       <div className="w-full px-4 py-8 sm:px-6 lg:px-8 xl:px-12 flex flex-col md:flex-row gap-8 items-start">
         <aside className="w-full md:w-64 shrink-0 top-8 md:sticky z-10">
           <nav className="flex flex-col space-y-1 bg-white p-3 rounded-xl shadow-sm border border-slate-200">
-             <button onClick={() => setActiveSection('course')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'course' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>1. COURSE</button>
-             <button onClick={() => setActiveSection('homework')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'homework' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>2. HOMEWORK</button>
-             <button onClick={() => setActiveSection('exercise')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'exercise' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>3. EXERCISE</button>
-             <button onClick={() => setActiveSection('lectureNote')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'lectureNote' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>4. LECTURE</button>
-             <button onClick={() => setActiveSection('activityPoints')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'activityPoints' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>5. ACTIVITY POINTS</button>
-             <button onClick={() => setActiveSection('vocabulary')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'vocabulary' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>6. VOCABULARY</button>
-             <button onClick={() => setActiveSection('referral')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'referral' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>7. REFERRALS</button>
-             <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-[#ea980c]/10 text-[#ea980c] hover:bg-[#ea980c]/20'}`}>8. TOEIC</button>
-             <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>9. NEWS</button>
-             <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>10. GALLERY</button>
-             <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>11. SUBSCRIPTION</button>
+             <button onClick={() => setActiveSection('users')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'users' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>1. USERS</button>
+             <button onClick={() => setActiveSection('course')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'course' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>2. COURSE</button>
+             <button onClick={() => setActiveSection('homework')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'homework' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>3. HOMEWORK</button>
+             <button onClick={() => setActiveSection('exercise')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'exercise' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>4. EXERCISE</button>
+             <button onClick={() => setActiveSection('lectureNote')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'lectureNote' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>5. LECTURE</button>
+             <button onClick={() => setActiveSection('activityPoints')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'activityPoints' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>6. ACTIVITY POINTS</button>
+             <button onClick={() => setActiveSection('vocabulary')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'vocabulary' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>7. VOCABULARY</button>
+             <button onClick={() => setActiveSection('referral')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'referral' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>8. REFERRALS</button>
+             <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-[#ea980c]/10 text-[#ea980c] hover:bg-[#ea980c]/20'}`}>9. TOEIC</button>
+             <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>10. NEWS</button>
+             <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>11. GALLERY</button>
+             <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>12. SUBSCRIPTION</button>
           </nav>
         </aside>
 
         <div className="flex-1 min-w-0">
+          {activeSection === 'users' && (
+            <div className="bg-white rounded shadow p-6 mb-8">
+              <AdminUserManagement />
+            </div>
+          )}
+
           {activeSection === 'pricing' && (
              <AdminPricingSettings />
           )}
@@ -4225,63 +4233,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className={`mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
-          {/* Table 1 — User accounts */}
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-            <button
-              type="button"
-              onClick={() => setTable1Expanded((v) => !v)}
-              className="flex w-full items-center justify-between px-5 py-4 text-left hover:bg-slate-50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-base font-bold text-slate-800">User accounts</span>
-                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">{usersOverview.length}</span>
-              </div>
-              <span className={`text-xs font-semibold px-3 py-1 rounded-full border transition-colors ${
-                table1Expanded
-                  ? 'border-slate-300 bg-white text-slate-600'
-                  : 'border-[#14532d]/30 bg-[#14532d]/5 text-[#14532d]'
-              }`}>
-                {table1Expanded ? 'Collapse ▲' : 'Expand ▼'}
-              </span>
-            </button>
-            {table1Expanded && (
-              <div className="border-t border-slate-100">
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead className="bg-slate-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Name</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Phone</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Created on</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {usersOverview.map((item) => (
-                        <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                          <td className="px-4 py-3 text-sm font-medium text-slate-800">{item.name || item.email}</td>
-                          <td className="px-4 py-3 text-sm text-slate-600">{item.phone || <span className="text-slate-400 italic">Not updated yet</span>}</td>
-                          <td className="px-4 py-3 text-sm text-slate-500">{new Date(item.createdAt).toLocaleDateString('en-GB')}</td>
-                        </tr>
-                      ))}
-                      {usersOverview.length === 0 && (
-                        <tr>
-                          <td colSpan={3} className="px-4 py-6 text-center text-sm text-slate-400">No user accounts found.</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-            {!table1Expanded && usersOverview.length > 0 && (
-              <div className="border-t border-slate-100 px-5 py-3">
-                <p className="text-xs text-slate-400">Showing summary — expand to view all {usersOverview.length} accounts.</p>
-              </div>
-            )}
-          </div>
 
-        </div>
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Homework Management by Course</h2>
