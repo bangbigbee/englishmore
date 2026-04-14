@@ -148,10 +148,18 @@ export default function TopNav() {
             <>
               <div className="flex items-center gap-2">
                 {session.user?.tier === 'PRO' && (
-                  <span className="border-[2px] border-[#ea980c] text-[#ea980c] bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">PRO</span>
+                  <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-[18px] rounded-sm text-[9px] shadow-sm cursor-default border border-[#FDB931]/50">
+                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    PRO
+                    <span className="absolute top-0 w-full h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
+                  </span>
                 )}
                 {session.user?.tier === 'ULTRA' && (
-                  <span className="border-[2px] border-purple-500 text-purple-600 bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">ULTRA</span>
+                  <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-500 to-purple-800 text-white font-black uppercase tracking-widest px-1.5 h-[18px] rounded-sm text-[9px] shadow-sm cursor-default border border-purple-400/30">
+                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    ULTRA
+                    <span className="absolute top-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
+                  </span>
                 )}
                 <div className="relative">
                   <button
@@ -203,10 +211,18 @@ export default function TopNav() {
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="flex items-center gap-2">
                     {session.user?.tier === 'PRO' && (
-                      <span className="border-[2px] border-[#ea980c] text-[#ea980c] bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">PRO</span>
+                      <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-[18px] rounded-sm text-[9px] shadow-sm cursor-default border border-[#FDB931]/50">
+                        <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        PRO
+                        <span className="absolute top-0 w-full h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
+                      </span>
                     )}
                     {session.user?.tier === 'ULTRA' && (
-                      <span className="border-[2px] border-purple-500 text-purple-600 bg-white text-[11px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md shadow-sm h-7 flex items-center justify-center">ULTRA</span>
+                      <span className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-500 to-purple-800 text-white font-black uppercase tracking-widest px-1.5 h-[18px] rounded-sm text-[9px] shadow-sm cursor-default border border-purple-400/30">
+                        <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        ULTRA
+                        <span className="absolute top-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
+                      </span>
                     )}
                     <div className="relative">
                       <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-500' : 'border-white'} bg-white text-[#14532d] shadow-sm`}>
