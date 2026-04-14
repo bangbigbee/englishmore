@@ -714,3 +714,10 @@ model LandingGalleryImage {
   @@index([courseId])
   @@index([section])
 }
+
+model SystemSetting {
+  key String @id
+  value Json
+  description String?
+  updatedAt DateTime @updatedAt
+}

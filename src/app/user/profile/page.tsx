@@ -353,9 +353,9 @@ export default function ProfilePage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Profile photo</label>
               <div className="flex items-end gap-4">
-                <div className="shrink-0">
+                <div className="shrink-0 relative">
                   {imagePreview && !imagePreviewFailed ? (
-                    <div className="h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200">
+                    <div className={`h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200 border-2 ${session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA' ? 'border-[#ffd700]' : 'border-transparent'}`}>
                       <Image
                         src={imagePreview}
                         alt="Avatar preview"
@@ -365,9 +365,15 @@ export default function ProfilePage() {
                       />
                     </div>
                   ) : (
-                    <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-[#14532d]/10 text-3xl font-bold text-[#14532d]">
+                    <div className={`flex h-24 w-24 items-center justify-center rounded-lg bg-[#14532d]/10 text-3xl font-bold text-[#14532d] border-2 ${session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA' ? 'border-[#ffd700]' : 'border-transparent'}`}>
                       {profileInitial}
                     </div>
+                  )}
+                  {session.user?.tier === 'PRO' && (
+                    <span className="absolute -bottom-2 -right-2 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">PRO</span>
+                  )}
+                  {session.user?.tier === 'ULTRA' && (
+                    <span className="absolute -bottom-2 -right-2 bg-gradient-to-r from-emerald-500 to-[#14532d] text-white border border-[#14532d] text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded shadow-sm z-10 transform -rotate-12 pointer-events-none">ULTRA</span>
                   )}
                 </div>
                 <div className="flex-1">

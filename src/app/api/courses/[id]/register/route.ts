@@ -134,11 +134,16 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     })
   }
 
-  // Promote user to member after course registration
-  await prisma.user.updateMany({
-    where: { id: userId, role: 'user' },
-    data: { role: 'member' }
-  })
+  // Promote user to member after course registration and defaults to PRO tier
+  if (currentUser.role === 'user' || currentUser.tier === 'FREE') {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { 
+         role: currentUser.role === 'user' ? 'member' : undefined,
+         tier: currentUser.tier === 'FREE' ? 'PRO' : undefined
+      }
+    })
+  }
 
   return NextResponse.json({
     message: 'Please use the transfer details below so the admin can confirm your tuition payment.',
