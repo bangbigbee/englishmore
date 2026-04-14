@@ -32,6 +32,7 @@ const IconX = ({ className }: { className?: string }) => (
 export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const { data: session } = useSession()
   const [activeModal, setActiveModal] = useState<'PRO' | 'ULTRA' | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   if (!isOpen && !activeModal) return null;
 
@@ -276,14 +277,38 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
 
           <div className="mt-6">
             <button 
-              onClick={() => {
-                alert('Sau khi đối soát, admin sẽ kích hoạt tài khoản của bạn (1-2 tiếng).')
-                setActiveModal(null)
-                onClose()
+              disabled={submitting}
+              onClick={async () => {
+                try {
+                  setSubmitting(true)
+                  const res = await fetch('/api/upgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      targetTier: activeModal,
+                      durationMonths: activeModal === 'PRO' ? 6 : 12,
+                      price: activeModal === 'PRO' ? 299000 : 899000,
+                    })
+                  })
+                  
+                  const data = await res.json()
+                  if (!res.ok) {
+                    alert(data.error || 'Đã có lỗi xảy ra. Bạn có thể đang có một yêu cầu khác đang chờ duyệt.')
+                    return
+                  }
+                  
+                  alert('Yêu cầu nâng cấp phân quyền của bạn đã được ghi nhận. Admin sẽ đối soát và kích hoạt trong 1-2 giờ làm việc.')
+                  setActiveModal(null)
+                  onClose()
+                } catch (err) {
+                  alert('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.')
+                } finally {
+                  setSubmitting(false)
+                }
               }}
-              className="w-full bg-slate-900 text-white font-bold rounded-xl py-3.5 hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20"
+              className="w-full bg-slate-900 text-white font-bold rounded-xl py-3.5 hover:bg-slate-800 disabled:opacity-50 transition-colors shadow-lg shadow-slate-900/20 flex items-center justify-center"
             >
-              Tôi đã chuyển khoản xong
+              {submitting ? 'Đang gửi yêu cầu...' : 'Tôi đã chuyển khoản xong'}
             </button>
           </div>
         </motion.div>

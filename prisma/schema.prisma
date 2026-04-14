@@ -118,6 +118,7 @@ model User {
   activityPointLogs     ActivityPointLog[]
   toeicAnswers          ToeicAnswer[]
   tier                  AccessTier   @default(FREE)
+  tierExpiresAt         DateTime?
   upgradeOrders         UpgradeOrder[]
 
   @@index([referrerId])
@@ -127,9 +128,10 @@ model UpgradeOrder {
   id              String             @id @default(cuid())
   userId          String
   targetTier      AccessTier
+  durationMonths  Int                @default(6)
   price           Int
   status          UpgradeOrderStatus @default(pending)
-  referenceCode   String?            @unique
+  referenceCode   String?
   paymentMethod   PaymentMethod?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt

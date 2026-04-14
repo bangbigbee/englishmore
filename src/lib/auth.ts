@@ -85,11 +85,25 @@ export const authOptions: NextAuthOptions = {
       if (token.sub) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
-          select: { role: true, tier: true }
+          select: { role: true, tier: true, tierExpiresAt: true, enrollments: { select: { id: true }, take: 1 } }
         })
         if (dbUser) {
+          let currentTier = dbUser.tier
+          
+          // Check expiration
+          if (dbUser.tierExpiresAt && new Date() > dbUser.tierExpiresAt && currentTier !== 'FREE') {
+            const hasCourse = dbUser.enrollments.length > 0
+            currentTier = hasCourse ? 'PRO' : 'FREE'
+            
+            // Background update to DB
+            prisma.user.update({
+              where: { id: token.sub },
+              data: { tier: currentTier, tierExpiresAt: null }
+            }).catch(console.error)
+          }
+
           token.role = dbUser.role
-          token.tier = dbUser.tier
+          token.tier = currentTier
         }
       }
 

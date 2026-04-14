@@ -3158,7 +3158,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-white shadow">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="w-full px-4 py-6 sm:px-6 lg:px-8 xl:px-12">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <Link
@@ -3172,7 +3172,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 items-start">
+      <div className="w-full px-4 py-8 sm:px-6 lg:px-8 xl:px-12 flex flex-col md:flex-row gap-8 items-start">
         <aside className="w-full md:w-64 shrink-0 top-8 md:sticky z-10">
           <nav className="flex flex-col space-y-1 bg-white p-3 rounded-xl shadow-sm border border-slate-200">
              <button onClick={() => setActiveSection('course')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'course' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>1. COURSE</button>
@@ -3185,8 +3185,7 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-[#ea980c]/10 text-[#ea980c] hover:bg-[#ea980c]/20'}`}>8. TOEIC</button>
              <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>9. NEWS</button>
              <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>10. GALLERY</button>
-             <div className="h-px bg-slate-200 my-2"></div>
-             <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>Subscription Pricing</button>
+             <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>11. SUBSCRIPTION</button>
           </nav>
         </aside>
 
