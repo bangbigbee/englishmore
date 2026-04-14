@@ -4209,31 +4209,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Statistics */}
-        <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ${activeSection === 'course' ? '' : 'hidden'}`}>
-          <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Total users</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalUsers}</p>
-          </div>
-          <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Total students across all courses</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">{summary.totalStudents}</p>
-          </div>
-          <div className="bg-white rounded shadow p-6">
-            <h3 className="text-gray-500 text-sm font-medium">Waiting for payment confirmation</h3>
-            <p className="text-3xl font-bold text-gray-900 mt-2">{enrollments.filter((e) => e.status === 'pending').length}</p>
-          </div>
-          <div className="bg-white rounded shadow p-6 flex flex-col justify-between">
-            <h3 className="text-gray-500 text-sm font-medium">Students by course</h3>
-            <Link
-              href="/admin/course-students"
-              className="mt-4 inline-flex items-center justify-center px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
-            >
-              View details
-            </Link>
-          </div>
-        </div>
-
 
 
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'homework' ? '' : 'hidden'}`}>
