@@ -505,8 +505,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 >
                   {/* Compact Lesson Header & Toggle */}
                   <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl font-black text-[#14532d]/20 select-none">#{currentLesson.order}</span>
+                    <div className="flex flex-wrap items-center gap-3 w-full">
                       <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
                         <span>{currentLesson.title}</span>
                         {currentLesson.accessTier === 'PRO' && <span className="px-2 py-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] border border-[#FDB931] text-[10px] font-black uppercase tracking-widest rounded-md shadow-sm">PRO</span>}
