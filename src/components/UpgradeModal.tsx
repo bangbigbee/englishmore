@@ -37,6 +37,34 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [submitting, setSubmitting] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [pendingCheckout, setPendingCheckout] = useState<'PRO' | 'ULTRA' | null>(null)
+  const [pricingConfig, setPricingConfig] = useState<any>(null)
+
+  useEffect(() => {
+    fetch('/api/public/settings?key=subscription_pricing')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.value) {
+          setPricingConfig(data.value)
+        }
+      })
+      .catch(console.error)
+  }, [])
+
+  const proPrice = pricingConfig?.PRO?.price ?? 299000
+  const proDuration = pricingConfig?.PRO?.durationMonths ?? 6
+  const ultraPrice = pricingConfig?.ULTRA?.price ?? 899000
+  const ultraDuration = pricingConfig?.ULTRA?.durationMonths ?? 120
+
+  const formatPrice = (price: number) => {
+    if (price === 0) return 'Miễn phí'
+    if (price >= 1000 && price % 1000 === 0) return `${price / 1000}k`
+    return price.toLocaleString('vi-VN') + 'đ'
+  }
+
+  const formatDuration = (months: number) => {
+    if (months >= 99) return 'trọn đời'
+    return `${months} tháng`
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined' && session) {
@@ -195,7 +223,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <h3 className="text-2xl font-black text-slate-900 mb-2">Học Viên Lớp</h3>
                   <p className="text-slate-500 text-sm h-12">Dành cho người thật sự muốn nâng cao điểm số hiệu quả.</p>
                   <div className="text-3xl font-black text-slate-900 mt-4 mb-6">
-                    299k<span className="text-base font-normal text-slate-400">/6 tháng</span>
+                    {formatPrice(proPrice)}<span className="text-base font-normal text-slate-400">/{formatDuration(proDuration)}</span>
                   </div>
                 </div>
                 
@@ -241,7 +269,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <h3 className="text-2xl font-black text-white mb-2">Trọn Đời (ULTRA)</h3>
                   <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
                   <div className="text-3xl font-black text-white mt-4 mb-6">
-                    899k<span className="text-base font-normal text-purple-100/50">/trọn đời</span>
+                    {formatPrice(ultraPrice)}<span className="text-base font-normal text-purple-100/50">/{formatDuration(ultraDuration)}</span>
                   </div>
                 </div>
                 
@@ -296,7 +324,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
             </p>
           </div>
 
-          {renderVietQR(activeModal === 'PRO' ? 299000 : 899000, activeModal)}
+          {renderVietQR(activeModal === 'PRO' ? proPrice : ultraPrice, activeModal)}
 
           <div className="mt-6">
             <button 
@@ -309,8 +337,8 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                       targetTier: activeModal,
-                      durationMonths: activeModal === 'PRO' ? 6 : 12,
-                      price: activeModal === 'PRO' ? 299000 : 899000,
+                      durationMonths: activeModal === 'PRO' ? proDuration : ultraDuration,
+                      price: activeModal === 'PRO' ? proPrice : ultraPrice,
                     })
                   })
                   
