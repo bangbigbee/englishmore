@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { IconSearch } from '@tabler/icons-react'
-import { format } from 'date-fns'
 
 interface UserItem {
   id: string
@@ -60,7 +59,7 @@ export default function AdminUserManagement() {
           </span>
           {expiresAt && (
             <span className="text-[10px] text-slate-500 whitespace-nowrap">
-              End: {format(new Date(expiresAt), 'dd/MM/yyyy')}
+              End: {new Date(expiresAt).toLocaleDateString('en-GB')}
             </span>
           )}
         </div>
@@ -144,7 +143,7 @@ export default function AdminUserManagement() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-500">
-                    {format(new Date(user.createdAt), 'dd/MM/yyyy')}
+                    {new Date(user.createdAt).toLocaleDateString('en-GB')}
                   </td>
                 </tr>
               ))
