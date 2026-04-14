@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 		}
 
 		const body = await req.json()
-		const { topicId, title, order, content, accessTier } = body
+		const { topicId, title, order, content, accessTier, theoryAccessTier, explanationAccessTier } = body
 
 		if (!topicId || !title || order === undefined) {
 			return NextResponse.json({ error: 'topicId, title, and order are required' }, { status: 400 })
@@ -54,7 +54,9 @@ export async function POST(req: Request) {
 				title,
 				order: Number(order),
 				content,
-				accessTier: accessTier || 'FREE'
+				accessTier: accessTier || 'FREE',
+				theoryAccessTier: theoryAccessTier || 'FREE',
+				explanationAccessTier: explanationAccessTier || 'FREE'
 			}
 		})
 

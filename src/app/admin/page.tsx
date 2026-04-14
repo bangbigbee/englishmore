@@ -300,6 +300,9 @@ interface AdminToeicLesson {
   title: string
   order: number
   content: string | null
+  accessTier: string
+  theoryAccessTier: string
+  explanationAccessTier: string
   _count?: { questions: number }
 }
 
@@ -769,7 +772,7 @@ export default function AdminDashboard() {
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '' })
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
-  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE' })
+  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE' })
   const [editingToeicLesson, setEditingToeicLesson] = useState<AdminToeicLesson | null>(null)
   const [showQuestionModal, setShowQuestionModal] = useState(false)
   const [questionForm, setQuestionForm] = useState({
@@ -1384,7 +1387,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save lesson')
       toast.success(editingToeicLesson ? 'Lesson updated successfully' : 'Lesson created successfully')
       setShowLessonModal(false)
-      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE' })
+      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE' })
       setEditingToeicLesson(null)
       fetchToeicLessons(selectedToeicTopic.id)
     } catch (err) {
@@ -3636,7 +3639,7 @@ export default function AdminDashboard() {
                 {selectedToeicTopic && (
                   <button
                     onClick={() => {
-                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE' })
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE' })
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
@@ -3673,7 +3676,7 @@ export default function AdminDashboard() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE' })
+                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || 'FREE', explanationAccessTier: (lesson as any).explanationAccessTier || 'FREE' })
                             setEditingToeicLesson(lesson)
                             setShowLessonModal(true)
                           }}
@@ -7131,11 +7134,38 @@ export default function AdminDashboard() {
                         className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                       />
                     </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
                     <div className="col-span-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Access Tier</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">General Access</label>
                       <select
                         value={lessonForm.accessTier}
                         onChange={(e) => setLessonForm({ ...lessonForm, accessTier: e.target.value })}
+                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                      >
+                        <option value="FREE">Tặng Miễn Phí (FREE)</option>
+                        <option value="PRO">Học Viên (PRO)</option>
+                        <option value="ULTRA">VIP (ULTRA)</option>
+                      </select>
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Theory Access</label>
+                      <select
+                        value={lessonForm.theoryAccessTier}
+                        onChange={(e) => setLessonForm({ ...lessonForm, theoryAccessTier: e.target.value })}
+                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                      >
+                        <option value="FREE">Tặng Miễn Phí (FREE)</option>
+                        <option value="PRO">Học Viên (PRO)</option>
+                        <option value="ULTRA">VIP (ULTRA)</option>
+                      </select>
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Explanation Access</label>
+                      <select
+                        value={lessonForm.explanationAccessTier}
+                        onChange={(e) => setLessonForm({ ...lessonForm, explanationAccessTier: e.target.value })}
                         className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                       >
                         <option value="FREE">Tặng Miễn Phí (FREE)</option>

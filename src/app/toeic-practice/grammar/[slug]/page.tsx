@@ -25,6 +25,8 @@ interface ToeicLesson {
   order: number
   content: string | null
   accessTier: 'FREE' | 'PRO' | 'ULTRA'
+  theoryAccessTier: 'FREE' | 'PRO' | 'ULTRA'
+  explanationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   questions: ToeicQuestion[]
 }
 
@@ -437,14 +439,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               <button
                 key={lesson.id}
                 onClick={() => {
-                  const lessonTierLevel = lesson.accessTier === 'ULTRA' ? 3 : lesson.accessTier === 'PRO' ? 2 : 1;
-                  const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                  
-                  if (lessonTierLevel > userTierLevel) {
-                    setShowPricing(true)
-                    return;
-                  }
-
                   setSelectedLessonId(lesson.id)
                   setActiveQuestionIndex(0)
                   setShowLessonContent(lesson.questions.length === 0)
@@ -487,8 +481,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   const lessonTierLevel = lesson.accessTier === 'ULTRA' ? 3 : lesson.accessTier === 'PRO' ? 2 : 1;
                   const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
                   return lessonTierLevel > userTierLevel && (
-                    <div className="shrink-0">
-                      <svg className="w-4 h-4 text-slate-400 opacity-60" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+                    <div className="shrink-0" onClick={(e) => { e.stopPropagation(); setShowPricing(true); }}>
+                      <svg className="w-4 h-4 text-slate-400 opacity-60 cursor-pointer hover:text-amber-500 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
                     </div>
                   );
                 })()}
@@ -545,13 +539,33 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden mb-8"
                       >
-                        <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50">
-                          <div className="prose prose-slate max-w-none prose-headings:font-black prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600">
-                            <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-sm md:text-base">
-                              {currentLesson.content || 'Nội dung đang được cập nhật...'}
-                            </div>
-                          </div>
-                        </div>
+                        {(() => {
+                           const theoryTierLevel = currentLesson.theoryAccessTier === 'ULTRA' ? 3 : currentLesson.theoryAccessTier === 'PRO' ? 2 : 1;
+                           const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                           const isLocked = theoryTierLevel > userTierLevel;
+                           return (
+                             <div className="relative">
+                               <div className={`bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50 ${isLocked ? 'blur-sm pointer-events-none opacity-40 select-none' : ''}`}>
+                                 <div className="prose prose-slate max-w-none prose-headings:font-black prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600">
+                                   <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-sm md:text-base">
+                                     {currentLesson.content || 'Nội dung đang được cập nhật...'}
+                                   </div>
+                                 </div>
+                               </div>
+                               {isLocked && (
+                                  <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4">
+                                    <div className="bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-slate-200/60 flex flex-col items-center text-center max-w-xs transform transition-all hover:scale-105">
+                                      <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-3">
+                                        <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                      </div>
+                                      <p className="text-slate-800 mb-4 text-sm font-medium leading-relaxed">Nội dung lý thuyết yêu cầu gói <strong className="text-amber-600 font-extrabold">{currentLesson.theoryAccessTier}</strong></p>
+                                      <button onClick={() => setShowPricing(true)} className="px-5 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all active:scale-95 w-full">Nâng Cấp Ngay</button>
+                                    </div>
+                                  </div>
+                               )}
+                             </div>
+                           )
+                        })()}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -718,11 +732,35 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               >
                                                 {explanationText}
                                               </button>
-                                          ) : (
-                                              <div className="text-xs md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[150px] overflow-y-auto custom-scrollbar">
-                                                {explanationText}
-                                              </div>
-                                          )}
+                                          ) : (() => {
+                                                const explanationTierLevel = currentLesson.explanationAccessTier === 'ULTRA' ? 3 : currentLesson.explanationAccessTier === 'PRO' ? 2 : 1;
+                                                const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                const isLocked = explanationTierLevel > userTierLevel;
+                                                
+                                                if (isLocked) {
+                                                   return (
+                                                      <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50 mt-2">
+                                                        <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-3 select-none text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">
+                                                          {explanationText}
+                                                        </div>
+                                                        <div className="relative z-10 flex py-4 flex-col items-center justify-center min-h-[100px]">
+                                                          <button onClick={() => setShowPricing(true)} className="group flex items-center gap-2 bg-white text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-full border border-slate-300 shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer">
+                                                             <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                                                               <svg className="w-3.5 h-3.5 text-amber-600 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                                             </div>
+                                                             <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">Yêu cầu {currentLesson.explanationAccessTier} để xem giải thích</span>
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                   )
+                                                }
+                                                
+                                                return (
+                                                  <div className="text-xs md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[150px] overflow-y-auto custom-scrollbar">
+                                                    {explanationText}
+                                                  </div>
+                                                )
+                                              })()}
                                         </div>
                                       )}
                                     </div>
