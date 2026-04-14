@@ -38,7 +38,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [pendingCheckout, setPendingCheckout] = useState<'PRO' | 'ULTRA' | null>(null)
   const [pricingConfig, setPricingConfig] = useState<any>(null)
-  const [feedback, setFeedback] = useState<{ type: 'error' | 'success', title: string, message: string } | null>(null)
+  const [feedback, setFeedback] = useState<{ type: 'error' | 'success', title: string, message: string, tier?: 'PRO' | 'ULTRA' } | null>(null)
   const [checkingPending, setCheckingPending] = useState(false)
 
   const getEffectiveTier = () => {
@@ -108,7 +108,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
         setFeedback({
           type: 'error',
           title: 'Yêu cầu đang chờ duyệt',
-          message: 'Vui lòng chờ Quản trị viên xác nhận đăng ký.'
+          message: 'Bạn có một yêu cầu nâng cấp đang chờ duyệt. Hãy quay lại sau nhé.'
         })
         return
       }
@@ -200,12 +200,22 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
         >
           <div className="mb-6 flex justify-center">
             {feedback.type === 'success' ? (
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <IconCheck className="w-8 h-8 text-green-600" />
-              </div>
+              feedback.tier === 'PRO' ? (
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
+                  <IconStar className="w-5 h-5" /> PRO PASS
+                </div>
+              ) : feedback.tier === 'ULTRA' ? (
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-900/60 text-purple-300 rounded-full text-xs font-bold uppercase tracking-widest border border-purple-700/30 shadow-sm">
+                  <IconZap className="w-5 h-5" /> ULTRA MASTERY
+                </div>
+              ) : (
+                <div className="w-16 h-16 bg-[#14532d]/10 rounded-full flex items-center justify-center">
+                  <IconCheck className="w-8 h-8 text-[#14532d]" />
+                </div>
+              )
             ) : (
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                <IconX className="w-8 h-8 text-red-600" />
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center">
+                <IconX className="w-8 h-8 text-amber-600" />
               </div>
             )}
           </div>
@@ -223,7 +233,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 onClose()
               }
             }}
-            className={`w-full font-bold rounded-xl py-3 transition-colors ${feedback.type === 'success' ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20' : 'bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20'}`}
+            className="w-full font-bold rounded-xl py-3 transition-colors bg-[#14532d] hover:bg-[#166534] text-white shadow-lg shadow-[#14532d]/20 mt-2"
           >
             Đã hiểu
           </button>
@@ -459,19 +469,20 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   
                   const data = await res.json()
                   if (!res.ok) {
-                    setFeedback({
-                      type: 'error',
-                      title: 'Có lỗi xảy ra',
-                      message: data.error || 'Bạn có thể đang có một yêu cầu khác đang chờ duyệt. Vui lòng kiểm tra lại.'
-                    })
-                    return
-                  }
-                  
                   setFeedback({
-                    type: 'success',
-                    title: 'Gửi yêu cầu thành công',
-                    message: 'Yêu cầu nâng cấp phân quyền của bạn đã được ghi nhận. Quản trị viên sẽ đối soát và kích hoạt trong vòng 1-2 giờ làm việc.'
+                    type: 'error',
+                    title: 'Có lỗi xảy ra',
+                    message: data.error || 'Bạn có một yêu cầu nâng cấp đang chờ duyệt. Hãy quay lại sau nhé.'
                   })
+                  return
+                }
+                
+                setFeedback({
+                  type: 'success',
+                  title: 'Gửi yêu cầu thành công',
+                  message: 'Yêu cầu nâng cấp phân quyền của bạn đã được ghi nhận. Quản trị viên sẽ đối soát và kích hoạt trong vòng 1-2 giờ làm việc.',
+                  tier: activeModal as 'PRO' | 'ULTRA'
+                })
                 } catch (err) {
                   setFeedback({
                     type: 'error',
