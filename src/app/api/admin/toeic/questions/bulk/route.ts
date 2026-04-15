@@ -33,7 +33,8 @@ export async function POST(req: Request) {
             optionC: q.optionC,
             optionD: q.optionD || null,
             correctOption: q.correctOption,
-            explanation: q.explanation || null
+            explanation: q.explanation || null,
+            translation: q.translation || null
           }
         })
       )

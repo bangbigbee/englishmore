@@ -312,6 +312,7 @@ interface AdminToeicLesson {
   accessTier: string
   theoryAccessTier: string
   explanationAccessTier: string
+  translationAccessTier: string
   _count?: { questions: number }
 }
 
@@ -325,6 +326,7 @@ interface AdminToeicQuestion {
   optionD: string | null
   correctOption: string
   explanation: string | null
+  translation: string | null
 }
 
 const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
@@ -794,7 +796,7 @@ export default function AdminDashboard() {
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '' })
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
-  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE' })
+  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE' })
   const [editingToeicLesson, setEditingToeicLesson] = useState<AdminToeicLesson | null>(null)
   const [showQuestionModal, setShowQuestionModal] = useState(false)
   const [questionForm, setQuestionForm] = useState({
@@ -804,7 +806,8 @@ export default function AdminDashboard() {
     optionC: '',
     optionD: '',
     correctOption: 'A',
-    explanation: ''
+    explanation: '',
+    translation: ''
   })
   const [editingToeicQuestion, setEditingToeicQuestion] = useState<AdminToeicQuestion | null>(null)
   const [deletingToeicId, setDeletingToeicId] = useState<string | null>(null)
@@ -1600,7 +1603,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save lesson')
       toast.success(editingToeicLesson ? 'Lesson updated successfully' : 'Lesson created successfully')
       setShowLessonModal(false)
-      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE' })
+      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE' })
       setEditingToeicLesson(null)
       fetchToeicLessons(selectedToeicTopic.id)
     } catch (err) {
@@ -1650,7 +1653,8 @@ export default function AdminDashboard() {
         optionC: '',
         optionD: '',
         correctOption: 'A',
-        explanation: ''
+        explanation: '',
+        translation: ''
       })
       fetchToeicQuestions(selectedToeicLesson.id)
     } catch (err) {
@@ -3808,7 +3812,7 @@ export default function AdminDashboard() {
                 {selectedToeicTopic && (
                   <button
                     onClick={() => {
-                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE' })
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE' })
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
@@ -3845,7 +3849,7 @@ export default function AdminDashboard() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || 'FREE', explanationAccessTier: (lesson as any).explanationAccessTier || 'FREE' })
+                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || 'FREE', explanationAccessTier: (lesson as any).explanationAccessTier || 'FREE', translationAccessTier: (lesson as any).translationAccessTier || 'FREE' })
                             setEditingToeicLesson(lesson)
                             setShowLessonModal(true)
                           }}
@@ -3922,7 +3926,8 @@ export default function AdminDashboard() {
                           optionC: '',
                           optionD: '',
                           correctOption: 'A',
-                          explanation: ''
+                          explanation: '',
+                          translation: ''
                         })
                         setEditingToeicQuestion(null)
                         setShowQuestionModal(true)
@@ -3959,7 +3964,8 @@ export default function AdminDashboard() {
                               optionC: q.optionC,
                               optionD: q.optionD || '',
                               correctOption: q.correctOption,
-                              explanation: q.explanation || ''
+                              explanation: q.explanation || '',
+                              translation: q.translation || ''
                             })
                             setEditingToeicQuestion(q)
                             setShowQuestionModal(true)
@@ -7125,7 +7131,7 @@ export default function AdminDashboard() {
                         {courses
                           .filter((c) => c.id !== quickCopyExercise.courseId)
                           .map((c) => (
-                            <option key={c.id} value={c.id}>{c.title}</option>
+                            <option key={c.id} value={c.title}>{c.title}</option>
                           ))}
                       </select>
                     </div>
@@ -7423,7 +7429,7 @@ export default function AdminDashboard() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-4 gap-4">
                     <div className="col-span-1">
                       <label className="block text-sm font-medium text-gray-700 mb-1">General Access</label>
                       <select
@@ -7451,13 +7457,25 @@ export default function AdminDashboard() {
                     <div className="col-span-1">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Explanation Access</label>
                       <select
+                        className="w-full p-2 border border-gray-300 rounded text-black bg-white"
                         value={lessonForm.explanationAccessTier}
                         onChange={(e) => setLessonForm({ ...lessonForm, explanationAccessTier: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                       >
-                        <option value="FREE">Tặng Miễn Phí (FREE)</option>
-                        <option value="PRO">Học Viên (PRO)</option>
-                        <option value="ULTRA">VIP (ULTRA)</option>
+                        <option value="FREE">Free</option>
+                        <option value="PRO">Pro</option>
+                        <option value="ULTRA">Ultra</option>
+                      </select>
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Translation Access</label>
+                      <select
+                        className="w-full p-2 border border-gray-300 rounded text-black bg-white"
+                        value={lessonForm.translationAccessTier}
+                        onChange={(e) => setLessonForm({ ...lessonForm, translationAccessTier: e.target.value })}
+                      >
+                        <option value="FREE">Free</option>
+                        <option value="PRO">Pro</option>
+                        <option value="ULTRA">Ultra</option>
                       </select>
                     </div>
                   </div>
@@ -7579,6 +7597,16 @@ export default function AdminDashboard() {
                         value={questionForm.explanation}
                         onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
                         className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] text-sm italic"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Translation (Show to student on click)</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Dịch nghĩa..."
+                        value={questionForm.translation}
+                        onChange={(e) => setQuestionForm({ ...questionForm, translation: e.target.value })}
+                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] text-sm"
                       />
                     </div>
                   </div>

@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 		}
 
 		const body = await req.json()
-		const { lessonId, question, optionA, optionB, optionC, optionD, correctOption, explanation } = body
+		const { lessonId, question, optionA, optionB, optionC, optionD, correctOption, explanation, translation } = body
 
 		if (!lessonId || !question || !optionA || !optionB || !optionC || !correctOption) {
 			return NextResponse.json({ error: 'lessonId, question, options A, B, C and correctOption are required' }, { status: 400 })
@@ -52,7 +52,8 @@ export async function POST(req: Request) {
 				optionC,
 				optionD,
 				correctOption,
-				explanation
+				explanation,
+				translation
 			}
 		})
 

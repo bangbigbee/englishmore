@@ -661,6 +661,7 @@ model ToeicGrammarLesson {
   accessTier  AccessTier @default(FREE)
   theoryAccessTier AccessTier @default(FREE)
   explanationAccessTier AccessTier @default(FREE)
+  translationAccessTier AccessTier @default(FREE)
   questions   ToeicQuestion[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -681,6 +682,7 @@ model ToeicQuestion {
   optionD       String?
   correctOption String
   explanation   String?  @db.Text
+  translation   String?  @db.Text
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

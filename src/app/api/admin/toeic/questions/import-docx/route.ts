@@ -14,6 +14,7 @@ type ExtractedToeicQuestion = {
   optionD: string
   correctOption: string
   explanation: string
+  translation: string
 }
 
 async function requireAdmin() {
@@ -67,7 +68,8 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
         optionC: '',
         optionD: '',
         correctOption: 'A',
-        explanation: ''
+        explanation: '',
+        translation: ''
       }
       continue
     }
@@ -98,8 +100,17 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
       continue
     }
 
+    // Match translation: "Dịch nghĩa: ...", "Translation: ..."
+    const translationMatch = line.match(/^(?:Translation|Dich\s*nghia|Dịch\s*nghĩa)\s*[:\-]?\s*(.+)$/i)
+    if (translationMatch) {
+      current.translation = translationMatch[1].trim()
+      continue
+    }
+
     // Append to either question or explanation if it doesn't match a prefix
-    if (current.explanation) {
+    if (current.translation) {
+      current.translation += ' ' + line
+    } else if (current.explanation) {
       current.explanation += ' ' + line
     } else if (current.question && !current.optionA) {
       current.question += ' ' + line

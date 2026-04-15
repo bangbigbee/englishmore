@@ -17,6 +17,7 @@ interface ToeicQuestion {
   optionD: string | null
   correctOption: string
   explanation: string | null
+  translation: string | null
 }
 
 interface ToeicLesson {
@@ -27,6 +28,7 @@ interface ToeicLesson {
   accessTier: 'FREE' | 'PRO' | 'ULTRA'
   theoryAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   explanationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
+  translationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   questions: ToeicQuestion[]
 }
 
@@ -48,6 +50,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
+  const [showTranslation, setShowTranslation] = useState<Record<string, boolean>>({})
   const [showLessonContent, setShowLessonContent] = useState(false)
   const [correctStreak, setCorrectStreak] = useState(0)
   const [timerStartTime, setTimerStartTime] = useState<number | null>(null)
@@ -358,12 +361,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     
     const newAnswers = { ...userAnswers };
     const newResults = { ...showResults };
+    const newTranslations = { ...showTranslation };
     currentLesson.questions.forEach(q => {
       delete newAnswers[q.id];
       delete newResults[q.id];
+      delete newTranslations[q.id];
     });
     setUserAnswers(newAnswers);
     setShowResults(newResults);
+    setShowTranslation(newTranslations);
     
     setIsTestCompleted(false);
     setIsReviewing(false);
@@ -723,9 +729,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             </div>
 
                             {/* Full Width Explanation Row below the buttons */}
-                            {isShowingResultLocal && explanationText && (
+                            {isShowingResultLocal && (explanationText || q.translation) && (
                               <div className={`w-full p-4 md:p-6 rounded-2xl border-2 shadow-sm ${isCorrectLocal ? 'bg-emerald-50/40 border-emerald-100' : 'bg-rose-50/40 border-rose-100'}`}>
-                                {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
+                                {explanationText ? (
+                                    explanationText === 'Đăng nhập để xem phần giải thích.' ? (
                                     <button 
                                       onClick={(e) => {
                                         e.preventDefault();
@@ -768,11 +775,65 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       }
                                       
                                       return (
-                                        <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
+                                        <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar mb-3">
                                           {explanationText}
                                         </div>
                                       )
-                                })()}
+                                })()
+                                ) : null}
+                                
+                                {q.translation && (
+                                  <div className="mt-3 pt-3 border-t border-slate-200/60">
+                                    {showTranslation[q.id] ? (
+                                      (() => {
+                                        const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                        const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                        const isLocked = translationTierLevel > userTierLevel;
+                                        
+                                        if (isLocked) {
+                                           return (
+                                              <div className="relative w-full overflow-hidden rounded-xl border border-blue-200 bg-blue-50/50">
+                                                <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-4 select-none text-sm leading-relaxed text-blue-900 whitespace-pre-wrap">
+                                                  {q.translation}
+                                                </div>
+                                                <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
+                                                  <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                                     <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                                       {currentLesson.translationAccessTier === 'ULTRA' ? (
+                                                          <svg className="w-4 h-4 text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                                       ) : (
+                                                          <svg className="w-4 h-4 text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                                       )}
+                                                       <span>Nâng cấp</span>
+                                                     </div>
+                                                     <div className="flex items-center gap-1 whitespace-nowrap">
+                                                       <span className={`${currentLesson.translationAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.translationAccessTier}</span>
+                                                       <span>để xem dịch nghĩa.</span>
+                                                     </div>
+                                                  </button>
+                                                </div>
+                                              </div>
+                                           )
+                                        }
+                                        
+                                        return (
+                                          <div className="text-sm md:text-[15px] font-medium text-blue-800 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
+                                            <span className="font-bold text-blue-900">Dịch nghĩa: </span>
+                                            {q.translation}
+                                          </div>
+                                        )
+                                      })()
+                                    ) : (
+                                      <button 
+                                        onClick={() => setShowTranslation(prev => ({ ...prev, [q.id]: true }))}
+                                        className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1 cursor-pointer"
+                                      >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 9.198 15.53 3 18.051" /></svg>
+                                        Xem dịch tiếng Việt
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             )}
 
