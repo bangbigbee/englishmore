@@ -6,11 +6,51 @@ import UpgradeModal from "@/components/UpgradeModal";
 
 
 const TABS = [
-	{ key: "grammar", label: "Grammar", icon: "📘" },
-	{ key: "vocabulary", label: "Vocabulary", icon: "📙" },
-	{ key: "listening", label: "Listening", icon: "🎧" },
-	{ key: "reading", label: "Reading", icon: "📖" },
-	{ key: "actual-test", label: "Actual Test", icon: "📝" },
+	{ 
+		key: "grammar", 
+		label: "Grammar", 
+		icon: (
+			<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+			</svg>
+		) 
+	},
+	{ 
+		key: "vocabulary", 
+		label: "Vocabulary", 
+		icon: (
+			<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 9.198 15.53 3 18.051" />
+			</svg>
+		)
+	},
+	{ 
+		key: "listening", 
+		label: "Listening", 
+		icon: (
+			<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+			</svg>
+		)
+	},
+	{ 
+		key: "reading", 
+		label: "Reading", 
+		icon: (
+			<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+			</svg>
+		)
+	},
+	{ 
+		key: "actual-test", 
+		label: "Actual Test", 
+		icon: (
+			<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+			</svg>
+		)
+	},
 ];
 
 const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
