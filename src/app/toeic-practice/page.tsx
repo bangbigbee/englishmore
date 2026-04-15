@@ -198,9 +198,16 @@ const buildPronunciationFeedback = (score: number, candidate: string, target: st
 };
 
 const UltraTag = () => (
-	<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-linear-to-r from-amber-400 via-yellow-200 to-amber-500 text-[9px] font-black text-amber-900 shadow-[0_0_8px_rgba(251,191,36,0.3)] border border-white/50">
-		<svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+	<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-linear-to-r from-purple-600 via-purple-500 to-indigo-600 text-[9px] font-black text-white shadow-[0_0_8px_rgba(147,51,234,0.3)] border border-purple-400/50">
+		<svg className="w-2.5 h-2.5 fill-amber-300" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
 		ULTRA
+	</span>
+);
+
+const ProTag = () => (
+	<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-linear-to-r from-amber-500 via-amber-400 to-orange-500 text-[9px] font-black text-white shadow-[0_0_8px_rgba(245,158,11,0.3)] border border-amber-300/50">
+		<svg className="w-2.5 h-2.5 fill-white" viewBox="0 0 24 24"><path d="M12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72 3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.6l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08l4.15-2.5z"/></svg>
+		PRO
 	</span>
 );
 
@@ -487,21 +494,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
 			className="inline-flex items-center gap-2 cursor-pointer group my-1"
 		>
-			<div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200 group-hover:bg-purple-50 group-hover:border-purple-200 transition-colors shadow-xs">
-				<svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200 group-hover:bg-slate-100 group-hover:border-slate-300 transition-colors shadow-xs">
+				<svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
 				</svg>
-				<span className="text-xs font-bold text-slate-600 group-hover:text-purple-700">{label}</span>
+				<span className="text-xs font-bold text-slate-600 group-hover:text-slate-800">{label}</span>
 			</div>
-			{tier === 'ULTRA' ? (
-				<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-purple-900 text-[9px] font-black text-purple-100 tracking-wider shadow-sm">
-					ULTRA
-				</span>
-			) : (
-				<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-emerald-700 text-[9px] font-black text-white tracking-wider shadow-sm">
-					PRO
-				</span>
-			)}
+			{tier === 'ULTRA' ? <UltraTag /> : <ProTag />}
 		</div>
 	);
 
@@ -533,11 +532,6 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 								</div>
 								<div>
 									<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1 pr-14">{t.topic}</div>
-									<div className="text-xs text-gray-400 flex items-center gap-1 mt-2">
-										<span className="text-amber-500">⭐</span>
-										<span className="text-amber-600 font-semibold text-[11px]">ULTRA</span>
-										<span className="text-gray-400 text-[11px]">— Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC</span>
-									</div>
 								</div>
 								<div className="flex justify-end mt-3">
 									<button className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer">
