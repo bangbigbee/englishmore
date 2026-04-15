@@ -125,18 +125,20 @@ const parseVocabularyFromText = (text: string) => {
     currentItem = {}
   }
 
-  for (const line of lines) {
-    if (/^---+$/.test(line)) {
-      flush()
-      continue
-    }
+  const regex = /(TOPIC|CHUDE|CHU_DE|CATEGORY|WORD|MEANING|PHONETIC|EXAMPLE_VI|EXAMPLE_VIETNAMESE|VI|NGHIA_VI|DICH_NGHIA|EXAMPLE|SYNONYMS|SYNONYM|ANTONYMS|ANTONYM|COLLOCATIONS|COLLOCATION|TOEIC_TRAP|TRAP|MNEMONIC_IMAGE|MNEMONICURL|ENGLISH_DEFINITION|DEFINITION|ENGLISHDEFINITION|PART_OF_SPEECH|POS)\s*:/gi;
+  const parts = normalizedText.split(regex);
 
-    const colonIdx = line.indexOf(':')
-    if (colonIdx <= 0) continue
+  // parts array will be: [prefixText, match1, textBetween1And2, match2, ...]
+  // So the length is guaranteed to be odd. Even indices are text, odd indices are keys.
+  for (let i = 1; i < parts.length; i += 2) {
+    const rawKey = parts[i];
+    const key = rawKey.toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    let val = parts[i + 1] || '';
+    
+    // Clean up trailing dashes if they were used as separators, and trim whitespace
+    val = val.replace(/---+/g, '').trim();
 
-    const key = line.slice(0, colonIdx).trim().toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '')
-    const val = line.slice(colonIdx + 1).trim()
-    if (!val) continue
+    if (!val) continue;
 
     if (key === 'TOPIC' || key === 'CHUDE' || key === 'CHU_DE' || key === 'CATEGORY') {
       if (currentItem.word) flush()
