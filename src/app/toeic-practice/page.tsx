@@ -19,13 +19,24 @@ const TABS = [
 		key: "vocabulary", 
 		label: "Vocabulary", 
 		icon: (
-			<div className="relative w-5 h-5">
-				<svg className="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-				</svg>
-				<span className="absolute inset-0 flex items-center justify-center text-[8px] font-black mt-[-1px] ml-[2px] tracking-tighter">A-Z</span>
-			</div>
+			<svg className="w-5 h-5 shadow-sm" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+				{/* Book Cover */}
+				<rect x="10" y="5" width="74" height="94" rx="10" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
+				{/* Tabs */}
+				<path d="M84 20C89.5228 20 94 24.4772 94 30V40C94 45.5228 89.5228 50 84 50V20Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
+				<path d="M84 45C89.5228 45 94 49.4772 94 55V65C94 70.5228 89.5228 75 84 75V45Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
+				<path d="M84 70C89.5228 70 94 74.4772 94 80V90C94 95.5228 89.5228 100 84 100V70Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
+				{/* Bottom Pages detail */}
+				<path d="M15 99C15 107.284 21.7157 114 30 114H80C82.2091 114 84 112.209 84 110V99H15Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
+				<path d="M22 106H77" stroke="#3B82F6" strokeWidth="6" strokeLinecap="round"/>
+				{/* A-Z Label */}
+				<rect x="25" y="20" width="44" height="28" rx="6" stroke="#3B82F6" strokeWidth="7"/>
+				<text x="47" y="42" fontSize="24" fontWeight="900" textAnchor="middle" fill="#3B82F6" fontFamily="Inter, sans-serif">A-Z</text>
+				{/* Cover Lines */}
+				<line x1="28" y1="62" x2="66" y2="62" stroke="#3B82F6" strokeWidth="7" strokeLinecap="round"/>
+				<line x1="28" y1="75" x2="66" y2="75" stroke="#3B82F6" strokeWidth="7" strokeLinecap="round"/>
+				<line x1="28" y1="88" x2="50" y2="88" stroke="#3B82F6" strokeWidth="7" strokeLinecap="round"/>
+			</svg>
 		)
 	},
 	{ 
