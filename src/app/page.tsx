@@ -2230,7 +2230,7 @@ function HomeContent() {
                                 )}
                                 
                                 {(currentVocabularyItem.collocations || currentVocabularyItem.toeicTrap) && (() => {
-                                  const isUltra = session?.user?.role === 'admin' || session?.user?.tier === 'ULTRA';
+                                  const isUltra = session?.user?.tier === 'ULTRA';
                                   return (
                                     <div className="mt-4 relative rounded-xl border border-amber-200/60 bg-gradient-to-br from-amber-50/80 to-orange-50/30 p-4 overflow-hidden shadow-[inset_0_1px_4px_rgba(0,0,0,0.02)]">
                                       {!isUltra && (
