@@ -17,31 +17,34 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 	return (
 		<div
 			onClick={onClick}
-			className="relative group bg-white/90 backdrop-blur-sm rounded-sm p-8 transition-all duration-700 cursor-pointer overflow-hidden
-								 shadow-[0_30px_60px_rgba(0,0,0,0.04)] hover:shadow-[0_50px_100px_rgba(0,0,0,0.1)] 
-								 hover:-translate-y-4 flex flex-col justify-start min-h-[220px] border border-white/20"
+			className="relative group bg-white rounded-md p-7 transition-all duration-500 cursor-pointer overflow-hidden
+								 shadow-[0_15px_35px_-5px_rgba(0,0,0,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.18)] 
+								 hover:-translate-y-2 flex flex-col justify-start min-h-[290px]"
 		>
-			{/* Metallic Shimmer Effect */}
-			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_3s_infinite] bg-linear-to-r from-transparent via-white/50 to-transparent skew-x-[-20deg]" />
+			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_3s_infinite] bg-linear-to-r from-transparent via-slate-50/30 to-transparent skew-x-[-20deg]" />
 
-			{badgeText && (
-				<div className="text-[10px] font-black uppercase tracking-[0.25em] text-[#818cf8] mb-8 block drop-shadow-sm">
-					{badgeText}
-				</div>
-			)}
-
-			<div className="relative z-10">
-				<h3 className="font-medium text-[22px] text-slate-700 group-hover:text-slate-900 transition-colors leading-[1.3] mb-4">
+			<div className="relative z-10 flex-1">
+				{/* Use flex-1 here so the button stays pushed to the bottom */}
+				<h3 className="font-bold text-2xl text-slate-900 group-hover:text-black transition-colors leading-tight mb-3">
 					{title}
 				</h3>
-				{subtitle && <p className="text-[15px] text-slate-400 font-normal leading-relaxed">{subtitle}</p>}
+
+				{badgeText && (
+					<div className="text-[12px] font-bold uppercase tracking-widest text-[#818cf8] mb-4">
+						{badgeText}
+					</div>
+				)}
+
+				{subtitle && <p className="text-[15px] text-slate-500 font-normal leading-relaxed">{subtitle}</p>}
 			</div>
 
-			{/* Interaction Hint */}
-			<div className="mt-auto pt-4 flex justify-end opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-				<svg className="w-5 h-5 text-[#818cf8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-				</svg>
+			{/* Floating Circular Arrow Button (Bottom Left) */}
+			<div className="relative z-10 mt-8 flex justify-start">
+				<div className="w-10 h-10 shrink-0 rounded-full bg-white shadow-[0_5px_15px_-3px_rgba(0,0,0,0.15)] group-hover:shadow-[0_8px_20px_-3px_rgba(0,0,0,0.2)] flex items-center justify-center text-[#818cf8] transition-all duration-300 group-hover:scale-110">
+					<svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+					</svg>
+				</div>
 			</div>
 		</div>
 	);
