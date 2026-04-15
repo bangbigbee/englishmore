@@ -489,6 +489,18 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		return null;
 	};
 
+	const fieldLabelsVi: Record<string, string> = {
+		meaning: 'Nghĩa của từ',
+		phonetic: 'Phiên âm',
+		englishDefinition: 'Định nghĩa tiếng Anh',
+		example: 'Câu ví dụ',
+		exampleVi: 'Dịch câu ví dụ',
+		synonyms: 'Từ đồng nghĩa',
+		antonyms: 'Từ trái nghĩa',
+		collocations: 'Cụm từ đi kèm',
+		toeicTrap: 'Bẫy TOEIC cần lưu ý',
+	};
+
 	const LockedFieldView = ({ tier, label }: { tier: 'PRO' | 'ULTRA', label: string }) => (
 		<div 
 			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
@@ -496,13 +508,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		>
 			{tier === 'ULTRA' ? (
 				<>
-					<svg className="w-3.5 h-3.5 fill-amber-400 drop-shadow-sm" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-					<span className="text-[11px] font-bold text-slate-400 group-hover:text-purple-700 transition-colors tracking-wide">{label}</span>
+					<svg className="w-3.5 h-3.5 fill-amber-300 drop-shadow-sm" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+					<span className="text-[11px] font-bold text-slate-400 group-hover:text-purple-700 transition-colors tracking-wide">{fieldLabelsVi[label] || label}</span>
 				</>
 			) : (
 				<>
 					<svg className="w-3.5 h-3.5 fill-amber-500 drop-shadow-sm" viewBox="0 0 24 24"><path d="M12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72 3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.6l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08l4.15-2.5z"/></svg>
-					<span className="text-[11px] font-bold text-slate-400 group-hover:text-amber-600 transition-colors tracking-wide">{label}</span>
+					<span className="text-[11px] font-bold text-slate-400 group-hover:text-amber-600 transition-colors tracking-wide">{fieldLabelsVi[label] || label}</span>
 				</>
 			)}
 		</div>
@@ -728,7 +740,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 											isFieldLocked('example') ? <LockedFieldView tier={isFieldLocked('example')!} label="Example" /> :
 											<div className="mt-3.5 w-full rounded-xl bg-slate-50 p-3 border border-slate-200 flex-shrink-0 relative overflow-hidden text-center flex flex-col items-center">
 												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40" />
-												<p className="text-[11px] italic text-slate-700 font-medium tracking-tight">
+												<p className="text-[13px] italic text-slate-700 font-medium tracking-tight">
 													<span className="font-bold text-slate-900 not-italic mr-1.5">Example:</span>
 													{currentItem.example}
 												</p>
@@ -754,7 +766,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 																</svg>
 															</button>
 															{showExampleVi && (
-																<p className="mt-1 text-[10px] italic text-[#ea980c] font-medium text-center leading-relaxed">
+																<p className="mt-1 text-[12px] italic text-[#ea980c] font-medium text-center leading-relaxed">
 																	{currentItem.exampleVi}
 																</p>
 															)}
@@ -772,7 +784,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													<div className="w-full text-left flex items-start gap-1">
 														<span className="font-bold text-[#14532d] flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-															Synonyms:
+															Từ đồng nghĩa:
 														</span>
 														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.synonyms}</span>
 													</div>
@@ -782,7 +794,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													<div className="w-full text-left flex items-start gap-1">
 														<span className="font-bold text-rose-600 flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-															Antonyms:
+															Từ trái nghĩa:
 														</span>
 														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.antonyms}</span>
 													</div>
@@ -792,7 +804,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													<div className="w-full text-left flex items-start gap-1">
 														<span className="font-bold text-purple-700 flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-															Collocations:
+															Cụm từ đi kèm:
 														</span>
 														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.collocations}</span>
 													</div>
@@ -802,7 +814,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													<div className="rounded-md bg-rose-50 border border-rose-200 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1">
 														<span className="font-bold text-rose-600 flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-															⚠ TOEIC Trap:
+															Bẫy TOEIC:
 														</span>
 														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.toeicTrap}</span>
 													</div>
