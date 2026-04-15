@@ -7611,37 +7611,40 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   {/* PRO */}
-                  <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
-                    <p className="mb-3 font-bold text-slate-700">Yêu cầu gói PRO</p>
+                  <div className="rounded-lg border border-amber-200 p-4 bg-amber-50">
+                    <p className="mb-3 font-bold text-amber-700">Yêu cầu gói PRO</p>
                     {(['meaning','phonetic','englishDefinition','example','exampleVi','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => (
                       <label key={`pro-${f}`} className="flex items-center gap-2 mb-2 cursor-pointer">
-                        <input type="checkbox" className="rounded border-slate-300 text-slate-600 focus:ring-slate-500" checked={currentTopicLocks.proFields.includes(f)} onChange={(e) => {
+                        <input type="checkbox" className="rounded border-amber-300 text-amber-600 focus:ring-amber-500" checked={currentTopicLocks.proFields.includes(f)} onChange={(e) => {
                           const checked = e.target.checked;
                           setCurrentTopicLocks(prev => ({
                             ...prev,
-                            proFields: checked ? [...prev.proFields, f] : prev.proFields.filter(x => x !== f)
+                            proFields: checked ? [...prev.proFields, f] : prev.proFields.filter(x => x !== f),
+                            ultraFields: checked ? prev.ultraFields.filter(x => x !== f) : prev.ultraFields
                           }))
                         }} />
-                        <span className="text-sm font-medium text-slate-600">{f}</span>
+                        <span className="text-sm font-medium text-amber-800">{f}</span>
                       </label>
                     ))}
                   </div>
 
                   {/* ULTRA */}
-                  <div className="rounded-lg border border-amber-200 p-4 bg-amber-50">
-                    <p className="mb-3 font-bold text-amber-700">Yêu cầu gói ULTRA</p>
-                    {(['meaning','phonetic','englishDefinition','example','exampleVi','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => (
-                      <label key={`ultra-${f}`} className="flex items-center gap-2 mb-2 cursor-pointer">
-                        <input type="checkbox" className="rounded border-amber-300 text-amber-600 focus:ring-amber-500" checked={currentTopicLocks.ultraFields.includes(f)} onChange={(e) => {
+                  <div className="rounded-lg border border-purple-200 p-4 bg-purple-50">
+                    <p className="mb-3 font-bold text-purple-700">Yêu cầu gói ULTRA</p>
+                    {(['meaning','phonetic','englishDefinition','example','exampleVi','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => {
+                      const isProChecked = currentTopicLocks.proFields.includes(f);
+                      return (
+                      <label key={`ultra-${f}`} className={`flex items-center gap-2 mb-2 ${isProChecked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
+                        <input type="checkbox" className={`rounded border-purple-300 text-purple-600 focus:ring-purple-500 ${isProChecked ? 'cursor-not-allowed' : ''}`} checked={isProChecked || currentTopicLocks.ultraFields.includes(f)} disabled={isProChecked} onChange={(e) => {
                           const checked = e.target.checked;
                           setCurrentTopicLocks(prev => ({
                             ...prev,
                             ultraFields: checked ? [...prev.ultraFields, f] : prev.ultraFields.filter(x => x !== f)
                           }))
                         }} />
-                        <span className="text-sm font-medium text-amber-800">{f}</span>
+                        <span className="text-sm font-medium text-purple-800">{f}</span>
                       </label>
-                    ))}
+                    )})}
                   </div>
                 </div>
               </div>
