@@ -6,12 +6,48 @@ import UpgradeModal from "@/components/UpgradeModal";
 
 
 const TABS = [
-	{ key: "grammar", label: "Grammar" },
-	{ key: "vocabulary", label: "Vocabulary" },
-	{ key: "listening", label: "Listening" },
-	{ key: "reading", label: "Reading" },
-	{ key: "actual-test", label: "Actual Test" },
+	{ key: "grammar", label: "Grammar", icon: "📘" },
+	{ key: "vocabulary", label: "Vocabulary", icon: "📙" },
+	{ key: "listening", label: "Listening", icon: "🎧" },
+	{ key: "reading", label: "Reading", icon: "📖" },
+	{ key: "actual-test", label: "Actual Test", icon: "📝" },
 ];
+
+const TopicCard = ({ title, subtitle, footerLabel, badgeText, onClick }: any) => {
+	return (
+		<div
+			onClick={onClick}
+			className="relative group bg-white rounded-2xl p-6 transition-all duration-500 cursor-pointer overflow-hidden
+								 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] 
+								 hover:-translate-y-2 flex flex-col justify-between min-h-[160px] border border-slate-50"
+		>
+			{/* Metallic Shimmer Effect */}
+			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_2.5s_infinite] bg-linear-to-r from-transparent via-white/60 to-transparent skew-x-[-20deg]" />
+
+			{badgeText && (
+				<div className="absolute top-0 right-0 bg-linear-to-br from-[#ea980c] to-[#d97706] text-white text-[10px] font-bold px-3 py-1.5 rounded-bl-xl shadow-sm z-10">
+					{badgeText}
+				</div>
+			)}
+
+			<div className="relative z-10">
+				<h3 className="font-bold text-lg text-slate-800 group-hover:text-[#14532d] transition-colors leading-snug mb-2 pr-12">
+					{title}
+				</h3>
+				{subtitle && <p className="text-sm text-slate-500 font-medium">{subtitle}</p>}
+			</div>
+
+			<div className="flex justify-end items-center mt-4 relative z-10">
+				<span className="text-[#14532d] font-bold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+					{footerLabel || 'Luyện tập'} 
+					<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+					</svg>
+				</span>
+			</div>
+		</div>
+	);
+};
 
 function ToeicPracticeContent() {
 	const router = useRouter();
@@ -46,14 +82,31 @@ function ToeicPracticeContent() {
 
 	return (
 		<div className="max-w-6xl mx-auto py-2 px-2 sm:px-6">
-			<div className="flex gap-2 sm:gap-4 border-b mb-8 overflow-x-auto">
+			<style jsx global>{`
+				@keyframes shimmer {
+					0% { transform: translateX(-150%) skewX(-20deg); }
+					50% { transform: translateX(150%) skewX(-20deg); }
+					100% { transform: translateX(150%) skewX(-20deg); }
+				}
+			`}</style>
+			
+			<div className="flex gap-4 sm:gap-8 mb-10 overflow-x-auto pb-4 scrollbar-hide py-2 px-1">
 				{TABS.map((t) => (
 					<button
 						key={t.key}
-						className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none cursor-pointer ${tab === t.key ? "border-[#14532d] text-[#14532d] bg-white" : "border-transparent text-gray-500 hover:text-[#14532d]"}`}
+						className={`flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap`}
 						onClick={() => handleTabChange(t.key)}
 					>
-						{t.label}
+						<span className={`text-xl transition-transform duration-300 ${tab === t.key ? "scale-110" : "opacity-60 scale-100 group-hover:opacity-100"}`}>
+							{t.icon}
+						</span>
+						<span className={`text-sm font-bold tracking-tight transition-all ${
+							tab === t.key 
+								? "text-[#14532d] scale-105" 
+								: "text-slate-400 group-hover:text-slate-600"
+						}`}>
+							{t.label}
+						</span>
 					</button>
 				))}
 			</div>
@@ -119,34 +172,20 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 				<span className="inline-block w-5 h-5 text-green-700">📘</span>
 				Các chủ đề ngữ pháp
 			</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 				{topics.length === 0 ? (
-					<div className="col-span-full py-12 text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">
+					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
 						Chưa có chủ đề nào được cập nhật.
 					</div>
 				) : (
 					topics.map((topic) => (
-						<div
+						<TopicCard
 							key={topic.id}
+							title={topic.title}
+							subtitle={topic.subtitle || 'Ngữ pháp TOEIC'}
+							badgeText={`${topic._count?.lessons || 0} bài học`}
 							onClick={() => onPracticeClick(topic.slug)}
-							className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
-						>
-							<div>
-								<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{topic.title}</div>
-								<div className="text-sm text-gray-500 mb-2">{topic.subtitle || 'Ngữ pháp TOEIC'}</div>
-								<div className="text-xs text-gray-400 mb-2">
-									{topic._count?.lessons || 0} bài học bài bản
-								</div>
-							</div>
-							<div className="flex justify-end">
-								<button
-									className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer"
-									onClick={() => onPracticeClick(topic.slug)}
-								>
-									Luyện tập &rarr;
-								</button>
-							</div>
-						</div>
+						/>
 					))
 				)}
 			</div>
@@ -587,31 +626,21 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 				</h2>
 
 				{loading ? (
-					<div className="py-12 text-center text-gray-400 italic">Đang tải chủ đề...</div>
+					<div className="py-12 text-center text-slate-400 italic font-medium">Đang tải chủ đề...</div>
 				) : topics.length === 0 ? (
-					<div className="py-12 text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">
+					<div className="py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
 						Chưa có chủ đề từ vựng nào. Admin cần import từ tab TOEIC.
 					</div>
 				) : (
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 						{topics.map((t) => (
-							<div
+							<TopicCard
 								key={t.topic}
+								title={t.topic}
+								footerLabel="Học flashcard"
+								badgeText={`${t.wordCount} từ`}
 								onClick={() => openTopic(t.topic)}
-								className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group relative overflow-hidden"
-							>
-								<div className="absolute top-0 right-0 bg-[#ea980c] text-white text-[10px] font-bold px-2.5 py-1 rounded-bl-lg">
-									{t.wordCount} từ
-								</div>
-								<div>
-									<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1 pr-14">{t.topic}</div>
-								</div>
-								<div className="flex justify-end mt-3">
-									<button className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer">
-										Học flashcard →
-									</button>
-								</div>
-							</div>
+							/>
 						))}
 					</div>
 				)}
@@ -903,11 +932,11 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 }
 
 function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void }) {
-	const listeningParts = [
-		{ title: "Part 1: Photographs", subtitle: "Mô tả tranh" },
-		{ title: "Part 2: Question-Response", subtitle: "Hỏi đáp" },
-		{ title: "Part 3: Conversations", subtitle: "Hội thoại ngắn" },
-		{ title: "Part 4: Short Talks", subtitle: "Bài nói ngắn" },
+	const topics = [
+		{ title: "Part 1: Photographs", subtitle: "Mô tả tranh", count: "10 bài" },
+		{ title: "Part 2: Question-Response", subtitle: "Hỏi đáp", count: "10 bài" },
+		{ title: "Part 3: Conversations", subtitle: "Hội thoại ngắn", count: "10 bài" },
+		{ title: "Part 4: Short Talks", subtitle: "Bài nói ngắn", count: "10 bài" },
 	];
 	return (
 		<div>
@@ -915,27 +944,15 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 				<span className="inline-block w-5 h-5 text-green-700">🎧</span>
 				Các phần thi Listening
 			</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-				{listeningParts.map((part) => (
-					<div
-						key={part.title}
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+				{topics.map((t) => (
+					<TopicCard
+						key={t.title}
+						title={t.title}
+						subtitle={t.subtitle}
+						badgeText={t.count}
 						onClick={onPracticeClick}
-						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
-					>
-						<div>
-							<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{part.title}</div>
-							<div className="text-sm text-gray-500 mb-2">{part.subtitle}</div>
-							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
-						</div>
-						<div className="flex justify-end mt-4">
-							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer"
-								onClick={onPracticeClick}
-							>
-								Luyện tập &rarr;
-							</button>
-						</div>
-					</div>
+					/>
 				))}
 			</div>
 		</div>
@@ -943,10 +960,10 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 }
 
 function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: () => void }) {
-	const readingParts = [
-		{ title: "Part 5: Incomplete Sentences", subtitle: "Điền vào câu trống" },
-		{ title: "Part 6: Text Completion", subtitle: "Điền vào đoạn văn" },
-		{ title: "Part 7: Reading Comprehension", subtitle: "Đọc hiểu" },
+	const topics = [
+		{ title: "Part 5: Incomplete Sentences", subtitle: "Hoàn thành câu", count: "30 bài" },
+		{ title: "Part 6: Text Completion", subtitle: "Hoàn thành đoạn văn", count: "16 bài" },
+		{ title: "Part 7: Reading Comprehension", subtitle: "Đọc hiểu văn bản", count: "54 bài" },
 	];
 	return (
 		<div>
@@ -954,27 +971,15 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 				<span className="inline-block w-5 h-5 text-green-700">📖</span>
 				Các phần thi Reading
 			</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-				{readingParts.map((part) => (
-					<div
-						key={part.title}
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+				{topics.map((t) => (
+					<TopicCard
+						key={t.title}
+						title={t.title}
+						subtitle={t.subtitle}
+						badgeText={t.count}
 						onClick={onPracticeClick}
-						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group"
-					>
-						<div>
-							<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{part.title}</div>
-							<div className="text-sm text-gray-500 mb-2">{part.subtitle}</div>
-							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
-						</div>
-						<div className="flex justify-end mt-4">
-							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer"
-								onClick={onPracticeClick}
-							>
-								Luyện tập &rarr;
-							</button>
-						</div>
-					</div>
+					/>
 				))}
 			</div>
 		</div>
@@ -993,30 +998,15 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }
 				<span className="inline-block w-5 h-5 text-green-700">🎓</span>
 				Đề thi thực tế (Actual Test)
 			</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 				{testPacks.map((test) => (
-					<div
+					<TopicCard
 						key={test.title}
+						title={test.title}
+						subtitle={test.subtitle}
+						badgeText={test.count}
 						onClick={onPracticeClick}
-						className="rounded-xl border-2 border-green-900 bg-white p-5 shadow-sm hover:border-[#ea980c] hover:shadow-md transition cursor-pointer flex flex-col justify-between group relative overflow-hidden"
-					>
-						<div className="absolute top-0 right-0 bg-[#ea980c] text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-							{test.count}
-						</div>
-						<div className="pr-12">
-							<div className="font-bold text-lg text-green-900 group-hover:text-[#ea980c] transition-colors mb-1">{test.title}</div>
-							<div className="text-sm text-gray-500 mb-2">{test.subtitle}</div>
-							<div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
-						</div>
-						<div className="flex justify-end mt-4">
-							<button
-								className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors bg-green-50 px-4 py-2 rounded-lg group-hover:bg-orange-50 cursor-pointer"
-								onClick={onPracticeClick}
-							>
-								Bắt đầu thi &rarr;
-							</button>
-						</div>
-					</div>
+					/>
 				))}
 			</div>
 		</div>
