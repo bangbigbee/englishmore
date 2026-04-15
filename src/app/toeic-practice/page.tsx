@@ -630,7 +630,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 										{currentItem.word}
 									</p>
 									{currentItem.phonetic && (
-										<p className="mt-4 text-lg text-white/60 font-medium font-mono">{currentItem.phonetic}</p>
+										<p className="mt-4 text-lg text-white/60 font-medium">{currentItem.phonetic.replaceAll('.', '')}</p>
 									)}
 
 									{/* Voice Practice Controls */}
@@ -722,7 +722,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 										<p className="text-2xl sm:text-3xl font-bold text-[#14532d] leading-none mb-1">{currentItem.word}</p>
 										{currentItem.phonetic && (
 											isFieldLocked('phonetic') ? <LockedFieldView tier={isFieldLocked('phonetic')!} label="phonetic" /> :
-											<p className="text-[13px] text-slate-400 font-mono">{currentItem.phonetic}</p>
+											<p className="text-[13px] text-slate-400">{currentItem.phonetic.replaceAll('.', '')}</p>
 										)}
 
 										<div className="mt-2.5 mb-2.5 w-10 h-0.5 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
