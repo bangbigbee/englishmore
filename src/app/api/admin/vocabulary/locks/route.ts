@@ -17,7 +17,17 @@ export async function GET(req: NextRequest) {
     where: { topic }
   })
   
-  return NextResponse.json(config || { topic, proFields: "[]", ultraFields: "[]" })
+  if (!config) {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
+    const master = setting?.value as any
+    return NextResponse.json({
+      topic,
+      proFields: JSON.stringify(master?.vocabulary?.proFields || []),
+      ultraFields: JSON.stringify(master?.vocabulary?.ultraFields || [])
+    })
+  }
+
+  return NextResponse.json(config)
 }
 
 export async function POST(req: NextRequest) {

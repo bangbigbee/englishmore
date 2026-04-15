@@ -48,6 +48,10 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: 'topicId, title, and order are required' }, { status: 400 })
 		}
 
+		const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
+		const master = setting?.value as any
+		const masterGrammar = master?.grammar || {}
+
 		const lesson = await prisma.toeicGrammarLesson.create({
 			data: {
 				topicId,
@@ -55,9 +59,9 @@ export async function POST(req: Request) {
 				order: Number(order),
 				content,
 				accessTier: accessTier || 'FREE',
-				theoryAccessTier: theoryAccessTier || 'FREE',
-				explanationAccessTier: explanationAccessTier || 'FREE',
-				translationAccessTier: translationAccessTier || 'FREE'
+				theoryAccessTier: theoryAccessTier || masterGrammar.theoryAccessTier || 'FREE',
+				explanationAccessTier: explanationAccessTier || masterGrammar.explanationAccessTier || 'FREE',
+				translationAccessTier: translationAccessTier || masterGrammar.translationAccessTier || 'FREE'
 			}
 		})
 

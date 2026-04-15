@@ -51,15 +51,24 @@ export async function GET(req: NextRequest) {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const config = await (prisma as any).vocabularyTopicConfig.findUnique({
+  let config = await (prisma as any).vocabularyTopicConfig.findUnique({
     where: { topic }
   })
+
+  if (!config) {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
+    const master = setting?.value as any
+    config = {
+      proFields: JSON.stringify(master?.vocabulary?.proFields || []),
+      ultraFields: JSON.stringify(master?.vocabulary?.ultraFields || [])
+    }
+  }
 
   return NextResponse.json({
     topic,
     isUltra,
     isPro,
-    topicConfig: config || { proFields: "[]", ultraFields: "[]" },
+    topicConfig: config,
     total: all.length,
     items: all
   })

@@ -11,6 +11,7 @@ import AdminGallery from './AdminGallery'
 import AdminPricingSettings from '@/components/AdminPricingSettings'
 import AdminUserManagement from '@/components/AdminUserManagement'
 import TipTapEditor from '@/components/TipTapEditor'
+import AdminMasterConfig from './AdminMasterConfig'
 
 interface CourseItem {
   id: string
@@ -351,7 +352,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing'
+type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing' | 'masterConfig'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -796,7 +797,7 @@ export default function AdminDashboard() {
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '' })
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
-  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE' })
+  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '' })
   const [editingToeicLesson, setEditingToeicLesson] = useState<AdminToeicLesson | null>(null)
   const [showQuestionModal, setShowQuestionModal] = useState(false)
   const [questionForm, setQuestionForm] = useState({
@@ -1603,7 +1604,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save lesson')
       toast.success(editingToeicLesson ? 'Lesson updated successfully' : 'Lesson created successfully')
       setShowLessonModal(false)
-      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE' })
+      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '' })
       setEditingToeicLesson(null)
       fetchToeicLessons(selectedToeicTopic.id)
     } catch (err) {
@@ -3406,6 +3407,7 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>10. NEWS</button>
              <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>11. GALLERY</button>
              <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>12. SUBSCRIPTION</button>
+             <button onClick={() => setActiveSection('masterConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'masterConfig' ? 'bg-[#ea980c]/10 text-[#ea980c] hover:bg-[#ea980c]/20' : 'text-slate-600 hover:bg-slate-50'}`}>13. MASTER CONFIG</button>
           </nav>
         </aside>
 
@@ -3414,6 +3416,10 @@ export default function AdminDashboard() {
             <div className="bg-white rounded shadow p-6 mb-8">
               <AdminUserManagement />
             </div>
+          )}
+
+          {activeSection === 'masterConfig' && (
+             <AdminMasterConfig />
           )}
 
           {activeSection === 'pricing' && (
@@ -3812,7 +3818,7 @@ export default function AdminDashboard() {
                 {selectedToeicTopic && (
                   <button
                     onClick={() => {
-                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE' })
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '' })
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
@@ -3849,7 +3855,7 @@ export default function AdminDashboard() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || 'FREE', explanationAccessTier: (lesson as any).explanationAccessTier || 'FREE', translationAccessTier: (lesson as any).translationAccessTier || 'FREE' })
+                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || '', explanationAccessTier: (lesson as any).explanationAccessTier || '', translationAccessTier: (lesson as any).translationAccessTier || '' })
                             setEditingToeicLesson(lesson)
                             setShowLessonModal(true)
                           }}
@@ -7449,6 +7455,7 @@ export default function AdminDashboard() {
                         onChange={(e) => setLessonForm({ ...lessonForm, theoryAccessTier: e.target.value })}
                         className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                       >
+                        <option value="">Default (Từ Master Config)</option>
                         <option value="FREE">Tặng Miễn Phí (FREE)</option>
                         <option value="PRO">Học Viên (PRO)</option>
                         <option value="ULTRA">VIP (ULTRA)</option>
@@ -7461,6 +7468,7 @@ export default function AdminDashboard() {
                         value={lessonForm.explanationAccessTier}
                         onChange={(e) => setLessonForm({ ...lessonForm, explanationAccessTier: e.target.value })}
                       >
+                        <option value="">Default (Từ Master Config)</option>
                         <option value="FREE">Free</option>
                         <option value="PRO">Pro</option>
                         <option value="ULTRA">Ultra</option>
@@ -7473,6 +7481,7 @@ export default function AdminDashboard() {
                         value={lessonForm.translationAccessTier}
                         onChange={(e) => setLessonForm({ ...lessonForm, translationAccessTier: e.target.value })}
                       >
+                        <option value="">Default (Từ Master Config)</option>
                         <option value="FREE">Free</option>
                         <option value="PRO">Pro</option>
                         <option value="ULTRA">Ultra</option>
