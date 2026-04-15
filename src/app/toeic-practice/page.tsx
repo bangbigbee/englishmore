@@ -254,6 +254,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const [isFlipped, setIsFlipped] = useState(false);
 	const [showUpgrade, setShowUpgrade] = useState(false);
 	const [showExampleVi, setShowExampleVi] = useState(false);
+	const [speechSupported, setSpeechSupported] = useState(false);
 
 	const [isPronunciationListening, setIsPronunciationListening] = useState(false);
 	const [pronunciationStatus, setPronunciationStatus] = useState('');
@@ -270,6 +271,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
 		const win = window as any;
+		setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition));
 
 		pronunciationDoneAudioRef.current = new Audio('/audio/tingsound.mp3');
 		pronunciationDoneAudioRef.current.preload = 'auto';
