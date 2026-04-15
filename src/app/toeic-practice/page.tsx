@@ -664,6 +664,25 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		</div>
 	);
 
+	const LockedValueBadge = ({ tier }: { tier: 'PRO' | 'ULTRA' }) => (
+		<span 
+			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
+			className="inline-flex items-center gap-1 cursor-pointer group mt-[2px]"
+		>
+			{tier === 'ULTRA' ? (
+				<span className="inline-flex items-center justify-center bg-purple-100 text-purple-700 rounded text-[9px] font-bold px-1.5 py-0.5 group-hover:bg-purple-200 transition-colors">
+					<svg className="w-2.5 h-2.5 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+					ULTRA
+				</span>
+			) : (
+				<span className="inline-flex items-center justify-center bg-amber-100 text-amber-700 rounded text-[9px] font-bold px-1.5 py-0.5 group-hover:bg-amber-200 transition-colors">
+					<svg className="w-2.5 h-2.5 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+					PRO
+				</span>
+			)}
+		</span>
+	);
+
 	const backToTopics = () => {
 		const params = new URLSearchParams(searchParams.toString());
 		params.delete('topic');
@@ -921,43 +940,47 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 										{hasPremium && (
 											<div className="mt-3.5 w-full flex-shrink-0 space-y-2 text-[11px] text-center border-t border-slate-100 pt-3 flex flex-col items-center">
 												{currentItem.synonyms && (
-													isFieldLocked('synonyms') ? <LockedFieldView tier={isFieldLocked('synonyms')!} label="synonyms" /> :
 													<div className="w-full text-left flex items-start gap-1">
 														<span className="font-bold text-[#14532d] flex items-center gap-1 text-[10px] shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
 															Synonyms:
 														</span>
-														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.synonyms}</span>
+														{isFieldLocked('synonyms') ? <LockedValueBadge tier={isFieldLocked('synonyms')!} /> : (
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.synonyms}</span>
+														)}
 													</div>
 												)}
 												{currentItem.antonyms && (
-													isFieldLocked('antonyms') ? <LockedFieldView tier={isFieldLocked('antonyms')!} label="antonyms" /> :
 													<div className="w-full text-left flex items-start gap-1">
 														<span className="font-bold text-[#14532d] flex items-center gap-1 text-[10px] shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
 															Antonyms:
 														</span>
-														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.antonyms}</span>
+														{isFieldLocked('antonyms') ? <LockedValueBadge tier={isFieldLocked('antonyms')!} /> : (
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.antonyms}</span>
+														)}
 													</div>
 												)}
 												{currentItem.collocations && (
-													isFieldLocked('collocations') ? <LockedFieldView tier={isFieldLocked('collocations')!} label="collocations" /> :
 													<div className="w-full text-left flex items-start gap-1">
 														<span className="font-bold text-purple-700 flex items-center gap-1 text-[10px] shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
 															Collocations:
 														</span>
-														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.collocations}</span>
+														{isFieldLocked('collocations') ? <LockedValueBadge tier={isFieldLocked('collocations')!} /> : (
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.collocations}</span>
+														)}
 													</div>
 												)}
 												{currentItem.toeicTrap && (
-													isFieldLocked('toeicTrap') ? <LockedFieldView tier={isFieldLocked('toeicTrap')!} label="toeicTrap" /> :
-														<div className="rounded-md bg-amber-50 border border-amber-200 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1 transition-colors">
+													<div className="rounded-md bg-amber-50 border border-amber-200 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1 transition-colors">
 														<span className="font-bold text-amber-600 flex items-center gap-1 text-[10px] shrink-0 mt-[1px]">
 															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
 															TOEIC Tip:
 														</span>
-														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.toeicTrap}</span>
+														{isFieldLocked('toeicTrap') ? <LockedValueBadge tier={isFieldLocked('toeicTrap')!} /> : (
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.toeicTrap}</span>
+														)}
 													</div>
 												)}
 											</div>
