@@ -198,8 +198,8 @@ const buildPronunciationFeedback = (score: number, candidate: string, target: st
 };
 
 const UltraTag = () => (
-	<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-linear-to-r from-purple-600 via-purple-500 to-indigo-600 text-[9px] font-black text-white shadow-[0_0_8px_rgba(147,51,234,0.3)] border border-purple-400/50">
-		<svg className="w-2.5 h-2.5 fill-amber-300" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+	<span className="inline-flex items-center gap-0.5 px-1.5 py-[2px] rounded border border-purple-600/50 bg-linear-to-r from-purple-900 via-purple-800 to-indigo-900 text-[8px] font-black text-purple-100 shadow-[0_0_8px_rgba(88,28,135,0.5)]">
+		<svg className="w-2.5 h-2.5 fill-amber-400" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
 		ULTRA
 	</span>
 );
@@ -702,35 +702,35 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 									</span>
 
 									{/* Basic info — always visible */}
-									<div className="flex-1 flex flex-col items-center justify-start text-center w-full pt-2">
-										<p className="text-2xl sm:text-3xl font-bold text-[#14532d]">{currentItem.word}</p>
+									<div className="flex-1 flex flex-col items-center justify-start text-center w-full pt-1">
+										<p className="text-2xl sm:text-3xl font-bold text-[#14532d] leading-none mb-1">{currentItem.word}</p>
 										{currentItem.phonetic && (
 											isFieldLocked('phonetic') ? <LockedFieldView tier={isFieldLocked('phonetic')!} label="Phonetic" /> :
-											<p className="mt-1 text-base text-slate-400 font-mono">{currentItem.phonetic}</p>
+											<p className="text-[13px] text-slate-400 font-mono">{currentItem.phonetic}</p>
 										)}
 
-										<div className="mt-4 mb-4 w-12 h-1 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
+										<div className="mt-2.5 mb-2.5 w-10 h-0.5 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
 
 										{isFieldLocked('meaning') ? <LockedFieldView tier={isFieldLocked('meaning')!} label="Meaning" /> : (
-											<p className="text-xl sm:text-2xl font-bold text-slate-800">{currentItem.meaning}</p>
+											<p className="text-lg sm:text-xl font-bold text-slate-800 leading-tight">{currentItem.meaning}</p>
 										)}
 
 										{currentItem.englishDefinition && (
 											isFieldLocked('englishDefinition') ? <LockedFieldView tier={isFieldLocked('englishDefinition')!} label="English Definition" /> :
-											<p className="mt-2 text-sm text-slate-500 font-medium px-2 italic">{currentItem.englishDefinition}</p>
+											<p className="mt-1.5 text-[11px] text-slate-500 font-medium px-2 italic leading-relaxed">{currentItem.englishDefinition}</p>
 										)}
 
 										{currentItem.example && (
 											isFieldLocked('example') ? <LockedFieldView tier={isFieldLocked('example')!} label="Example" /> :
-											<div className="mt-5 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden text-center flex flex-col items-center">
+											<div className="mt-3.5 w-full rounded-xl bg-slate-50 p-3 border border-slate-200 flex-shrink-0 relative overflow-hidden text-center flex flex-col items-center">
 												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40" />
-												<p className="text-sm italic text-slate-700 font-medium tracking-tight">
-													<span className="font-bold text-slate-900 not-italic mr-2">Example:</span>
+												<p className="text-[11px] italic text-slate-700 font-medium tracking-tight">
+													<span className="font-bold text-slate-900 not-italic mr-1.5">Example:</span>
 													{currentItem.example}
 												</p>
 												{currentItem.exampleVi && (
 													isFieldLocked('exampleVi') ? (
-														<div className="mt-3">
+														<div className="mt-2">
 															<LockedFieldView tier={isFieldLocked('exampleVi')!} label="Translation" />
 														</div>
 													) : (
@@ -738,19 +738,19 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 															<button
 																type="button"
 																onClick={(e) => { e.stopPropagation(); setShowExampleVi(v => !v); }}
-																className="mt-2 flex items-center justify-center gap-1 text-[#ea980c] hover:text-[#c47c08] transition-colors"
+																className="mt-1.5 flex items-center justify-center gap-1 text-[#ea980c] hover:text-[#c47c08] transition-colors"
 																title="Dịch nghĩa"
 															>
-																<span className="text-[10px] font-bold tracking-tight">Dịch nghĩa</span>
+																<span className="text-[9px] font-bold tracking-tight">Dịch nghĩa</span>
 																<svg
-																	className={`w-3.5 h-3.5 transition-transform duration-200 ${showExampleVi ? 'rotate-180' : ''}`}
+																	className={`w-3 h-3 transition-transform duration-200 ${showExampleVi ? 'rotate-180' : ''}`}
 																	fill="none" stroke="currentColor" viewBox="0 0 24 24"
 																>
 																	<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
 																</svg>
 															</button>
 															{showExampleVi && (
-																<p className="mt-1.5 text-xs italic text-[#ea980c] font-medium text-center leading-relaxed">
+																<p className="mt-1 text-[10px] italic text-[#ea980c] font-medium text-center leading-relaxed">
 																	{currentItem.exampleVi}
 																</p>
 															)}
@@ -762,45 +762,45 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 
 										{/* ── PREMIUM ZONE ── */}
 										{hasPremium && (
-											<div className="mt-5 w-full flex-shrink-0 space-y-3 text-sm text-center border-t border-slate-100 pt-4 flex flex-col items-center">
+											<div className="mt-3.5 w-full flex-shrink-0 space-y-2 text-[11px] text-center border-t border-slate-100 pt-3 flex flex-col items-center">
 												{currentItem.synonyms && (
 													isFieldLocked('synonyms') ? <LockedFieldView tier={isFieldLocked('synonyms')!} label="Synonyms" /> :
-													<div className="w-full text-left">
-														<p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-															Synonyms
-														</p>
-														<p className="text-slate-700 font-medium pl-5">{currentItem.synonyms}</p>
+													<div className="w-full text-left flex items-start gap-1">
+														<span className="font-bold text-[#14532d] flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
+															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+															Synonyms:
+														</span>
+														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.synonyms}</span>
 													</div>
 												)}
 												{currentItem.antonyms && (
 													isFieldLocked('antonyms') ? <LockedFieldView tier={isFieldLocked('antonyms')!} label="Antonyms" /> :
-													<div className="w-full text-left">
-														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-															Antonyms
-														</p>
-														<p className="text-slate-700 font-medium pl-5">{currentItem.antonyms}</p>
+													<div className="w-full text-left flex items-start gap-1">
+														<span className="font-bold text-rose-600 flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
+															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+															Antonyms:
+														</span>
+														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.antonyms}</span>
 													</div>
 												)}
 												{currentItem.collocations && (
 													isFieldLocked('collocations') ? <LockedFieldView tier={isFieldLocked('collocations')!} label="Collocations" /> :
-													<div className="w-full text-left">
-														<p className="font-bold text-purple-700 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-															Collocations
-														</p>
-														<p className="text-slate-700 font-medium pl-5">{currentItem.collocations}</p>
+													<div className="w-full text-left flex items-start gap-1">
+														<span className="font-bold text-purple-700 flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
+															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+															Collocations:
+														</span>
+														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.collocations}</span>
 													</div>
 												)}
 												{currentItem.toeicTrap && (
 													isFieldLocked('toeicTrap') ? <LockedFieldView tier={isFieldLocked('toeicTrap')!} label="TOEIC Trap Alert" /> :
-													<div className="rounded-lg bg-rose-50 border border-rose-200 p-3 w-full text-left">
-														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-															⚠ TOEIC Trap Alert
-														</p>
-														<p className="text-slate-700 font-medium pl-5 leading-relaxed">{currentItem.toeicTrap}</p>
+													<div className="rounded-md bg-rose-50 border border-rose-200 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1">
+														<span className="font-bold text-rose-600 flex items-center gap-1 text-[10px] uppercase tracking-wider shrink-0 mt-[1px]">
+															<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+															⚠ TOEIC Trap:
+														</span>
+														<span className="text-slate-700 font-medium leading-relaxed">{currentItem.toeicTrap}</span>
 													</div>
 												)}
 											</div>
