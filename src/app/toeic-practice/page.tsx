@@ -231,12 +231,47 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	const pronunciationListeningTimeoutRef = useRef<number | null>(null);
 	const pronunciationFinalizeTimeoutRef = useRef<number | null>(null);
 	const pronunciationRecognitionRef = useRef<any>(null);
+	const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null);
+	const pronunciationRewardAudioRef = useRef<HTMLAudioElement | null>(null);
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
 		const win = window as any;
 		setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition));
+
+		pronunciationDoneAudioRef.current = new Audio('/audio/tingsound.mp3');
+		pronunciationDoneAudioRef.current.preload = 'auto';
+		pronunciationDoneAudioRef.current.load();
+
+		pronunciationRewardAudioRef.current = new Audio('/audio/amazing-reward-sound.mp3');
+		pronunciationRewardAudioRef.current.preload = 'auto';
+		pronunciationRewardAudioRef.current.load();
+
+		return () => {
+			if (pronunciationDoneAudioRef.current) pronunciationDoneAudioRef.current.pause();
+			if (pronunciationRewardAudioRef.current) pronunciationRewardAudioRef.current.pause();
+		};
 	}, []);
+
+	const playPronunciationDoneChime = () => {
+		if (typeof window !== 'undefined' && pronunciationDoneAudioRef.current) {
+			try {
+				pronunciationDoneAudioRef.current.pause();
+				pronunciationDoneAudioRef.current.currentTime = 0;
+				void pronunciationDoneAudioRef.current.play().catch(() => {});
+			} catch {}
+		}
+	};
+
+	const playPronunciationRewardChime = () => {
+		if (typeof window !== 'undefined' && pronunciationRewardAudioRef.current) {
+			try {
+				pronunciationRewardAudioRef.current.pause();
+				pronunciationRewardAudioRef.current.currentTime = 0;
+				void pronunciationRewardAudioRef.current.play().catch(() => {});
+			} catch {}
+		}
+	};
 
 	const clearPronunciationTimeouts = () => {
 		if (typeof window === 'undefined') return;
@@ -278,6 +313,30 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		clearPronunciationTimeouts();
 		stopRecognition();
 
+		// Prime audio
+		try {
+			if (pronunciationDoneAudioRef.current) {
+				pronunciationDoneAudioRef.current.muted = true;
+				void pronunciationDoneAudioRef.current.play().then(() => {
+					if (pronunciationDoneAudioRef.current) {
+						pronunciationDoneAudioRef.current.pause();
+						pronunciationDoneAudioRef.current.currentTime = 0;
+						pronunciationDoneAudioRef.current.muted = false;
+					}
+				}).catch(() => { if (pronunciationDoneAudioRef.current) pronunciationDoneAudioRef.current.muted = false; });
+			}
+			if (pronunciationRewardAudioRef.current) {
+				pronunciationRewardAudioRef.current.muted = true;
+				void pronunciationRewardAudioRef.current.play().then(() => {
+					if (pronunciationRewardAudioRef.current) {
+						pronunciationRewardAudioRef.current.pause();
+						pronunciationRewardAudioRef.current.currentTime = 0;
+						pronunciationRewardAudioRef.current.muted = false;
+					}
+				}).catch(() => { if (pronunciationRewardAudioRef.current) pronunciationRewardAudioRef.current.muted = false; });
+			}
+		} catch {}
+
 		const recognition = new RecognitionCtor();
 		pronunciationRecognitionRef.current = recognition;
 		recognition.lang = 'en-US';
@@ -293,11 +352,15 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 			const { candidate, score } = getBestPronunciationCandidate(currentWord, transcript);
 			setPronunciationTranscript(transcript);
 			setPronunciationStatus('Đã nhận giọng nói. Đang đánh giá...');
+			playPronunciationDoneChime();
 			
 			pronunciationScoringTimeoutRef.current = window.setTimeout(() => {
 				setPronunciationScore(score);
 				setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentWord));
 				setPronunciationStatus(score >= 80 ? 'Rất tốt! Hãy tiếp tục phát huy.' : 'Hãy thử lại một lần nữa nhé.');
+				if (score === 100) {
+					playPronunciationRewardChime();
+				}
 			}, 500);
 		};
 
