@@ -203,9 +203,9 @@ const normalizeDraftItems = (items: DraftVocabularyItem[]) => {
   return { parsedItems, invalidCount }
 }
 
-const dedupeVocabularyItems = async (courseId: string, items: ParsedVocabularyItem[]) => {
+const dedupeVocabularyItems = async (courseId: string, category: string, items: ParsedVocabularyItem[]) => {
   const existingItems = await prismaWithVocabulary.vocabularyItem.findMany({
-    where: { courseId },
+    where: category === 'TOEIC' ? { category: 'TOEIC' } : { courseId },
     select: { word: true, meaning: true }
   }) as Array<{ word: string; meaning: string }>
 
@@ -223,9 +223,9 @@ const dedupeVocabularyItems = async (courseId: string, items: ParsedVocabularyIt
   })
 }
 
-const createVocabularyItems = async (courseId: string, items: ParsedVocabularyItem[]) => {
+const createVocabularyItems = async (courseId: string, category: string, items: ParsedVocabularyItem[]) => {
   const lastItem = await prismaWithVocabulary.vocabularyItem.findFirst({
-    where: { courseId },
+    where: category === 'TOEIC' ? { category: 'TOEIC' } : { courseId },
     select: { displayOrder: true },
     orderBy: { displayOrder: 'desc' }
   }) as { displayOrder: number } | null
@@ -235,7 +235,7 @@ const createVocabularyItems = async (courseId: string, items: ParsedVocabularyIt
   const created = items.length > 0
     ? await prismaWithVocabulary.vocabularyItem.createMany({
         data: items.map((item, index) => ({
-          courseId,
+          courseId: category === 'TOEIC' ? null : courseId,
           word: item.word,
           phonetic: item.phonetic,
           englishDefinition: item.englishDefinition,
@@ -248,6 +248,7 @@ const createVocabularyItems = async (courseId: string, items: ParsedVocabularyIt
           toeicTrap: item.toeicTrap,
           mnemonicUrl: item.mnemonicUrl,
           isActive: true,
+          category: category,
           displayOrder: baseOrder + index + 1
         }))
       }) as { count: number }
@@ -326,16 +327,19 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const action = String(formData.get('action') || 'direct').trim().toLowerCase()
     const courseId = String(formData.get('courseId') || '').trim()
+    const category = String(formData.get('category') || 'GENERAL').trim().toUpperCase()
     const docsUrl = String(formData.get('docsUrl') || '').trim()
     const file = formData.get('file')
 
-    if (!courseId) {
-      return NextResponse.json({ error: 'courseId is required.' }, { status: 400 })
-    }
+    if (category !== 'TOEIC') {
+      if (!courseId) {
+        return NextResponse.json({ error: 'courseId is required for general vocabulary.' }, { status: 400 })
+      }
 
-    const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
-    if (!course) {
-      return NextResponse.json({ error: 'Course not found.' }, { status: 404 })
+      const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
+      if (!course) {
+        return NextResponse.json({ error: 'Course not found.' }, { status: 404 })
+      }
     }
 
     if (action === 'preview') {
@@ -392,8 +396,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No valid vocabulary rows found. Required fields: WORD and MEANING.' }, { status: 400 })
     }
 
-    const dedupedItems = await dedupeVocabularyItems(courseId, parsedItems)
-    const createdCount = await createVocabularyItems(courseId, dedupedItems)
+    const dedupedItems = await dedupeVocabularyItems(courseId, category, parsedItems)
+    const createdCount = await createVocabularyItems(courseId, category, dedupedItems)
 
     return NextResponse.json({
       createdCount,

@@ -31,9 +31,11 @@ export async function GET(request: NextRequest) {
   }
 
   const courseId = request.nextUrl.searchParams.get('courseId') || ''
+  const category = request.nextUrl.searchParams.get('category') || 'GENERAL'
 
   const items = await prismaWithVocabulary.vocabularyItem.findMany({
     where: {
+      category,
       ...(courseId ? { courseId } : {})
     },
     include: {
@@ -68,18 +70,24 @@ export async function POST(request: NextRequest) {
   const meaning = String(body?.meaning || '').trim()
   const example = String(body?.example || '').trim()
   const topic = String(body?.topic || 'WarmUp').trim()
+  const category = String(body?.category || 'GENERAL').trim().toUpperCase()
 
-  if (!courseId || !word || !meaning) {
-    return NextResponse.json({ error: 'courseId, word, meaning are required' }, { status: 400 })
+  if (!word || !meaning) {
+    return NextResponse.json({ error: 'word and meaning are required' }, { status: 400 })
   }
 
-  const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
-  if (!course) {
-    return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+  if (category !== 'TOEIC') {
+    if (!courseId) {
+      return NextResponse.json({ error: 'courseId is required for general vocabulary' }, { status: 400 })
+    }
+    const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
+    if (!course) {
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+    }
   }
 
   const lastItem = await prismaWithVocabulary.vocabularyItem.findFirst({
-    where: { courseId },
+    where: category === 'TOEIC' ? { category: 'TOEIC' } : { courseId },
     select: { displayOrder: true },
     orderBy: { displayOrder: 'desc' }
   }) as { displayOrder: number } | null
@@ -88,13 +96,14 @@ export async function POST(request: NextRequest) {
 
   const item = await prismaWithVocabulary.vocabularyItem.create({
     data: {
-      courseId,
+      courseId: category === 'TOEIC' ? null : courseId,
       word,
       phonetic: phonetic || null,
       englishDefinition: englishDefinition || null,
       meaning,
       example: example || null,
       topic,
+      category,
       displayOrder,
       isActive: true
     },
