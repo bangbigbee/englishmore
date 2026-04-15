@@ -60,6 +60,7 @@ export async function GET() {
       englishDefinition: true,
       meaning: true,
       example: true,
+      exampleVi: true,
       topic: true,
       displayOrder: true
     },

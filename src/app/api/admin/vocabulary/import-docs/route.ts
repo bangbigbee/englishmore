@@ -12,6 +12,7 @@ type ParsedVocabularyItem = {
   englishDefinition: string | null
   meaning: string
   example: string | null
+  exampleVi: string | null
   topic: string
   synonyms: string | null
   antonyms: string | null
@@ -26,6 +27,7 @@ type DraftVocabularyItem = {
   englishDefinition?: string | null
   meaning?: string
   example?: string | null
+  exampleVi?: string | null
   topic?: string
   synonyms?: string | null
   antonyms?: string | null
@@ -107,6 +109,7 @@ const parseVocabularyFromText = (text: string) => {
         englishDefinition: currentItem.englishDefinition || null,
         meaning: currentItem.meaning,
         example: currentItem.example || null,
+        exampleVi: currentItem.exampleVi || null,
         topic: currentItem.topic || lastTopic || 'WarmUp',
         synonyms: currentItem.synonyms || null,
         antonyms: currentItem.antonyms || null,
@@ -148,6 +151,8 @@ const parseVocabularyFromText = (text: string) => {
       currentItem.phonetic = val
     } else if (key === 'EXAMPLE') {
       currentItem.example = val
+    } else if (key === 'EXAMPLE_VI' || key === 'EXAMPLE_VIETNAMESE' || key === 'VI' || key === 'NGHIA_VI' || key === 'DICH_NGHIA') {
+      currentItem.exampleVi = val
     } else if (key === 'SYNONYMS' || key === 'SYNONYM') {
       currentItem.synonyms = val
     } else if (key === 'ANTONYMS' || key === 'ANTONYM') {
@@ -184,6 +189,7 @@ const normalizeDraftItems = (items: DraftVocabularyItem[]) => {
     const phonetic = String(item?.phonetic || '').trim()
     const englishDefinition = String(item?.englishDefinition || '').trim()
     const example = String(item?.example || '').trim()
+    const exampleVi = String(item?.exampleVi || '').trim()
 
     parsedItems.push({
       word,
@@ -191,6 +197,7 @@ const normalizeDraftItems = (items: DraftVocabularyItem[]) => {
       englishDefinition: englishDefinition || null,
       meaning,
       example: example || null,
+      exampleVi: exampleVi || null,
       topic: String(item?.topic || 'WarmUp').trim(),
       synonyms: String(item?.synonyms || '').trim() || null,
       antonyms: String(item?.antonyms || '').trim() || null,
@@ -241,6 +248,7 @@ const createVocabularyItems = async (courseId: string, category: string, items: 
           englishDefinition: item.englishDefinition,
           meaning: item.meaning,
           example: item.example,
+          exampleVi: item.exampleVi,
           topic: item.topic,
           synonyms: item.synonyms,
           antonyms: item.antonyms,

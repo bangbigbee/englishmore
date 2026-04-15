@@ -607,6 +607,7 @@ model VocabularyItem {
   englishDefinition String?
   meaning      String
   example      String?  @db.Text
+  exampleVi    String?  @db.Text
   topic        String   @default("WarmUp")
   displayOrder Int      @default(1)
   isActive     Boolean  @default(true)

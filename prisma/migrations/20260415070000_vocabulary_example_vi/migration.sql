@@ -1,0 +1,2 @@
+ALTER TABLE "VocabularyItem"
+ADD COLUMN IF NOT EXISTS "exampleVi" TEXT;

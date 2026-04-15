@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
       englishDefinition: true,
       meaning: true,
       example: true,
+      exampleVi: true,
       topic: true,
       synonyms: true,
       antonyms: true,

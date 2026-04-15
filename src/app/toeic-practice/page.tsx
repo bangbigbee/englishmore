@@ -145,6 +145,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	const [cardIndex, setCardIndex] = useState(0);
 	const [isFlipped, setIsFlipped] = useState(false);
 	const [showUpgrade, setShowUpgrade] = useState(false);
+	const [showExampleVi, setShowExampleVi] = useState(false);
 
 	useEffect(() => {
 		const fetchTopics = async () => {
@@ -169,6 +170,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		setVocabLoading(true);
 		setCardIndex(0);
 		setIsFlipped(false);
+		setShowExampleVi(false);
 		try {
 			const res = await fetch(`/api/toeic/vocabulary?topic=${encodeURIComponent(topic)}`);
 			if (res.ok) {
@@ -186,6 +188,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 
 	const moveCard = (dir: 'prev' | 'next') => {
 		setIsFlipped(false);
+		setShowExampleVi(false);
 		setTimeout(() => {
 			setCardIndex((prev) =>
 				dir === 'next'
@@ -345,10 +348,33 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 										{currentItem.example && (
 											<div className="mt-5 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden text-left">
 												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40" />
-												<p className="text-sm italic text-slate-700 font-medium px-2">
-													<span className="font-bold text-[#14532d] not-italic mr-2">EX:</span>
-													{currentItem.example}
-												</p>
+												<div className="flex items-start justify-between gap-2 px-2">
+													<p className="text-sm italic text-slate-700 font-medium flex-1">
+														<span className="font-bold text-[#14532d] not-italic mr-2">EX:</span>
+														{currentItem.example}
+													</p>
+													{currentItem.exampleVi && (
+														<button
+															type="button"
+															onClick={(e) => { e.stopPropagation(); setShowExampleVi(v => !v); }}
+															className="flex-shrink-0 flex items-center gap-1 text-[#ea980c] hover:text-[#c47c08] transition-colors"
+															title="Dịch nghĩa"
+														>
+															<svg
+																className={`w-4 h-4 transition-transform duration-200 ${showExampleVi ? 'rotate-180' : ''}`}
+																fill="none" stroke="currentColor" viewBox="0 0 24 24"
+															>
+																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+															</svg>
+															<span className="text-[11px] font-semibold whitespace-nowrap">Dịch nghĩa</span>
+														</button>
+													)}
+												</div>
+												{currentItem.exampleVi && showExampleVi && (
+													<p className="mt-2 px-2 text-sm text-[#ea980c] font-medium">
+														{currentItem.exampleVi}
+													</p>
+												)}
 											</div>
 										)}
 
