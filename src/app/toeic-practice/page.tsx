@@ -183,6 +183,7 @@ function ToeicPracticeContent() {
 				 }} />}
 			</div>
 		</div>
+	</div>
 	);
 }
 
