@@ -12,6 +12,7 @@ import AdminPricingSettings from '@/components/AdminPricingSettings'
 import AdminUserManagement from '@/components/AdminUserManagement'
 import TipTapEditor from '@/components/TipTapEditor'
 import AdminMasterConfig from './AdminMasterConfig'
+import AdminToeicVocabEditor from './AdminToeicVocabEditor'
 
 interface CourseItem {
   id: string
@@ -815,6 +816,7 @@ export default function AdminDashboard() {
   const [savingToeicTopic, setSavingToeicTopic] = useState(false)
   const [savingToeicLesson, setSavingToeicLesson] = useState(false)
   const [savingToeicQuestion, setSavingToeicQuestion] = useState(false)
+  const [toeicVocabTopicEditing, setToeicVocabTopicEditing] = useState<string | null>(null)
 
   // News states
   const [newsList, setNewsList] = useState<NewsItem[]>([])
@@ -4059,6 +4061,13 @@ export default function AdminDashboard() {
                           <p className="text-xs text-amber-700 font-medium mt-0.5">{t.wordCount} từ</p>
                         </div>
                         <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setToeicVocabTopicEditing(t.topic)}
+                            className="shrink-0 rounded-lg border border-amber-200 bg-white px-3 py-1.5 text-xs font-semibold text-amber-600 hover:bg-amber-50 hover:border-amber-300 transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            Chỉnh sửa
+                          </button>
                           <button
                             type="button"
                             onClick={() => void openTopicLocksConfig(t.topic)}
@@ -7709,6 +7718,13 @@ export default function AdminDashboard() {
         )}
         </div>
       </div>
+      
+      {toeicVocabTopicEditing && (
+        <AdminToeicVocabEditor
+          topic={toeicVocabTopicEditing}
+          onClose={() => setToeicVocabTopicEditing(null)}
+        />
+      )}
     </div>
   )
 }

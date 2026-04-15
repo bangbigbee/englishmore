@@ -60,8 +60,16 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
   const topic = String(body?.topic || 'WarmUp').trim()
   const displayOrderRaw = body?.displayOrder
 
-  if (!courseId || !word || !meaning) {
-    return NextResponse.json({ error: 'courseId, word, meaning are required' }, { status: 400 })
+  const category = String(body?.category || 'GENERAL').trim().toUpperCase()
+
+  if (!word || !meaning) {
+    return NextResponse.json({ error: 'word and meaning are required' }, { status: 400 })
+  }
+
+  if (category !== 'TOEIC') {
+    if (!courseId) {
+      return NextResponse.json({ error: 'courseId is required for general vocabulary' }, { status: 400 })
+    }
   }
 
   if (displayOrderRaw !== undefined && displayOrderRaw !== null && displayOrderRaw !== '') {
@@ -71,9 +79,11 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     }
   }
 
-  const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
-  if (!course) {
-    return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+  if (category !== 'TOEIC') {
+    const course = await prisma.course.findUnique({ where: { id: courseId }, select: { id: true } })
+    if (!course) {
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 })
+    }
   }
 
   try {
@@ -81,13 +91,19 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     const item = await prismaWithVocabulary.vocabularyItem.update({
       where: { id },
       data: {
-        courseId,
+        courseId: category === 'TOEIC' ? null : courseId,
         word,
         phonetic: phonetic || null,
         englishDefinition: englishDefinition || null,
         meaning,
         example: example || null,
+        exampleVi: String(body?.exampleVi || '').trim() || null,
+        synonyms: String(body?.synonyms || '').trim() || null,
+        antonyms: String(body?.antonyms || '').trim() || null,
+        collocations: String(body?.collocations || '').trim() || null,
+        toeicTrap: String(body?.toeicTrap || '').trim() || null,
         topic,
+        category,
         ...(displayOrderRaw !== undefined && displayOrderRaw !== null && displayOrderRaw !== ''
           ? { displayOrder }
           : {})
