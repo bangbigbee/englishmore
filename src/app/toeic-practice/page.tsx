@@ -14,11 +14,18 @@ const TABS = [
 ];
 
 function ToeicPracticeContent() {
-	const [tab, setTab] = useState("grammar");
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { data: session } = useSession();
+
+	const tabFromUrl = searchParams.get('tab') || 'grammar';
+	const [tab, setTab] = useState(tabFromUrl);
+
+	useEffect(() => {
+		const t = searchParams.get('tab');
+		if (t && TABS.some(item => item.key === t)) setTab(t);
+	}, [searchParams]);
 
 	const openLoginModal = (destination?: string) => {
 		const params = new URLSearchParams(searchParams.toString());
@@ -29,6 +36,14 @@ function ToeicPracticeContent() {
 		router.push(`${pathname}?${params.toString()}`, { scroll: false });
 	};
 
+	const handleTabChange = (newTab: string) => {
+		setTab(newTab);
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('tab', newTab);
+		params.delete('topic'); // clear topic when switching tabs
+		router.push(`${pathname}?${params.toString()}`, { scroll: false });
+	};
+
 	return (
 		<div className="max-w-6xl mx-auto py-2 px-2 sm:px-6">
 			<div className="flex gap-2 sm:gap-4 border-b mb-8 overflow-x-auto">
@@ -36,7 +51,7 @@ function ToeicPracticeContent() {
 					<button
 						key={t.key}
 						className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none cursor-pointer ${tab === t.key ? "border-[#14532d] text-[#14532d] bg-white" : "border-transparent text-gray-500 hover:text-[#14532d]"}`}
-						onClick={() => setTab(t.key)}
+						onClick={() => handleTabChange(t.key)}
 					>
 						{t.label}
 					</button>
@@ -50,17 +65,23 @@ function ToeicPracticeContent() {
 						 router.push(`/toeic-practice/grammar/${slug}`);
 					 }
 				 }} />}
-				{tab === "vocabulary" && <ToeicVocabularyTab onPracticeClick={() => {
-					 if (!session) openLoginModal();
+				{tab === "vocabulary" && <ToeicVocabularyTab 
+					onPracticeClick={(topic) => {
+					 if (!session) {
+						const params = new URLSearchParams(searchParams.toString());
+						params.set('tab', 'vocabulary');
+						if (topic) params.set('topic', topic);
+						openLoginModal(`${pathname}?${params.toString()}`);
+					 }
 				 }} />}
 				{tab === "listening" && <ToeicListeningTab onPracticeClick={() => {
-					 if (!session) openLoginModal();
+					 if (!session) openLoginModal(`${pathname}?tab=listening`);
 				 }} />}
 				{tab === "reading" && <ToeicReadingTab onPracticeClick={() => {
-					 if (!session) openLoginModal();
+					 if (!session) openLoginModal(`${pathname}?tab=reading`);
 				 }} />}
 				{tab === "actual-test" && <ToeicActualTestTab onPracticeClick={() => {
-					 if (!session) openLoginModal();
+					 if (!session) openLoginModal(`${pathname}?tab=actual-test`);
 				 }} />}
 			</div>
 		</div>
@@ -211,11 +232,17 @@ const ProTag = () => (
 	</span>
 );
 
-function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }) {
+function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: string) => void }) {
 	const { data: session } = useSession();
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const router = useRouter();
+
 	const [topics, setTopics] = useState<{ topic: string; wordCount: number }[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+
+	const initialTopic = searchParams.get('topic');
+	const [selectedTopic, setSelectedTopic] = useState<string | null>(initialTopic);
 	const [vocabItems, setVocabItems] = useState<any[]>([]);
 	const [isUltra, setIsUltra] = useState(false);
 	const [isPro, setIsPro] = useState(false);
@@ -228,7 +255,6 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	const [showUpgrade, setShowUpgrade] = useState(false);
 	const [showExampleVi, setShowExampleVi] = useState(false);
 
-	const [speechSupported, setSpeechSupported] = useState(false);
 	const [isPronunciationListening, setIsPronunciationListening] = useState(false);
 	const [pronunciationStatus, setPronunciationStatus] = useState('');
 	const [pronunciationFeedback, setPronunciationFeedback] = useState('');
@@ -244,7 +270,6 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
 		const win = window as any;
-		setSpeechSupported(Boolean(win.SpeechRecognition || win.webkitSpeechRecognition));
 
 		pronunciationDoneAudioRef.current = new Audio('/audio/tingsound.mp3');
 		pronunciationDoneAudioRef.current.preload = 'auto';
@@ -416,8 +441,30 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		fetchTopics();
 	}, []);
 
+	// Handle initialTopic from URL or back Navigation
+	useEffect(() => {
+		const topicFromUrl = searchParams.get('topic');
+		const tabFromUrl = searchParams.get('tab');
+		if (tabFromUrl === 'vocabulary' && topicFromUrl && topicFromUrl !== selectedTopic) {
+			loadTopic(topicFromUrl);
+		} else if (!topicFromUrl && selectedTopic) {
+			setSelectedTopic(null);
+		}
+	}, [searchParams]);
+
 	const openTopic = async (topic: string) => {
-		if (!session) { onPracticeClick(); return; }
+		if (!session) { onPracticeClick(topic); return; }
+		
+		// Update URL to reflect current topic
+		const params = new URLSearchParams(searchParams.toString());
+		params.set('topic', topic);
+		params.set('tab', 'vocabulary');
+		router.push(`${pathname}?${params.toString()}`, { scroll: false });
+		
+		loadTopic(topic);
+	};
+
+	const loadTopic = async (topic: string) => {
 		setSelectedTopic(topic);
 		setVocabLoading(true);
 		setCardIndex(0);
@@ -520,6 +567,14 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		</div>
 	);
 
+	const backToTopics = () => {
+		const params = new URLSearchParams(searchParams.toString());
+		params.delete('topic');
+		router.push(`${pathname}?${params.toString()}`, { scroll: false });
+		setSelectedTopic(null);
+		setVocabItems([]);
+	};
+
 	// ── Topic list ──────────────────────────────────────────
 	if (!selectedTopic) {
 		return (
@@ -572,7 +627,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 			{/* Header */}
 			<div className="flex flex-wrap items-center gap-3 mb-6">
 				<button
-					onClick={() => { setSelectedTopic(null); setVocabItems([]); }}
+					onClick={backToTopics}
 					className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-1"
 				>
 					← Quay lại
