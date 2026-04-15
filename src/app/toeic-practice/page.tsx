@@ -667,16 +667,16 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const LockedValueBadge = ({ tier }: { tier: 'PRO' | 'ULTRA' }) => (
 		<span 
 			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-			className="inline-flex items-center gap-1 cursor-pointer group mt-[2px]"
+			className="inline-flex items-center cursor-pointer group mt-[1px]"
 		>
 			{tier === 'ULTRA' ? (
-				<span className="inline-flex items-center justify-center bg-purple-100 text-purple-700 rounded text-[9px] font-bold px-1.5 py-0.5 group-hover:bg-purple-200 transition-colors">
-					<svg className="w-2.5 h-2.5 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+				<span className="inline-flex items-center justify-center bg-purple-100 text-purple-700 rounded text-[7px] font-black tracking-widest px-1 py-[2px] group-hover:bg-purple-200 transition-colors uppercase leading-none">
+					<svg className="w-2 h-2 mr-[2px]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
 					ULTRA
 				</span>
 			) : (
-				<span className="inline-flex items-center justify-center bg-amber-100 text-amber-700 rounded text-[9px] font-bold px-1.5 py-0.5 group-hover:bg-amber-200 transition-colors">
-					<svg className="w-2.5 h-2.5 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+				<span className="inline-flex items-center justify-center bg-amber-100 text-amber-700 rounded text-[7px] font-black tracking-widest px-1 py-[2px] group-hover:bg-amber-200 transition-colors uppercase leading-none">
+					<svg className="w-2 h-2 mr-[2px]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
 					PRO
 				</span>
 			)}
