@@ -482,14 +482,26 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		return null;
 	};
 
-	const LockedFieldView = ({ tier }: { tier: 'PRO' | 'ULTRA' }) => (
-		<div className="relative my-2 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 flex flex-col items-center justify-center select-none cursor-pointer" onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}>
-			<svg className="w-5 h-5 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-			<p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Nâng cấp lên gói {tier} để xem chi tiết</p>
-			<div className="absolute inset-x-8 bottom-3 flex flex-col items-center gap-1 opacity-20 blur-[2px]">
-				<div className="h-1.5 w-full bg-slate-400 rounded-full"></div>
-				<div className="h-1.5 w-2/3 bg-slate-400 rounded-full"></div>
+	const LockedFieldView = ({ tier, label }: { tier: 'PRO' | 'ULTRA', label: string }) => (
+		<div 
+			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
+			className="inline-flex items-center gap-2 cursor-pointer group my-1"
+		>
+			<div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200 group-hover:bg-purple-50 group-hover:border-purple-200 transition-colors shadow-xs">
+				<svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+				</svg>
+				<span className="text-xs font-bold text-slate-600 group-hover:text-purple-700">{label}</span>
 			</div>
+			{tier === 'ULTRA' ? (
+				<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-purple-900 text-[9px] font-black text-purple-100 tracking-wider shadow-sm">
+					ULTRA
+				</span>
+			) : (
+				<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-emerald-700 text-[9px] font-black text-white tracking-wider shadow-sm">
+					PRO
+				</span>
+			)}
 		</div>
 	);
 
@@ -699,23 +711,23 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 									<div className="flex-1 flex flex-col items-center justify-start text-center w-full pt-2">
 										<p className="text-2xl sm:text-3xl font-bold text-[#14532d]">{currentItem.word}</p>
 										{currentItem.phonetic && (
-											isFieldLocked('phonetic') ? <LockedFieldView tier={isFieldLocked('phonetic')!} /> :
+											isFieldLocked('phonetic') ? <LockedFieldView tier={isFieldLocked('phonetic')!} label="Phonetic" /> :
 											<p className="mt-1 text-base text-slate-400 font-mono">{currentItem.phonetic}</p>
 										)}
 
 										<div className="mt-4 mb-4 w-12 h-1 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
 
-										{isFieldLocked('meaning') ? <LockedFieldView tier={isFieldLocked('meaning')!} /> : (
+										{isFieldLocked('meaning') ? <LockedFieldView tier={isFieldLocked('meaning')!} label="Meaning" /> : (
 											<p className="text-xl sm:text-2xl font-bold text-slate-800">{currentItem.meaning}</p>
 										)}
 
 										{currentItem.englishDefinition && (
-											isFieldLocked('englishDefinition') ? <LockedFieldView tier={isFieldLocked('englishDefinition')!} /> :
+											isFieldLocked('englishDefinition') ? <LockedFieldView tier={isFieldLocked('englishDefinition')!} label="English Definition" /> :
 											<p className="mt-2 text-sm text-slate-500 font-medium px-2 italic">{currentItem.englishDefinition}</p>
 										)}
 
 										{currentItem.example && (
-											isFieldLocked('example') ? <LockedFieldView tier={isFieldLocked('example')!} /> :
+											isFieldLocked('example') ? <LockedFieldView tier={isFieldLocked('example')!} label="Example" /> :
 											<div className="mt-5 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden text-center flex flex-col items-center">
 												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40" />
 												<p className="text-sm italic text-slate-700 font-medium tracking-tight">
@@ -724,8 +736,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 												</p>
 												{currentItem.exampleVi && (
 													isFieldLocked('exampleVi') ? (
-														<div className="mt-3 w-full max-w-[250px]">
-															<LockedFieldView tier={isFieldLocked('exampleVi')!} />
+														<div className="mt-3">
+															<LockedFieldView tier={isFieldLocked('exampleVi')!} label="Translation" />
 														</div>
 													) : (
 														<>
@@ -756,10 +768,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 
 										{/* ── PREMIUM ZONE ── */}
 										{hasPremium && (
-											<div className="mt-5 w-full flex-shrink-0 space-y-3 text-sm text-left border-t border-slate-100 pt-4">
+											<div className="mt-5 w-full flex-shrink-0 space-y-3 text-sm text-center border-t border-slate-100 pt-4 flex flex-col items-center">
 												{currentItem.synonyms && (
-													isFieldLocked('synonyms') ? <LockedFieldView tier={isFieldLocked('synonyms')!} /> :
-													<div>
+													isFieldLocked('synonyms') ? <LockedFieldView tier={isFieldLocked('synonyms')!} label="Synonyms" /> :
+													<div className="w-full text-left">
 														<p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
 															Synonyms
@@ -768,8 +780,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													</div>
 												)}
 												{currentItem.antonyms && (
-													isFieldLocked('antonyms') ? <LockedFieldView tier={isFieldLocked('antonyms')!} /> :
-													<div>
+													isFieldLocked('antonyms') ? <LockedFieldView tier={isFieldLocked('antonyms')!} label="Antonyms" /> :
+													<div className="w-full text-left">
 														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
 															Antonyms
@@ -778,8 +790,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													</div>
 												)}
 												{currentItem.collocations && (
-													isFieldLocked('collocations') ? <LockedFieldView tier={isFieldLocked('collocations')!} /> :
-													<div>
+													isFieldLocked('collocations') ? <LockedFieldView tier={isFieldLocked('collocations')!} label="Collocations" /> :
+													<div className="w-full text-left">
 														<p className="font-bold text-purple-700 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
 															Collocations
@@ -788,8 +800,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													</div>
 												)}
 												{currentItem.toeicTrap && (
-													isFieldLocked('toeicTrap') ? <LockedFieldView tier={isFieldLocked('toeicTrap')!} /> :
-													<div className="rounded-lg bg-rose-50 border border-rose-200 p-3">
+													isFieldLocked('toeicTrap') ? <LockedFieldView tier={isFieldLocked('toeicTrap')!} label="TOEIC Trap Alert" /> :
+													<div className="rounded-lg bg-rose-50 border border-rose-200 p-3 w-full text-left">
 														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
 															⚠ TOEIC Trap Alert
