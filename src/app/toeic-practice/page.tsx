@@ -142,7 +142,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	const [isUltra, setIsUltra] = useState(false);
 	const [totalWords, setTotalWords] = useState(0);
 	const [vocabLoading, setVocabLoading] = useState(false);
-	const [flipIndex, setFlipIndex] = useState<number | null>(null);
+	const [cardIndex, setCardIndex] = useState(0);
+	const [isFlipped, setIsFlipped] = useState(false);
 	const [showUpgrade, setShowUpgrade] = useState(false);
 
 	useEffect(() => {
@@ -166,7 +167,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		if (!session) { onPracticeClick(); return; }
 		setSelectedTopic(topic);
 		setVocabLoading(true);
-		setFlipIndex(null);
+		setCardIndex(0);
+		setIsFlipped(false);
 		try {
 			const res = await fetch(`/api/toeic/vocabulary?topic=${encodeURIComponent(topic)}`);
 			if (res.ok) {
@@ -180,6 +182,17 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		} finally {
 			setVocabLoading(false);
 		}
+	};
+
+	const moveCard = (dir: 'prev' | 'next') => {
+		setIsFlipped(false);
+		setTimeout(() => {
+			setCardIndex((prev) =>
+				dir === 'next'
+					? Math.min(prev + 1, vocabItems.length - 1)
+					: Math.max(prev - 1, 0)
+			);
+		}, 150);
 	};
 
 	// ── Topic list ──────────────────────────────────────────
@@ -211,14 +224,14 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 								<div>
 									<div className="font-bold text-base text-green-900 group-hover:text-[#ea980c] transition-colors mb-1 pr-14">{t.topic}</div>
 									<div className="text-xs text-gray-400 flex items-center gap-1 mt-2">
-										<span className="inline-block w-3.5 h-3.5 text-amber-500">⭐</span>
+										<span className="text-amber-500">⭐</span>
 										<span className="text-amber-600 font-semibold text-[11px]">ULTRA</span>
-										<span className="text-gray-400 text-[11px]">— Collocations, Synonyms, Antonyms &amp; TOEIC Traps</span>
+										<span className="text-gray-400 text-[11px]">— Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC</span>
 									</div>
 								</div>
 								<div className="flex justify-end mt-3">
 									<button className="text-green-900 font-semibold text-sm hover:text-[#ea980c] transition-colors cursor-pointer">
-										Xem flashcard →
+										Học flashcard →
 									</button>
 								</div>
 							</div>
@@ -230,115 +243,200 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	}
 
 	// ── Flashcard view ──────────────────────────────────────
+	const currentItem = vocabItems[cardIndex];
 	const lockedCount = totalWords - vocabItems.length;
+	const hasPremium = currentItem && (currentItem.collocations || currentItem.synonyms || currentItem.antonyms || currentItem.toeicTrap);
 
 	return (
 		<div>
 			{/* Header */}
-			<div className="flex items-center gap-3 mb-6">
+			<div className="flex flex-wrap items-center gap-3 mb-6">
 				<button
 					onClick={() => { setSelectedTopic(null); setVocabItems([]); }}
 					className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-1"
 				>
 					← Quay lại
 				</button>
-				<h2 className="text-lg font-bold text-green-900">📙 {selectedTopic}</h2>
+				<h2 className="text-base font-bold text-green-900">📙 {selectedTopic}</h2>
 				{!isUltra && (
-					<span className="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">
-						⭐ ULTRA — Mở khoá đầy đủ
-					</span>
+					<button
+						onClick={() => setShowUpgrade(true)}
+						className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 px-3 py-1 text-xs font-bold text-white shadow-sm hover:opacity-90 transition"
+					>
+						🔒 ULTRA — Mở khoá đầy đủ
+					</button>
 				)}
 			</div>
 
 			{vocabLoading ? (
 				<div className="py-12 text-center text-gray-400 italic">Đang tải từ vựng...</div>
+			) : vocabItems.length === 0 ? (
+				<div className="py-12 text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">Không có từ vựng nào.</div>
 			) : (
-				<>
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-						{vocabItems.map((item, idx) => (
+				<div className="space-y-5">
+					{/* Nav controls */}
+					<div className="flex items-center justify-between gap-2 rounded-xl bg-slate-100 p-2 border border-slate-200 shadow-sm">
+						<button
+							type="button"
+							onClick={() => moveCard('prev')}
+							disabled={cardIndex === 0}
+							className="rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40 disabled:shadow-none"
+						>
+							Prev
+						</button>
+
+						<div className="flex flex-col items-center gap-0.5">
+							<span className="text-sm font-semibold text-slate-600">
+								{cardIndex + 1} / {totalWords}
+							</span>
+							{!isUltra && lockedCount > 0 && (
+								<span className="text-[10px] text-amber-600 font-medium">
+									🔒 {lockedCount} từ bị khoá
+								</span>
+							)}
+						</div>
+
+						<button
+							type="button"
+							onClick={() => moveCard('next')}
+							disabled={cardIndex >= vocabItems.length - 1}
+							className="rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40 disabled:shadow-none"
+						>
+							Next
+						</button>
+					</div>
+
+					{/* 3D Flip Card — same structure as homepage */}
+					{currentItem && (
+						<div className="relative w-full h-[360px] sm:h-[480px] [perspective:1200px]">
 							<div
-								key={item.id}
-								onClick={() => setFlipIndex(flipIndex === idx ? null : idx)}
-								className="group relative cursor-pointer rounded-2xl border-2 border-green-900/20 bg-white shadow-sm hover:shadow-lg hover:border-[#14532d]/60 transition-all duration-200 overflow-hidden"
+								className={`relative h-full w-full rounded-2xl shadow-lg transition-transform duration-500 ease-out [transform-style:preserve-3d] cursor-pointer ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
+								onClick={() => setIsFlipped(!isFlipped)}
 							>
-								{/* Front */}
-								<div className="p-5">
-									<div className="flex items-start justify-between gap-2 mb-2">
-										<div className="font-bold text-xl text-green-900">{item.word}</div>
-										{item.phonetic && (
-											<span className="text-xs text-gray-400 bg-gray-100 rounded px-2 py-0.5 shrink-0 font-mono">{item.phonetic}</span>
+								{/* ── FRONT FACE ── */}
+								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-[#14532d] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
+									<span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-white/50 bg-white/10 px-3 py-1 rounded-full pointer-events-none">
+										Nhấn để lật
+									</span>
+									<p className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-sm text-center">
+										{currentItem.word}
+									</p>
+									{currentItem.phonetic && (
+										<p className="mt-4 text-lg text-white/60 font-medium font-mono">{currentItem.phonetic}</p>
+									)}
+									<p className="mt-8 text-sm text-white/50 font-medium tracking-wide">
+										Chủ đề: {selectedTopic}
+									</p>
+								</div>
+
+								{/* ── BACK FACE ── */}
+								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-[#14532d]/20 p-5 sm:p-7 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(20,83,45,0.02)] overflow-y-auto overflow-x-hidden">
+									<span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-[#14532d]/50 bg-[#14532d]/5 px-3 py-1 rounded-full pointer-events-none">
+										Nhấn để lật
+									</span>
+
+									{/* Basic info — always visible */}
+									<div className="flex-1 flex flex-col items-center justify-start text-center w-full pt-2">
+										<p className="text-2xl sm:text-3xl font-bold text-[#14532d]">{currentItem.word}</p>
+										{currentItem.phonetic && (
+											<p className="mt-1 text-base text-slate-400 font-mono">{currentItem.phonetic}</p>
+										)}
+
+										<div className="mt-4 mb-4 w-12 h-1 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
+
+										<p className="text-xl sm:text-2xl font-bold text-slate-800">{currentItem.meaning}</p>
+										{currentItem.englishDefinition && (
+											<p className="mt-2 text-sm text-slate-500 font-medium px-2 italic">{currentItem.englishDefinition}</p>
+										)}
+
+										{currentItem.example && (
+											<div className="mt-5 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden text-left">
+												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40" />
+												<p className="text-sm italic text-slate-700 font-medium px-2">
+													<span className="font-bold text-[#14532d] not-italic mr-2">EX:</span>
+													{currentItem.example}
+												</p>
+											</div>
+										)}
+
+										{/* ── PREMIUM ZONE — blur + lock for non-ULTRA ── */}
+										{hasPremium && (
+											<div className="mt-5 w-full flex-shrink-0 relative rounded-xl border border-amber-200/60 bg-gradient-to-br from-amber-50/80 to-orange-50/30 p-4 text-left overflow-hidden shadow-[inset_0_1px_4px_rgba(0,0,0,0.02)]">
+												{!isUltra && (
+													<div
+														className="absolute inset-0 z-10 backdrop-blur-[3px] bg-white/40 flex flex-col items-center justify-center p-4 text-center cursor-pointer transition hover:bg-white/30"
+														onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
+													>
+														<div className="bg-gradient-to-b from-white to-amber-50 shadow-sm border border-amber-200 rounded-full p-2 mb-2">
+															<svg className="w-6 h-6 text-amber-500 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24">
+																<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+															</svg>
+														</div>
+														<p className="text-[10px] font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100/80 px-2.5 py-1 rounded-sm border border-amber-200/50">ULTRA REQUIRED</p>
+														<p className="text-xs font-semibold text-slate-700 mt-2 max-w-[220px]">
+															Mở khoá Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC để tăng điểm Reading.
+														</p>
+														<button
+															className="mt-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-bold px-4 py-1.5 shadow hover:opacity-90 transition"
+															onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
+														>
+															Nâng cấp ULTRA →
+														</button>
+													</div>
+												)}
+
+												<div className={`space-y-3 text-sm ${!isUltra ? 'opacity-20 pointer-events-none select-none blur-[2px]' : ''}`}>
+													{currentItem.synonyms && (
+														<div>
+															<p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+																Synonyms
+															</p>
+															<p className="text-slate-700 font-medium pl-5">{currentItem.synonyms}</p>
+														</div>
+													)}
+													{currentItem.antonyms && (
+														<div>
+															<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+																Antonyms
+															</p>
+															<p className="text-slate-700 font-medium pl-5">{currentItem.antonyms}</p>
+														</div>
+													)}
+													{currentItem.collocations && (
+														<div>
+															<p className="font-bold text-purple-700 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+																Collocations
+															</p>
+															<p className="text-slate-700 font-medium pl-5">{currentItem.collocations}</p>
+														</div>
+													)}
+													{currentItem.toeicTrap && (
+														<div className="rounded-lg bg-white/60 border border-rose-200 p-3">
+															<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+																⚠ TOEIC Trap Alert
+															</p>
+															<p className="text-slate-700 font-medium pl-5 leading-relaxed">{currentItem.toeicTrap}</p>
+														</div>
+													)}
+												</div>
+											</div>
 										)}
 									</div>
-									<div className="text-sm text-[#14532d] font-semibold mb-1">{item.meaning}</div>
-									{item.englishDefinition && (
-										<div className="text-xs text-gray-500 italic mb-2">{item.englishDefinition}</div>
-									)}
-									{item.example && (
-										<div className="text-xs text-gray-600 border-t pt-2 mt-2 leading-relaxed">
-											<span className="font-semibold text-gray-400">Ví dụ: </span>{item.example}
-										</div>
-									)}
-
-									{/* Expanded details on click */}
-									{flipIndex === idx && (
-										<div className="mt-3 space-y-2 border-t pt-3">
-											{item.collocations && (
-												<div className="text-xs">
-													<span className="font-bold text-purple-700">Collocations: </span>
-													<span className="text-gray-700">{item.collocations}</span>
-												</div>
-											)}
-											{item.synonyms && (
-												<div className="text-xs">
-													<span className="font-bold text-blue-700">Synonyms: </span>
-													<span className="text-gray-700">{item.synonyms}</span>
-												</div>
-											)}
-											{item.antonyms && (
-												<div className="text-xs">
-													<span className="font-bold text-red-600">Antonyms: </span>
-													<span className="text-gray-700">{item.antonyms}</span>
-												</div>
-											)}
-											{item.toeicTrap && (
-												<div className="text-xs rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
-													<span className="font-bold text-amber-700">⚠ TOEIC Trap: </span>
-													<span className="text-amber-800">{item.toeicTrap}</span>
-												</div>
-											)}
-										</div>
-									)}
-								</div>
-
-								{/* Expand hint */}
-								<div className="absolute bottom-2 right-3 text-[10px] text-gray-400 group-hover:text-[#ea980c] transition-colors">
-									{flipIndex === idx ? 'Thu gọn ↑' : 'Xem chi tiết ↓'}
 								</div>
 							</div>
-						))}
-
-						{/* Locked placeholder cards */}
-						{!isUltra && lockedCount > 0 && Array.from({ length: Math.min(lockedCount, 3) }).map((_, i) => (
-							<div
-								key={`locked-${i}`}
-								onClick={() => setShowUpgrade(true)}
-								className="relative rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50/50 p-5 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-amber-50 transition min-h-[160px]"
-							>
-								<div className="text-3xl">🔒</div>
-								<div className="text-sm font-bold text-amber-700 text-center">
-									{i === 0 ? `+${lockedCount} từ bị khoá` : ''}
-								</div>
-								<div className="text-xs text-amber-600 text-center">Nâng cấp ULTRA để mở khoá collocations, synonyms &amp; TOEIC traps</div>
-							</div>
-						))}
-					</div>
+						</div>
+					)}
 
 					{/* Upgrade CTA banner */}
 					{!isUltra && lockedCount > 0 && (
-						<div className="mt-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+						<div className="mt-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
 							<div>
-								<p className="font-bold text-base">🚀 Nâng cấp ULTRA để mở khoá {lockedCount} từ còn lại!</p>
-								<p className="text-sm text-amber-100 mt-1">Bao gồm Collocations, Synonyms, Antonyms và TOEIC Traps của từng từ.</p>
+								<p className="font-bold text-sm sm:text-base">🚀 Nâng cấp ULTRA để mở khoá {lockedCount} từ còn lại!</p>
+								<p className="text-xs sm:text-sm text-amber-100 mt-1">Mỗi thẻ sẽ có đầy đủ Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC.</p>
 							</div>
 							<button
 								onClick={() => setShowUpgrade(true)}
@@ -348,15 +446,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 							</button>
 						</div>
 					)}
-				</>
+				</div>
 			)}
 
-			{/* Upgrade modal */}
 			{showUpgrade && <UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} />}
 		</div>
 	);
 }
-
 
 function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 	const listeningParts = [
