@@ -492,15 +492,19 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	const LockedFieldView = ({ tier, label }: { tier: 'PRO' | 'ULTRA', label: string }) => (
 		<div 
 			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-			className="inline-flex items-center gap-2 cursor-pointer group my-1"
+			className="inline-flex items-center gap-1 cursor-pointer group my-0.5 opacity-80 hover:opacity-100 transition-opacity"
 		>
-			<div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200 group-hover:bg-slate-100 group-hover:border-slate-300 transition-colors shadow-xs">
-				<svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-				</svg>
-				<span className="text-xs font-bold text-slate-600 group-hover:text-slate-800">{label}</span>
-			</div>
-			{tier === 'ULTRA' ? <UltraTag /> : <ProTag />}
+			{tier === 'ULTRA' ? (
+				<>
+					<svg className="w-3.5 h-3.5 fill-amber-400 drop-shadow-sm" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+					<span className="text-[11px] font-bold text-slate-400 group-hover:text-purple-700 transition-colors tracking-wide">{label}</span>
+				</>
+			) : (
+				<>
+					<svg className="w-3.5 h-3.5 fill-amber-500 drop-shadow-sm" viewBox="0 0 24 24"><path d="M12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72 3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.6l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08l4.15-2.5z"/></svg>
+					<span className="text-[11px] font-bold text-slate-400 group-hover:text-amber-600 transition-colors tracking-wide">{label}</span>
+				</>
+			)}
 		</div>
 	);
 
