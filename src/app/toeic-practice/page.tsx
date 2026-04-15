@@ -198,6 +198,27 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		}, 150);
 	};
 
+	const playPronunciation = (e: React.MouseEvent, word: string) => {
+		e.stopPropagation();
+		if (typeof window === 'undefined' || !window.speechSynthesis) return;
+
+		window.speechSynthesis.cancel();
+		const utterance = new SpeechSynthesisUtterance(word);
+		utterance.lang = 'en-US';
+		utterance.rate = 0.9;
+		
+		const voices = window.speechSynthesis.getVoices();
+		const preferredVoiceNames = ['Samantha', 'Daniel', 'Alex', 'Google', 'Jenny', 'Guy', 'Christopher', 'Eric', 'Aria', 'Davis', 'Roger', 'Joey', 'Matthew', 'Salli', 'Ivy', 'Kevin'];
+		const americanVoice = voices.find((voice) => voice.name === 'Google US English' && voice.lang.toLowerCase() === 'en-us') ||
+							  voices.find((voice) => voice.name.toLowerCase().includes('google') && voice.lang.toLowerCase() === 'en-us') ||
+							  voices.find((voice) => voice.lang.toLowerCase() === 'en-us' && preferredVoiceNames.some((name) => voice.name.includes(name))) ||
+							  voices.find((voice) => voice.lang.toLowerCase() === 'en-us');
+		if (americanVoice) {
+			utterance.voice = americanVoice;
+		}
+		window.speechSynthesis.speak(utterance);
+	};
+
 	// ── Topic list ──────────────────────────────────────────
 	if (!selectedTopic) {
 		return (
@@ -320,6 +341,20 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 									{currentItem.phonetic && (
 										<p className="mt-4 text-lg text-white/60 font-medium font-mono">{currentItem.phonetic}</p>
 									)}
+
+									{/* Voice Button */}
+									<button
+										type="button"
+										onClick={(e) => playPronunciation(e, currentItem.word)}
+										className="mt-6 rounded-full bg-white/10 p-3.5 text-white shadow-sm ring-1 ring-white/20 transition-all hover:bg-white/25 hover:scale-110 active:scale-95"
+										title="Nghe phát âm"
+									>
+										<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.49 9.49 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06zM18.584 5.106a.75.75 0 011.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 11-1.06-1.06 8.25 8.25 0 000-11.668.75.75 0 010-1.06z" />
+											<path d="M15.932 7.757a.75.75 0 011.061 0 6 6 0 010 8.486.75.75 0 01-1.06-1.061 4.5 4.5 0 000-6.364.75.75 0 010-1.06z" />
+										</svg>
+									</button>
+
 									<p className="mt-8 text-sm text-white/50 font-medium tracking-wide">
 										Chủ đề: {selectedTopic}
 									</p>
@@ -346,32 +381,30 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 										)}
 
 										{currentItem.example && (
-											<div className="mt-5 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden text-left">
+											<div className="mt-5 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden text-center flex flex-col items-center">
 												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40" />
-												<div className="flex items-start justify-between gap-2 px-2">
-													<p className="text-sm italic text-slate-700 font-medium flex-1">
-														<span className="font-bold text-[#14532d] not-italic mr-2">EX:</span>
-														{currentItem.example}
-													</p>
-													{currentItem.exampleVi && (
-														<button
-															type="button"
-															onClick={(e) => { e.stopPropagation(); setShowExampleVi(v => !v); }}
-															className="flex-shrink-0 flex items-center gap-1 text-[#ea980c] hover:text-[#c47c08] transition-colors"
-															title="Dịch nghĩa"
+												<p className="text-sm italic text-slate-700 font-medium">
+													<span className="font-bold text-[#14532d] not-italic mr-2">EX:</span>
+													{currentItem.example}
+												</p>
+												{currentItem.exampleVi && (
+													<button
+														type="button"
+														onClick={(e) => { e.stopPropagation(); setShowExampleVi(v => !v); }}
+														className="mt-2 flex items-center justify-center gap-1 text-[#ea980c] hover:text-[#c47c08] transition-colors"
+														title="Dịch nghĩa"
+													>
+														<span className="text-[11px] font-semibold whitespace-nowrap">Dịch nghĩa</span>
+														<svg
+															className={`w-4 h-4 transition-transform duration-200 ${showExampleVi ? 'rotate-180' : ''}`}
+															fill="none" stroke="currentColor" viewBox="0 0 24 24"
 														>
-															<svg
-																className={`w-4 h-4 transition-transform duration-200 ${showExampleVi ? 'rotate-180' : ''}`}
-																fill="none" stroke="currentColor" viewBox="0 0 24 24"
-															>
-																<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-															</svg>
-															<span className="text-[11px] font-semibold whitespace-nowrap">Dịch nghĩa</span>
-														</button>
-													)}
-												</div>
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+														</svg>
+													</button>
+												)}
 												{currentItem.exampleVi && showExampleVi && (
-													<p className="mt-2 px-2 text-sm text-[#ea980c] font-medium">
+													<p className="mt-2 text-sm text-[#ea980c] font-medium text-center">
 														{currentItem.exampleVi}
 													</p>
 												)}
@@ -423,7 +456,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 											<button
 												type="button"
 												onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-												className="mt-5 text-xs text-amber-600 underline underline-offset-2 hover:text-amber-700 transition cursor-pointer"
+												className="mt-5 text-xs font-bold text-purple-700 hover:text-purple-800 transition cursor-pointer"
 											>
 												Nâng cấp ULTRA để xem đầy đủ Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC
 											</button>
