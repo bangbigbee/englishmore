@@ -64,6 +64,11 @@ interface MemberVocabularyItem {
   example: string | null
   topic?: string
   displayOrder: number
+  synonyms: string | null
+  antonyms: string | null
+  collocations: string | null
+  toeicTrap: string | null
+  mnemonicUrl: string | null
 }
 
 type BrowserSpeechRecognition = {
@@ -295,6 +300,7 @@ function HomeContent() {
   const [memberVocabularyItems, setMemberVocabularyItems] = useState<MemberVocabularyItem[]>([])
   const [selectedVocabularyTopic, setSelectedVocabularyTopic] = useState<string | null>(null)
   const [memberVocabularyIndex, setMemberVocabularyIndex] = useState(0)
+  const [isVocabularyFlipped, setIsVocabularyFlipped] = useState(false)
   const [memberVocabularyLoading, setMemberVocabularyLoading] = useState(false)
   const [memberVocabularyError, setMemberVocabularyError] = useState('')
   const [speechSupported, setSpeechSupported] = useState(false)
@@ -900,6 +906,7 @@ function HomeContent() {
     if (availableTopics.length > 0 && (!selectedVocabularyTopic || !availableTopics.includes(selectedVocabularyTopic))) {
       setSelectedVocabularyTopic(availableTopics[0])
       setMemberVocabularyIndex(0)
+      setIsVocabularyFlipped(false)
     }
   }, [availableTopics, selectedVocabularyTopic])
 
@@ -983,6 +990,7 @@ function HomeContent() {
 
   const moveVocabulary = (direction: 'prev' | 'next') => {
     if (filteredVocabularyItems.length <= 1) return
+    setIsVocabularyFlipped(false)
     setMemberVocabularyIndex((current) => {
       const delta = direction === 'next' ? 1 : -1
       return (current + delta + filteredVocabularyItems.length) % filteredVocabularyItems.length
@@ -2090,6 +2098,7 @@ function HomeContent() {
                           onClick={() => {
                             setSelectedVocabularyTopic(topic)
                             setMemberVocabularyIndex(0)
+                            setIsVocabularyFlipped(false)
                           }}
                           className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                             selectedVocabularyTopic === topic
@@ -2111,29 +2120,28 @@ function HomeContent() {
                 ) : !currentVocabularyItem ? (
                   <p className="text-sm text-slate-500">No vocabulary has been added for your current course yet.</p>
                 ) : (
-                  <div className="overflow-hidden rounded-lg bg-linear-to-r from-[#2f8f2e] via-[#14532d] to-[#052e16] px-3 sm:px-4 py-4 sm:py-5 md:px-6 md:py-6 text-white">
-                    <div className="mb-3 sm:mb-4 flex items-center justify-between gap-1">
+                  <div className="space-y-4">
+                    {/* Controls Row */}
+                    <div className="flex items-center justify-between gap-1 rounded-xl bg-slate-100 p-2 border border-slate-200 shadow-sm">
                       <button
                         type="button"
                         onClick={() => moveVocabulary('prev')}
                         disabled={filteredVocabularyItems.length <= 1}
-                        className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        className="rounded-lg bg-white shadow-xs px-3 sm:px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 disabled:shadow-none"
                         aria-label="Previous vocabulary"
                       >
-                        {'<'}
+                        Prev
                       </button>
-                      <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+                      
+                      <div className="flex flex-wrap items-center justify-center gap-2">
                         <button
                           type="button"
                           onClick={() => speakVocabularyWord()}
-                          className="inline-flex items-center justify-center rounded-full bg-white/15 p-2 sm:p-3 transition hover:bg-white/25"
+                          className="inline-flex items-center justify-center rounded-full bg-white shadow-xs p-2.5 text-[#14532d] transition hover:bg-green-50"
                           aria-label="Speak vocabulary"
+                          title="Listen to pronunciation"
                         >
-                          <svg
-                            aria-hidden="true"
-                            viewBox="0 0 24 24"
-                            className="h-5 w-5 sm:h-6 sm:w-6 fill-current"
-                          >
+                          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-current">
                             <path d="M3 10v4h4l5 4V6L7 10H3zm12.5 2a4.5 4.5 0 0 0-2.18-3.85v7.7A4.5 4.5 0 0 0 15.5 12zm0-8.5v2.06A8.5 8.5 0 0 1 20 12a8.5 8.5 0 0 1-4.5 7.44v2.06A10.49 10.49 0 0 0 22 12 10.49 10.49 0 0 0 15.5 3.5z" />
                           </svg>
                         </button>
@@ -2141,60 +2149,169 @@ function HomeContent() {
                           type="button"
                           onClick={handleTryVocabulary}
                           disabled={!speechSupported || isPronunciationListening}
-                          className="inline-flex items-center gap-1 sm:gap-2 rounded-full bg-white/15 px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white transition hover:bg-white/25 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-[#14532d] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          <svg
-                            aria-hidden="true"
-                            viewBox="0 0 24 24"
-                            className="h-4 w-4 sm:h-5 sm:w-5 fill-current shrink-0"
-                          >
+                          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current shrink-0">
                             <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.5 14.53 16 12 16s-4.52-1.5-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.063.54-.92 1.14.72 3.44 3.82 5.96 7.81 5.96s7.09-2.52 7.81-5.96c.14-.6-.31-1.14-.92-1.14z" />
                           </svg>
-                          <span>{isPronunciationListening ? 'Listening...' : 'Try it'}</span>
+                          <span>{isPronunciationListening ? 'Listening...' : 'Practice Voice'}</span>
                         </button>
                       </div>
+
                       <button
                         type="button"
                         onClick={() => moveVocabulary('next')}
                         disabled={filteredVocabularyItems.length <= 1}
-                        className="rounded-full px-2 py-1 text-base sm:text-lg font-bold transition hover:bg-white/20 disabled:opacity-50"
+                        className="rounded-lg bg-white shadow-xs px-3 sm:px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50 disabled:shadow-none"
                         aria-label="Next vocabulary"
                       >
-                        {'>'}
+                        Next
                       </button>
                     </div>
 
-                    <div className="text-center">
-                      <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">{currentVocabularyItem.word}</p>
-                      <p className="mt-1 sm:mt-2 text-lg sm:text-2xl text-white/90">{formatPhoneticForDisplay(currentVocabularyItem.phonetic)}</p>
-                      {currentVocabularyItem.englishDefinition && (
-                        <p className="mt-2 sm:mt-3 text-xs sm:text-base font-medium text-white/90">{currentVocabularyItem.englishDefinition}</p>
-                      )}
-                      <p className="mt-3 sm:mt-5 text-base sm:text-2xl font-semibold">{currentVocabularyItem.meaning}</p>
-                      {currentVocabularyItem.example && (
-                        <p className="mt-2 sm:mt-4 text-xs sm:text-base italic text-white/90">&quot;{currentVocabularyItem.example}&quot;</p>
-                      )}
-
-                      {pronunciationStatus && (
-                        <p className="mt-3 sm:mt-5 text-xs sm:text-sm font-medium text-white/85">{pronunciationStatus}</p>
-                      )}
-
-                      {pronunciationScore !== null && (
-                        <div className="mt-3 sm:mt-4 rounded-md sm:rounded-lg border border-white/20 bg-white/10 px-3 sm:px-4 py-2 sm:py-3 text-left backdrop-blur-sm text-xs sm:text-sm">
-                          {pronunciationTranscript && (
-                            <p className="text-white/85">We heard: &quot;{pronunciationTranscript}&quot;</p>
-                          )}
-                          {pronunciationFeedback && (
-                            <p className={`${pronunciationTranscript ? 'mt-1.5 sm:mt-2 ' : ''}font-semibold text-blue-300`}>{pronunciationFeedback}</p>
-                          )}
-                          <p className="mt-1.5 sm:mt-2 text-[11px] sm:text-xs text-white/70">Score: {pronunciationScore}% (estimated from browser speech recognition)</p>
+                    {/* Fliping Flashcard */}
+                    <div className="relative w-full h-[320px] sm:h-[380px] [perspective:1200px] group">
+                      <div 
+                        className={`relative h-full w-full rounded-2xl shadow-lg transition-transform duration-500 ease-out [transform-style:preserve-3d] cursor-pointer ${
+                          isVocabularyFlipped ? '[transform:rotateY(180deg)]' : ''
+                        }`}
+                        onClick={() => setIsVocabularyFlipped(!isVocabularyFlipped)}
+                      >
+                        {/* Front Face */}
+                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-[#14532d] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
+                          <span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-white/50 bg-white/10 px-3 py-1 rounded-full pointer-events-none">
+                            Tap to flip
+                          </span>
+                          
+                          <p className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-sm">
+                            {currentVocabularyItem.word}
+                          </p>
+                          
+                          <p className="mt-8 text-sm sm:text-base text-white/60 font-medium tracking-wide">
+                            Chủ đề: {selectedVocabularyTopic || 'WarmUp'}
+                          </p>
                         </div>
-                      )}
 
-                      {!speechSupported && (
-                        <p className="mt-3 sm:mt-4 text-xs text-white/70">Voice practice is not supported in this browser.</p>
-                      )}
+                        {/* Back Face */}
+                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-[#14532d]/20 p-5 sm:p-8 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(20,83,45,0.02)] overflow-y-auto overflow-x-hidden">
+                          <span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-[#14532d]/50 bg-[#14532d]/5 px-3 py-1 rounded-full pointer-events-none">
+                            Tap to flip
+                          </span>
+
+                          <div className="flex-1 flex flex-col items-center justify-center text-center w-full">
+                            <p className="text-2xl sm:text-3xl font-bold text-[#14532d]">{currentVocabularyItem.word}</p>
+                            <p className="mt-1 text-lg sm:text-xl font-medium text-slate-500">{formatPhoneticForDisplay(currentVocabularyItem.phonetic)}</p>
+                            
+                            <div className="mt-4 sm:mt-5 mb-4 sm:mb-5 w-12 h-1 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
+                            
+                            <p className="text-xl sm:text-2xl font-bold text-slate-800">{currentVocabularyItem.meaning}</p>
+                            {currentVocabularyItem.englishDefinition && (
+                              <p className="mt-2 text-sm sm:text-base text-slate-600 font-medium px-2">{currentVocabularyItem.englishDefinition}</p>
+                            )}
+                            
+                            {currentVocabularyItem.example && (
+                              <div className="mt-5 sm:mt-6 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden">
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40"></div>
+                                <p className="text-sm sm:text-base italic text-slate-700 font-medium text-left px-2">
+                                  <span className="font-bold text-[#14532d] not-italic mr-2">EX:</span>
+                                  {currentVocabularyItem.example}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* PREMIUM FIELDS */}
+                            {(currentVocabularyItem.synonyms || currentVocabularyItem.antonyms || currentVocabularyItem.collocations || currentVocabularyItem.toeicTrap) && (
+                              <div className="mt-5 w-full flex-shrink-0 text-left space-y-3 border-t border-slate-100 pt-5">
+                                {(currentVocabularyItem.synonyms || currentVocabularyItem.antonyms) && (
+                                  <div className="text-sm space-y-1.5 px-2">
+                                    {currentVocabularyItem.synonyms && <p><span className="font-semibold text-[#14532d] inline-flex items-center gap-1"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg> Synonyms:</span> <span className="text-slate-600 font-medium ml-1">{currentVocabularyItem.synonyms}</span></p>}
+                                    {currentVocabularyItem.antonyms && <p><span className="font-semibold text-rose-600 inline-flex items-center gap-1"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg> Antonyms:</span> <span className="text-slate-600 font-medium ml-1">{currentVocabularyItem.antonyms}</span></p>}
+                                  </div>
+                                )}
+                                
+                                {(currentVocabularyItem.collocations || currentVocabularyItem.toeicTrap) && (() => {
+                                  const isUltra = session?.user?.role === 'admin' || session?.user?.tier === 'ULTRA';
+                                  return (
+                                    <div className="mt-4 relative rounded-xl border border-amber-200/60 bg-gradient-to-br from-amber-50/80 to-orange-50/30 p-4 overflow-hidden shadow-[inset_0_1px_4px_rgba(0,0,0,0.02)]">
+                                      {!isUltra && (
+                                        <div className="absolute inset-0 z-10 backdrop-blur-[3px] bg-white/40 flex flex-col items-center justify-center p-4 text-center cursor-help transition hover:bg-white/30" title="Cần gói ULTRA để mở khóa">
+                                          <div className="bg-gradient-to-b from-white to-amber-50 shadow-sm border border-amber-200 rounded-full p-2 mb-2">
+                                            <svg className="w-6 h-6 text-amber-500 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" /></svg>
+                                          </div>
+                                          <p className="text-[10px] font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100/80 px-2.5 py-1 rounded-sm shadow-xs border border-amber-200/50">ULTRA REQUIRED</p>
+                                          <p className="text-xs font-semibold text-slate-700 mt-2 max-w-[200px]">Unlock TOEIC Traps & premium collocations to secure high score.</p>
+                                        </div>
+                                      )}
+                                      
+                                      <div className={`space-y-4 text-sm ${!isUltra ? 'opacity-30 pointer-events-none select-none blur-[2px]' : ''}`}>
+                                        {currentVocabularyItem.collocations && (
+                                          <div>
+                                            <p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+                                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                              Collocations
+                                            </p>
+                                            <p className="text-slate-700 font-medium pl-5.5">{currentVocabularyItem.collocations}</p>
+                                          </div>
+                                        )}
+                                        {currentVocabularyItem.toeicTrap && (
+                                          <div>
+                                            <p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+                                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                              TOEIC Trap Alert
+                                            </p>
+                                            <p className="text-slate-700 font-medium pl-5.5 leading-relaxed bg-white/50 p-2 rounded-lg border border-rose-100">{currentVocabularyItem.toeicTrap}</p>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
+                              </div>
+                            )}
+
+                          </div>
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Practice Status */}
+                    {(pronunciationStatus || pronunciationScore !== null) && (
+                      <div className="rounded-xl bg-green-50/50 border border-[#14532d]/20 p-4 transition-all animate-in fade-in slide-in-from-top-2">
+                        {pronunciationStatus && (
+                          <p className="text-sm font-semibold text-[#14532d] mb-1">{pronunciationStatus}</p>
+                        )}
+                        {pronunciationScore !== null && (
+                          <div className="mt-2 space-y-1.5 bg-white/60 rounded-lg p-3 border border-[#14532d]/10">
+                            {pronunciationTranscript && (
+                              <p className="text-sm text-slate-700">
+                                <span className="text-slate-500 font-medium text-xs uppercase mr-2">We heard:</span>
+                                &quot;{pronunciationTranscript}&quot;
+                              </p>
+                            )}
+                            {pronunciationFeedback && (
+                              <p className="text-sm font-bold text-[#14532d] pt-1">{pronunciationFeedback}</p>
+                            )}
+                            <div className="flex items-center gap-3 pt-2 border-t border-[#14532d]/10 mt-2">
+                              <span className="text-xs font-semibold text-slate-500">Score:</span>
+                              <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                <div 
+                                  className={`h-full rounded-full transition-all duration-1000 ${pronunciationScore >= 80 ? 'bg-green-500' : pronunciationScore >= 50 ? 'bg-amber-400' : 'bg-red-400'}`}
+                                  style={{ width: `${pronunciationScore}%` }} 
+                                />
+                              </div>
+                              <span className="text-xs font-bold text-slate-700 min-w-8 text-right">{pronunciationScore}%</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {!speechSupported && (
+                      <p className="mt-2 text-xs text-slate-500 text-center flex items-center justify-center gap-1.5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-amber-500"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        Voice practice is not supported in your browser.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

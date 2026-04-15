@@ -13,6 +13,11 @@ type ParsedVocabularyItem = {
   meaning: string
   example: string | null
   topic: string
+  synonyms: string | null
+  antonyms: string | null
+  collocations: string | null
+  toeicTrap: string | null
+  mnemonicUrl: string | null
 }
 
 type DraftVocabularyItem = {
@@ -22,6 +27,11 @@ type DraftVocabularyItem = {
   meaning?: string
   example?: string | null
   topic?: string
+  synonyms?: string | null
+  antonyms?: string | null
+  collocations?: string | null
+  toeicTrap?: string | null
+  mnemonicUrl?: string | null
 }
 
 const getFirstValue = (map: Map<string, string>, keys: string[]) => {
@@ -97,7 +107,12 @@ const parseVocabularyFromText = (text: string) => {
         englishDefinition: currentItem.englishDefinition || null,
         meaning: currentItem.meaning,
         example: currentItem.example || null,
-        topic: currentItem.topic || lastTopic || 'WarmUp'
+        topic: currentItem.topic || lastTopic || 'WarmUp',
+        synonyms: currentItem.synonyms || null,
+        antonyms: currentItem.antonyms || null,
+        collocations: currentItem.collocations || null,
+        toeicTrap: currentItem.toeicTrap || null,
+        mnemonicUrl: currentItem.mnemonicUrl || null
       })
     } else if (Object.keys(currentItem).length > 0) {
       if (currentItem.word || currentItem.meaning) {
@@ -133,6 +148,16 @@ const parseVocabularyFromText = (text: string) => {
       currentItem.phonetic = val
     } else if (key === 'EXAMPLE') {
       currentItem.example = val
+    } else if (key === 'SYNONYMS' || key === 'SYNONYM') {
+      currentItem.synonyms = val
+    } else if (key === 'ANTONYMS' || key === 'ANTONYM') {
+      currentItem.antonyms = val
+    } else if (key === 'COLLOCATIONS' || key === 'COLLOCATION') {
+      currentItem.collocations = val
+    } else if (key === 'TOEIC_TRAP' || key === 'TRAP') {
+      currentItem.toeicTrap = val
+    } else if (key === 'MNEMONIC_IMAGE' || key === 'MNEMONICURL') {
+      currentItem.mnemonicUrl = val
     } else if (key === 'ENGLISH_DEFINITION' || key === 'DEFINITION' || key === 'ENGLISHDEFINITION') {
       currentItem.englishDefinition = currentItem.englishDefinition ? `${currentItem.englishDefinition} ${val}` : val
     } else if (key === 'PART_OF_SPEECH' || key === 'POS') {
@@ -166,7 +191,12 @@ const normalizeDraftItems = (items: DraftVocabularyItem[]) => {
       englishDefinition: englishDefinition || null,
       meaning,
       example: example || null,
-      topic: String(item?.topic || 'WarmUp').trim()
+      topic: String(item?.topic || 'WarmUp').trim(),
+      synonyms: String(item?.synonyms || '').trim() || null,
+      antonyms: String(item?.antonyms || '').trim() || null,
+      collocations: String(item?.collocations || '').trim() || null,
+      toeicTrap: String(item?.toeicTrap || '').trim() || null,
+      mnemonicUrl: String(item?.mnemonicUrl || '').trim() || null
     })
   }
 
@@ -212,6 +242,11 @@ const createVocabularyItems = async (courseId: string, items: ParsedVocabularyIt
           meaning: item.meaning,
           example: item.example,
           topic: item.topic,
+          synonyms: item.synonyms,
+          antonyms: item.antonyms,
+          collocations: item.collocations,
+          toeicTrap: item.toeicTrap,
+          mnemonicUrl: item.mnemonicUrl,
           isActive: true,
           displayOrder: baseOrder + index + 1
         }))

@@ -52,7 +52,12 @@ export async function GET(request: NextRequest) {
       meaning: true,
       example: true,
       topic: true,
-      displayOrder: true
+      displayOrder: true,
+      synonyms: true,
+      antonyms: true,
+      collocations: true,
+      toeicTrap: true,
+      mnemonicUrl: true
     },
     orderBy: [
       { displayOrder: 'asc' },
