@@ -19,23 +19,13 @@ const TABS = [
 		key: "vocabulary", 
 		label: "Vocabulary", 
 		icon: (
-			<svg className="w-5 h-5 shadow-sm" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-				{/* Book Cover */}
-				<rect x="10" y="5" width="74" height="94" rx="10" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
-				{/* Tabs */}
-				<path d="M84 20C89.5228 20 94 24.4772 94 30V40C94 45.5228 89.5228 50 84 50V20Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
-				<path d="M84 45C89.5228 45 94 49.4772 94 55V65C94 70.5228 89.5228 75 84 75V45Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
-				<path d="M84 70C89.5228 70 94 74.4772 94 80V90C94 95.5228 89.5228 100 84 100V70Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
-				{/* Bottom Pages detail */}
-				<path d="M15 99C15 107.284 21.7157 114 30 114H80C82.2091 114 84 112.209 84 110V99H15Z" fill="#DBEAFE" stroke="#3B82F6" strokeWidth="8"/>
-				<path d="M22 106H77" stroke="#3B82F6" strokeWidth="6" strokeLinecap="round"/>
-				{/* A-Z Label */}
-				<rect x="25" y="20" width="44" height="28" rx="6" stroke="#3B82F6" strokeWidth="7"/>
-				<text x="47" y="42" fontSize="24" fontWeight="900" textAnchor="middle" fill="#3B82F6" fontFamily="Inter, sans-serif">A-Z</text>
-				{/* Cover Lines */}
-				<line x1="28" y1="62" x2="66" y2="62" stroke="#3B82F6" strokeWidth="7" strokeLinecap="round"/>
-				<line x1="28" y1="75" x2="66" y2="75" stroke="#3B82F6" strokeWidth="7" strokeLinecap="round"/>
-				<line x1="28" y1="88" x2="50" y2="88" stroke="#3B82F6" strokeWidth="7" strokeLinecap="round"/>
+			<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M4 19C4 19.8284 4.67157 20.5 5.5 20.5H18.5C19.3284 20.5 20 19.8284 20 19V17.5H4V19Z" fill="currentColor"/>
+				<path d="M4 17.5V4C4 2.89543 4.89543 2 6 2H20V17.5H4Z" fill="currentColor" fillOpacity="0.1" stroke="currentColor" strokeWidth="2"/>
+				<path d="M7 6L8.5 10M10 6L8.5 10M7.5 8.5H9.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M13 6H17M13 8H17" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+				<path d="M7 12H11M7 14H11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+				<path d="M14 12H18L14 16H18" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -72,19 +62,19 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 	return (
 		<div
 			onClick={onClick}
-			className="relative group bg-white rounded-md p-7 transition-all duration-500 cursor-pointer overflow-hidden
-								 shadow-[5px_15px_40px_rgba(0,0,0,0.08)] hover:shadow-[10px_25px_60px_rgba(0,0,0,0.12)] 
-								 hover:-translate-y-2 flex flex-col justify-start min-h-[290px]"
+			className="relative group bg-white rounded-md p-8 transition-all duration-500 cursor-pointer overflow-hidden
+								 shadow-[5px_20px_50px_rgba(0,0,0,0.06)] hover:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] 
+								 hover:-translate-y-3 flex flex-col justify-start min-h-[310px] border border-slate-100/50"
 		>
-			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_3s_infinite] bg-linear-to-r from-transparent via-green-50/10 to-transparent skew-x-[-20deg]" />
+			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_3s_infinite] bg-linear-to-r from-transparent via-slate-50/20 to-transparent skew-x-[-20deg]" />
 
 			<div className="relative z-10 flex-1">
-				<h3 className="font-bold text-2xl text-[#14532d] leading-tight mb-3">
+				<h3 className="font-bold text-[22px] text-[#14532d] leading-snug mb-4 group-hover:text-black transition-colors">
 					{title}
 				</h3>
 
 				{badgeText && (
-					<div className="text-[12px] font-bold uppercase tracking-widest text-[#14532d] mb-4">
+					<div className="text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mb-6 opacity-80">
 						{badgeText}
 					</div>
 				)}
@@ -92,9 +82,9 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 				{subtitle && <p className="text-[15px] text-slate-500 font-normal leading-relaxed">{subtitle}</p>}
 			</div>
 
-			<div className="relative z-10 mt-8 flex justify-start">
-				<div className="w-14 h-14 shrink-0 rounded-full bg-white shadow-[0_8px_25px_-5px_rgba(0,0,0,0.15)] group-hover:shadow-[0_15px_35px_-5px_rgba(0,0,0,0.25)] flex items-center justify-center text-[#818cf8] group-hover:text-indigo-500 transition-all duration-300 group-hover:scale-110">
-					<svg className="w-6 h-6 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div className="relative z-10 mt-10 flex justify-start">
+				<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] group-hover:shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-[#818cf8] group-hover:text-indigo-600 transition-all duration-300 group-hover:scale-105 border border-slate-50">
+					<svg className="w-7 h-7 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
 					</svg>
 				</div>
@@ -135,8 +125,9 @@ function ToeicPracticeContent() {
 	};
 
 	return (
-		<div className="max-w-6xl mx-auto py-2 px-2 sm:px-6">
-			<style jsx global>{`
+		<div className="min-h-screen bg-slate-50/50">
+			<div className="max-w-6xl mx-auto py-8 px-4 sm:px-6">
+				<style jsx global>{`
 				@keyframes shimmer {
 					0% { transform: translateX(-150%) skewX(-20deg); }
 					50% { transform: translateX(150%) skewX(-20deg); }
