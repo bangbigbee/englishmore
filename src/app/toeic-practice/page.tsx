@@ -630,13 +630,20 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 												type="button"
 												onClick={(e) => { e.stopPropagation(); startVoicePractice(); }}
 												disabled={isPronunciationListening}
-												className={`rounded-full p-3.5 text-white shadow-sm ring-1 ring-white/20 transition-all hover:scale-110 active:scale-95 ${isPronunciationListening ? 'bg-rose-500 animate-pulse' : 'bg-white/10 hover:bg-white/25'}`}
+												className={`flex items-center justify-center gap-2 shadow-sm ring-1 ring-white/20 transition-all duration-300 overflow-hidden ${
+													isPronunciationListening 
+														? 'rounded-full bg-[#75967b] px-5 py-2.5 opacity-95 pointer-events-none'
+														: 'rounded-full bg-white/10 p-3.5 hover:bg-white/25 hover:scale-110 active:scale-95'
+												}`}
 												title="Luyện tập phát âm"
 											>
-												<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+												<svg className={`shrink-0 ${isPronunciationListening ? 'w-5 h-5 text-white animate-pulse' : 'w-6 h-6 text-white'}`} fill="currentColor" viewBox="0 0 24 24">
 													<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
 													<path d="M19 10v1a7 7 0 0 1-14 0v-1H3v1a9 9 0 0 0 8 8.94V22h2v-2.06A9 9 0 0 0 21 11v-1h-2z" />
 												</svg>
+												{isPronunciationListening && (
+													<span className="text-white font-bold text-sm tracking-wide whitespace-nowrap animate-pulse">Listening...</span>
+												)}
 											</button>
 										)}
 									</div>
