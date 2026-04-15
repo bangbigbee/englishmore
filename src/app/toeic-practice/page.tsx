@@ -258,14 +258,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 					← Quay lại
 				</button>
 				<h2 className="text-base font-bold text-green-900">📙 {selectedTopic}</h2>
-				{!isUltra && (
-					<button
-						onClick={() => setShowUpgrade(true)}
-						className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 px-3 py-1 text-xs font-bold text-white shadow-sm hover:opacity-90 transition"
-					>
-						🔒 ULTRA — Mở khoá đầy đủ
-					</button>
-				)}
+
 			</div>
 
 			{vocabLoading ? (
@@ -359,71 +352,55 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 											</div>
 										)}
 
-										{/* ── PREMIUM ZONE — blur + lock for non-ULTRA ── */}
-										{hasPremium && (
-											<div className="mt-5 w-full flex-shrink-0 relative rounded-xl border border-amber-200/60 bg-gradient-to-br from-amber-50/80 to-orange-50/30 p-4 text-left overflow-hidden shadow-[inset_0_1px_4px_rgba(0,0,0,0.02)]">
-												{!isUltra && (
-													<div
-														className="absolute inset-0 z-10 backdrop-blur-[3px] bg-white/40 flex flex-col items-center justify-center p-4 text-center cursor-pointer transition hover:bg-white/30"
-														onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-													>
-														<div className="bg-gradient-to-b from-white to-amber-50 shadow-sm border border-amber-200 rounded-full p-2 mb-2">
-															<svg className="w-6 h-6 text-amber-500 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24">
-																<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
-															</svg>
-														</div>
-														<p className="text-[10px] font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100/80 px-2.5 py-1 rounded-sm border border-amber-200/50">ULTRA REQUIRED</p>
-														<p className="text-xs font-semibold text-slate-700 mt-2 max-w-[220px]">
-															Mở khoá Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC để tăng điểm Reading.
+										{/* ── PREMIUM ZONE ── */}
+										{isUltra && hasPremium && (
+											<div className="mt-5 w-full flex-shrink-0 space-y-3 text-sm text-left border-t border-slate-100 pt-4">
+												{currentItem.synonyms && (
+													<div>
+														<p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+															Synonyms
 														</p>
-														<button
-															className="mt-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-bold px-4 py-1.5 shadow hover:opacity-90 transition"
-															onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-														>
-															Nâng cấp ULTRA →
-														</button>
+														<p className="text-slate-700 font-medium pl-5">{currentItem.synonyms}</p>
 													</div>
 												)}
-
-												<div className={`space-y-3 text-sm ${!isUltra ? 'opacity-20 pointer-events-none select-none blur-[2px]' : ''}`}>
-													{currentItem.synonyms && (
-														<div>
-															<p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-																Synonyms
-															</p>
-															<p className="text-slate-700 font-medium pl-5">{currentItem.synonyms}</p>
-														</div>
-													)}
-													{currentItem.antonyms && (
-														<div>
-															<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-																Antonyms
-															</p>
-															<p className="text-slate-700 font-medium pl-5">{currentItem.antonyms}</p>
-														</div>
-													)}
-													{currentItem.collocations && (
-														<div>
-															<p className="font-bold text-purple-700 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-																Collocations
-															</p>
-															<p className="text-slate-700 font-medium pl-5">{currentItem.collocations}</p>
-														</div>
-													)}
-													{currentItem.toeicTrap && (
-														<div className="rounded-lg bg-white/60 border border-rose-200 p-3">
-															<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
-																<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-																⚠ TOEIC Trap Alert
-															</p>
-															<p className="text-slate-700 font-medium pl-5 leading-relaxed">{currentItem.toeicTrap}</p>
-														</div>
-													)}
-												</div>
+												{currentItem.antonyms && (
+													<div>
+														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+															Antonyms
+														</p>
+														<p className="text-slate-700 font-medium pl-5">{currentItem.antonyms}</p>
+													</div>
+												)}
+												{currentItem.collocations && (
+													<div>
+														<p className="font-bold text-purple-700 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+															Collocations
+														</p>
+														<p className="text-slate-700 font-medium pl-5">{currentItem.collocations}</p>
+													</div>
+												)}
+												{currentItem.toeicTrap && (
+													<div className="rounded-lg bg-rose-50 border border-rose-200 p-3">
+														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+															⚠ TOEIC Trap Alert
+														</p>
+														<p className="text-slate-700 font-medium pl-5 leading-relaxed">{currentItem.toeicTrap}</p>
+													</div>
+												)}
 											</div>
+										)}
+										{!isUltra && (
+											<button
+												type="button"
+												onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
+												className="mt-5 text-xs text-amber-600 underline underline-offset-2 hover:text-amber-700 transition cursor-pointer"
+											>
+												Nâng cấp ULTRA để xem đầy đủ Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC
+											</button>
 										)}
 									</div>
 								</div>
@@ -431,21 +408,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 						</div>
 					)}
 
-					{/* Upgrade CTA banner */}
-					{!isUltra && lockedCount > 0 && (
-						<div className="mt-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
-							<div>
-								<p className="font-bold text-sm sm:text-base">🚀 Nâng cấp ULTRA để mở khoá {lockedCount} từ còn lại!</p>
-								<p className="text-xs sm:text-sm text-amber-100 mt-1">Mỗi thẻ sẽ có đầy đủ Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC.</p>
-							</div>
-							<button
-								onClick={() => setShowUpgrade(true)}
-								className="shrink-0 rounded-xl bg-white text-amber-600 font-bold px-6 py-2.5 text-sm hover:bg-amber-50 transition shadow"
-							>
-								Nâng cấp ngay →
-							</button>
-						</div>
-					)}
+
 				</div>
 			)}
 
