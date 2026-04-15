@@ -772,6 +772,9 @@ export default function AdminDashboard() {
   const [toeicVocabImportPreviewItems, setToeicVocabImportPreviewItems] = useState<VocabularyImportDraftItem[]>([])
   const [toeicVocabError, setToeicVocabError] = useState('')
   const [toeicVocabSuccess, setToeicVocabSuccess] = useState('')
+  const [toeicVocabTopics, setToeicVocabTopics] = useState<{ topic: string; wordCount: number }[]>([])
+  const [toeicVocabTopicsLoading, setToeicVocabTopicsLoading] = useState(false)
+  const [deletingToeicVocabTopic, setDeletingToeicVocabTopic] = useState<string | null>(null)
   const [toeicTopics, setToeicTopics] = useState<AdminToeicTopic[]>([])
   const [selectedToeicTopic, setSelectedToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [toeicLessons, setToeicLessons] = useState<AdminToeicLesson[]>([])
@@ -1249,6 +1252,36 @@ export default function AdminDashboard() {
     }
   }, [])
 
+  const fetchToeicVocabTopics = async () => {
+    try {
+      setToeicVocabTopicsLoading(true)
+      const res = await fetch('/api/admin/toeic/vocabulary/topics')
+      if (!res.ok) throw new Error('Failed to fetch')
+      const data = await res.json()
+      setToeicVocabTopics(data.topics || [])
+    } catch (err) {
+      console.error('[fetchToeicVocabTopics]', err)
+    } finally {
+      setToeicVocabTopicsLoading(false)
+    }
+  }
+
+  const deleteToeicVocabTopic = async (topic: string) => {
+    if (!confirm(`Xóa toàn bộ từ vựng trong chủ đề "${topic}"? Hành động này không thể hoàn tác.`)) return
+    try {
+      setDeletingToeicVocabTopic(topic)
+      const res = await fetch(`/api/admin/toeic/vocabulary/topics?topic=${encodeURIComponent(topic)}`, { method: 'DELETE' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Failed')
+      setToeicVocabTopics((prev) => prev.filter((t) => t.topic !== topic))
+      setToeicVocabSuccess(`Đã xóa ${data.deletedCount} từ trong chủ đề "${topic}".`)
+    } catch (err) {
+      setToeicVocabError(err instanceof Error ? err.message : 'Could not delete topic.')
+    } finally {
+      setDeletingToeicVocabTopic(null)
+    }
+  }
+
   const importToeicVocabularyFromDocsOrFile = async () => {
     const docsUrl = toeicVocabImportDocsUrl.trim()
     if (!docsUrl && !toeicVocabImportDocxFile) {
@@ -1359,6 +1392,7 @@ export default function AdminDashboard() {
       setToeicVocabImportPreviewItems([])
       setToeicVocabImportDocsUrl('')
       setToeicVocabImportDocxFile(null)
+      void fetchToeicVocabTopics()
     } catch (err) {
       setToeicVocabError(err instanceof Error ? err.message : 'Could not save imported vocabulary.')
     } finally {
@@ -2120,8 +2154,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (activeSection === 'toeic') {
       fetchToeicTopics()
+      void fetchToeicVocabTopics()
     }
   }, [activeSection, fetchToeicTopics])
+
 
   useEffect(() => {
     if (activeSection === 'news') {
@@ -3917,128 +3953,190 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* ─────────── TOEIC Vocabulary Import ─────────── */}
+          {/* ─────────── TOEIC Vocabulary Management ─────────── */}
           <div className="mt-8 border-t pt-6">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold text-[#ea980c]">📚 TOEIC Vocabulary (ULTRA tier)</h3>
-                <p className="mt-1 text-sm text-gray-600">Import topic-based flashcards (collocations, synonyms, antonyms, TOEIC traps) to incentivize ULTRA upgrades.</p>
+                <p className="mt-1 text-sm text-gray-600">Quản lý từ vựng TOEIC theo chủ đề — collocations, synonyms, antonyms, TOEIC traps.</p>
               </div>
+              <button
+                type="button"
+                onClick={() => void fetchToeicVocabTopics()}
+                disabled={toeicVocabTopicsLoading}
+                className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-50"
+              >
+                {toeicVocabTopicsLoading ? 'Đang tải...' : '↻ Refresh'}
+              </button>
             </div>
 
-            <div className="rounded-xl border border-amber-200 bg-amber-50/40 px-5 py-5">
-              <p className="text-sm font-semibold text-amber-900">Import từ Google Docs hoặc file .docx</p>
-              <p className="mt-1 text-xs text-amber-800">Format: TOPIC | WORD | PHONETIC | PART_OF_SPEECH | ENGLISH_DEFINITION | MEANING | EXAMPLE | COLLOCATIONS | SYNONYMS | ANTONYMS | TOEIC_TRAP</p>
+            <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 items-start">
 
-              <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto_auto]">
-                <input
-                  type="url"
-                  value={toeicVocabImportDocsUrl}
-                  onChange={(e) => setToeicVocabImportDocsUrl(e.target.value)}
-                  placeholder="Dán link Google Docs..."
-                  className="rounded-lg border border-amber-300 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-                />
+              {/* ── LEFT: Topic list ── */}
+              <div className="rounded-xl border border-amber-200 bg-white overflow-hidden shadow-sm">
+                <div className="flex items-center justify-between bg-amber-50 px-4 py-3 border-b border-amber-200">
+                  <span className="text-sm font-bold text-amber-900">Danh sách chủ đề</span>
+                  <span className="rounded-full bg-amber-200 px-2.5 py-0.5 text-xs font-bold text-amber-800">
+                    {toeicVocabTopics.length} chủ đề
+                  </span>
+                </div>
 
-                <label className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
-                  {toeicVocabImportDocxFile ? 'Đổi DOCX' : 'Đính kèm DOCX'}
-                  <input
-                    type="file"
-                    accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    className="hidden"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0] || null
-                      setToeicVocabImportDocxFile(file)
-                      event.currentTarget.value = ''
-                    }}
-                  />
-                </label>
+                {toeicVocabTopicsLoading ? (
+                  <div className="py-10 text-center text-sm text-gray-400 italic">Đang tải...</div>
+                ) : toeicVocabTopics.length === 0 ? (
+                  <div className="py-10 text-center text-sm text-gray-400 italic px-4">
+                    Chưa có chủ đề nào. Import từ vựng để bắt đầu.
+                  </div>
+                ) : (
+                  <div className="divide-y divide-amber-100 max-h-[500px] overflow-y-auto">
+                    {toeicVocabTopics.map((t) => (
+                      <div
+                        key={t.topic}
+                        className="flex items-center justify-between px-4 py-3 hover:bg-amber-50/50 group"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-gray-900 truncate">{t.topic}</p>
+                          <p className="text-xs text-amber-700 font-medium mt-0.5">{t.wordCount} từ</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => void deleteToeicVocabTopic(t.topic)}
+                          disabled={deletingToeicVocabTopic === t.topic}
+                          className="ml-3 shrink-0 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 hover:border-red-300 disabled:opacity-50 transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          {deletingToeicVocabTopic === t.topic ? 'Đang xóa...' : 'Xóa'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-                <button
-                  type="button"
-                  onClick={() => void importToeicVocabularyFromDocsOrFile()}
-                  disabled={importingToeicVocabPreview}
-                  className="rounded-lg bg-amber-600 px-5 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
-                >
-                  {importingToeicVocabPreview ? 'Đang tải...' : 'Xem trước'}
-                </button>
-              </div>
-
-              {toeicVocabImportDocxFile && (
-                <p className="mt-2 text-xs text-gray-600">File đính kèm: {toeicVocabImportDocxFile.name}</p>
-              )}
-
-              {toeicVocabError && (
-                <p className="mt-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">{toeicVocabError}</p>
-              )}
-              {toeicVocabSuccess && (
-                <p className="mt-3 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">{toeicVocabSuccess}</p>
-              )}
-
-              {toeicVocabImportPreviewItems.length > 0 && (
-                <div className="mt-4 rounded-xl border border-amber-300 bg-white p-3">
-                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-bold text-amber-900">Xem trước trước khi lưu</p>
-                    <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
-                      {toeicVocabImportPreviewItems.length} từ
+                {/* Summary footer */}
+                {toeicVocabTopics.length > 0 && (
+                  <div className="border-t border-amber-200 bg-amber-50/60 px-4 py-2.5 flex items-center justify-between">
+                    <span className="text-xs text-amber-800">Tổng số từ</span>
+                    <span className="text-sm font-bold text-amber-900">
+                      {toeicVocabTopics.reduce((sum, t) => sum + t.wordCount, 0)}
                     </span>
                   </div>
+                )}
+              </div>
 
-                  <div className="max-h-96 overflow-auto rounded-lg border border-amber-200">
-                    <table className="w-full border-collapse text-xs">
-                      <thead className="sticky top-0 bg-amber-100 border-b border-amber-200">
-                        <tr>
-                          {['Topic','Word','Phonetic','Meaning','English Def','Example','Collocations','Synonyms','Antonyms','TOEIC Trap',''].map((h) => (
-                            <th key={h} className="px-2 py-2 text-left font-semibold text-amber-900 uppercase whitespace-nowrap">{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {toeicVocabImportPreviewItems.map((item, index) => (
-                          <tr key={`toeic-prev-${index}`} className="border-b border-amber-50 align-top hover:bg-amber-50/50">
-                            {(['topic','word','phonetic','meaning','englishDefinition','example','collocations','synonyms','antonyms','toeicTrap'] as (keyof VocabularyImportDraftItem)[]).map((field) => (
-                              <td key={field} className="px-2 py-1.5">
-                                <input
-                                  type="text"
-                                  value={String(item[field] || '')}
-                                  onChange={(e) => updateToeicVocabImportPreviewItem(index, field, e.target.value)}
-                                  className="w-28 rounded border border-amber-200 px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-400"
-                                />
-                              </td>
-                            ))}
-                            <td className="px-2 py-1.5">
-                              <button
-                                type="button"
-                                onClick={() => removeToeicVocabImportPreviewItem(index)}
-                                className="rounded border border-red-300 px-2 py-0.5 text-xs font-semibold text-red-600 hover:bg-red-50"
-                              >
-                                Xóa
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+              {/* ── RIGHT: Import form ── */}
+              <div className="rounded-xl border border-amber-200 bg-amber-50/40 px-5 py-5">
+                <p className="text-sm font-semibold text-amber-900">Import chủ đề mới từ Google Docs hoặc file .docx</p>
+                <p className="mt-1 text-xs text-amber-800">Format: TOPIC | WORD | PHONETIC | POS | ENGLISH_DEFINITION | MEANING | EXAMPLE | COLLOCATIONS | SYNONYMS | ANTONYMS | TOEIC_TRAP</p>
 
-                  <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setToeicVocabImportPreviewItems([])}
-                      className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      Hủy
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void confirmToeicVocabImportPreview()}
-                      disabled={confirmingToeicVocabImport}
-                      className="rounded-lg bg-amber-600 px-5 py-2 text-sm font-bold text-white hover:bg-amber-700 disabled:opacity-50"
-                    >
-                      {confirmingToeicVocabImport ? 'Đang lưu...' : `Xác nhận & Lưu (${toeicVocabImportPreviewItems.length} từ)`}
-                    </button>
-                  </div>
+                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto_auto]">
+                  <input
+                    type="url"
+                    value={toeicVocabImportDocsUrl}
+                    onChange={(e) => setToeicVocabImportDocsUrl(e.target.value)}
+                    placeholder="Dán link Google Docs..."
+                    className="rounded-lg border border-amber-300 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  />
+
+                  <label className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+                    {toeicVocabImportDocxFile ? 'Đổi DOCX' : 'Đính kèm DOCX'}
+                    <input
+                      type="file"
+                      accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      className="hidden"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0] || null
+                        setToeicVocabImportDocxFile(file)
+                        event.currentTarget.value = ''
+                      }}
+                    />
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={() => void importToeicVocabularyFromDocsOrFile()}
+                    disabled={importingToeicVocabPreview}
+                    className="rounded-lg bg-amber-600 px-5 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+                  >
+                    {importingToeicVocabPreview ? 'Đang tải...' : 'Xem trước'}
+                  </button>
                 </div>
-              )}
+
+                {toeicVocabImportDocxFile && (
+                  <p className="mt-2 text-xs text-gray-600">📎 {toeicVocabImportDocxFile.name}</p>
+                )}
+
+                {toeicVocabError && (
+                  <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">{toeicVocabError}</p>
+                )}
+                {toeicVocabSuccess && (
+                  <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">{toeicVocabSuccess}</p>
+                )}
+
+                {toeicVocabImportPreviewItems.length > 0 && (
+                  <div className="mt-4 rounded-xl border border-amber-300 bg-white p-3">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-sm font-bold text-amber-900">Xem trước trước khi lưu</p>
+                      <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
+                        {toeicVocabImportPreviewItems.length} từ
+                      </span>
+                    </div>
+
+                    <div className="max-h-96 overflow-auto rounded-lg border border-amber-200">
+                      <table className="w-full border-collapse text-xs">
+                        <thead className="sticky top-0 bg-amber-100 border-b border-amber-200">
+                          <tr>
+                            {['Topic','Word','Phonetic','Meaning','English Def','Example','Collocations','Synonyms','Antonyms','TOEIC Trap',''].map((h) => (
+                              <th key={h} className="px-2 py-2 text-left font-semibold text-amber-900 uppercase whitespace-nowrap">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {toeicVocabImportPreviewItems.map((item, index) => (
+                            <tr key={`toeic-prev-${index}`} className="border-b border-amber-50 align-top hover:bg-amber-50/50">
+                              {(['topic','word','phonetic','meaning','englishDefinition','example','collocations','synonyms','antonyms','toeicTrap'] as (keyof VocabularyImportDraftItem)[]).map((field) => (
+                                <td key={field} className="px-2 py-1.5">
+                                  <input
+                                    type="text"
+                                    value={String(item[field] || '')}
+                                    onChange={(e) => updateToeicVocabImportPreviewItem(index, field, e.target.value)}
+                                    className="w-28 rounded border border-amber-200 px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-400"
+                                  />
+                                </td>
+                              ))}
+                              <td className="px-2 py-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => removeToeicVocabImportPreviewItem(index)}
+                                  className="rounded border border-red-300 px-2 py-0.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                                >
+                                  Xóa
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setToeicVocabImportPreviewItems([])}
+                        className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                      >
+                        Hủy
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void confirmToeicVocabImportPreview()}
+                        disabled={confirmingToeicVocabImport}
+                        className="rounded-lg bg-amber-600 px-5 py-2 text-sm font-bold text-white hover:bg-amber-700 disabled:opacity-50"
+                      >
+                        {confirmingToeicVocabImport ? 'Đang lưu...' : `Xác nhận & Lưu (${toeicVocabImportPreviewItems.length} từ)`}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
