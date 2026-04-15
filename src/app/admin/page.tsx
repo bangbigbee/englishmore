@@ -7613,7 +7613,7 @@ export default function AdminDashboard() {
                   {/* PRO */}
                   <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
                     <p className="mb-3 font-bold text-slate-700">Yêu cầu gói PRO</p>
-                    {(['meaning','phonetic','englishDefinition','example','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => (
+                    {(['meaning','phonetic','englishDefinition','example','exampleVi','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => (
                       <label key={`pro-${f}`} className="flex items-center gap-2 mb-2 cursor-pointer">
                         <input type="checkbox" className="rounded border-slate-300 text-slate-600 focus:ring-slate-500" checked={currentTopicLocks.proFields.includes(f)} onChange={(e) => {
                           const checked = e.target.checked;
@@ -7630,7 +7630,7 @@ export default function AdminDashboard() {
                   {/* ULTRA */}
                   <div className="rounded-lg border border-amber-200 p-4 bg-amber-50">
                     <p className="mb-3 font-bold text-amber-700">Yêu cầu gói ULTRA</p>
-                    {(['meaning','phonetic','englishDefinition','example','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => (
+                    {(['meaning','phonetic','englishDefinition','example','exampleVi','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => (
                       <label key={`ultra-${f}`} className="flex items-center gap-2 mb-2 cursor-pointer">
                         <input type="checkbox" className="rounded border-amber-300 text-amber-600 focus:ring-amber-500" checked={currentTopicLocks.ultraFields.includes(f)} onChange={(e) => {
                           const checked = e.target.checked;

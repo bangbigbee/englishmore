@@ -645,25 +645,33 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													{currentItem.example}
 												</p>
 												{currentItem.exampleVi && (
-													<button
-														type="button"
-														onClick={(e) => { e.stopPropagation(); setShowExampleVi(v => !v); }}
-														className="mt-2 flex items-center justify-center gap-1 text-[#ea980c] hover:text-[#c47c08] transition-colors"
-														title="Dịch nghĩa"
-													>
-														<span className="text-[10px] font-bold tracking-tight">Dịch nghĩa</span>
-														<svg
-															className={`w-3.5 h-3.5 transition-transform duration-200 ${showExampleVi ? 'rotate-180' : ''}`}
-															fill="none" stroke="currentColor" viewBox="0 0 24 24"
-														>
-															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-														</svg>
-													</button>
-												)}
-												{currentItem.exampleVi && showExampleVi && (
-													<p className="mt-1.5 text-xs italic text-[#ea980c] font-medium text-center leading-relaxed">
-														{currentItem.exampleVi}
-													</p>
+													isFieldLocked('exampleVi') ? (
+														<div className="mt-3 w-full max-w-[250px]">
+															<LockedFieldView tier={isFieldLocked('exampleVi')!} />
+														</div>
+													) : (
+														<>
+															<button
+																type="button"
+																onClick={(e) => { e.stopPropagation(); setShowExampleVi(v => !v); }}
+																className="mt-2 flex items-center justify-center gap-1 text-[#ea980c] hover:text-[#c47c08] transition-colors"
+																title="Dịch nghĩa"
+															>
+																<span className="text-[10px] font-bold tracking-tight">Dịch nghĩa</span>
+																<svg
+																	className={`w-3.5 h-3.5 transition-transform duration-200 ${showExampleVi ? 'rotate-180' : ''}`}
+																	fill="none" stroke="currentColor" viewBox="0 0 24 24"
+																>
+																	<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+																</svg>
+															</button>
+															{showExampleVi && (
+																<p className="mt-1.5 text-xs italic text-[#ea980c] font-medium text-center leading-relaxed">
+																	{currentItem.exampleVi}
+																</p>
+															)}
+														</>
+													)
 												)}
 											</div>
 										)}
