@@ -19,9 +19,13 @@ const TABS = [
 		key: "vocabulary", 
 		label: "Vocabulary", 
 		icon: (
-			<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 9.198 15.53 3 18.051" />
-			</svg>
+			<div className="relative w-5 h-5">
+				<svg className="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+				</svg>
+				<span className="absolute inset-0 flex items-center justify-center text-[8px] font-black mt-[-1px] ml-[2px] tracking-tighter">A-Z</span>
+			</div>
 		)
 	},
 	{ 
