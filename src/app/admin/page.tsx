@@ -4380,7 +4380,7 @@ export default function AdminDashboard() {
           <div className="mb-6 rounded border border-[#14532d]/25 bg-[#14532d]/5 px-4 py-4">
             <p className="text-sm font-semibold text-[#14532d]">Import vocabulary from Google Docs or DOCX</p>
             <p className="mt-1 text-xs text-gray-600">The imported words will be added to the course selected in the manual form above.</p>
-            <p className="mt-1 text-xs text-gray-600">Format: TOPIC, WORD, PHONETIC, PART_OF_SPEECH, ENGLISH_DEFINITION, MEANING, EXAMPLE, DICH_NGHIA (WORD + MEANING required).</p>
+            <p className="mt-1 text-xs text-gray-600">Format: TOPIC, WORD, PHONETIC, PART_OF_SPEECH, ENGLISH_DEFINITION, MEANING, EXAMPLE (WORD + MEANING required).</p>
 
             <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto_auto]">
               <input
@@ -4438,7 +4438,7 @@ export default function AdminDashboard() {
                         <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Meaning</th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Topic</th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Example</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Example Vi</th>
+
                         <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Action</th>
                       </tr>
                     </thead>
@@ -4499,15 +4499,7 @@ export default function AdminDashboard() {
                               placeholder="Example"
                             />
                           </td>
-                          <td className="px-3 py-2">
-                            <input
-                              type="text"
-                              value={item.exampleVi || ''}
-                              onChange={(event) => updateVocabularyImportPreviewItem(index, 'exampleVi', event.target.value)}
-                              className="w-56 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-                              placeholder="Example Vi"
-                            />
-                          </td>
+
                           <td className="px-3 py-2">
                             <button
                               type="button"
