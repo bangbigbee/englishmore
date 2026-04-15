@@ -16,14 +16,16 @@ export async function GET(req: NextRequest) {
 
   const session = await getServerSession(authOptions)
 
-  // Determine if user has ULTRA tier
+  // Determine if user has ULTRA or PRO tier
   let isUltra = false
+  let isPro = false
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { tier: true }
     })
     isUltra = user?.tier === 'ULTRA'
+    isPro = user?.tier === 'ULTRA' || user?.tier === 'PRO'
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,10 +50,17 @@ export async function GET(req: NextRequest) {
     orderBy: [{ displayOrder: 'asc' }, { createdAt: 'asc' }]
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const config = await (prisma as any).vocabularyTopicConfig.findUnique({
+    where: { topic }
+  })
+
   return NextResponse.json({
     topic,
     isUltra,
+    isPro,
+    topicConfig: config || { proFields: "[]", ultraFields: "[]" },
     total: all.length,
-    items: isUltra ? all : all.slice(0, 5)
+    items: all
   })
 }

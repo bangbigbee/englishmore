@@ -140,6 +140,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 	const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 	const [vocabItems, setVocabItems] = useState<any[]>([]);
 	const [isUltra, setIsUltra] = useState(false);
+	const [isPro, setIsPro] = useState(false);
+	const [topicProFields, setTopicProFields] = useState<string[]>([]);
+	const [topicUltraFields, setTopicUltraFields] = useState<string[]>([]);
 	const [totalWords, setTotalWords] = useState(0);
 	const [vocabLoading, setVocabLoading] = useState(false);
 	const [cardIndex, setCardIndex] = useState(0);
@@ -177,6 +180,14 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 				const data = await res.json();
 				setVocabItems(data.items || []);
 				setIsUltra(data.isUltra ?? false);
+				setIsPro(data.isPro ?? false);
+				try {
+					setTopicProFields(JSON.parse(data.topicConfig?.proFields || "[]"));
+					setTopicUltraFields(JSON.parse(data.topicConfig?.ultraFields || "[]"));
+				} catch {
+					setTopicProFields([]);
+					setTopicUltraFields([]);
+				}
 				setTotalWords(data.total ?? 0);
 			}
 		} catch (e) {
@@ -218,6 +229,23 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 		}
 		window.speechSynthesis.speak(utterance);
 	};
+
+	const isFieldLocked = (field: string) => {
+		if (topicUltraFields.includes(field) && !isUltra) return 'ULTRA';
+		if (topicProFields.includes(field) && !isPro && !isUltra) return 'PRO';
+		return null;
+	};
+
+	const LockedFieldView = ({ tier }: { tier: 'PRO' | 'ULTRA' }) => (
+		<div className="relative my-2 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 flex flex-col items-center justify-center select-none cursor-pointer" onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}>
+			<svg className="w-5 h-5 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+			<p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Nâng cấp lên gói {tier} để xem chi tiết</p>
+			<div className="absolute inset-x-8 bottom-3 flex flex-col items-center gap-1 opacity-20 blur-[2px]">
+				<div className="h-1.5 w-full bg-slate-400 rounded-full"></div>
+				<div className="h-1.5 w-2/3 bg-slate-400 rounded-full"></div>
+			</div>
+		</div>
+	);
 
 	// ── Topic list ──────────────────────────────────────────
 	if (!selectedTopic) {
@@ -306,11 +334,6 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 							<span className="text-sm font-semibold text-slate-600">
 								{cardIndex + 1} / {totalWords}
 							</span>
-							{!isUltra && lockedCount > 0 && (
-								<span className="text-[10px] text-amber-600 font-medium">
-									🔒 {lockedCount} từ bị khoá
-								</span>
-							)}
 						</div>
 
 						<button
@@ -370,17 +393,23 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 									<div className="flex-1 flex flex-col items-center justify-start text-center w-full pt-2">
 										<p className="text-2xl sm:text-3xl font-bold text-[#14532d]">{currentItem.word}</p>
 										{currentItem.phonetic && (
+											isFieldLocked('phonetic') ? <LockedFieldView tier={isFieldLocked('phonetic')!} /> :
 											<p className="mt-1 text-base text-slate-400 font-mono">{currentItem.phonetic}</p>
 										)}
 
 										<div className="mt-4 mb-4 w-12 h-1 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
 
-										<p className="text-xl sm:text-2xl font-bold text-slate-800">{currentItem.meaning}</p>
+										{isFieldLocked('meaning') ? <LockedFieldView tier={isFieldLocked('meaning')!} /> : (
+											<p className="text-xl sm:text-2xl font-bold text-slate-800">{currentItem.meaning}</p>
+										)}
+
 										{currentItem.englishDefinition && (
+											isFieldLocked('englishDefinition') ? <LockedFieldView tier={isFieldLocked('englishDefinition')!} /> :
 											<p className="mt-2 text-sm text-slate-500 font-medium px-2 italic">{currentItem.englishDefinition}</p>
 										)}
 
 										{currentItem.example && (
+											isFieldLocked('example') ? <LockedFieldView tier={isFieldLocked('example')!} /> :
 											<div className="mt-5 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden text-center flex flex-col items-center">
 												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40" />
 												<p className="text-sm italic text-slate-700 font-medium">
@@ -412,9 +441,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 										)}
 
 										{/* ── PREMIUM ZONE ── */}
-										{isUltra && hasPremium && (
+										{hasPremium && (
 											<div className="mt-5 w-full flex-shrink-0 space-y-3 text-sm text-left border-t border-slate-100 pt-4">
 												{currentItem.synonyms && (
+													isFieldLocked('synonyms') ? <LockedFieldView tier={isFieldLocked('synonyms')!} /> :
 													<div>
 														<p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
@@ -424,6 +454,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													</div>
 												)}
 												{currentItem.antonyms && (
+													isFieldLocked('antonyms') ? <LockedFieldView tier={isFieldLocked('antonyms')!} /> :
 													<div>
 														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
@@ -433,6 +464,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													</div>
 												)}
 												{currentItem.collocations && (
+													isFieldLocked('collocations') ? <LockedFieldView tier={isFieldLocked('collocations')!} /> :
 													<div>
 														<p className="font-bold text-purple-700 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
@@ -442,6 +474,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 													</div>
 												)}
 												{currentItem.toeicTrap && (
+													isFieldLocked('toeicTrap') ? <LockedFieldView tier={isFieldLocked('toeicTrap')!} /> :
 													<div className="rounded-lg bg-rose-50 border border-rose-200 p-3">
 														<p className="font-bold text-rose-600 flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -452,7 +485,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: () => void }
 												)}
 											</div>
 										)}
-										{!isUltra && (
+										{(!isUltra || !isPro) && (topicProFields.length > 0 || topicUltraFields.length > 0) && (
 											<button
 												type="button"
 												onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}

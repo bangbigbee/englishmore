@@ -630,6 +630,17 @@ model VocabularyItem {
   @@index([category])
 }
 
+model VocabularyTopicConfig {
+  id          String   @id @default(cuid())
+  topic       String   @unique
+  proFields   String?  @default("[]")
+  ultraFields String?  @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([topic])
+}
+
 // TOEIC Grammar Section
 model ToeicGrammarTopic {
   id          String   @id @default(cuid())
