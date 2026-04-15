@@ -18,19 +18,18 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 		<div
 			onClick={onClick}
 			className="relative group bg-white rounded-md p-7 transition-all duration-500 cursor-pointer overflow-hidden
-								 shadow-[0_15px_35px_-5px_rgba(0,0,0,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.18)] 
+								 shadow-[5px_15px_40px_rgba(0,0,0,0.08)] hover:shadow-[10px_25px_60px_rgba(0,0,0,0.12)] 
 								 hover:-translate-y-2 flex flex-col justify-start min-h-[290px]"
 		>
-			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_3s_infinite] bg-linear-to-r from-transparent via-slate-50/30 to-transparent skew-x-[-20deg]" />
+			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_3s_infinite] bg-linear-to-r from-transparent via-green-50/10 to-transparent skew-x-[-20deg]" />
 
 			<div className="relative z-10 flex-1">
-				{/* Use flex-1 here so the button stays pushed to the bottom */}
-				<h3 className="font-bold text-2xl text-slate-900 group-hover:text-black transition-colors leading-tight mb-3">
+				<h3 className="font-bold text-2xl text-[#14532d] leading-tight mb-3">
 					{title}
 				</h3>
 
 				{badgeText && (
-					<div className="text-[12px] font-bold uppercase tracking-widest text-[#818cf8] mb-4">
+					<div className="text-[12px] font-bold uppercase tracking-widest text-[#14532d] mb-4">
 						{badgeText}
 					</div>
 				)}
@@ -38,10 +37,9 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 				{subtitle && <p className="text-[15px] text-slate-500 font-normal leading-relaxed">{subtitle}</p>}
 			</div>
 
-			{/* Floating Circular Arrow Button (Bottom Left) */}
 			<div className="relative z-10 mt-8 flex justify-start">
-				<div className="w-10 h-10 shrink-0 rounded-full bg-white shadow-[0_5px_15px_-3px_rgba(0,0,0,0.15)] group-hover:shadow-[0_8px_20px_-3px_rgba(0,0,0,0.2)] flex items-center justify-center text-[#818cf8] transition-all duration-300 group-hover:scale-110">
-					<svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div className="w-14 h-14 shrink-0 rounded-full bg-white shadow-[0_8px_25px_-5px_rgba(0,0,0,0.15)] group-hover:shadow-[0_15px_35px_-5px_rgba(0,0,0,0.25)] flex items-center justify-center text-[#818cf8] group-hover:text-indigo-500 transition-all duration-300 group-hover:scale-110">
+					<svg className="w-6 h-6 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
 					</svg>
 				</div>
