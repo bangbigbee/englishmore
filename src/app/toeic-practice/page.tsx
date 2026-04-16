@@ -267,7 +267,7 @@ function ToeicPracticeContent() {
 						📈
 					</span>
 					<span className="text-sm font-bold tracking-tight transition-all text-slate-400 group-hover:text-slate-600">
-						Theo Dõi Tiến Độ
+						Tiến Độ Của Tôi
 					</span>
 				</Link>
 			</div>

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export const metadata = {
-	title: 'Tiến độ học tập TOEIC',
+	title: 'Tiến Độ Của Tôi',
 };
 
 async function VocabularyBank() {
@@ -101,10 +101,9 @@ const TABS = [
 export default async function ToeicProgressPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ tab?: string }>;
+	searchParams: { tab?: string };
 }) {
-	const resolvedParams = await searchParams;
-	const activeTab = resolvedParams.tab || 'vocabulary-bank';
+	const activeTab = searchParams.tab || 'vocabulary-bank';
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
@@ -121,7 +120,7 @@ export default async function ToeicProgressPage({
 								<span className="text-3xl">📈</span>
 							</div>
 							<div>
-								<h1 className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-sm">Tiến Độ TOEIC</h1>
+								<h1 className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-sm">Tiến Độ Của Tôi</h1>
 								<p className="text-green-100 font-medium mt-1 opacity-90 overflow-hidden text-ellipsis whitespace-nowrap max-w-sm">Học viên {session.user.name || session.user.email}</p>
 							</div>
 						</div>
