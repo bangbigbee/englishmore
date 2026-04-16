@@ -50,7 +50,7 @@ function CloseIcon() {
   )
 }
 
-export default function TopNav() {
+export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: boolean }) {
   const { data: session, status } = useSession()
   const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -126,22 +126,22 @@ export default function TopNav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 relative">
         <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 leading-none sm:gap-3">
           <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.4rem]">
-            <span className="text-[#14532d]">English</span>
-            <span className="text-amber-500">More</span>
+            {isToeicDomain ? (
+                <>
+                <span className="text-[#14532d]">Toeic</span>
+                <span className="text-amber-500">More</span>
+                </>
+            ) : (
+                <>
+                <span className="text-[#14532d]">English</span>
+                <span className="text-amber-500">More</span>
+                </>
+            )}
           </span>
           <span className="hidden sm:block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm">
-            Speak your mind and more
+            {isToeicDomain ? "Boost Your TOEIC Score & More" : "Speak your mind and more"}
           </span>
         </Link>
-
-        {pathname.startsWith('/toeic-practice') && (
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:block pointer-events-none">
-            <span className="text-[1.8rem] font-extrabold tracking-tight whitespace-nowrap">
-              <span className="text-[#14532d]">Toeic</span>
-              <span className="text-amber-500">More</span>
-            </span>
-          </div>
-        )}
 
         <div className="shrink-0 flex items-center gap-1.5 sm:gap-3">
           {session ? (

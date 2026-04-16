@@ -34,11 +34,15 @@ export const viewport = {
   userScalable: false,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await import("next/headers").then(m => m.headers());
+  const host = headersList.get('host') || '';
+  const isToeicDomain = host.includes('toeicmore');
+
   return (
     <html
       lang="en"
@@ -46,7 +50,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#fdfdfc]">
         <AuthProvider>
-          <TopNav />
+          <TopNav isToeicDomain={isToeicDomain} />
           <MainWrapper>{children}</MainWrapper>
           <LoginModalController />
           <GlobalUpgradePoller />

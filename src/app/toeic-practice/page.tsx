@@ -7,6 +7,17 @@ import Link from "next/link";
 
 const TABS = [
 	{ 
+		key: "home", 
+		label: "Trang chủ", 
+		icon: (
+			<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="#0ea5e9" fillOpacity="0.2"/>
+				<path d="M9 22V12h6v10" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+			</svg>
+		) 
+	},
+	{ 
 		key: "grammar", 
 		label: "Grammar", 
 		icon: (
@@ -207,7 +218,7 @@ function ToeicPracticeContent() {
 	const pathname = usePathname();
 	const { data: session } = useSession();
 
-	const tabFromUrl = searchParams.get('tab') || 'grammar';
+	const tabFromUrl = searchParams.get('tab') || 'home';
 	const [tab, setTab] = useState(tabFromUrl);
 
 	useEffect(() => {
@@ -272,6 +283,7 @@ function ToeicPracticeContent() {
 				</Link>
 			</div>
 			<div className="mt-6">
+				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
 					 if (!session) {
 						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
@@ -304,6 +316,126 @@ function ToeicPracticeContent() {
 			</div>
 		</div>
 	</div>
+	);
+}
+
+function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
+	const [stats, setStats] = useState({ users: 15125, grammarTopics: 30, vocabularies: 1540 });
+
+	useEffect(() => {
+		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
+	}, []);
+
+	return (
+		<div className="py-8">
+			{/* Hero Section */}
+			<div className="text-center mb-20">
+				<div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 font-semibold text-sm mb-6 border border-blue-100">
+					<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+					Nền tảng luyện TOEIC hàng đầu
+				</div>
+				<h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-800 tracking-tight leading-tight mb-4">
+					Luyện TOEIC hiệu quả<br />
+					<span className="text-[#14532d]">Đạt mục tiêu nhanh hơn</span>
+				</h1>
+				<p className="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+					Luyện nghe 4 chế độ, luyện đề, học từ vựng, ngữ pháp — tất cả trong một nền tảng.
+				</p>
+				<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+					<button onClick={() => onTabClick('reading')} className="w-full sm:w-auto px-8 py-4 bg-[#14532d] hover:bg-[#166534] text-white rounded-xl font-bold text-lg shadow-lg shadow-[#14532d]/20 transition-all hover:-translate-y-1">
+						Bắt đầu luyện tập →
+					</button>
+					<button onClick={() => onTabClick('actual-test')} className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 border-2 border-slate-200 text-slate-700 rounded-xl font-bold text-lg transition-all hover:border-[#14532d]/30">
+						Làm bài test thử
+					</button>
+				</div>
+				<div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-500">
+					<div className="flex items-center gap-2"><svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Đăng ký miễn phí</div>
+					<div className="flex items-center gap-2"><svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Theo dõi tiến độ học tập</div>
+					<div className="flex items-center gap-2"><svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Giải thích chi tiết từng câu</div>
+				</div>
+			</div>
+
+			{/* Stats Section */}
+			<div className="border-y border-slate-200 py-12 mb-20 bg-white/50">
+				<div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-slate-200">
+					<div className="py-4 md:py-0">
+						<div className="text-4xl font-black text-[#14532d] mb-2">{stats.users.toLocaleString()}+</div>
+						<div className="text-slate-500 font-medium">Học viên đang học</div>
+					</div>
+					<div className="py-4 md:py-0">
+						<div className="text-4xl font-black text-[#ea980c] mb-2">{stats.vocabularies.toLocaleString()}+</div>
+						<div className="text-slate-500 font-medium">Từ vựng TOEIC</div>
+					</div>
+					<div className="py-4 md:py-0">
+						<div className="text-4xl font-black text-rose-500 mb-2">{stats.grammarTopics.toLocaleString()}+</div>
+						<div className="text-slate-500 font-medium">Chủ đề ngữ pháp</div>
+					</div>
+				</div>
+			</div>
+
+			{/* Features Section */}
+			<div className="text-center mb-12">
+				<h2 className="text-3xl md:text-4xl font-black text-slate-800 mb-4">
+					Trên <span className="text-[#14532d]">TOEICMORE</span> bạn luyện được gì?
+				</h2>
+				<p className="text-slate-500">Hệ thống luyện tập toàn diện, từ ngữ pháp đến luyện nghe, từ vựng đến luyện đề</p>
+			</div>
+			
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+				{/* Ngữ pháp */}
+				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
+					<div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+					</div>
+					<h3 className="text-lg font-bold text-slate-800 mb-2">Ngữ pháp</h3>
+					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Chinh phục TOEIC với hệ thống bài học và luyện tập toàn diện.</p>
+					<button onClick={() => onTabClick('grammar')} className="text-blue-600 font-bold text-sm flex items-center gap-1 hover:text-blue-700">
+						Bắt đầu →
+					</button>
+				</div>
+				
+				{/* Luyện nghe */}
+				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
+					<div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6">
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+					</div>
+					<h3 className="text-lg font-bold text-slate-800 mb-2">Reading</h3>
+					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Luyện Reading Part 5, 6, 7 giải thích cặn kẽ từng câu.</p>
+					<button onClick={() => onTabClick('reading')} className="text-indigo-600 font-bold text-sm flex items-center gap-1 hover:text-indigo-700">
+						Bắt đầu →
+					</button>
+				</div>
+
+				{/* Từ vựng */}
+				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
+					<div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+					</div>
+					<h3 className="text-lg font-bold text-slate-800 mb-2">Từ vựng</h3>
+					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Học từ vựng TOEIC theo chủ đề với flashcard thẻ học xịn xò.</p>
+					<button onClick={() => onTabClick('vocabulary')} className="text-blue-600 font-bold text-sm flex items-center gap-1 hover:text-blue-700">
+						Bắt đầu →
+					</button>
+				</div>
+
+				{/* Luyện đề */}
+				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
+					<div className="w-12 h-12 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center mb-6">
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+					</div>
+					<h3 className="text-lg font-bold text-slate-800 mb-2">Luyện đề</h3>
+					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Luyện các đề ETS TOEIC full test với chấm điểm và phân tích chi tiết.</p>
+					<button onClick={() => onTabClick('actual-test')} className="text-sky-600 font-bold text-sm flex items-center gap-1 hover:text-sky-700">
+						Bắt đầu →
+					</button>
+				</div>
+			</div>
+		</div>
 	);
 }
 
