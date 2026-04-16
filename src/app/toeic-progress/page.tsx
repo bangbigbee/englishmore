@@ -39,7 +39,7 @@ async function VocabularyBank() {
 				<p className="text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">
 					Bạn chưa đánh dấu từ vựng nào trong quá trình luyện tập. Hãy quay lại phần luyện tập và chọn đánh dấu các từ vựng bạn muốn lưu lại nhé!
 				</p>
-				<Link href="/toeic-practice?tab=vocabulary" className="inline-flex items-center justify-center rounded-xl bg-green-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-green-200 transition-all hover:-translate-y-1 hover:bg-green-700 hover:shadow-xl">
+				<Link href="/toeic-practice?tab=vocabulary" className="inline-flex items-center justify-center rounded-xl bg-[#14532d] px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-1 hover:bg-[#166534] hover:shadow-xl">
 					Trở lại luyện từ
 				</Link>
 			</div>
@@ -84,7 +84,7 @@ function ComingSoonPlaceholder({ title, icon }: { title: string, icon: string })
 			<p className="text-slate-500 max-w-sm mx-auto">
 				Chuyên mục này đang được xây dựng và sẽ sớm ra mắt trong bản cập nhật tới.
 			</p>
-			<Link href="/toeic-practice" className="mt-8 inline-block text-green-600 font-bold hover:text-green-700">
+			<Link href="/toeic-practice" className="mt-8 inline-block text-[#14532d] font-bold hover:text-[#166534]">
 				← Quay lại trang luyện tập
 			</Link>
 		</div>
@@ -115,7 +115,7 @@ export default async function ToeicProgressPage({
 
 	return (
 		<main className="min-h-screen bg-slate-50 pb-20">
-			<div className="bg-[#14532d] text-white pt-10 pb-24 shadow-inner">
+			<div className="bg-[#14532d] text-white pt-10 pb-10 shadow-inner">
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex flex-col sm:flex-row items-center justify-between gap-6">
 						<div className="flex items-center gap-4">
@@ -135,7 +135,7 @@ export default async function ToeicProgressPage({
 				</div>
 			</div>
 
-			<div className="container mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10">
+			<div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-10">
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Sidebar Navigation */}
 					<div className="w-full lg:w-72 shrink-0">
