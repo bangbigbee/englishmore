@@ -945,18 +945,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const LockedValueBadge = ({ tier }: { tier: 'PRO' | 'ULTRA' }) => (
 		<span 
 			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-			className="inline-flex items-center cursor-pointer group mt-[1px]"
+			className="inline-flex items-center justify-center cursor-pointer group mt-[1px] w-5 h-5 rounded-md transition-colors"
+			title={`Nâng cấp ${tier} để xem`}
 		>
 			{tier === 'ULTRA' ? (
-				<span className="inline-flex items-center justify-center bg-purple-100 text-purple-700 rounded text-[7px] font-black tracking-widest px-1 py-[2px] group-hover:bg-purple-200 transition-colors uppercase leading-none">
-					<svg className="w-2 h-2 mr-[2px]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
-					ULTRA
-				</span>
+				<svg className="w-3.5 h-3.5 text-purple-600 group-hover:text-purple-800 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
 			) : (
-				<span className="inline-flex items-center justify-center bg-amber-100 text-amber-700 rounded text-[7px] font-black tracking-widest px-1 py-[2px] group-hover:bg-amber-200 transition-colors uppercase leading-none">
-					<svg className="w-2 h-2 mr-[2px]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
-					PRO
-				</span>
+				<svg className="w-3.5 h-3.5 text-amber-500 group-hover:text-amber-600 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
 			)}
 		</span>
 	);
@@ -1075,8 +1070,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							type="button"
 							onClick={() => moveCard('prev')}
 							disabled={cardIndex === 0}
-							className="rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40 disabled:shadow-none"
+							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
 						>
+							<svg className="w-4 h-4 text-green-600 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 							Prev
 						</button>
 
@@ -1090,9 +1086,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							type="button"
 							onClick={() => moveCard('next')}
 							disabled={cardIndex >= vocabItems.length - 1}
-							className="rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40 disabled:shadow-none"
+							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
 						>
 							Next
+							<svg className="w-4 h-4 text-green-600 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
 						</button>
 					</div>
 
