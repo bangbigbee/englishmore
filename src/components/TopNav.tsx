@@ -310,18 +310,18 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
               <div className="py-2"><div className="h-px bg-slate-100 w-full" /></div>
 
               {isToeicDomain ? (
-                <Link href={process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://englishmore.vn'} onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer mt-2">
+                <Link href={process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://englishmore.bigbee.ltd'} onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer mt-2">
                   <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-100 shadow-sm">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                   </span>
-                  <span className="flex-1 truncate text-[15px]">Sang <span className="text-[#14532d] font-black">English</span><span className="text-[#ea980c] font-black">More</span></span>
+                  <span className="flex-1 truncate text-[15px]"><span className="text-[#14532d] font-black">English</span><span className="text-[#ea980c] font-black">More</span></span>
                 </Link>
               ) : (
                 <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer mt-2">
                   <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-green-50 text-green-600 transition-colors group-hover:bg-green-100 shadow-sm">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                   </span>
-                  <span className="flex-1 truncate text-[15px]">Thử sức <span className="text-[#14532d] font-black">Toeic</span><span className="text-[#ea980c] font-black">More</span></span>
+                  <span className="flex-1 truncate text-[15px]"><span className="text-[#14532d] font-black">Toeic</span><span className="text-[#ea980c] font-black">More</span></span>
                 </Link>
               )}
 
