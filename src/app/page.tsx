@@ -2417,7 +2417,7 @@ function HomeContent() {
                     Hoặc lấy chứng chỉ TOEIC với ToeicMore?
                   </p>
                   <Link
-                    href="/toeic-practice"
+                    href={process.env.NODE_ENV === 'development' ? '/toeic-practice' : 'https://toeicmore.com'}
                     className="brand-cta brand-cta-outline"
                   >
                     <span>ToeicMore</span>
