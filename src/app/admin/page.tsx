@@ -798,7 +798,7 @@ export default function AdminDashboard() {
   const toeicFileInputRef = useRef<HTMLInputElement>(null)
 
   const [showTopicModal, setShowTopicModal] = useState(false)
-  const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR' })
+  const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR', part: 5 as number | null })
   const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING'>('GRAMMAR')
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
@@ -3836,7 +3836,7 @@ export default function AdminDashboard() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug, type: topic.type || toeicPracticeSubtab })
+                          setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug, type: topic.type || toeicPracticeSubtab, part: topic.part || 5 })
                           setEditingToeicTopic(topic)
                           setShowTopicModal(true)
                         }}
@@ -7453,7 +7453,24 @@ export default function AdminDashboard() {
                       className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                     />
                   </div>
+                  </div>
                 </div>
+
+                {topicForm.type === 'READING' && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Select Part</label>
+                    <select
+                      value={topicForm.part || 5}
+                      onChange={(e) => setTopicForm({ ...topicForm, part: parseInt(e.target.value, 10) })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] p-2 border"
+                    >
+                      <option value={5}>Part 5 (Incomplete Sentences)</option>
+                      <option value={6}>Part 6 (Text Completion)</option>
+                      <option value={7}>Part 7 (Reading Comprehension)</option>
+                    </select>
+                  </div>
+                )}
+
                 <div className="mt-8 flex justify-end gap-3">
                   <button
                     onClick={() => setShowTopicModal(false)}

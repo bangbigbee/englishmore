@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 		}
 
 		const body = await req.json()
-		const { title, subtitle, slug, type } = body
+		const { title, subtitle, slug, type, part } = body
 
 		if (!title || !slug) {
 			return NextResponse.json({ error: 'Title and Slug are required' }, { status: 400 })
@@ -49,7 +49,8 @@ export async function POST(req: Request) {
 				title,
 				subtitle,
 				slug,
-				type: type || 'GRAMMAR'
+				type: type || 'GRAMMAR',
+				part: part ? parseInt(part, 10) : null
 			}
 		})
 

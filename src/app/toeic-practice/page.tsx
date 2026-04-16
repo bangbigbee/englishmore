@@ -1444,6 +1444,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [selectedPart, setSelectedPart] = useState<number | null>(null);
 
 	useEffect(() => {
 		const fetchTopics = async () => {
@@ -1466,6 +1467,51 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 		return <div className="py-12 text-center text-gray-500 italic">Đang tải các chủ đề...</div>;
 	}
 
+	const parts = [
+		{ id: 5, title: "Part 5: Incomplete Sentences", subtitle: "Hoàn thành câu" },
+		{ id: 6, title: "Part 6: Text Completion", subtitle: "Hoàn thành đoạn văn" },
+		{ id: 7, title: "Part 7: Reading Comprehension", subtitle: "Đọc hiểu văn bản" },
+	];
+
+	if (selectedPart) {
+		const filteredTopics = topics.filter(t => t.part === selectedPart);
+		const currentPartInfo = parts.find(p => p.id === selectedPart);
+
+		return (
+			<div>
+				<div className="flex items-center gap-3 mb-6">
+					<button
+						onClick={() => setSelectedPart(null)}
+						className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-1"
+					>
+						← Quay lại
+					</button>
+					<h2 className="text-lg font-bold text-green-900 flex items-center gap-2">
+						{currentPartInfo?.title}
+					</h2>
+				</div>
+				
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+					{filteredTopics.length === 0 ? (
+						<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
+							Chưa có chủ đề nào trong phần này được cập nhật.
+						</div>
+					) : (
+						filteredTopics.map((topic) => (
+							<TopicCard
+								key={topic.id}
+								title={topic.title}
+								subtitle={topic.subtitle}
+								badgeText={`${topic._count?.lessons || 0} SESSIONS`}
+								onClick={() => onPracticeClick(topic.slug)}
+							/>
+						))
+					)}
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
@@ -1473,21 +1519,20 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 				Các phần thi Reading
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-				{topics.length === 0 ? (
-					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-						Chưa có chủ đề nào được cập nhật.
-					</div>
-				) : (
-					topics.map((topic) => (
+				{parts.map((p) => {
+					const topicsInPart = topics.filter(t => t.part === p.id);
+					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
+					
+					return (
 						<TopicCard
-							key={topic.id}
-							title={topic.title}
-							subtitle={topic.subtitle}
-							badgeText={`${topic._count?.lessons || 0} SESSIONS`}
-							onClick={() => onPracticeClick(topic.slug)}
+							key={p.id}
+							title={p.title}
+							subtitle={p.subtitle}
+							badgeText={`${totalLessons} SESSIONS`}
+							onClick={() => setSelectedPart(p.id)}
 						/>
-					))
-				)}
+					);
+				})}
 			</div>
 		</div>
 	);

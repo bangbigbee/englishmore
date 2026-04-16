@@ -664,6 +664,7 @@ model VocabularyTag {
 model ToeicGrammarTopic {
   id        String               @id @default(cuid())
   type      String               @default("GRAMMAR")
+  part      Int?
   title     String
   subtitle  String?
   slug      String               @unique
