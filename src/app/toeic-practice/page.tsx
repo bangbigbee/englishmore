@@ -917,21 +917,27 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setChallengeExpanded(false);
 		setChallengePreCtd(null);
 
-		let localTags: Record<number, any> = {};
-		if (typeof window !== 'undefined') {
-			try {
-				const stored = localStorage.getItem(`vocab-tags-${session?.user?.id || 'guest'}`);
-				if (stored) localTags = JSON.parse(stored);
-				setVocabTags(localTags);
-			} catch {}
-		}
-
 		try {
-			const res = await fetch(`/api/toeic/vocabulary?topic=${encodeURIComponent(topic)}`);
-			if (res.ok) {
-				const data = await res.json();
+			const [vocabRes, tagsRes] = await Promise.all([
+				fetch(`/api/toeic/vocabulary?topic=${encodeURIComponent(topic)}`),
+				session ? fetch('/api/toeic/vocabulary/tags') : Promise.resolve(null)
+			]);
+
+			let currentTags: Record<string, any> = {};
+			if (tagsRes && tagsRes.ok) {
+				const tagsData = await tagsRes.json();
+				if (tagsData.tags) {
+					tagsData.tags.forEach((t: any) => {
+						currentTags[t.vocabId] = { learned: t.isLearned, hard: t.isHard, bookmarked: t.isBookmarked };
+					});
+					setVocabTags(currentTags);
+				}
+			}
+
+			if (vocabRes.ok) {
+				const data = await vocabRes.json();
 				const rawItems = data.items || [];
-				const filteredItems = rawItems.filter((w: any) => !localTags[w.id]?.learned);
+				const filteredItems = rawItems.filter((w: any) => !currentTags[w.id]?.learned);
 				
 				setVocabItems(filteredItems.length > 0 ? filteredItems : rawItems);
 				setIsUltra(data.isUltra ?? false);
