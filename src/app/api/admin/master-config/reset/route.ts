@@ -12,13 +12,41 @@ export async function POST() {
   const config = (setting?.value as any) || DEFAULT_MASTER_CONFIG
 
   if (config.grammar) {
-    await prisma.toeicGrammarLesson.updateMany({
-      data: {
-        theoryAccessTier: config.grammar.theoryAccessTier,
-        explanationAccessTier: config.grammar.explanationAccessTier,
-        translationAccessTier: config.grammar.translationAccessTier,
-      }
+    const readingTopics = await prisma.toeicGrammarTopic.findMany({
+      where: { type: 'READING' },
+      select: { id: true }
     })
+    const grammarTopics = await prisma.toeicGrammarTopic.findMany({
+      where: { type: 'GRAMMAR' },
+      select: { id: true }
+    })
+
+    const readingTopicIds = readingTopics.map(t => t.id)
+    const grammarTopicIds = grammarTopics.map(t => t.id)
+
+    if (grammarTopicIds.length > 0) {
+      await prisma.toeicGrammarLesson.updateMany({
+        where: { topicId: { in: grammarTopicIds } },
+        data: {
+          theoryAccessTier: config.grammar.theoryAccessTier,
+          explanationAccessTier: config.grammar.explanationAccessTier,
+          translationAccessTier: config.grammar.translationAccessTier,
+          bookmarkAccessTier: config.grammar.grammarBookmarkAccessTier || 'PRO',
+        }
+      })
+    }
+    
+    if (readingTopicIds.length > 0) {
+      await prisma.toeicGrammarLesson.updateMany({
+        where: { topicId: { in: readingTopicIds } },
+        data: {
+          theoryAccessTier: config.grammar.theoryAccessTier,
+          explanationAccessTier: config.grammar.explanationAccessTier,
+          translationAccessTier: config.grammar.translationAccessTier,
+          bookmarkAccessTier: config.grammar.readingBookmarkAccessTier || 'PRO',
+        }
+      })
+    }
   }
 
   if (config.vocabulary) {

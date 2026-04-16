@@ -21,14 +21,21 @@ export async function PUT(
     }
 
     // If they send empty string for tiers, it means they want to fallback to master config
-    if (body.theoryAccessTier === '' || body.explanationAccessTier === '' || body.translationAccessTier === '') {
+    if (body.theoryAccessTier === '' || body.explanationAccessTier === '' || body.translationAccessTier === '' || body.bookmarkAccessTier === '') {
       const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
       const master = setting?.value as any
       const masterGrammar = master?.grammar || {}
+      
+      const currentLesson = await prisma.toeicGrammarLesson.findUnique({ where: { id: id }, include: { topic: true } })
+      const isReading = currentLesson?.topic?.type === 'READING'
+      const defaultBookmarkAccessTier = isReading 
+        ? (masterGrammar.readingBookmarkAccessTier || 'PRO') 
+        : (masterGrammar.grammarBookmarkAccessTier || 'PRO')
 
       if (body.theoryAccessTier === '') body.theoryAccessTier = masterGrammar.theoryAccessTier || 'FREE'
       if (body.explanationAccessTier === '') body.explanationAccessTier = masterGrammar.explanationAccessTier || 'FREE'
       if (body.translationAccessTier === '') body.translationAccessTier = masterGrammar.translationAccessTier || 'FREE'
+      if (body.bookmarkAccessTier === '') body.bookmarkAccessTier = defaultBookmarkAccessTier
     }
 
 		const lesson = await prisma.toeicGrammarLesson.update({

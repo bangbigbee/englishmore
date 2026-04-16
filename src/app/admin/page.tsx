@@ -803,7 +803,7 @@ export default function AdminDashboard() {
   const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING'>('GRAMMAR')
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
-  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '' })
+  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
   const [editingToeicLesson, setEditingToeicLesson] = useState<AdminToeicLesson | null>(null)
   const [showQuestionModal, setShowQuestionModal] = useState(false)
   const [questionForm, setQuestionForm] = useState({
@@ -1638,7 +1638,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save lesson')
       toast.success(editingToeicLesson ? 'Lesson updated successfully' : 'Lesson created successfully')
       setShowLessonModal(false)
-      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '' })
+      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
       setEditingToeicLesson(null)
       fetchToeicLessons(selectedToeicTopic.id)
     } catch (err) {
@@ -3871,7 +3871,7 @@ export default function AdminDashboard() {
                 {selectedToeicTopic && (
                   <button
                     onClick={() => {
-                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '' })
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
@@ -3908,7 +3908,7 @@ export default function AdminDashboard() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || '', explanationAccessTier: (lesson as any).explanationAccessTier || '', translationAccessTier: (lesson as any).translationAccessTier || '' })
+                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || '', explanationAccessTier: (lesson as any).explanationAccessTier || '', translationAccessTier: (lesson as any).translationAccessTier || '', bookmarkAccessTier: (lesson as any).bookmarkAccessTier || '' })
                             setEditingToeicLesson(lesson)
                             setShowLessonModal(true)
                           }}
@@ -7530,7 +7530,7 @@ export default function AdminDashboard() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-4 gap-4">
+                  <div className="grid grid-cols-5 gap-4">
                     <div className="col-span-1">
                       <label className="block text-sm font-medium text-gray-700 mb-1">General Access</label>
                       <select
@@ -7575,6 +7575,19 @@ export default function AdminDashboard() {
                         className="w-full p-2 border border-gray-300 rounded text-black bg-white"
                         value={lessonForm.translationAccessTier}
                         onChange={(e) => setLessonForm({ ...lessonForm, translationAccessTier: e.target.value })}
+                      >
+                        <option value="">Default (Từ Master Config)</option>
+                        <option value="FREE">Free</option>
+                        <option value="PRO">Pro</option>
+                        <option value="ULTRA">Ultra</option>
+                      </select>
+                    </div>
+                    <div className="col-span-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Bookmark Access (Sổ Tay)</label>
+                      <select
+                        className="w-full p-2 border border-blue-300 bg-blue-50 focus:ring-blue-500 rounded text-black"
+                        value={lessonForm.bookmarkAccessTier}
+                        onChange={(e) => setLessonForm({ ...lessonForm, bookmarkAccessTier: e.target.value })}
                       >
                         <option value="">Default (Từ Master Config)</option>
                         <option value="FREE">Free</option>

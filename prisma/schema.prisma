@@ -684,6 +684,7 @@ model ToeicGrammarLesson {
   theoryAccessTier      AccessTier      @default(FREE)
   explanationAccessTier AccessTier      @default(FREE)
   translationAccessTier AccessTier      @default(FREE)
+  bookmarkAccessTier    AccessTier      @default(PRO)
   questions             ToeicQuestion[]
   createdAt             DateTime        @default(now())
   updatedAt             DateTime        @updatedAt

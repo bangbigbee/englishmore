@@ -30,19 +30,11 @@ export async function POST(req: Request) {
 
     const question = await prisma.toeicQuestion.findUnique({
       where: { id: questionId },
-      include: { lesson: { include: { topic: true } } }
+      include: { lesson: true }
     })
     if (!question) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-    const type = question.lesson?.topic?.type || 'GRAMMAR'
-
-    const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
-    const masterConfig = (setting?.value as any) || {}
-    
-    // Choose which tier to check based on question type
-    const requiredTier = type === 'READING' 
-        ? (masterConfig.grammar?.readingBookmarkAccessTier || 'PRO') 
-        : (masterConfig.grammar?.grammarBookmarkAccessTier || 'PRO')
+    const requiredTier = question.lesson.bookmarkAccessTier || 'PRO'
 
     const userRole = session.user.role || 'user'
     const userTier = session.user.tier || 'FREE'

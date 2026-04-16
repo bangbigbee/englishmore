@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 		}
 
 		const body = await req.json()
-		const { topicId, title, order, content, accessTier, theoryAccessTier, explanationAccessTier, translationAccessTier } = body
+		const { topicId, title, order, content, accessTier, theoryAccessTier, explanationAccessTier, translationAccessTier, bookmarkAccessTier } = body
 
 		if (!topicId || !title || order === undefined) {
 			return NextResponse.json({ error: 'topicId, title, and order are required' }, { status: 400 })
@@ -51,6 +51,12 @@ export async function POST(req: Request) {
 		const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
 		const master = setting?.value as any
 		const masterGrammar = master?.grammar || {}
+
+		const topic = await prisma.toeicGrammarTopic.findUnique({ where: { id: topicId } })
+		const isReading = topic?.type === 'READING'
+		const defaultBookmarkAccessTier = isReading 
+			? (masterGrammar.readingBookmarkAccessTier || 'PRO')
+			: (masterGrammar.grammarBookmarkAccessTier || 'PRO')
 
 		const lesson = await prisma.toeicGrammarLesson.create({
 			data: {
@@ -61,7 +67,8 @@ export async function POST(req: Request) {
 				accessTier: accessTier || 'FREE',
 				theoryAccessTier: theoryAccessTier || masterGrammar.theoryAccessTier || 'FREE',
 				explanationAccessTier: explanationAccessTier || masterGrammar.explanationAccessTier || 'FREE',
-				translationAccessTier: translationAccessTier || masterGrammar.translationAccessTier || 'FREE'
+				translationAccessTier: translationAccessTier || masterGrammar.translationAccessTier || 'FREE',
+				bookmarkAccessTier: bookmarkAccessTier || defaultBookmarkAccessTier
 			}
 		})
 
