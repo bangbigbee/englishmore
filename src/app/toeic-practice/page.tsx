@@ -291,8 +291,12 @@ function ToeicPracticeContent() {
 				{tab === "listening" && <ToeicListeningTab onPracticeClick={() => {
 					 if (!session) openLoginModal(`${pathname}?tab=listening`);
 				 }} />}
-				{tab === "reading" && <ToeicReadingTab onPracticeClick={() => {
-					 if (!session) openLoginModal(`${pathname}?tab=reading`);
+				{tab === "reading" && <ToeicReadingTab onPracticeClick={(slug) => {
+					 if (!session) {
+						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
+					 } else if (slug) {
+						 router.push(`/toeic-practice/grammar/${slug}`);
+					 }
 				 }} />}
 				{tab === "actual-test" && <ToeicActualTestTab onPracticeClick={() => {
 					 if (!session) openLoginModal(`${pathname}?tab=actual-test`);
@@ -1437,12 +1441,31 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 	);
 }
 
-function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: () => void }) {
-	const topics = [
-		{ title: "Part 5: Incomplete Sentences", subtitle: "Hoàn thành câu", count: "30 bài" },
-		{ title: "Part 6: Text Completion", subtitle: "Hoàn thành đoạn văn", count: "16 bài" },
-		{ title: "Part 7: Reading Comprehension", subtitle: "Đọc hiểu văn bản", count: "54 bài" },
-	];
+function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+	const [topics, setTopics] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchTopics = async () => {
+			try {
+				const res = await fetch('/api/toeic/grammar?type=READING');
+				if (res.ok) {
+					const data = await res.json();
+					setTopics(data);
+				}
+			} catch (error) {
+				console.error('Failed to fetch reading topics:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchTopics();
+	}, []);
+
+	if (loading) {
+		return <div className="py-12 text-center text-gray-500 italic">Đang tải các chủ đề...</div>;
+	}
+
 	return (
 		<div>
 			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
@@ -1450,15 +1473,21 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: () => void }) {
 				Các phần thi Reading
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-				{topics.map((t) => (
-					<TopicCard
-						key={t.title}
-						title={t.title}
-						subtitle={t.subtitle}
-						badgeText={t.count.replace(' bài', ' SESSIONS')}
-						onClick={onPracticeClick}
-					/>
-				))}
+				{topics.length === 0 ? (
+					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
+						Chưa có chủ đề nào được cập nhật.
+					</div>
+				) : (
+					topics.map((topic) => (
+						<TopicCard
+							key={topic.id}
+							title={topic.title}
+							subtitle={topic.subtitle}
+							badgeText={`${topic._count?.lessons || 0} SESSIONS`}
+							onClick={() => onPracticeClick(topic.slug)}
+						/>
+					))
+				)}
 			</div>
 		</div>
 	);
