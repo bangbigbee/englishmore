@@ -68,7 +68,7 @@ const TABS = [
 	},
 ];
 
-const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
+const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: any) => {
 	return (
 		<div
 			onClick={onClick}
@@ -91,22 +91,32 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 				{subtitle && <p className="text-[15px] text-slate-500 font-normal leading-relaxed">{subtitle}</p>}
 			</div>
 
-			<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-				<div className="perspective-[1000px] w-32 h-24">
-					<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-						<div className="absolute inset-0 w-full h-full bg-[#14532d] shadow-lg flex flex-col items-center justify-center gap-0.5 p-2 [backface-visibility:hidden] border-l-[3px] border-l-green-400">
-							<span className="text-2xl drop-shadow-sm mb-1">🍎</span>
-							<span className="text-white font-black text-[13px] tracking-widest leading-none">FLIP ME</span>
-							<span className="text-green-200/80 font-medium text-[11px] tracking-wide mt-0.5">/flɪp miː/</span>
-						</div>
-						<div className="absolute inset-0 w-full h-full bg-amber-500 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden border-r-[3px] border-r-amber-300">
-							<svg className="w-8 h-8 text-white opacity-0 -translate-x-8 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-							</svg>
+			{type === 'grammar' ? (
+				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
+					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-indigo-600 transition-transform duration-300 group-hover:scale-110 border border-slate-50">
+						<svg className="w-7 h-7 ml-0.5 opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+						</svg>
+					</div>
+				</div>
+			) : (
+				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
+					<div className="perspective-[1000px] w-32 h-24">
+						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+							<div className="absolute inset-0 w-full h-full bg-[#14532d] shadow-lg flex flex-col items-center justify-center gap-0.5 p-2 [backface-visibility:hidden] border-l-[3px] border-l-green-400">
+								<span className="text-2xl drop-shadow-sm mb-1">🍎</span>
+								<span className="text-white font-black text-[13px] tracking-widest leading-none">FLIP ME</span>
+								<span className="text-green-200/80 font-medium text-[11px] tracking-wide mt-0.5">/flɪp miː/</span>
+							</div>
+							<div className="absolute inset-0 w-full h-full bg-amber-500 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden border-r-[3px] border-r-amber-300">
+								<svg className="w-8 h-8 text-white opacity-0 -translate-x-8 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+								</svg>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 };
@@ -255,6 +265,7 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 						topics.map((topic) => (
 							<TopicCard
 								key={topic.id}
+								type="grammar"
 								title={topic.title}
 								subtitle={topic.subtitle || 'Ngữ pháp TOEIC'}
 								badgeText={`${topic._count?.lessons || 0} Lessons`}
@@ -772,6 +783,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 								{topics.map((t) => (
 									<TopicCard
 										key={t.topic}
+										type="vocabulary"
 										title={t.topic}
 										badgeText={`${t.wordCount} words`}
 										onClick={() => openTopic(t.topic)}
