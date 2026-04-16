@@ -1067,35 +1067,6 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 				<div className="py-12 text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">Không có từ vựng nào.</div>
 			) : (
 				<div className="space-y-5">
-					{/* Nav controls */}
-					<div className="flex items-center justify-between gap-2 rounded-xl bg-slate-100 p-2 border border-slate-200 shadow-sm">
-						<button
-							type="button"
-							onClick={() => moveCard('prev')}
-							disabled={cardIndex === 0}
-							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
-						>
-							<svg className="w-4 h-4 text-green-600 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
-							Prev
-						</button>
-
-						<div className="flex flex-col items-center gap-0.5">
-							<span className="text-sm font-semibold text-slate-600">
-								{cardIndex + 1} / {totalWords}
-							</span>
-						</div>
-
-						<button
-							type="button"
-							onClick={() => moveCard('next')}
-							disabled={cardIndex >= vocabItems.length - 1}
-							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
-						>
-							Next
-							<svg className="w-4 h-4 text-green-600 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
-						</button>
-					</div>
-
 					{/* 3D Flip Card — same structure as homepage */}
 					{currentItem && (
 						<div className="relative w-full h-[360px] sm:h-[480px] [perspective:1200px]">
@@ -1321,6 +1292,35 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							</div>
 						</div>
 					)}
+
+					{/* Nav controls */}
+					<div className="flex items-center justify-between gap-2 rounded-xl bg-slate-100 p-2 border border-slate-200 shadow-sm">
+						<button
+							type="button"
+							onClick={() => moveCard('prev')}
+							disabled={cardIndex === 0}
+							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
+						>
+							<svg className="w-4 h-4 text-green-600 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
+							Prev
+						</button>
+
+						<div className="flex flex-col items-center gap-0.5">
+							<span className="text-sm font-semibold text-slate-600">
+								{cardIndex + 1} / {totalWords}
+							</span>
+						</div>
+
+						<button
+							type="button"
+							onClick={() => moveCard('next')}
+							disabled={cardIndex >= vocabItems.length - 1}
+							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
+						>
+							Next
+							<svg className="w-4 h-4 text-green-600 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+						</button>
+					</div>
 
 					{/* Tags Action Bar */}
 					{currentItem && !challengeActive && !challengeResult.show && (
