@@ -9,7 +9,7 @@ export default async function GrammarBank() {
 
 	const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
 	const masterConfig = (setting?.value as any) || {}
-	const requiredTier = masterConfig.grammar?.bookmarkAccessTier || 'PRO'
+	const requiredTier = masterConfig.grammar?.grammarBookmarkAccessTier || 'PRO'
 	
 	const userRole = session.user.role || 'user'
 	const userTier = session.user.tier || 'FREE'
