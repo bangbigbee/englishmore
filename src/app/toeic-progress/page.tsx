@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Suspense } from "react";
+import VocabularyFilter from "./VocabularyFilter";
 
 export const metadata = {
 	title: 'Tiến Độ Của Tôi',
@@ -11,18 +12,23 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-async function VocabularyBank() {
+async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?: string }) {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
+
+	let orClause: any[] = [];
+	if (tagFilter === 'learned') orClause.push({ isLearned: true });
+	else if (tagFilter === 'hard') orClause.push({ isHard: true });
+	else if (tagFilter === 'bookmarked') orClause.push({ isBookmarked: true });
+	else {
+		orClause = [{ isLearned: true }, { isHard: true }, { isBookmarked: true }];
+	}
 
 	const tags = await prisma.vocabularyTag.findMany({
 		where: {
 			userId: session.user.id,
-			OR: [
-				{ isLearned: true },
-				{ isHard: true },
-				{ isBookmarked: true }
-			]
+			OR: orClause,
+			...(topic && { vocabulary: { topic: topic } }),
 		},
 		include: {
 			vocabulary: true
@@ -32,7 +38,14 @@ async function VocabularyBank() {
 		}
 	});
 
-	if (tags.length === 0) {
+	// Get all available topics from user's tags for filter dropdown
+	const allUserTags = await prisma.vocabularyTag.findMany({
+		where: { userId: session.user.id, OR: [{ isLearned: true }, { isHard: true }, { isBookmarked: true }] },
+		include: { vocabulary: { select: { topic: true } } }
+	});
+	const uniqueTopics = Array.from(new Set(allUserTags.map(t => t.vocabulary.topic))).sort();
+
+	if (tags.length === 0 && !topic && !tagFilter) {
 		return (
 			<div className="text-center py-20 px-6 bg-white rounded-2xl border border-slate-200">
 				<h3 className="text-2xl font-black text-slate-800 mb-4">Chưa có từ vựng nào</h3>
@@ -47,7 +60,15 @@ async function VocabularyBank() {
 	}
 
 	return (
-		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+		<div>
+			<VocabularyFilter topics={uniqueTopics} />
+
+			{tags.length === 0 ? (
+				<div className="text-center py-12 px-6 bg-yellow-50/50 rounded-2xl border border-yellow-100 border-dashed">
+					<p className="text-slate-500 font-medium">Không tìm thấy từ vựng nào khớp với bộ lọc điều kiện trên.</p>
+				</div>
+			) : (
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{tags.map(tag => (
 				<div key={tag.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md transition-shadow">
 					<div className="p-5 flex-1">
@@ -70,6 +91,8 @@ async function VocabularyBank() {
 					</div>
 				</div>
 			))}
+				</div>
+			)}
 		</div>
 	);
 }
@@ -103,10 +126,12 @@ const TABS = [
 export default async function ToeicProgressPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ tab?: string }>;
+	searchParams: Promise<{ tab?: string, topic?: string, tag?: string }>;
 }) {
 	const resolvedParams = await searchParams;
 	const activeTab = resolvedParams.tab || 'vocabulary-bank';
+	const topicFilter = resolvedParams.topic;
+	const tagFilter = resolvedParams.tag;
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
@@ -177,7 +202,7 @@ export default async function ToeicProgressPage({
 									<p className="text-slate-500 font-medium mt-1">Danh sách các từ vựng bạn đã đánh dấu ưu tiên học</p>
 								</div>
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
-									<VocabularyBank />
+									<VocabularyBank topic={topicFilter} tagFilter={tagFilter} />
 								</Suspense>
 							</div>
 						)}
