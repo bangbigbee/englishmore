@@ -14,7 +14,11 @@ export default function UpgradePage() {
         isOpen={showModal} 
         onClose={() => {
           setShowModal(false)
-          router.push('/')
+          if (window.history.length > 2) {
+             router.back()
+          } else {
+             router.push('/')
+          }
         }} 
       />
     </div>

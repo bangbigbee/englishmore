@@ -29,6 +29,7 @@ interface ToeicLesson {
   theoryAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   explanationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   translationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
+  bookmarkAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   questions: ToeicQuestion[]
 }
 
@@ -123,9 +124,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         if (res.status === 403) {
             // Revert state
             setBookmarkedQuestions(prev => ({ ...prev, [questionId]: currentlyBookmarked }));
-            if (window.confirm('Sổ Tay Ngữ Pháp và Sổ Tay Luyện Đọc là tính năng chuyên sâu. Nâng cấp ngay để mở khóa trọn bộ tính năng nhé.')) {
-                router.push('/upgrade');
-            }
+            setShowPricing(true);
         }
     } catch {
         // Revert state
@@ -763,14 +762,44 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                               </div>
 
                               <div className="flex items-center gap-2 shrink-0">
-                                <button
-                                  onClick={() => toggleBookmark(q.id)}
-                                  className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`}
-                                  aria-label="Lưu tay"
-                                  title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}
-                                >
-                                  <svg className="w-5 h-5 md:w-6 md:h-6" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                </button>
+                                {(() => {
+                                  const bookmarkTierLevel = currentLesson.bookmarkAccessTier === 'ULTRA' ? 3 : currentLesson.bookmarkAccessTier === 'PRO' ? 2 : 1;
+                                  const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                  const isLocked = bookmarkTierLevel > userTierLevel;
+
+                                  if (isLocked) {
+                                    return (
+                                      <div className="relative group">
+                                        <button
+                                          onClick={() => setShowPricing(true)}
+                                          className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none`}
+                                          aria-label="Lưu tay bị khóa"
+                                        >
+                                          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                          
+                                          {/* Lock icon overlay */}
+                                          <div className={`absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center shadow-sm ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'bg-purple-100 border border-purple-300 text-purple-700' : 'bg-amber-100 border border-amber-300 text-amber-700'}`}>
+                                             <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                          </div>
+                                        </button>
+                                        <span className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-white bg-slate-800 px-3 py-1.5 rounded shadow-lg pointer-events-none z-10 block">
+                                            Nâng cấp {currentLesson.bookmarkAccessTier} để bookmark tài liệu
+                                        </span>
+                                      </div>
+                                    )
+                                  }
+
+                                  return (
+                                    <button
+                                      onClick={() => toggleBookmark(q.id)}
+                                      className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`}
+                                      aria-label="Lưu tay"
+                                      title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}
+                                    >
+                                      <svg className="w-5 h-5 md:w-6 md:h-6" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                    </button>
+                                  )
+                                })()}
                                 <button
                                   onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
                                   disabled={activeQuestionIndex === currentLesson.questions.length - 1}
