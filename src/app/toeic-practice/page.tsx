@@ -491,8 +491,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const [speechSupported, setSpeechSupported] = useState(false);
 
 	const [vocabTags, setVocabTags] = useState<Record<number, { learned?: boolean, hard?: boolean, bookmarked?: boolean }>>({});
-	
 	// Speed Challenge State
+	const [challengeExpanded, setChallengeExpanded] = useState(false);
+	const [challengePreCtd, setChallengePreCtd] = useState<number | null>(null);
 	const [challengeActive, setChallengeActive] = useState(false);
 	const [challengeWords, setChallengeWords] = useState<any[]>([]);
 	const [challengeRound, setChallengeRound] = useState(0);
@@ -719,6 +720,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setShowExampleVi(false);
 		setChallengeResult({ show: false, score: 0, total: 0 });
 		setChallengeActive(false);
+		setChallengeExpanded(false);
+		setChallengePreCtd(null);
 
 		let localTags: Record<number, any> = {};
 		if (typeof window !== 'undefined') {
@@ -812,6 +815,53 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setupChallengeRound(0, shuffled);
 		setChallengeActive(true);
 	};
+
+	const handleStartChallenge = () => {
+		let plays: number[] = [];
+		const storageKey = `speed-challenge-plays-${session?.user?.id || 'guest'}`;
+		if (typeof window !== 'undefined') {
+			try { plays = JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch {}
+		}
+		const now = Date.now();
+		plays = plays.filter(time => now - time < 24 * 60 * 60 * 1000);
+		
+		let allowed = false;
+		if (!session) {
+			allowed = plays.length < 1;
+		} else {
+			if (isPro || isUltra) allowed = true;
+			else allowed = plays.length < 2;
+		}
+
+		if (!allowed) {
+			if (!session) {
+				onPracticeClick(selectedTopic || undefined, false); // prompt login for guest
+			} else {
+				setShowUpgrade(true); // prompt upgrade for normal user
+			}
+			return;
+		}
+
+		plays.push(now);
+		if (typeof window !== 'undefined') {
+			localStorage.setItem(storageKey, JSON.stringify(plays));
+		}
+
+		setChallengeExpanded(false);
+		setChallengePreCtd(3);
+	};
+
+	useEffect(() => {
+		if (challengePreCtd !== null) {
+			if (challengePreCtd > 0) {
+				const timer = setTimeout(() => setChallengePreCtd(c => c! - 1), 1000);
+				return () => clearTimeout(timer);
+			} else {
+				setChallengePreCtd(null);
+				startChallenge();
+			}
+		}
+	}, [challengePreCtd]);
 
 	useEffect(() => {
 		if (!challengeActive) return;
@@ -1288,29 +1338,49 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 						</div>
 					)}
 
-					{/* Speed Challenge Section */}
-					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && (
-						<div className="mt-8 bg-white border border-indigo-100 rounded-3xl p-8 text-center shadow-sm">
-							<div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-5 rotate-3">
-								<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-							</div>
-							<h3 className="text-xl font-black text-slate-800 mb-2">Bạn đã tự tin nhớ bao nhiêu % từ vựng ở đây?</h3>
-							<p className="text-slate-500 mb-6 font-medium">Tham gia Speed Challenge này nhé? Bạn có trung bình 3 giây để nhìn nhanh ý nghĩa của mỗi từ.</p>
-							<button onClick={startChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-95">
-								Bắt đầu thử thách ngay
+					{/* Pre Countdown UI */}
+					{challengePreCtd !== null && (
+						<div className="mt-8 bg-indigo-600 rounded-3xl p-16 text-center shadow-xl flex flex-col items-center justify-center animate-in zoom-in-95 duration-300">
+							<span className="text-white text-xl font-bold mb-4 opacity-80 uppercase tracking-widest">Chuẩn bị...</span>
+							<h3 className="text-8xl font-black text-white drop-shadow-lg animate-pulse">{challengePreCtd}</h3>
+						</div>
+					)}
+
+					{/* Speed Challenge Intro Section */}
+					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && challengePreCtd === null && (
+						<div className="mt-8 bg-white border border-indigo-100 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
+							<button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between p-6 bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none">
+								<div className="flex items-center gap-3">
+									<div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
+										<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+									</div>
+									<h3 className="text-lg font-black text-slate-800">Speed Challenge</h3>
+								</div>
+								<svg className={`w-6 h-6 text-slate-400 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
 							</button>
+
+							{challengeExpanded && (
+								<div className="p-8 text-center border-t border-indigo-50 animate-in slide-in-from-top-4 duration-300">
+									<h3 className="text-xl font-black text-slate-800 mb-2">Bạn đã tự tin nhớ bao nhiêu % từ vựng ở đây?</h3>
+									<p className="text-slate-500 mb-6 font-medium">Tham gia Speed Challenge này nhé? Bạn có trung bình 3 giây để nhìn nhanh ý nghĩa của mỗi từ.</p>
+									<p className="text-[12px] text-slate-400 font-medium mb-6 bg-slate-50 p-3 rounded-xl inline-block border border-slate-100">
+										{!session ? "Lưu ý: Bạn đang là khách nên chỉ được tham gia 1 lần / 24 giờ. Vui lòng đăng nhập để có thêm lượt." : (!isPro && !isUltra) ? "Lưu ý: Bạn được tham gia 2 lần / 24 giờ. Nâng cấp tài khoản để làm lại không giới hạn." : "Tài khoản cao cấp: Bạn được tham gia thử thách không giới hạn."}
+									</p>
+									<div className="block">
+										<button onClick={handleStartChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-95 cursor-pointer">
+											Bắt đầu thử thách ngay
+										</button>
+									</div>
+								</div>
+							)}
 						</div>
 					)}
 
 					{/* Active Speed Challenge UI */}
-					{challengeActive && challengeWords[challengeRound] && (
+					{challengeActive && challengeWords[challengeRound] && challengePreCtd === null && (
 						<div className="mt-6 bg-white border-2 border-indigo-500 rounded-3xl p-8 shadow-xl animate-in fade-in slide-in-from-bottom-6 duration-300">
 							<div className="flex justify-between items-center mb-6">
 								<span className="font-bold text-slate-500">Từ {challengeRound + 1} / {challengeWords.length}</span>
-								<div className="flex items-center gap-2 text-rose-500 font-bold bg-rose-50 px-3 py-1.5 rounded-full">
-									<svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-									{challengeTimeLeft}s
-								</div>
 							</div>
 							
 							<div className="text-center mb-10">
@@ -1322,9 +1392,16 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 								)}
 							</div>
 
+							<div className="flex justify-start mb-3">
+								<div className="flex items-center gap-1.5 text-rose-500 font-bold bg-rose-50 px-3 py-1.5 rounded-full text-sm">
+									<svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+									{challengeTimeLeft}s
+								</div>
+							</div>
+
 							<div className="grid grid-cols-1 gap-3">
 								{challengeOptions.map((opt, i) => (
-									<button key={i} onClick={() => handleChallengeAnswer(opt)} className="bg-slate-50 border-2 border-slate-200 p-4 rounded-xl text-lg font-bold text-slate-700 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all text-left">
+									<button key={i} onClick={() => handleChallengeAnswer(opt)} className="bg-slate-50 border-2 border-slate-200 p-4 rounded-xl text-lg font-bold text-slate-700 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all text-left cursor-pointer">
 										{opt}
 									</button>
 								))}
@@ -1339,10 +1416,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							<p className="text-indigo-200 text-lg mb-8 font-medium">Bạn đã trả lời đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ vựng.</p>
 							
 							<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-								<button onClick={startChallenge} className="bg-white text-indigo-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto">
-									Chơi Lại
+								<button onClick={handleStartChallenge} className="bg-white text-indigo-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
+									Làm Lại
 								</button>
-								<button onClick={() => setChallengeResult({ show: false, score: 0, total: 0 })} className="bg-indigo-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-indigo-900 transition-all w-full sm:w-auto">
+								<button onClick={() => { setChallengeResult({ show: false, score: 0, total: 0 }); setChallengeExpanded(false); }} className="bg-indigo-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-indigo-900 transition-all w-full sm:w-auto cursor-pointer">
 									Quay Lại Học Từ
 								</button>
 							</div>
