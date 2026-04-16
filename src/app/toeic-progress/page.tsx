@@ -101,9 +101,10 @@ const TABS = [
 export default async function ToeicProgressPage({
 	searchParams,
 }: {
-	searchParams: { tab?: string };
+	searchParams: Promise<{ tab?: string }>;
 }) {
-	const activeTab = searchParams.tab || 'vocabulary-bank';
+	const resolvedParams = await searchParams;
+	const activeTab = resolvedParams.tab || 'vocabulary-bank';
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
@@ -121,7 +122,7 @@ export default async function ToeicProgressPage({
 							</div>
 							<div>
 								<h1 className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-sm">Tiến Độ Của Tôi</h1>
-								<p className="text-green-100 font-medium mt-1 opacity-90 overflow-hidden text-ellipsis whitespace-nowrap max-w-sm">Học viên {session.user.name || session.user.email}</p>
+								<p className="text-green-100 font-medium mt-1 opacity-90 overflow-hidden text-ellipsis whitespace-nowrap max-w-sm">Học viên {session.user?.name || session.user?.email || ''}</p>
 							</div>
 						</div>
 						<Link href="/toeic-practice" className="inline-flex items-center gap-2 rounded-xl bg-white/10 border border-white/20 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-white/20 focus:outline-none">
