@@ -945,7 +945,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const LockedValueBadge = ({ tier }: { tier: 'PRO' | 'ULTRA' }) => (
 		<span 
 			onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-			className="inline-flex items-center justify-center cursor-pointer group mt-[1px] w-5 h-5 rounded-md transition-colors"
+			className="inline-flex items-center justify-center cursor-pointer group mt-[1.5px] transition-colors"
 			title={`Nâng cấp ${tier} để xem`}
 		>
 			{tier === 'ULTRA' ? (
