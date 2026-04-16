@@ -136,7 +136,7 @@ const getTopicVietnamese = (en: string): string => {
 	for (const key of Object.keys(TOEIC_TOPICS_VI)) {
 		if (key.toUpperCase() === upper) return TOEIC_TOPICS_VI[key];
 	}
-	return "Từ vựng TOEIC";
+	return "";
 };
 
 const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: any) => {
@@ -154,17 +154,17 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 		>
 
 			<div className="relative z-10 flex-1">
-				<h3 className="font-bold text-[22px] text-black leading-snug mb-4 group-hover:text-[#14532d] transition-colors duration-300">
+				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300">
 					{displayTitle}
 				</h3>
 
+				{displaySubtitle && <p className="text-[15px] text-slate-500 font-medium mb-4">{displaySubtitle}</p>}
+
 				{badgeText && (
-					<div className="text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mb-6 opacity-80">
+					<div className="text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mt-2 opacity-80">
 						{badgeText}
 					</div>
 				)}
-
-				{displaySubtitle && <p className="text-[15px] text-slate-500 font-normal leading-relaxed">{displaySubtitle}</p>}
 			</div>
 
 			{type === 'grammar' ? (
