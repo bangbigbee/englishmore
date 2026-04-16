@@ -19,13 +19,41 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "EnglishMore - English Learning Platform",
-  description: "A learning platform for course registration, assignments, and study progress.",
-  icons: {
-    icon: "/favicon.svg",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await import("next/headers").then(m => m.headers());
+  const host = headersList.get('host') || '';
+  const isToeicDomain = host.includes('toeicmore');
+
+  if (isToeicDomain) {
+    return {
+      title: "ToeicMore - Chinh phục TOEIC",
+      description: "Hệ thống luyện thi TOEIC thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.",
+      openGraph: {
+        title: "ToeicMore - Chinh phục TOEIC",
+        description: "Hệ thống luyện thi TOEIC thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.",
+        url: "https://toeicmore.com",
+        siteName: "ToeicMore",
+        locale: "vi_VN",
+        type: "website",
+      },
+      metadataBase: new URL('https://toeicmore.com'),
+    };
+  }
+
+  return {
+    title: "EnglishMore - English Learning Platform",
+    description: "A learning platform for course registration, assignments, and study progress.",
+    openGraph: {
+      title: "EnglishMore - English Learning Platform",
+      description: "A learning platform for course registration, assignments, and study progress.",
+      url: "https://englishmore.bigbee.ltd",
+      siteName: "EnglishMore",
+      locale: "vi_VN",
+      type: "website",
+    },
+    metadataBase: new URL('https://englishmore.bigbee.ltd'),
+  };
+}
 
 export const viewport = {
   width: "device-width",
