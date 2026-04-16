@@ -140,10 +140,49 @@ const getTopicVietnamese = (en: string): string => {
 };
 
 const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: any) => {
-	// Auto translate subtitle for vocabulary if none provided
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
-	// Extract main title if it has hyphen
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
+
+	if (type === 'vocabulary') {
+		const wordCount = badgeText ? parseInt(badgeText.replace(/[^0-9]/g, '')) : 0;
+		return (
+			<div
+				onClick={onClick}
+				className="bg-[#f8f9fc] rounded-md p-6 sm:p-8 flex flex-col justify-start min-h-[340px] cursor-pointer group transition-all duration-300 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white hover:-translate-y-1"
+			>
+				{/* Logo / Title row */}
+				<div className="flex items-center gap-3 mb-4">
+					<div className="w-7 h-7 flex-shrink-0 flex items-center justify-center bg-indigo-600 text-white rounded font-bold text-sm shadow-sm rotate-3 group-hover:rotate-6 transition-transform">
+						{displayTitle.charAt(0)}
+					</div>
+					<h3 className="font-extrabold text-[22px] text-slate-900 leading-tight tracking-tight">
+						{displayTitle}
+					</h3>
+				</div>
+				
+				{/* Subtitle */}
+				{displaySubtitle && (
+					<div className="text-[12px] font-bold uppercase tracking-widest text-indigo-400 mb-5">
+						{displaySubtitle}
+					</div>
+				)}
+
+				{/* Body text */}
+				<p className="text-[15px] text-slate-600 leading-relaxed font-medium flex-grow pr-2">
+					Bộ từ vựng trọng tâm chủ đề {displaySubtitle ? displaySubtitle : displayTitle}. Bao gồm {wordCount > 0 ? <span className="font-bold text-slate-800">{wordCount} từ</span> : 'các từ'} quan trọng thường xuất hiện trong đề thi TOEIC thực tế.
+				</p>
+
+				{/* Bottom button */}
+				<div className="mt-8">
+					<div className="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-500 transition-all duration-300 group-hover:shadow-md border border-slate-100 group-hover:border-indigo-100 group-hover:text-indigo-600">
+						<svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+						</svg>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div
@@ -152,13 +191,12 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 								 shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start min-h-[220px] border border-slate-200
 								 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]"
 		>
-
 			<div className="relative z-10 flex-1">
 				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300">
-					{displayTitle}
+					{title}
 				</h3>
 
-				{displaySubtitle && <p className="text-[15px] text-slate-500 font-medium mb-4">{displaySubtitle}</p>}
+				{subtitle && <p className="text-[15px] text-slate-500 font-medium mb-4">{subtitle}</p>}
 
 				{badgeText && (
 					<div className="text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mt-2 opacity-80">
@@ -167,30 +205,13 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 				)}
 			</div>
 
-			{type === 'grammar' ? (
-				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-green-600 transition-transform duration-300 group-hover:scale-110 border border-slate-50">
-						<svg className="w-7 h-7 ml-0.5 opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-						</svg>
-					</div>
+			<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
+				<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-green-600 transition-transform duration-300 group-hover:scale-110 border border-slate-50">
+					<svg className="w-7 h-7 ml-0.5 opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+					</svg>
 				</div>
-			) : (
-				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="perspective-[1000px] w-[116px] h-[38px]">
-						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-							<div className="absolute inset-0 w-full h-full bg-[#20633b] shadow-md flex items-center justify-center [backface-visibility:hidden]">
-								<span className="text-white font-semibold text-[13px]">Flip me over</span>
-							</div>
-							<div className="absolute inset-0 w-full h-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-								<svg className="w-5 h-5 text-white opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-								</svg>
-							</div>
-						</div>
-					</div>
-				</div>
-			)}
+			</div>
 		</div>
 	);
 };
