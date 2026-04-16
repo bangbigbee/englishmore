@@ -25,8 +25,25 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const isPremium = session.user.role === 'admin' || session.user.tier === 'PRO' || session.user.tier === 'ULTRA';
-    if (!isPremium) {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
+    const masterConfig = (setting?.value as any) || {}
+    const requiredTier = masterConfig.grammar?.bookmarkAccessTier || 'PRO'
+    
+    const userRole = session.user.role || 'user'
+    const userTier = session.user.tier || 'FREE'
+
+    let hasAccess = false
+    if (userRole === 'admin') {
+      hasAccess = true
+    } else if (requiredTier === 'FREE') {
+      hasAccess = true
+    } else if (requiredTier === 'PRO' && (userTier === 'PRO' || userTier === 'ULTRA')) {
+      hasAccess = true
+    } else if (requiredTier === 'ULTRA' && userTier === 'ULTRA') {
+      hasAccess = true
+    }
+
+    if (!hasAccess) {
       return NextResponse.json({ error: 'Forbidden. Premium feature.' }, { status: 403 })
     }
 

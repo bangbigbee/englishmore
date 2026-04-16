@@ -7,16 +7,33 @@ export default async function GrammarBank() {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
 
-	const isPremium = session.user.role === 'admin' || session.user.tier === 'PRO' || session.user.tier === 'ULTRA';
-	if (!isPremium) {
+	const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
+	const masterConfig = (setting?.value as any) || {}
+	const requiredTier = masterConfig.grammar?.bookmarkAccessTier || 'PRO'
+	
+	const userRole = session.user.role || 'user'
+	const userTier = session.user.tier || 'FREE'
+
+	let hasAccess = false
+	if (userRole === 'admin') {
+		hasAccess = true
+	} else if (requiredTier === 'FREE') {
+		hasAccess = true
+	} else if (requiredTier === 'PRO' && (userTier === 'PRO' || userTier === 'ULTRA')) {
+		hasAccess = true
+	} else if (requiredTier === 'ULTRA' && userTier === 'ULTRA') {
+		hasAccess = true
+	}
+
+	if (!hasAccess) {
 		return (
 			<div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
 				<div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-amber-100">
 					<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
 				</div>
-				<h3 className="text-xl font-bold text-slate-800 mb-2">Tính năng dành cho PRO / ULTRA</h3>
+				<h3 className="text-xl font-bold text-slate-800 mb-2">Tính năng dành cho {requiredTier}</h3>
 				<p className="text-slate-500 max-w-sm mx-auto mb-6">
-					Nâng cấp tài khoản để mở khoá tính năng Sổ Tay độc quyền và lưu trữ không giới hạn các câu hỏi khó.
+					Nâng cấp tài khoản {requiredTier} để mở khoá tính năng Sổ Tay độc quyền và lưu trữ không giới hạn các câu hỏi khó.
 				</p>
 				<Link href="/upgrade" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 font-bold rounded-xl shadow-md hover:from-amber-500 hover:to-amber-600 transition-all">
 					Nâng Cấp Ngay

@@ -16,7 +16,8 @@ export default function AdminMasterConfig() {
       if (res.ok) {
         const data = await res.json()
         // Ensure defaults are merged in case structural fields are missing
-        const grammar = data.grammar || { theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE' }
+        const grammar = data.grammar || { theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE', bookmarkAccessTier: 'PRO' }
+        if (!grammar.bookmarkAccessTier) grammar.bookmarkAccessTier = 'PRO'
         const vocabulary = data.vocabulary || { proFields: [], ultraFields: [] }
         setConfig({ grammar, vocabulary })
       }
@@ -185,6 +186,18 @@ export default function AdminMasterConfig() {
                 className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#14532d] focus:border-[#14532d]"
                 value={config.grammar.translationAccessTier}
                 onChange={(e) => setConfig({ ...config, grammar: { ...config.grammar, translationAccessTier: e.target.value } })}
+              >
+                <option value="FREE">Free</option>
+                <option value="PRO">Pro</option>
+                <option value="ULTRA">Ultra</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền Sổ Tay Ghi Chú (Bookmark)</label>
+              <select
+                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#14532d] focus:border-[#14532d]"
+                value={config.grammar.bookmarkAccessTier}
+                onChange={(e) => setConfig({ ...config, grammar: { ...config.grammar, bookmarkAccessTier: e.target.value } })}
               >
                 <option value="FREE">Free</option>
                 <option value="PRO">Pro</option>

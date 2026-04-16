@@ -7,16 +7,33 @@ export default async function ReadingBank() {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
 
-	const isPremium = session.user.role === 'admin' || session.user.tier === 'PRO' || session.user.tier === 'ULTRA';
-	if (!isPremium) {
+	const setting = await prisma.systemSetting.findUnique({ where: { key: 'MASTER_ACCESS_TIER_CONFIG' } })
+	const masterConfig = (setting?.value as any) || {}
+	const requiredTier = masterConfig.grammar?.bookmarkAccessTier || 'PRO'
+	
+	const userRole = session.user.role || 'user'
+	const userTier = session.user.tier || 'FREE'
+
+	let hasAccess = false
+	if (userRole === 'admin') {
+		hasAccess = true
+	} else if (requiredTier === 'FREE') {
+		hasAccess = true
+	} else if (requiredTier === 'PRO' && (userTier === 'PRO' || userTier === 'ULTRA')) {
+		hasAccess = true
+	} else if (requiredTier === 'ULTRA' && userTier === 'ULTRA') {
+		hasAccess = true
+	}
+
+	if (!hasAccess) {
 		return (
 			<div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
 				<div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-blue-100">
                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
 				</div>
-				<h3 className="text-xl font-bold text-slate-800 mb-2">Tính năng dành cho PRO / ULTRA</h3>
+				<h3 className="text-xl font-bold text-slate-800 mb-2">Tính năng dành cho {requiredTier}</h3>
 				<p className="text-slate-500 max-w-sm mx-auto mb-6">
-					Nâng cấp tài khoản để mở khoá tính năng Sổ Tay độc quyền và lưu trữ không giới hạn các câu hỏi khó.
+					Nâng cấp tài khoản {requiredTier} để mở khoá tính năng Sổ Tay độc quyền và lưu trữ không giới hạn các bài luyện đọc.
 				</p>
 				<Link href="/upgrade" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-xl shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all">
 					Nâng Cấp Ngay

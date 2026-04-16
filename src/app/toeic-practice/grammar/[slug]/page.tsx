@@ -108,22 +108,29 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu trữ câu hỏi khó lại nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
         return;
     }
-    const isPremium = session?.user?.role === 'admin' || session?.user?.tier === 'PRO' || session?.user?.tier === 'ULTRA';
-    if (!isPremium) {
-        if (window.confirm('Sổ Tay Ngữ Pháp và Sổ Tay Luyện Đọc là tính năng chuyên sâu của phiên bản đặc quyền PRO. Nâng cấp ngay để mở khóa trọn bộ tính năng nhé.')) {
-            router.push('/upgrade');
-        }
-        return;
-    }
+
     const currentlyBookmarked = !!bookmarkedQuestions[questionId];
+    // Optimistic Update
     setBookmarkedQuestions(prev => ({ ...prev, [questionId]: !currentlyBookmarked }));
+    
     try {
-        await fetch('/api/toeic/grammar/bookmark', {
+        const res = await fetch('/api/toeic/grammar/bookmark', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ questionId, isBookmarked: !currentlyBookmarked })
         });
-    } catch {}
+        
+        if (res.status === 403) {
+            // Revert state
+            setBookmarkedQuestions(prev => ({ ...prev, [questionId]: currentlyBookmarked }));
+            if (window.confirm('Sổ Tay Ngữ Pháp và Sổ Tay Luyện Đọc là tính năng chuyên sâu. Nâng cấp ngay để mở khóa trọn bộ tính năng nhé.')) {
+                router.push('/upgrade');
+            }
+        }
+    } catch {
+        // Revert state
+        setBookmarkedQuestions(prev => ({ ...prev, [questionId]: currentlyBookmarked }));
+    }
   };
 
   // Persistence Logic: Load

@@ -8,6 +8,7 @@ export const DEFAULT_MASTER_CONFIG = {
     theoryAccessTier: 'FREE',
     explanationAccessTier: 'FREE',
     translationAccessTier: 'FREE',
+    bookmarkAccessTier: 'PRO',
   },
   vocabulary: {
     proFields: [] as string[],
