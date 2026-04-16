@@ -119,20 +119,27 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
       continue
     }
 
-    // Match vocabulary header (can be ignored as we just catch items)
-    if (line.match(/^(?:Vocabulary|Từ\s*vựng|Tu\s*vung)\s*[:\-]?\s*$/i)) {
+    // Match inline vocabulary item: "Vocabulary: policy (n) : chính sách" or "Vocabulary: (Blank)"
+    const vocabMatch = line.match(/^(?:Vocabulary|Từ\s*vựng|Tu\s*vung)\s*[:\-]\s*(.*)$/i)
+    if (vocabMatch) {
+      const vocabStr = vocabMatch[1].trim()
+      if (vocabStr === '(Blank)' || !vocabStr) {
+        current.vocabulary = []
+        continue
+      }
+      
+      const partsMatch = vocabStr.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]?\s*(.+)$/)
+      if (partsMatch) {
+        const typeStr = partsMatch[2] ? `(${partsMatch[2].trim()}) ` : ''
+        current.vocabulary = [{
+          word: partsMatch[1].trim(),
+          meaning: `${typeStr}${partsMatch[3].trim()}`
+        }]
+      } else {
+        // Fallback if they just type "Vocabulary: antique" without meaning
+        current.vocabulary = [{ word: vocabStr, meaning: '' }]
+      }
       continue
-    }
-
-    // Match vocabulary item: "- policy (n) : chính sách"
-    const vocabItemMatch = line.match(/^\-\s*([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/)
-    if (vocabItemMatch) {
-       const typeStr = vocabItemMatch[2] ? `(${vocabItemMatch[2].trim()}) ` : ''
-       current.vocabulary.push({
-         word: vocabItemMatch[1].trim(),
-         meaning: `${typeStr}${vocabItemMatch[3].trim()}`
-       })
-       continue
     }
 
     // Append to either question, explanation, translation or tip if it doesn't match a prefix
