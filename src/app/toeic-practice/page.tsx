@@ -153,7 +153,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 		>
 			<div className="relative z-10 flex-1">
 				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300 flex items-center gap-3">
-					<span className="w-[30px] h-[30px] rounded-[8px] bg-green-600 text-white flex items-center justify-center text-[14px] font-black shrink-0 shadow-sm leading-none pb-[2px]">
+					<span className={`w-[30px] h-[30px] rounded-[8px] bg-green-700 text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
 						{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
 					</span>
 					<span>{type === 'vocabulary' ? displayTitle : title}</span>
