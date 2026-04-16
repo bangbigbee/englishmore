@@ -286,19 +286,17 @@ function ToeicPracticeContent() {
 					
 					
 					<Link href="/toeic-progress" className="flex items-center justify-center w-[20%] max-w-[50px] aspect-square rounded-xl bg-white border border-slate-200 shadow-sm active:scale-[0.98] transition-transform shrink-0" aria-label="Tiến độ của tôi">
-						<svg className="w-5 h-5 -rotate-90" viewBox="0 0 36 36" fill="none" stroke="currentColor">
-							<path className="text-slate-100" strokeWidth="4" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-							<path className="text-[#ea980c]" strokeWidth="4" strokeDasharray="60, 100" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+						<svg className="w-5 h-5 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+						  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
 						</svg>
 					</Link>
 				</div>
 
 				{/* Desktop "Tiến độ của tôi" */}
 				<Link href="/toeic-progress" className="hidden md:flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap shrink-0">
-					<span className="transition-transform duration-300 opacity-60 scale-100 group-hover:opacity-100">
-						<svg className="w-4 h-4 -rotate-90" viewBox="0 0 36 36" fill="none" stroke="currentColor">
-							<path className="text-slate-200" strokeWidth="4" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-							<path className="text-[#14532d]" strokeWidth="4" strokeDasharray="60, 100" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+					<span className="transition-transform duration-300 opacity-60 scale-100 group-hover:opacity-100 group-hover:rotate-180">
+						<svg className="w-[18px] h-[18px] text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+						  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
 						</svg>
 					</span>
 					<span className="text-sm font-bold tracking-tight transition-all text-slate-400 group-hover:text-[#14532d]">
@@ -346,9 +344,8 @@ function ToeicPracticeContent() {
 
 						<Link href="/toeic-progress" onClick={() => setIsMobileMenuOpen(false)} className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-slate-100 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
 							<span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-green-50">
-								<svg className="w-5 h-5 -rotate-90" viewBox="0 0 36 36" fill="none" stroke="currentColor">
-									<path className="text-slate-200" strokeWidth="4" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-									<path className="text-[#14532d]" strokeWidth="4" strokeDasharray="60, 100" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+								<svg className="w-5 h-5 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+								  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
 								</svg>
 							</span>
 							<span className="text-[15px]">Tiến Độ Của Tôi</span>
@@ -414,7 +411,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				<div>
 					<h1 className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
 						<span className="text-[#14532d] block line-clamp-1 break-words">Chinh phục TOEIC</span>
-						<span className="text-amber-500 block line-clamp-1 break-words mt-1">Dễ Dàng và Thú vị!</span>
+						<span className="text-amber-500 block line-clamp-1 break-words mt-1">Dễ Dàng và Hiệu Quả Hơn!</span>
 					</h1>
 					<p className="mt-4 max-w-xl text-base sm:text-lg font-medium text-[#14532d] leading-relaxed">
 						Hệ thống luyện thi TOEIC theo phương pháp đặc biệt — thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.
