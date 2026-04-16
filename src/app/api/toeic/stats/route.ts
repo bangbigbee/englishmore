@@ -10,7 +10,7 @@ export async function GET() {
     ])
 
     return NextResponse.json({
-      users: usersCount + 15000, // starting baseline for marketing
+      users: usersCount,
       grammarTopics: grammarCount,
       vocabularies: vocabCount
     })
