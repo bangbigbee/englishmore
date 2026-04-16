@@ -10,10 +10,8 @@ const TABS = [
 		key: "home", 
 		label: "Trang chủ", 
 		icon: (
-			<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="#0ea5e9" fillOpacity="0.2"/>
-				<path d="M9 22V12h6v10" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+			<svg className="w-[18px] h-[18px] fill-[#14532d]" viewBox="0 0 24 24">
+				<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
 			</svg>
 		) 
 	},
@@ -286,17 +284,24 @@ function ToeicPracticeContent() {
 						<span className="truncate">{TABS.find(t => t.key === tab)?.label || 'Chọn mục'}</span>
 					</button>
 					
-					<Link href="/toeic-progress" className="flex items-center justify-center w-[20%] max-w-[50px] aspect-square rounded-xl bg-white border border-slate-200 shadow-sm text-xl active:scale-[0.98] transition-transform shrink-0" aria-label="Tiến độ của tôi">
-						📈
+					
+					<Link href="/toeic-progress" className="flex items-center justify-center w-[20%] max-w-[50px] aspect-square rounded-xl bg-white border border-slate-200 shadow-sm active:scale-[0.98] transition-transform shrink-0" aria-label="Tiến độ của tôi">
+						<svg className="w-5 h-5 -rotate-90" viewBox="0 0 36 36" fill="none" stroke="currentColor">
+							<path className="text-slate-100" strokeWidth="4" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+							<path className="text-[#ea980c]" strokeWidth="4" strokeDasharray="60, 100" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+						</svg>
 					</Link>
 				</div>
 
 				{/* Desktop "Tiến độ của tôi" */}
 				<Link href="/toeic-progress" className="hidden md:flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap shrink-0">
-					<span className="text-xl transition-transform duration-300 opacity-60 scale-100 group-hover:opacity-100">
-						📈
+					<span className="transition-transform duration-300 opacity-60 scale-100 group-hover:opacity-100">
+						<svg className="w-4 h-4 -rotate-90" viewBox="0 0 36 36" fill="none" stroke="currentColor">
+							<path className="text-slate-200" strokeWidth="4" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+							<path className="text-[#14532d]" strokeWidth="4" strokeDasharray="60, 100" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+						</svg>
 					</span>
-					<span className="text-sm font-bold tracking-tight transition-all text-slate-400 group-hover:text-slate-600">
+					<span className="text-sm font-bold tracking-tight transition-all text-slate-400 group-hover:text-[#14532d]">
 						Tiến Độ Của Tôi
 					</span>
 				</Link>
@@ -340,8 +345,11 @@ function ToeicPracticeContent() {
 						</div>
 
 						<Link href="/toeic-progress" onClick={() => setIsMobileMenuOpen(false)} className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-slate-100 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-							<span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-amber-50">
-								<span className="text-lg">📈</span>
+							<span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-green-50">
+								<svg className="w-5 h-5 -rotate-90" viewBox="0 0 36 36" fill="none" stroke="currentColor">
+									<path className="text-slate-200" strokeWidth="4" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+									<path className="text-[#14532d]" strokeWidth="4" strokeDasharray="60, 100" strokeLinecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+								</svg>
 							</span>
 							<span className="text-[15px]">Tiến Độ Của Tôi</span>
 						</Link>
@@ -380,6 +388,12 @@ function ToeicPracticeContent() {
 					 if (!session) openLoginModal(`${pathname}?tab=actual-test`);
 				 }} />}
 			</div>
+
+			<footer className="mt-20 pt-8 pb-4 border-t border-slate-200 text-center text-sm font-medium text-slate-500 opacity-80">
+				<p className="mb-2 uppercase tracking-wider text-[11px] font-bold text-[#14532d]">ToeicMore &copy; {new Date().getFullYear()}</p>
+				<p>Bản quyền được bảo lưu.</p>
+				<p>Thương hiệu và sản phẩm trực thuộc nền tảng Luyện Tiếng Anh Giao Tiếp EnglishMore.</p>
+			</footer>
 		</div>
 	</div>
 	);
@@ -411,9 +425,9 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							<span>Bắt đầu luyện tập</span>
 							<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
 						</button>
-						<button onClick={() => onTabClick('actual-test')} className="brand-cta brand-cta-outline !text-[15px] sm:!text-base !px-7 !py-3.5">
+						<button onClick={() => onTabClick('actual-test')} className="brand-cta brand-cta-filled !text-[15px] sm:!text-base !px-7 !py-3.5 group">
 							<span>Thi thử TOEIC</span>
-							<span aria-hidden="true" className="brand-cta-arrow">→</span>
+							<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
 						</button>
 					</div>
 				</div>
@@ -436,72 +450,69 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							<p className="text-[13px] sm:text-[15px] font-bold text-[#14532d] uppercase tracking-wide">Học viên tham gia</p>
 						</div>
 					</div>
-					<div className="mt-5 text-center text-[13px] font-semibold text-[#14532d]/80">
-						Số liệu được cập nhật theo thời gian thực từ hệ thống.
-					</div>
 				</div>
 			</section>
 
 			{/* Features Section */}
 			<div className="text-center mb-12">
-				<h2 className="text-3xl md:text-4xl font-black text-slate-800 mb-4">
-					Trên <span className="text-[#14532d]">TOEICMORE</span> bạn luyện được gì?
+				<h2 className="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">
+					Trên <span className="text-[#14532d]">TOEIC</span><span className="text-[#ea980c]">MORE</span> bạn luyện được gì?
 				</h2>
-				<p className="text-slate-500">Hệ thống luyện tập toàn diện, từ ngữ pháp đến luyện nghe, từ vựng đến luyện đề</p>
+				<p className="text-slate-500 font-medium max-w-2xl mx-auto">Hệ thống luyện tập toàn diện, từ ngữ pháp đến từ vựng, reading và luyện đề mô phỏng chuẩn xác bài thi thật.</p>
 			</div>
 			
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-				{/* Ngữ pháp */}
-				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
-					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
-					<div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+				{[
+					{ 
+						id: 'grammar', 
+						title: 'Ngữ pháp', 
+						desc: 'Hệ thống bài học và luyện tập toàn diện.', 
+						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg> 
+					},
+					{ 
+						id: 'reading', 
+						title: 'Reading', 
+						desc: 'Luyện Part 5, 6, 7 giải thích cặn kẽ chi tiết.', 
+						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg> 
+					},
+					{ 
+						id: 'vocabulary', 
+						title: 'Từ vựng', 
+						desc: 'Học từ vựng thông minh bằng thuật toán Flashcard.', 
+						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> 
+					},
+					{ 
+						id: 'actual-test', 
+						title: 'Luyện đề', 
+						desc: 'Luyện đề thi thử bám sát cấu trúc đề thi thực.', 
+						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+					}
+				].map((f) => (
+					<div key={f.id} className="perspective-[1000px] w-full min-h-[160px] group cursor-pointer" onClick={() => onTabClick(f.id)}>
+						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] rounded-[20px] shadow-sm hover:shadow-xl">
+							{/* Mặt trước */}
+							<div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex items-center justify-start gap-4 flex-col [backface-visibility:hidden]">
+								<div className="w-full flex items-center gap-4">
+									<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
+										{f.icon}
+									</div>
+									<h3 className="text-xl font-bold text-[#14532d]">{f.title}</h3>
+								</div>
+								<p className="text-slate-500 font-medium text-sm text-left w-full line-clamp-2">
+									{f.desc}
+								</p>
+							</div>
+							{/* Mặt sau */}
+							<div className="absolute inset-0 w-full h-full bg-white border-2 border-[#14532d]/20 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+								<div className="w-full h-full flex flex-col items-center justify-center bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] p-6">
+									<button className="bg-[#14532d] text-[#eab308] px-6 py-2.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform flex items-center gap-1.5 focus:outline-none">
+										Bắt đầu <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+									</button>
+								</div>
+							</div>
+						</div>
 					</div>
-					<h3 className="text-lg font-bold text-slate-800 mb-2">Ngữ pháp</h3>
-					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Chinh phục TOEIC với hệ thống bài học và luyện tập toàn diện.</p>
-					<button onClick={() => onTabClick('grammar')} className="text-blue-600 font-bold text-sm flex items-center gap-1 hover:text-blue-700">
-						Bắt đầu →
-					</button>
-				</div>
-				
-				{/* Luyện nghe */}
-				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
-					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
-					<div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-6">
-						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-					</div>
-					<h3 className="text-lg font-bold text-slate-800 mb-2">Reading</h3>
-					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Luyện Reading Part 5, 6, 7 giải thích cặn kẽ từng câu.</p>
-					<button onClick={() => onTabClick('reading')} className="text-indigo-600 font-bold text-sm flex items-center gap-1 hover:text-indigo-700">
-						Bắt đầu →
-					</button>
-				</div>
-
-				{/* Từ vựng */}
-				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
-					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
-					<div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
-					</div>
-					<h3 className="text-lg font-bold text-slate-800 mb-2">Từ vựng</h3>
-					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Học từ vựng TOEIC theo chủ đề với flashcard thẻ học xịn xò.</p>
-					<button onClick={() => onTabClick('vocabulary')} className="text-blue-600 font-bold text-sm flex items-center gap-1 hover:text-blue-700">
-						Bắt đầu →
-					</button>
-				</div>
-
-				{/* Luyện đề */}
-				<div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
-					<div className="w-3 h-3 rounded-full bg-emerald-400 absolute top-6 right-6"></div>
-					<div className="w-12 h-12 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center mb-6">
-						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-					</div>
-					<h3 className="text-lg font-bold text-slate-800 mb-2">Luyện đề</h3>
-					<p className="text-slate-500 text-sm mb-6 min-h-[60px]">Luyện các đề ETS TOEIC full test với chấm điểm và phân tích chi tiết.</p>
-					<button onClick={() => onTabClick('actual-test')} className="text-sky-600 font-bold text-sm flex items-center gap-1 hover:text-sky-700">
-						Bắt đầu →
-					</button>
-				</div>
+				))}
 			</div>
 		</div>
 	);
