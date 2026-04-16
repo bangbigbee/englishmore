@@ -143,12 +143,13 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
-	const minHeightClass = type === 'vocabulary' ? 'min-h-[320px]' : 'min-h-[220px]';
+	const minHeightClass = type === 'vocabulary' ? 'min-h-[340px]' : 'min-h-[220px]';
+	const paddingClass = type === 'vocabulary' ? 'p-6 sm:p-7' : 'p-8';
 
 	return (
 		<div
 			onClick={onClick}
-			className={`relative group bg-white rounded-xl p-8 transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
+			className={`relative group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
 		>
 			<div className="relative z-10 flex-1">
 				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300">
@@ -854,7 +855,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 								Chưa có chủ đề từ vựng nào. Admin cần import từ tab TOEIC.
 							</div>
 						) : (
-							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 sm:gap-6">
 								{topics.map((t) => (
 									<TopicCard
 										key={t.topic}
