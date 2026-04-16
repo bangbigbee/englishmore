@@ -1593,7 +1593,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save topic')
       toast.success(editingToeicTopic ? 'Topic updated successfully' : 'Topic created successfully')
       setShowTopicModal(false)
-      setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab })
+      setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: 5 })
       setEditingToeicTopic(null)
       fetchToeicTopics()
     } catch (err) {
@@ -3782,7 +3782,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => {
-                  setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab })
+                  setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: 5 })
                   setEditingToeicTopic(null)
                   setShowTopicModal(true)
                 }}
