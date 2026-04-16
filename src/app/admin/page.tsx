@@ -329,6 +329,8 @@ interface AdminToeicQuestion {
   correctOption: string
   explanation: string | null
   translation: string | null
+  tips?: string | null
+  vocabulary?: any
 }
 
 const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
