@@ -2053,7 +2053,7 @@ function HomeContent() {
                   href="/toeic-practice"
                   className="brand-cta brand-cta-filled w-full justify-center"
                 >
-                  <span>Luyện TOEIC</span>
+                  <span>ToeicMore</span>
                   <span aria-hidden="true" className="brand-cta-arrow">→</span>
                 </Link>
                 <Link
@@ -2414,13 +2414,13 @@ function HomeContent() {
                 {/* Câu hỏi TOEIC và button Luyện TOEIC */}
                 <div className="mt-6">
                   <p className="max-w-xl text-base sm:text-lg font-medium text-[#14532d] mb-4">
-                    Hoặc luyện thi lấy chứng chỉ TOEIC?
+                    Hoặc lấy chứng chỉ TOEIC với ToeicMore?
                   </p>
                   <Link
                     href="/toeic-practice"
                     className="brand-cta brand-cta-outline"
                   >
-                    <span>Luyện TOEIC</span>
+                    <span>ToeicMore</span>
                     <span aria-hidden="true" className="brand-cta-arrow">→</span>
                   </Link>
                 </div>

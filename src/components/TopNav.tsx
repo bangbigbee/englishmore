@@ -136,9 +136,9 @@ export default function TopNav() {
 
         {pathname.startsWith('/toeic-practice') && (
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:block pointer-events-none">
-            <span className="text-[1.45rem] font-extrabold tracking-tight whitespace-nowrap">
-              <span className="text-[#14532d]">LUYỆN THI</span>{' '}
-              <span className="text-amber-500">TOEIC</span>
+            <span className="text-[1.8rem] font-extrabold tracking-tight whitespace-nowrap">
+              <span className="text-[#14532d]">Toeic</span>
+              <span className="text-amber-500">More</span>
             </span>
           </div>
         )}
@@ -275,7 +275,7 @@ export default function TopNav() {
                   Exercise
                 </Link>
                 <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
-                  Luyện TOEIC
+                  ToeicMore
                 </Link>
                 <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
                   Slides
