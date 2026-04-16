@@ -300,6 +300,7 @@ interface ActivityPointResponse {
 interface AdminToeicTopic {
   id: string
   type: string
+  part?: number | null
   title: string
   subtitle: string | null
   slug: string
