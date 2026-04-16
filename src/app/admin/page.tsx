@@ -1318,6 +1318,31 @@ export default function AdminDashboard() {
     }
   }
 
+  const renameToeicVocabTopic = async (oldTopic: string) => {
+    const newTopic = window.prompt(`Nhập tên mới cho chủ đề "${oldTopic}":`, oldTopic);
+    if (!newTopic || newTopic.trim() === '' || oldTopic === newTopic.trim()) return;
+    
+    try {
+      setToeicVocabTopicsLoading(true);
+      const res = await fetch(`/api/admin/toeic/vocabulary/topics/rename`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldTopic, newTopic: newTopic.trim() }),
+      });
+      if (res.ok) {
+        setToeicVocabSuccess(`Đổi tên chủ đề thành "${newTopic}" thành công!`);
+        await fetchToeicVocabTopics();
+      } else {
+        const err = await res.json();
+        setToeicVocabError('Lỗi đổi tên: ' + err.error);
+      }
+    } catch(e) {
+      setToeicVocabError('Đã có lỗi xảy ra khi đổi tên.');
+    } finally {
+      setToeicVocabTopicsLoading(false);
+    }
+  };
+
   const deleteToeicVocabTopic = async (topic: string) => {
     if (!confirm(`Xóa toàn bộ từ vựng trong chủ đề "${topic}"? Hành động này không thể hoàn tác.`)) return
     try {
@@ -4058,6 +4083,13 @@ export default function AdminDashboard() {
                           <p className="text-xs text-amber-700 font-medium mt-0.5">{t.wordCount} từ</p>
                         </div>
                         <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => void renameToeicVocabTopic(t.topic)}
+                            className="shrink-0 rounded-lg border border-amber-200 bg-white px-3 py-1.5 text-xs font-semibold text-amber-600 hover:bg-amber-50 hover:border-amber-300 transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            Đổi tên
+                          </button>
                           <button
                             type="button"
                             onClick={() => setToeicVocabTopicEditing(t.topic)}
