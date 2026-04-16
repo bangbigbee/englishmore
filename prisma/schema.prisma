@@ -12,31 +12,31 @@ datasource db {
 }
 
 enum UserRole {
-  user    // Người dùng mới đăng ký, chưa là học viên
-  member  // Học viên/member đã đăng ký khóa học
-  admin   // Quản trị viên
+  user // Người dùng mới đăng ký, chưa là học viên
+  member // Học viên/member đã đăng ký khóa học
+  admin // Quản trị viên
 }
 
 enum EnrollmentStatus {
-  pending      // Đã đăng ký, chờ thanh toán
-  active       // Đã thanh toán, đang học
-  completed    // Hoàn thành khóa
-  dropped      // Rút khỏi khóa
-  suspended    // Tạm dừng
+  pending // Đã đăng ký, chờ thanh toán
+  active // Đã thanh toán, đang học
+  completed // Hoàn thành khóa
+  dropped // Rút khỏi khóa
+  suspended // Tạm dừng
 }
 
 enum PaymentStatus {
-  pending    // Chờ xác nhận
-  verified   // Đã xác nhận thanh toán
-  completed  // Hoàn thành
-  failed     // Thất bại
+  pending // Chờ xác nhận
+  verified // Đã xác nhận thanh toán
+  completed // Hoàn thành
+  failed // Thất bại
 }
 
 enum PaymentMethod {
-  bank_transfer   // Chuyển khoản ngân hàng
-  momo            // Ví Momo
-  zalopay         // Ví Zalopay
-  cash            // Tiền mặt
+  bank_transfer // Chuyển khoản ngân hàng
+  momo // Ví Momo
+  zalopay // Ví Zalopay
+  cash // Tiền mặt
 }
 
 enum GreetingInputMethod {
@@ -60,7 +60,6 @@ enum UpgradeOrderStatus {
   completed
   rejected
 }
-
 
 model Account {
   id                String  @id @default(cuid())
@@ -89,55 +88,56 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  name          String?
-  phone         String?      @unique
-  email         String       @unique
-  emailVerified DateTime?
-  image         String?
-  bio           String?
-  password      String?
-  method        String?      // PPF, Beyond, Contrast
-  role          UserRole     @default(user) // user, member, or admin
-  referrerId    String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @default(now())
+  id                      String                 @id @default(cuid())
+  name                    String?
+  phone                   String?                @unique
+  email                   String                 @unique
+  emailVerified           DateTime?
+  image                   String?
+  bio                     String?
+  password                String?
+  method                  String? // PPF, Beyond, Contrast
+  role                    UserRole               @default(user) // user, member, or admin
+  referrerId              String?
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @default(now())
   classActivityLastReadAt DateTime?
-  activityPoints Int         @default(0)
-  referrer      User?        @relation("UserReferrals", fields: [referrerId], references: [id])
-  referredUsers User[]       @relation("UserReferrals")
-  accounts      Account[]
-  sessions      Session[]
-  assignments   Assignment[]
-  homeworkSubmissions HomeworkSubmission[]
-  exerciseSubmissions ExerciseSubmission[]
-  enrollments   Enrollment[]
-  dailyGreetingCheckins DailyGreetingCheckin[]
-  dailyReflections      DailyReflection[]
-  speakYourselfAttempts SpeakYourselfAttempt[]
-  activityPointLogs     ActivityPointLog[]
-  toeicAnswers          ToeicAnswer[]
-  tier                  AccessTier   @default(FREE)
-  tierExpiresAt         DateTime?
-  upgradeOrders         UpgradeOrder[]
+  activityPoints          Int                    @default(0)
+  referrer                User?                  @relation("UserReferrals", fields: [referrerId], references: [id])
+  referredUsers           User[]                 @relation("UserReferrals")
+  accounts                Account[]
+  sessions                Session[]
+  assignments             Assignment[]
+  homeworkSubmissions     HomeworkSubmission[]
+  exerciseSubmissions     ExerciseSubmission[]
+  enrollments             Enrollment[]
+  dailyGreetingCheckins   DailyGreetingCheckin[]
+  dailyReflections        DailyReflection[]
+  speakYourselfAttempts   SpeakYourselfAttempt[]
+  activityPointLogs       ActivityPointLog[]
+  toeicAnswers            ToeicAnswer[]
+  vocabularyTags          VocabularyTag[]
+  tier                    AccessTier             @default(FREE)
+  tierExpiresAt           DateTime?
+  upgradeOrders           UpgradeOrder[]
 
   @@index([referrerId])
 }
 
 model UpgradeOrder {
-  id              String             @id @default(cuid())
-  userId          String
-  targetTier      AccessTier
-  durationMonths  Int                @default(6)
-  price           Int
-  status          UpgradeOrderStatus @default(pending)
-  referenceCode   String?
-  paymentMethod   PaymentMethod?
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  completedAt     DateTime?
+  id             String             @id @default(cuid())
+  userId         String
+  targetTier     AccessTier
+  durationMonths Int                @default(6)
+  price          Int
+  status         UpgradeOrderStatus @default(pending)
+  referenceCode  String?
+  paymentMethod  PaymentMethod?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  completedAt    DateTime?
 
-  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
@@ -157,56 +157,56 @@ model Assignment {
   title       String
   description String?
   filePath    String?
-  method      String   // PPF, Beyond, Contrast
+  method      String // PPF, Beyond, Contrast
   submittedAt DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Course {
-  id                   String       @id @default(cuid())
-  code                 String?      // Mã khóa học: COURSE_001
-  title                String
-  description          String?
-  shortDescription     String?
-  price                Int          @default(0)  // Giá khóa (VNĐ)
-  currency             String       @default("VND")
-  
+  id               String  @id @default(cuid())
+  code             String? // Mã khóa học: COURSE_001
+  title            String
+  description      String?
+  shortDescription String?
+  price            Int     @default(0) // Giá khóa (VNĐ)
+  currency         String  @default("VND")
+
   // Thời gian khóa học
-  startDate            DateTime?    @default(now())
-  endDate              DateTime?    @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL '3 months'"))
+  startDate            DateTime? @default(now())
+  endDate              DateTime? @default(dbgenerated("CURRENT_TIMESTAMP + INTERVAL '3 months'"))
   registrationDeadline DateTime
-  
+
   // Thông tin khóa học
-  totalLessons         Int          @default(0)
-  completedSessions    Int          @default(0) // Số buổi đã dạy xong (0-30)
-  maxStudents          Int          @default(10)
-  method               String?      // PPF, Beyond, Contrast
-  teacher              String?      // Tên giáo viên
-  
+  totalLessons      Int     @default(0)
+  completedSessions Int     @default(0) // Số buổi đã dạy xong (0-30)
+  maxStudents       Int     @default(10)
+  method            String? // PPF, Beyond, Contrast
+  teacher           String? // Tên giáo viên
+
   // Trạng thái
-  isPublished          Boolean      @default(false)
-  isActive             Boolean      @default(true)  // Khóa còn tuyển sinh
-  galleryAnimation     String       @default("vertical") // vertical, horizontal, diagonal
-  
+  isPublished      Boolean @default(false)
+  isActive         Boolean @default(true) // Khóa còn tuyển sinh
+  galleryAnimation String  @default("vertical") // vertical, horizontal, diagonal
+
   // Early Bird Pricing Tiers (Configurable)
-  sebDiscountPercent   Int          @default(30)
-  ebDiscountPercent    Int          @default(15)
-  sebThresholdDays     Int          @default(45)
-  ebThresholdDays      Int          @default(15)
-  
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
-  
+  sebDiscountPercent Int @default(30)
+  ebDiscountPercent  Int @default(15)
+  sebThresholdDays   Int @default(45)
+  ebThresholdDays    Int @default(15)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  enrollments          Enrollment[]
-  lessons              Lesson[]
-  homeworks            CourseHomework[]
-  exercises            CourseExercise[]
-  lectureNotes         LectureNote[]
-  vocabularies         VocabularyItem[]
+  enrollments           Enrollment[]
+  lessons               Lesson[]
+  homeworks             CourseHomework[]
+  exercises             CourseExercise[]
+  lectureNotes          LectureNote[]
+  vocabularies          VocabularyItem[]
   speakYourselfAttempts SpeakYourselfAttempt[]
-  reviewImages         CourseReviewImage[]
-  galleryImages        LandingGalleryImage[] @relation("CourseGallery")
+  reviewImages          CourseReviewImage[]
+  galleryImages         LandingGalleryImage[]  @relation("CourseGallery")
 }
 
 model CourseReviewImage {
@@ -219,27 +219,27 @@ model CourseReviewImage {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([courseId])
   @@index([courseId, displayOrder])
 }
 
 model CourseExercise {
-  id          String             @id @default(cuid())
-  courseId    String
-  order       Int
-  title       String
-  description String?
-  exerciseType String            @default("multiple_choice")
-  audioFileUrl String?
+  id                String   @id @default(cuid())
+  courseId          String
+  order             Int
+  title             String
+  description       String?
+  exerciseType      String   @default("multiple_choice")
+  audioFileUrl      String?
   attachmentFileUrl String?
-  isDraft     Boolean            @default(false)
-  sourceFormUrl String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  isDraft           Boolean  @default(false)
+  sourceFormUrl     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  course      Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course      Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions   ExerciseQuestion[]
   submissions ExerciseSubmission[]
 
@@ -248,7 +248,7 @@ model CourseExercise {
 }
 
 model ExerciseQuestion {
-  id            String          @id @default(cuid())
+  id            String   @id @default(cuid())
   exerciseId    String
   order         Int
   question      String
@@ -257,30 +257,30 @@ model ExerciseQuestion {
   optionC       String
   optionD       String?
   correctOption String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  exercise      CourseExercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
-  answers       ExerciseSubmissionAnswer[]
+  exercise CourseExercise             @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  answers  ExerciseSubmissionAnswer[]
 
   @@unique([exerciseId, order])
   @@index([exerciseId])
 }
 
 model ExerciseSubmission {
-  id             String                     @id @default(cuid())
-  exerciseId     String
-  userId         String
-  score          Int                        @default(0)
-  totalQuestions Int
+  id              String   @id @default(cuid())
+  exerciseId      String
+  userId          String
+  score           Int      @default(0)
+  totalQuestions  Int
   durationSeconds Int?
-  submittedAt    DateTime                   @default(now())
-  createdAt      DateTime                   @default(now())
-  updatedAt      DateTime                   @updatedAt
+  submittedAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  exercise       CourseExercise             @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
-  user           User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  answers        ExerciseSubmissionAnswer[]
+  exercise CourseExercise             @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  user     User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers  ExerciseSubmissionAnswer[]
 
   @@unique([exerciseId, userId])
   @@index([exerciseId])
@@ -306,32 +306,32 @@ model ExerciseAttachmentFile {
 }
 
 model ExerciseSubmissionAnswer {
-  id             String               @id @default(cuid())
+  id             String   @id @default(cuid())
   submissionId   String
   questionId     String
   selectedOption String
-  isCorrect      Boolean              @default(false)
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
+  isCorrect      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  submission     ExerciseSubmission   @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  question       ExerciseQuestion     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  submission ExerciseSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  question   ExerciseQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([submissionId, questionId])
   @@index([questionId])
 }
 
 model CourseHomework {
-  id            String              @id @default(cuid())
+  id            String   @id @default(cuid())
   courseId      String
   title         String
   description   String?
   attachmentUrl String?
   dueDate       DateTime
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  course      Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course      Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
   submissions HomeworkSubmission[]
 
   @@index([courseId])
@@ -339,20 +339,20 @@ model CourseHomework {
 }
 
 model HomeworkSubmission {
-  id          String         @id @default(cuid())
-  homeworkId  String
-  userId      String
-  note        String?
-  teacherComment String?
+  id                String    @id @default(cuid())
+  homeworkId        String
+  userId            String
+  note              String?
+  teacherComment    String?
   studentLastReadAt DateTime?
   teacherLastReadAt DateTime?
-  submittedAt DateTime       @default(now())
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  submittedAt       DateTime  @default(now())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  homework    CourseHomework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages    HomeworkMessage[]
+  homework CourseHomework    @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages HomeworkMessage[]
 
   @@unique([homeworkId, userId])
   @@index([userId])
@@ -366,7 +366,7 @@ model HomeworkMessage {
   createdAt    DateTime              @default(now())
   updatedAt    DateTime              @updatedAt
 
-  submission   HomeworkSubmission    @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  submission HomeworkSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
 
   @@index([submissionId])
   @@index([createdAt])
@@ -391,39 +391,39 @@ model UserAvatarFile {
 }
 
 model Enrollment {
-  id                String             @id @default(cuid())
-  courseId          String
-  userId            String
-  studentId         String?            @unique // ID cá nhân (6 kí tự số) cho học viên
-  
+  id        String  @id @default(cuid())
+  courseId  String
+  userId    String
+  studentId String? @unique // ID cá nhân (6 kí tự số) cho học viên
+
   // Mã tham chiếu (cho chuyển khoản)
-  referenceCode     String?            // COURSE_ID-USER_ID
-  
+  referenceCode String? // COURSE_ID-USER_ID
+
   // Trạng thái đăng ký
-  status            EnrollmentStatus   @default(pending)
-  
+  status EnrollmentStatus @default(pending)
+
   // Thanh toán
-  isPaid            Boolean            @default(false)
-  paidAt            DateTime?
-  paymentId         String?            // Reference đến Payment
-  
+  isPaid    Boolean   @default(false)
+  paidAt    DateTime?
+  paymentId String? // Reference đến Payment
+
   // Kết quả học tập
-  completedAt       DateTime?
-  dropoutReason     String?            // Lý do rút khỏa (nếu có)
-  attendanceRate    Float              @default(0)  // Tỷ lệ dự học (0-100)
-  totalScore        Float?             // Điểm tổng
-  
+  completedAt    DateTime?
+  dropoutReason  String? // Lý do rút khỏa (nếu có)
+  attendanceRate Float     @default(0) // Tỷ lệ dự học (0-100)
+  totalScore     Float? // Điểm tổng
+
   // Timeline
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  course            Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  payments          Payment[]
-  progress          Progress[]
+  course                Course                 @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments              Payment[]
+  progress              Progress[]
   speakYourselfAttempts SpeakYourselfAttempt[]
-  
+
   @@unique([courseId, userId])
   @@index([courseId])
   @@index([userId])
@@ -432,7 +432,7 @@ model Enrollment {
 }
 
 model SpeakYourselfAttempt {
-  id              String     @id @default(cuid())
+  id              String   @id @default(cuid())
   userId          String
   courseId        String
   enrollmentId    String
@@ -440,13 +440,13 @@ model SpeakYourselfAttempt {
   generatedScript String
   recognizedText  String
   accuracy        Int
-  passed          Boolean    @default(false)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  passed          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course          Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  enrollment      Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([courseId])
@@ -455,106 +455,106 @@ model SpeakYourselfAttempt {
 }
 
 model Payment {
-  id              String          @id @default(cuid())
-  enrollmentId    String
-  referenceCode   String?         @unique  // COURSEID-USERID
-  amount          Int                      // Số tiền (VNĐ)
-  currency        String          @default("VND")
-  
+  id            String  @id @default(cuid())
+  enrollmentId  String
+  referenceCode String? @unique // COURSEID-USERID
+  amount        Int // Số tiền (VNĐ)
+  currency      String  @default("VND")
+
   // Trạng thái thanh toán
-  status          PaymentStatus   @default(pending)
-  paymentMethod   PaymentMethod?
-  
+  status        PaymentStatus  @default(pending)
+  paymentMethod PaymentMethod?
+
   // Thông tin giao dịch
-  bankReference   String?         // Mã giao dịch ngân hàng
-  transactionDate DateTime?       // Ngày giao dịch thực tế
-  verifiedAt      DateTime?       // Lúc xác nhận thanh toán
-  
+  bankReference   String? // Mã giao dịch ngân hàng
+  transactionDate DateTime? // Ngày giao dịch thực tế
+  verifiedAt      DateTime? // Lúc xác nhận thanh toán
+
   // Timeline
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  enrollment      Enrollment      @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
   @@index([referenceCode])
   @@index([status])
   @@index([enrollmentId])
 }
 
 model Lesson {
-  id            String   @id @default(cuid())
-  courseId      String
-  title         String
-  description   String?
-  order         Int      // Thứ tự bài học trong khóa
-  content       String?  // Nội dung bài học (có thể dài)
-  videoUrl      String?  // URL video bài học
-  duration      Int?     // Thời lượng video (phút)
-  
+  id          String  @id @default(cuid())
+  courseId    String
+  title       String
+  description String?
+  order       Int // Thứ tự bài học trong khóa
+  content     String? // Nội dung bài học (có thể dài)
+  videoUrl    String? // URL video bài học
+  duration    Int? // Thời lượng video (phút)
+
   // Timeline
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  progress      Progress[]
-  
+  course   Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress Progress[]
+
   @@index([courseId])
   @@index([order])
 }
 
 model Progress {
-  id            String   @id @default(cuid())
-  enrollmentId  String
-  lessonId      String
-  
+  id           String @id @default(cuid())
+  enrollmentId String
+  lessonId     String
+
   // Tình trạng bài học
-  isCompleted   Boolean  @default(false)
-  score         Float?   // Điểm bài học (nếu có quiz)
-  
+  isCompleted Boolean @default(false)
+  score       Float? // Điểm bài học (nếu có quiz)
+
   // Timeline
-  completedAt   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
   // Relations
-  enrollment    Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  lesson        Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson     Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
   @@unique([enrollmentId, lessonId])
   @@index([enrollmentId])
   @@index([lessonId])
 }
 
 model LectureNote {
-  id              String   @id @default(cuid())
-  courseId        String
-  sessionNumber   Int      // Buổi học từ 1-30
-  driveLink       String?  // Link Google Drive tài liệu
-  description     String?  // Mô tả tài liệu
-  
+  id            String  @id @default(cuid())
+  courseId      String
+  sessionNumber Int // Buổi học từ 1-30
+  driveLink     String? // Link Google Drive tài liệu
+  description   String? // Mô tả tài liệu
+
   // Timeline
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
   @@unique([courseId, sessionNumber])
   @@index([courseId])
 }
 
 model DailyGreetingCheckin {
-  id          String              @id @default(cuid())
-  userId      String
+  id           String              @id @default(cuid())
+  userId       String
   responseDate DateTime
-  message     String
-  inputMethod GreetingInputMethod
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  message      String
+  inputMethod  GreetingInputMethod
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
 
-  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, responseDate])
   @@index([responseDate])
@@ -568,7 +568,7 @@ model DailyReflection {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, responseDate])
   @@index([responseDate])
@@ -592,7 +592,7 @@ model ActivityPointLog {
   referenceKey String   @unique
   createdAt    DateTime @default(now())
 
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([activityKey])
@@ -600,30 +600,31 @@ model ActivityPointLog {
 }
 
 model VocabularyItem {
-  id           String   @id @default(cuid())
-  courseId     String?
-  word         String
-  phonetic     String?
+  id                String  @id @default(cuid())
+  courseId          String?
+  word              String
+  phonetic          String?
   englishDefinition String?
-  meaning      String
-  example      String?  @db.Text
-  exampleVi    String?  @db.Text
-  topic        String   @default("WarmUp")
-  displayOrder Int      @default(1)
-  isActive     Boolean  @default(true)
+  meaning           String
+  example           String? @db.Text
+  exampleVi         String? @db.Text
+  topic             String  @default("WarmUp")
+  displayOrder      Int     @default(1)
+  isActive          Boolean @default(true)
 
-  synonyms     String?  @db.Text
-  antonyms     String?  @db.Text
-  collocations String?  @db.Text
-  toeicTrap    String?  @db.Text
+  synonyms     String? @db.Text
+  antonyms     String? @db.Text
+  collocations String? @db.Text
+  toeicTrap    String? @db.Text
   mnemonicUrl  String?
-  
-  category     String   @default("GENERAL")
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  category String @default("GENERAL")
 
-  course       Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course Course?         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  tags   VocabularyTag[]
 
   @@index([courseId])
   @@index([courseId, displayOrder])
@@ -641,32 +642,50 @@ model VocabularyTopicConfig {
   @@index([topic])
 }
 
+model VocabularyTag {
+  id           String   @id @default(cuid())
+  userId       String
+  vocabId      String
+  isLearned    Boolean  @default(false)
+  isHard       Boolean  @default(false)
+  isBookmarked Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabulary VocabularyItem @relation(fields: [vocabId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vocabId])
+  @@index([userId])
+  @@index([vocabId])
+}
+
 // TOEIC Grammar Section
 model ToeicGrammarTopic {
-  id          String   @id @default(cuid())
-  title       String
-  subtitle    String?
-  slug        String   @unique
-  lessons     ToeicGrammarLesson[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String               @id @default(cuid())
+  title     String
+  subtitle  String?
+  slug      String               @unique
+  lessons   ToeicGrammarLesson[]
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
 }
 
 model ToeicGrammarLesson {
-  id          String   @id @default(cuid())
-  topicId     String
-  title       String
-  order       Int      // Lesson 1, 2, ...
-  content     String?  @db.Text
-  accessTier  AccessTier @default(FREE)
-  theoryAccessTier AccessTier @default(FREE)
-  explanationAccessTier AccessTier @default(FREE)
-  translationAccessTier AccessTier @default(FREE)
-  questions   ToeicQuestion[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    String          @id @default(cuid())
+  topicId               String
+  title                 String
+  order                 Int // Lesson 1, 2, ...
+  content               String?         @db.Text
+  accessTier            AccessTier      @default(FREE)
+  theoryAccessTier      AccessTier      @default(FREE)
+  explanationAccessTier AccessTier      @default(FREE)
+  translationAccessTier AccessTier      @default(FREE)
+  questions             ToeicQuestion[]
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
 
-  topic       ToeicGrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic ToeicGrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@index([topicId])
   @@index([order])
@@ -686,22 +705,23 @@ model ToeicQuestion {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  lesson        ToeicGrammarLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  answers       ToeicAnswer[]
+  lesson  ToeicGrammarLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answers ToeicAnswer[]
 
   @@index([lessonId])
 }
-model ToeicAnswer {
-  id              String   @id @default(cuid())
-  userId          String
-  questionId      String
-  selectedOption  String   // A, B, C, D
-  isCorrect       Boolean
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
 
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  question        ToeicQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+model ToeicAnswer {
+  id             String   @id @default(cuid())
+  userId         String
+  questionId     String
+  selectedOption String // A, B, C, D
+  isCorrect      Boolean
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question ToeicQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, questionId])
   @@index([userId])
@@ -733,7 +753,7 @@ model LandingGalleryImage {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  course       Course?  @relation("CourseGallery", fields: [courseId], references: [id], onDelete: Cascade)
+  course Course? @relation("CourseGallery", fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([isActive])
   @@index([displayOrder])
@@ -742,8 +762,8 @@ model LandingGalleryImage {
 }
 
 model SystemSetting {
-  key String @id
-  value Json
+  key         String   @id
+  value       Json
   description String?
-  updatedAt DateTime @updatedAt
+  updatedAt   DateTime @updatedAt
 }
