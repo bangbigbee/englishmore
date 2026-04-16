@@ -7453,7 +7453,6 @@ export default function AdminDashboard() {
                       className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                     />
                   </div>
-                  </div>
                 </div>
 
                 {topicForm.type === 'READING' && (
