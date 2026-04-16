@@ -1516,7 +1516,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 						<div className="flex flex-col items-center gap-0.5">
 							<span className="text-sm font-semibold text-slate-600">
-								{cardIndex + 1} / {totalWords}
+								{cardIndex + 1} / {vocabItems.length}
 							</span>
 						</div>
 
