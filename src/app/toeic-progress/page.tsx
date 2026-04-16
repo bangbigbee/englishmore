@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import VocabularyFilter from "./VocabularyFilter";
 import VocabularyDashboard from "./VocabularyDashboard";
+import GrammarBank from "./GrammarBank";
 
 export const metadata = {
 	title: 'Tiến Độ Của Tôi',
@@ -204,7 +205,17 @@ export default async function ToeicProgressPage({
 								</Suspense>
 							</div>
 						)}
-						{activeTab === 'grammar' && <ComingSoonPlaceholder title="Tiến Độ Ngữ Pháp" icon="📝" />}
+						{activeTab === 'grammar' && (
+							<div>
+								<div className="mb-6">
+									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Ngữ Pháp</h2>
+									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi hay và điểm ngữ pháp bạn đã lưu lại</p>
+								</div>
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
+									<GrammarBank />
+								</Suspense>
+							</div>
+						)}
 						{activeTab === 'vocabulary' && (
 							<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
 								<VocabularyDashboard />

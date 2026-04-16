@@ -51,6 +51,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
   const [showTranslation, setShowTranslation] = useState<Record<string, boolean>>({})
+  const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Record<string, boolean>>({})
   const [showLessonContent, setShowLessonContent] = useState(false)
   const [correctStreak, setCorrectStreak] = useState(0)
   const [timerStartTime, setTimerStartTime] = useState<number | null>(null)
@@ -88,6 +89,35 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     }
     fetchTopic()
   }, [slug])
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetch('/api/toeic/grammar/bookmark').then(res => res.json()).then(data => {
+        if (Array.isArray(data)) {
+          const bMap: Record<string, boolean> = {};
+          data.forEach((id: string) => bMap[id] = true);
+          setBookmarkedQuestions(bMap);
+        }
+      }).catch(console.error);
+    }
+  }, [status]);
+
+  const toggleBookmark = async (questionId: string) => {
+    if (status !== 'authenticated') {
+        const currentPath = window.location.pathname;
+        router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu trữ câu hỏi khó lại nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
+        return;
+    }
+    const currentlyBookmarked = !!bookmarkedQuestions[questionId];
+    setBookmarkedQuestions(prev => ({ ...prev, [questionId]: !currentlyBookmarked }));
+    try {
+        await fetch('/api/toeic/grammar/bookmark', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ questionId, isBookmarked: !currentlyBookmarked })
+        });
+    } catch {}
+  };
 
   // Persistence Logic: Load
   const loadProgress = useCallback(async (lessonId: string) => {
@@ -718,14 +748,24 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 )}
                               </div>
 
-                              <button
-                                onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
-                                disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
-                                aria-label="Tiếp theo"
-                              >
-                                <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                              </button>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  onClick={() => toggleBookmark(q.id)}
+                                  className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`}
+                                  aria-label="Lưu tay"
+                                  title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}
+                                >
+                                  <svg className="w-5 h-5 md:w-6 md:h-6" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                </button>
+                                <button
+                                  onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
+                                  disabled={activeQuestionIndex === currentLesson.questions.length - 1}
+                                  className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                  aria-label="Tiếp theo"
+                                >
+                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                </button>
+                              </div>
                             </div>
 
                             {/* Full Width Explanation Row below the buttons */}
