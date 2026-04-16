@@ -152,8 +152,11 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 			className={`relative group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
 		>
 			<div className="relative z-10 flex-1">
-				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300">
-					{type === 'vocabulary' ? displayTitle : title}
+				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300 flex items-center gap-3">
+					<span className="w-[30px] h-[30px] rounded-[8px] bg-green-600 text-white flex items-center justify-center text-[14px] font-black shrink-0 shadow-sm leading-none pb-[2px]">
+						{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
+					</span>
+					<span>{type === 'vocabulary' ? displayTitle : title}</span>
 				</h3>
 
 				{(type === 'vocabulary' ? displaySubtitle : subtitle) && (
