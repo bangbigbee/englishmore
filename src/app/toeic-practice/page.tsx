@@ -182,16 +182,13 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 				</div>
 			) : (
 				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="perspective-[1000px] w-[116px] h-[38px]">
+					<div className="perspective-[1000px] w-16 h-16 shrink-0">
 						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-							<div className="absolute inset-0 w-full h-full bg-[#20633b] shadow-md flex items-center justify-center [backface-visibility:hidden]">
-								<span className="text-white font-semibold text-[13px]">Flip me over</span>
+							<div className="absolute inset-0 w-full h-full rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] border border-slate-50 flex items-center justify-center [backface-visibility:hidden]">
 							</div>
-							<div className="absolute inset-0 w-full h-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-								<span className="text-white font-bold text-[13px] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 delay-100">Học ngay</span>
-								<svg className="w-4 h-4 text-white opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-								</svg>
+							<div className="absolute inset-0 w-full h-full rounded-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex flex-col items-center justify-center leading-tight [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+								<span className="text-white font-bold text-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">Học</span>
+								<span className="text-white font-bold text-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">ngay</span>
 							</div>
 						</div>
 					</div>
