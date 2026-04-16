@@ -184,8 +184,9 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 							<div className="absolute inset-0 w-full h-full bg-[#20633b] shadow-md flex items-center justify-center [backface-visibility:hidden]">
 								<span className="text-white font-semibold text-[13px]">Flip me over</span>
 							</div>
-							<div className="absolute inset-0 w-full h-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-								<svg className="w-5 h-5 text-white opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div className="absolute inset-0 w-full h-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+								<span className="text-white font-bold text-[13px] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 delay-100">Học ngay</span>
+								<svg className="w-4 h-4 text-white opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
 								</svg>
 							</div>
@@ -485,6 +486,17 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const [showExampleVi, setShowExampleVi] = useState(false);
 	const [speechSupported, setSpeechSupported] = useState(false);
 
+	const [vocabTags, setVocabTags] = useState<Record<number, { learned?: boolean, hard?: boolean, bookmarked?: boolean }>>({});
+	
+	// Speed Challenge State
+	const [challengeActive, setChallengeActive] = useState(false);
+	const [challengeWords, setChallengeWords] = useState<any[]>([]);
+	const [challengeRound, setChallengeRound] = useState(0);
+	const [challengeOptions, setChallengeOptions] = useState<string[]>([]);
+	const [challengeScore, setChallengeScore] = useState(0);
+	const [challengeTimeLeft, setChallengeTimeLeft] = useState(3);
+	const [challengeResult, setChallengeResult] = useState<{show: boolean, score: number, total: number}>({show: false, score: 0, total: 0});
+
 	const [isPronunciationListening, setIsPronunciationListening] = useState(false);
 	const [pronunciationStatus, setPronunciationStatus] = useState('');
 	const [pronunciationFeedback, setPronunciationFeedback] = useState('');
@@ -701,11 +713,26 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setCardIndex(0);
 		setIsFlipped(false);
 		setShowExampleVi(false);
+		setChallengeResult({ show: false, score: 0, total: 0 });
+		setChallengeActive(false);
+
+		let localTags: Record<number, any> = {};
+		if (typeof window !== 'undefined') {
+			try {
+				const stored = localStorage.getItem(`vocab-tags-${session?.user?.id || 'guest'}`);
+				if (stored) localTags = JSON.parse(stored);
+				setVocabTags(localTags);
+			} catch {}
+		}
+
 		try {
 			const res = await fetch(`/api/toeic/vocabulary?topic=${encodeURIComponent(topic)}`);
 			if (res.ok) {
 				const data = await res.json();
-				setVocabItems(data.items || []);
+				const rawItems = data.items || [];
+				const filteredItems = rawItems.filter((w: any) => !localTags[w.id]?.learned);
+				
+				setVocabItems(filteredItems.length > 0 ? filteredItems : rawItems);
 				setIsUltra(data.isUltra ?? false);
 				setIsPro(data.isPro ?? false);
 				try {
@@ -738,6 +765,65 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 					: Math.max(prev - 1, 0)
 			);
 		}, 150);
+	};
+
+	const toggleTag = (wordId: number, tag: 'learned' | 'hard' | 'bookmarked') => {
+		setVocabTags(prev => {
+			const current = prev[wordId] || {};
+			const newTags = { ...prev, [wordId]: { ...current, [tag]: !current[tag] } };
+			if (tag === 'learned' && newTags[wordId].learned) newTags[wordId].hard = false;
+			if (tag === 'hard' && newTags[wordId].hard) newTags[wordId].learned = false;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem(`vocab-tags-${session?.user?.id || 'guest'}`, JSON.stringify(newTags));
+			}
+			return newTags;
+		});
+	};
+
+	const setupChallengeRound = (roundIdx: number, wList = challengeWords) => {
+		if (roundIdx >= wList.length) {
+			setChallengeActive(false);
+			setChallengeResult({ show: true, score: challengeScore, total: wList.length });
+			return;
+		}
+		const tWord = wList[roundIdx];
+		const pool = vocabItems.filter(w => w.id !== tWord.id);
+		const wOpts = [...pool].sort(() => 0.5 - Math.random()).slice(0, 2).map(w => w.meaning);
+		const opts = [tWord.meaning, ...wOpts].sort(() => 0.5 - Math.random());
+		setChallengeOptions(opts);
+		setChallengeTimeLeft(3);
+	};
+
+	const startChallenge = () => {
+		if (vocabItems.length < 3) return;
+		const shuffled = [...vocabItems].sort(() => 0.5 - Math.random());
+		setChallengeWords(shuffled);
+		setChallengeRound(0);
+		setChallengeScore(0);
+		setChallengeResult({ show: false, score: 0, total: 0 });
+		setupChallengeRound(0, shuffled);
+		setChallengeActive(true);
+	};
+
+	useEffect(() => {
+		if (!challengeActive) return;
+		if (challengeTimeLeft <= 0) {
+			const nextRound = challengeRound + 1;
+			setChallengeRound(nextRound);
+			setupChallengeRound(nextRound);
+			return;
+		}
+		const timer = setTimeout(() => setChallengeTimeLeft(pr => pr - 1), 1000);
+		return () => clearTimeout(timer);
+	}, [challengeTimeLeft, challengeActive, challengeRound]);
+
+	const handleChallengeAnswer = (answer: string) => {
+		if (answer === challengeWords[challengeRound].meaning) {
+			setChallengeScore(s => s + 1);
+		}
+		const nextRound = challengeRound + 1;
+		setChallengeRound(nextRound);
+		setupChallengeRound(nextRound);
 	};
 
 	const playPronunciation = (e: React.MouseEvent, word: string) => {
@@ -1178,6 +1264,81 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 						</div>
 					)}
 
+					{/* Tags Action Bar */}
+					{currentItem && !challengeActive && !challengeResult.show && (
+						<div className="flex flex-wrap items-center justify-center gap-3 mt-4 animate-in fade-in slide-in-from-top-2">
+							<button onClick={() => toggleTag(currentItem.id, 'learned')} className={`px-4 py-2.5 rounded-full font-bold text-sm transition-all border shadow-sm ${vocabTags[currentItem.id]?.learned ? 'bg-green-100 text-green-700 border-green-300' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
+								{vocabTags[currentItem.id]?.learned ? '✓ Đã thuộc' : '○ Đánh dấu đã thuộc'}
+							</button>
+							<button onClick={() => toggleTag(currentItem.id, 'hard')} className={`px-4 py-2.5 rounded-full font-bold text-sm transition-all border shadow-sm ${vocabTags[currentItem.id]?.hard ? 'bg-red-100 text-red-700 border-red-300' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
+								{vocabTags[currentItem.id]?.hard ? '🔥 Khó' : 'Thấy từ này khó?'}
+							</button>
+							<button onClick={() => toggleTag(currentItem.id, 'bookmarked')} className={`w-11 h-11 flex items-center justify-center rounded-full transition-all border shadow-sm ${vocabTags[currentItem.id]?.bookmarked ? 'bg-amber-100 text-amber-500 border-amber-300' : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-50'}`} title="Bookmark">
+								<svg className="w-5 h-5" fill={vocabTags[currentItem.id]?.bookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+							</button>
+						</div>
+					)}
+
+					{/* Speed Challenge Section */}
+					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && (
+						<div className="mt-8 bg-white border border-indigo-100 rounded-3xl p-8 text-center shadow-sm">
+							<div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-5 rotate-3">
+								<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+							</div>
+							<h3 className="text-xl font-black text-slate-800 mb-2">Bạn đã tự tin nhớ bao nhiêu % từ vựng ở đây?</h3>
+							<p className="text-slate-500 mb-6 font-medium">Tham gia Speed Challenge này nhé? Bạn có trung bình 3 giây để nhìn nhanh ý nghĩa của mỗi từ.</p>
+							<button onClick={startChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-95">
+								Bắt đầu thử thách ngay
+							</button>
+						</div>
+					)}
+
+					{/* Active Speed Challenge UI */}
+					{challengeActive && challengeWords[challengeRound] && (
+						<div className="mt-6 bg-white border-2 border-indigo-500 rounded-3xl p-8 shadow-xl animate-in fade-in slide-in-from-bottom-6 duration-300">
+							<div className="flex justify-between items-center mb-6">
+								<span className="font-bold text-slate-500">Từ {challengeRound + 1} / {challengeWords.length}</span>
+								<div className="flex items-center gap-2 text-rose-500 font-bold bg-rose-50 px-3 py-1.5 rounded-full">
+									<svg className="w-4 h-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+									{challengeTimeLeft}s
+								</div>
+							</div>
+							
+							<div className="text-center mb-10">
+								<h4 className="text-5xl font-black text-slate-800 tracking-tight drop-shadow-sm mb-4">
+									{challengeWords[challengeRound].word}
+								</h4>
+								{challengeWords[challengeRound].phonetic && (
+									<p className="text-slate-400 font-medium">{challengeWords[challengeRound].phonetic.replaceAll('.', '')}</p>
+								)}
+							</div>
+
+							<div className="grid grid-cols-1 gap-3">
+								{challengeOptions.map((opt, i) => (
+									<button key={i} onClick={() => handleChallengeAnswer(opt)} className="bg-slate-50 border-2 border-slate-200 p-4 rounded-xl text-lg font-bold text-slate-700 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all text-left">
+										{opt}
+									</button>
+								))}
+							</div>
+						</div>
+					)}
+
+					{/* Challenge Result */}
+					{challengeResult.show && (
+						<div className="mt-8 bg-indigo-600 text-white rounded-3xl p-10 text-center shadow-xl animate-in zoom-in-95 duration-500">
+							<h3 className="text-3xl font-black mb-4 tracking-tight">🎉 Thử Thách Hoàn Tất!</h3>
+							<p className="text-indigo-200 text-lg mb-8 font-medium">Bạn đã trả lời đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ vựng.</p>
+							
+							<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+								<button onClick={startChallenge} className="bg-white text-indigo-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto">
+									Chơi Lại
+								</button>
+								<button onClick={() => setChallengeResult({ show: false, score: 0, total: 0 })} className="bg-indigo-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-indigo-900 transition-all w-full sm:w-auto">
+									Quay Lại Học Từ
+								</button>
+							</div>
+						</div>
+					)}
 
 				</div>
 			)}
