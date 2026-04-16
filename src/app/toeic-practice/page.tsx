@@ -248,9 +248,7 @@ function ToeicPracticeContent() {
 
 	return (
 		<div className="min-h-screen bg-slate-50/50">
-			<div className="max-w-6xl mx-auto py-8 px-4 sm:px-6">
-
-			
+			<div className="max-w-6xl mx-auto pt-4 pb-8 px-4 sm:px-6">
 			<div className="flex justify-between items-center mb-6 md:mb-10 pb-0 md:pb-4 border-b border-transparent md:border-slate-200/60">
 				{/* Desktop Tabs */}
 				<div className="hidden md:flex gap-8 pr-4 overflow-x-auto scrollbar-hide">
@@ -278,18 +276,11 @@ function ToeicPracticeContent() {
 				<div className="md:hidden flex items-center justify-between w-full">
 					<button
 						onClick={() => setIsMobileMenuOpen(true)}
-						className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-700 font-bold active:scale-[0.98] transition-transform w-[75%]"
+						className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-700 font-bold active:scale-[0.98] transition-transform w-full"
 					>
 						<svg className="w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 						<span className="truncate">{TABS.find(t => t.key === tab)?.label || 'Chọn mục'}</span>
 					</button>
-					
-					
-					<Link href="/toeic-progress" className="flex items-center justify-center w-[20%] max-w-[50px] aspect-square rounded-xl bg-white border border-slate-200 shadow-sm active:scale-[0.98] transition-transform shrink-0" aria-label="Tiến độ của tôi">
-						<svg className="w-5 h-5 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-						  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-						</svg>
-					</Link>
 				</div>
 
 				{/* Desktop "Tiến độ của tôi" */}
