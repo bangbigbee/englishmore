@@ -33,120 +33,117 @@ async function requireAdmin() {
 }
 
 function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
-  const lines = text
-    .replace(/\r/g, '\n')
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-
+  const blocks = text.split(/---+/)
   const results: ExtractedToeicQuestion[] = []
-  let current: ExtractedToeicQuestion | null = null
 
-  const pushCurrent = () => {
-    if (!current) return
+  for (const block of blocks) {
+    const trimmed = block.trim()
+    if (!trimmed) continue
 
-    if (
-      current.question &&
-      current.optionA &&
-      current.optionB &&
-      current.optionC &&
-      ['A', 'B', 'C', 'D'].includes(current.correctOption)
-    ) {
-      results.push(current)
+    let vocabBlock = ''
+    let textWithoutVocab = trimmed
+    const vocabMatch = trimmed.match(/(?:Vocabulary|Từ\s*vựng|Tu\s*vung)\s*[:\-]?\s*([\s\S]*)$/i)
+    if (vocabMatch) {
+      vocabBlock = vocabMatch[1]
+      textWithoutVocab = trimmed.substring(0, vocabMatch.index).trim()
     }
 
-    current = null
-  }
-
-  for (const line of lines) {
-    // Match question starts: "Câu 1:", "Question 1:", "Q1:", "1."
-    const questionMatch = line.match(/^(?:Q(?:uestion)?|Cau|Câu)?\s*(\d{1,3})\s*[\).:-]\s*(.+)$/i)
-    if (questionMatch) {
-      pushCurrent()
-      current = {
-        question: questionMatch[2].trim(),
-        optionA: '',
-        optionB: '',
-        optionC: '',
-        optionD: '',
-        correctOption: 'A',
-        explanation: '',
-        translation: '',
-        tips: '',
-        vocabulary: []
+    const vocabulary: { word: string; meaning: string }[] = []
+    if (vocabBlock) {
+      const vocabLines = vocabBlock.split('\n')
+      for (const line of vocabLines) {
+        const vMatch = line.trim().match(/^\-\s*([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/)
+        if (vMatch) {
+          const typeStr = vMatch[2] ? `(${vMatch[2].trim()}) ` : ''
+          vocabulary.push({
+            word: vMatch[1].trim(),
+            meaning: `${typeStr}${vMatch[3].trim()}`
+          })
+        }
       }
-      continue
     }
 
-    if (!current) {
-      continue
-    }
-
-    // Match options: "A. ...", "A) ...", "A: ..."
-    const optionMatch = line.match(/^(?:Option\s*)?([ABCD])\s*[\).:-]\s*(.+)$/i)
-    if (optionMatch) {
-      const key = `option${optionMatch[1].toUpperCase()}` as 'optionA' | 'optionB' | 'optionC' | 'optionD'
-      current[key] = optionMatch[2].trim()
-      continue
-    }
-
-    // Match answers: "Đáp án: A", "Answer: A", "Dap an: A"
-    const answerMatch = line.match(/^(?:ANSWER|CORRECT(?:\s*OPTION)?|DAP\s*AN|ĐÁP\s*ÁN|Dap\s*an)\s*[:\-]?\s*([ABCD])\b/i)
-    if (answerMatch) {
-      current.correctOption = answerMatch[1].toUpperCase()
-      continue
-    }
-
-    // Match explanation: "Giải thích: ...", "Explanation: ..."
-    const explanationMatch = line.match(/^(?:Explanation|Giai\s*thich|Giải\s*thích)\s*[:\-]?\s*(.+)$/i)
-    if (explanationMatch) {
-      current.explanation = explanationMatch[1].trim()
-      continue
-    }
-
-    // Match translation: "Dịch nghĩa: ...", "Translation: ..."
-    const translationMatch = line.match(/^(?:Translation|Dich\s*nghia|Dịch\s*nghĩa)\s*[:\-]?\s*(.+)$/i)
-    if (translationMatch) {
-      current.translation = translationMatch[1].trim()
-      continue
-    }
-
-    // Match tip: "Tip: ...", "Mẹo: ..."
-    const tipMatch = line.match(/^(?:Tip|Mẹo|Meo|Mẹo\s*TOEIC)\s*[:\-]?\s*(.*)$/i)
+    let tipBlock = ''
+    let textWithoutTip = textWithoutVocab
+    const tipMatch = textWithoutVocab.match(/(?:Tip|Mẹo|Meo|Mẹo\s*TOEIC)\s*[:\-]?\s*([\s\S]*)$/i)
     if (tipMatch) {
-      current.tips = tipMatch[1].trim()
-      continue
+      tipBlock = tipMatch[1].trim()
+      textWithoutTip = textWithoutVocab.substring(0, tipMatch.index).trim()
     }
 
-    // Match vocabulary header (can be ignored as we just catch items)
-    if (line.match(/^(?:Vocabulary|Từ\s*vựng|Tu\s*vung)\s*[:\-]?\s*$/i)) {
-      continue
+    let transBlock = ''
+    let textWithoutTrans = textWithoutTip
+    const transMatch = textWithoutTip.match(/(?:Translation|Dich\s*nghia|Dịch\s*nghĩa)\s*[:\-]?\s*([\s\S]*)$/i)
+    if (transMatch) {
+      transBlock = transMatch[1].trim()
+      textWithoutTrans = textWithoutTip.substring(0, transMatch.index).trim()
     }
 
-    // Match vocabulary item: "- policy (n) : chính sách"
-    const vocabItemMatch = line.match(/^\-\s*([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/)
-    if (vocabItemMatch) {
-       const typeStr = vocabItemMatch[2] ? `(${vocabItemMatch[2].trim()}) ` : ''
-       current.vocabulary.push({
-         word: vocabItemMatch[1].trim(),
-         meaning: `${typeStr}${vocabItemMatch[3].trim()}`
-       })
-       continue
+    let expBlock = ''
+    let textWithoutExp = textWithoutTrans
+    const expMatch = textWithoutTrans.match(/(?:Explanation|Giai\s*thich|Giải\s*thích)\s*[:\-]?\s*([\s\S]*)$/i)
+    if (expMatch) {
+      expBlock = expMatch[1].trim()
+      textWithoutExp = textWithoutTrans.substring(0, expMatch.index).trim()
     }
 
-    // Append to either question, explanation, translation or tip if it doesn't match a prefix
-    if (current.tips) {
-      current.tips += ' ' + line
-    } else if (current.translation) {
-      current.translation += ' ' + line
-    } else if (current.explanation) {
-      current.explanation += ' ' + line
-    } else if (current.question && !current.optionA) {
-      current.question += ' ' + line
+    let ansBlock = 'A'
+    let textWithoutAns = textWithoutExp
+    const ansMatch = textWithoutExp.match(/(?:ANSWER|CORRECT(?:\s*OPTION)?|DAP\s*AN|ĐÁP\s*ÁN|Dap\s*an)\s*[:\-]?\s*([ABCD])\b/i)
+    if (ansMatch) {
+      ansBlock = ansMatch[1].toUpperCase()
+      textWithoutAns = textWithoutExp.substring(0, ansMatch.index).trim()
+    }
+
+    let optD = ''
+    let textWithoutD = textWithoutAns
+    const dMatch = textWithoutAns.match(/(?:Option\s*)?D\s*[\).:-]\s*([\s\S]*)$/i)
+    if (dMatch) {
+      optD = dMatch[1].trim()
+      textWithoutD = textWithoutAns.substring(0, dMatch.index).trim()
+    }
+
+    let optC = ''
+    let textWithoutC = textWithoutD
+    const cMatch = textWithoutD.match(/(?:Option\s*)?C\s*[\).:-]\s*([\s\S]*)$/i)
+    if (cMatch) {
+      optC = cMatch[1].trim()
+      textWithoutC = textWithoutD.substring(0, cMatch.index).trim()
+    }
+
+    let optB = ''
+    let textWithoutB = textWithoutC
+    const bMatch = textWithoutC.match(/(?:Option\s*)?B\s*[\).:-]\s*([\s\S]*)$/i)
+    if (bMatch) {
+      optB = bMatch[1].trim()
+      textWithoutB = textWithoutC.substring(0, bMatch.index).trim()
+    }
+
+    let optA = ''
+    let textWithoutA = textWithoutB
+    const aMatch = textWithoutB.match(/(?:Option\s*)?A\s*[\).:-]\s*([\s\S]*)$/i)
+    if (aMatch) {
+      optA = aMatch[1].trim()
+      textWithoutA = textWithoutB.substring(0, aMatch.index).trim()
+    }
+
+    let question = textWithoutA.replace(/^(?:Q(?:uestion)?|Cau|Câu)?\s*(\d{1,3})?\s*[\).:-]?\s*/i, '').trim()
+
+    if (question && optA && optB && optC) {
+      results.push({
+        question,
+        optionA: optA,
+        optionB: optB,
+        optionC: optC,
+        optionD: optD,
+        correctOption: ansBlock,
+        explanation: expBlock,
+        translation: transBlock,
+        tips: tipBlock === '(Blank)' ? '' : tipBlock,
+        vocabulary
+      })
     }
   }
-
-  pushCurrent()
 
   return results
 }
