@@ -376,11 +376,12 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					</div>
 
 					<div className="flex flex-wrap items-center gap-4">
-						<button onClick={() => onTabClick('reading')} className="px-8 py-4 bg-[#14532d] hover:bg-[#166534] text-white rounded-xl font-bold text-lg shadow-xl shadow-[#14532d]/20 transition-all hover:-translate-y-1">
-							Bắt đầu luyện tập
+						<button onClick={() => onTabClick('reading')} className="brand-cta brand-cta-register !text-lg !px-8 !py-4 !rounded-xl group">
+							<span>Bắt đầu luyện tập</span>
+							<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
 						</button>
-						<button onClick={() => onTabClick('actual-test')} className="flex items-center gap-3 px-6 py-4 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-lg border border-slate-200 transition-all hover:border-[#ea980c] hover:text-[#ea980c]">
-							<div className="w-8 h-8 bg-[#ea980c] rounded-lg text-white flex items-center justify-center shadow-md">
+						<button onClick={() => onTabClick('actual-test')} className="flex items-center gap-3 px-6 py-4 bg-[#f8f9fa] hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-lg border border-slate-200 transition-all hover:border-[#14532d] hover:text-[#14532d]">
+							<div className="w-8 h-8 bg-[#14532d] rounded-lg text-white flex items-center justify-center shadow-md">
 								<svg className="w-4 h-4 ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 							</div>
 							Thi thử TOEIC
