@@ -148,7 +148,7 @@ const getTopicVietnamese = (en: string): string => {
 	return "";
 };
 
-const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: any) => {
+const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress }: any) => {
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
@@ -174,9 +174,26 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 					</p>
 				)}
 
-				{badgeText && (
+				{badgeText && !progress && (
 					<div className="text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mt-2 opacity-80">
 						{badgeText}
+					</div>
+				)}
+
+				{progress && (
+					<div className="mt-auto pt-3">
+						<div className="flex justify-between items-center mb-1.5 font-bold text-[11px]">
+							<span className="text-[#14532d] uppercase tracking-wider">Tiến độ</span>
+							<span className={progress.learned >= progress.total ? "text-green-600" : "text-[#ea980c]"}>
+								{progress.learned} / {progress.total}
+							</span>
+						</div>
+						<div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+							<div 
+								className={`h-full transition-all duration-700 ${progress.learned >= progress.total ? 'bg-green-500' : 'bg-linear-to-r from-[#ea980c] to-[#f59e0b]'}`}
+								style={{ width: `${Math.max(2, Math.min(100, Math.round((progress.learned / progress.total) * 100)))}%` }} 
+							/>
+						</div>
 					</div>
 				)}
 			</div>
@@ -642,7 +659,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const pathname = usePathname();
 	const router = useRouter();
 
-	const [topics, setTopics] = useState<{ topic: string; wordCount: number }[]>([]);
+	const [topics, setTopics] = useState<{ topic: string; wordCount: number, learnedCount?: number }[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [subTab, setSubTab] = useState<'practice' | 'progress'>('practice');
 
@@ -1224,6 +1241,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 										title={t.topic}
 										badgeText={`${t.wordCount} từ`}
 										onClick={() => openTopic(t.topic)}
+										progress={{ learned: t.learnedCount || 0, total: t.wordCount }}
 									/>
 								))}
 							</div>

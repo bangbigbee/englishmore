@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Suspense } from "react";
 import VocabularyFilter from "./VocabularyFilter";
+import VocabularyDashboard from "./VocabularyDashboard";
 
 export const metadata = {
 	title: 'Tiến Độ Của Tôi',
@@ -211,7 +212,11 @@ export default async function ToeicProgressPage({
 							</div>
 						)}
 						{activeTab === 'grammar' && <ComingSoonPlaceholder title="Tiến Độ Ngữ Pháp" icon="📝" />}
-						{activeTab === 'vocabulary' && <ComingSoonPlaceholder title="Tiến Độ Từ Vựng" icon="🎯" />}
+						{activeTab === 'vocabulary' && (
+							<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
+								<VocabularyDashboard />
+							</Suspense>
+						)}
 						{activeTab === 'listening' && <ComingSoonPlaceholder title="Tiến Độ Listening" icon="🎧" />}
 						{activeTab === 'reading' && <ComingSoonPlaceholder title="Tiến Độ Reading" icon="📖" />}
 						{activeTab === 'actual-test' && <ComingSoonPlaceholder title="Tiến Độ Đề Thực Tế" icon="🎓" />}
