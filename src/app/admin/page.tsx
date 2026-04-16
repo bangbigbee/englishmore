@@ -299,6 +299,7 @@ interface ActivityPointResponse {
 
 interface AdminToeicTopic {
   id: string
+  type: string
   title: string
   subtitle: string | null
   slug: string
@@ -797,7 +798,8 @@ export default function AdminDashboard() {
   const toeicFileInputRef = useRef<HTMLInputElement>(null)
 
   const [showTopicModal, setShowTopicModal] = useState(false)
-  const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '' })
+  const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR' })
+  const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING'>('GRAMMAR')
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
   const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '' })
@@ -1482,10 +1484,10 @@ export default function AdminDashboard() {
     }
   }
 
-  const fetchToeicTopics = useCallback(async () => {
+  const fetchToeicTopics = useCallback(async (typeStr: string = toeicPracticeSubtab) => {
     try {
       setToeicLoading(true)
-      const res = await fetch('/api/admin/toeic/topics')
+      const res = await fetch(`/api/admin/toeic/topics?type=${typeStr}`)
       if (!res.ok) throw new Error('Failed to fetch TOEIC topics')
       const data = await res.json()
       setToeicTopics(data)
@@ -1586,12 +1588,12 @@ export default function AdminDashboard() {
       const res = await fetch(editingToeicTopic ? `/api/admin/toeic/topics/${editingToeicTopic.id}` : '/api/admin/toeic/topics', {
         method: editingToeicTopic ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(topicForm)
+        body: JSON.stringify({ ...topicForm, type: toeicPracticeSubtab })
       })
       if (!res.ok) throw new Error('Failed to save topic')
       toast.success(editingToeicTopic ? 'Topic updated successfully' : 'Topic created successfully')
       setShowTopicModal(false)
-      setTopicForm({ title: '', subtitle: '', slug: '' })
+      setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab })
       setEditingToeicTopic(null)
       fetchToeicTopics()
     } catch (err) {
@@ -2243,10 +2245,10 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (activeSection === 'toeic') {
-      fetchToeicTopics()
-      void fetchToeicVocabTopics()
+      fetchToeicTopics(toeicPracticeSubtab)
+      fetchToeicVocabTopics()
     }
-  }, [activeSection, fetchToeicTopics])
+  }, [activeSection, fetchToeicTopics, toeicPracticeSubtab])
 
 
   useEffect(() => {
@@ -3773,14 +3775,14 @@ export default function AdminDashboard() {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={fetchToeicTopics}
+                onClick={() => fetchToeicTopics()}
                 className="rounded border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50"
               >
                 Refresh
               </button>
               <button
                 onClick={() => {
-                  setTopicForm({ title: '', subtitle: '', slug: '' })
+                  setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab })
                   setEditingToeicTopic(null)
                   setShowTopicModal(true)
                 }}
@@ -3789,6 +3791,22 @@ export default function AdminDashboard() {
                 + New Topic
               </button>
             </div>
+          </div>
+          
+          {/* Subtabs for GRAMMAR and READING */}
+          <div className="flex gap-4 border-b border-gray-200 mb-6">
+            <button
+              onClick={() => { setToeicPracticeSubtab('GRAMMAR'); fetchToeicTopics('GRAMMAR'); setSelectedToeicTopic(null) }}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'GRAMMAR' ? 'border-[#14532d] text-[#14532d]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            >
+              Grammar
+            </button>
+            <button
+              onClick={() => { setToeicPracticeSubtab('READING'); fetchToeicTopics('READING'); setSelectedToeicTopic(null) }}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'READING' ? 'border-[#14532d] text-[#14532d]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            >
+              Reading
+            </button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -3818,7 +3836,7 @@ export default function AdminDashboard() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug })
+                          setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug, type: topic.type || toeicPracticeSubtab })
                           setEditingToeicTopic(topic)
                           setShowTopicModal(true)
                         }}

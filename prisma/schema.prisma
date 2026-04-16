@@ -663,6 +663,7 @@ model VocabularyTag {
 // TOEIC Grammar Section
 model ToeicGrammarTopic {
   id        String               @id @default(cuid())
+  type      String               @default("GRAMMAR")
   title     String
   subtitle  String?
   slug      String               @unique
