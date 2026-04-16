@@ -72,14 +72,14 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 	return (
 		<div
 			onClick={onClick}
-			className="relative group bg-white rounded-md p-8 transition-all duration-500 cursor-pointer overflow-hidden
-								 shadow-[5px_20px_50px_rgba(0,0,0,0.06)] hover:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] 
-								 hover:-translate-y-3 flex flex-col justify-start min-h-[310px] border border-slate-100/50"
+			className="relative group bg-white rounded-xl p-8 transition-transform duration-500 cursor-pointer overflow-hidden
+								 shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start min-h-[310px] border border-slate-200
+								 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]"
 		>
-			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_3s_infinite] bg-linear-to-r from-transparent via-slate-50/20 to-transparent skew-x-[-20deg]" />
+			<div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-amber-300/40 to-transparent skew-x-[-20deg]" />
 
 			<div className="relative z-10 flex-1">
-				<h3 className="font-bold text-[22px] text-[#14532d] leading-snug mb-4 group-hover:text-black transition-colors">
+				<h3 className="font-bold text-[22px] text-black leading-snug mb-4 group-hover:text-[#14532d] transition-colors duration-300">
 					{title}
 				</h3>
 
@@ -93,7 +93,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick }: any) => {
 			</div>
 
 			<div className="relative z-10 mt-10 flex justify-start">
-				<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] group-hover:shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-[#818cf8] group-hover:text-indigo-600 transition-all duration-300 group-hover:scale-105 border border-slate-50">
+				<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] scale-105 flex items-center justify-center text-indigo-600 transition-transform duration-300 group-hover:scale-110 border border-slate-50">
 					<svg className="w-7 h-7 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
 					</svg>
