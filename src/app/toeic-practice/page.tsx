@@ -980,21 +980,17 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			return;
 		}
 		
-		// Optimistic UI update
-		let updatedState = false;
-		let updatedTagData: any = {};
+		const current = vocabTags[wordId] || {};
+		const newTagData = { ...current, [tag]: !current[tag] };
 		
-		setVocabTags(prev => {
-			const current = prev[wordId] || {};
-			const newTags = { ...prev, [wordId]: { ...current, [tag]: !current[tag] } };
-			if (tag === 'learned' && newTags[wordId].learned) newTags[wordId].hard = false;
-			if (tag === 'hard' && newTags[wordId].hard) newTags[wordId].learned = false;
-			
-			updatedState = newTags[wordId][tag] as boolean;
-			updatedTagData = newTags[wordId];
-			
-			return newTags;
-		});
+		if (tag === 'learned' && newTagData.learned) newTagData.hard = false;
+		if (tag === 'hard' && newTagData.hard) newTagData.learned = false;
+
+		// Optimistic UI update
+		setVocabTags(prev => ({
+			...prev,
+			[wordId]: newTagData
+		}));
 
 		// Backend sync
 		try {
@@ -1003,9 +999,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					vocabId: wordId,
-					isLearned: updatedTagData.learned,
-					isHard: updatedTagData.hard,
-					isBookmarked: updatedTagData.bookmarked,
+					isLearned: newTagData.learned,
+					isHard: newTagData.hard,
+					isBookmarked: newTagData.bookmarked,
 				}),
 			});
 		} catch (error) {
