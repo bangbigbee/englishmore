@@ -8,6 +8,8 @@ import { Suspense } from "react";
 export const metadata = {
 	title: 'Tiến Độ Của Tôi',
 };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 async function VocabularyBank() {
 	const session = await getServerSession(authOptions);

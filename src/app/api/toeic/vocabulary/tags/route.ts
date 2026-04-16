@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 export async function GET(req: NextRequest) {
 	try {
@@ -74,6 +75,8 @@ export async function POST(req: NextRequest) {
 				isBookmarked: isBookmarked || false,
 			},
 		});
+
+		revalidatePath('/toeic-progress');
 
 		return NextResponse.json({ tag });
 	} catch (error) {
