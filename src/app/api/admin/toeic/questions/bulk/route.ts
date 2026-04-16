@@ -34,7 +34,9 @@ export async function POST(req: Request) {
             optionD: q.optionD || null,
             correctOption: q.correctOption,
             explanation: q.explanation || null,
-            translation: q.translation || null
+            translation: q.translation || null,
+            tips: q.tips || null,
+            vocabulary: q.vocabulary && q.vocabulary.length > 0 ? q.vocabulary : null
           }
         })
       )

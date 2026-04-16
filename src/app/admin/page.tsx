@@ -809,7 +809,9 @@ export default function AdminDashboard() {
     optionD: '',
     correctOption: 'A',
     explanation: '',
-    translation: ''
+    translation: '',
+    tips: '',
+    vocabulary: ''
   })
   const [editingToeicQuestion, setEditingToeicQuestion] = useState<AdminToeicQuestion | null>(null)
   const [deletingToeicId, setDeletingToeicId] = useState<string | null>(null)
@@ -1665,10 +1667,14 @@ export default function AdminDashboard() {
     if (!selectedToeicLesson) return
     try {
       setSavingToeicQuestion(true)
+      let vocabData = null
+      if (questionForm.vocabulary) {
+        try { vocabData = JSON.parse(questionForm.vocabulary) } catch(e) { throw new Error('Vocabulary JSON is invalid') }
+      }
       const res = await fetch(editingToeicQuestion ? `/api/admin/toeic/questions/${editingToeicQuestion.id}` : '/api/admin/toeic/questions', {
         method: editingToeicQuestion ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...questionForm, lessonId: selectedToeicLesson.id })
+        body: JSON.stringify({ ...questionForm, vocabulary: vocabData, lessonId: selectedToeicLesson.id })
       })
       if (!res.ok) throw new Error('Failed to save question')
       toast.success(editingToeicQuestion ? 'Question updated successfully' : 'Question created successfully')
@@ -1682,7 +1688,9 @@ export default function AdminDashboard() {
         optionD: '',
         correctOption: 'A',
         explanation: '',
-        translation: ''
+        translation: '',
+        tips: '',
+        vocabulary: ''
       })
       fetchToeicQuestions(selectedToeicLesson.id)
     } catch (err) {
@@ -3957,7 +3965,9 @@ export default function AdminDashboard() {
                           optionD: '',
                           correctOption: 'A',
                           explanation: '',
-                          translation: ''
+                          translation: '',
+                          tips: '',
+                          vocabulary: ''
                         })
                         setEditingToeicQuestion(null)
                         setShowQuestionModal(true)
@@ -3995,7 +4005,9 @@ export default function AdminDashboard() {
                               optionD: q.optionD || '',
                               correctOption: q.correctOption,
                               explanation: q.explanation || '',
-                              translation: q.translation || ''
+                              translation: q.translation || '',
+                              tips: q.tips || '',
+                              vocabulary: q.vocabulary ? JSON.stringify(q.vocabulary, null, 2) : ''
                             })
                             setEditingToeicQuestion(q)
                             setShowQuestionModal(true)
@@ -4030,6 +4042,10 @@ export default function AdminDashboard() {
                           {q.explanation}
                         </div>
                       )}
+                      <div className="mt-2 flex gap-2">
+                        {q.tips && <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-100 text-amber-800 font-bold">💡 Mẹo TOEIC</span>}
+                        {q.vocabulary && <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-800 font-bold">📚 {Array.isArray(q.vocabulary) ? q.vocabulary.length : 1} Từ vựng</span>}
+                      </div>
                     </div>
                   ))
                 )}
@@ -7658,6 +7674,26 @@ export default function AdminDashboard() {
                         value={questionForm.translation}
                         onChange={(e) => setQuestionForm({ ...questionForm, translation: e.target.value })}
                         className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-amber-600">Mẹo (Tips/Traps)</label>
+                      <textarea
+                        rows={2}
+                        placeholder="Mẹo làm bài nhanh..."
+                        value={questionForm.tips}
+                        onChange={(e) => setQuestionForm({ ...questionForm, tips: e.target.value })}
+                        className="w-full rounded-lg border-amber-300 focus:border-amber-500 focus:ring-amber-500 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-blue-600">Vocabulary (JSON array)</label>
+                      <textarea
+                        rows={4}
+                        placeholder={'[\n  { "word": "policy", "meaning": "(n) chính sách" }\n]'}
+                        value={questionForm.vocabulary}
+                        onChange={(e) => setQuestionForm({ ...questionForm, vocabulary: e.target.value })}
+                        className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 font-mono text-xs"
                       />
                     </div>
                   </div>

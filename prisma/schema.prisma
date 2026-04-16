@@ -702,6 +702,8 @@ model ToeicQuestion {
   correctOption String
   explanation   String?  @db.Text
   translation   String?  @db.Text
+  tips          String?  @db.Text
+  vocabulary    Json?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

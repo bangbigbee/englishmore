@@ -15,6 +15,8 @@ type ExtractedToeicQuestion = {
   correctOption: string
   explanation: string
   translation: string
+  tips: string
+  vocabulary: { word: string; meaning: string }[]
 }
 
 async function requireAdmin() {
@@ -69,7 +71,9 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
         optionD: '',
         correctOption: 'A',
         explanation: '',
-        translation: ''
+        translation: '',
+        tips: '',
+        vocabulary: []
       }
       continue
     }
@@ -107,8 +111,33 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
       continue
     }
 
-    // Append to either question or explanation if it doesn't match a prefix
-    if (current.translation) {
+    // Match tip: "Tip: ...", "Mẹo: ..."
+    const tipMatch = line.match(/^(?:Tip|Mẹo|Meo|Mẹo\s*TOEIC)\s*[:\-]?\s*(.*)$/i)
+    if (tipMatch) {
+      current.tips = tipMatch[1].trim()
+      continue
+    }
+
+    // Match vocabulary header (can be ignored as we just catch items)
+    if (line.match(/^(?:Vocabulary|Từ\s*vựng|Tu\s*vung)\s*[:\-]?\s*$/i)) {
+      continue
+    }
+
+    // Match vocabulary item: "- policy (n) : chính sách"
+    const vocabItemMatch = line.match(/^\-\s*([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/)
+    if (vocabItemMatch) {
+       const typeStr = vocabItemMatch[2] ? `(${vocabItemMatch[2].trim()}) ` : ''
+       current.vocabulary.push({
+         word: vocabItemMatch[1].trim(),
+         meaning: `${typeStr}${vocabItemMatch[3].trim()}`
+       })
+       continue
+    }
+
+    // Append to either question, explanation, translation or tip if it doesn't match a prefix
+    if (current.tips) {
+      current.tips += ' ' + line
+    } else if (current.translation) {
       current.translation += ' ' + line
     } else if (current.explanation) {
       current.explanation += ' ' + line
