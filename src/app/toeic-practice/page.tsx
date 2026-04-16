@@ -262,9 +262,13 @@ function ToeicPracticeContent() {
 						</button>
 					))}
 				</div>
-				<Link href="/toeic-progress" className="items-center gap-2 bg-[#14532d] hover:bg-[#166534] px-4 py-2.5 rounded-xl transition-colors shrink-0 hidden md:flex shadow-sm hover:shadow-md hover:-translate-y-0.5">
-					<span className="text-xl">📈</span>
-					<span className="text-sm font-bold text-white">Theo Dõi Tiến Độ</span>
+				<Link href="/toeic-progress" className="hidden md:flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap shrink-0">
+					<span className="text-xl transition-transform duration-300 opacity-60 scale-100 group-hover:opacity-100">
+						📈
+					</span>
+					<span className="text-sm font-bold tracking-tight transition-all text-slate-400 group-hover:text-slate-600">
+						Theo Dõi Tiến Độ
+					</span>
 				</Link>
 			</div>
 			<div className="mt-6">
@@ -302,7 +306,6 @@ function ToeicPracticeContent() {
 function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [subTab, setSubTab] = useState<'practice' | 'progress'>('practice');
 	const { data: session } = useSession();
 
 	useEffect(() => {
@@ -328,70 +331,24 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 
 	return (
 		<div>
-			<div className="flex gap-6 mb-6 border-b border-slate-200">
-				<button 
-					onClick={() => setSubTab('practice')}
-					className={`pb-3 text-[15px] font-bold transition-all relative ${subTab === 'practice' ? 'text-green-800' : 'text-slate-400 hover:text-slate-600'}`}
-				>
-					Luyện tập theo chủ đề
-					{subTab === 'practice' && <span className="absolute bottom-0 left-0 w-full h-[3px] bg-green-700 rounded-t-full" />}
-				</button>
-				<button 
-					onClick={() => setSubTab('progress')}
-					className={`pb-3 text-[15px] font-bold transition-all relative ${subTab === 'progress' ? 'text-green-800' : 'text-slate-400 hover:text-slate-600'}`}
-				>
-					Theo dõi tiến độ
-					{subTab === 'progress' && <span className="absolute bottom-0 left-0 w-full h-[3px] bg-green-700 rounded-t-full" />}
-				</button>
+			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+				{topics.length === 0 ? (
+					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
+						Chưa có chủ đề nào được cập nhật.
+					</div>
+				) : (
+					topics.map((topic) => (
+						<TopicCard
+							key={topic.id}
+							type="grammar"
+							title={topic.title}
+							subtitle={topic.subtitle || 'Ngữ pháp TOEIC'}
+							badgeText={`${topic._count?.lessons || 0} Lessons`}
+							onClick={() => onPracticeClick(topic.slug)}
+						/>
+					))
+				)}
 			</div>
-
-			{subTab === 'practice' && (
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{topics.length === 0 ? (
-						<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-							Chưa có chủ đề nào được cập nhật.
-						</div>
-					) : (
-						topics.map((topic) => (
-							<TopicCard
-								key={topic.id}
-								type="grammar"
-								title={topic.title}
-								subtitle={topic.subtitle || 'Ngữ pháp TOEIC'}
-								badgeText={`${topic._count?.lessons || 0} Lessons`}
-								onClick={() => onPracticeClick(topic.slug)}
-							/>
-						))
-					)}
-				</div>
-			)}
-
-			{subTab === 'progress' && (
-				<div className="bg-white rounded-2xl p-8 sm:p-12 border border-slate-200 text-center shadow-sm">
-					{!session ? (
-						<div className="max-w-md mx-auto">
-							<div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-								<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-							</div>
-							<p className="text-slate-500 mb-6 leading-relaxed">Vui lòng đăng nhập để hệ thống có thể lưu trữ và theo dõi tiến độ học tập ngữ pháp của bạn.</p>
-							<button onClick={() => onPracticeClick()} className="bg-green-700 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-800 transition-colors shadow-sm hover:shadow-md">Đăng nhập ngay</button>
-						</div>
-					) : (
-						<div className="text-left max-w-sm mx-auto space-y-4">
-							<h3 className="font-extrabold text-xl text-slate-800 border-b border-slate-100 pb-3 mb-4">Tiến độ Ngữ Pháp</h3>
-							<div className="flex justify-between items-center p-3 sm:p-4 rounded-xl bg-slate-50/80 border border-slate-100 shadow-[inset_0_1px_3px_#00000005]">
-								<span className="text-slate-600 font-semibold">Đã học:</span>
-								<span className="font-bold text-green-700 bg-green-100/80 px-3 py-1 rounded-full text-sm">0 <span className="font-medium text-xs opacity-80">bài</span></span>
-							</div>
-							<div className="flex justify-between items-center p-3 sm:p-4 rounded-xl bg-slate-50/80 border border-slate-100 shadow-[inset_0_1px_3px_#00000005]">
-								<span className="text-slate-600 font-semibold">Điểm trung bình:</span>
-								<span className="font-bold text-amber-600 bg-amber-100/80 px-3 py-1 rounded-full text-sm">0 <span className="font-medium text-xs opacity-80">score</span></span>
-							</div>
-							<p className="text-[13px] italic text-slate-400 mt-6 pt-2 text-center">* Giao diện biểu đồ tiến độ đang được hoàn thiện.</p>
-						</div>
-					)}
-				</div>
-			)}
 		</div>
 	);
 }

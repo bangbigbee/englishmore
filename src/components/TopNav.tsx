@@ -268,6 +268,9 @@ export default function TopNav() {
                 <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
                   Profile
                 </Link>
+                <Link href="/toeic-progress" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
+                  Tiến độ học tập
+                </Link>
                 <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
                   Homework
                 </Link>
