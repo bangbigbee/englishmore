@@ -887,8 +887,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	useEffect(() => {
 		const topicFromUrl = searchParams.get('topic');
 		const tabFromUrl = searchParams.get('tab');
-		if (tabFromUrl === 'vocabulary' && topicFromUrl && topicFromUrl !== selectedTopic) {
-			loadTopic(topicFromUrl);
+		const wordIdFromUrl = searchParams.get('wordId');
+		
+		if (tabFromUrl === 'vocabulary' && topicFromUrl && (topicFromUrl !== selectedTopic || wordIdFromUrl)) {
+			loadTopic(topicFromUrl, wordIdFromUrl);
 		} else if (!topicFromUrl && selectedTopic) {
 			setSelectedTopic(null);
 		}
@@ -901,12 +903,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('topic', topic);
 		params.set('tab', 'vocabulary');
+		params.delete('wordId'); // Clear specific cross-linking wordId when normally opening a topic
 		router.push(`${pathname}?${params.toString()}`, { scroll: false });
 		
 		loadTopic(topic);
 	};
 
-	const loadTopic = async (topic: string) => {
+	const loadTopic = async (topic: string, specificWordId?: string | null) => {
 		setSelectedTopic(topic);
 		setVocabLoading(true);
 		setCardIndex(0);
@@ -939,7 +942,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 				const rawItems = data.items || [];
 				const filteredItems = rawItems.filter((w: any) => !currentTags[w.id]?.learned);
 				
-				setVocabItems(filteredItems.length > 0 ? filteredItems : rawItems);
+				const finalItems = filteredItems.length > 0 ? filteredItems : rawItems;
+				setVocabItems(finalItems);
+				
+				if (specificWordId) {
+					const idx = finalItems.findIndex((w: any) => w.id === specificWordId);
+					if (idx !== -1) setCardIndex(idx);
+				}
 				setIsUltra(data.isUltra ?? false);
 				setIsPro(data.isPro ?? false);
 				try {

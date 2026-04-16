@@ -70,7 +70,11 @@ async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?
 			) : (
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{tags.map(tag => (
-				<div key={tag.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md transition-shadow">
+				<Link 
+					key={tag.id} 
+					href={`/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(tag.vocabulary.topic)}&wordId=${tag.vocabId}`}
+					className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-green-300 transition-all cursor-pointer relative"
+				>
 					<div className="p-5 flex-1">
 						<div className="flex justify-between items-start mb-3">
 							<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700">
@@ -89,7 +93,7 @@ async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?
 							<p className="mt-3 text-sm text-slate-600 italic bg-slate-50 p-3 rounded-xl border border-slate-100">{tag.vocabulary.example}</p>
 						)}
 					</div>
-				</div>
+				</Link>
 			))}
 				</div>
 			)}
