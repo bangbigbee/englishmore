@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import VocabularyFilter from "./VocabularyFilter";
 import VocabularyDashboard from "./VocabularyDashboard";
 import GrammarBank from "./GrammarBank";
+import ProgressNavigation from "./ProgressNavigation";
 
 export const metadata = {
 	title: 'Tiến Độ Của Tôi',
@@ -120,15 +121,6 @@ function ComingSoonPlaceholder({ title, icon }: { title: string, icon: string })
 	);
 }
 
-const TABS = [
-	{ id: 'vocabulary-bank', label: 'Sổ Từ Vựng', icon: '📔' },
-	{ id: 'grammar', label: 'Ngữ Pháp', icon: '📝' },
-	{ id: 'vocabulary', label: 'Từ Vựng', icon: '🎯' },
-	{ id: 'listening', label: 'Listening', icon: '🎧' },
-	{ id: 'reading', label: 'Reading', icon: '📖' },
-	{ id: 'actual-test', label: 'Luyện Đề', icon: '🎓' },
-];
-
 export default async function ToeicProgressPage({
 	searchParams,
 }: {
@@ -145,52 +137,11 @@ export default async function ToeicProgressPage({
 	}
 
 	return (
-		<main className="min-h-screen bg-slate-50 pb-20">
-			<div className="bg-[#14532d] text-white pt-10 pb-10 shadow-inner">
-				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
-					<div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-						<div className="flex items-center gap-2 sm:gap-4">
-							<Link href="/toeic-practice" title="Quay lại học" className="w-12 h-12 rounded-full hover:bg-white/10 text-white flex items-center justify-center shrink-0 border border-transparent hover:border-white/20 transition-all focus:outline-none">
-								<svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-							</Link>
-							<div className="w-16 h-16 rounded-2xl bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/20 ml-2">
-								<span className="text-3xl">📈</span>
-							</div>
-							<div>
-								<h1 className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-sm">Tiến Độ Của Tôi</h1>
-								<p className="text-green-100 font-medium mt-1 opacity-90 overflow-hidden text-ellipsis whitespace-nowrap max-w-sm">Học viên {session.user?.name || session.user?.email || ''}</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-10">
-				<div className="flex flex-col gap-6">
-					{/* Top Navigation Navigation */}
-					<div className="w-full">
-						<div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto no-scrollbar">
-							<nav className="flex items-center p-2 gap-1 min-w-max">
-								{TABS.map(tab => {
-									const isActive = activeTab === tab.id;
-									return (
-										<Link 
-											key={tab.id}
-											href={`/toeic-progress?tab=${tab.id}`}
-											className={`flex items-center gap-2 px-5 py-3 rounded-xl transition-all duration-200 font-bold shrink-0 text-[15px] ${
-												isActive 
-													? 'bg-green-50 text-green-700 ring-1 ring-green-100' 
-													: 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-											}`}
-										>
-											<span className="text-lg">{tab.icon}</span>
-											{tab.label}
-										</Link>
-									);
-								})}
-							</nav>
-						</div>
-					</div>
+		<main className="min-h-screen bg-slate-50/50">
+			<div className="max-w-6xl mx-auto pt-4 pb-8 px-4 sm:px-6">
+                <Suspense fallback={<div className="h-16 w-full animate-pulse bg-slate-100 rounded-lg mb-8"></div>}>
+				    <ProgressNavigation activeTab={activeTab} />
+                </Suspense>
 
 					{/* Main Content Area */}
 					<div className="flex-1">
@@ -225,7 +176,6 @@ export default async function ToeicProgressPage({
 						{activeTab === 'reading' && <ComingSoonPlaceholder title="Tiến Độ Reading" icon="📖" />}
 						{activeTab === 'actual-test' && <ComingSoonPlaceholder title="Tiến Độ Đề Thực Tế" icon="🎓" />}
 					</div>
-				</div>
 			</div>
 		</main>
 	);
