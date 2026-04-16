@@ -3405,11 +3405,10 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('activityPoints')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'activityPoints' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>6. ACTIVITY POINTS</button>
              <button onClick={() => setActiveSection('vocabulary')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'vocabulary' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>7. VOCABULARY</button>
              <button onClick={() => setActiveSection('referral')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'referral' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>8. REFERRALS</button>
-             <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-[#ea980c]/10 text-[#ea980c] hover:bg-[#ea980c]/20'}`}>9. TOEIC</button>
+             <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>9. TOEIC</button>
              <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>10. NEWS</button>
              <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>11. GALLERY</button>
              <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>12. SUBSCRIPTION</button>
-             <button onClick={() => setActiveSection('masterConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'masterConfig' ? 'bg-[#ea980c]/10 text-[#ea980c] hover:bg-[#ea980c]/20' : 'text-slate-600 hover:bg-slate-50'}`}>13. MASTER CONFIG</button>
           </nav>
         </aside>
 
@@ -3418,10 +3417,6 @@ export default function AdminDashboard() {
             <div className="bg-white rounded shadow p-6 mb-8">
               <AdminUserManagement />
             </div>
-          )}
-
-          {activeSection === 'masterConfig' && (
-             <AdminMasterConfig />
           )}
 
           {activeSection === 'pricing' && (
@@ -3734,6 +3729,8 @@ export default function AdminDashboard() {
 
         {/* TOEIC Management Section */}
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'toeic' ? '' : 'hidden'}`}>
+          <AdminMasterConfig />
+          
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3 pb-4 border-b">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">TOEIC Practice Management</h2>

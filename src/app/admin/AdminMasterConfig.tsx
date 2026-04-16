@@ -8,6 +8,7 @@ export default function AdminMasterConfig() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [resetting, setResetting] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const fetchConfig = async () => {
     try {
@@ -98,31 +99,52 @@ export default function AdminMasterConfig() {
   ]
 
   return (
-    <div className="bg-white rounded-xl shadow p-6 flex flex-col h-full overflow-y-auto">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-2xl font-black text-slate-800">Master Configuration</h2>
-          <p className="text-sm text-slate-500 mt-1">
-            Cấu hình phân quyền mặc định cho các học liệu (Grammar Quiz, Vocabulary Flashcard).
-          </p>
+    <div className="bg-white rounded-xl shadow border border-amber-200 mb-8 overflow-hidden">
+      <button 
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-5 bg-amber-50/50 hover:bg-amber-100/50 transition-colors border-b border-amber-100"
+      >
+        <div className="flex items-center gap-3 text-left">
+          <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-amber-900">Master Configuration</h2>
+            <p className="text-sm text-amber-700/80 mt-0.5">
+              Cấu hình quyền mặc định cho khóa luyện thi TOEIC (Flashcard, Grammar).
+            </p>
+          </div>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={handleReset}
-            disabled={resetting}
-            className="px-4 py-2 bg-rose-100 text-rose-700 font-medium rounded-lg hover:bg-rose-200 transition-colors disabled:opacity-50"
-          >
-            {resetting ? 'Đang Reset...' : 'Reset Tất Cả'}
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-4 py-2 bg-[#14532d] text-white font-medium rounded-lg hover:bg-[#166534] transition-colors shadow-lg shadow-[#14532d]/20 disabled:opacity-50"
-          >
-            {saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}
-          </button>
-        </div>
-      </div>
+        <svg className={`w-6 h-6 text-amber-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="p-6 bg-white animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex items-center justify-end mb-6">
+            <div className="flex gap-3">
+              <button
+                onClick={handleReset}
+                disabled={resetting}
+                title="Thay đổi này sẽ áp dụng cấu hình và ghi đè toàn bộ Flashcard / Grammar Quiz về trạng thái của Master Config này"
+                className="px-4 py-2 bg-amber-100 text-amber-700 font-bold rounded-lg hover:bg-amber-200 transition-colors disabled:opacity-50"
+              >
+                {resetting ? 'Đang Xử Lý...' : 'Apply All'}
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-5 py-2 bg-gradient-to-r from-amber-500 to-[#ea980c] text-white font-bold rounded-lg hover:opacity-90 transition-opacity shadow-sm disabled:opacity-50"
+              >
+                {saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}
+              </button>
+            </div>
+          </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* TOEIC GRAMMAR */}
@@ -214,6 +236,8 @@ export default function AdminMasterConfig() {
           <p className="mt-4 text-xs italic text-slate-500">* Chọn cả PRO và ULTRA nếu muốn khóa hoàn toàn với tài khoản FREE.</p>
         </div>
       </div>
+        </div>
+      )}
     </div>
   )
 }
