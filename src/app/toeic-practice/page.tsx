@@ -336,10 +336,10 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				<div className="absolute bottom-0 left-[-10%] w-[300px] h-[300px] bg-green-50 rounded-full blur-[80px] -z-10"></div>
 
 				{/* Left Content */}
-				<div className="w-full lg:w-[55%] z-10">
-					<h1 className="text-5xl md:text-6xl lg:text-[72px] font-black tracking-tight leading-[1.1] mb-6 drop-shadow-sm">
-						<span className="text-[#14532d]">Chinh phục TOEIC</span><br/>
-						<span className="text-[#ea980c] inline-block mt-2" style={{ WebkitTextStroke: '1.5px #ea980c', color: 'transparent', textShadow: '4px 4px 0px rgba(234, 152, 12, 0.15)' }}>Dễ Dàng & Thú Vị!</span>
+				<div className="w-full lg:w-[55%] z-10 shrink-0">
+					<h1 className="text-[2.8rem] sm:text-5xl md:text-6xl lg:text-[72px] font-black tracking-tight leading-[1.1] mb-6 drop-shadow-sm flex flex-col">
+						<span className="text-[#14532d] block whitespace-nowrap">Chinh phục TOEIC</span>
+						<span className="text-[#ea980c] block whitespace-nowrap mt-2" style={{ WebkitTextStroke: '1.5px #ea980c', color: 'transparent', textShadow: '4px 4px 0px rgba(234, 152, 12, 0.15)' }}>Dễ Dàng & Thú Vị!</span>
 					</h1>
 					<p className="text-slate-500 text-lg md:text-xl max-w-xl mb-10 leading-relaxed font-medium">
 						Hệ thống luyện thi TOEIC theo phương pháp đặc biệt — thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao.
@@ -388,61 +388,58 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					</div>
 				</div>
 
-				{/* Right Image/Cards Area */}
-				<div className="w-full lg:w-[45%] relative h-[500px] flex items-center justify-center mt-10 lg:mt-0 z-10">
+				{/* Right Cards Area */}
+				<div className="w-full lg:w-[45%] relative h-[450px] flex items-center justify-center mt-10 lg:mt-0 z-10 mx-auto max-w-[400px]">
 					{/* Abstract Shape Behind */}
-					<div className="absolute right-0 top-10 w-[80%] h-[90%] bg-[#fde68a]/50 rounded-l-[100px] rounded-r-3xl -z-10 shadow-inner overflow-hidden">
-					    <div className="absolute bottom-0 left-[-20%] w-[200px] h-[200px] bg-[#14532d]/90 rounded-full blur-[2px]"></div>
+					<div className="absolute inset-0 bg-[#fde68a]/40 rounded-[60px] transform rotate-3 -z-10 shadow-sm overflow-hidden flex items-center justify-center">
+					    <div className="absolute bottom-[-10%] left-[-20%] w-[250px] h-[250px] bg-[#14532d]/80 rounded-full blur-[2px]"></div>
+					    <div className="absolute top-[-10%] right-[-10%] w-[200px] h-[200px] bg-amber-500/80 rounded-full blur-[2px]"></div>
 					</div>
 
-					{/* Center Image Placeholder (Can be replaced with `img` later) */}
-					<div className="relative w-[70%] max-w-[320px] h-[85%] bg-slate-200 rounded-[50px] overflow-hidden border-8 border-white shadow-2xl z-10 group flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300">
-						<div className="text-center p-6 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity">
-							<svg className="w-16 h-16 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-							<p className="text-xs font-bold leading-tight">Image Placeholder<br/>(320x450)</p>
-						</div>
-					</div>
-
-					{/* Floating Badge 1 (Top Left) */}
-					<div className="absolute top-[10%] left-[-5%] lg:left-[-15%] bg-white px-5 py-4 rounded-[24px] shadow-2xl flex items-center gap-4 z-20 hover:-translate-y-2 transition-all duration-300 border border-slate-50">
-						<div className="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center shadow-inner">
-							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-						</div>
-						<div>
-							<div className="text-slate-500 font-bold text-[10px] uppercase tracking-wider mb-0.5">Grammar</div>
-							<div className="font-black text-slate-800 text-lg leading-none">{stats.grammarTopics}+ <span className="text-sm font-medium text-slate-600">Bài học</span></div>
-						</div>
-					</div>
-
-					{/* Floating Badge 2 (Middle Left) */}
-					<div className="absolute top-[45%] left-[-10%] lg:left-[-25%] bg-white px-5 py-4 rounded-[24px] shadow-2xl flex items-center gap-4 z-20 hover:-translate-y-2 transition-all duration-300 border border-slate-50">
-						<div className="w-12 h-12 border-4 border-red-500 rounded-full flex items-center justify-center bg-white shadow-inner relative overflow-hidden">
-							<div className="absolute inset-0 bg-red-100"></div>
-							<svg className="w-5 h-5 text-red-600 relative z-10" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
-						</div>
-						<div>
-							<div className="font-black text-slate-800 text-lg leading-tight">{stats.vocabularies}+</div>
-							<div className="text-slate-500 font-medium text-xs">Từ vựng TOEIC</div>
-						</div>
-					</div>
-
-					{/* Floating Badge 3 (Bottom Right - Student Count) */}
-					<div className="absolute bottom-[5%] right-[-5%] lg:right-[-10%] bg-white px-5 py-4 flex flex-col items-center rounded-[30px] shadow-2xl z-30 hover:-translate-y-2 transition-all duration-300 border border-slate-50">
-						<div className="flex items-center gap-3 w-full mb-3">
-							<div className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center">
-								<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-							</div>
-							<div>
-								<div className="font-black text-slate-800 text-xl leading-none">{stats.users}</div>
-								<div className="text-slate-500 text-[11px] font-medium mt-1">Học viên tham gia</div>
+					<div className="flex flex-col gap-6 w-[80%] z-20">
+						{/* Badge 1 */}
+						<div className="bg-white/95 backdrop-blur-sm px-6 py-5 rounded-[24px] shadow-xl flex items-center justify-between border border-white hover:-translate-y-1 transition duration-300 transform -rotate-2">
+							<div className="flex gap-4 items-center">
+								<div className="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center shadow-inner shrink-0">
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+								</div>
+								<div>
+									<div className="text-slate-500 font-bold text-[11px] uppercase tracking-wider mb-1">Chủ đề Ngữ pháp</div>
+									<div className="font-black text-slate-800 text-xl leading-none">{stats.grammarTopics}+</div>
+								</div>
 							</div>
 						</div>
-						<div className="flex w-full mt-1 border-t border-slate-100 pt-3 relative">
-							<div className="flex -space-x-3">
-								<div className="w-8 h-8 rounded-full border-2 border-white bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">U1</div>
-								<div className="w-8 h-8 rounded-full border-2 border-white bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">U2</div>
-								<div className="w-8 h-8 rounded-full border-2 border-white bg-rose-100 text-rose-600 flex items-center justify-center text-xs font-bold">U3</div>
-								<div className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold shadow-sm">+{stats.users > 3 ? stats.users - 3 : 0}</div>
+
+						{/* Badge 2 */}
+						<div className="bg-white/95 backdrop-blur-sm px-6 py-5 rounded-[24px] shadow-xl flex items-center justify-between border border-white hover:-translate-y-1 transition duration-300 transform rotate-1 translate-x-6">
+							<div className="flex gap-4 items-center">
+								<div className="w-12 h-12 border-4 border-red-500 bg-red-50 rounded-full flex items-center justify-center shadow-inner shrink-0 leading-none">
+									<svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+								</div>
+								<div>
+									<div className="text-slate-500 font-bold text-[11px] uppercase tracking-wider mb-1">Từ vựng TOEIC</div>
+									<div className="font-black text-slate-800 text-xl leading-none">{stats.vocabularies}+</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Badge 3 */}
+						<div className="bg-white/95 backdrop-blur-sm px-6 py-5 rounded-[24px] shadow-xl flex items-center justify-between border border-white hover:-translate-y-1 transition duration-300 transform -rotate-1">
+							<div className="flex gap-4 items-center">
+								<div className="w-12 h-12 bg-[#14532d]/10 text-[#14532d] rounded-full flex flex-col items-center justify-center shrink-0">
+									<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+								</div>
+								<div>
+									<div className="text-slate-500 font-bold text-[11px] uppercase tracking-wider mb-1">Học viên gia nhập</div>
+									<div className="font-black text-slate-800 text-xl leading-none flex items-center gap-2">
+										{stats.users}
+										<div className="flex -space-x-1.5 ml-1">
+											<div className="w-5 h-5 rounded-full bg-blue-100 border border-white"></div>
+											<div className="w-5 h-5 rounded-full bg-green-100 border border-white"></div>
+											<div className="w-5 h-5 rounded-full bg-rose-100 border border-white"></div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

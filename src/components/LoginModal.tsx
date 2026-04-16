@@ -28,7 +28,14 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGuest = false, onGuest, subtitle }: LoginModalProps) {
   const [googleLoading, setGoogleLoading] = useState(false)
+  const [isToeicDomain, setIsToeicDomain] = useState(false)
   const isZaloInAppBrowser = typeof navigator !== 'undefined' && /zalo/i.test(navigator.userAgent || '')
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsToeicDomain(window.location.hostname.includes('toeicmore'))
+    }
+  }, [])
 
   useEffect(() => {
     if (isOpen) {
@@ -104,7 +111,11 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               </div>
               
               <h2 className="text-xl font-bold tracking-tight text-slate-900" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-                Chào mừng bạn đến với <span className="text-[#14532d]">English</span><span className="text-amber-500">More</span>
+                Chào mừng bạn đến với {isToeicDomain ? (
+                  <span><span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span></span>
+                ) : (
+                  <span><span className="text-[#14532d]">English</span><span className="text-amber-500">More</span></span>
+                )}
               </h2>
               <p className="mt-3 text-[15px] font-bold text-slate-700">
                 {subtitle || 'Đăng nhập để lưu và theo dõi tiến độ học tập'}
