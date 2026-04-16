@@ -729,7 +729,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         return (
                           <div className="mt-6 flex flex-col gap-4 w-full">
                             {/* Prev + Result + Next Row */}
-                            <div className={`flex flex-row items-center justify-between gap-3 w-full p-2 md:p-3 rounded-2xl shadow-sm transition-all overflow-hidden ${isShowingResultLocal ? (isCorrectLocal ? 'bg-emerald-50 border-2 border-emerald-500/30' : 'bg-rose-50 border-2 border-rose-500/30') : 'bg-slate-50 border border-slate-200'}`}>
+                            <div className={`flex flex-row items-center justify-between gap-3 w-full p-2 md:p-3 rounded-2xl shadow-sm transition-all ${isShowingResultLocal ? (isCorrectLocal ? 'bg-emerald-50 border-2 border-emerald-500/30' : 'bg-rose-50 border-2 border-rose-500/30') : 'bg-slate-50 border border-slate-200'}`}>
                               <button
                                 onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
                                 disabled={activeQuestionIndex === 0}
@@ -777,12 +777,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         >
                                           <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                                           
-                                          {/* Lock icon overlay */}
-                                          <div className={`absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center shadow-sm ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'bg-purple-100 border border-purple-300 text-purple-700' : 'bg-amber-100 border border-amber-300 text-amber-700'}`}>
-                                             <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                          {/* Lock icon overlay without outer border */}
+                                          <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}>
+                                             <svg className="w-4 h-4 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
                                           </div>
                                         </button>
-                                        <span className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-white bg-slate-800 px-3 py-1.5 rounded shadow-lg pointer-events-none z-10 block">
+                                        <span className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-[11px] md:text-xs font-semibold text-[#14532d] bg-white border border-[#14532d]/20 px-3 py-1.5 rounded shadow-lg pointer-events-none z-50 block">
                                             Nâng cấp {currentLesson.bookmarkAccessTier} để bookmark tài liệu
                                         </span>
                                       </div>
