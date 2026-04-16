@@ -338,6 +338,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                     <span className="text-slate-700">Nhân đôi Activity Points (x2)</span>
                   </li>
+                  <li className="flex items-start gap-3">
+                    <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <span className="text-slate-700 border-b border-amber-200 border-dashed pb-0.5">Mở khoá Sổ Tay Ngữ Pháp & Luyện Đọc</span>
+                  </li>
                   <li className="flex items-start gap-3 opacity-40">
                     <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                     <span className="text-slate-500 line-through">Chữa Speaking/Writing 1-1 AI</span>

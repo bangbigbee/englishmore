@@ -25,6 +25,11 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+    const isPremium = session.user.role === 'admin' || session.user.tier === 'PRO' || session.user.tier === 'ULTRA';
+    if (!isPremium) {
+      return NextResponse.json({ error: 'Forbidden. Premium feature.' }, { status: 403 })
+    }
+
     const { questionId, isBookmarked } = await req.json()
     if (!questionId) return NextResponse.json({ error: 'Bad request' }, { status: 400 })
 

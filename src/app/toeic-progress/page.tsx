@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import VocabularyFilter from "./VocabularyFilter";
 import VocabularyDashboard from "./VocabularyDashboard";
 import GrammarBank from "./GrammarBank";
+import ReadingBank from "./ReadingBank";
 import ProgressNavigation from "./ProgressNavigation";
 
 export const metadata = {
@@ -173,7 +174,17 @@ export default async function ToeicProgressPage({
 							</Suspense>
 						)}
 						{activeTab === 'listening' && <ComingSoonPlaceholder title="Tiến Độ Listening" icon="🎧" />}
-						{activeTab === 'reading' && <ComingSoonPlaceholder title="Tiến Độ Reading" icon="📖" />}
+						{activeTab === 'reading' && (
+							<div>
+								<div className="mb-6">
+									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Luyện Đọc</h2>
+									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi dài và khó trong Part 6-7 bạn đã lưu lại</p>
+								</div>
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
+									<ReadingBank />
+								</Suspense>
+							</div>
+						)}
 						{activeTab === 'actual-test' && <ComingSoonPlaceholder title="Tiến Độ Đề Thực Tế" icon="🎓" />}
 					</div>
 			</div>
