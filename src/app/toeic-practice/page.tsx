@@ -493,7 +493,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const [showExampleVi, setShowExampleVi] = useState(false);
 	const [speechSupported, setSpeechSupported] = useState(false);
 
-	const [vocabTags, setVocabTags] = useState<Record<number, { learned?: boolean, hard?: boolean, bookmarked?: boolean }>>({});
+	const [vocabTags, setVocabTags] = useState<Record<string, { learned?: boolean, hard?: boolean, bookmarked?: boolean }>>({});
 	// Speed Challenge State
 	const [challengeExpanded, setChallengeExpanded] = useState(false);
 	const [challengePreCtd, setChallengePreCtd] = useState<number | null>(null);
@@ -516,6 +516,29 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const pronunciationRecognitionRef = useRef<any>(null);
 	const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null);
 	const pronunciationRewardAudioRef = useRef<HTMLAudioElement | null>(null);
+
+	useEffect(() => {
+		if (session) {
+			const fetchTags = async () => {
+				try {
+					const res = await fetch('/api/toeic/vocabulary/tags');
+					if (res.ok) {
+						const data = await res.json();
+						if (data.tags) {
+							const tagsMap: Record<string, { learned?: boolean, hard?: boolean, bookmarked?: boolean }> = {};
+							data.tags.forEach((t: any) => {
+								tagsMap[t.vocabId] = { learned: t.isLearned, hard: t.isHard, bookmarked: t.isBookmarked };
+							});
+							setVocabTags(tagsMap);
+						}
+					}
+				} catch (e) {
+					console.error('Failed to fetch vocab tags', e);
+				}
+			};
+			fetchTags();
+		}
+	}, [session]);
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return;
@@ -777,21 +800,43 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		}, 150);
 	};
 
-	const toggleTag = (wordId: number, tag: 'learned' | 'hard' | 'bookmarked') => {
+	const toggleTag = async (wordId: string, tag: 'learned' | 'hard' | 'bookmarked') => {
 		if (!session) {
 			onPracticeClick(selectedTopic || undefined, false);
 			return;
 		}
+		
+		// Optimistic UI update
+		let updatedState = false;
+		let updatedTagData: any = {};
+		
 		setVocabTags(prev => {
 			const current = prev[wordId] || {};
 			const newTags = { ...prev, [wordId]: { ...current, [tag]: !current[tag] } };
 			if (tag === 'learned' && newTags[wordId].learned) newTags[wordId].hard = false;
 			if (tag === 'hard' && newTags[wordId].hard) newTags[wordId].learned = false;
-			if (typeof window !== 'undefined') {
-				localStorage.setItem(`vocab-tags-${session?.user?.id || 'guest'}`, JSON.stringify(newTags));
-			}
+			
+			updatedState = newTags[wordId][tag] as boolean;
+			updatedTagData = newTags[wordId];
+			
 			return newTags;
 		});
+
+		// Backend sync
+		try {
+			await fetch('/api/toeic/vocabulary/tags', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					vocabId: wordId,
+					isLearned: updatedTagData.learned,
+					isHard: updatedTagData.hard,
+					isBookmarked: updatedTagData.bookmarked,
+				}),
+			});
+		} catch (error) {
+			console.error('Failed to sync tag', error);
+		}
 	};
 
 	const setupChallengeRound = (roundIdx: number, wList = challengeWords) => {

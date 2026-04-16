@@ -1,0 +1,83 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+
+export async function GET(req: NextRequest) {
+	try {
+		const session = await getServerSession(authOptions);
+		if (!session?.user?.email) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		const user = await prisma.user.findUnique({
+			where: { email: session.user.email },
+			select: { id: true },
+		});
+
+		if (!user) {
+			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+		}
+
+		const tags = await prisma.vocabularyTag.findMany({
+			where: { userId: user.id },
+		});
+
+		return NextResponse.json({ tags });
+	} catch (error) {
+		console.error('Error fetching vocabulary tags:', error);
+		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+	}
+}
+
+export async function POST(req: NextRequest) {
+	try {
+		const session = await getServerSession(authOptions);
+		if (!session?.user?.email) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		const user = await prisma.user.findUnique({
+			where: { email: session.user.email },
+			select: { id: true },
+		});
+
+		if (!user) {
+			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+		}
+
+		const body = await req.json();
+		const { vocabId, isLearned, isHard, isBookmarked } = body;
+
+		if (!vocabId) {
+			return NextResponse.json({ error: 'Missing vocabId' }, { status: 400 });
+		}
+
+		const updateData: any = {};
+		if (isLearned !== undefined) updateData.isLearned = isLearned;
+		if (isHard !== undefined) updateData.isHard = isHard;
+		if (isBookmarked !== undefined) updateData.isBookmarked = isBookmarked;
+
+		const tag = await prisma.vocabularyTag.upsert({
+			where: {
+				userId_vocabId: {
+					userId: user.id,
+					vocabId: vocabId,
+				},
+			},
+			update: updateData,
+			create: {
+				userId: user.id,
+				vocabId: vocabId,
+				isLearned: isLearned || false,
+				isHard: isHard || false,
+				isBookmarked: isBookmarked || false,
+			},
+		});
+
+		return NextResponse.json({ tag });
+	} catch (error) {
+		console.error('Error upserting vocabulary tag:', error);
+		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+	}
+}
