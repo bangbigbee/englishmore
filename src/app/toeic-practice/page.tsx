@@ -409,9 +409,11 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			<section className="grid gap-8 md:gap-12 md:grid-cols-2 md:items-center mb-24 max-w-6xl mx-auto px-4 sm:px-6">
 				{/* Left Content */}
 				<div>
-					<h1 className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-						<span className="text-[#14532d] block line-clamp-1 break-words">Chinh phục TOEIC</span>
-						<span className="text-amber-500 block line-clamp-1 break-words mt-1">Dễ Dàng và Hiệu Quả Hơn!</span>
+					<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
+						<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-[#14532d] block line-clamp-1 break-words">Chinh phục TOEIC</span>
+						<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block line-clamp-1 break-words mt-1 lg:mt-2">
+							<span className="text-amber-500">Dễ dàng</span> <span className="text-[#14532d]">và hiệu quả hơn</span>
+						</span>
 					</h1>
 					<p className="mt-4 max-w-xl text-base sm:text-lg font-medium text-[#14532d] leading-relaxed">
 						Hệ thống luyện thi TOEIC theo phương pháp đặc biệt — thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.
@@ -453,7 +455,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Features Section */}
 			<div className="text-center mb-12">
 				<h2 className="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">
-					Trên <span className="text-[#14532d]">TOEIC</span><span className="text-[#ea980c]">MORE</span> bạn luyện được gì?
+					Trên <span className="text-[#14532d]">Toeic</span><span className="text-[#ea980c]">More</span> bạn luyện được gì?
 				</h2>
 				<p className="text-slate-500 font-medium max-w-2xl mx-auto">Hệ thống luyện tập toàn diện, từ ngữ pháp đến từ vựng, reading và luyện đề mô phỏng chuẩn xác bài thi thật.</p>
 			</div>

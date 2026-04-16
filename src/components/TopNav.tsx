@@ -263,35 +263,78 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
               </div>
             </div>
 
-            <nav className="flex-1 px-3 py-4">
-              <div className="space-y-1">
-                <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
-                  Profile
+            <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
+              <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2">Menu Cá Nhân</div>
+              
+              <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
+                <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
+                  <UserIcon />
+                </span>
+                <span className="flex-1 truncate text-[15px]">Hồ Sơ Cá Nhân</span>
+              </Link>
+              
+              <Link href="/toeic-progress" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
+                <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
+                  <svg className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  </svg>
+                </span>
+                <span className="flex-1 truncate text-[15px]">Tiến Độ Của Tôi</span>
+              </Link>
+              
+              {!isToeicDomain && (
+                <>
+                  <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
+                    <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    </span>
+                    <span className="flex-1 truncate text-[15px]">Làm Bài Tập</span>
+                  </Link>
+
+                  <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
+                    <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
+                      <BookIcon />
+                    </span>
+                    <span className="flex-1 truncate text-[15px]">Bài Học Trên Lớp</span>
+                  </Link>
+
+                  <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
+                    <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    </span>
+                    <span className="flex-1 truncate text-[15px]">Slide Bài Giảng</span>
+                  </Link>
+                </>
+              )}
+
+              <div className="py-2"><div className="h-px bg-slate-100 w-full" /></div>
+
+              {isToeicDomain ? (
+                <Link href={process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://englishmore.vn'} onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer mt-2">
+                  <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-100 shadow-sm">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                  </span>
+                  <span className="flex-1 truncate text-[15px]">Sang <span className="text-[#14532d] font-black">English</span><span className="text-[#ea980c] font-black">More</span></span>
                 </Link>
-                <Link href="/toeic-progress" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
-                  Tiến Độ Của Tôi
+              ) : (
+                <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer mt-2">
+                  <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-green-50 text-green-600 transition-colors group-hover:bg-green-100 shadow-sm">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                  </span>
+                  <span className="flex-1 truncate text-[15px]">Thử sức <span className="text-[#14532d] font-black">Toeic</span><span className="text-[#ea980c] font-black">More</span></span>
                 </Link>
-                <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
-                  Homework
-                </Link>
-                <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
-                  Exercise
-                </Link>
-                <Link href="/toeic-practice" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
-                  ToeicMore
-                </Link>
-                <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-md px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-[#ea980c]/10 hover:text-[#ea980c]">
-                  Slides
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="flex w-full items-center gap-2 rounded-md px-4 py-3 mt-4 text-sm font-semibold text-[#ea980c] transition hover:bg-[#ea980c] hover:text-white cursor-pointer"
-                >
+              )}
+
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="group mt-4 w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-rose-600 border border-transparent hover:bg-rose-50 cursor-pointer"
+              >
+                <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-rose-100/50 text-rose-500 transition-colors group-hover:bg-rose-100">
                   <LogoutIcon />
-                  Log out
-                </button>
-              </div>
+                </span>
+                <span className="flex-1 truncate text-[15px]">Đăng Xuất</span>
+              </button>
             </nav>
           </aside>
         </div>
