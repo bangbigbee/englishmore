@@ -68,18 +68,94 @@ const TABS = [
 	},
 ];
 
+const TOEIC_TOPICS_VI: Record<string, string> = {
+	"Contracts": "Hợp đồng",
+	"Marketing": "Tiếp thị",
+	"Warranties": "Bảo hành",
+	"Business Planning": "Lập kế hoạch kinh doanh",
+	"Conferences": "Hội nghị",
+	"Computers": "Máy tính",
+	"Office Technology": "Công nghệ văn phòng",
+	"Office Procedures": "Quy trình văn phòng",
+	"Electronics": "Điện tử",
+	"Correspondence": "Thư tín",
+	"Job Advertising and Recruiting": "Quảng cáo việc làm và tuyển dụng",
+	"Applying and Interviewing": "Ứng tuyển và phỏng vấn",
+	"Hiring and Training": "Tuyển dụng và đào tạo",
+	"Salaries and Benefits": "Lương và phúc lợi",
+	"Promotions, Pensions, and Awards": "Thăng tiến, lương hưu và giải thưởng",
+	"Shopping": "Mua sắm",
+	"Ordering Supplies": "Đặt hàng vật tư",
+	"Shipping": "Vận chuyển",
+	"Invoices": "Hóa đơn",
+	"Inventory": "Hàng tồn kho",
+	"Banking": "Ngân hàng",
+	"Accounting": "Kế toán",
+	"Investments": "Đầu tư",
+	"Taxes": "Thuế",
+	"Financial Statements": "Báo cáo tài chính",
+	"Property and Departments": "Tài sản và các phòng ban",
+	"Board Meetings and Committees": "Họp hội đồng và ủy ban",
+	"Quality Control": "Kiểm soát chất lượng",
+	"Product Development": "Phát triển sản phẩm",
+	"Renting and Leasing": "Thuê và cho thuê",
+	"Selecting a Restaurant": "Chọn nhà hàng",
+	"Eating Out": "Ăn ngoài",
+	"Ordering Lunch": "Đặt bữa trưa",
+	"Cooking as a Career": "Nghề nấu ăn",
+	"Events": "Sự kiện",
+	"General Travel": "Du lịch tổng quan",
+	"Airlines": "Hàng không",
+	"Trains": "Tàu hỏa",
+	"Hotels": "Khách sạn",
+	"Car Rentals": "Thuê xe ô tô",
+	"Movies": "Phim ảnh",
+	"Theater": "Nhà hát",
+	"Music": "Âm nhạc",
+	"Museums": "Bảo tàng",
+	"Media": "Truyền thông",
+	"Doctor's Office": "Phòng khám bác sĩ",
+	"Dentist's Office": "Phòng khám nha khoa",
+	"Health Insurance": "Bảo hiểm y tế",
+	"Hospitals": "Bệnh viện",
+	"Pharmacy": "Hiệu thuốc",
+	"WarmUp": "Khởi động",
+	"REVIEW 1": "Ôn tập 1",
+	"REVIEW 2": "Ôn tập 2",
+	"REVIEW 3": "Ôn tập 3",
+	"CUSTOMER SERVICE & COMMUNICATION": "Dịch vụ khách hàng & Giao tiếp",
+	"Customer Service & Communication": "Dịch vụ khách hàng & Giao tiếp"
+};
+
+const getTopicVietnamese = (en: string): string => {
+	// If it already contains a hyphen like "En - Vi", return the "Vi" part
+	if (en.includes(' - ')) {
+		return en.split(' - ')[1].trim();
+	}
+	const upper = en.toUpperCase();
+	for (const key of Object.keys(TOEIC_TOPICS_VI)) {
+		if (key.toUpperCase() === upper) return TOEIC_TOPICS_VI[key];
+	}
+	return "Từ vựng TOEIC";
+};
+
 const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: any) => {
+	// Auto translate subtitle for vocabulary if none provided
+	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
+	// Extract main title if it has hyphen
+	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
+
 	return (
 		<div
 			onClick={onClick}
 			className="relative group bg-white rounded-xl p-8 transition-transform duration-500 cursor-pointer overflow-hidden
-								 shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start min-h-[310px] border border-slate-200
+								 shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start min-h-[220px] border border-slate-200
 								 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]"
 		>
 
 			<div className="relative z-10 flex-1">
 				<h3 className="font-bold text-[22px] text-black leading-snug mb-4 group-hover:text-[#14532d] transition-colors duration-300">
-					{title}
+					{displayTitle}
 				</h3>
 
 				{badgeText && (
@@ -88,7 +164,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 					</div>
 				)}
 
-				{subtitle && <p className="text-[15px] text-slate-500 font-normal leading-relaxed">{subtitle}</p>}
+				{displaySubtitle && <p className="text-[15px] text-slate-500 font-normal leading-relaxed">{displaySubtitle}</p>}
 			</div>
 
 			{type === 'grammar' ? (
@@ -101,15 +177,13 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 				</div>
 			) : (
 				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="perspective-[1000px] w-32 h-24">
+					<div className="perspective-[1000px] w-32 h-11">
 						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-							<div className="absolute inset-0 w-full h-full bg-[#14532d] shadow-lg flex flex-col items-center justify-center gap-0.5 p-2 [backface-visibility:hidden] border-l-[3px] border-l-green-400">
-								<span className="text-2xl drop-shadow-sm mb-1">🍎</span>
-								<span className="text-white font-black text-[13px] tracking-widest leading-none">FLIP ME</span>
-								<span className="text-green-200/80 font-medium text-[11px] tracking-wide mt-0.5">/flɪp miː/</span>
+							<div className="absolute inset-0 w-full h-full bg-[#20633b] shadow-md flex items-center justify-center [backface-visibility:hidden]">
+								<span className="text-white font-semibold text-[14px]">Flip me</span>
 							</div>
-							<div className="absolute inset-0 w-full h-full bg-amber-500 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden border-r-[3px] border-r-amber-300">
-								<svg className="w-8 h-8 text-white opacity-0 -translate-x-8 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div className="absolute inset-0 w-full h-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+								<svg className="w-6 h-6 text-white opacity-0 -translate-x-8 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
 								</svg>
 							</div>
@@ -785,7 +859,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 										key={t.topic}
 										type="vocabulary"
 										title={t.topic}
-										badgeText={`${t.wordCount} words`}
+										badgeText={`${t.wordCount} từ`}
 										onClick={() => openTopic(t.topic)}
 									/>
 								))}
