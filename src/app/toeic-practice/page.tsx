@@ -169,7 +169,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 
 			{type === 'grammar' ? (
 				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-indigo-600 transition-transform duration-300 group-hover:scale-110 border border-slate-50">
+					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-green-600 transition-transform duration-300 group-hover:scale-110 border border-slate-50">
 						<svg className="w-7 h-7 ml-0.5 opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
 						</svg>
@@ -177,13 +177,13 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar' }: an
 				</div>
 			) : (
 				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="perspective-[1000px] w-32 h-11">
+					<div className="perspective-[1000px] w-[116px] h-[38px]">
 						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
 							<div className="absolute inset-0 w-full h-full bg-[#20633b] shadow-md flex items-center justify-center [backface-visibility:hidden]">
-								<span className="text-white font-semibold text-[14px]">Flip me</span>
+								<span className="text-white font-semibold text-[13px]">Flip me over</span>
 							</div>
 							<div className="absolute inset-0 w-full h-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-								<svg className="w-6 h-6 text-white opacity-0 -translate-x-8 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg className="w-5 h-5 text-white opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
 								</svg>
 							</div>
