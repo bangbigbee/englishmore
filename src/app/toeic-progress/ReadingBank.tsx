@@ -133,7 +133,7 @@ export default async function ReadingBank({ filter = 'mistakes' }: { filter?: st
 						className="block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group relative"
 					>
                         {isMistakes && item.selectedOption && (
-                            <div className="absolute top-4 right-4 text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 opacity-90 text-[11px] font-bold">
+                            <div className="absolute top-4 right-4 text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 opacity-90 text-[10px] font-bold">
                                 CÂU SAI
                             </div>
                         )}

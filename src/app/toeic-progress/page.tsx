@@ -89,8 +89,8 @@ async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?
 							</span>
 							<div className="flex gap-1.5">
 								{tag.isHard && (
-									<span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-50 text-rose-600 border border-rose-100 shadow-sm" title="Câu làm sai">
-										<svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+									<span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-50 text-rose-600 border border-rose-100 shadow-sm" title="Từ khó">
+										<span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(244,63,94,0.3)]" />
 									</span>
 								)}
 								{tag.isBookmarked && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-50 text-[#ea980c] border border-amber-100 text-xs shadow-sm" title="Câu đã lưu">⭐</span>}

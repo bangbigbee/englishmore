@@ -53,7 +53,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 					{[
 						{ id: 'all', label: 'Tất cả trạng thái', icon: '🌈', activeClass: 'bg-slate-800 text-white' },
 						{ id: 'bookmarked', label: '⭐ Câu đã lưu', icon: '⭐', activeClass: 'bg-[#ea980c] text-white' },
-						{ id: 'hard', label: '❌ Câu làm sai', icon: '❌', activeClass: 'bg-rose-600 text-white' },
+						{ id: 'hard', label: '● Từ khó', icon: '●', activeClass: 'bg-rose-600 text-white' },
 						{ id: 'learned', label: '✓ Đã thuộc', icon: '✓', activeClass: 'bg-green-600 text-white' }
 					].map(tag => (
 						<button 
