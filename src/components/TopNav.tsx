@@ -292,17 +292,45 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                               </button>
                           );
                       })}
-                      <Link
-                          href="/about"
+                      <a
+                          href="https://englishmore.bigbee.ltd"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
                           onClick={() => setIsMenuOpen(false)}
                       >
                           <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-slate-50 text-slate-400 group-hover:bg-slate-100">
                               <div className="scale-[0.8] text-slate-500 opacity-60">
+                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+                              </div>
+                          </span>
+                          <span className="flex-1 truncate text-[14px]">Luyện phát âm</span>
+                      </a>
+                      <a
+                          href="https://englishmore.bigbee.ltd"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
+                          onClick={() => setIsMenuOpen(false)}
+                      >
+                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-slate-50 text-slate-400 group-hover:bg-slate-100">
+                              <div className="scale-[0.8] text-slate-500 opacity-60">
+                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
+                              </div>
+                          </span>
+                          <span className="flex-1 truncate text-[14px]">Tiếng Anh giao tiếp</span>
+                      </a>
+                      <Link
+                          href="/about"
+                          className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
+                          onClick={() => setIsMenuOpen(false)}
+                      >
+                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-blue-50 text-blue-500 group-hover:bg-blue-100">
+                              <div className="scale-[0.8]">
                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
                               </div>
                           </span>
-                          <span className="flex-1 truncate text-[14px]">About ToeicMore</span>
+                          <span className="flex-1 truncate text-[14px]">About <span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span></span>
                       </Link>
                       </>
                     ) : (
@@ -493,16 +521,42 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                        <>
                            <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[200px] rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5 flex flex-col gap-1">
                                {isToeicDomain && (
-                                   <Link
-                                       href="/about"
-                                       onClick={() => setIsDropdownOpen(false)}
-                                       className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
-                                   >
-                                       <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-slate-100 text-slate-500">
-                                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
-                                       </span>
-                                       About ToeicMore
-                                   </Link>
+                                   <>
+                                       <a
+                                           href="https://englishmore.bigbee.ltd"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           onClick={() => setIsDropdownOpen(false)}
+                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
+                                       >
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-slate-100 text-slate-500">
+                                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+                                           </span>
+                                           Luyện phát âm
+                                       </a>
+                                       <a
+                                           href="https://englishmore.bigbee.ltd"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           onClick={() => setIsDropdownOpen(false)}
+                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
+                                       >
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-slate-100 text-slate-500">
+                                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
+                                           </span>
+                                           Tiếng Anh giao tiếp
+                                       </a>
+                                       <Link
+                                           href="/about"
+                                           onClick={() => setIsDropdownOpen(false)}
+                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
+                                       >
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-blue-50 text-blue-500">
+                                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
+                                           </span>
+                                           About <span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span>
+                                       </Link>
+                                   </>
                                )}
                                {session && (
                                    <button
