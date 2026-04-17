@@ -79,9 +79,9 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   return (
     <>
       {/* Desktop Main Navigation Tabs */}
-      <div className="hidden lg:flex items-center gap-4 xl:gap-8 overflow-x-auto pt-1 w-full justify-start ml-2 mr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="hidden lg:flex items-center gap-3 xl:gap-5 overflow-x-auto pt-1 w-full justify-start ml-2 mr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {session ? (
-          <>
+          <div className="flex items-center gap-2 xl:gap-3 shrink-0">
             <Link
               href="/user/profile"
               className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
@@ -129,7 +129,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                  Tiến Độ Của Tôi
               </span>
             </Link>
-          </>
+          </div>
         ) : (
           <button
             onClick={handleLoginClick}
@@ -190,6 +190,24 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
               </Link>
             )
           })
+        )}
+
+        {session && (
+          <>
+            <div className="w-[1px] h-5 bg-[#14532d]/20 mx-1 shrink-0"></div>
+            <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap px-3 py-1.5 rounded-[12px] bg-rose-50 hover:bg-rose-100/80 border border-rose-100 hover:border-rose-200 shrink-0"
+            >
+                <span className="transition-transform duration-300 scale-100 group-hover:scale-110 text-rose-500">
+                  <LogoutIcon />
+                </span>
+                <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-rose-600 border-transparent">
+                  Đăng Xuất
+                </span>
+            </button>
+          </>
         )}
       </div>
 
@@ -306,6 +324,21 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                               </Link>
                           );
                       })
+                    )}
+                    
+                    {session && (
+                      <div className="mt-8 pt-4 border-t border-slate-100">
+                        <button
+                            type="button"
+                            onClick={() => signOut({ callbackUrl: '/' })}
+                            className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer text-rose-600 border border-transparent hover:border-rose-100 hover:bg-rose-50"
+                        >
+                            <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors bg-rose-50 text-rose-500">
+                                <LogoutIcon />
+                            </span>
+                            <span className="flex-1 truncate text-[15px]">Đăng Xuất</span>
+                        </button>
+                      </div>
                     )}
                 </nav>
             </aside>
