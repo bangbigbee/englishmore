@@ -1483,7 +1483,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									</p>
 
 									{/* Front Face Nav */}
-									<div className="absolute inset-x-0 px-6 bottom-5 flex items-center justify-between pointer-events-auto" onClick={e => e.stopPropagation()}>
+									<div className="absolute inset-x-0 px-4 bottom-1 sm:bottom-3 flex items-center justify-between pointer-events-auto" onClick={e => e.stopPropagation()}>
 										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-white/80 transition hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
 											<svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 											Prev
@@ -1625,7 +1625,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									</div>
 
 									{/* Back Face Nav */}
-									<div className="absolute inset-x-0 px-6 bottom-5 flex items-center justify-between pointer-events-auto z-50 bg-gradient-to-t from-white via-white to-transparent pt-6 pb-2" onClick={e => e.stopPropagation()}>
+									<div className="absolute inset-x-0 px-4 bottom-1 sm:bottom-3 flex items-center justify-between pointer-events-auto z-50 bg-gradient-to-t from-white via-white to-transparent pt-8 pb-1" onClick={e => e.stopPropagation()}>
 										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-slate-500 transition hover:text-[#14532d] disabled:opacity-30 disabled:cursor-not-allowed">
 											<svg className="w-5 h-5 text-green-600 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 											Prev
@@ -1680,16 +1680,18 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 							{challengeExpanded && (
 								<div className="p-8 text-center border-t border-indigo-50 animate-in slide-in-from-top-4 duration-300">
-									<h3 className="text-xl font-black text-slate-800 mb-2">Bạn đã tự tin nhớ bao nhiêu % từ vựng ở đây?</h3>
-									<p className="text-slate-500 mb-6 font-medium">Tham gia Speed Challenge này nhé? Bạn có trung bình 3 giây để nhìn nhanh ý nghĩa của mỗi từ.</p>
-									<p className="text-[12px] text-slate-400 font-medium mb-6 bg-slate-50 p-3 rounded-xl inline-block border border-slate-100">
-										{!session ? "Lưu ý: Bạn đang là khách nên chỉ được tham gia 1 lần / 24 giờ. Vui lòng đăng nhập để có thêm lượt." : (!isPro && !isUltra) ? "Lưu ý: Bạn được tham gia 2 lần / 24 giờ. Nâng cấp tài khoản để làm lại không giới hạn." : "Tài khoản cao cấp: Bạn được tham gia thử thách không giới hạn."}
-									</p>
-									<div className="block">
+									<h3 className="text-xl font-black text-slate-800 mb-2">Hãy bắt đầu thử thách này chỉ khi bạn ôn tập kỹ và thực sự sẵn sàng.</h3>
+									<p className="text-slate-500 mb-6 font-medium">Bạn có chỉ 3 giây để nhớ và chọn nghĩa cho mỗi từ.</p>
+									
+									<div className="block mb-5">
 										<button onClick={handleStartChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-95 cursor-pointer">
-											Bắt đầu thử thách ngay
+											Bắt Đầu Ngay
 										</button>
 									</div>
+
+									<p className="text-[12px] text-slate-400 font-medium bg-slate-50 p-3 rounded-xl inline-block border border-slate-100">
+										{!session ? "Lưu ý: Bạn đang là khách nên chỉ được tham gia 1 lần / 24 giờ. Vui lòng đăng nhập để có thêm lượt." : (!isPro && !isUltra) ? "Lưu ý: Bạn được tham gia 2 lần / 24 giờ. Nâng cấp tài khoản để Challenge không giới hạn." : "Tài khoản cao cấp: Bạn được tham gia thử thách không giới hạn."}
+									</p>
 								</div>
 							)}
 						</div>
