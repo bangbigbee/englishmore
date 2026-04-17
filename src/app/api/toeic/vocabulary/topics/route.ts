@@ -36,10 +36,18 @@ export async function GET() {
       });
     }
 
-    const topics = (groups as { topic: string; _count: { id: number } }[]).map((g) => ({
+    const groupedTopics = groups as { topic: string; _count: { id: number } }[];
+    const topicsNames = groupedTopics.map(g => g.topic);
+    const configs = await prisma.vocabularyTopicConfig.findMany({
+      where: { topic: { in: topicsNames } }
+    });
+    const configMap = new Map(configs.map(c => [c.topic, c]));
+
+    const topics = groupedTopics.map((g) => ({
       topic: g.topic,
       wordCount: g._count.id,
-      learnedCount: learnedCounts[g.topic] || 0
+      learnedCount: learnedCounts[g.topic] || 0,
+      packageType: configMap.get(g.topic)?.packageType || 'ADVANCED'
     }))
 
     return NextResponse.json({ topics })

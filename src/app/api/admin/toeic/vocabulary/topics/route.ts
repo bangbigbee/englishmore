@@ -38,9 +38,16 @@ export async function GET() {
       orderBy: { topic: 'asc' }
     }) as { topic: string; _count: { id: number } }[]
 
+    const topicsNames = groups.map(g => g.topic)
+    const configs = await prisma.vocabularyTopicConfig.findMany({
+      where: { topic: { in: topicsNames } }
+    })
+    const configMap = new Map(configs.map(c => [c.topic, c]))
+
     const topics = groups.map((g) => ({
       topic: g.topic,
-      wordCount: g._count.id
+      wordCount: g._count.id,
+      packageType: configMap.get(g.topic)?.packageType || 'ADVANCED'
     }))
 
     return NextResponse.json({ topics })

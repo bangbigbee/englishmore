@@ -632,13 +632,20 @@ model VocabularyItem {
   @@index([category])
 }
 
+enum VocabPackageType {
+  BASIC
+  ADVANCED
+  MIXED
+}
+
 model VocabularyTopicConfig {
-  id          String   @id @default(cuid())
-  topic       String   @unique
-  proFields   String?  @default("[]")
-  ultraFields String?  @default("[]")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String           @id @default(cuid())
+  topic       String           @unique
+  packageType VocabPackageType @default(ADVANCED)
+  proFields   String?          @default("[]")
+  ultraFields String?          @default("[]")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@index([topic])
 }

@@ -782,7 +782,7 @@ export default function AdminDashboard() {
   const [toeicVocabImportPreviewItems, setToeicVocabImportPreviewItems] = useState<VocabularyImportDraftItem[]>([])
   const [toeicVocabError, setToeicVocabError] = useState('')
   const [toeicVocabSuccess, setToeicVocabSuccess] = useState('')
-  const [toeicVocabTopics, setToeicVocabTopics] = useState<{ topic: string; wordCount: number }[]>([])
+  const [toeicVocabTopics, setToeicVocabTopics] = useState<{ topic: string; wordCount: number; packageType?: string }[]>([])
   const [toeicVocabTopicsLoading, setToeicVocabTopicsLoading] = useState(false)
   const [deletingToeicVocabTopic, setDeletingToeicVocabTopic] = useState<string | null>(null)
   const [configuringTopicLocks, setConfiguringTopicLocks] = useState<string | null>(null)
@@ -1348,6 +1348,24 @@ export default function AdminDashboard() {
       setToeicVocabError('Đã có lỗi xảy ra khi đổi tên.');
     } finally {
       setToeicVocabTopicsLoading(false);
+    }
+  };
+
+  const updateTopicPackageType = async (topic: string, packageType: string) => {
+    try {
+      const res = await fetch('/api/admin/toeic/vocabulary/topics/package', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, packageType })
+      });
+      if (res.ok) {
+        await fetchToeicVocabTopics();
+      } else {
+        const err = await res.json();
+        setToeicVocabError('Lỗi sửa gói: ' + err.error);
+      }
+    } catch(e) {
+      setToeicVocabError('Đã có lỗi xảy ra khi sửa gói.');
     }
   };
 
@@ -4241,6 +4259,7 @@ export default function AdminDashboard() {
                       <thead className="bg-amber-50/40 text-amber-900">
                         <tr>
                           <th className="px-6 py-3.5 text-left font-bold border-b border-amber-200 uppercase tracking-wider text-[11px]">Tên Bộ Từ Vựng (Chủ Đề)</th>
+                          <th className="px-6 py-3.5 text-left font-bold border-b border-amber-200 uppercase tracking-wider text-[11px] w-48">Gói (Package)</th>
                           <th className="px-6 py-3.5 text-left font-bold border-b border-amber-200 uppercase tracking-wider text-[11px] w-36">Từ Vựng</th>
                           <th className="px-6 py-3.5 text-right font-bold border-b border-amber-200 uppercase tracking-wider text-[11px] w-[350px]">Thao Tác</th>
                         </tr>
@@ -4250,6 +4269,17 @@ export default function AdminDashboard() {
                           <tr key={t.topic} className="hover:bg-amber-50/50 transition-colors group">
                             <td className="px-6 py-4">
                               <span className="font-bold text-gray-900 text-[15px]">{t.topic}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <select 
+                                value={t.packageType || 'ADVANCED'}
+                                onChange={(e) => void updateTopicPackageType(t.topic, e.target.value)}
+                                className="border border-amber-200 rounded min-w-[140px] px-2 py-1.5 text-xs bg-white font-bold text-amber-900 focus:ring-amber-500 shadow-sm cursor-pointer outline-none hover:border-amber-400 transition-colors"
+                              >
+                                <option value="BASIC">🌱 BASIC (Cơ bản)</option>
+                                <option value="ADVANCED">🔥 ADVANCED (Nâng cao)</option>
+                                <option value="MIXED">🔀 MIXED (Hỗn hợp)</option>
+                              </select>
                             </td>
                             <td className="px-6 py-4">
                               <span className="inline-flex items-center bg-amber-100/80 px-2.5 py-1 rounded-md text-xs font-bold text-amber-800 border border-amber-200/50 shadow-sm">

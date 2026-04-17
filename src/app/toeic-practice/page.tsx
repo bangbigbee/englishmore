@@ -149,7 +149,14 @@ const getTopicVietnamese = (en: string): string => {
 	return "";
 };
 
-const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress }: any) => {
+const PackageBadge = ({ pkg }: { pkg?: string }) => {
+	if (pkg === 'BASIC') return (<span className="inline-flex items-center px-2 py-1 bg-emerald-100 text-emerald-800 text-[10px] sm:text-[11px] font-black rounded-lg border border-emerald-200/50 shadow-sm leading-none z-20 pointer-events-none uppercase tracking-wider">🌱 BASIC</span>);
+	if (pkg === 'ADVANCED') return (<span className="inline-flex items-center px-2 py-1 bg-amber-100 text-amber-800 text-[10px] sm:text-[11px] font-black rounded-lg border border-amber-200/50 shadow-sm leading-none z-20 pointer-events-none uppercase tracking-wider">🔥 ADVANCED</span>);
+	if (pkg === 'MIXED') return (<span className="inline-flex items-center px-2 py-1 bg-fuchsia-100 text-fuchsia-800 text-[10px] sm:text-[11px] font-black rounded-lg border border-fuchsia-200/50 shadow-sm leading-none z-20 pointer-events-none uppercase tracking-wider">🔀 MIXED</span>);
+	return null;
+}
+
+const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress, packageType }: any) => {
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
@@ -161,7 +168,12 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 			onClick={onClick}
 			className={`relative group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
 		>
-			<div className="relative z-10 flex-1">
+            {packageType && (
+                <div className="absolute top-4 right-4 text-right">
+                    <PackageBadge pkg={packageType} />
+                </div>
+            )}
+			<div className="relative z-10 flex-1 mt-2">
 				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300 flex items-center gap-3">
 					<span className={`w-[30px] h-[30px] rounded-[8px] bg-green-700 text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
 						{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
@@ -769,9 +781,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const pathname = usePathname();
 	const router = useRouter();
 
-	const [topics, setTopics] = useState<{ topic: string; wordCount: number, learnedCount?: number }[]>([]);
+	const [topics, setTopics] = useState<{ topic: string; wordCount: number, learnedCount?: number, packageType?: string }[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [subTab, setSubTab] = useState<'practice' | 'progress'>('practice');
+	const [activePackage, setActivePackage] = useState<string>('ALL');
 
 	const initialTopic = searchParams.get('topic');
 	const [selectedTopic, setSelectedTopic] = useState<string | null>(initialTopic);
@@ -1344,18 +1357,32 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 								Chưa có chủ đề từ vựng nào. Admin cần import từ tab TOEIC.
 							</div>
 						) : (
-							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-								{topics.map((t) => (
-									<TopicCard
-										key={t.topic}
-										type="vocabulary"
-										title={t.topic}
-										badgeText={`${t.wordCount} từ`}
-										onClick={() => openTopic(t.topic)}
-										progress={{ learned: t.learnedCount || 0, total: t.wordCount }}
-									/>
-								))}
-							</div>
+                            <>
+                                <div className="flex flex-wrap gap-2 mb-6 p-1 bg-slate-100 rounded-[14px]">
+                                    {(['ALL', 'BASIC', 'ADVANCED', 'MIXED']).map(pkg => (
+                                        <button
+                                            key={pkg}
+                                            onClick={() => setActivePackage(pkg)}
+                                            className={`flex-1 min-w-[100px] px-4 py-2.5 rounded-[10px] text-[13px] sm:text-sm font-bold transition-all duration-300 ${activePackage === pkg ? 'bg-white text-[#14532d] shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                                        >
+                                            {pkg === 'ALL' ? 'Tất cả' : pkg === 'BASIC' ? '🌱 Cơ Bản' : pkg === 'ADVANCED' ? '🔥 Nâng Cao' : '🔀 Hỗn Hợp'}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                    {topics.filter(t => activePackage === 'ALL' || t.packageType === activePackage).map((t) => (
+                                        <TopicCard
+                                            key={t.topic}
+                                            type="vocabulary"
+                                            title={t.topic}
+                                            badgeText={`${t.wordCount} từ`}
+                                            onClick={() => openTopic(t.topic)}
+                                            progress={{ learned: t.learnedCount || 0, total: t.wordCount }}
+                                            packageType={t.packageType}
+                                        />
+                                    ))}
+                                </div>
+                            </>
 						)}
 					</>
 			</div>
@@ -1414,6 +1441,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							>
 								{/* ── FRONT FACE ── */}
 								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-[#14532d] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
+									<div className="absolute top-4 left-4 z-20 shadow-md">
+										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} />
+									</div>
 									<span className="absolute top-4 right-5 text-[9px] font-semibold uppercase tracking-wider text-white/50 bg-white/10 px-3 py-1 rounded-full pointer-events-none">
 										Nhấn để lật
 									</span>
