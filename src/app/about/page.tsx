@@ -8,13 +8,13 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
 	return (
-		<div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col">
+		<div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col z-0">
 			{/* Decorative Background Elements */}
-			<div className="absolute top-0 inset-x-0 h-[450px] bg-gradient-to-b from-green-900 via-[#14532d] to-slate-50 -z-10" />
-			<div className="absolute top-20 right-0 w-96 h-96 bg-amber-500/10 blur-[100px] rounded-full -z-10" />
-			<div className="absolute top-40 left-10 w-72 h-72 bg-emerald-500/15 blur-[100px] rounded-full -z-10" />
+			<div className="absolute top-0 inset-x-0 h-[450px] bg-gradient-to-b from-green-900 via-[#14532d] to-slate-50 z-[-1]" />
+			<div className="absolute top-20 right-0 w-96 h-96 bg-amber-500/10 blur-[100px] rounded-full z-[-1]" />
+			<div className="absolute top-40 left-10 w-72 h-72 bg-emerald-500/15 blur-[100px] rounded-full z-[-1]" />
 
-			<div className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-20 pb-20">
+			<div className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-20 pb-20 relative z-10">
 				
 				{/* Top Breadcrumb & Link */}
 				<Link href="/" className="inline-flex items-center gap-2 text-green-100 hover:text-white transition-colors mb-12 group drop-shadow-sm font-semibold">
@@ -40,8 +40,8 @@ export default function AboutPage() {
 								{/* User's Avatar */}
 								<img 
 									src="/avatar.jpg" 
-									alt="Thầy Nguyễn Trí Bằng - Founder ToeicMore" 
-									className="w-full h-full object-cover relative z-20"
+									alt="" 
+									className="w-full h-full object-cover relative z-20 text-transparent"
 								/>
 							</div>
 							
