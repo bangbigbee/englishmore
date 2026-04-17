@@ -201,27 +201,15 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 
 			{type === 'grammar' ? (
 				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center overflow-hidden border border-slate-50 transition-all duration-300 group-hover:scale-110 relative">
+					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center overflow-hidden border border-slate-50 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.3)]">
 						<style>{`
-							.arrows-wrapper {
-								display: flex;
-								position: absolute;
-								left: 50%;
-								transform: translateX(-42px);
-							}
-							.group:hover .arrows-wrapper {
-								animation: arrows-flow 0.5s linear infinite;
-							}
-							@keyframes arrows-flow {
-								0% { transform: translateX(-42px); }
-								100% { transform: translateX(-14px); }
+							@keyframes slide-bounce-in {
+								0% { transform: translateX(-30px); opacity: 0; }
+								70% { transform: translateX(4px); opacity: 1; }
+								100% { transform: translateX(0); opacity: 1; }
 							}
 						`}</style>
-						<div className="arrows-wrapper text-green-600">
-							<svg className="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-							<svg className="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-							<svg className="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-						</div>
+						<svg className="w-7 h-7 text-green-600 transition-transform duration-300 group-hover:translate-x-1" style={{ animation: 'slide-bounce-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
 					</div>
 				</div>
 			) : (
