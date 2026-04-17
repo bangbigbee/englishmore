@@ -16,6 +16,11 @@ export default function AdminAboutToeicMore() {
     const [grid4Title, setGrid4Title] = useState('Môi Trường Quốc Tế Đa Chiều');
     const [grid4Desc, setGrid4Desc] = useState('Nhiều năm làm việc và cọ xát trong môi trường chuẩn quốc tế. Tham gia các hội nghị, sự kiện quy mô lớn tại các quốc gia như Singapore, Hàn Quốc... mang đến góc nhìn sâu sắc và kinh nghiệm quý báu cho thế hệ sau.');
 
+    const [fbLink, setFbLink] = useState('https://www.facebook.com/bangbigbee');
+    const [fbText, setFbText] = useState('Facebook Nền Tảng');
+    const [tiktokLink, setTiktokLink] = useState('https://www.tiktok.com/@bangbigbee');
+    const [tiktokText, setTiktokText] = useState('TikTok Giao Tiếp Cơ Bản');
+
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -33,6 +38,10 @@ export default function AdminAboutToeicMore() {
                 if (data.grid3Desc) setGrid3Desc(data.grid3Desc);
                 if (data.grid4Title) setGrid4Title(data.grid4Title);
                 if (data.grid4Desc) setGrid4Desc(data.grid4Desc);
+                if (data.fbLink) setFbLink(data.fbLink);
+                if (data.fbText) setFbText(data.fbText);
+                if (data.tiktokLink) setTiktokLink(data.tiktokLink);
+                if (data.tiktokText) setTiktokText(data.tiktokText);
             })
             .finally(() => setIsLoading(false));
     }, []);
@@ -47,7 +56,9 @@ export default function AdminAboutToeicMore() {
                     grid1Title, grid1Desc,
                     grid2Title, grid2Desc,
                     grid3Title, grid3Desc,
-                    grid4Title, grid4Desc
+                    grid4Title, grid4Desc,
+                    fbLink, fbText,
+                    tiktokLink, tiktokText
                 })
             });
             if (res.ok) {
@@ -134,6 +145,25 @@ export default function AdminAboutToeicMore() {
                         <input type="text" value={grid4Title} onChange={(e) => setGrid4Title(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
                         <label className="block text-sm font-bold text-slate-700">Khối 4: Nội dung</label>
                         <textarea rows={4} value={grid4Desc} onChange={(e) => setGrid4Desc(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                    </div>
+                </div>
+
+                <div className="pt-8 pb-4">
+                    <h3 className="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2">Liên Hệ</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-4 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
+                        <label className="block text-sm font-bold text-slate-700">Facebook: Text hiển thị</label>
+                        <input type="text" value={fbText} onChange={(e) => setFbText(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                        <label className="block text-sm font-bold text-slate-700">Facebook: Đường dẫn (Link)</label>
+                        <input type="text" value={fbLink} onChange={(e) => setFbLink(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
+                        <label className="block text-sm font-bold text-slate-700">TikTok: Text hiển thị</label>
+                        <input type="text" value={tiktokText} onChange={(e) => setTiktokText(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                        <label className="block text-sm font-bold text-slate-700">TikTok: Đường dẫn (Link)</label>
+                        <input type="text" value={tiktokLink} onChange={(e) => setTiktokLink(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
                     </div>
                 </div>
 

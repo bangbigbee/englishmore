@@ -19,6 +19,8 @@ export default async function AboutPage() {
         grid2Title?: string; grid2Desc?: string;
         grid3Title?: string; grid3Desc?: string;
         grid4Title?: string; grid4Desc?: string;
+        fbLink?: string; fbText?: string;
+        tiktokLink?: string; tiktokText?: string;
     } | undefined;
     
     const title = aboutData?.title || "Thầy Nguyễn Trí Bằng";
@@ -32,6 +34,11 @@ export default async function AboutPage() {
     const grid3Desc = aboutData?.grid3Desc || "Xông pha và tích luỹ 2 năm kinh nghiệm chinh chiến trong lĩnh vực công nghệ Blockchain - xu hướng công nghệ tiên phong toàn cầu ở thời điểm hiện tại.";
     const grid4Title = aboutData?.grid4Title || "Môi Trường Quốc Tế Đa Chiều";
     const grid4Desc = aboutData?.grid4Desc || "Nhiều năm làm việc và cọ xát trong môi trường chuẩn quốc tế. Tham gia các hội nghị, sự kiện quy mô lớn tại các quốc gia như Singapore, Hàn Quốc... mang đến góc nhìn sâu sắc và kinh nghiệm quý báu cho thế hệ sau.";
+
+    const fbLink = aboutData?.fbLink || "https://www.facebook.com/bangbigbee";
+    const fbText = aboutData?.fbText || "Facebook Nền Tảng";
+    const tiktokLink = aboutData?.tiktokLink || "https://www.tiktok.com/@bangbigbee";
+    const tiktokText = aboutData?.tiktokText || "TikTok Giao Tiếp Cơ Bản";
 
 	return (
 		<div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col z-0">
@@ -58,7 +65,7 @@ export default async function AboutPage() {
 						{/* Avatar Frame Container */}
 						<div className="relative shrink-0 group">
 							<div className="absolute inset-0 bg-gradient-to-tr from-[#14532d] to-[#ea980c] rounded-full blur-xl opacity-40 scale-90 group-hover:opacity-60 transition-opacity" />
-							<a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noopener noreferrer" className="block w-40 h-40 sm:w-48 sm:h-48 rounded-full border-[6px] border-white shadow-xl overflow-hidden bg-slate-100 relative z-10 transition-transform group-hover:scale-[1.02]">
+							<a href={fbLink} target="_blank" rel="noopener noreferrer" className="block w-40 h-40 sm:w-48 sm:h-48 rounded-full border-[6px] border-white shadow-xl overflow-hidden bg-slate-100 relative z-10 transition-transform group-hover:scale-[1.02]">
 								{/* Placeholder/Initial if real image missing */}
 								<div className="absolute inset-0 flex items-center justify-center text-6xl font-black text-[#14532d] opacity-50 bg-slate-100">
 									B
@@ -71,7 +78,7 @@ export default async function AboutPage() {
 								/>
 							</a>
 							
-							<a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noopener noreferrer" className="absolute -bottom-4 right-0 md:right-auto md:-right-4 py-1.5 px-4 rounded-full bg-[#14532d] border-2 border-white shadow-lg text-white font-black text-sm z-30 flex items-center gap-1.5 hover:bg-[#166534] transition-colors cursor-pointer">
+							<a href={fbLink} target="_blank" rel="noopener noreferrer" className="absolute -bottom-4 right-0 md:right-auto md:-right-4 py-1.5 px-4 rounded-full bg-[#14532d] border-2 border-white shadow-lg text-white font-black text-sm z-30 flex items-center gap-1.5 hover:bg-[#166534] transition-colors cursor-pointer">
 								<svg className="w-4 h-4 text-[#ea980c]" viewBox="0 0 24 24" fill="currentColor">
 									<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
 								</svg>
@@ -155,7 +162,7 @@ export default async function AboutPage() {
 					
 					<div className="flex flex-wrap gap-4 items-center mb-8">
 						<a 
-							href="https://www.facebook.com/bangbigbee" 
+							href={fbLink} 
 							target="_blank" 
 							rel="noopener noreferrer" 
 							className="flex items-center gap-3 px-6 py-3.5 bg-[#eff6ff] text-[#1d4ed8] hover:bg-[#2563eb] hover:text-white rounded-2xl font-bold transition-all shadow-sm group border border-blue-100 hover:border-[#2563eb]"
@@ -163,11 +170,11 @@ export default async function AboutPage() {
 							<svg className="w-6 h-6 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
 								<path d="M9.19795 21.5H13.198V13.4901H16.8021L17.198 9.50977H13.198V7.5C13.198 6.94772 13.6457 6.5 14.198 6.5H17.198V2.5H14.198C11.4365 2.5 9.19795 4.73858 9.19795 7.5V9.50977H7.19795L6.80206 13.4901H9.19795V21.5Z"/>
 							</svg>
-							Facebook Nền Tảng
+							{fbText}
 						</a>
 						
 						<a 
-							href="https://www.tiktok.com/@bangbigbee" 
+							href={tiktokLink} 
 							target="_blank" 
 							rel="noopener noreferrer" 
 							className="flex items-center gap-3 px-6 py-3.5 bg-slate-100 text-slate-800 hover:bg-black hover:text-white rounded-2xl font-bold transition-all shadow-sm group border border-slate-200 hover:border-black"
@@ -175,7 +182,7 @@ export default async function AboutPage() {
 							<svg className="w-6 h-6 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
 								<path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.64-5.38-.21-2.22.42-4.52 1.83-6.19 1.25-1.47 3.05-2.43 4.96-2.61V13c-.92.11-1.84.45-2.58 1.05-.85.67-1.36 1.73-1.35 2.82.01 1.48 1.15 2.76 2.62 2.92 1.45.14 2.89-.78 3.29-2.18.15-.55.15-1.12.15-1.68-.02-5.32-.01-10.63-.02-15.95Z"/>
 							</svg>
-							TikTok Giao Tiếp Cơ Bản
+							{tiktokText}
 						</a>
 					</div>
 
