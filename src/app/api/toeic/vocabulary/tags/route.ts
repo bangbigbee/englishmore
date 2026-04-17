@@ -87,6 +87,9 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
 	try {
+        const { searchParams } = new URL(req.url);
+        const type = searchParams.get('type') || 'all';
+
 		const session = await getServerSession(authOptions);
 		if (!session?.user?.email) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -101,14 +104,30 @@ export async function DELETE(req: NextRequest) {
 			return NextResponse.json({ error: 'User not found' }, { status: 404 });
 		}
 
-		// Delete all tags for this user
-		await prisma.vocabularyTag.deleteMany({
-			where: { userId: user.id },
-		});
+		if (type === 'all') {
+            await prisma.vocabularyTag.deleteMany({
+                where: { userId: user.id },
+            });
+        } else if (type === 'learned') {
+            await prisma.vocabularyTag.updateMany({
+                where: { userId: user.id, isLearned: true },
+                data: { isLearned: false }
+            });
+        } else if (type === 'hard') {
+            await prisma.vocabularyTag.updateMany({
+                where: { userId: user.id, isHard: true },
+                data: { isHard: false }
+            });
+        } else if (type === 'bookmarked') {
+            await prisma.vocabularyTag.updateMany({
+                where: { userId: user.id, isBookmarked: true },
+                data: { isBookmarked: false }
+            });
+        }
 
 		revalidatePath('/toeic-progress');
 
-		return NextResponse.json({ success: true, message: 'Vocabulary progress reset successfully' });
+		return NextResponse.json({ success: true, message: `Vocabulary ${type} reset successfully` });
 	} catch (error) {
 		console.error('Error resetting vocabulary tags:', error);
 		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

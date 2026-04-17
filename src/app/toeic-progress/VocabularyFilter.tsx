@@ -9,6 +9,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 	const searchParams = useSearchParams();
     const [isTopicOpen, setIsTopicOpen] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
+    const [isResetMenuOpen, setIsResetMenuOpen] = useState(false);
 	
 	const currentTopic = searchParams.get('topic') || 'all';
 	const currentTag = searchParams.get('tag') || 'all';
@@ -26,20 +27,25 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 		router.push(`?${params.toString()}`);
 	};
 
-    const handleReset = async () => {
-        if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ trạng thái học tập (Đã thuộc, Từ khó, Đã lưu) của bộ từ vựng này không? Hành động này không thể hoàn tác.')) {
+    const handleReset = async (type: string = 'all') => {
+        let msg = 'Bạn có chắc chắn muốn xóa toàn bộ trạng thái học tập (Đã thuộc, Từ khó, Đã lưu) không?';
+        if (type === 'learned') msg = 'Bạn có chắc chắn muốn xóa trạng thái "Đã thuộc" cho tất cả từ vựng không?';
+        if (type === 'hard') msg = 'Bạn có chắc chắn muốn xóa trạng thái "Từ khó" cho tất cả từ vựng không?';
+        if (type === 'bookmarked') msg = 'Bạn có chắc chắn muốn xóa trạng thái "Đã lưu" cho tất cả từ vựng không?';
+
+        if (!confirm(msg + ' Hành động này không thể hoàn tác.')) {
             return;
         }
 
+        setIsResetMenuOpen(false);
         setIsResetting(true);
         try {
-            const res = await fetch('/api/toeic/vocabulary/tags', {
+            const res = await fetch(`/api/toeic/vocabulary/tags?type=${type}`, {
                 method: 'DELETE'
             });
 
             if (res.ok) {
                 router.refresh();
-                // To be extra sure everything reloads
                 window.location.reload();
             } else {
                 alert('Có lỗi xảy ra khi đặt lại tiến độ. Vui lòng thử lại.');
@@ -121,16 +127,46 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 					))}
 				</div>
 			</div>
-			{/* Reset Progress Button */}
-			<div className="flex justify-end pt-2">
+			{/* Reset Progress Button with Dropdown */}
+			<div className="flex justify-end pt-2 relative">
                 <button 
-                    onClick={handleReset}
+                    onClick={() => setIsResetMenuOpen(!isResetMenuOpen)}
                     disabled={isResetting}
-                    className="flex items-center gap-2 px-3 py-1.5 text-[12px] font-bold text-slate-400 hover:text-rose-600 transition-colors group"
+                    className="flex items-center gap-2 px-3 py-1.5 text-[12px] font-bold text-slate-400 hover:text-slate-600 transition-colors group"
                 >
-                    <svg className={`w-4 h-4 transition-transform duration-500 ${isResetting ? 'animate-spin' : 'group-hover:rotate-180'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    <span>{isResetting ? 'Đang đặt lại...' : 'Làm mới lộ trình (Reset)'}</span>
+                    <svg className={`w-4 h-4 transition-transform duration-500 ${isResetting ? 'animate-spin' : (isResetMenuOpen ? 'rotate-180' : 'group-hover:rotate-180')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <span>{isResetting ? 'Đang xử lý...' : 'Làm mới lộ trình'}</span>
                 </button>
+
+                <AnimatePresence>
+                    {isResetMenuOpen && (
+                        <>
+                            <div className="fixed inset-0 z-40" onClick={() => setIsResetMenuOpen(false)} />
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 10, x: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 10, x: 20 }}
+                                className="absolute bottom-full right-0 mb-2 w-48 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 overflow-hidden py-2"
+                            >
+                                <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">Tùy chọn đặt lại</div>
+                                <button onClick={() => handleReset('learned')} className="w-full text-left px-4 py-2 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-green-600 transition-colors flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Xóa "Đã thuộc"
+                                </button>
+                                <button onClick={() => handleReset('hard')} className="w-full text-left px-4 py-2 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-rose-600 transition-colors flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Xóa "Từ khó"
+                                </button>
+                                <button onClick={() => handleReset('bookmarked')} className="w-full text-left px-4 py-2 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-amber-500 transition-colors flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Xóa "Đã lưu"
+                                </button>
+                                <div className="h-px bg-slate-100 my-1" />
+                                <button onClick={() => handleReset('all')} className="w-full text-left px-4 py-2 text-[13px] font-bold text-rose-600 hover:bg-rose-50 transition-colors flex items-center gap-2">
+                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    Đặt lại toàn bộ
+                                </button>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
 			</div>
 		</div>
 	);
