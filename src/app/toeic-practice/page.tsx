@@ -1369,15 +1369,33 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	return (
 		<div>
 			{/* Header */}
-			<div className="flex flex-wrap items-center gap-3 mb-6">
-				<button
-					onClick={backToTopics}
-					className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-1"
-				>
-					← Quay lại
-				</button>
-				<h2 className="text-base font-bold text-green-900">📙 {selectedTopic}</h2>
-
+			<div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+				<div className="flex items-center gap-3">
+					<button
+						onClick={backToTopics}
+						className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-green-700 transition-colors"
+						title="Quay lại"
+					>
+						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
+					</button>
+					<div className="flex flex-col">
+						<h2 className="text-base sm:text-lg font-black text-slate-800 leading-tight">
+							{selectedTopic.replace(/^Chủ đề:\s*/i, '').split(' - ')[0]}
+						</h2>
+						{selectedTopic.includes(' - ') && (
+							<p className="text-[11px] sm:text-xs font-bold text-slate-400">
+								{selectedTopic.split(' - ')[1]}
+							</p>
+						)}
+					</div>
+				</div>
+                <Link 
+                    href="/toeic-progress"
+                    className="text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 transition-colors bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg ml-auto"
+                >
+                    <span>Sổ từ vựng</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+                </Link>
 			</div>
 
 			{vocabLoading ? (
@@ -1478,20 +1496,25 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 										</div>
 									)}
 
-									<p className="mt-8 text-xs text-white/50 font-medium tracking-wide">
-										Chủ đề: {selectedTopic}
-									</p>
+									<div className="mt-8 text-center">
+										<p className="text-[11px] sm:text-xs text-white/60 font-bold tracking-wider uppercase">
+											{selectedTopic.replace(/^Chủ đề:\s*/i, '').split(' - ')[0]}
+										</p>
+										{selectedTopic.includes(' - ') && (
+											<p className="text-[10px] sm:text-[11px] text-white/40 font-medium mt-1">
+												{selectedTopic.split(' - ')[1]}
+											</p>
+										)}
+									</div>
 
 									{/* Front Face Nav */}
 									<div className="absolute inset-x-0 px-4 bottom-1 sm:bottom-3 flex items-center justify-between pointer-events-auto" onClick={e => e.stopPropagation()}>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-white/80 transition hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
-											<svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
-											Prev
+										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center p-2 text-white/80 transition hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
+											<svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 										</button>
-										<span className="text-sm font-bold text-white/60 tracking-widest">{cardIndex + 1} / {vocabItems.length}</span>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-white/80 transition hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
-											Next
-											<svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+										<span className="text-[10px] sm:text-[11px] font-bold text-white/30 tracking-widest">{cardIndex + 1} / {vocabItems.length}</span>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center p-2 text-white/80 transition hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
+											<svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
 										</button>
 									</div>
 								</div>
@@ -1626,14 +1649,12 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 									{/* Back Face Nav */}
 									<div className="absolute inset-x-0 px-4 bottom-1 sm:bottom-3 flex items-center justify-between pointer-events-auto z-50 bg-gradient-to-t from-white via-white to-transparent pt-8 pb-1" onClick={e => e.stopPropagation()}>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-slate-500 transition hover:text-[#14532d] disabled:opacity-30 disabled:cursor-not-allowed">
-											<svg className="w-5 h-5 text-green-600 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
-											Prev
+										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center p-2 text-green-600 transition hover:text-green-800 disabled:opacity-30 disabled:cursor-not-allowed">
+											<svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 										</button>
-										<span className="text-sm font-bold text-slate-400 tracking-widest">{cardIndex + 1} / {vocabItems.length}</span>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-slate-500 transition hover:text-[#14532d] disabled:opacity-30 disabled:cursor-not-allowed">
-											Next
-											<svg className="w-5 h-5 text-green-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+										<span className="text-[10px] sm:text-[11px] font-bold text-slate-300 tracking-widest">{cardIndex + 1} / {vocabItems.length}</span>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center p-2 text-green-600 transition hover:text-green-800 disabled:opacity-30 disabled:cursor-not-allowed">
+											<svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
 										</button>
 									</div>
 								</div>
