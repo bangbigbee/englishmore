@@ -33,13 +33,7 @@ function ToeicNavTabs() {
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setIsToeicMenuOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    // Drawer handles its own overlay click
   }, [])
 
   const handleToeicTabClick = (key: string) => {
@@ -79,36 +73,65 @@ function ToeicNavTabs() {
         })}
       </div>
 
-      <div className="lg:hidden flex items-center relative ml-1 sm:ml-4" ref={menuRef}>
+      <div className="lg:hidden flex items-center relative ml-1 sm:ml-4">
         <button
-          onClick={() => setIsToeicMenuOpen(!isToeicMenuOpen)}
-          className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-50/80 hover:bg-slate-100 border border-slate-200 rounded-xl shadow-sm text-slate-700 font-bold active:scale-[0.98] transition-all"
+          onClick={() => setIsToeicMenuOpen(true)}
+          className="flex items-center justify-center w-10 h-10 bg-slate-50/80 hover:bg-slate-100 border border-slate-200 rounded-xl shadow-sm text-slate-700 active:scale-[0.98] transition-all"
         >
-          <svg className={`w-4 h-4 sm:w-5 sm:h-5 text-slate-500 transition-transform ${isToeicMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
-          <span className="truncate text-[13px] sm:text-[14px] mr-1">{(pathname.startsWith('/toeic-practice') || pathname === '/') ? (TOEIC_TABS.find(t => t.key === currentTab)?.label || 'Trang chủ') : 'Mục Toeic'}</span>
+          <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
 
-        {isToeicMenuOpen && (
-          <div className="absolute top-[120%] left-0 w-[220px] bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.12)] border border-[#14532d]/10 py-2.5 z-50 animate-in fade-in slide-in-from-top-2">
-            {TOEIC_TABS.map(t => {
-              const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
-              return (
-                <button
-                  key={t.key}
-                  className={`w-full flex items-center gap-3.5 px-4 py-3 text-left transition-colors relative`}
-                  onClick={() => {
-                    handleToeicTabClick(t.key)
-                    setIsToeicMenuOpen(false)
-                  }}
-                >
-                  {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-2/3 bg-[#ea980c] rounded-r-md" />}
-                  <div className={`scale-90 ${isActive ? (TAB_COLORS[t.key]||'text-[#14532d]') : 'text-slate-400'}`}>{t.icon}</div>
-                  <span className={`text-[15px] ${isActive ? 'font-black text-[#14532d]' : 'font-bold text-slate-600 hover:text-slate-900'}`}>{t.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
+        {/* Mobile Drawer Menu */}
+        <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isToeicMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isToeicMenuOpen}>
+            <button type="button" onClick={() => setIsToeicMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 ${isToeicMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
+            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${isToeicMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
+                    <h2 className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight">
+                        <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">T</span>
+                        ToeicMore
+                    </h2>
+                    <button onClick={() => setIsToeicMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
+                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                    </button>
+                </div>
+
+                <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
+                    <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-2">Các Chuyên Mục Học Tập</div>
+                    {TOEIC_TABS.map(t => {
+                        const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
+                        return (
+                            <button
+                                key={t.key}
+                                className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                onClick={() => {
+                                    handleToeicTabClick(t.key)
+                                    setIsToeicMenuOpen(false)
+                                }}
+                            >
+                                <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + (TAB_COLORS[t.key]||'text-[#14532d]') : 'bg-slate-100/80 text-slate-400 group-hover:bg-slate-200/80'}`}>
+                                    <div className="scale-[0.8]">{t.icon}</div>
+                                </span>
+                                <span className="flex-1 truncate text-[15px]">{t.label}</span>
+                                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0 shadow-[0_0_8px_rgba(234,152,12,0.6)]" />}
+                            </button>
+                        );
+                    })}
+
+                    <div className="py-4">
+                        <div className="h-px bg-slate-100 w-full" />
+                    </div>
+
+                    <Link href="/toeic-progress" onClick={() => setIsToeicMenuOpen(false)} className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
+                        <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-green-50">
+                            <svg className="w-5 h-5 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </span>
+                        <span className="text-[15px]">Tiến Độ Của Tôi</span>
+                    </Link>
+                </nav>
+            </aside>
+        </div>
       </div>
     </>
   )
