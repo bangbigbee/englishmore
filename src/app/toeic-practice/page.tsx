@@ -824,6 +824,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const [challengeScore, setChallengeScore] = useState(0);
 	const [challengeTimeLeft, setChallengeTimeLeft] = useState(3);
 	const [challengeResult, setChallengeResult] = useState<{show: boolean, score: number, total: number}>({show: false, score: 0, total: 0});
+	const [challengeDifficulty, setChallengeDifficulty] = useState<'high' | 'extreme'>('extreme');
+	const [copySuccess, setCopySuccess] = useState(false);
 
 	const [isPronunciationListening, setIsPronunciationListening] = useState(false);
 	const [pronunciationStatus, setPronunciationStatus] = useState('');
@@ -836,6 +838,25 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const pronunciationRecognitionRef = useRef<any>(null);
 	const pronunciationDoneAudioRef = useRef<HTMLAudioElement | null>(null);
 	const pronunciationRewardAudioRef = useRef<HTMLAudioElement | null>(null);
+
+	useEffect(() => {
+		if (searchParams.get('playChallenge') === 'true' && vocabItems.length >= 3) {
+			const diff = searchParams.get('diff');
+			if (diff === 'high' || diff === 'extreme') setChallengeDifficulty(diff);
+            setChallengeExpanded(true);
+            setTimeout(() => {
+                const el = document.getElementById('speed-challenge-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+            
+            if (typeof window !== 'undefined') {
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.delete('playChallenge');
+                newUrl.searchParams.delete('diff');
+                window.history.replaceState({}, '', newUrl.toString());
+            }
+        }
+	}, [searchParams, vocabItems.length]);
 
 	useEffect(() => {
 		if (session) {
@@ -1205,7 +1226,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		const wOpts = [...pool].sort(() => 0.5 - Math.random()).slice(0, 2).map(w => w.meaning);
 		const opts = [tWord.meaning, ...wOpts].sort(() => 0.5 - Math.random());
 		setChallengeOptions(opts);
-		setChallengeTimeLeft(3);
+		setChallengeTimeLeft(challengeDifficulty === 'high' ? 5 : 3);
 	};
 
 	const startChallenge = () => {
@@ -1233,7 +1254,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			allowed = plays.length < 1;
 		} else {
 			if (isPro || isUltra) allowed = true;
-			else allowed = plays.length < 2;
+			else allowed = plays.length < 3;
 		}
 
 		if (!allowed) {
@@ -1773,7 +1794,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 					{/* Speed Challenge Intro Section */}
 					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && challengePreCtd === null && (
-						<div className="mt-8 bg-white border border-indigo-100 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
+						<div id="speed-challenge-section" className="mt-8 bg-white border border-indigo-100 rounded-3xl overflow-hidden shadow-sm transition-all duration-300">
 							<button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between p-6 bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none">
 								<div className="flex items-center gap-3">
 									<div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
@@ -1786,9 +1807,26 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 							{challengeExpanded && (
 								<div className="p-8 text-center border-t border-indigo-50 animate-in slide-in-from-top-4 duration-300">
-									<h3 className="text-xl font-black text-slate-800 mb-2">Hãy bắt đầu thử thách này chỉ khi bạn ôn tập kỹ và thực sự sẵn sàng.</h3>
-									<p className="text-slate-500 mb-6 font-medium">Bạn có chỉ 3 giây để nhớ và chọn nghĩa cho mỗi từ.</p>
+									<h3 className="text-xl font-black text-slate-800 mb-2">Hãy chuẩn bị kỹ trước khi tham gia!</h3>
+									<p className="text-slate-500 mb-6 font-medium">Chọn tốc độ ghi nhớ phù hợp với khả năng của bạn trước khi bắt đầu.</p>
 									
+                                    <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+                                        <button 
+                                            onClick={() => setChallengeDifficulty('high')}
+                                            className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'high' ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-indigo-300 hover:text-indigo-500'}`}
+                                        >
+                                            <div className="mb-0.5">Áp lực cao</div>
+                                            <div className="text-[12px] opacity-80 font-medium">(5 giây / từ)</div>
+                                        </button>
+                                        <button 
+                                            onClick={() => setChallengeDifficulty('extreme')}
+                                            className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'extreme' ? 'bg-rose-50 border-rose-500 text-rose-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500'}`}
+                                        >
+                                            <div className="mb-0.5">Áp lực cực cao</div>
+                                            <div className="text-[12px] opacity-80 font-medium">(3 giây / từ)</div>
+                                        </button>
+                                    </div>
+
 									<div className="block mb-5">
 										<button type="button" onClick={handleStartChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full md:hover:bg-indigo-700 md:hover:shadow-lg transition-all active:scale-95 active:bg-indigo-800 cursor-pointer focus:outline-none touch-manipulation select-none">
 											Bắt Đầu Ngay
@@ -1796,7 +1834,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									</div>
 
 									<p className="text-[12px] text-slate-400 font-medium bg-slate-50 p-3 rounded-xl inline-block border border-slate-100">
-										{!session ? "Lưu ý: Bạn đang là khách nên chỉ được tham gia 1 lần / 24 giờ. Vui lòng đăng nhập để có thêm lượt." : (!isPro && !isUltra) ? "Lưu ý: Bạn được tham gia 2 lần / 24 giờ. Nâng cấp tài khoản để Challenge không giới hạn." : "Tài khoản cao cấp: Bạn được tham gia thử thách không giới hạn."}
+										{!session ? "Lưu ý: Bạn đang là khách nên chỉ được tham gia 1 lần / 24 giờ. Vui lòng đăng nhập để có thêm lượt." : (!isPro && !isUltra) ? "Lưu ý: Bạn được tham gia 3 lần / 24 giờ. Nâng cấp tài khoản để Challenge không giới hạn." : "Tài khoản cao cấp: Bạn được tham gia thử thách không giới hạn."}
 									</p>
 								</div>
 							)}
@@ -1842,6 +1880,34 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							<h3 className="text-3xl font-black mb-4 tracking-tight">🎉 Thử Thách Hoàn Tất!</h3>
 							<p className="text-indigo-200 text-lg mb-8 font-medium">Bạn đã trả lời đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ vựng.</p>
 							
+                            {challengeResult.score / Math.max(1, challengeResult.total) >= 0.8 ? (
+                                <div className="mb-8 p-6 bg-white/10 rounded-2xl border border-white/20">
+                                    <h4 className="text-xl font-bold text-amber-300 mb-2">Bạn quá xuất sắc với chủ đề này rồi!</h4>
+                                    <p className="text-indigo-100 text-sm mb-5">Chia sẻ kết quả này để thách đấu cùng bạn bè nhé.</p>
+                                    <div className="flex items-center gap-2 max-w-sm mx-auto bg-white/10 p-1.5 rounded-xl border border-white/20">
+                                        <input 
+                                            readOnly 
+                                            value={`https://englishmore.bigbee.ltd/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`} 
+                                            className="flex-1 bg-transparent text-white px-3 py-2 text-sm outline-none w-full truncate" 
+                                        />
+                                        <button 
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(`https://englishmore.bigbee.ltd/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`);
+                                                setCopySuccess(true);
+                                                setTimeout(() => setCopySuccess(false), 2000);
+                                            }} 
+                                            className="bg-indigo-500 hover:bg-indigo-400 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shrink-0 cursor-pointer"
+                                        >
+                                            {copySuccess ? 'Đã Copy' : 'Khắc Chiến'}
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="mb-8">
+                                    <h4 className="text-xl font-bold text-amber-300">Bạn đã rất nỗ lực rồi! Chúc mừng bạn nhé!</h4>
+                                </div>
+                            )}
+
 							<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 								<button onClick={handleStartChallenge} className="bg-white text-indigo-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
 									Làm Lại
