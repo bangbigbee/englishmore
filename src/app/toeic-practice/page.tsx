@@ -6,6 +6,15 @@ import UpgradeModal from "@/components/UpgradeModal";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
+const playSound = (soundFileName: string) => {
+	try {
+		const audio = new Audio(`/audio/${soundFileName}`);
+		audio.play().catch(e => console.log('Audio error:', e));
+	} catch (e) {
+		console.log(e);
+	}
+};
+
 const TABS = [
 	{ 
 		key: "home", 
@@ -1148,6 +1157,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	};
 
 	const moveCard = (dir: 'prev' | 'next') => {
+		playSound('transition-sound.mp3');
 		setIsFlipped(false);
 		setShowExampleVi(false);
 		setPronunciationStatus('');
@@ -1172,6 +1182,11 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			onPracticeClick(selectedTopic || undefined, false);
 			return;
 		}
+		
+		playSound(
+			tag === 'bookmarked' ? 'bookmark-sound.mp3' :
+			tag === 'learned' ? 'click-learned.mp3' : 'click-tough.mp3'
+		);
 		
 		const current = vocabTags[wordId] || {};
 		const isEnabling = !current[tag];
