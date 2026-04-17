@@ -201,10 +201,27 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 
 			{type === 'grammar' ? (
 				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center text-green-600 transition-transform duration-300 group-hover:scale-110 border border-slate-50">
-						<svg className="w-7 h-7 ml-0.5 opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-						</svg>
+					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center overflow-hidden border border-slate-50 transition-all duration-300 group-hover:scale-110 relative">
+						<style>{`
+							.arrows-wrapper {
+								display: flex;
+								position: absolute;
+								left: 50%;
+								transform: translateX(-42px);
+							}
+							.group:hover .arrows-wrapper {
+								animation: arrows-flow 0.5s linear infinite;
+							}
+							@keyframes arrows-flow {
+								0% { transform: translateX(-42px); }
+								100% { transform: translateX(-14px); }
+							}
+						`}</style>
+						<div className="arrows-wrapper text-green-600">
+							<svg className="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+							<svg className="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+							<svg className="w-7 h-7 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+						</div>
 					</div>
 				</div>
 			) : (
