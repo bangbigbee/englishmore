@@ -207,7 +207,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
 
         {/* Mobile Left Drawer Menu */}
         <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMenuOpen}>
-            <button type="button" onClick={() => setIsMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 touch-none overscroll-none ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
+            <div onClick={() => setIsMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 cursor-pointer ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
             <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
                     <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
@@ -299,8 +299,8 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                           className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
                           onClick={() => setIsMenuOpen(false)}
                       >
-                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-slate-50 text-slate-400 group-hover:bg-slate-100">
-                              <div className="scale-[0.8] text-slate-500 opacity-60">
+                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-amber-50 text-amber-500 group-hover:bg-amber-100">
+                              <div className="scale-[0.8] opacity-90">
                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
                               </div>
                           </span>
@@ -313,8 +313,8 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                           className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
                           onClick={() => setIsMenuOpen(false)}
                       >
-                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-slate-50 text-slate-400 group-hover:bg-slate-100">
-                              <div className="scale-[0.8] text-slate-500 opacity-60">
+                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-emerald-50 text-emerald-500 group-hover:bg-emerald-100">
+                              <div className="scale-[0.8] opacity-90">
                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
                               </div>
                           </span>
@@ -330,7 +330,9 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
                               </div>
                           </span>
-                          <span className="flex-1 truncate text-[14px]">About <span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span></span>
+                          <span className="flex-1 truncate text-[14px]">
+                              About <span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span>
+                          </span>
                       </Link>
                       </>
                     ) : (
@@ -529,7 +531,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                                            onClick={() => setIsDropdownOpen(false)}
                                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
                                        >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-slate-100 text-slate-500">
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-amber-50 text-amber-500">
                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
                                            </span>
                                            Luyện phát âm
@@ -541,7 +543,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                                            onClick={() => setIsDropdownOpen(false)}
                                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
                                        >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-slate-100 text-slate-500">
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-emerald-50 text-emerald-500">
                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
                                            </span>
                                            Tiếng Anh giao tiếp
@@ -554,7 +556,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-blue-50 text-blue-500">
                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
                                            </span>
-                                           About <span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span>
+                                           <span>About <span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span></span>
                                        </Link>
                                    </>
                                )}
