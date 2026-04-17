@@ -670,7 +670,11 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 	}
 
 	return (
-		<div>
+		<div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+                <span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
+                Các Chủ Đề Bài Học Ngữ Pháp
+            </h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 				{topics.length === 0 ? (
 					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
