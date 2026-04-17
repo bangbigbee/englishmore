@@ -66,6 +66,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isReviewing, setIsReviewing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [showPricing, setShowPricing] = useState(false)
+  const [flyingStars, setFlyingStars] = useState<{ id: number, x: number, y: number, startX: number, startY: number, endX: number, endY: number }[]>([])
+  const notebookRef = useRef<HTMLAnchorElement>(null)
+  const bookmarkBtnRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -126,6 +129,25 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             // Revert state
             setBookmarkedQuestions(prev => ({ ...prev, [questionId]: currentlyBookmarked }));
             setShowPricing(true);
+        } else if (res.ok && !currentlyBookmarked && bookmarkBtnRef.current && notebookRef.current) {
+            // Trigger flying stars
+            const btnRect = bookmarkBtnRef.current.getBoundingClientRect();
+            const targetRect = notebookRef.current.getBoundingClientRect();
+            
+            const newStar = {
+                id: Date.now(),
+                startX: btnRect.left + btnRect.width / 2,
+                startY: btnRect.top + btnRect.height / 2,
+                endX: targetRect.left + targetRect.width / 2,
+                endY: targetRect.top + targetRect.height / 2,
+                x: 0,
+                y: 0
+            };
+            
+            setFlyingStars(prev => [...prev, newStar]);
+            setTimeout(() => {
+                setFlyingStars(prev => prev.filter(s => s.id !== newStar.id));
+            }, 800);
         }
     } catch {
         // Revert state
@@ -446,6 +468,22 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* Flying Stars Animation Overlay */}
+      <AnimatePresence>
+        {flyingStars.map(star => (
+          <motion.div
+            key={star.id}
+            initial={{ x: star.startX - 10, y: star.startY - 10, opacity: 1, scale: 1.2, rotate: 0 }}
+            animate={{ x: star.endX - 10, y: star.endY - 10, opacity: 1, scale: 0.5, rotate: 360 }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
+            className="fixed z-[9999] pointer-events-none text-xl drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+            style={{ left: 0, top: 0 }}
+          >
+            ⭐
+          </motion.div>
+        ))}
+      </AnimatePresence>
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -466,6 +504,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           
           <div className="hidden md:flex items-center gap-4">
             <Link 
+                ref={notebookRef}
                 href={topic.type === 'READING' ? '/toeic-progress?tab=reading' : '/toeic-progress?tab=grammar'}
                 className="px-3 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors text-xs font-bold rounded-full border border-emerald-100 uppercase tracking-wider cursor-pointer"
                 title="Khám phá sổ tay học tập của bạn"
@@ -796,6 +835,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                                   return (
                                     <button
+                                      ref={bookmarkBtnRef}
                                       onClick={() => toggleBookmark(q.id)}
                                       className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`}
                                       aria-label="Lưu tay"
