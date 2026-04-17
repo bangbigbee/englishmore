@@ -42,7 +42,6 @@ export default function AboutPage() {
 									src="/avatar.jpg" 
 									alt="Thầy Nguyễn Trí Bằng - Founder ToeicMore" 
 									className="w-full h-full object-cover relative z-20"
-									onError={(e) => { e.currentTarget.style.display = 'none'; }}
 								/>
 							</div>
 							
