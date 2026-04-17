@@ -470,20 +470,24 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 						Luyện Part 5, 6, 7 giải thích cặn kẽ chi tiết.
 					</p>
 					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center justify-start ml-2 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-						<div className="w-[124px] h-8 bg-[#14532d]/5 border border-[#14532d]/20 rounded-md shadow flex items-center justify-center relative perspective-[1000px]">
+						<div className="w-[120px] h-8 bg-white border border-[#14532d]/20 rounded-md flex items-center justify-center relative perspective-[1000px] ml-4 shadow-[inset_0px_0px_2px_rgba(20,83,45,0.1)]">
+							{/* Book spine (gáy sách bên trái) */}
+							<div className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#14532d]/10 border-r border-[#14532d]/20 z-10 rounded-l-md" />
 							<AnimatePresence mode="popLayout">
 								<motion.div 
 									key={activePage}
-									initial={{ rotateX: -90, opacity: 0 }}
-									animate={{ rotateX: 0, opacity: 1 }}
-									exit={{ rotateX: 90, opacity: 0 }}
-									transition={{ duration: 0.3 }}
-									className="absolute font-bold text-[#14532d] text-[11px] uppercase tracking-wider text-center w-full truncate px-2"
+									initial={{ rotateY: 90, opacity: 0 }}
+									animate={{ rotateY: 0, opacity: 1 }}
+									exit={{ rotateY: -90, opacity: 0, transition: { duration: 0.1 } }}
+									transition={{ duration: 0.5, type: "spring", stiffness: 60 }}
+									style={{ transformOrigin: 'left center' }}
+									className="absolute left-[4px] top-0 right-0 bottom-0 bg-white border border-l-0 border-[#14532d]/10 rounded-r-md flex items-center justify-center shadow-[-2px_0_4px_rgba(0,0,0,0.05)] [backface-visibility:hidden]"
 								>
-									{pages[activePage]}
+									<span className="font-bold text-[#14532d] text-[10px] uppercase tracking-wider text-center px-1 truncate">
+										{pages[activePage]}
+									</span>
 								</motion.div>
 							</AnimatePresence>
-							<div className="absolute left-0 top-0 bottom-0 w-1.5 border-r border-[#14532d]/20 bg-[#14532d]/10" />
 						</div>
 					</div>
 				</div>
@@ -534,9 +538,13 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 						Luyện đề thi thử bám sát cấu trúc đề thi thực.
 					</p>
 					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center delay-100 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-						<div className="flex items-center space-x-2 text-amber-500 font-mono font-bold text-sm bg-red-50/50 px-3 py-1.5 rounded-lg border border-red-100/50 shadow-inner">
-							<svg className="w-4 h-4 animate-pulse text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-							<span className="text-red-500 tracking-wider w-[64px] text-left">{formatTime(timeLeft)}</span>
+						<div className="flex items-center space-x-0 text-amber-500 font-mono font-bold text-sm bg-red-50/50 px-2 py-1.5 rounded-lg border border-red-100/50 shadow-inner">
+                            <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10V9a9 9 0 0118 0v1m-18 0v5a2 2 0 002 2h2V10H3zm18 0v5a2 2 0 01-2 2h-2V10h4z" /></svg>
+							<div className="flex items-center space-x-1.5 mx-1.5 px-1.5 border-x border-red-200/50">
+                                <svg className="w-3.5 h-3.5 animate-pulse text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span className="text-red-500 tracking-wider w-[64px] text-left">{formatTime(timeLeft)}</span>
+                            </div>
+                            <svg className="w-4 h-4 text-[#14532d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
 						</div>
 					</div>
 				</div>
@@ -567,8 +575,12 @@ function VocabFeatureCard({ onClick, icon }: any) {
                 </div>
                 <div className="absolute inset-0 w-full h-full bg-white border-2 border-[#14532d]/20 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
                     <div className="w-full h-full flex flex-col items-center justify-center bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] p-6">
-                        <button className="bg-[#14532d] text-[#eab308] px-6 py-2.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform flex items-center gap-1.5 focus:outline-none">
-                            Bắt đầu <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        <div className="mb-3 text-center">
+                            <div className="text-[#14532d] font-bold text-xl leading-none tracking-tight">vocabulary</div>
+                            <div className="opacity-80 text-[11px] text-slate-500 font-medium mt-1">/vəˈkæbjələri/ <span className="text-amber-600 ml-1 italic font-semibold">noun</span></div>
+                        </div>
+                        <button className="bg-[#14532d] text-[#eab308] px-5 py-2 rounded-full text-sm font-bold shadow-md hover:scale-105 transition-transform flex items-center gap-1.5 focus:outline-none relative z-10 w-max">
+                            Học Ngay <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </button>
                     </div>
                 </div>
