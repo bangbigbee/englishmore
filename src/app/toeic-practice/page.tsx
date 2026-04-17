@@ -254,7 +254,11 @@ function ToeicPracticeContent() {
 
 	useEffect(() => {
 		const t = searchParams.get('tab');
-		if (t && TABS.some(item => item.key === t)) setTab(t);
+		if (t && TABS.some(item => item.key === t)) {
+            setTab(t);
+        } else if (!t) {
+            setTab('home');
+        }
 	}, [searchParams]);
 
 	const openLoginModal = (destination?: string, allowGuest = true) => {
@@ -1338,13 +1342,6 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 						Các Chủ Đề Luyện Tập
 					</h2>
-					<Link 
-						href="/toeic-progress"
-						className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 transition-colors bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg"
-					>
-						<span>Sổ từ vựng</span>
-						<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-					</Link>
 				</div>
 
 				<>
@@ -1415,13 +1412,6 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 						)}
 					</div>
 				</div>
-                <Link 
-                    href="/toeic-progress"
-                    className="text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 transition-colors bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg ml-auto"
-                >
-                    <span>Sổ từ vựng</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-                </Link>
 			</div>
 
 			{vocabLoading ? (
