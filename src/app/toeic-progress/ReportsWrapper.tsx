@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 import ReportsDashboard from "./ReportsDashboard";
 
-export default async function ReportsWrapper() {
+export default async function ReportsWrapper({ defaultSubTab = 'vocabulary' }: { defaultSubTab?: string }) {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
 
@@ -81,5 +81,5 @@ export default async function ReportsWrapper() {
         else quizStats[key as keyof typeof quizStats].incorrect++;
     });
 
-	return <ReportsDashboard vocabularyStats={vocabStats} vocabularyHeatmap={heatMapDays} quizStats={quizStats} />;
+	return <ReportsDashboard vocabularyStats={vocabStats} vocabularyHeatmap={heatMapDays} quizStats={quizStats} defaultSubTab={defaultSubTab} />;
 }

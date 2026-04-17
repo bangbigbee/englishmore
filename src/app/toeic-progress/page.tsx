@@ -164,7 +164,7 @@ export default async function ToeicProgressPage({
 								</Suspense>
 							</div>
 						)}
-						{activeTab === 'grammar' && (
+						{activeTab === 'grammar-bank' && (
 							<div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
@@ -172,12 +172,12 @@ export default async function ToeicProgressPage({
 								</Suspense>
 							</div>
 						)}
-						{activeTab === 'reports' && (
+						{activeTab?.startsWith('reports') && (
 							<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
-								<ReportsWrapper />
+								<ReportsWrapper defaultSubTab={activeTab.replace('reports-', '')} />
 							</Suspense>
 						)}
-						{activeTab === 'listening' && (
+						{activeTab === 'listening-bank' && (
 							<div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
@@ -185,7 +185,7 @@ export default async function ToeicProgressPage({
 								</Suspense>
 							</div>
 						)}
-						{activeTab === 'reading' && (
+						{activeTab === 'reading-bank' && (
 							<div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
@@ -193,7 +193,7 @@ export default async function ToeicProgressPage({
 								</Suspense>
 							</div>
 						)}
-						{activeTab === 'actual-test' && (
+						{activeTab === 'actual-test-bank' && (
 							<div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
