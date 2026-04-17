@@ -10,7 +10,6 @@ const TABS = [
 	{ id: 'reading', label: 'Sổ Luyện Đọc', icon: '📖' },
 	{ id: 'listening', label: 'Sổ Luyện Nghe', icon: '🎧' },
 	{ id: 'actual-test', label: 'Luyện Đề', icon: '🎓' },
-	{ id: 'reports', label: 'Báo Cáo Tiến Độ', icon: '📈' },
 ];
 
 export default function ProgressNavigation({ activeTab }: { activeTab: string }) {
@@ -28,12 +27,18 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
         <div className="w-full relative z-20">
             {/* Desktop Sidebar */}
             <div className="hidden md:flex flex-col gap-1.5 bg-white rounded-2xl border border-slate-200 p-3 shadow-sm sticky top-24">
-                <div className="px-3 pt-2 pb-5 mb-2 border-b border-slate-100 flex items-center gap-3">
-                    <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] bg-green-50 text-[#14532d] flex items-center justify-center shadow-inner">
+                <button 
+                    onClick={() => handleTabChange('reports')}
+                    className={`group px-3 pt-2 pb-5 mb-2 border-b border-slate-100 flex items-center gap-3 w-full text-left transition-all ${activeTab === 'reports' ? 'bg-green-50/50 rounded-t-xl' : 'hover:bg-slate-50 rounded-t-xl'}`}
+                >
+                    <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center shadow-inner transition-all ${activeTab === 'reports' ? 'bg-[#ea980c] text-white shadow-lg scale-110' : 'bg-green-50 text-[#14532d]'}`}>
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </span>
-					<h2 className="font-black text-slate-800 text-[17px] tracking-tight">Tiến Độ Của Bạn</h2>
-                </div>
+					<div className="flex flex-col">
+                        <h2 className={`font-black text-[17px] tracking-tight leading-none ${activeTab === 'reports' ? 'text-[#14532d]' : 'text-slate-800'}`}>Tiến Độ Của Bạn</h2>
+                        {activeTab === 'reports' && <span className="text-[10px] font-bold text-[#ea980c] mt-1 uppercase tracking-wider">Đang xem báo cáo</span>}
+                    </div>
+                </button>
                 
                 {TABS.map((t) => (
                     <button
@@ -87,17 +92,19 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
 				<button type="button" onClick={() => setIsMobileMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
 				<aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 					<div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
-						<h2 className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight">
-							<span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">📈</span>
+						<button 
+                            onClick={() => { handleTabChange('reports'); setIsMobileMenuOpen(false); }}
+                            className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight text-left"
+                        >
+							<span className={`w-8 h-8 rounded-[10px] flex items-center justify-center font-bold text-lg transition-colors ${activeTab === 'reports' ? 'bg-[#ea980c] text-white' : 'bg-green-100 text-[#14532d]'}`}>📈</span>
 							Tiến Độ Của Bạn
-						</h2>
+						</button>
 						<button onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
 							<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
 						</button>
 					</div>
 
 					<nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
-						<div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2">Phân hệ thống kê</div>
 						{TABS.map((t) => (
 							<button
 								key={t.id}

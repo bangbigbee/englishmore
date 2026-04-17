@@ -25,7 +25,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 	return (
 		<div className="flex flex-col sm:flex-row gap-4 mb-6">
 			<div className="flex-1">
-				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Chủ đề</label>
+				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Hiển thị theo chủ đề</label>
 				<select 
 					value={currentTopic}
 					onChange={(e) => updateFilters(e.target.value, currentTag)}
@@ -38,7 +38,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 				</select>
 			</div>
 			<div className="flex-1">
-				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Trạng thái tag</label>
+				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Lọc theo tag đã chọn</label>
 				<select 
 					value={currentTag}
 					onChange={(e) => updateFilters(currentTopic, e.target.value)}
