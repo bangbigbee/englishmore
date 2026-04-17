@@ -407,7 +407,6 @@ function ToeicPracticeContent() {
 
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, readingTopics: 10, vocabTopics: 50, detailedQuestions: 1200 });
-	const [showAllStats, setShowAllStats] = useState(false);
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
@@ -416,93 +415,57 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	return (
 		<div className="py-8 pb-20">
 			{/* Hero Section */}
-			<section className="grid gap-8 md:gap-12 md:grid-cols-2 md:items-center mb-24 max-w-6xl mx-auto px-4 sm:px-6">
-				{/* Left Content */}
-				<div>
-					<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-						<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-[#14532d] block line-clamp-1 break-words">Chinh phục TOEIC</span>
-						<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block line-clamp-1 break-words mt-1 lg:mt-2">
-							<span className="text-amber-500">dễ dàng</span> <span className="text-[#14532d]">và hiệu quả hơn</span>
-						</span>
-					</h1>
-					<p className="mt-4 max-w-xl text-base sm:text-lg font-medium text-[#14532d] leading-relaxed">
-						Hệ thống luyện thi TOEIC thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.
-					</p>
+			<section className="flex flex-col items-center text-center mt-8 mb-24 max-w-5xl mx-auto px-4 sm:px-6">
+				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
+					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-[#14532d] block break-words">Chinh phục TOEIC</span>
+					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2">
+						<span className="text-amber-500">dễ dàng</span> <span className="text-[#14532d]">và hiệu quả hơn</span>
+					</span>
+				</h1>
+				<p className="mt-3 max-w-2xl text-base sm:text-lg font-medium text-[#14532d] leading-relaxed mx-auto opacity-90">
+					Hệ thống luyện thi TOEIC thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.
+				</p>
 
-					<div className="mt-8 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4">
-						<button onClick={() => onTabClick('reading')} className="brand-cta brand-cta-register !text-[15px] sm:!text-base !px-7 !py-3.5 group">
-							<span>Bắt đầu luyện tập</span>
-							<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
-						</button>
-					</div>
+				<div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
+					<button onClick={() => onTabClick('reading')} className="brand-cta brand-cta-register !text-[15px] sm:!text-base !px-8 !py-3.5 group">
+						<span>Bắt đầu luyện tập</span>
+						<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
+					</button>
 				</div>
 
-				{/* Right Cards Area */}
-				<div className="rounded-[1.25rem] border border-slate-200 bg-white p-6 sm:p-8 shadow-xl shadow-slate-200/50 flex flex-col items-center">
-					<motion.div 
-						initial={false}
-						animate={{ height: showAllStats ? 'auto' : 240 }}
-						style={{ overflow: 'hidden' }}
-						transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-						className="relative w-full rounded-xl bg-slate-50/80 border border-slate-100"
-					>
-						<div className="grid grid-cols-2 justify-center items-start gap-x-2 gap-y-7 sm:gap-y-9 py-8 px-4 sm:px-6">
-							<div className="text-center w-full">
-								<p className="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.grammarTopics.toLocaleString()}+</p>
-								<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Chủ đề Ngữ pháp</p>
-							</div>
-							<div className="text-center w-full">
-								<p className="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.readingTopics.toLocaleString()}+</p>
-								<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Bộ đề Reading</p>
-							</div>
+				<div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[13px] font-medium text-slate-500">
+					<div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg><span>Miễn phí đăng ký</span></div>
+					<div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg><span>Theo dõi tiến độ học tập</span></div>
+					<div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg><span>Giải thích chi tiết từng câu</span></div>
+				</div>
 
-							<div className="text-center w-full">
-								<p className="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.vocabTopics.toLocaleString()}+</p>
-								<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Chủ đề từ vựng</p>
-							</div>
-							<div className="text-center w-full">
-								<p className="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.vocabularies.toLocaleString()}+</p>
-								<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Từ vựng TOEIC</p>
-							</div>
-
-							<div className="text-center w-full">
-								<p className="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.detailedQuestions.toLocaleString()}+</p>
-								<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Giải thích chi tiết</p>
-							</div>
-							<div className="text-center w-full">
-								<p className="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.users.toLocaleString()}+</p>
-								<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Học viên tham gia</p>
-							</div>
+				<div className="w-full mt-16 pt-10 border-t border-slate-200/70 relative">
+					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-10 gap-x-4 relative z-10 w-full max-w-6xl mx-auto">
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.grammarTopics.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chủ đề Ngữ pháp</p>
 						</div>
-
-						{/* Fading gradient at the bottom when collapsed */}
-						<AnimatePresence>
-							{!showAllStats && (
-								<motion.div 
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
-									className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-slate-50/95 to-transparent pointer-events-none" 
-								/>
-							)}
-						</AnimatePresence>
-					</motion.div>
-
-					{/* View More Button */}
-					<AnimatePresence>
-						{!showAllStats && (
-							<motion.button 
-								initial={{ opacity: 1 }}
-								exit={{ opacity: 0, height: 0, marginTop: 0 }}
-								onClick={() => setShowAllStats(true)}
-								className="mt-4 flex flex-col justify-center items-center gap-1 group cursor-pointer"
-								aria-label="Xem thêm số liệu"
-							>
-								<span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-[#14532d] transition-colors">More</span>
-								<svg className="w-5 h-5 text-slate-300 group-hover:text-[#14532d] transition-colors animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-							</motion.button>
-						)}
-					</AnimatePresence>
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.readingTopics.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Bộ đề Reading</p>
+						</div>
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.vocabTopics.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chủ đề từ vựng</p>
+						</div>
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.vocabularies.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Từ vựng TOEIC</p>
+						</div>
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-amber-500 leading-none mb-2">{stats.detailedQuestions.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-[12px] font-bold text-amber-600 uppercase tracking-wide">Giải thích chi tiết</p>
+						</div>
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.users.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Học viên tham gia</p>
+						</div>
+					</div>
 				</div>
 			</section>
 
