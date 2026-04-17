@@ -532,6 +532,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                   <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
                 </span>
               )}
+            </div>
           )}
         </div>
       </div>
