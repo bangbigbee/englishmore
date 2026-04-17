@@ -25,51 +25,63 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
     };
 
     return (
-        <div className="flex justify-between items-center mb-6 md:mb-10 pb-0 md:pb-4 border-b border-transparent md:border-slate-200/60">
-            {/* Desktop Tabs */}
-            <div className="hidden md:flex gap-8 pr-4 overflow-x-auto scrollbar-hide">
+    return (
+        <div className="w-full relative z-20">
+            {/* Desktop Sidebar */}
+            <div className="hidden md:flex flex-col gap-1.5 bg-white rounded-2xl border border-slate-200 p-3 shadow-sm sticky top-24">
+                <div className="px-3 pt-2 pb-5 mb-2 border-b border-slate-100 flex items-center gap-3">
+                    <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] bg-green-50 text-[#14532d] flex items-center justify-center shadow-inner">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </span>
+					<h2 className="font-black text-slate-800 text-[17px] tracking-tight">Tiến Độ Của Bạn</h2>
+                </div>
+                
                 {TABS.map((t) => (
                     <button
                         key={t.id}
-                        className={`flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap`}
+                        className={`flex items-center justify-start gap-3.5 px-3 py-2.5 rounded-xl font-bold transition-all text-left cursor-pointer group ${
+                            activeTab === t.id 
+                            ? 'bg-green-50 text-[#14532d] shadow-sm relative' 
+                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                        }`}
                         onClick={() => handleTabChange(t.id)}
                     >
-                        <span className={`text-xl transition-transform duration-300 ${activeTab === t.id ? "scale-110" : "opacity-60 scale-100 group-hover:opacity-100"}`}>
-                            {t.icon}
+                        {activeTab === t.id && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-[#ea980c] rounded-r-full" />
+                        )}
+                        <span className={`w-[28px] h-[28px] shrink-0 rounded-lg flex items-center justify-center transition-transform duration-300 ${activeTab === t.id ? 'bg-white shadow-sm scale-110' : 'bg-slate-100 text-slate-400 group-hover:scale-105 group-hover:bg-white group-hover:shadow-sm'}`}>
+                            <span className="text-[13px]">{t.icon}</span>
                         </span>
-                        <span className={`text-sm font-bold tracking-tight transition-all pb-1 border-b-2 ${
-                            activeTab === t.id 
-                                ? "text-[#14532d] border-[#ea980c]" 
-                                : "text-slate-400 border-transparent group-hover:text-slate-600"
-                        }`}>
-                            {t.label}
-                        </span>
+                        <span className="flex-1 truncate text-[14px] leading-none pt-0.5">{t.label}</span>
                     </button>
                 ))}
+
+                <div className="py-2 px-3">
+                    <div className="h-px bg-slate-100 w-full" />
+                </div>
+
+                {/* Desktop "Quay lại luyện tập" */}
+                <Link href="/toeic-practice" className="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-bold transition-all text-left cursor-pointer text-slate-500 hover:bg-slate-50 hover:text-slate-800 group">
+                    <span className="w-[28px] h-[28px] shrink-0 rounded-lg flex items-center justify-center transition-all duration-300 bg-slate-100 text-slate-400 group-hover:bg-slate-200 group-hover:-translate-x-1">
+                        <svg className="w-4 h-4 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </span>
+                    <span className="text-[14px] leading-none pt-0.5">Về ToeicMore</span>
+                </Link>
             </div>
 
             {/* Mobile Menu Toggle Button */}
-            <div className="md:hidden flex items-center justify-between w-full">
+            <div className="md:hidden flex items-center justify-between w-full mb-6">
                 <button
                     onClick={() => setIsMobileMenuOpen(true)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-700 font-bold active:scale-[0.98] transition-transform w-full"
+                    className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-slate-700 font-bold active:scale-[0.98] transition-transform w-full"
                 >
-                    <svg className="w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    <span className="truncate">{TABS.find(t => t.id === activeTab)?.label || 'Chọn mục'}</span>
+                    <svg className="w-5 h-5 text-[#14532d] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <span className="truncate flex-1 text-left text-[15px]">{TABS.find(t => t.id === activeTab)?.label || 'Chọn mục'}</span>
+                    <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
                 </button>
             </div>
-
-            {/* Desktop "Quay lại luyện tập" */}
-            <Link href="/toeic-practice" className="hidden md:flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap shrink-0 ml-auto">
-                <span className="transition-transform duration-300 opacity-60 scale-100 group-hover:opacity-100 group-hover:-translate-x-1">
-                    <svg className="w-[18px] h-[18px] text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </span>
-                <span className="text-sm font-bold tracking-tight transition-all text-slate-400 group-hover:text-[#14532d]">
-                    Về ToeicMore
-                </span>
-            </Link>
 
             {/* Mobile Drawer Menu */}
             <div className={`fixed inset-0 z-[100] isolate transition md:hidden ${isMobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMobileMenuOpen}>
@@ -86,7 +98,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
 					</div>
 
 					<nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
-						<div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2">Báo Cáo Thống Kê</div>
+						<div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2">Phân hệ thống kê</div>
 						{TABS.map((t) => (
 							<button
 								key={t.id}
@@ -99,7 +111,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
 								<span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${activeTab === t.id ? 'bg-white shadow-sm' : 'bg-slate-100/80 text-slate-400 group-hover:bg-slate-200/80'}`}>
 									<div className="scale-[0.8]">{t.icon}</div>
 								</span>
-								<span className="flex-1 truncate truncate text-[15px]">{t.label}</span>
+								<span className="flex-1 truncate text-[15px]">{t.label}</span>
 								{activeTab === t.id && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0 shadow-[0_0_8px_rgba(234,152,12,0.6)]" />}
 							</button>
 						))}

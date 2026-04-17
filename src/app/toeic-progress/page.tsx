@@ -143,13 +143,16 @@ export default async function ToeicProgressPage({
 
 	return (
 		<main className="min-h-screen bg-slate-50/50">
-			<div className="max-w-6xl mx-auto pt-4 pb-8 px-4 sm:px-6">
-                <Suspense fallback={<div className="h-16 w-full animate-pulse bg-slate-100 rounded-lg mb-8"></div>}>
-				    <ProgressNavigation activeTab={activeTab} />
-                </Suspense>
+			<div className="max-w-7xl mx-auto pt-6 pb-12 px-4 sm:px-6 flex flex-col md:flex-row gap-6 lg:gap-8">
+                {/* Sidebar */}
+                <div className="w-full md:w-64 lg:w-72 shrink-0">
+                    <Suspense fallback={<div className="h-64 w-full animate-pulse bg-white border border-slate-200 rounded-2xl mb-8 shadow-sm"></div>}>
+                        <ProgressNavigation activeTab={activeTab} />
+                    </Suspense>
+                </div>
 
-					{/* Main Content Area */}
-					<div className="flex-1">
+                {/* Main Content Area */}
+                <div className="flex-1 min-w-0">
 						{activeTab === 'vocabulary-bank' && (
 							<div>
 								<div className="mb-6">
