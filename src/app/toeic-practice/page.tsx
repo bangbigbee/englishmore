@@ -164,6 +164,17 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 	const minHeightClass = isCompactType ? 'min-h-[95px] sm:min-h-[105px]' : 'min-h-[220px]';
 	const paddingClass = isCompactType ? 'p-4 sm:p-5' : 'p-8';
 
+    const theme = {
+        iconBg: packageType === 'BASIC' ? 'bg-blue-600' : packageType === 'ADVANCED' ? 'bg-[#ea980c]' : packageType === 'MIXED' ? 'bg-[#6b21a8]' : 'bg-green-700',
+        titleHover: packageType === 'BASIC' ? 'group-hover:text-blue-700' : packageType === 'ADVANCED' ? 'group-hover:text-amber-600' : packageType === 'MIXED' ? 'group-hover:text-purple-800' : 'group-hover:text-green-700',
+        title: packageType === 'BASIC' ? 'text-blue-700/90' : packageType === 'ADVANCED' ? 'text-[#ea980c]' : packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-black',
+        backIconBg: packageType === 'BASIC' ? 'bg-blue-500' : packageType === 'ADVANCED' ? 'bg-amber-500' : packageType === 'MIXED' ? 'bg-purple-500' : 'bg-[#f59e0b]',
+        subtitle: packageType === 'BASIC' ? 'text-blue-700/90' : packageType === 'ADVANCED' ? 'text-[#ea980c]' : packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-[#14532d]',
+        progressBg: packageType === 'BASIC' ? 'bg-blue-100/60' : packageType === 'ADVANCED' ? 'bg-amber-100/60' : packageType === 'MIXED' ? 'bg-purple-100/60' : 'bg-slate-100',
+        progressFill: packageType === 'BASIC' ? 'bg-blue-500' : packageType === 'ADVANCED' ? 'bg-amber-500' : packageType === 'MIXED' ? 'bg-purple-500' : (progress?.learned >= progress?.total ? 'bg-green-500' : 'bg-linear-to-r from-[#ea980c] to-[#f59e0b]'),
+        progressText: packageType === 'BASIC' ? 'text-blue-600' : packageType === 'ADVANCED' ? 'text-[#ea980c]' : packageType === 'MIXED' ? 'text-[#6b21a8]' : (progress?.learned >= progress?.total ? 'text-green-600' : 'text-[#ea980c]'),
+    };
+
 	return (
 		<div
 			onClick={onClick}
@@ -178,16 +189,10 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${displaySubtitle ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
                             {/* Front side (English/Main) */}
 							<div className="flex items-center gap-2.5 [backface-visibility:hidden]">
-                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[1px] ${
-                                    packageType === 'BASIC' ? 'bg-blue-600' : 
-                                    packageType === 'ADVANCED' ? 'bg-[#ea980c]' : 
-                                    packageType === 'MIXED' ? 'bg-[#6b21a8]' : 'bg-green-700'} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
 									{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
 								</span>
-                                <h3 className={`font-bold text-[14px] sm:text-[15px] transition-colors duration-300 group-hover:text-green-700 pr-1 leading-snug shrink ${
-                                    packageType === 'BASIC' ? 'text-blue-700/90' : 
-                                    packageType === 'ADVANCED' ? 'text-[#ea980c]' : 
-                                    packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-black'}`}>
+                                <h3 className={`font-bold text-[14px] sm:text-[15px] transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
 								    {type === 'vocabulary' ? displayTitle : title}
                                 </h3>
 							</div>
@@ -195,10 +200,10 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
                             {/* Back side (Vietnamese/Subtitle) */}
 							{displaySubtitle && (
 								<div className="absolute inset-0 flex items-center gap-2.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black">
-									<span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] bg-[#f59e0b] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
+									<span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] ${theme.backIconBg} text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
 										{displaySubtitle.charAt(0).toLowerCase()}
 									</span>
-									<h3 className="font-bold text-[13px] sm:text-[14px] text-[#14532d] pr-1 leading-snug shrink">
+									<h3 className={`font-bold text-[13px] sm:text-[14px] ${theme.subtitle} pr-1 leading-snug shrink`}>
 										{displaySubtitle}
 									</h3>
 								</div>
@@ -207,14 +212,8 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 					</div>
                 ) : (
                     <>
-                        <h3 className={`font-bold text-[22px] leading-snug mb-1 transition-colors duration-300 group-hover:text-green-700 flex items-center gap-3 ${
-                            packageType === 'BASIC' ? 'text-blue-700' : 
-                            packageType === 'ADVANCED' ? 'text-[#ea980c]' : 
-                            packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-black'}`}>
-                            <span className={`w-[30px] h-[30px] rounded-[8px] text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[2px] ${
-                                packageType === 'BASIC' ? 'bg-blue-600' : 
-                                packageType === 'ADVANCED' ? 'bg-[#ea980c]' : 
-                                packageType === 'MIXED' ? 'bg-[#6b21a8]' : 'bg-green-700'} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                        <h3 className={`font-bold text-[22px] leading-snug mb-1 transition-colors duration-300 ${theme.titleHover} flex items-center gap-3 ${theme.title}`}>
+                            <span className={`w-[30px] h-[30px] rounded-[8px] text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[2px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
                                 {title.charAt(0).toLowerCase()}
                             </span>
                             <span>{title}</span>
@@ -235,19 +234,16 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 				)}
 
 				{progress && (
-					<div className={`mt-auto w-full ${isCompactType ? 'pt-4 border-t border-slate-100' : 'pt-3'}`}>
-						<div className="flex justify-between items-center mb-1.5 font-bold text-[11px]">
-							<span className="text-[#14532d] uppercase tracking-wider">Tiến độ</span>
-							<span className={progress.learned >= progress.total ? "text-green-600" : "text-[#ea980c]"}>
-								{progress.learned} / {progress.total}
-							</span>
-						</div>
-						<div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+					<div className={`mt-auto w-full flex items-center gap-3 ${isCompactType ? 'pt-4 border-t border-slate-100/50' : 'pt-3'}`}>
+						<div className={`flex-1 h-1.5 ${theme.progressBg} rounded-full overflow-hidden shadow-inner`}>
 							<div 
-								className={`h-full transition-all duration-700 ${progress.learned >= progress.total ? 'bg-green-500' : 'bg-linear-to-r from-[#ea980c] to-[#f59e0b]'}`}
+								className={`h-full transition-all duration-700 ${theme.progressFill}`}
 								style={{ width: `${Math.max(2, Math.min(100, Math.round((progress.learned / progress.total) * 100)))}%` }} 
 							/>
 						</div>
+                        <span className={`font-bold text-[11px] tabular-nums tracking-widest shrink-0 ${theme.progressText}`}>
+                            {progress.learned} <span className="opacity-60 text-[10px]">/</span> {progress.total}
+                        </span>
 					</div>
 				)}
 			</div>
