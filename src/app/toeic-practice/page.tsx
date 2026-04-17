@@ -1064,9 +1064,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
         const playChal = searchParams.get('playChallenge');
 		
 		if (tabFromUrl === 'vocabulary' && topicFromUrl && (topicFromUrl !== selectedTopic || wordIdFromUrl)) {
-            if (playChal === 'true' && !session) {
+            if (playChal === 'true' && !session && searchParams.get('login') !== 'true') {
                 onPracticeClick(topicFromUrl, false);
-                return;
             }
 			loadTopic(topicFromUrl, wordIdFromUrl);
 		} else if (!topicFromUrl && selectedTopic) {
