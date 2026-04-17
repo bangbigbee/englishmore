@@ -1323,9 +1323,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		return (
 			<div>
 				<div className="flex justify-between items-center mb-6 border-b border-slate-200 pb-3">
-					<h3 className="text-[17px] font-bold text-green-800">
-						Luyện tập theo chủ đề
-					</h3>
+					<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] flex items-center gap-2.5 tracking-tight px-1">
+						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
+						Các Chủ Đề Luyện Tập
+					</h2>
 					<Link 
 						href="/toeic-progress"
 						className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 transition-colors bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg"
@@ -1785,9 +1786,9 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 	];
 	return (
 		<div>
-			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
-				<span className="inline-block w-5 h-5 text-green-700">🎧</span>
-				Các phần thi Listening
+			<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
+				Các Phần Thi Listening
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 				{topics.map((t) => (
@@ -1877,9 +1878,9 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 
 	return (
 		<div>
-			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
-				<span className="inline-block w-5 h-5 text-green-700">📖</span>
-				Các phần thi Reading
+			<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
+				Các Phần Thi Reading
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 				{parts.map((p) => {
@@ -1909,9 +1910,9 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }
 	];
 	return (
 		<div>
-			<h2 className="text-lg font-bold mb-4 text-green-900 flex items-center gap-2">
-				<span className="inline-block w-5 h-5 text-green-700">🎓</span>
-				Đề thi thực tế (Actual Test)
+			<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
+				Đề Thi Thực Tế (Actual Test)
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 				{testPacks.map((test) => (
