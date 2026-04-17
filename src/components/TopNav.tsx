@@ -25,6 +25,7 @@ const TAB_COLORS: Record<string, string> = {
 }
 
 function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
+  const { data: session } = useSession()
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -40,6 +41,15 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
     } else {
       router.push(`/toeic-practice?tab=${key}`)
     }
+  }
+
+  const handleLoginClick = () => {
+    setIsMenuOpen(false)
+    const params = new URLSearchParams(window.location.search)
+    params.set('login', 'true')
+    params.set('subtitle', 'Đăng nhập để lưu và theo dõi tiến độ học tập')
+    params.set('callbackUrl', pathname)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
   const ENGLISHMORE_TABS = [
@@ -69,56 +79,72 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   return (
     <>
       {/* Desktop Main Navigation Tabs */}
-      <div className="hidden lg:flex items-center gap-6 xl:gap-8 overflow-x-auto pt-1 w-full justify-start mx-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        <Link
-          href="/user/profile"
-          className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
-        >
-          <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-slate-500`}>
-             <UserIcon />
-          </span>
-          <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-             pathname === '/user/profile'
-               ? "border-[#14532d]"
-               : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-          }`}>
-             Hồ Sơ Cá Nhân
-          </span>
-        </Link>
-        <Link
-          href="/toeic-progress?tab=vocabulary-bank"
-          className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
-        >
-          <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-emerald-500`}>
-             <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-          </span>
-          <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-             pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank')
-               ? "border-[#14532d]"
-               : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-          }`}>
-             Sổ Tay Của Tôi
-          </span>
-        </Link>
-        <Link
-          href="/toeic-progress?tab=reports-vocabulary"
-          className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
-        >
-          <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-sky-500`}>
-             <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-             </svg>
-          </span>
-          <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-             pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports')
-               ? "border-[#14532d]"
-               : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-          }`}>
-             Tiến Độ Của Tôi
-          </span>
-        </Link>
+      <div className="hidden lg:flex items-center gap-4 xl:gap-6 overflow-x-auto pt-1 w-full justify-start mx-3 xl:mx-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {session ? (
+          <>
+            <Link
+              href="/user/profile"
+              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+            >
+              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-slate-500`}>
+                 <UserIcon />
+              </span>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
+                 pathname === '/user/profile'
+                   ? "border-[#14532d]"
+                   : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
+              }`}>
+                 Hồ Sơ Cá Nhân
+              </span>
+            </Link>
+            <Link
+              href="/toeic-progress?tab=vocabulary-bank"
+              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+            >
+              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-emerald-500`}>
+                 <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+              </span>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
+                 pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank')
+                   ? "border-[#14532d]"
+                   : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
+              }`}>
+                 Sổ Tay Của Tôi
+              </span>
+            </Link>
+            <Link
+              href="/toeic-progress?tab=reports-vocabulary"
+              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+            >
+              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-sky-500`}>
+                 <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                 </svg>
+              </span>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
+                 pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports')
+                   ? "border-[#14532d]"
+                   : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
+              }`}>
+                 Tiến Độ Của Tôi
+              </span>
+            </Link>
+          </>
+        ) : (
+          <button
+            onClick={handleLoginClick}
+            className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+          >
+            <span className="transition-transform duration-300 scale-100 group-hover:scale-110 text-[#ea980c]">
+               <UserIcon />
+            </span>
+            <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#ea980c] opacity-90 border-transparent hover:opacity-100 group-hover:border-[#ea980c]/30">
+               Đăng Nhập
+            </span>
+          </button>
+        )}
         
-        <div className="w-[1px] h-5 bg-[#14532d]/20 mx-1"></div>
+        <div className="w-[1px] h-5 bg-[#14532d]/20 mx-1 shrink-0"></div>
         
         {isToeicDomain ? (
           TOEIC_TABS.map((t) => {
@@ -191,39 +217,53 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
 
                 <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
                     <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-2">Dữ liệu cá nhân</div>
-                    <Link 
-                      href="/user/profile" 
-                      onClick={() => setIsMenuOpen(false)} 
-                      className={`mb-1 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/user/profile' ? 'bg-slate-50 text-slate-900 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
-                    >
-                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/user/profile' ? 'bg-white shadow-sm text-slate-700' : 'bg-slate-50 text-slate-400'}`}>
-                            <UserIcon />
-                        </span>
-                        <span className="flex-1 truncate text-[15px]">Hồ Sơ Cá Nhân</span>
-                    </Link>
-                    <Link
-                      href="/toeic-progress?tab=vocabulary-bank" 
-                      onClick={() => setIsMenuOpen(false)} 
-                      className={`mb-1 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-[0_4px_12px_rgba(16,185,129,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
-                    >
-                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-emerald-500' : 'bg-slate-50 text-emerald-500/60'}`}>
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-                        </span>
-                        <span className="flex-1 truncate text-[15px]">Sổ Tay Của Tôi</span>
-                    </Link>
-
-                    <Link 
-                      href="/toeic-progress?tab=reports-vocabulary" 
-                      onClick={() => setIsMenuOpen(false)} 
-                      className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
-                    >
-                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-white shadow-sm text-sky-500' : 'bg-slate-50 text-sky-500/60'}`}>
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </span>
-                        <span className="flex-1 truncate text-[15px]">Tiến Độ Của Tôi</span>
-                    </Link>
+                    {session ? (
+                      <>
+                        <Link 
+                          href="/user/profile" 
+                          onClick={() => setIsMenuOpen(false)} 
+                          className={`mb-1 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/user/profile' ? 'bg-slate-50 text-slate-900 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
+                        >
+                            <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/user/profile' ? 'bg-white shadow-sm text-slate-700' : 'bg-slate-50 text-slate-400'}`}>
+                                <UserIcon />
+                            </span>
+                            <span className="flex-1 truncate text-[15px]">Hồ Sơ Cá Nhân</span>
+                        </Link>
+                        <Link
+                          href="/toeic-progress?tab=vocabulary-bank" 
+                          onClick={() => setIsMenuOpen(false)} 
+                          className={`mb-1 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-[0_4px_12px_rgba(16,185,129,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
+                        >
+                            <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-emerald-500' : 'bg-slate-50 text-emerald-500/60'}`}>
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                            </span>
+                            <span className="flex-1 truncate text-[15px]">Sổ Tay Của Tôi</span>
+                        </Link>
+    
+                        <Link 
+                          href="/toeic-progress?tab=reports-vocabulary" 
+                          onClick={() => setIsMenuOpen(false)} 
+                          className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
+                        >
+                            <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-white shadow-sm text-sky-500' : 'bg-slate-50 text-sky-500/60'}`}>
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </span>
+                            <span className="flex-1 truncate text-[15px]">Tiến Độ Của Tôi</span>
+                        </Link>
+                      </>
+                    ) : (
+                      <button 
+                        onClick={handleLoginClick} 
+                        className="mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-[#ea980c]"
+                      >
+                          <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors bg-amber-50 shadow-sm text-[#ea980c]">
+                              <UserIcon />
+                          </span>
+                          <span className="flex-1 truncate text-[15px]">Đăng Nhập</span>
+                      </button>
+                    )}
 
                     <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-4">Các Chuyên Mục Học Tập</div>
 
@@ -375,7 +415,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 relative">
         <div className="flex flex-1 items-center min-w-0 pr-4">
           <Link href="/" className="lg:static absolute left-1/2 -translate-x-1/2 lg:transform-none flex shrink-0 items-center gap-2 leading-none sm:gap-3 z-10">
-            <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.4rem]">
+            <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[1.8rem]">
               {isToeicDomain ? (
                   <>
                   <span className="text-[#14532d]">Toeic</span>
@@ -395,82 +435,65 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </div>
 
         <div className="shrink-0 flex items-center gap-1.5 sm:gap-3">
-          {session ? (
-            <>
-              <div className="flex items-center gap-2">
-                {session.user?.tier === 'PRO' && (
-                  <span 
-                    className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-[#FDB931]/50"
-                    title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói PRO'}
-                  >
-                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    PRO
-                    <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                  </span>
-                )}
-                {session.user?.tier === 'ULTRA' && (
-                  <span 
-                    className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-purple-600/30"
-                    title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói ULTRA'}
-                  >
-                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    ULTRA
-                    <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                  </span>
-                )}
-                <div className="relative isolate">
-                  <button
-                    type="button"
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer hover:border-amber-500`}
-                    aria-expanded={isDropdownOpen}
-                    aria-label="Toggle profile menu"
-                  >
-                    {session.user?.image && !avatarLoadFailed ? (
-                      <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
-                    ) : (
-                      <span className="text-sm font-bold text-[#14532d]">{userInitial}</span>
-                    )}
-                  </button>
-                  
-                  {/* Floating Dropdown Menu */}
-                  {isDropdownOpen && (
-                    <>
-                      {/* Invisible overlay for capturing outside clicks */}
-                      <button className="fixed inset-0 z-40 w-full h-full cursor-default" onClick={() => setIsDropdownOpen(false)} aria-hidden="true"></button>
-                      
-                      <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[160px] max-w-[90vw] origin-top-right rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5">
-                        <button
-                          type="button"
-                          onClick={() => signOut({ callbackUrl: '/' })}
-                          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all"
-                        >
-                          <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-100/60 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
-                            <LogoutIcon />
-                          </span>
-                          Đăng Xuất
-                        </button>
-                      </div>
-                    </>
+          {session && (
+            <div className="flex items-center gap-2">
+              {session.user?.tier === 'PRO' && (
+                <span 
+                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-[#FDB931]/50"
+                  title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói PRO'}
+                >
+                  <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  PRO
+                  <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
+                </span>
+              )}
+              {session.user?.tier === 'ULTRA' && (
+                <span 
+                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-purple-600/30"
+                  title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói ULTRA'}
+                >
+                  <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  ULTRA
+                  <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
+                </span>
+              )}
+              <div className="relative isolate">
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer hover:border-amber-500`}
+                  aria-expanded={isDropdownOpen}
+                  aria-label="Toggle profile menu"
+                >
+                  {session.user?.image && !avatarLoadFailed ? (
+                    <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
+                  ) : (
+                    <span className="text-sm font-bold text-[#14532d]">{userInitial}</span>
                   )}
-                </div>
+                </button>
+                
+                {/* Floating Dropdown Menu */}
+                {isDropdownOpen && (
+                  <>
+                    {/* Invisible overlay for capturing outside clicks */}
+                    <button className="fixed inset-0 z-40 w-full h-full cursor-default" onClick={() => setIsDropdownOpen(false)} aria-hidden="true"></button>
+                    
+                    <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[160px] max-w-[90vw] origin-top-right rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5">
+                      <button
+                        type="button"
+                        onClick={() => signOut({ callbackUrl: '/' })}
+                        className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all"
+                      >
+                        <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-100/60 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                          <LogoutIcon />
+                        </span>
+                        Đăng Xuất
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
-            </>
-          ) : (
-            <button
-              onClick={() => {
-                const params = new URLSearchParams(window.location.search)
-                params.set('login', 'true')
-                params.set('subtitle', 'Đăng nhập để lưu và theo dõi tiến độ học tập')
-                params.set('callbackUrl', pathname)
-                router.push(`${pathname}?${params.toString()}`, { scroll: false })
-              }}
-              disabled={status === 'loading'}
-              className="inline-flex items-center gap-2 rounded-md bg-[#14532d] px-5 py-2 text-base font-semibold text-white transition hover:bg-[#166534] shadow-sm hover:shadow-md disabled:opacity-70 cursor-pointer"
-            >
-              Log in
-              <BookIcon />
-            </button>
+            </div>
           )}
         </div>
       </div>
