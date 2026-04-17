@@ -15,12 +15,12 @@ export default function ReportsDashboard({ vocabularyHeatmap, vocabularyStats, q
     return (
         <div className="space-y-6">
             {/* Sub-navigation */}
-            <div className="flex flex-wrap gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl w-fit xl:w-full xl:justify-between xl:bg-transparent xl:p-0">
+            <div className="flex flex-nowrap overflow-x-auto gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl w-full xl:justify-between xl:bg-transparent xl:p-0 custom-scrollbar pb-3 sm:pb-1.5 xl:pb-0">
                 {SUB_TABS.map(tab => (
                     <button
                         key={tab.id}
                         onClick={() => setSubTab(tab.id)}
-                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all shrink-0 whitespace-nowrap ${
                             subTab === tab.id
                                 ? 'bg-white text-[#14532d] shadow-sm xl:bg-[#14532d] xl:text-white'
                                 : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 xl:bg-slate-50 xl:hover:bg-slate-100'

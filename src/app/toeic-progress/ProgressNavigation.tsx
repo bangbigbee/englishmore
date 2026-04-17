@@ -82,7 +82,9 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                     className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-slate-700 font-bold active:scale-[0.98] transition-transform w-full"
                 >
                     <svg className="w-5 h-5 text-[#14532d] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    <span className="truncate flex-1 text-left text-[15px]">{TABS.find(t => t.id === activeTab)?.label || 'Chọn mục'}</span>
+                    <span className="truncate flex-1 text-left text-[15px]">
+                        {activeTab === 'reports' ? 'Tiến Độ Của Bạn' : (TABS.find(t => t.id === activeTab)?.label || 'Chọn mục')}
+                    </span>
                     <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
                 </button>
             </div>
