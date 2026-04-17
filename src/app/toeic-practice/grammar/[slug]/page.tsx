@@ -35,6 +35,7 @@ interface ToeicLesson {
 
 interface ToeicTopic {
   id: string
+  type: string
   title: string
   subtitle: string | null
   slug: string
@@ -459,13 +460,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             </Link>
             <div className="flex flex-col">
               <h1 className="font-black text-slate-900 text-sm md:text-base leading-tight">{topic.title}</h1>
-              <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest">{topic.subtitle || 'TOEIC Grammar'}</p>
+              <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest">{topic.subtitle || (topic.type === 'READING' ? 'TOEIC Reading' : 'TOEIC Grammar')}</p>
             </div>
           </div>
           
           <div className="hidden md:flex items-center gap-4">
             <div className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-100 uppercase tracking-wider">
-              Grammar Practice
+              {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : 'Sổ Tay Ngữ Pháp'}
             </div>
           </div>
         </div>
