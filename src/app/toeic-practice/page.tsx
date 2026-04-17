@@ -419,11 +419,11 @@ function GrammarFeatureCard({ onClick, icon }: any) {
 					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 group-hover:opacity-0">
 						Hệ thống bài học và luyện tập toàn diện.
 					</p>
-					<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mt-2">
+					<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mt-7 ml-[2px]">
 						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2s_infinite_ease-out]" style={{ width: '85%' }} />
 						
 						{/* Typed "Grammar" text above the line */}
-						<div className="absolute -top-[22px] left-1 text-[#14532d] font-serif italic text-[15px] font-bold leading-none animate-[fadeInText_2s_infinite_ease-out]">
+						<div className="absolute -top-[20px] left-0 text-[#14532d] font-serif italic text-[15px] font-bold leading-none animate-[fadeInText_2s_infinite_ease-out]">
 							Grammar
 						</div>
 
