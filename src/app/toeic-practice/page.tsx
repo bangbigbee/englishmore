@@ -150,9 +150,9 @@ const getTopicVietnamese = (en: string): string => {
 };
 
 const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: string }) => {
-	if (pkg === 'BASIC') return (<span className={`inline-flex items-center px-2 py-[3px] bg-emerald-100 text-emerald-800 text-[9px] font-bold uppercase tracking-widest ${className}`}>BASIC</span>);
-	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-amber-100 text-amber-800 text-[9px] font-bold uppercase tracking-widest ${className}`}>ADVANCED</span>);
-	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-fuchsia-100 text-fuchsia-800 text-[9px] font-bold uppercase tracking-widest ${className}`}>MIXED</span>);
+	if (pkg === 'BASIC') return (<span className={`inline-flex items-center px-2 py-[3px] bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100 ${className}`}>Cơ bản</span>);
+	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-amber-50 text-[#ea980c] text-[10px] font-medium border border-amber-100 ${className}`}>Nâng cao</span>);
+	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-fuchsia-50 text-[#6b21a8] text-[10px] font-medium border border-fuchsia-100 ${className}`}>Hỗn hợp</span>);
 	return null;
 }
 
@@ -178,10 +178,16 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${displaySubtitle ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
                             {/* Front side (English/Main) */}
 							<div className="flex items-center gap-2.5 [backface-visibility:hidden]">
-                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] bg-green-700 text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[1px] ${
+                                    packageType === 'BASIC' ? 'bg-blue-600' : 
+                                    packageType === 'ADVANCED' ? 'bg-[#ea980c]' : 
+                                    packageType === 'MIXED' ? 'bg-[#6b21a8]' : 'bg-green-700'} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
 									{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
 								</span>
-                                <h3 className="font-bold text-[14px] sm:text-[15px] text-black pr-1 leading-snug shrink">
+                                <h3 className={`font-bold text-[14px] sm:text-[15px] transition-colors duration-300 group-hover:text-green-700 pr-1 leading-snug shrink ${
+                                    packageType === 'BASIC' ? 'text-blue-700/90' : 
+                                    packageType === 'ADVANCED' ? 'text-[#ea980c]' : 
+                                    packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-black'}`}>
 								    {type === 'vocabulary' ? displayTitle : title}
                                 </h3>
 							</div>
@@ -201,8 +207,14 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 					</div>
                 ) : (
                     <>
-                        <h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300 flex items-center gap-3">
-                            <span className={`w-[30px] h-[30px] rounded-[8px] bg-green-700 text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                        <h3 className={`font-bold text-[22px] leading-snug mb-1 transition-colors duration-300 group-hover:text-green-700 flex items-center gap-3 ${
+                            packageType === 'BASIC' ? 'text-blue-700' : 
+                            packageType === 'ADVANCED' ? 'text-[#ea980c]' : 
+                            packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-black'}`}>
+                            <span className={`w-[30px] h-[30px] rounded-[8px] text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[2px] ${
+                                packageType === 'BASIC' ? 'bg-blue-600' : 
+                                packageType === 'ADVANCED' ? 'bg-[#ea980c]' : 
+                                packageType === 'MIXED' ? 'bg-[#6b21a8]' : 'bg-green-700'} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
                                 {title.charAt(0).toLowerCase()}
                             </span>
                             <span>{title}</span>
