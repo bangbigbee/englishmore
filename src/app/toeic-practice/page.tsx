@@ -1220,10 +1220,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		}
 	};
 
-	const setupChallengeRound = (roundIdx: number, wList = challengeWords) => {
+	const setupChallengeRound = (roundIdx: number, currentScore: number, wList = challengeWords) => {
 		if (roundIdx >= wList.length) {
 			setChallengeActive(false);
-			setChallengeResult({ show: true, score: challengeScore, total: wList.length });
+			setChallengeResult({ show: true, score: currentScore, total: wList.length });
 			return;
 		}
 		const tWord = wList[roundIdx];
@@ -1241,7 +1241,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setChallengeRound(0);
 		setChallengeScore(0);
 		setChallengeResult({ show: false, score: 0, total: 0 });
-		setupChallengeRound(0, shuffled);
+		setupChallengeRound(0, 0, shuffled);
 		setChallengeActive(true);
 	};
 
@@ -1297,20 +1297,22 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		if (challengeTimeLeft <= 0) {
 			const nextRound = challengeRound + 1;
 			setChallengeRound(nextRound);
-			setupChallengeRound(nextRound);
+			setupChallengeRound(nextRound, challengeScore);
 			return;
 		}
 		const timer = setTimeout(() => setChallengeTimeLeft(pr => pr - 1), 1000);
 		return () => clearTimeout(timer);
-	}, [challengeTimeLeft, challengeActive, challengeRound]);
+	}, [challengeTimeLeft, challengeActive, challengeRound, challengeScore]);
 
 	const handleChallengeAnswer = (answer: string) => {
-		if (answer === challengeWords[challengeRound].meaning) {
-			setChallengeScore(s => s + 1);
+        const isCorrect = answer === challengeWords[challengeRound].meaning;
+        const nextScore = challengeScore + (isCorrect ? 1 : 0);
+		if (isCorrect) {
+			setChallengeScore(nextScore);
 		}
 		const nextRound = challengeRound + 1;
 		setChallengeRound(nextRound);
-		setupChallengeRound(nextRound);
+		setupChallengeRound(nextRound, nextScore);
 	};
 
 	const playPronunciation = (e: React.MouseEvent, word: string) => {
