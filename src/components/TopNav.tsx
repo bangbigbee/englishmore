@@ -84,48 +84,36 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
           <div className="flex items-center gap-2 xl:gap-3 shrink-0">
             <Link
               href="/user/profile"
-              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+              className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/user/profile' ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
             >
-              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-slate-500`}>
-                 <UserIcon />
+              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]`}>
+                 <ModernUserIcon />
               </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-                 pathname === '/user/profile'
-                   ? "border-[#14532d]"
-                   : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-              }`}>
-                 Cá Nhân
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/user/profile' ? "opacity-100" : "opacity-80 group-hover:opacity-100"} max-w-[120px] truncate`} title={session.user?.name || "Cá Nhân"}>
+                 {session.user?.name || "Cá Nhân"}
               </span>
             </Link>
             <Link
               href="/toeic-progress?tab=vocabulary-bank"
-              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+              className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
             >
               <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-emerald-500`}>
-                 <BookIcon className="w-4 h-4 mt-0.5" />
+                 <BookIcon className="w-[18px] h-[18px] mt-[-2px]" />
               </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-                 pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank')
-                   ? "border-[#14532d]"
-                   : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-              }`}>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
                  Sổ Tay Của Tôi
               </span>
             </Link>
             <Link
               href="/toeic-progress?tab=reports-vocabulary"
-              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+              className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
             >
               <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-sky-500`}>
-                 <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                 <svg className="w-[18px] h-[18px] mt-[-2px]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                  </svg>
               </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-                 pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports')
-                   ? "border-[#14532d]"
-                   : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-              }`}>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
                  Tiến Độ Của Tôi
               </span>
             </Link>
@@ -133,12 +121,12 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
         ) : (
           <button
             onClick={handleLoginClick}
-            className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] border-transparent hover:border-[#ea980c]/20"
           >
-            <span className="transition-transform duration-300 scale-100 group-hover:scale-110 text-[#ea980c]">
-               <UserIcon />
+            <span className="transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]">
+               <ModernUserIcon />
             </span>
-            <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#ea980c] opacity-90 border-transparent hover:opacity-100 group-hover:border-[#ea980c]/30">
+            <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#ea980c] opacity-90 group-hover:opacity-100">
                Đăng Nhập
             </span>
           </button>
@@ -154,16 +142,12 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
               <button
                 key={t.key}
                 onClick={() => handleToeicTabClick(t.key)}
-                className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+                className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
               >
                 <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${TAB_COLORS[t.key]||'text-[#14532d]'}`}>
-                  <div className="scale-[0.9]">{t.icon}</div>
+                  <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
                 </span>
-                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-                  isActive 
-                    ? "border-[#14532d]" 
-                    : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-                }`}>
+                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
                   {t.label}
                 </span>
               </button>
@@ -177,16 +161,12 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
               <Link
                 key={t.key}
                 href={t.href}
-                className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+                className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
               >
                 <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${t.color}`}>
-                  <div className="scale-[0.9]">{t.icon}</div>
+                  <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
                 </span>
-                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-                  isActive 
-                    ? "border-[#14532d]" 
-                    : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-                }`}>
+                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
                   {t.label}
                 </span>
               </Link>
@@ -227,10 +207,10 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                           onClick={() => setIsMenuOpen(false)} 
                           className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${pathname === '/user/profile' ? 'bg-slate-50 text-slate-900 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
                         >
-                            <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${pathname === '/user/profile' ? 'bg-white shadow-sm text-slate-700' : 'bg-slate-50 text-slate-400'}`}>
-                                <UserIcon />
+                            <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${pathname === '/user/profile' ? 'bg-white shadow-sm' : 'bg-slate-50'}`}>
+                                <ModernUserIcon />
                             </span>
-                            <span className="flex-1 truncate text-[14px]">Cá Nhân</span>
+                            <span className="flex-1 truncate text-[14px]">{session.user?.name || "Cá Nhân"}</span>
                         </Link>
                         <Link
                           href="/toeic-progress?tab=vocabulary-bank" 
@@ -299,26 +279,12 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                           className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
                           onClick={() => setIsMenuOpen(false)}
                       >
-                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-amber-50 text-amber-500 group-hover:bg-amber-100">
-                              <div className="scale-[0.8] opacity-90">
-                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
-                              </div>
-                          </span>
-                          <span className="flex-1 truncate text-[14px]">Luyện phát âm</span>
-                      </a>
-                      <a
-                          href="https://englishmore.bigbee.ltd"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
-                          onClick={() => setIsMenuOpen(false)}
-                      >
-                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-emerald-50 text-emerald-500 group-hover:bg-emerald-100">
+                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-fuchsia-50 text-fuchsia-500 group-hover:bg-fuchsia-100">
                               <div className="scale-[0.8] opacity-90">
                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
                               </div>
                           </span>
-                          <span className="flex-1 truncate text-[14px]">Tiếng Anh giao tiếp</span>
+                          <span className="flex-1 truncate text-[14px]">Luyện Speaking</span>
                       </a>
                       <Link
                           href="/about"
@@ -531,22 +497,10 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                                            onClick={() => setIsDropdownOpen(false)}
                                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
                                        >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-amber-50 text-amber-500">
-                                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
-                                           </span>
-                                           Luyện phát âm
-                                       </a>
-                                       <a
-                                           href="https://englishmore.bigbee.ltd"
-                                           target="_blank"
-                                           rel="noopener noreferrer"
-                                           onClick={() => setIsDropdownOpen(false)}
-                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
-                                       >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-emerald-50 text-emerald-500">
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-fuchsia-50 text-fuchsia-500">
                                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
                                            </span>
-                                           Tiếng Anh giao tiếp
+                                           Luyện Speaking
                                        </a>
                                        <Link
                                            href="/about"
@@ -606,4 +560,19 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
       </div>
     </header>
   )
+}
+
+function ModernUserIcon({ className = "w-5 h-5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="modernUserGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#0ea5e9"/>
+          <stop offset="100%" stopColor="#6366f1"/>
+        </linearGradient>
+      </defs>
+      <path opacity="0.35" d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="url(#modernUserGrad)"/>
+      <path d="M12 14.5C6.99 14.5 2.5 17.5 2 22C2 22 4 22 12 22C20 22 22 22 22 22C21.5 17.5 17.01 14.5 12 14.5Z" fill="url(#modernUserGrad)"/>
+    </svg>
+  );
 }
