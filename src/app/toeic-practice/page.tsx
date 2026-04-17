@@ -1061,13 +1061,18 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		const topicFromUrl = searchParams.get('topic');
 		const tabFromUrl = searchParams.get('tab');
 		const wordIdFromUrl = searchParams.get('wordId');
+        const playChal = searchParams.get('playChallenge');
 		
 		if (tabFromUrl === 'vocabulary' && topicFromUrl && (topicFromUrl !== selectedTopic || wordIdFromUrl)) {
+            if (playChal === 'true' && !session) {
+                onPracticeClick(topicFromUrl, false);
+                return;
+            }
 			loadTopic(topicFromUrl, wordIdFromUrl);
 		} else if (!topicFromUrl && selectedTopic) {
 			setSelectedTopic(null);
 		}
-	}, [searchParams]);
+	}, [searchParams, session, selectedTopic]);
 
 	const openTopic = async (topic: string) => {
 		if (!session) { onPracticeClick(topic); return; }
@@ -1888,13 +1893,14 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                                         <div className="bg-white/10 p-2.5 rounded-xl border border-white/20">
                                             <input 
                                                 readOnly 
-                                                value={`https://englishmore.bigbee.ltd/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`} 
+                                                value={`${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`} 
                                                 className="w-full bg-transparent text-white/90 px-1 text-sm outline-none truncate text-center" 
                                             />
                                         </div>
                                         <button 
                                             onClick={() => {
-                                                navigator.clipboard.writeText(`https://englishmore.bigbee.ltd/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`);
+                                                const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`;
+                                                navigator.clipboard.writeText(url);
                                                 setCopySuccess(true);
                                                 setTimeout(() => setCopySuccess(false), 2000);
                                             }} 
