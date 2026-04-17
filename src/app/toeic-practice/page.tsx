@@ -160,39 +160,67 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
-	const minHeightClass = type === 'vocabulary' ? 'min-h-[170px]' : 'min-h-[220px]';
-	const paddingClass = type === 'vocabulary' ? 'p-6' : 'p-8';
+	const minHeightClass = type === 'vocabulary' ? 'min-h-[120px] sm:min-h-[130px]' : 'min-h-[220px]';
+	const paddingClass = type === 'vocabulary' ? 'p-5 sm:p-6 pb-5 sm:pb-6' : 'p-8';
 
 	return (
 		<div
 			onClick={onClick}
-			className={`relative group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
+			className={`relative w-full group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
 		>
             {packageType && (
                 <PackageBadge pkg={packageType} className="absolute top-0 right-0 rounded-bl-[14px] rounded-tr-xl border-b border-l border-amber-200/30 shadow-sm z-20 pointer-events-none" />
             )}
-			<div className="relative z-10 flex-1 mt-2">
-				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300 flex items-center gap-3">
-					<span className={`w-[30px] h-[30px] rounded-[8px] bg-green-700 text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
-						{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
-					</span>
-					<span>{type === 'vocabulary' ? displayTitle : title}</span>
-				</h3>
+			<div className="relative z-10 flex-1 mt-2 flex flex-col">
+                {type === 'vocabulary' ? (
+					<div className="perspective-[1000px] mb-2 w-full flex-1 flex flex-col justify-center">
+						<div className="relative w-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateX(-180deg)]">
+                            {/* Front side (English) - establishes height */}
+							<div className="flex items-start sm:items-center gap-3 sm:gap-3.5 [backface-visibility:hidden]">
+                                <span className={`w-[26px] shrink-0 h-[26px] mt-1 sm:mt-0 sm:w-[32px] sm:h-[32px] rounded-[8px] sm:rounded-[10px] bg-green-700 text-white flex items-center justify-center text-[14px] sm:text-[16px] font-black shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+									{displayTitle.charAt(0).toLowerCase()}
+								</span>
+                                <h3 className="font-bold text-[18px] sm:text-[20px] lg:text-[22px] text-black pr-1 leading-snug shrink">
+								    {displayTitle}
+                                </h3>
+							</div>
 
-				{(type === 'vocabulary' ? displaySubtitle : subtitle) && (
-					<p className="text-[15px] text-slate-500 font-medium mb-4">
-						{type === 'vocabulary' ? displaySubtitle : subtitle}
-					</p>
-				)}
+                            {/* Back side (Vietnamese) - absolute inset */}
+							<div className="absolute inset-0 flex items-start sm:items-center gap-3 sm:gap-3.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black">
+                                <span className={`w-[26px] shrink-0 h-[26px] mt-1 sm:mt-0 sm:w-[32px] sm:h-[32px] rounded-[8px] sm:rounded-[10px] bg-[#f59e0b] text-white flex items-center justify-center text-[14px] sm:text-[16px] font-black shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
+									{displaySubtitle.charAt(0).toLowerCase()}
+								</span>
+                                <h3 className="font-bold text-[17px] sm:text-[19px] lg:text-[21px] text-[#14532d] pr-1 leading-snug shrink">
+								    {displaySubtitle}
+                                </h3>
+							</div>
+						</div>
+					</div>
+                ) : (
+                    <>
+                        <h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300 flex items-center gap-3">
+                            <span className={`w-[30px] h-[30px] rounded-[8px] bg-green-700 text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                                {(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
+                            </span>
+                            <span>{title}</span>
+                        </h3>
+
+                        {subtitle && (
+                            <p className="text-[15px] text-slate-500 font-medium mb-4">
+                                {subtitle}
+                            </p>
+                        )}
+                    </>
+                )}
 
 				{badgeText && !progress && (
-					<div className="text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mt-2 opacity-80">
+					<div className={`text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mt-2 opacity-80 ${type === 'vocabulary' ? 'mt-4' : 'mt-2'}`}>
 						{badgeText}
 					</div>
 				)}
 
 				{progress && (
-					<div className="mt-auto pt-3">
+					<div className={`mt-auto w-full ${type === 'vocabulary' ? 'pt-4 border-t border-slate-100' : 'pt-3'}`}>
 						<div className="flex justify-between items-center mb-1.5 font-bold text-[11px]">
 							<span className="text-[#14532d] uppercase tracking-wider">Tiến độ</span>
 							<span className={progress.learned >= progress.total ? "text-green-600" : "text-[#ea980c]"}>
@@ -209,8 +237,8 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 				)}
 			</div>
 
-			{type === 'grammar' ? (
-				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
+			{type === 'grammar' && (
+				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible pointer-events-none">
 					<div className="w-16 h-16 shrink-0 rounded-full bg-white shadow-[0_15px_40px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center overflow-hidden border border-slate-50 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.3)]">
 						<style>{`
 							@keyframes slide-bounce-in {
@@ -220,22 +248,6 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 							}
 						`}</style>
 						<svg className="w-7 h-7 text-green-600 transition-transform duration-300 group-hover:translate-x-1" style={{ animation: 'slide-bounce-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
-					</div>
-				</div>
-			) : (
-				<div className="relative z-10 mt-auto pt-6 flex justify-end overflow-visible">
-					<div className="perspective-[1000px] w-[116px] h-[38px]">
-						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-							<div className="absolute inset-0 w-full h-full bg-[#20633b] shadow-md flex items-center justify-center [backface-visibility:hidden]">
-								<span className="text-white font-semibold text-[13px]">Học ngay</span>
-							</div>
-							<div className="absolute inset-0 w-full h-full bg-[#f59e0b] shadow-[0_10px_20px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-								<span className="text-white font-bold text-[13px] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 delay-100">Học ngay</span>
-								<svg className="w-4 h-4 text-white opacity-0 -translate-x-6 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] delay-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-								</svg>
-							</div>
-						</div>
 					</div>
 				</div>
 			)}
@@ -566,7 +578,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				</p>
 
 				<div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
-					<button onClick={() => onTabClick('reading')} className="brand-cta brand-cta-register !text-[15px] sm:!text-base !px-8 !py-3.5 group">
+					<button onClick={() => onTabClick('vocabulary')} className="brand-cta brand-cta-register !text-[15px] sm:!text-base !px-8 !py-3.5 group">
 						<span>Bắt đầu luyện tập</span>
 						<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
 					</button>
