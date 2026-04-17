@@ -8,6 +8,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
     const [isTopicOpen, setIsTopicOpen] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
 	
 	const currentTopic = searchParams.get('topic') || 'all';
 	const currentTag = searchParams.get('tag') || 'all';
@@ -24,6 +25,32 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 		
 		router.push(`?${params.toString()}`);
 	};
+
+    const handleReset = async () => {
+        if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ trạng thái học tập (Đã thuộc, Từ khó, Đã lưu) của bộ từ vựng này không? Hành động này không thể hoàn tác.')) {
+            return;
+        }
+
+        setIsResetting(true);
+        try {
+            const res = await fetch('/api/toeic/vocabulary/tags', {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                router.refresh();
+                // To be extra sure everything reloads
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra khi đặt lại tiến độ. Vui lòng thử lại.');
+            }
+        } catch (error) {
+            console.error('Reset error:', error);
+            alert('Lỗi kết nối. Vui lòng thử lại.');
+        } finally {
+            setIsResetting(false);
+        }
+    };
 
 	return (
 		<div className="space-y-6 mb-8">
@@ -93,6 +120,17 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 						</button>
 					))}
 				</div>
+			</div>
+			{/* Reset Progress Button */}
+			<div className="flex justify-end pt-2">
+                <button 
+                    onClick={handleReset}
+                    disabled={isResetting}
+                    className="flex items-center gap-2 px-3 py-1.5 text-[12px] font-bold text-slate-400 hover:text-rose-600 transition-colors group"
+                >
+                    <svg className={`w-4 h-4 transition-transform duration-500 ${isResetting ? 'animate-spin' : 'group-hover:rotate-180'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <span>{isResetting ? 'Đang đặt lại...' : 'Làm mới lộ trình (Reset)'}</span>
+                </button>
 			</div>
 		</div>
 	);

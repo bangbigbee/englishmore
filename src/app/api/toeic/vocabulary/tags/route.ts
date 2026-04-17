@@ -84,3 +84,33 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
 	}
 }
+
+export async function DELETE(req: NextRequest) {
+	try {
+		const session = await getServerSession(authOptions);
+		if (!session?.user?.email) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		const user = await prisma.user.findUnique({
+			where: { email: session.user.email },
+			select: { id: true },
+		});
+
+		if (!user) {
+			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+		}
+
+		// Delete all tags for this user
+		await prisma.vocabularyTag.deleteMany({
+			where: { userId: user.id },
+		});
+
+		revalidatePath('/toeic-progress');
+
+		return NextResponse.json({ success: true, message: 'Vocabulary progress reset successfully' });
+	} catch (error) {
+		console.error('Error resetting vocabulary tags:', error);
+		return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+	}
+}
