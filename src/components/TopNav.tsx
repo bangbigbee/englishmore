@@ -185,7 +185,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   const { data: session, status } = useSession()
   const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -448,12 +447,12 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                 </>
               )}
 
-              <button onClick={() => { setIsMenuOpen(false); setIsAboutModalOpen(true); }} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
+              <Link href="/about" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
                 <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </span>
                 <span className="flex-1 truncate text-[15px]">About ToeicMore</span>
-              </button>
+              </Link>
 
               <div className="py-2"><div className="h-px bg-slate-100 w-full" /></div>
 
@@ -485,78 +484,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
               </button>
             </nav>
           </aside>
-        </div>
-      )}
-
-      {isAboutModalOpen && (
-        <div className="fixed inset-0 z-[200] isolate flex items-center justify-center p-4">
-          <div className="absolute inset-0 z-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" onClick={() => setIsAboutModalOpen(false)} />
-          <div className="relative z-10 w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 fade-in duration-300">
-            {/* Header / Banner */}
-            <div className="h-32 bg-gradient-to-br from-[#14532d] to-[#1e7a42] relative">
-              <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-              <button
-                onClick={() => setIsAboutModalOpen(false)}
-                className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 p-2 rounded-full text-white transition-colors backdrop-blur-md"
-              >
-                <CloseIcon />
-              </button>
-            </div>
-            
-            {/* Content & Avatar */}
-            <div className="px-6 pb-8 pt-0 relative flex flex-col items-center text-center sm:text-left sm:items-start text-slate-800">
-              <div className="w-28 h-28 -mt-14 rounded-full border-4 border-white shadow-lg overflow-hidden bg-slate-100 relative self-center sm:self-start sm:ml-4 flex-shrink-0">
-                <img src="/avatar.jpg" alt="Founder" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                <div className="absolute inset-0 flex items-center justify-center text-3xl font-black text-[#14532d] opacity-50 -z-10 bg-slate-200">
-                  B
-                </div>
-              </div>
-              
-              <div className="mt-4 sm:ml-4">
-                <h3 className="text-[22px] sm:text-2xl font-black text-slate-900 tracking-tight leading-none text-center sm:text-left">Thầy Nguyễn Trí Bằng</h3>
-                <p className="text-[#ea980c] font-bold text-xs sm:text-sm tracking-widest uppercase mt-1.5 text-center sm:text-left">Founder of ToeicMore</p>
-              </div>
-              
-              <div className="mt-6 space-y-4 w-full">
-                <div className="flex gap-3.5 items-start">
-                  <div className="w-8 h-8 rounded-[10px] bg-green-50 flex items-center justify-center shrink-0 text-[#14532d] mt-0.5">
-                    <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                  </div>
-                  <p className="text-slate-600 text-[14px] sm:text-[15px] leading-[1.6] flex-1 text-left">
-                    <strong className="text-slate-900 font-bold">7 năm công tác </strong> 
-                    tại Đại học Bách Khoa - ĐH Đà Nẵng trong lĩnh vực khoa học kỹ thuật, làm việc với 03 chương trình đào tạo quốc tế (02 chương trình tiên tiến Việt - Mỹ, chương trình đào tạo Kỹ sư Chất lượng Cao Việt Pháp).
-                  </p>
-                </div>
-
-                <div className="flex gap-3.5 items-start">
-                  <div className="w-8 h-8 rounded-[10px] bg-blue-50 flex items-center justify-center shrink-0 text-blue-600 mt-0.5">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
-                  </div>
-                  <p className="text-slate-600 text-[14px] sm:text-[15px] leading-[1.6] flex-1 text-left">
-                    <strong className="text-slate-900 font-bold">5 năm kinh nghiệm </strong> dạy tiếng Anh.
-                  </p>
-                </div>
-
-                <div className="flex gap-3.5 items-start">
-                  <div className="w-8 h-8 rounded-[10px] bg-purple-50 flex items-center justify-center shrink-0 text-purple-600 mt-0.5">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                  </div>
-                  <p className="text-slate-600 text-[14px] sm:text-[15px] leading-[1.6] flex-1 text-left">
-                    <strong className="text-slate-900 font-bold">2 năm kinh nghiệm </strong> trong lĩnh vực công nghệ Blockchain.
-                  </p>
-                </div>
-
-                <div className="flex gap-3.5 items-start">
-                  <div className="w-8 h-8 rounded-[10px] bg-amber-50 flex items-center justify-center shrink-0 text-amber-600 mt-0.5">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3.204 11h9.592M4.512 15h7.476m-9.5-8h11.5M12 3v18" /></svg>
-                  </div>
-                  <p className="text-slate-600 text-[14px] sm:text-[15px] leading-[1.6] flex-1 text-left">
-                    <strong className="text-slate-900 font-bold">Nhiều năm kinh nghiệm </strong> làm việc trong môi trường quốc tế, tham gia các hội nghị và sự kiện tại Singapore, Hàn Quốc, mang đến góc nhìn và trải nghiệm thực tế cho học viên.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </header>
