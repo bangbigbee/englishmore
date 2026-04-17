@@ -194,8 +194,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
           })
         )}
 
-        {session && (
-        )}
+
       </div>
 
       <div className="lg:hidden flex items-center relative order-first">
