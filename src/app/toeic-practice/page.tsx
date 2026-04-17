@@ -160,8 +160,8 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
-	const minHeightClass = type === 'vocabulary' ? 'min-h-[120px] sm:min-h-[130px]' : 'min-h-[220px]';
-	const paddingClass = type === 'vocabulary' ? 'p-5 sm:p-6 pb-5 sm:pb-6' : 'p-8';
+	const minHeightClass = type === 'vocabulary' ? 'min-h-[95px] sm:min-h-[105px]' : 'min-h-[220px]';
+	const paddingClass = type === 'vocabulary' ? 'p-4 sm:p-5' : 'p-8';
 
 	return (
 		<div
@@ -176,21 +176,21 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 					<div className="perspective-[1000px] mb-2 w-full flex-1 flex flex-col justify-center">
 						<div className="relative w-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateX(-180deg)]">
                             {/* Front side (English) - establishes height */}
-							<div className="flex items-start sm:items-center gap-3 sm:gap-3.5 [backface-visibility:hidden]">
-                                <span className={`w-[26px] shrink-0 h-[26px] mt-1 sm:mt-0 sm:w-[32px] sm:h-[32px] rounded-[8px] sm:rounded-[10px] bg-green-700 text-white flex items-center justify-center text-[14px] sm:text-[16px] font-black shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+							<div className="flex items-center gap-2.5 [backface-visibility:hidden]">
+                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] bg-green-700 text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
 									{displayTitle.charAt(0).toLowerCase()}
 								</span>
-                                <h3 className="font-bold text-[18px] sm:text-[20px] lg:text-[22px] text-black pr-1 leading-snug shrink">
+                                <h3 className="font-bold text-[14px] sm:text-[15px] text-black pr-1 leading-snug shrink">
 								    {displayTitle}
                                 </h3>
 							</div>
 
                             {/* Back side (Vietnamese) - absolute inset */}
-							<div className="absolute inset-0 flex items-start sm:items-center gap-3 sm:gap-3.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black">
-                                <span className={`w-[26px] shrink-0 h-[26px] mt-1 sm:mt-0 sm:w-[32px] sm:h-[32px] rounded-[8px] sm:rounded-[10px] bg-[#f59e0b] text-white flex items-center justify-center text-[14px] sm:text-[16px] font-black shadow-md transition-transform duration-300 group-hover:rotate-0 leading-none pb-[2px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
+							<div className="absolute inset-0 flex items-center gap-2.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black">
+                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] bg-[#f59e0b] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
 									{displaySubtitle.charAt(0).toLowerCase()}
 								</span>
-                                <h3 className="font-bold text-[17px] sm:text-[19px] lg:text-[21px] text-[#14532d] pr-1 leading-snug shrink">
+                                <h3 className="font-bold text-[13px] sm:text-[14px] text-[#14532d] pr-1 leading-snug shrink">
 								    {displaySubtitle}
                                 </h3>
 							</div>
