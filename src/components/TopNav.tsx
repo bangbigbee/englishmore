@@ -102,7 +102,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
               className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
             >
               <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-emerald-500`}>
-                 <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                 <BookIcon className="w-4 h-4 mt-0.5" />
               </span>
               <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
                  pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank')
@@ -210,10 +210,10 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
             <button type="button" onClick={() => setIsMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 touch-none overscroll-none ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
             <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
-                    <h2 className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight">
+                    <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
                         <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">{isToeicDomain ? 'T' : 'E'}</span>
                         {isToeicDomain ? 'ToeicMore' : 'EnglishMore'}
-                    </h2>
+                    </Link>
                     <button onClick={() => setIsMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     </button>
@@ -238,7 +238,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                           className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-[0_4px_12px_rgba(16,185,129,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
                         >
                             <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-emerald-500' : 'bg-slate-50 text-emerald-500/60'}`}>
-                                <svg className="w-5 h-5 scale-[0.8]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967A8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                                <BookIcon className="w-5 h-5 scale-[0.9]" />
                             </span>
                             <span className="flex-1 truncate text-[14px]">Sổ Tay Của Tôi</span>
                         </Link>
@@ -374,9 +374,9 @@ function UserIcon() {
   )
 }
 
-function BookIcon() {
+function BookIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
       <path d="M4 5.25A2.25 2.25 0 0 1 6.25 3h11.5A2.25 2.25 0 0 1 20 5.25v11.5A2.25 2.25 0 0 1 17.75 19H6.25A2.25 2.25 0 0 1 4 16.75V5.25Zm2 .25a.75.75 0 0 0-.75.75v10.5c0 .414.336.75.75.75H11V5.5H6Zm12 .75a.75.75 0 0 0-.75-.75H13v12h4.25a.75.75 0 0 0 .75-.75V6.25Z" />
     </svg>
   )
