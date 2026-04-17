@@ -25,7 +25,6 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
     };
 
     return (
-    return (
         <div className="w-full relative z-20">
             {/* Desktop Sidebar */}
             <div className="hidden md:flex flex-col gap-1.5 bg-white rounded-2xl border border-slate-200 p-3 shadow-sm sticky top-24">
