@@ -1878,27 +1878,29 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 					{challengeResult.show && (
 						<div className="mt-8 bg-indigo-600 text-white rounded-3xl p-10 text-center shadow-xl animate-in zoom-in-95 duration-500">
 							<h3 className="text-3xl font-black mb-4 tracking-tight">🎉 Thử Thách Hoàn Tất!</h3>
-							<p className="text-indigo-200 text-lg mb-8 font-medium">Bạn đã trả lời đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ vựng.</p>
+							<p className="text-indigo-200 text-lg mb-8 font-medium">Bạn đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ.</p>
 							
                             {challengeResult.score / Math.max(1, challengeResult.total) >= 0.8 ? (
                                 <div className="mb-8 p-6 bg-white/10 rounded-2xl border border-white/20">
                                     <h4 className="text-xl font-bold text-amber-300 mb-2">Bạn quá xuất sắc với chủ đề này rồi!</h4>
                                     <p className="text-indigo-100 text-sm mb-5">Chia sẻ kết quả này để thách đấu cùng bạn bè nhé.</p>
-                                    <div className="flex items-center gap-2 max-w-sm mx-auto bg-white/10 p-1.5 rounded-xl border border-white/20">
-                                        <input 
-                                            readOnly 
-                                            value={`https://englishmore.bigbee.ltd/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`} 
-                                            className="flex-1 bg-transparent text-white px-3 py-2 text-sm outline-none w-full truncate" 
-                                        />
+                                    <div className="flex flex-col gap-3 max-w-sm mx-auto">
+                                        <div className="bg-white/10 p-2.5 rounded-xl border border-white/20">
+                                            <input 
+                                                readOnly 
+                                                value={`https://englishmore.bigbee.ltd/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`} 
+                                                className="w-full bg-transparent text-white/90 px-1 text-sm outline-none truncate text-center" 
+                                            />
+                                        </div>
                                         <button 
                                             onClick={() => {
                                                 navigator.clipboard.writeText(`https://englishmore.bigbee.ltd/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`);
                                                 setCopySuccess(true);
                                                 setTimeout(() => setCopySuccess(false), 2000);
                                             }} 
-                                            className="bg-indigo-500 hover:bg-indigo-400 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shrink-0 cursor-pointer"
+                                            className="w-full bg-amber-400 hover:bg-amber-300 text-indigo-900 px-4 py-3.5 rounded-xl text-base font-black transition-colors cursor-pointer shadow-lg active:scale-95"
                                         >
-                                            {copySuccess ? 'Đã Copy' : 'Khắc Chiến'}
+                                            {copySuccess ? 'Đã Copy Link' : 'Khắc Chiến'}
                                         </button>
                                     </div>
                                 </div>
