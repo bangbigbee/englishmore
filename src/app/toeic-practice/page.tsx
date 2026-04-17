@@ -1428,9 +1428,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 								onClick={() => setIsFlipped(!isFlipped)}
 							>
 								{/* ── FRONT FACE ── */}
-								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-[#14532d] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
-									<div className="absolute top-0 left-0 z-20 shadow-sm pointer-events-none">
-										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} className="rounded-br-[14px] rounded-tl-2xl border-b border-r border-white/20 text-white/90 bg-white/10 backdrop-blur-sm" />
+								<div className="absolute inset-0 h-full w-full rounded-2xl overflow-hidden [backface-visibility:hidden] bg-linear-to-br from-[#14532d] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
+									<div className="absolute top-0 left-0 z-20 pointer-events-none flex leading-none">
+										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} className="rounded-br-[14px] rounded-tl-none border-b border-r border-white/20 text-white/90 bg-white/10 backdrop-blur-sm m-0" />
 									</div>
 									<span className="absolute top-4 right-5 text-[9px] font-semibold uppercase tracking-wider text-white/50 bg-white/10 px-3 py-1 rounded-full pointer-events-none">
 										Nhấn để lật
