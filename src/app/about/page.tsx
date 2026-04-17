@@ -18,6 +18,14 @@ export default async function AboutPage() {
     const title = aboutData?.title || "Thầy Nguyễn Trí Bằng";
     const subtitle = aboutData?.subtitle || "Giám đốc Sáng lập";
     const description = aboutData?.description || `"Gắn liền giáo dục với trải nghiệm thực tiễn và công nghệ lõi. Hướng đến tạo ra những giá trị đích thực và vượt trội cho hàng triệu học viên tại Việt Nam."`;
+    const grid1Title = aboutData?.grid1Title || "7 Năm Công Tác ĐH Bách Khoa";
+    const grid1Desc = aboutData?.grid1Desc || "Tại Đại học Bách Khoa - ĐH Đà Nẵng trong lĩnh vực khoa học kỹ thuật, làm việc trực tiếp với 03 chương trình đào tạo quốc tế (gồm 02 chương trình tiên tiến Việt - Mỹ, và chương trình Kỹ sư Chất lượng Cao Việt Pháp).";
+    const grid2Title = aboutData?.grid2Title || "5 Năm Dạy Tiếng Anh";
+    const grid2Desc = aboutData?.grid2Desc || "Hơn nửa thập kỷ gắn bó với bục giảng Tiếng Anh, giúp đỡ và dẫn dắt hàng nghìn học viên vượt qua các rào cản ngoại ngữ, chinh phục các chứng chỉ quốc tế và hoàn thiện kỹ năng giao tiếp thực chiến.";
+    const grid3Title = aboutData?.grid3Title || "2 Năm Công Nghệ Blockchain";
+    const grid3Desc = aboutData?.grid3Desc || "Xông pha và tích luỹ 2 năm kinh nghiệm chinh chiến trong lĩnh vực công nghệ Blockchain - xu hướng công nghệ tiên phong toàn cầu ở thời điểm hiện tại.";
+    const grid4Title = aboutData?.grid4Title || "Môi Trường Quốc Tế Đa Chiều";
+    const grid4Desc = aboutData?.grid4Desc || "Nhiều năm làm việc và cọ xát trong môi trường chuẩn quốc tế. Tham gia các hội nghị, sự kiện quy mô lớn tại các quốc gia như Singapore, Hàn Quốc... mang đến góc nhìn sâu sắc và kinh nghiệm quý báu cho thế hệ sau.";
 
 	return (
 		<div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col z-0">
@@ -91,9 +99,9 @@ export default async function AboutPage() {
 							<div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0 text-[#14532d] mb-6 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
 								<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
 							</div>
-							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#14532d] transition-colors">7 Năm Công Tác ĐH Bách Khoa</h3>
-							<p className="text-slate-600 leading-relaxed text-[15px]">
-								Tại Đại học Bách Khoa - ĐH Đà Nẵng trong lĩnh vực khoa học kỹ thuật, làm việc trực tiếp với <strong className="text-slate-800">03 chương trình đào tạo quốc tế</strong> (gồm 02 chương trình tiên tiến Việt - Mỹ, và chương trình Kỹ sư Chất lượng Cao Việt Pháp).
+							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#14532d] transition-colors">{grid1Title}</h3>
+							<p className="text-slate-600 leading-relaxed text-[15px] whitespace-pre-wrap">
+								{grid1Desc}
 							</p>
 						</div>
 
@@ -102,9 +110,9 @@ export default async function AboutPage() {
 							<div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0 text-blue-600 mb-6 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
 								<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
 							</div>
-							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-700 transition-colors">5 Năm Dạy Tiếng Anh</h3>
-							<p className="text-slate-600 leading-relaxed text-[15px]">
-								Hơn nửa thập kỷ gắn bó với bục giảng Tiếng Anh, giúp đỡ và dẫn dắt hàng nghìn học viên vượt qua các rào cản ngoại ngữ, chinh phục các chứng chỉ quốc tế và hoàn thiện kỹ năng giao tiếp thực chiến.
+							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-700 transition-colors">{grid2Title}</h3>
+							<p className="text-slate-600 leading-relaxed text-[15px] whitespace-pre-wrap">
+                                {grid2Desc}
 							</p>
 						</div>
 
@@ -113,9 +121,9 @@ export default async function AboutPage() {
 							<div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0 text-purple-600 mb-6 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
 								<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
 							</div>
-							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-purple-700 transition-colors">2 Năm Công Nghệ Blockchain</h3>
-							<p className="text-slate-600 leading-relaxed text-[15px]">
-								Xông pha và tích luỹ 2 năm kinh nghiệm chinh chiến trong lĩnh vực công nghệ Blockchain - xu hướng công nghệ tiên phong toàn cầu ở thời điểm hiện tại.
+							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-purple-700 transition-colors">{grid3Title}</h3>
+							<p className="text-slate-600 leading-relaxed text-[15px] whitespace-pre-wrap">
+								{grid3Desc}
 							</p>
 						</div>
 
@@ -124,9 +132,9 @@ export default async function AboutPage() {
 							<div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0 text-amber-600 mb-6 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
 								<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
 							</div>
-							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-amber-700 transition-colors">Môi Trường Quốc Tế Đa Chiều</h3>
-							<p className="text-slate-600 leading-relaxed text-[15px]">
-								Nhiều năm làm việc và cọ xát trong môi trường chuẩn quốc tế. Tham gia các hội nghị, sự kiện quy mô lớn tại các quốc gia như Singapore, Hàn Quốc... mang đến góc nhìn sâu sắc và kinh nghiệm quý báu cho thế hệ sau.
+							<h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-amber-700 transition-colors">{grid4Title}</h3>
+							<p className="text-slate-600 leading-relaxed text-[15px] whitespace-pre-wrap">
+								{grid4Desc}
 							</p>
 						</div>
 					</div>

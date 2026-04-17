@@ -61,10 +61,10 @@ function ToeicNavTabs() {
               <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${TAB_COLORS[t.key]||'text-[#14532d]'}`}>
                 <div className="scale-[0.9]">{t.icon}</div>
               </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#ea980c] ${
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
                 isActive 
-                  ? "border-[#ea980c]" 
-                  : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#ea980c]/30"
+                  ? "border-[#14532d]" 
+                  : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
               }`}>
                 {t.label}
               </span>
@@ -81,10 +81,10 @@ function ToeicNavTabs() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
              </svg>
           </span>
-          <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#ea980c] ${
+          <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
              pathname.startsWith('/toeic-progress')
-               ? "border-[#ea980c]"
-               : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#ea980c]/30"
+               ? "border-[#14532d]"
+               : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
           }`}>
              Tiến Độ Của Tôi
           </span>
