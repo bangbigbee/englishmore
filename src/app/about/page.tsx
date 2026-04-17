@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from 'next';
 
@@ -62,7 +61,7 @@ export default function AboutPage() {
 								Giám đốc Sáng lập
 							</p>
 							<p className="text-slate-600 text-lg leading-relaxed max-w-2xl">
-								"Gắn liền giáo dục với trải nghiệm thực tiễn và công nghệ lõi. Hướng đến tạo ra những giá trị đích thực và vượt trội cho hàng triệu học viên tại Việt Nam."
+								&quot;Gắn liền giáo dục với trải nghiệm thực tiễn và công nghệ lõi. Hướng đến tạo ra những giá trị đích thực và vượt trội cho hàng triệu học viên tại Việt Nam.&quot;
 							</p>
 						</div>
 					</div>
