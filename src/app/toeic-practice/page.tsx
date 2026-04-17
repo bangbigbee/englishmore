@@ -1481,13 +1481,28 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									<p className="mt-8 text-xs text-white/50 font-medium tracking-wide">
 										Chủ đề: {selectedTopic}
 									</p>
+
+									{/* Front Face Nav */}
+									<div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-1 sm:gap-2 rounded-xl bg-white/10 p-1.5 sm:p-2 shadow-sm ring-1 ring-white/20 backdrop-blur-sm" onClick={e => e.stopPropagation()}>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg hover:bg-white/20 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white transition disabled:opacity-30 disabled:cursor-not-allowed">
+											<svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
+											Prev
+										</button>
+										<span className="text-xs sm:text-sm font-semibold text-white/90">{cardIndex + 1} / {vocabItems.length}</span>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg hover:bg-white/20 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white transition disabled:opacity-30 disabled:cursor-not-allowed">
+											Next
+											<svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+										</button>
+									</div>
 								</div>
 
 								{/* ── BACK FACE ── */}
-								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-[#14532d]/20 p-5 sm:p-7 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(20,83,45,0.02)] overflow-y-auto overflow-x-hidden">
-									<span className="absolute top-4 right-5 text-[9px] font-semibold uppercase tracking-wider text-[#14532d]/50 bg-[#14532d]/5 px-3 py-1 rounded-full pointer-events-none">
-										Nhấn để lật
-									</span>
+								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-[#14532d]/20 py-5 sm:py-7 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(20,83,45,0.02)] overflow-hidden">
+									
+									<div className="flex-1 overflow-y-auto px-5 sm:px-7 pb-20">
+										<span className="absolute top-4 right-5 text-[9px] font-semibold uppercase tracking-wider text-[#14532d]/50 bg-[#14532d]/5 px-3 py-1 rounded-full pointer-events-none">
+											Nhấn để lật
+										</span>
 
 									{/* Basic info — always visible */}
 									<div className="flex-1 flex flex-col items-center justify-start text-center w-full pt-1">
@@ -1601,45 +1616,30 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 											<button
 												type="button"
 												onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-												className="mt-6 text-[10px] font-bold text-purple-700 hover:text-purple-800 transition cursor-pointer flex items-center gap-1.5 justify-center"
+												className="mt-6 text-[10px] font-bold text-purple-700 hover:text-purple-800 transition cursor-pointer flex items-center gap-1.5 justify-center pb-4"
 											>
 												Nâng cấp <UltraTag /> để xem đầy đủ Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC
 											</button>
 										)}
 									</div>
+									</div>
+
+									{/* Back Face Nav */}
+									<div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-1 sm:gap-2 rounded-xl bg-slate-100/90 backdrop-blur-md p-1.5 sm:p-2 border border-slate-200 shadow-sm z-50 pointer-events-auto" onClick={e => e.stopPropagation()}>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed border border-slate-100">
+											<svg className="w-4 h-4 text-green-600 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
+											Prev
+										</button>
+										<span className="text-xs sm:text-sm font-semibold text-slate-600">{cardIndex + 1} / {vocabItems.length}</span>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed border border-slate-100">
+											Next
+											<svg className="w-4 h-4 text-green-600 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
 					)}
-
-					{/* Nav controls */}
-					<div className="flex items-center justify-between gap-2 rounded-xl bg-slate-100 p-2 border border-slate-200 shadow-sm">
-						<button
-							type="button"
-							onClick={() => moveCard('prev')}
-							disabled={cardIndex === 0}
-							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
-						>
-							<svg className="w-4 h-4 text-green-600 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
-							Prev
-						</button>
-
-						<div className="flex flex-col items-center gap-0.5">
-							<span className="text-sm font-semibold text-slate-600">
-								{cardIndex + 1} / {vocabItems.length}
-							</span>
-						</div>
-
-						<button
-							type="button"
-							onClick={() => moveCard('next')}
-							disabled={cardIndex >= vocabItems.length - 1}
-							className="group flex items-center justify-center gap-1.5 rounded-lg bg-white shadow-xs px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 focus:outline-none cursor-pointer disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed"
-						>
-							Next
-							<svg className="w-4 h-4 text-green-600 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
-						</button>
-					</div>
 
 					{/* Tags Action Bar */}
 					{currentItem && !challengeActive && !challengeResult.show && (
