@@ -69,7 +69,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   return (
     <>
       {/* Desktop Main Navigation Tabs */}
-      <div className="hidden lg:flex items-center gap-6 xl:gap-8 overflow-x-auto scrollbar-hide pt-1 w-full justify-start mx-6">
+      <div className="hidden lg:flex items-center gap-6 xl:gap-8 overflow-x-auto pt-1 w-full justify-start mx-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <Link
           href="/user/profile"
           className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
@@ -439,65 +439,17 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                       {/* Invisible overlay for capturing outside clicks */}
                       <button className="fixed inset-0 z-40 w-full h-full cursor-default" onClick={() => setIsDropdownOpen(false)} aria-hidden="true"></button>
                       
-                      <div className="absolute right-0 top-[calc(100%+12px)] z-50 w-[280px] min-w-[280px] max-w-[90vw] origin-top-right rounded-[20px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200 ease-out border border-slate-100">
-                        {/* User Header */}
-                        <div className="bg-[#14532d] px-4 py-5 shrink-0 relative overflow-hidden border-b-4 border-amber-500">
-                          {/* Background pattern */}
-                          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
-                          
-                          <div className="flex items-center gap-3 relative z-10">
-                            <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-300' : 'border-white'} bg-white text-[#14532d] shadow-sm`}>
-                              {session.user?.image && !avatarLoadFailed ? (
-                                <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
-                              ) : (
-                                <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
-                              )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-base font-bold text-white tracking-tight">{session.user?.name || 'User'}</p>
-                              <p className="truncate text-[11px] text-green-100/90 font-medium">{session.user?.email || ''}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-3 relative z-10 flex flex-col gap-1.5">
-                            {(session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA') && (
-                               <div className="flex items-center gap-1.5">
-                                 {session.user?.tier === 'PRO' ? (
-                                   <span className="inline-flex items-center justify-center gap-1 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-2 h-5 rounded text-[10px] shadow-sm">
-                                     <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                     PRO
-                                   </span>
-                                 ) : (
-                                   <span className="inline-flex items-center justify-center gap-1 bg-gradient-to-r from-purple-700 to-purple-900 text-white font-black uppercase tracking-widest px-2 h-5 rounded text-[10px] shadow-sm border border-purple-500/30">
-                                     <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                     ULTRA
-                                   </span>
-                                 )}
-                                 {session.user.tierExpiresAt && (
-                                   <span className="text-[10px] text-white/80 font-medium">Đến: {new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}</span>
-                                 )}
-                               </div>
-                            )}
-                            {enrolledCourseTitle && (
-                              <p className="truncate text-xs font-semibold text-[#ea980c] bg-[#14532d] shadow-sm border border-black/10 self-start px-2 py-0.5 rounded-md">{enrolledCourseTitle}</p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Dropdown Items */}
-                        <div className="p-2 space-y-1 bg-slate-50/50">
-
-                          <button
-                            type="button"
-                            onClick={() => signOut({ callbackUrl: '/' })}
-                            className="group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all mt-2"
-                          >
-                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-100/60 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
-                              <LogoutIcon />
-                            </span>
-                            Đăng Xuất
-                          </button>
-                        </div>
+                      <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[160px] max-w-[90vw] origin-top-right rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5">
+                        <button
+                          type="button"
+                          onClick={() => signOut({ callbackUrl: '/' })}
+                          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all"
+                        >
+                          <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-100/60 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                            <LogoutIcon />
+                          </span>
+                          Đăng Xuất
+                        </button>
                       </div>
                     </>
                   )}
