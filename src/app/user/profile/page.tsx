@@ -241,122 +241,18 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-          <aside className="space-y-6 lg:sticky lg:top-6 self-start">
-            <div className="rounded-xl border-2 border-amber-200 bg-amber-50 p-4 shadow-sm">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-amber-700">Activity Points (AP)</h2>
-              <div className="mt-3 flex items-center gap-2">
-                <input
-                  type="text"
-                  value={`${profile?.activityPoints ?? 0} points`}
-                  disabled
-                  className="block w-full rounded-lg border border-amber-200 bg-white px-4 py-2 text-slate-700"
-                />
-                <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">AP</span>
-              </div>
-            </div>
-
-            <div className="rounded-xl border-2 border-slate-200 bg-white p-4 shadow-sm">
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700">Achievements</h2>
-                {badges.length > 0 && (
-                  <span className="rounded-full bg-[#14532d]/10 px-2 py-0.5 text-xs font-semibold text-[#14532d]">
-                    {badges.filter((b) => b.earned).length}/{badges.length}
-                  </span>
-                )}
-              </div>
-              {badgesLoading ? (
-                <p className="text-xs text-slate-500">Loading achievements...</p>
-              ) : badges.length === 0 ? (
-                <p className="text-xs text-slate-500">No activity data yet.</p>
-              ) : (
-                <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
-                  {badges.map((badge) => (
-                    <div
-                      key={badge.id}
-                      className={`flex items-start gap-3 rounded-lg border p-3 transition-all ${
-                        badge.earned
-                          ? 'border-[#14532d]/20 bg-[#14532d]/5'
-                          : 'border-slate-100 bg-slate-50 opacity-60'
-                      }`}
-                    >
-                      <span className="mt-0.5 shrink-0 text-xl leading-none">{badge.icon}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className={`text-xs font-bold ${ badge.earned ? 'text-[#14532d]' : 'text-slate-500'}`}>{badge.name}</p>
-                          {badge.earned && <span className="shrink-0 rounded-full bg-[#14532d] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Earned</span>}
-                        </div>
-                        <p className="mt-0.5 text-[11px] leading-snug text-slate-500">
-                          <LinkifiedText text={badge.description} />
-                        </p>
-                        {!badge.earned && typeof badge.progress === 'number' && (
-                          <div className="mt-1.5">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] text-slate-400">{badge.progressLabel}</span>
-                              <span className="text-[10px] font-semibold text-slate-500">{badge.progress}%</span>
-                            </div>
-                            <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-slate-200">
-                              <div
-                                className="h-full rounded-full bg-[#14532d]/40 transition-all"
-                                style={{ width: `${badge.progress}%` }}
-                              />
-                            </div>
-                          </div>
-                        )}
-                        {badge.earned && badge.earnedAt && (
-                          <p className="mt-1 text-[10px] text-slate-400">
-                            {new Date(badge.earnedAt).toLocaleDateString('en-GB')}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-amber-700">Referred By</h2>
-              {profile?.referrer ? (
-                <div className="mt-3 space-y-1 text-sm text-slate-700">
-                  <p><span className="font-semibold">Name:</span> {profile.referrer.name || 'N/A'}</p>
-                  <p><span className="font-semibold">Email:</span> {profile.referrer.email}</p>
-                  <p><span className="font-semibold">Student ID:</span> {profile.referrer.studentId || 'N/A'}</p>
-                </div>
-              ) : (
-                <p className="mt-3 text-sm text-slate-600">No referrer recorded.</p>
-              )}
-            </div>
-
-            <div className="rounded-lg border border-[#14532d]/20 bg-[#14532d]/5 p-4">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-[#14532d]">Successful Referrals</h2>
-              {profile?.referredUsers?.length ? (
-                <div className="mt-3 space-y-3">
-                  {profile.referredUsers.map((item) => (
-                    <div key={item.id} className="rounded-lg border border-white bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">
-                      <p><span className="font-semibold">Name:</span> {item.name || 'N/A'}</p>
-                      <p><span className="font-semibold">Email:</span> {item.email}</p>
-                      <p><span className="font-semibold">Student ID:</span> {item.studentId || 'N/A'}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-3 text-sm text-slate-600">No successful referrals yet.</p>
-              )}
-            </div>
-          </aside>
-
-          <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm p-6 sm:p-8">
-
+        <div className="flex flex-col gap-8">
+          {/* Main Info Box */}
+          <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm p-6 sm:p-8 relative">
+            <h2 className="text-xl font-black text-slate-800 mb-6 border-b pb-4">Thông tin cá nhân</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Avatar Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Profile photo</label>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
+              {/* Avatar Upload */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Profile photo</label>
+                <div className="flex items-center gap-4">
                   <div className="shrink-0 relative">
                     {imagePreview && !imagePreviewFailed ? (
-                      <div className={`h-24 w-24 relative rounded-lg overflow-hidden bg-gray-200 border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-700' : ''}`}>
+                      <div className={`h-24 w-24 relative rounded-xl overflow-hidden bg-gray-100 shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c] ring-4 ring-[#ea980c]/10' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-700 ring-4 ring-purple-600/10' : ''}`}>
                         <Image
                           src={imagePreview}
                           alt="Avatar preview"
@@ -366,146 +262,213 @@ export default function ProfilePage() {
                         />
                       </div>
                     ) : (
-                      <div className={`flex h-24 w-24 items-center justify-center rounded-lg bg-[#14532d]/10 text-3xl font-bold text-[#14532d] border-4 border-white shadow-md ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-700' : ''}`}>
+                      <div className={`flex h-24 w-24 items-center justify-center rounded-xl bg-[#14532d]/5 text-3xl font-black text-[#14532d] shadow-sm ${session.user?.tier === 'PRO' ? 'outline outline-2 outline-[#ea980c] ring-4 ring-[#ea980c]/10' : session.user?.tier === 'ULTRA' ? 'outline outline-2 outline-purple-700 ring-4 ring-purple-600/10' : ''}`}>
                         {profileInitial}
                       </div>
                     )}
                   </div>
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="block w-full text-sm text-slate-500
+                        file:mr-4 file:py-2.5 file:px-4
+                        file:rounded-xl file:border-0
+                        file:text-sm file:font-bold
+                        file:bg-slate-100 file:text-slate-700
+                        hover:file:bg-slate-200 file:transition-colors
+                        cursor-pointer focus:outline-none"
+                    />
+                    <p className="text-xs text-slate-400 mt-2 font-medium">JPG, PNG, GIF Max 5MB</p>
+                  </div>
                 </div>
-                <div className="flex-1">
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Name */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-bold text-slate-700">Full name</label>
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="block w-full text-sm text-gray-500
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-[#14532d] file:text-white
-                      hover:file:bg-[#166534]
-                      cursor-pointer"
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="mt-1.5 block w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-[#14532d] focus:ring-0 outline-none transition-colors font-medium text-slate-800"
                   />
-                  <p className="text-xs text-gray-500 mt-1">JPG, PNG, GIF up to 5MB</p>
+                </div>
+
+                {/* Email (read-only) */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-bold text-slate-700">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={profile?.email || ''}
+                    disabled
+                    className="mt-1.5 block w-full rounded-xl border-2 border-slate-100 px-4 py-2.5 bg-slate-50 text-slate-500 font-medium cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700">Student ID</label>
+                  <input
+                    type="text"
+                    value={profile?.studentId || 'Chưa cập nhật'}
+                    disabled
+                    className="mt-1.5 block w-full rounded-xl border-2 border-slate-100 px-4 py-2.5 bg-slate-50 text-slate-500 font-medium cursor-not-allowed"
+                  />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-bold text-slate-700">Số điện thoại</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="0912345678"
+                    className="mt-1.5 block w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-[#14532d] focus:ring-0 outline-none transition-colors font-medium text-slate-800"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-slate-700">Khóa học hiện tại</label>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-3">
+                    <input
+                      type="text"
+                      value={
+                        !profile?.courseEnrollmentStatus
+                          ? 'Chưa đăng ký khóa học nào'
+                          : profile.courseEnrollmentStatus === 'pending'
+                          ? 'Đang chờ duyệt'
+                          : profile.courseTitle || 'Không xác định'
+                      }
+                      disabled
+                      className="block flex-1 min-w-[200px] rounded-xl border-2 border-slate-100 px-4 py-2.5 bg-slate-50 text-slate-500 font-bold cursor-not-allowed"
+                    />
+                    {profile?.courseEnrollmentStatus === 'pending' && (
+                      <span className="shrink-0 rounded-[10px] bg-amber-100 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-amber-700">Pending</span>
+                    )}
+                    {profile?.courseEnrollmentStatus === 'active' && (
+                      <span className="shrink-0 rounded-[10px] bg-[#14532d]/10 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-[#14532d]">Active Enrolled</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bio */}
+                <div className="md:col-span-2">
+                  <label htmlFor="bio" className="block text-sm font-bold text-slate-700">Tiểu sử (Bio)</label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleInputChange}
+                    placeholder="Viết một vài dòng về bản thân bạn..."
+                    rows={3}
+                    className="mt-1.5 block w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-[#14532d] focus:ring-0 outline-none transition-colors font-medium text-slate-800 resize-none custom-scrollbar"
+                  />
                 </div>
               </div>
-            </div>
-
-            {/* Name */}
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d] outline-none"
-              />
-            </div>
-
-            {/* Email (read-only) */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                id="email"
-                value={profile?.email || ''}
-                disabled
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 bg-gray-100 text-gray-600"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Student ID</label>
-              <input
-                type="text"
-                value={profile?.studentId || 'Not assigned yet'}
-                disabled
-                className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Khóa học</label>
-              <div className="mt-1 flex items-center gap-2">
-                <input
-                  type="text"
-                  value={
-                    !profile?.courseEnrollmentStatus
-                      ? 'No active course'
-                      : profile.courseEnrollmentStatus === 'pending'
-                      ? 'Waiting to be confirmed'
-                      : profile.courseTitle || 'No active course'
-                  }
-                  disabled
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-gray-600"
-                />
-                {profile?.courseEnrollmentStatus === 'pending' && (
-                  <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">Pending</span>
-                )}
-                {profile?.courseEnrollmentStatus === 'active' && (
-                  <span className="shrink-0 rounded-full bg-[#14532d]/10 px-2.5 py-1 text-xs font-semibold text-[#14532d]">Active</span>
-                )}
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone number</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="0912345678"
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d] outline-none"
-              />
-            </div>
-
-            {/* Bio */}
-            <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Bio</label>
-              <textarea
-                id="bio"
-                name="bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                placeholder="Write something about yourself..."
-                rows={4}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d] outline-none resize-none"
-              />
-              <p className="text-xs text-gray-500 mt-1">Up to 500 characters</p>
-            </div>
 
               {/* Submit */}
-              <div className="flex gap-3 pt-4">
-              {session.user?.role === 'admin' && (
-                <button
-                  type="button"
-                  onClick={() => router.push('/admin')}
-                  className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-black font-medium transition-colors cursor-pointer"
-                >
-                  Go to Dashboard
-                </button>
-              )}
+              <div className="flex flex-wrap gap-3 pt-6 border-t border-slate-100">
+                {session.user?.role === 'admin' && (
+                  <button
+                    type="button"
+                    onClick={() => router.push('/admin')}
+                    className="px-6 py-2.5 bg-slate-900 text-white rounded-[12px] hover:bg-black font-bold transition-all cursor-pointer shadow-md"
+                  >
+                    Go Admin
+                  </button>
+                )}
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-2 bg-[#14532d] text-white rounded-lg hover:bg-[#166534] disabled:opacity-50 font-medium transition-colors cursor-pointer"
+                  className="flex-1 min-w-[150px] px-6 py-2.5 bg-[#14532d] text-white rounded-[12px] hover:bg-[#166534] disabled:opacity-50 disabled:cursor-not-allowed font-bold transition-all cursor-pointer shadow-md"
                 >
-                  {saving ? 'Saving...' : 'Save changes'}
+                  {saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}
                 </button>
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors cursor-pointer"
+                  className="px-6 py-2.5 border-2 border-slate-200 text-slate-600 rounded-[12px] hover:bg-slate-50 hover:text-slate-800 font-bold transition-all cursor-pointer"
                 >
-                  Back
+                  Trở về
                 </button>
               </div>
             </form>
           </div>
+
+          {/* Quick Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* AP */}
+            <div className="rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5 shadow-sm flex flex-col">
+              <h2 className="text-xs font-black uppercase tracking-widest text-amber-700 mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Activity Points
+              </h2>
+              <div className="flex-1 flex items-center gap-3">
+                <div className="text-4xl font-black text-amber-600 tracking-tighter">
+                  {profile?.activityPoints ?? 0}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-amber-800 font-bold text-sm">Điểm AP</span>
+                  <span className="text-amber-600/70 text-[11px] font-medium leading-tight mt-0.5">Dùng để xếp hạng<br/>và đổi quà</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Referred By */}
+            <div className="rounded-xl border-2 border-slate-200 bg-white p-5 shadow-sm flex flex-col">
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                Người giới thiệu
+              </h2>
+              <div className="flex-1">
+                {profile?.referrer ? (
+                  <div className="space-y-1.5">
+                    <p className="text-slate-800 font-bold text-[15px]">{profile.referrer.name || 'Thành viên vô danh'}</p>
+                    <p className="text-slate-500 font-medium text-[13px] truncate">{profile.referrer.email}</p>
+                    {profile.referrer.studentId && (
+                      <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-600 text-[11px] font-bold rounded-md mt-1">ID: {profile.referrer.studentId}</span>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm font-medium text-slate-400 italic mt-2">Chưa ghi nhận người giới thiệu.</p>
+                )}
+              </div>
+            </div>
+
+            {/* My Referrals */}
+            <div className="rounded-xl border-2 border-[#14532d]/20 bg-gradient-to-br from-[#14532d]/5 to-white p-5 shadow-sm flex flex-col">
+              <h2 className="text-xs font-black uppercase tracking-widest text-[#14532d] mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                Lượt giới thiệu
+              </h2>
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <div className="text-3xl font-black text-[#14532d] tracking-tighter mb-2">
+                  {profile?.referredUsers?.length || 0}
+                  <span className="text-sm font-bold text-[#14532d]/60 tracking-normal ml-1.5">lượt</span>
+                </div>
+                {profile?.referredUsers?.length ? (
+                  <div className="space-y-2 overflow-y-auto custom-scrollbar flex-1 pr-1 max-h-[80px]">
+                    {profile.referredUsers.map((item) => (
+                      <div key={item.id} className="text-[13px] font-medium text-slate-600 truncate border-b border-slate-100 last:border-0 pb-1 last:pb-0">
+                        {item.name || item.email.split('@')[0]}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm font-medium text-slate-400 italic">Chưa giới thiệu được ai.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>
