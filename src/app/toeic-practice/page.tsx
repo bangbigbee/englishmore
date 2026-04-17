@@ -1125,6 +1125,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		}, 150);
 	};
 
+	const vocabBankBtnRef = useRef<HTMLAnchorElement>(null);
+	const bookmarkBtnRef = useRef<HTMLButtonElement>(null);
+	const [flyingStars, setFlyingStars] = useState<{ id: number, startX: number, startY: number, endX: number, endY: number }[]>([]);
+
 	const toggleTag = async (wordId: string, tag: 'learned' | 'hard' | 'bookmarked') => {
 		if (!session) {
 			onPracticeClick(selectedTopic || undefined, false);
@@ -1132,10 +1136,30 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		}
 		
 		const current = vocabTags[wordId] || {};
-		const newTagData = { ...current, [tag]: !current[tag] };
+		const isEnabling = !current[tag];
+		const newTagData = { ...current, [tag]: isEnabling };
 		
 		if (tag === 'learned' && newTagData.learned) newTagData.hard = false;
 		if (tag === 'hard' && newTagData.hard) newTagData.learned = false;
+
+		// Star Animation Trigger
+		if (tag === 'bookmarked' && isEnabling && bookmarkBtnRef.current && vocabBankBtnRef.current) {
+			const startRect = bookmarkBtnRef.current.getBoundingClientRect();
+			const endRect = vocabBankBtnRef.current.getBoundingClientRect();
+			
+			const newStar = {
+				id: Date.now(),
+				startX: startRect.left + startRect.width / 2,
+				startY: startRect.top + startRect.height / 2,
+				endX: endRect.left + endRect.width / 2,
+				endY: endRect.top + endRect.height / 2
+			};
+			
+			setFlyingStars(prev => [...prev, newStar]);
+			setTimeout(() => {
+				setFlyingStars(prev => prev.filter(s => s.id !== newStar.id));
+			}, 1000);
+		}
 
 		// Optimistic UI update
 		setVocabTags(prev => ({
@@ -1390,7 +1414,23 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const hasPremium = currentItem && (currentItem.collocations || currentItem.synonyms || currentItem.antonyms || currentItem.toeicTrap);
 
 	return (
-		<div>
+		<div className="relative">
+			{/* Flying Stars Animation Overlay */}
+			<AnimatePresence>
+				{flyingStars.map(star => (
+					<motion.div
+						key={star.id}
+						initial={{ x: star.startX - 10, y: star.startY - 10, opacity: 1, scale: 1.2, rotate: 0 }}
+						animate={{ x: star.endX - 10, y: star.endY - 10, opacity: 1, scale: 0.5, rotate: 360 }}
+						exit={{ opacity: 0, scale: 0 }}
+						transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
+						className="fixed z-[9999] pointer-events-none text-xl drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+						style={{ left: 0, top: 0 }}
+					>
+						⭐
+					</motion.div>
+				))}
+			</AnimatePresence>
 			{/* Header */}
 			<div className="flex flex-wrap items-center justify-between gap-3 mb-6">
 				<div className="flex items-center gap-3">
@@ -1690,10 +1730,26 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							<button onClick={() => toggleTag(currentItem.id, 'hard')} className={`px-3 py-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.hard ? 'bg-red-100 text-red-700 border-red-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
 								{vocabTags[currentItem.id]?.hard ? '🔥 Khó' : 'Thấy từ này khó?'}
 							</button>
-							<button onClick={() => toggleTag(currentItem.id, 'bookmarked')} className={`px-3 py-1.5 flex items-center justify-center gap-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.bookmarked ? 'bg-amber-100 text-amber-600 border-amber-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`} title="Bookmark">
+							<button 
+								ref={bookmarkBtnRef}
+								onClick={() => toggleTag(currentItem.id, 'bookmarked')} 
+								className={`px-3 py-1.5 flex items-center justify-center gap-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.bookmarked ? 'bg-amber-100 text-amber-600 border-amber-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`} 
+								title="Bookmark"
+							>
 								<svg className="w-3.5 h-3.5" fill={vocabTags[currentItem.id]?.bookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
 								{vocabTags[currentItem.id]?.bookmarked ? 'Đã lưu' : 'Lưu lại từ này'}
 							</button>
+
+							<div className="w-full flex justify-center mt-3 mb-1">
+								<Link 
+									ref={vocabBankBtnRef}
+									href="/toeic-progress?tab=vocabulary-bank"
+									className="group px-4 py-2 rounded-full font-bold text-[13px] bg-green-50 text-[#14532d] border border-green-200 hover:bg-green-100 hover:border-green-300 transition-all flex items-center justify-center gap-2 shadow-xs"
+								>
+									<span className="flex items-center justify-center w-5 h-5 bg-white rounded-full text-[10px] shadow-xs group-hover:scale-110 transition-transform">📚</span>
+									Sổ từ vựng của tôi
+								</Link>
+							</div>
 						</div>
 					)}
 
