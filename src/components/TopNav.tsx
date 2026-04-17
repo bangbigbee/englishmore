@@ -115,8 +115,8 @@ function ToeicNavTabs() {
 
         {/* Mobile Drawer Menu */}
         <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isToeicMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isToeicMenuOpen}>
-            <button type="button" onClick={() => setIsToeicMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 ${isToeicMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
-            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${isToeicMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <button type="button" onClick={() => setIsToeicMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 touch-none overscroll-none ${isToeicMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
+            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isToeicMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
                     <h2 className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight">
                         <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">T</span>
@@ -393,11 +393,11 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
           <button
             type="button"
             onClick={() => setIsMenuOpen(false)}
-            className={`absolute inset-0 z-0 bg-slate-950/35 transition-opacity ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+            className={`absolute inset-0 z-0 bg-slate-950/35 transition-opacity touch-none overscroll-none ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
             aria-label="Close menu overlay"
           />
 
-          <aside className={`absolute right-0 top-0 z-10 flex h-screen w-[min(22rem,88vw)] flex-col border-l border-amber-200 bg-[#fff9f2] shadow-2xl transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <aside className={`absolute right-0 top-0 z-10 flex h-screen w-[min(22rem,88vw)] flex-col border-l border-amber-200 bg-[#fff9f2] shadow-2xl transition-transform duration-300 touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
             <div className="border-b-[4px] border-amber-500 bg-[#14532d] px-5 py-6 shrink-0">
               <div className="flex items-start justify-between gap-3 relative">
                 <div className="flex min-w-0 items-center gap-3">
