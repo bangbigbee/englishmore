@@ -8,8 +8,8 @@ import { useEffect, useState, Suspense, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const TOEIC_TABS = [
-  { key: "grammar", label: "Grammar", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5C4 18.837 4.53726 18.3 5.2 18.3H19C19.5523 18.3 20 18.7477 20 19.3V19.3C20 19.8523 19.5523 20.3 19 20.3H5.2C4.53726 20.3 4 19.763 4 19.1V19.5Z" fill="currentColor" fillOpacity="0.2"/><path d="M4 19.5V5.2C4 4.53726 4.53726 4 5.2 4H19C19.5523 4 20 4.44772 20 5V19.5M4 19.5C4 18.837 4.53726 18.3 5.2 18.3H19M4 19.5C4 20.163 4.53726 20.7 5.2 20.7H19C19.5523 20.7 20 20.2523 20 19.7V18.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M12 4V18.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg> },
-  { key: "vocabulary", label: "Vocabulary", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19C4 19.8284 4.67157 20.5 5.5 20.5H18.5C19.3284 20.5 20 19.8284 20 19V17.5H4V19Z" fill="currentColor"/><path d="M4 17.5V4C4 2.89543 4.89543 2 6 2H20V17.5H4Z" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2"/><path d="M7 6L8.5 10M10 6L8.5 10M7.5 8.5H9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 6H17M13 8H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M7 12H11M7 14H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M14 12H18L14 16H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+  { key: "grammar", label: "Luyện ngữ pháp", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5C4 18.837 4.53726 18.3 5.2 18.3H19C19.5523 18.3 20 18.7477 20 19.3V19.3C20 19.8523 19.5523 20.3 19 20.3H5.2C4.53726 20.3 4 19.763 4 19.1V19.5Z" fill="currentColor" fillOpacity="0.2"/><path d="M4 19.5V5.2C4 4.53726 4.53726 4 5.2 4H19C19.5523 4 20 4.44772 20 5V19.5M4 19.5C4 18.837 4.53726 18.3 5.2 18.3H19M4 19.5C4 20.163 4.53726 20.7 5.2 20.7H19C19.5523 20.7 20 20.2523 20 19.7V18.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M12 4V18.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg> },
+  { key: "vocabulary", label: "Học từ vựng", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19C4 19.8284 4.67157 20.5 5.5 20.5H18.5C19.3284 20.5 20 19.8284 20 19V17.5H4V19Z" fill="currentColor"/><path d="M4 17.5V4C4 2.89543 4.89543 2 6 2H20V17.5H4Z" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2"/><path d="M7 6L8.5 10M10 6L8.5 10M7.5 8.5H9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 6H17M13 8H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M7 12H11M7 14H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M14 12H18L14 16H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
   { key: "listening", label: "Listening", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 14V16C19 18.2091 17.2091 20 15 20H14V14H19Z" fill="currentColor" fillOpacity="0.2"/><path d="M5 14V16C5 18.2091 6.79086 20 9 20H10V14H5Z" fill="currentColor" fillOpacity="0.2"/><path d="M10 20H9C6.79086 20 5 18.2091 5 16V12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12V16C19 18.2091 17.2091 20 15 20H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M10 14V20H9C7.89543 20 7 19.1046 7 18V16C7 14.8954 7.89543 14 9 14H10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M14 14V20H15C16.1046 20 17 19.1046 17 18V16C17 14.8954 16.1046 14 15 14H14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg> },
   { key: "reading", label: "Reading", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 3V7C14 7.55228 14.4477 8 15 8H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M14 3L19 8V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14Z" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M9 13H15M9 17H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg> },
   { key: "actual-test", label: "Actual Test", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="4" width="12" height="18" rx="2" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2"/><path d="M9 4V3C9 2.44772 9.44772 2 10 2H14C14.5523 2 15 2.44772 15 3V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> },
@@ -51,7 +51,22 @@ function ToeicNavTabs() {
     <>
       <div className="hidden lg:flex items-center gap-6 xl:gap-8 overflow-x-auto scrollbar-hide pt-1 w-full justify-start mx-6">
         <Link
-          href="/toeic-progress"
+          href="/toeic-progress?tab=vocabulary-bank"
+          className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+        >
+          <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-emerald-500`}>
+             <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+          </span>
+          <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
+             pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank')
+               ? "border-[#14532d]"
+               : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
+          }`}>
+             Sổ Tay Của Tôi
+          </span>
+        </Link>
+        <Link
+          href="/toeic-progress?tab=reports-vocab"
           className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
         >
           <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-sky-500`}>
@@ -60,7 +75,7 @@ function ToeicNavTabs() {
              </svg>
           </span>
           <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-             pathname.startsWith('/toeic-progress')
+             pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports')
                ? "border-[#14532d]"
                : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
           }`}>
@@ -113,15 +128,32 @@ function ToeicNavTabs() {
                 </div>
 
                 <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
-                    <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-2">Các Chuyên Mục Học Tập</div>
-                    <Link href="/toeic-progress" onClick={() => setIsToeicMenuOpen(false)} className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname.startsWith('/toeic-progress') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}>
-                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname.startsWith('/toeic-progress') ? 'bg-white shadow-sm text-sky-500' : 'bg-slate-50 text-sky-500/60'}`}>
+                    <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-2">Dữ liệu cá nhân</div>
+                    <Link 
+                      href="/toeic-progress?tab=vocabulary-bank" 
+                      onClick={() => setIsToeicMenuOpen(false)} 
+                      className={`mb-1 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-[0_4px_12px_rgba(16,185,129,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
+                    >
+                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-emerald-500' : 'bg-slate-50 text-emerald-500/60'}`}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                        </span>
+                        <span className="flex-1 truncate text-[15px]">Sổ Tay Của Tôi</span>
+                    </Link>
+
+                    <Link 
+                      href="/toeic-progress?tab=reports-vocab" 
+                      onClick={() => setIsToeicMenuOpen(false)} 
+                      className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
+                    >
+                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-white shadow-sm text-sky-500' : 'bg-slate-50 text-sky-500/60'}`}>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </span>
                         <span className="flex-1 truncate text-[15px]">Tiến Độ Của Tôi</span>
                     </Link>
+
+                    <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-4">Các Chuyên Mục Học Tập</div>
 
                     {TOEIC_TABS.map(t => {
                         const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');

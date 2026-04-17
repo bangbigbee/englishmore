@@ -29,7 +29,6 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 		<div className="space-y-6 mb-8">
 			{/* Topic Dropdown */}
 			<div className="relative z-30">
-				<label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Chủ đề từ vựng</label>
 				<div className="max-w-md relative">
                     <button 
                         onClick={() => setIsTopicOpen(!isTopicOpen)}
@@ -78,7 +77,6 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 
 			{/* Tag Chips */}
 			<div>
-				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 px-1">Lọc theo tag đã chọn</label>
 				<div className="flex flex-nowrap overflow-x-auto gap-2 pb-3 custom-scrollbar">
 					{[
 						{ id: 'all', label: 'Tất cả trạng thái', icon: '🌈', activeClass: 'bg-slate-800 text-white' },
