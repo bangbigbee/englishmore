@@ -93,9 +93,9 @@ function ToeicNavTabs() {
       <div className="lg:hidden flex items-center relative order-first">
         <button
           onClick={() => setIsToeicMenuOpen(true)}
-          className="flex items-center justify-center w-10 h-10 bg-slate-50/80 hover:bg-slate-100 border border-slate-200 rounded-xl shadow-sm text-slate-700 active:scale-[0.98] transition-all"
+          className="flex items-center justify-center w-10 h-10 bg-[#ea980c] hover:bg-[#d48c0b] border border-[#ea980c]/20 rounded-xl shadow-[0_4px_12px_rgba(234,152,12,0.25)] text-white active:scale-[0.98] transition-all"
         >
-          <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          <svg className="w-5 h-5 text-[#14532d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
 
         {/* Mobile Drawer Menu */}

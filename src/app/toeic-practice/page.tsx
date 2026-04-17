@@ -217,7 +217,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
                 )}
 
 				{badgeText && !progress && (
-					<div className={`text-[11px] font-black uppercase tracking-[0.2em] text-[#14532d] mt-2 opacity-80 ${isCompactType ? 'mt-4' : 'mt-2'}`}>
+					<div className={`text-[12px] font-medium text-[#14532d] mt-2 opacity-90 ${isCompactType ? 'mt-4' : 'mt-2'}`}>
 						{badgeText}
 					</div>
 				)}
