@@ -469,7 +469,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                 <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </span>
-                <span className="flex-1 truncate text-[15px]">About ToeicMore</span>
+                <span className="flex-1 truncate text-[15px]">About <span className="text-[#14532d] font-black">Toeic</span><span className="text-[#ea980c] font-black">More</span></span>
               </Link>
 
               <div className="py-2"><div className="h-px bg-slate-100 w-full" /></div>

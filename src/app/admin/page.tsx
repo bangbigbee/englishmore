@@ -12,6 +12,7 @@ import AdminPricingSettings from '@/components/AdminPricingSettings'
 import AdminUserManagement from '@/components/AdminUserManagement'
 import TipTapEditor from '@/components/TipTapEditor'
 import AdminMasterConfig from './AdminMasterConfig'
+import AdminAboutToeicMore from './AdminAboutToeicMore'
 import AdminToeicVocabEditor from './AdminToeicVocabEditor'
 
 interface CourseItem {
@@ -357,7 +358,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing' | 'masterConfig'
+type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing' | 'masterConfig' | 'about_toeicmore'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -3447,6 +3448,7 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>10. NEWS</button>
              <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>11. GALLERY</button>
              <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>12. SUBSCRIPTION</button>
+             <button onClick={() => setActiveSection('about_toeicmore')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'about_toeicmore' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>13. ABOUT TOEICMORE</button>
           </nav>
         </aside>
 
@@ -3459,6 +3461,10 @@ export default function AdminDashboard() {
 
           {activeSection === 'pricing' && (
              <AdminPricingSettings />
+          )}
+
+          {activeSection === 'about_toeicmore' && (
+             <AdminAboutToeicMore />
           )}
 
         {activeSection === 'gallery' && (
