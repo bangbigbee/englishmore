@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useState, Suspense, useRef } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const TOEIC_TABS = [
@@ -24,17 +24,12 @@ const TAB_COLORS: Record<string, string> = {
   "actual-test": "text-green-600"
 }
 
-function ToeicNavTabs() {
+function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
   const currentTab = searchParams.get('tab') || 'home'
-  const [isToeicMenuOpen, setIsToeicMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    // Drawer handles its own overlay click
-  }, [])
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleToeicTabClick = (key: string) => {
     if (pathname.startsWith('/toeic-practice') || pathname === '/') {
@@ -47,8 +42,33 @@ function ToeicNavTabs() {
     }
   }
 
+  const ENGLISHMORE_TABS = [
+    {
+      key: "my-homework",
+      label: "Làm Bài Tập",
+      icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>,
+      href: "/my-homework",
+      color: "text-blue-600"
+    },
+    {
+      key: "dashboard",
+      label: "Bài Học Trên Lớp",
+      icon: <BookIcon />,
+      href: "/dashboard",
+      color: "text-emerald-600"
+    },
+    {
+      key: "lecture-notes",
+      label: "Slide Bài Giảng",
+      icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>,
+      href: "/lecture-notes",
+      color: "text-indigo-600"
+    }
+  ]
+
   return (
     <>
+      {/* Desktop Main Navigation Tabs */}
       <div className="hidden lg:flex items-center gap-6 xl:gap-8 overflow-x-auto scrollbar-hide pt-1 w-full justify-start mx-6">
         <Link
           href="/toeic-progress?tab=vocabulary-bank"
@@ -82,47 +102,74 @@ function ToeicNavTabs() {
              Tiến Độ Của Tôi
           </span>
         </Link>
-        {TOEIC_TABS.map((t) => {
-          const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
-          return (
-            <button
-              key={t.key}
-              onClick={() => handleToeicTabClick(t.key)}
-              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
-            >
-              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${TAB_COLORS[t.key]||'text-[#14532d]'}`}>
-                <div className="scale-[0.9]">{t.icon}</div>
-              </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
-                isActive 
-                  ? "border-[#14532d]" 
-                  : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
-              }`}>
-                {t.label}
-              </span>
-            </button>
-          );
-        })}
+        
+        <div className="w-[1px] h-5 bg-[#14532d]/20 mx-1"></div>
+        
+        {isToeicDomain ? (
+          TOEIC_TABS.map((t) => {
+            const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
+            return (
+              <button
+                key={t.key}
+                onClick={() => handleToeicTabClick(t.key)}
+                className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+              >
+                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${TAB_COLORS[t.key]||'text-[#14532d]'}`}>
+                  <div className="scale-[0.9]">{t.icon}</div>
+                </span>
+                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
+                  isActive 
+                    ? "border-[#14532d]" 
+                    : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
+                }`}>
+                  {t.label}
+                </span>
+              </button>
+            );
+          })
+        ) : (
+          ENGLISHMORE_TABS.map((t) => {
+            const isActive = pathname === t.href;
+            return (
+              <Link
+                key={t.key}
+                href={t.href}
+                className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+              >
+                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${t.color}`}>
+                  <div className="scale-[0.9]">{t.icon}</div>
+                </span>
+                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 text-[#14532d] ${
+                  isActive 
+                    ? "border-[#14532d]" 
+                    : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
+                }`}>
+                  {t.label}
+                </span>
+              </Link>
+            )
+          })
+        )}
       </div>
 
       <div className="lg:hidden flex items-center relative order-first">
         <button
-          onClick={() => setIsToeicMenuOpen(true)}
-          className="flex items-center justify-center w-10 h-10 bg-[#ea980c] hover:bg-[#d48c0b] border border-[#ea980c]/20 rounded-xl shadow-[0_4px_12px_rgba(234,152,12,0.25)] text-white active:scale-[0.98] transition-all"
+          onClick={() => setIsMenuOpen(true)}
+          className="flex items-center justify-center w-10 h-10 bg-[#ea980c] hover:bg-[#d48c0b] border border-[#ea980c]/20 rounded-xl shadow-[0_4px_12px_rgba(234,152,12,0.25)] text-white active:scale-[0.98] transition-all cursor-pointer"
         >
           <svg className="w-5 h-5 text-[#14532d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
 
-        {/* Mobile Drawer Menu */}
-        <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isToeicMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isToeicMenuOpen}>
-            <button type="button" onClick={() => setIsToeicMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 touch-none overscroll-none ${isToeicMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
-            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isToeicMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        {/* Mobile Left Drawer Menu */}
+        <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMenuOpen}>
+            <button type="button" onClick={() => setIsMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 touch-none overscroll-none ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
+            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
                     <h2 className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight">
-                        <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">T</span>
-                        ToeicMore
+                        <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">{isToeicDomain ? 'T' : 'E'}</span>
+                        {isToeicDomain ? 'ToeicMore' : 'EnglishMore'}
                     </h2>
-                    <button onClick={() => setIsToeicMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
+                    <button onClick={() => setIsMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                     </button>
                 </div>
@@ -131,7 +178,7 @@ function ToeicNavTabs() {
                     <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-2">Dữ liệu cá nhân</div>
                     <Link 
                       href="/toeic-progress?tab=vocabulary-bank" 
-                      onClick={() => setIsToeicMenuOpen(false)} 
+                      onClick={() => setIsMenuOpen(false)} 
                       className={`mb-1 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-[0_4px_12px_rgba(16,185,129,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
                     >
                         <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-emerald-500' : 'bg-slate-50 text-emerald-500/60'}`}>
@@ -142,7 +189,7 @@ function ToeicNavTabs() {
 
                     <Link 
                       href="/toeic-progress?tab=reports-vocabulary" 
-                      onClick={() => setIsToeicMenuOpen(false)} 
+                      onClick={() => setIsMenuOpen(false)} 
                       className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
                     >
                         <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-white shadow-sm text-sky-500' : 'bg-slate-50 text-sky-500/60'}`}>
@@ -155,26 +202,46 @@ function ToeicNavTabs() {
 
                     <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-4">Các Chuyên Mục Học Tập</div>
 
-                    {TOEIC_TABS.map(t => {
-                        const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
-                        const tabColorClass = TAB_COLORS[t.key] || 'text-[#14532d]';
-                        return (
-                            <button
-                                key={t.key}
-                                className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
-                                onClick={() => {
-                                    handleToeicTabClick(t.key)
-                                    setIsToeicMenuOpen(false)
-                                }}
-                            >
-                                <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + tabColorClass : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100'}`}>
-                                    <div className={`scale-[0.8] ${!isActive ? tabColorClass + ' opacity-60' : ''}`}>{t.icon}</div>
-                                </span>
-                                <span className="flex-1 truncate text-[15px]">{t.label}</span>
-                                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0 shadow-[0_0_8px_rgba(234,152,12,0.6)]" />}
-                            </button>
-                        );
-                    })}
+                    {isToeicDomain ? (
+                      TOEIC_TABS.map(t => {
+                          const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
+                          const tabColorClass = TAB_COLORS[t.key] || 'text-[#14532d]';
+                          return (
+                              <button
+                                  key={t.key}
+                                  className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                  onClick={() => {
+                                      handleToeicTabClick(t.key)
+                                      setIsMenuOpen(false)
+                                  }}
+                              >
+                                  <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + tabColorClass : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100'}`}>
+                                      <div className={`scale-[0.8] ${!isActive ? tabColorClass + ' opacity-60' : ''}`}>{t.icon}</div>
+                                  </span>
+                                  <span className="flex-1 truncate text-[15px]">{t.label}</span>
+                                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0 shadow-[0_0_8px_rgba(234,152,12,0.6)]" />}
+                              </button>
+                          );
+                      })
+                    ) : (
+                      ENGLISHMORE_TABS.map(t => {
+                          const isActive = pathname === t.href;
+                          return (
+                              <Link
+                                  key={t.key}
+                                  href={t.href}
+                                  className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                  onClick={() => setIsMenuOpen(false)}
+                              >
+                                  <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + t.color : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100'}`}>
+                                      <div className={`scale-[0.8] ${!isActive ? t.color + ' opacity-60' : ''}`}>{t.icon}</div>
+                                  </span>
+                                  <span className="flex-1 truncate text-[15px]">{t.label}</span>
+                                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0 shadow-[0_0_8px_rgba(234,152,12,0.6)]" />}
+                              </Link>
+                          );
+                      })
+                    )}
                 </nav>
             </aside>
         </div>
@@ -218,19 +285,10 @@ function BookIcon() {
   )
 }
 
-function CloseIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-      <path d="M18 6 6 18"></path>
-      <path d="m6 6 12 12"></path>
-    </svg>
-  )
-}
-
 export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: boolean }) {
   const { data: session, status } = useSession()
   const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -277,26 +335,15 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
     setAvatarLoadFailed(false)
   }, [session?.user?.image])
 
+  // Optional: close dropdown on escape key
   useEffect(() => {
-    if (!isMenuOpen) {
-      return
-    }
-
+    if (!isDropdownOpen) return
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsMenuOpen(false)
-      }
+      if (event.key === 'Escape') setIsDropdownOpen(false)
     }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isMenuOpen])
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isDropdownOpen])
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-[#14532d]/10 px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 transition-all">
@@ -317,16 +364,14 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
               )}
             </span>
             {!isToeicDomain && (
-              <span className="hidden sm:block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm">
+              <span className="hidden sm:block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm pt-1">
                 Speak your mind and more
               </span>
             )}
           </Link>
-          {isToeicDomain && (
-            <Suspense fallback={<div className="w-[100px]" />}>
-              <ToeicNavTabs />
-            </Suspense>
-          )}
+          <Suspense fallback={<div className="w-[100px]" />}>
+            <MenuNavTabs isToeicDomain={isToeicDomain} />
+          </Suspense>
         </div>
 
         <div className="shrink-0 flex items-center gap-1.5 sm:gap-3">
@@ -335,30 +380,31 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
               <div className="flex items-center gap-2">
                 {session.user?.tier === 'PRO' && (
                   <span 
-                    className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-[#FDB931]/50"
+                    className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-[#FDB931]/50"
                     title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói PRO'}
                   >
-                    <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     PRO
                     <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
                   </span>
                 )}
                 {session.user?.tier === 'ULTRA' && (
                   <span 
-                    className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30"
+                    className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-purple-600/30"
                     title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói ULTRA'}
                   >
-                    <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     ULTRA
                     <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
                   </span>
                 )}
-                <div className="relative">
+                <div className="relative isolate">
                   <button
                     type="button"
-                    onClick={() => setIsMenuOpen(true)}
-                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer`}
-                    aria-label="Open profile menu"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer hover:border-amber-500`}
+                    aria-expanded={isDropdownOpen}
+                    aria-label="Toggle profile menu"
                   >
                     {session.user?.image && !avatarLoadFailed ? (
                       <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
@@ -366,6 +412,107 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                       <span className="text-sm font-bold text-[#14532d]">{userInitial}</span>
                     )}
                   </button>
+                  
+                  {/* Floating Dropdown Menu */}
+                  {isDropdownOpen && (
+                    <>
+                      {/* Invisible overlay for capturing outside clicks */}
+                      <button className="fixed inset-0 z-40 w-full h-full cursor-default" onClick={() => setIsDropdownOpen(false)} aria-hidden="true"></button>
+                      
+                      <div className="absolute right-0 top-[calc(100%+12px)] z-50 w-[280px] min-w-[280px] max-w-[90vw] origin-top-right rounded-[20px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200 ease-out border border-slate-100">
+                        {/* User Header */}
+                        <div className="bg-[#14532d] px-4 py-5 shrink-0 relative overflow-hidden border-b-4 border-amber-500">
+                          {/* Background pattern */}
+                          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
+                          
+                          <div className="flex items-center gap-3 relative z-10">
+                            <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-300' : 'border-white'} bg-white text-[#14532d] shadow-sm`}>
+                              {session.user?.image && !avatarLoadFailed ? (
+                                <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
+                              ) : (
+                                <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-base font-bold text-white tracking-tight">{session.user?.name || 'User'}</p>
+                              <p className="truncate text-[11px] text-green-100/90 font-medium">{session.user?.email || ''}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="mt-3 relative z-10 flex flex-col gap-1.5">
+                            {(session.user?.tier === 'PRO' || session.user?.tier === 'ULTRA') && (
+                               <div className="flex items-center gap-1.5">
+                                 {session.user?.tier === 'PRO' ? (
+                                   <span className="inline-flex items-center justify-center gap-1 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-2 h-5 rounded text-[10px] shadow-sm">
+                                     <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                     PRO
+                                   </span>
+                                 ) : (
+                                   <span className="inline-flex items-center justify-center gap-1 bg-gradient-to-r from-purple-700 to-purple-900 text-white font-black uppercase tracking-widest px-2 h-5 rounded text-[10px] shadow-sm border border-purple-500/30">
+                                     <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                     ULTRA
+                                   </span>
+                                 )}
+                                 {session.user.tierExpiresAt && (
+                                   <span className="text-[10px] text-white/80 font-medium">Đến: {new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}</span>
+                                 )}
+                               </div>
+                            )}
+                            {enrolledCourseTitle && (
+                              <p className="truncate text-xs font-semibold text-[#ea980c] bg-[#14532d] shadow-sm border border-black/10 self-start px-2 py-0.5 rounded-md">{enrolledCourseTitle}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Dropdown Items */}
+                        <div className="p-2 space-y-1 bg-slate-50/50">
+                          <Link href="/user/profile" onClick={() => setIsDropdownOpen(false)} className="group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200 transition-all">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-slate-200/50 text-slate-500 group-hover:bg-slate-100 group-hover:text-[#14532d] group-hover:shadow-[0_2px_8px_rgba(20,83,45,0.15)] group-hover:-translate-y-0.5 transition-all">
+                              <UserIcon />
+                            </span>
+                            Hồ Sơ Cá Nhân
+                          </Link>
+                          
+                          <Link href="/about" onClick={() => setIsDropdownOpen(false)} className="group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200 transition-all">
+                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-slate-200/50 text-slate-500 group-hover:bg-slate-100 group-hover:text-slate-700 group-hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)] group-hover:-translate-y-0.5 transition-all">
+                              <svg className="w-4 h-4 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </span>
+                            Về <span className="text-[#14532d] mx-0.5">Toeic</span><span className="text-[#ea980c]">More</span>
+                          </Link>
+
+                          <div className="h-px bg-slate-200/60 my-2 mx-2"></div>
+
+                          {/* Domain Switcher */}
+                          {isToeicDomain ? (
+                            <Link href={process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://englishmore.bigbee.ltd'} onClick={() => setIsDropdownOpen(false)} className="group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-blue-50/50 hover:shadow-sm border border-transparent hover:border-blue-100 transition-all">
+                              <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(37,99,235,0.2)] group-hover:-translate-y-0.5 transition-all">
+                                <svg className="w-4 h-4 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                              </span>
+                              Tới <span className="text-[#14532d] mx-0.5">English</span><span className="text-[#ea980c]">More</span>
+                            </Link>
+                          ) : (
+                            <Link href={process.env.NODE_ENV === 'development' ? '/toeic-practice' : 'https://toeicmore.com'} onClick={() => setIsDropdownOpen(false)} className="group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-green-50/50 hover:shadow-sm border border-transparent hover:border-green-100 transition-all">
+                              <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white group-hover:shadow-[0_4px_12px_rgba(22,163,74,0.2)] group-hover:-translate-y-0.5 transition-all">
+                                <svg className="w-4 h-4 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                              </span>
+                              Tới <span className="text-[#14532d] mx-0.5">Toeic</span><span className="text-[#ea980c]">More</span>
+                            </Link>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => signOut({ callbackUrl: '/' })}
+                            className="group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all mt-2"
+                          >
+                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-100/60 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                              <LogoutIcon />
+                            </span>
+                            Đăng Xuất
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </>
@@ -387,151 +534,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
           )}
         </div>
       </div>
-
-      {session && (
-        <div className={`fixed inset-0 z-50 isolate transition ${isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMenuOpen}>
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen(false)}
-            className={`absolute inset-0 z-0 bg-slate-950/35 transition-opacity touch-none overscroll-none ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}
-            aria-label="Close menu overlay"
-          />
-
-          <aside className={`absolute right-0 top-0 z-10 flex h-screen w-[min(22rem,88vw)] flex-col border-l border-amber-200 bg-[#fff9f2] shadow-2xl transition-transform duration-300 touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-            <div className="border-b-[4px] border-amber-500 bg-[#14532d] px-5 py-6 shrink-0">
-              <div className="flex items-start justify-between gap-3 relative">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    {session.user?.tier === 'PRO' && (
-                      <span 
-                        className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-[#FDB931]/50"
-                        title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói PRO'}
-                      >
-                        <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        PRO
-                        <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                      </span>
-                    )}
-                    {session.user?.tier === 'ULTRA' && (
-                      <span 
-                        className="relative overflow-hidden flex items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1 h-4 rounded-[3px] text-[8px] shadow-sm cursor-default border border-purple-600/30"
-                        title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói ULTRA'}
-                      >
-                        <svg className="w-2 h-2" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        ULTRA
-                        <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                      </span>
-                    )}
-                    <div className="relative">
-                      <div className={`relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-white'} bg-white text-[#14532d] shadow-sm`}>
-                        {session.user?.image && !avatarLoadFailed ? (
-                          <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
-                        ) : (
-                          <span className="text-base font-bold text-[#14532d]">{userInitial}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-base font-bold text-white">{session.user?.name || 'User'}</p>
-                    <p className="truncate text-xs text-green-100">{session.user?.email || ''}</p>
-                    <p className="mt-1 truncate text-xs font-semibold text-[#ea980c]">{enrolledCourseTitle || 'Chưa vào khóa học'}</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="shrink-0 rounded-full border border-white/20 p-2 text-white/70 transition hover:bg-[#ea980c] hover:border-[#ea980c] hover:text-white"
-                  aria-label="Close profile menu"
-                >
-                  <CloseIcon />
-                </button>
-              </div>
-            </div>
-
-            <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
-              <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2">Menu Cá Nhân</div>
-              
-              <Link href="/user/profile" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
-                  <UserIcon />
-                </span>
-                <span className="flex-1 truncate text-[15px]">Hồ Sơ Cá Nhân</span>
-              </Link>
-              
-              <Link href="/toeic-progress" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
-                  <svg className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                  </svg>
-                </span>
-                <span className="flex-1 truncate text-[15px]">Tiến Độ Của Tôi</span>
-              </Link>
-              
-              {!isToeicDomain && (
-                <>
-                  <Link href="/my-homework" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                    <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                    </span>
-                    <span className="flex-1 truncate text-[15px]">Làm Bài Tập</span>
-                  </Link>
-
-                  <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                    <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
-                      <BookIcon />
-                    </span>
-                    <span className="flex-1 truncate text-[15px]">Bài Học Trên Lớp</span>
-                  </Link>
-
-                  <Link href="/lecture-notes" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                    <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                    </span>
-                    <span className="flex-1 truncate text-[15px]">Slide Bài Giảng</span>
-                  </Link>
-                </>
-              )}
-
-              <Link href="/about" onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-                <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-slate-100/80 text-slate-500 transition-colors group-hover:bg-slate-200/80">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </span>
-                <span className="flex-1 truncate text-[15px]">About <span className="text-[#14532d] font-black">Toeic</span><span className="text-[#ea980c] font-black">More</span></span>
-              </Link>
-
-              <div className="py-2"><div className="h-px bg-slate-100 w-full" /></div>
-
-              {isToeicDomain ? (
-                <Link href={process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://englishmore.bigbee.ltd'} onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer mt-2">
-                  <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-100 shadow-sm">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                  </span>
-                  <span className="flex-1 truncate text-[15px]"><span className="text-[#14532d] font-black">English</span><span className="text-[#ea980c] font-black">More</span></span>
-                </Link>
-              ) : (
-                <Link href={process.env.NODE_ENV === 'development' ? '/toeic-practice' : 'https://toeicmore.com'} onClick={() => setIsMenuOpen(false)} className="group w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 cursor-pointer mt-2">
-                  <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-green-50 text-green-600 transition-colors group-hover:bg-green-100 shadow-sm">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                  </span>
-                  <span className="flex-1 truncate text-[15px]"><span className="text-[#14532d] font-black">Toeic</span><span className="text-[#ea980c] font-black">More</span></span>
-                </Link>
-              )}
-
-              <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="group mt-4 w-full flex items-center gap-3.5 px-3 py-3.5 rounded-2xl font-bold transition-all text-left text-rose-600 border border-transparent hover:bg-rose-50 cursor-pointer"
-              >
-                <span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-rose-100/50 text-rose-500 transition-colors group-hover:bg-rose-100">
-                  <LogoutIcon />
-                </span>
-                <span className="flex-1 truncate text-[15px]">Đăng Xuất</span>
-              </button>
-            </nav>
-          </aside>
-        </div>
-      )}
     </header>
   )
 }
