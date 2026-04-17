@@ -465,9 +465,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           </div>
           
           <div className="hidden md:flex items-center gap-4">
-            <div className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-100 uppercase tracking-wider">
+            <Link 
+                href="/toeic-progress"
+                className="px-3 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors text-xs font-bold rounded-full border border-emerald-100 uppercase tracking-wider cursor-pointer"
+                title="Khám phá sổ tay học tập của bạn"
+            >
               {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : 'Sổ Tay Ngữ Pháp'}
-            </div>
+            </Link>
           </div>
         </div>
       </header>
