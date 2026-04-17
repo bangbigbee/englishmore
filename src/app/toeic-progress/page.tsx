@@ -128,7 +128,7 @@ function ComingSoonPlaceholder({ title, icon }: { title: string, icon: string })
 export default async function ToeicProgressPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ tab?: string, topic?: string, tag?: string }>;
+	searchParams: Promise<{ tab?: string, topic?: string, tag?: string, filter?: string }>;
 }) {
 	const resolvedParams = await searchParams;
 	const activeTab = resolvedParams.tab || 'vocabulary-bank';
