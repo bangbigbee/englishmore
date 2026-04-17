@@ -423,7 +423,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					</span>
 				</h1>
 				<p className="mt-3 max-w-2xl text-base sm:text-lg font-medium text-[#14532d] leading-relaxed mx-auto opacity-90">
-					Hệ thống luyện thi TOEIC thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.
+					Học từ vựng siêu hiệu quả và nhớ lâu. Giải thích ngữ pháp và mẹo làm bài chi tiết. Giúp bạn nâng cao điểm số TOEIC và hơn thế nữa
 				</p>
 
 				<div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
