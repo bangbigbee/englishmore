@@ -79,7 +79,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   return (
     <>
       {/* Desktop Main Navigation Tabs */}
-      <div className="hidden lg:flex items-center gap-4 xl:gap-6 overflow-x-auto pt-1 w-full justify-start mx-3 xl:mx-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="hidden lg:flex items-center gap-4 xl:gap-8 overflow-x-auto pt-1 w-full justify-start ml-2 mr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {session ? (
           <>
             <Link
@@ -94,7 +94,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                    ? "border-[#14532d]"
                    : "opacity-80 border-transparent hover:opacity-100 group-hover:border-[#14532d]/30"
               }`}>
-                 Hồ Sơ Cá Nhân
+                 Cá Nhân
               </span>
             </Link>
             <Link
@@ -227,7 +227,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                             <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname === '/user/profile' ? 'bg-white shadow-sm text-slate-700' : 'bg-slate-50 text-slate-400'}`}>
                                 <UserIcon />
                             </span>
-                            <span className="flex-1 truncate text-[15px]">Hồ Sơ Cá Nhân</span>
+                            <span className="flex-1 truncate text-[15px]">Cá Nhân</span>
                         </Link>
                         <Link
                           href="/toeic-progress?tab=vocabulary-bank" 
@@ -457,42 +457,16 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                   <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
                 </span>
               )}
-              <div className="relative isolate">
-                <button
-                  type="button"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className={`relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border-2 ${session.user?.tier === 'PRO' ? 'border-[#ea980c]' : session.user?.tier === 'ULTRA' ? 'border-purple-700' : 'border-[#14532d]'} bg-white text-[#14532d] shadow-sm transition hover:shadow-md cursor-pointer hover:border-amber-500`}
-                  aria-expanded={isDropdownOpen}
-                  aria-label="Toggle profile menu"
-                >
-                  {session.user?.image && !avatarLoadFailed ? (
-                    <Image src={session.user.image} alt={session.user?.name || 'Profile'} fill className="object-cover" onError={() => setAvatarLoadFailed(true)} />
-                  ) : (
-                    <span className="text-sm font-bold text-[#14532d]">{userInitial}</span>
-                  )}
-                </button>
-                
-                {/* Floating Dropdown Menu */}
-                {isDropdownOpen && (
-                  <>
-                    {/* Invisible overlay for capturing outside clicks */}
-                    <button className="fixed inset-0 z-40 w-full h-full cursor-default" onClick={() => setIsDropdownOpen(false)} aria-hidden="true"></button>
-                    
-                    <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[160px] max-w-[90vw] origin-top-right rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5">
-                      <button
-                        type="button"
-                        onClick={() => signOut({ callbackUrl: '/' })}
-                        className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all"
-                      >
-                        <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-100/60 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
-                          <LogoutIcon />
-                        </span>
-                        Đăng Xuất
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="group flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100 focus:outline-none"
+              >
+                <span className="flex items-center justify-center w-7 h-7 rounded-[8px] bg-rose-100/60 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                  <LogoutIcon />
+                </span>
+                <span className="hidden sm:inline">Đăng Xuất</span>
+              </button>
             </div>
           )}
         </div>
