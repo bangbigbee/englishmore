@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Returns distinct topics from VocabularyItem where category = 'TOEIC', with word counts and learned counts
 export async function GET() {
   try {

@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Returns vocabulary items for a given TOEIC topic
 // - FREE words (first 5 per topic) visible to all logged-in users
 // - All words visible only if user is ULTRA tier

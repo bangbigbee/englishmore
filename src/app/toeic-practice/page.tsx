@@ -1136,7 +1136,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 					setTopicUltraFields([]);
 				}
 				setTotalWords(data.total ?? 0);
-			}
+			} else {
+                const errData = await vocabRes.json().catch(() => ({}));
+                console.error("Vocabulary load failed", errData);
+            }
 		} catch (e) {
 			console.error(e);
 		} finally {
