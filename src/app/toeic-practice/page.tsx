@@ -689,7 +689,7 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 							type="grammar"
 							title={topic.title}
 							subtitle={topic.subtitle || 'Ngữ pháp TOEIC'}
-							badgeText={`${topic._count?.lessons || 0} Lessons`}
+							badgeText={`${topic._count?.lessons || 0} Bài tập`}
 							onClick={() => onPracticeClick(topic.slug)}
 						/>
 					))
@@ -1814,7 +1814,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 						key={t.title}
 						title={t.title}
 						subtitle={t.subtitle}
-						badgeText={t.count.replace(' bài', ' SESSIONS')}
+						badgeText={t.count.replace(' bài', ' Bài tập')}
 						onClick={onPracticeClick}
 					/>
 				))}
@@ -1884,7 +1884,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 								key={topic.id}
 								title={topic.title}
 								subtitle={topic.subtitle}
-								badgeText={`${topic._count?.lessons || 0} SESSIONS`}
+								badgeText={`${topic._count?.lessons || 0} Bài tập`}
 								onClick={() => onPracticeClick(topic.slug)}
 							/>
 						))
@@ -1910,7 +1910,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 							key={p.id}
 							title={p.title}
 							subtitle={p.subtitle}
-							badgeText={`${totalLessons} SESSIONS`}
+							badgeText={`${totalLessons} Bài tập`}
 							onClick={() => setSelectedPart(p.id)}
 						/>
 					);

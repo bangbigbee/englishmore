@@ -114,8 +114,8 @@ function ToeicNavTabs() {
 
                 <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
                     <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2 mt-2">Các Chuyên Mục Học Tập</div>
-                    <Link href="/toeic-progress" onClick={() => setIsToeicMenuOpen(false)} className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname.startsWith('/toeic-progress') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}>
-                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname.startsWith('/toeic-progress') ? 'bg-white shadow-sm text-sky-500' : 'bg-slate-100/80 text-slate-400'}`}>
+                    <Link href="/toeic-progress" onClick={() => setIsToeicMenuOpen(false)} className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname.startsWith('/toeic-progress') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}>
+                        <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${pathname.startsWith('/toeic-progress') ? 'bg-white shadow-sm text-sky-500' : 'bg-slate-50 text-sky-500/60'}`}>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                             </svg>
@@ -125,17 +125,18 @@ function ToeicNavTabs() {
 
                     {TOEIC_TABS.map(t => {
                         const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
+                        const tabColorClass = TAB_COLORS[t.key] || 'text-[#14532d]';
                         return (
                             <button
                                 key={t.key}
-                                className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
                                 onClick={() => {
                                     handleToeicTabClick(t.key)
                                     setIsToeicMenuOpen(false)
                                 }}
                             >
-                                <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + (TAB_COLORS[t.key]||'text-[#14532d]') : 'bg-slate-100/80 text-slate-400 group-hover:bg-slate-200/80'}`}>
-                                    <div className="scale-[0.8]">{t.icon}</div>
+                                <span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + tabColorClass : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100'}`}>
+                                    <div className={`scale-[0.8] ${!isActive ? tabColorClass + ' opacity-60' : ''}`}>{t.icon}</div>
                                 </span>
                                 <span className="flex-1 truncate text-[15px]">{t.label}</span>
                                 {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0 shadow-[0_0_8px_rgba(234,152,12,0.6)]" />}
