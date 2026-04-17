@@ -1483,15 +1483,15 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									</p>
 
 									{/* Front Face Nav */}
-									<div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-1 sm:gap-2 rounded-xl bg-white/10 p-1.5 sm:p-2 shadow-sm ring-1 ring-white/20 backdrop-blur-sm" onClick={e => e.stopPropagation()}>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg hover:bg-white/20 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white transition disabled:opacity-30 disabled:cursor-not-allowed">
-											<svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
+									<div className="absolute inset-x-0 px-6 bottom-5 flex items-center justify-between pointer-events-auto" onClick={e => e.stopPropagation()}>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-white/80 transition hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
+											<svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 											Prev
 										</button>
-										<span className="text-xs sm:text-sm font-semibold text-white/90">{cardIndex + 1} / {vocabItems.length}</span>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg hover:bg-white/20 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white transition disabled:opacity-30 disabled:cursor-not-allowed">
+										<span className="text-sm font-bold text-white/60 tracking-widest">{cardIndex + 1} / {vocabItems.length}</span>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-white/80 transition hover:text-white disabled:opacity-30 disabled:cursor-not-allowed">
 											Next
-											<svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+											<svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
 										</button>
 									</div>
 								</div>
@@ -1625,15 +1625,15 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									</div>
 
 									{/* Back Face Nav */}
-									<div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-1 sm:gap-2 rounded-xl bg-slate-100/90 backdrop-blur-md p-1.5 sm:p-2 border border-slate-200 shadow-sm z-50 pointer-events-auto" onClick={e => e.stopPropagation()}>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed border border-slate-100">
-											<svg className="w-4 h-4 text-green-600 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
+									<div className="absolute inset-x-0 px-6 bottom-5 flex items-center justify-between pointer-events-auto z-50 bg-gradient-to-t from-white via-white to-transparent pt-6 pb-2" onClick={e => e.stopPropagation()}>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-slate-500 transition hover:text-[#14532d] disabled:opacity-30 disabled:cursor-not-allowed">
+											<svg className="w-5 h-5 text-green-600 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 											Prev
 										</button>
-										<span className="text-xs sm:text-sm font-semibold text-slate-600">{cardIndex + 1} / {vocabItems.length}</span>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1 sm:gap-1.5 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-slate-700 transition hover:bg-green-50 hover:text-green-800 disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed border border-slate-100">
+										<span className="text-sm font-bold text-slate-400 tracking-widest">{cardIndex + 1} / {vocabItems.length}</span>
+										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-slate-500 transition hover:text-[#14532d] disabled:opacity-30 disabled:cursor-not-allowed">
 											Next
-											<svg className="w-4 h-4 text-green-600 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+											<svg className="w-5 h-5 text-green-600 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
 										</button>
 									</div>
 								</div>
