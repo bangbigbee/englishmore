@@ -66,7 +66,7 @@ function ToeicNavTabs() {
           </span>
         </Link>
         <Link
-          href="/toeic-progress?tab=reports-vocab"
+          href="/toeic-progress?tab=reports-vocabulary"
           className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
         >
           <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-sky-500`}>
@@ -141,7 +141,7 @@ function ToeicNavTabs() {
                     </Link>
 
                     <Link 
-                      href="/toeic-progress?tab=reports-vocab" 
+                      href="/toeic-progress?tab=reports-vocabulary" 
                       onClick={() => setIsToeicMenuOpen(false)} 
                       className={`mb-1.5 w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? 'bg-sky-50 text-sky-700 border border-sky-200 shadow-[0_4px_12px_rgba(14,165,233,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
                     >

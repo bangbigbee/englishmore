@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const PROGRESS_TABS = [
-	{ id: 'reports-vocab', label: 'Tiến độ từ vựng', icon: '📊' },
+	{ id: 'reports-vocabulary', label: 'Tiến độ từ vựng', icon: '📊' },
 	{ id: 'reports-grammar', label: 'Tiến độ ngữ pháp', icon: '📈' },
 	{ id: 'reports-listening', label: 'Tiến độ luyện nghe', icon: '📻' },
 	{ id: 'reports-reading', label: 'Tiến độ luyện đọc', icon: '📉' },
