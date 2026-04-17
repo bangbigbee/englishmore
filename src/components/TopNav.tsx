@@ -87,10 +87,10 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
               className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/user/profile' ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
             >
               <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]`}>
-                 <ModernUserIcon />
+                 <ModernUserIcon className="w-[18px] h-[18px]" />
               </span>
               <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/user/profile' ? "opacity-100" : "opacity-80 group-hover:opacity-100"} max-w-[120px] truncate`} title={session.user?.name || "Cá Nhân"}>
-                 {session.user?.name || "Cá Nhân"}
+                 {session.user?.name?.split(' ').pop() || "Cá Nhân"}
               </span>
             </Link>
             <Link
@@ -124,7 +124,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
             className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] border-transparent hover:border-[#ea980c]/20"
           >
             <span className="transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]">
-               <ModernUserIcon />
+               <ModernUserIcon className="w-[18px] h-[18px]" />
             </span>
             <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#ea980c] opacity-90 group-hover:opacity-100">
                Đăng Nhập
@@ -567,8 +567,8 @@ function ModernUserIcon({ className = "w-5 h-5" }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="modernUserGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#0ea5e9"/>
-          <stop offset="100%" stopColor="#6366f1"/>
+          <stop offset="0%" stopColor="#f97316"/>
+          <stop offset="100%" stopColor="#c2410c"/>
         </linearGradient>
       </defs>
       <path opacity="0.35" d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="url(#modernUserGrad)"/>
