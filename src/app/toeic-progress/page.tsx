@@ -88,9 +88,13 @@ async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?
 								{tag.vocabulary.topic}
 							</span>
 							<div className="flex gap-1.5">
-								{tag.isHard && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100 text-red-600 text-xs shadow-sm" title="Từ khó">🔥</span>}
-								{tag.isBookmarked && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 text-amber-600 text-xs shadow-sm" title="Đã lưu">⭐</span>}
-								{tag.isLearned && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 text-xs shadow-sm" title="Đã thuộc">✓</span>}
+								{tag.isHard && (
+									<span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-50 text-rose-600 border border-rose-100 shadow-sm" title="Câu làm sai">
+										<svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+									</span>
+								)}
+								{tag.isBookmarked && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-50 text-[#ea980c] border border-amber-100 text-xs shadow-sm" title="Câu đã lưu">⭐</span>}
+								{tag.isLearned && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-50 text-green-600 border border-green-100 text-xs shadow-sm" title="Đã thuộc">✓</span>}
 							</div>
 						</div>
 						<h3 className="text-xl font-black text-slate-800 mb-1">{tag.vocabulary.word}</h3>

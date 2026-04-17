@@ -23,32 +23,48 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 	};
 
 	return (
-		<div className="flex flex-col sm:flex-row gap-4 mb-6">
-			<div className="flex-1">
-				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Hiển thị theo chủ đề</label>
-				<select 
-					value={currentTopic}
-					onChange={(e) => updateFilters(e.target.value, currentTag)}
-					className="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-green-500 focus:border-green-500 block p-2.5 font-medium shadow-sm transition-shadow outline-none"
-				>
-					<option value="all">Tất cả chủ đề</option>
+		<div className="space-y-6 mb-8">
+			{/* Topic Chips */}
+			<div>
+				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 px-1">Hiển thị theo chủ đề</label>
+				<div className="flex flex-nowrap overflow-x-auto gap-2 pb-3 custom-scrollbar">
+					<button 
+						onClick={() => updateFilters('all', currentTag)}
+						className={`px-4 py-2 rounded-xl text-sm font-bold transition-all shrink-0 whitespace-nowrap shadow-sm border ${currentTopic === 'all' ? 'bg-[#14532d] text-white border-[#14532d] shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+					>
+						Tất cả chủ đề
+					</button>
 					{topics.map(t => (
-						<option key={t} value={t}>{t}</option>
+						<button 
+							key={t}
+							onClick={() => updateFilters(t, currentTag)}
+							className={`px-4 py-2 rounded-xl text-sm font-bold transition-all shrink-0 whitespace-nowrap shadow-sm border ${currentTopic === t ? 'bg-[#14532d] text-white border-[#14532d] shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+						>
+							{t}
+						</button>
 					))}
-				</select>
+				</div>
 			</div>
-			<div className="flex-1">
-				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Lọc theo tag đã chọn</label>
-				<select 
-					value={currentTag}
-					onChange={(e) => updateFilters(currentTopic, e.target.value)}
-					className="w-full bg-white border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-green-500 focus:border-green-500 block p-2.5 font-medium shadow-sm transition-shadow outline-none"
-				>
-					<option value="all">Tất cả trạng thái</option>
-					<option value="bookmarked">⭐ Đã lưu (Bookmarked)</option>
-					<option value="hard">🔥 Từ khó (Hard)</option>
-					<option value="learned">✓ Đã thuộc (Learned)</option>
-				</select>
+
+			{/* Tag Chips */}
+			<div>
+				<label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 px-1">Lọc theo tag đã chọn</label>
+				<div className="flex flex-nowrap overflow-x-auto gap-2 pb-3 custom-scrollbar">
+					{[
+						{ id: 'all', label: 'Tất cả trạng thái', icon: '🌈', activeClass: 'bg-slate-800 text-white' },
+						{ id: 'bookmarked', label: '⭐ Câu đã lưu', icon: '⭐', activeClass: 'bg-[#ea980c] text-white' },
+						{ id: 'hard', label: '❌ Câu làm sai', icon: '❌', activeClass: 'bg-rose-600 text-white' },
+						{ id: 'learned', label: '✓ Đã thuộc', icon: '✓', activeClass: 'bg-green-600 text-white' }
+					].map(tag => (
+						<button 
+							key={tag.id}
+							onClick={() => updateFilters(currentTopic, tag.id)}
+							className={`px-4 py-2 rounded-xl text-sm font-bold transition-all shrink-0 whitespace-nowrap shadow-sm border flex items-center gap-2 ${currentTag === tag.id ? tag.activeClass + ' border-transparent shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+						>
+							{tag.label}
+						</button>
+					))}
+				</div>
 			</div>
 		</div>
 	);
