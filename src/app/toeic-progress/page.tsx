@@ -131,7 +131,7 @@ export default async function ToeicProgressPage({
 	searchParams: Promise<{ tab?: string, topic?: string, tag?: string, filter?: string }>;
 }) {
 	const resolvedParams = await searchParams;
-	const activeTab = resolvedParams.tab || 'vocabulary-bank';
+	const activeTab = resolvedParams.tab || 'reports';
 	const topicFilter = resolvedParams.topic;
 	const tagFilter = resolvedParams.tag;
 	const qbFilter = resolvedParams.filter || 'mistakes';
@@ -155,10 +155,6 @@ export default async function ToeicProgressPage({
                 <div className="flex-1 min-w-0">
 						{activeTab === 'vocabulary-bank' && (
 							<div>
-								<div className="mb-6">
-									<h2 className="text-2xl font-black text-slate-800">Sổ Từ Vựng Của Bạn</h2>
-									<p className="text-slate-500 font-medium mt-1">Danh sách các từ vựng bạn đã đánh dấu ưu tiên học</p>
-								</div>
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
 									<VocabularyBank topic={topicFilter} tagFilter={tagFilter} />
 								</Suspense>
@@ -166,10 +162,6 @@ export default async function ToeicProgressPage({
 						)}
 						{activeTab === 'grammar' && (
 							<div>
-								<div className="mb-6">
-									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Ngữ Pháp</h2>
-									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi hay, điểm ngữ pháp và lỗi sai bạn đã gặp</p>
-								</div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
 									<GrammarBank filter={qbFilter} />
@@ -183,10 +175,6 @@ export default async function ToeicProgressPage({
 						)}
 						{activeTab === 'listening' && (
 							<div>
-								<div className="mb-6">
-									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Luyện Nghe</h2>
-									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi khó nghe và lỗi sai bạn đã gặp trong Part 1-4</p>
-								</div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
 									<ListeningBank filter={qbFilter} />
@@ -195,10 +183,6 @@ export default async function ToeicProgressPage({
 						)}
 						{activeTab === 'reading' && (
 							<div>
-								<div className="mb-6">
-									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Luyện Đọc</h2>
-									<p className="text-slate-500 font-medium mt-1">Danh sách các bài đọc khó hoặc lỗi sai bạn đã gặp trong Part 5-7</p>
-								</div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
 									<ReadingBank filter={qbFilter} />
@@ -207,10 +191,6 @@ export default async function ToeicProgressPage({
 						)}
 						{activeTab === 'actual-test' && (
 							<div>
-								<div className="mb-6">
-									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Luyện Đề (Actual Test)</h2>
-									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi hay, bẫy hoặc làm sai trong quá trình thi thử</p>
-								</div>
                                 <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
 									<ActualTestBank filter={qbFilter} />

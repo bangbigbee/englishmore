@@ -14,11 +14,6 @@ export default function ReportsDashboard({ vocabularyHeatmap, vocabularyStats, q
 
     return (
         <div className="space-y-6">
-            <div className="mb-6 border-b border-slate-200 pb-2">
-				<h2 className="text-2xl font-black text-slate-800">Báo Cáo Tiến Độ Luyện Tập</h2>
-				<p className="text-slate-500 font-medium mt-1">Thông số và cường độ học tập ghi nhận từ hệ thống ToeicMore</p>
-			</div>
-
             {/* Sub-navigation */}
             <div className="flex flex-wrap gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl w-fit xl:w-full xl:justify-between xl:bg-transparent xl:p-0">
                 {SUB_TABS.map(tab => (
