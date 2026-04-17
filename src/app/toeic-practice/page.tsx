@@ -408,7 +408,7 @@ function ToeicPracticeContent() {
 function GrammarFeatureCard({ onClick, icon }: any) {
 	return (
 		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick}>
-			<div className="p-6 h-full flex flex-col relative z-10 w-full">
+			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 group-hover:opacity-0">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
 					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
 						{icon}
@@ -416,22 +416,36 @@ function GrammarFeatureCard({ onClick, icon }: any) {
 					<h3 className="text-xl font-bold text-[#14532d]">Ngữ pháp</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className="text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 group-hover:opacity-0 absolute inset-0">
+					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0">
 						Hệ thống bài học và luyện tập toàn diện.
 					</p>
-					<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center pointer-events-none">
-						<div className="relative h-2 w-[80%] flex items-center">
-							<div className="h-[3px] bg-amber-500/80 rounded-full animate-[drawLine_1.5s_infinite_ease-in-out]" style={{ width: '100%' }} />
-							<svg className="w-6 h-6 text-[#14532d] absolute -top-4 -ml-1 animate-[moveRight_1.5s_infinite_ease-in-out] origin-bottom-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-							</svg>
+				</div>
+			</div>
+			
+			<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center pointer-events-none bg-[#f8fafc]">
+				<div className="relative h-14 w-[85%] flex items-center justify-center">
+					{/* Icon quyển sổ mờ làm nền */}
+					<svg className="w-12 h-12 text-emerald-100 absolute left-2 top-0" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H6a2 2 0 00-2 2zm2 0h12v16H6V4zm2 2v2h8V6H8zm0 4v2h8v-2H8zm0 4v2h6v-2H8z"/></svg>
+
+					<div className="absolute left-[38px] top-6 right-8">
+						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2s_infinite_ease-out]" style={{ width: '100%' }} />
+						
+						{/* Typed "Grammar" text above the line */}
+						<div className="absolute -top-6 left-1 text-[#14532d] font-serif italic font-bold text-lg leading-none animate-[fadeInText_2s_infinite_ease-out]">
+							Grammar
 						</div>
+
+						{/* Cây viết */}
+						<svg className="w-5 h-5 text-[#14532d] absolute -top-4 -ml-1 animate-[moveWritingPen_2s_infinite_ease-out] origin-bottom-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+						</svg>
 					</div>
 				</div>
 			</div>
+
 			{/* Overlay Button on Hover */}
 			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md">
+				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
 			</div>
@@ -449,7 +463,7 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 		if (isHovered) {
 			int = setInterval(() => {
 				setActivePage((p) => (p + 1) % 4);
-			}, 700);
+			}, 900);
 		} else {
 			setActivePage(0);
 		}
@@ -457,43 +471,71 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 	}, [isHovered]);
 
 	return (
-		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-			<div className="p-6 h-full flex flex-col relative z-10 w-full">
+		<div className="w-full min-h-[160px] group cursor-pointer border border-[#14532d]/10 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+			{/* Front/Default view */}
+			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-[#14532d]">Reading</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className={`text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 absolute inset-0 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0">
 						Luyện Part 5, 6, 7 giải thích cặn kẽ chi tiết.
 					</p>
-					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center justify-start ml-2 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-						<div className="w-[120px] h-8 bg-white border border-[#14532d]/20 rounded-md flex items-center justify-center relative perspective-[1000px] ml-4 shadow-[inset_0px_0px_2px_rgba(20,83,45,0.1)]">
-							{/* Book spine (gáy sách bên trái) */}
-							<div className="absolute left-0 top-0 bottom-0 w-[4px] bg-[#14532d]/10 border-r border-[#14532d]/20 z-10 rounded-l-md" />
-							<AnimatePresence mode="popLayout">
-								<motion.div 
-									key={activePage}
-									initial={{ rotateY: 90, opacity: 0 }}
-									animate={{ rotateY: 0, opacity: 1 }}
-									exit={{ rotateY: -90, opacity: 0, transition: { duration: 0.1 } }}
-									transition={{ duration: 0.5, type: "spring", stiffness: 60 }}
-									style={{ transformOrigin: 'left center' }}
-									className="absolute left-[4px] top-0 right-0 bottom-0 bg-white border border-l-0 border-[#14532d]/10 rounded-r-md flex items-center justify-center shadow-[-2px_0_4px_rgba(0,0,0,0.05)] [backface-visibility:hidden]"
-								>
-									<span className="font-bold text-[#14532d] text-[10px] uppercase tracking-wider text-center px-1 truncate">
-										{pages[activePage]}
-									</span>
-								</motion.div>
-							</AnimatePresence>
-						</div>
-					</div>
 				</div>
 			</div>
-			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md">
+
+			{/* Full Card Book Flip View */}
+			<div className={`absolute inset-0 z-20 pointer-events-none perspective-[1200px] flex ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 bg-[#f8fafc]`}>
+				{/* Book Spine Center line */}
+				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-[#14532d]/10" />
+
+				{/* Left half (static background under flipped page) */}
+				<div className="w-1/2 h-full bg-white flex flex-col items-center justify-center border-r-[1px] border-slate-100 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2">
+					<div className="w-10 h-10 text-[#14532d]/30 mb-2">
+						{icon}
+					</div>
+					<span className="font-bold text-[#14532d]/40 text-[10px] uppercase tracking-widest text-center mt-1">Reading<br/>TOEIC</span>
+				</div>
+
+				{/* Right half (background of upcoming page side) */}
+				<div className="w-1/2 h-full bg-slate-50 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center">
+					<div className="w-6 h-6 border-b-2 border-slate-300 rounded-full blur-[1px] animate-pulse opacity-50" />
+				</div>
+
+				{/* Animated Pages Flipping */}
+				<div className="absolute inset-0 z-40 flex">
+                    <div className="w-1/2 h-full" /> 
+                    <div className="w-1/2 h-full relative">
+                        <AnimatePresence>
+                            <motion.div 
+                                key={activePage}
+                                initial={{ rotateY: 0, zIndex: 10 }}
+                                animate={{ rotateY: -180, zIndex: 20 }}
+                                exit={{ opacity: 0, transition: {duration: 0} }}
+                                transition={{ duration: 0.8, ease: "easeInOut" }}
+                                style={{ transformOrigin: 'left center' }}
+                                className="absolute inset-0 bg-white border-l border-slate-100 shadow-[2px_0_10px_rgba(0,0,0,0.05)] [transform-style:preserve-3d]"
+                            >
+                                {/* Front face (starts on the right edge) */}
+                                <div className="absolute inset-0 flex items-center justify-center p-3 [backface-visibility:hidden] bg-slate-50 border-r border-[#14532d]/10 rounded-r-[20px]">
+                                </div>
+                                {/* Back face (when flipped to the left) */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white shadow-[inset_-8px_0_20px_rgba(20,83,45,0.03)] rounded-l-[10px]">
+                                    <span className="font-bold text-[#14532d] text-sm uppercase tracking-wider text-center drop-shadow-sm leading-tight">
+                                        {pages[activePage]}
+                                    </span>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+				</div>
+			</div>
+
+			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
 			</div>
@@ -542,7 +584,7 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
                             <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10V9a9 9 0 0118 0v1m-18 0v5a2 2 0 002 2h2V10H3zm18 0v5a2 2 0 01-2 2h-2V10h4z" /></svg>
 							<div className="flex items-center space-x-1.5 mx-1.5 px-1.5 border-x border-red-200/50">
                                 <svg className="w-3.5 h-3.5 animate-pulse text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span className="text-red-500 tracking-wider w-[64px] text-left">{formatTime(timeLeft)}</span>
+                                <span className="text-red-500 tracking-wider text-left min-w-[72px] sm:min-w-[76px] lg:min-w-[80px]">{formatTime(timeLeft)}</span>
                             </div>
                             <svg className="w-4 h-4 text-[#14532d]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
 						</div>
@@ -631,15 +673,24 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							100% { transform: translateX(calc(-50% - 1rem)); } 
 						}
 						@keyframes drawLine {
-							0% { width: 0%; }
-							100% { width: 100%; }
+							0% { width: 0%; opacity: 0; }
+							1% { opacity: 1; }
+							100% { width: 100%; opacity: 1; }
 						}
-						@keyframes moveRight {
-							0% { left: 0%; transform: rotate(-5deg); }
-							25% { transform: rotate(5deg); }
+						@keyframes fadeInText {
+							0% { opacity: 0; clip-path: inset(0 100% 0 0); }
+							20% { opacity: 1; clip-path: inset(0 100% 0 0); }
+							80% { opacity: 1; clip-path: inset(0 0 0 0); }
+							100% { opacity: 1; clip-path: inset(0 0 0 0); }
+						}
+						@keyframes moveWritingPen {
+							0% { left: 0%; transform: rotate(0deg); opacity:0; }
+							1% { opacity: 1; }
+							25% { transform: rotate(10deg); }
 							50% { transform: rotate(-5deg); }
-							75% { transform: rotate(5deg); }
-							100% { left: calc(100% - 20px); transform: rotate(-5deg); }
+							75% { transform: rotate(10deg); }
+							99% { opacity: 1; }
+							100% { left: calc(100% - 20px); transform: rotate(0deg); opacity: 0; }
 						}
 						.animate-marquee {
 							animation: marquee 25s linear infinite;
