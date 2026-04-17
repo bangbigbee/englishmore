@@ -1705,7 +1705,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									<p className="text-slate-500 mb-6 font-medium">Bạn có chỉ 3 giây để nhớ và chọn nghĩa cho mỗi từ.</p>
 									
 									<div className="block mb-5">
-										<button onClick={handleStartChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-95 cursor-pointer">
+										<button type="button" onClick={handleStartChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full md:hover:bg-indigo-700 md:hover:shadow-lg transition-all active:scale-95 active:bg-indigo-800 cursor-pointer focus:outline-none touch-manipulation select-none">
 											Bắt Đầu Ngay
 										</button>
 									</div>
@@ -1725,12 +1725,12 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 								<span className="font-bold text-slate-500">Từ {challengeRound + 1} / {challengeWords.length}</span>
 							</div>
 							
-							<div className="text-center mb-10">
-								<h4 className="text-5xl font-black text-slate-800 tracking-tight drop-shadow-sm mb-4">
+							<div className="text-center mb-10 w-full overflow-hidden">
+								<h4 className="text-3xl sm:text-5xl font-black text-slate-800 tracking-tight drop-shadow-sm mb-3 sm:mb-4 break-words">
 									{challengeWords[challengeRound].word}
 								</h4>
 								{challengeWords[challengeRound].phonetic && (
-									<p className="text-slate-400 font-medium">{challengeWords[challengeRound].phonetic.replaceAll('.', '')}</p>
+									<p className="text-sm sm:text-base text-slate-400 font-medium">{challengeWords[challengeRound].phonetic.replaceAll('.', '')}</p>
 								)}
 							</div>
 
@@ -1743,7 +1743,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 							<div className="grid grid-cols-1 gap-3">
 								{challengeOptions.map((opt, i) => (
-									<button key={i} onClick={() => handleChallengeAnswer(opt)} className="bg-slate-50 border-2 border-slate-200 p-4 rounded-xl text-lg font-bold text-slate-700 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 transition-all text-left cursor-pointer">
+									<button key={i} type="button" onClick={() => handleChallengeAnswer(opt)} className="bg-slate-50 border-2 border-slate-200 p-3 sm:p-4 rounded-xl text-base sm:text-lg font-bold text-slate-700 active:border-indigo-400 active:bg-indigo-50 active:text-indigo-700 md:hover:border-indigo-400 md:hover:bg-indigo-50 md:hover:text-indigo-700 transition-all text-left cursor-pointer break-words focus:outline-none select-none touch-manipulation">
 										{opt}
 									</button>
 								))}
