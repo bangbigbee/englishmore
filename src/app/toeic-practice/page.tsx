@@ -149,10 +149,10 @@ const getTopicVietnamese = (en: string): string => {
 	return "";
 };
 
-const PackageBadge = ({ pkg }: { pkg?: string }) => {
-	if (pkg === 'BASIC') return (<span className="inline-flex items-center px-2 py-1 bg-emerald-100 text-emerald-800 text-[10px] sm:text-[11px] font-black rounded-lg border border-emerald-200/50 shadow-sm leading-none z-20 pointer-events-none uppercase tracking-wider">🌱 BASIC</span>);
-	if (pkg === 'ADVANCED') return (<span className="inline-flex items-center px-2 py-1 bg-amber-100 text-amber-800 text-[10px] sm:text-[11px] font-black rounded-lg border border-amber-200/50 shadow-sm leading-none z-20 pointer-events-none uppercase tracking-wider">🔥 ADVANCED</span>);
-	if (pkg === 'MIXED') return (<span className="inline-flex items-center px-2 py-1 bg-fuchsia-100 text-fuchsia-800 text-[10px] sm:text-[11px] font-black rounded-lg border border-fuchsia-200/50 shadow-sm leading-none z-20 pointer-events-none uppercase tracking-wider">🔀 MIXED</span>);
+const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: string }) => {
+	if (pkg === 'BASIC') return (<span className={`inline-flex items-center px-2 py-[3px] bg-emerald-100 text-emerald-800 text-[9px] font-bold uppercase tracking-widest ${className}`}>BASIC</span>);
+	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-amber-100 text-amber-800 text-[9px] font-bold uppercase tracking-widest ${className}`}>ADVANCED</span>);
+	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-fuchsia-100 text-fuchsia-800 text-[9px] font-bold uppercase tracking-widest ${className}`}>MIXED</span>);
 	return null;
 }
 
@@ -169,9 +169,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 			className={`relative group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
 		>
             {packageType && (
-                <div className="absolute top-4 right-4 text-right">
-                    <PackageBadge pkg={packageType} />
-                </div>
+                <PackageBadge pkg={packageType} className="absolute top-0 right-0 rounded-bl-[14px] rounded-tr-xl border-b border-l border-amber-200/30 shadow-sm z-20 pointer-events-none" />
             )}
 			<div className="relative z-10 flex-1 mt-2">
 				<h3 className="font-bold text-[22px] text-black leading-snug mb-1 group-hover:text-[#14532d] transition-colors duration-300 flex items-center gap-3">
@@ -1441,8 +1439,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							>
 								{/* ── FRONT FACE ── */}
 								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-[#14532d] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
-									<div className="absolute top-4 left-4 z-20 shadow-md">
-										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} />
+									<div className="absolute top-0 left-0 z-20 shadow-sm pointer-events-none">
+										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} className="rounded-br-[14px] rounded-tl-2xl border-b border-r border-white/20 text-white/90 bg-white/10 backdrop-blur-sm" />
 									</div>
 									<span className="absolute top-4 right-5 text-[9px] font-semibold uppercase tracking-wider text-white/50 bg-white/10 px-3 py-1 rounded-full pointer-events-none">
 										Nhấn để lật
