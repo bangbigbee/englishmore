@@ -236,7 +236,6 @@ function ToeicPracticeContent() {
 
 	const tabFromUrl = searchParams.get('tab') || 'home';
 	const [tab, setTab] = useState(tabFromUrl);
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	useEffect(() => {
 		const t = searchParams.get('tab');
@@ -267,102 +266,7 @@ function ToeicPracticeContent() {
 	return (
 		<div className="min-h-screen bg-slate-50/50">
 			<div className="max-w-6xl mx-auto pt-4 pb-8 px-4 sm:px-6">
-			<div className="flex justify-between items-center mb-6 md:mb-10 pb-0 md:pb-4 border-b border-transparent md:border-slate-200/60">
-				{/* Desktop Tabs */}
-				<div className="hidden md:flex gap-8 pr-4 overflow-x-auto scrollbar-hide">
-					{TABS.map((t) => (
-						<button
-							key={t.key}
-							className={`flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap`}
-							onClick={() => handleTabChange(t.key)}
-						>
-							<span className={`text-xl transition-transform duration-300 ${tab === t.key ? "scale-110" : "opacity-60 scale-100 group-hover:opacity-100"}`}>
-								{t.icon}
-							</span>
-							<span className={`text-sm font-bold tracking-tight transition-all pb-1 border-b-2 ${
-								tab === t.key 
-									? "text-[#14532d] border-[#ea980c]" 
-									: "text-slate-400 border-transparent group-hover:text-slate-600"
-							}`}>
-								{t.label}
-							</span>
-						</button>
-					))}
-				</div>
-
-				{/* Mobile Menu Toggle Button */}
-				<div className="md:hidden flex items-center justify-between w-full">
-					<button
-						onClick={() => setIsMobileMenuOpen(true)}
-						className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-700 font-bold active:scale-[0.98] transition-transform w-full"
-					>
-						<svg className="w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-						<span className="truncate">{TABS.find(t => t.key === tab)?.label || 'Chọn mục'}</span>
-					</button>
-				</div>
-
-				{/* Desktop "Tiến độ của tôi" */}
-				<Link href="/toeic-progress" className="hidden md:flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap shrink-0">
-					<span className="transition-transform duration-300 opacity-60 scale-100 group-hover:opacity-100 group-hover:rotate-180">
-						<svg className="w-[18px] h-[18px] text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-						  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-						</svg>
-					</span>
-					<span className="text-sm font-bold tracking-tight transition-all text-slate-400 group-hover:text-[#14532d]">
-						Tiến Độ Của Tôi
-					</span>
-				</Link>
-			</div>
-
-			{/* Mobile Drawer Menu */}
-			<div className={`fixed inset-0 z-[100] isolate transition md:hidden ${isMobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMobileMenuOpen}>
-				<button type="button" onClick={() => setIsMobileMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} />
-				<aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-					<div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
-						<h2 className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight">
-							<span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">T</span>
-							ToeicMore Menu
-						</h2>
-						<button onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
-							<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-						</button>
-					</div>
-
-					<nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
-						<div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-[#14532d]/40 px-2">Các Chuyên Mục Học Tập</div>
-						{TABS.map((t) => (
-							<button
-								key={t.key}
-								className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer ${tab === t.key ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
-								onClick={() => {
-									handleTabChange(t.key);
-									setIsMobileMenuOpen(false);
-								}}
-							>
-								<span className={`w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors ${tab === t.key ? 'bg-white shadow-sm' : 'bg-slate-100/80 text-slate-400 group-hover:bg-slate-200/80'}`}>
-									<div className="scale-[0.8]">{t.icon}</div>
-								</span>
-								<span className="flex-1 truncate truncate text-[15px]">{t.label}</span>
-								{tab === t.key && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0 shadow-[0_0_8px_rgba(234,152,12,0.6)]" />}
-							</button>
-						))}
-
-						<div className="py-4">
-							<div className="h-px bg-slate-100 w-full" />
-						</div>
-
-						<Link href="/toeic-progress" onClick={() => setIsMobileMenuOpen(false)} className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left text-slate-600 border border-slate-100 hover:bg-slate-50 hover:text-slate-900 cursor-pointer">
-							<span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center bg-green-50">
-								<svg className="w-5 h-5 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-								  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-								</svg>
-							</span>
-							<span className="text-[15px]">Tiến Độ Của Tôi</span>
-						</Link>
-					</nav>
-				</aside>
-			</div>
-			<div className="mt-6">
+			<div className="mt-2 md:mt-4">
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
 					 if (!session) {

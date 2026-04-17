@@ -4,7 +4,116 @@ import Image from 'next/image'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
+
+const TOEIC_TABS = [
+  { key: "home", label: "Trang chủ", icon: <svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg> },
+  { key: "grammar", label: "Grammar", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5C4 18.837 4.53726 18.3 5.2 18.3H19C19.5523 18.3 20 18.7477 20 19.3V19.3C20 19.8523 19.5523 20.3 19 20.3H5.2C4.53726 20.3 4 19.763 4 19.1V19.5Z" fill="currentColor" fillOpacity="0.2"/><path d="M4 19.5V5.2C4 4.53726 4.53726 4 5.2 4H19C19.5523 4 20 4.44772 20 5V19.5M4 19.5C4 18.837 4.53726 18.3 5.2 18.3H19M4 19.5C4 20.163 4.53726 20.7 5.2 20.7H19C19.5523 20.7 20 20.2523 20 19.7V18.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M12 4V18.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg> },
+  { key: "vocabulary", label: "Vocabulary", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19C4 19.8284 4.67157 20.5 5.5 20.5H18.5C19.3284 20.5 20 19.8284 20 19V17.5H4V19Z" fill="currentColor"/><path d="M4 17.5V4C4 2.89543 4.89543 2 6 2H20V17.5H4Z" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2"/><path d="M7 6L8.5 10M10 6L8.5 10M7.5 8.5H9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 6H17M13 8H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M7 12H11M7 14H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M14 12H18L14 16H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+  { key: "listening", label: "Listening", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 14V16C19 18.2091 17.2091 20 15 20H14V14H19Z" fill="currentColor" fillOpacity="0.2"/><path d="M5 14V16C5 18.2091 6.79086 20 9 20H10V14H5Z" fill="currentColor" fillOpacity="0.2"/><path d="M10 20H9C6.79086 20 5 18.2091 5 16V12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12V16C19 18.2091 17.2091 20 15 20H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M10 14V20H9C7.89543 20 7 19.1046 7 18V16C7 14.8954 7.89543 14 9 14H10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M14 14V20H15C16.1046 20 17 19.1046 17 18V16C17 14.8954 16.1046 14 15 14H14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg> },
+  { key: "reading", label: "Reading", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 3V7C14 7.55228 14.4477 8 15 8H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M14 3L19 8V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14Z" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M9 13H15M9 17H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg> },
+  { key: "actual-test", label: "Actual Test", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="4" width="12" height="18" rx="2" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2"/><path d="M9 4V3C9 2.44772 9.44772 2 10 2H14C14.5523 2 15 2.44772 15 3V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+]
+
+const TAB_COLORS: Record<string, string> = {
+  home: "text-[#14532d]",
+  grammar: "text-[#10B981]",
+  vocabulary: "text-[#3B82F6]",
+  listening: "text-[#F43F5E]",
+  reading: "text-[#F59E0B]",
+  "actual-test": "text-[#8B5CF6]"
+}
+
+function ToeicNavTabs() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+  const currentTab = searchParams.get('tab') || 'home'
+  const [isToeicMenuOpen, setIsToeicMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsToeicMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleToeicTabClick = (key: string) => {
+    if (pathname.startsWith('/toeic-practice') || pathname === '/') {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('tab', key)
+      params.delete('topic')
+      router.push(`/toeic-practice?${params.toString()}`, { scroll: false })
+    } else {
+      router.push(`/toeic-practice?tab=${key}`)
+    }
+  }
+
+  return (
+    <>
+      <div className="hidden lg:flex items-center gap-6 xl:gap-8 overflow-x-auto scrollbar-hide pt-1 w-full justify-start mx-6">
+        {TOEIC_TABS.map((t) => {
+          const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
+          return (
+            <button
+              key={t.key}
+              onClick={() => handleToeicTabClick(t.key)}
+              className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap"
+            >
+              <span className={`transition-transform duration-300 ${isActive ? "scale-110 " + (TAB_COLORS[t.key]||'text-[#14532d]') : "opacity-60 scale-100 group-hover:opacity-100 text-slate-500"}`}>
+                <div className="scale-[0.9]">{t.icon}</div>
+              </span>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 ${
+                isActive 
+                  ? "text-[#14532d] border-[#ea980c]" 
+                  : "text-slate-400 border-transparent group-hover:text-slate-600 group-hover:border-slate-200"
+              }`}>
+                {t.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="lg:hidden flex items-center relative ml-1 sm:ml-4" ref={menuRef}>
+        <button
+          onClick={() => setIsToeicMenuOpen(!isToeicMenuOpen)}
+          className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-50/80 hover:bg-slate-100 border border-slate-200 rounded-xl shadow-sm text-slate-700 font-bold active:scale-[0.98] transition-all"
+        >
+          <svg className={`w-4 h-4 sm:w-5 sm:h-5 text-slate-500 transition-transform ${isToeicMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+          <span className="truncate text-[13px] sm:text-[14px] mr-1">{(pathname.startsWith('/toeic-practice') || pathname === '/') ? (TOEIC_TABS.find(t => t.key === currentTab)?.label || 'Trang chủ') : 'Mục Toeic'}</span>
+        </button>
+
+        {isToeicMenuOpen && (
+          <div className="absolute top-[120%] left-0 w-[220px] bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.12)] border border-[#14532d]/10 py-2.5 z-50 animate-in fade-in slide-in-from-top-2">
+            {TOEIC_TABS.map(t => {
+              const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
+              return (
+                <button
+                  key={t.key}
+                  className={`w-full flex items-center gap-3.5 px-4 py-3 text-left transition-colors relative`}
+                  onClick={() => {
+                    handleToeicTabClick(t.key)
+                    setIsToeicMenuOpen(false)
+                  }}
+                >
+                  {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-2/3 bg-[#ea980c] rounded-r-md" />}
+                  <div className={`scale-90 ${isActive ? (TAB_COLORS[t.key]||'text-[#14532d]') : 'text-slate-400'}`}>{t.icon}</div>
+                  <span className={`text-[15px] ${isActive ? 'font-black text-[#14532d]' : 'font-bold text-slate-600 hover:text-slate-900'}`}>{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
 
 interface HeaderEnrollment {
   id: string
@@ -124,24 +233,33 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-[#14532d]/10 px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 transition-all">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 relative">
-        <Link href="/" className="flex min-w-0 flex-1 items-center gap-2 leading-none sm:gap-3">
-          <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.4rem]">
-            {isToeicDomain ? (
-                <>
-                <span className="text-[#14532d]">Toeic</span>
-                <span className="text-amber-500">More</span>
-                </>
-            ) : (
-                <>
-                <span className="text-[#14532d]">English</span>
-                <span className="text-amber-500">More</span>
-                </>
+        <div className="flex flex-1 items-center min-w-0 pr-4">
+          <Link href="/" className="flex shrink-0 items-center gap-2 leading-none sm:gap-3">
+            <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[2.4rem]">
+              {isToeicDomain ? (
+                  <>
+                  <span className="text-[#14532d]">Toeic</span>
+                  <span className="text-amber-500">More</span>
+                  </>
+              ) : (
+                  <>
+                  <span className="text-[#14532d]">English</span>
+                  <span className="text-amber-500">More</span>
+                  </>
+              )}
+            </span>
+            {!isToeicDomain && (
+              <span className="hidden sm:block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm">
+                Speak your mind and more
+              </span>
             )}
-          </span>
-          <span className="hidden sm:block max-w-20 truncate text-[10px] font-medium leading-tight text-slate-600 sm:max-w-none sm:truncate-none sm:text-sm">
-            {isToeicDomain ? "Boost Your TOEIC Score & More" : "Speak your mind and more"}
-          </span>
-        </Link>
+          </Link>
+          {isToeicDomain && (
+            <Suspense fallback={<div className="w-[100px]" />}>
+              <ToeicNavTabs />
+            </Suspense>
+          )}
+        </div>
 
         <div className="shrink-0 flex items-center gap-1.5 sm:gap-3">
           {session ? (
