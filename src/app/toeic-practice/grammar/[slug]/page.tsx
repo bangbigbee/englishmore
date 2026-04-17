@@ -782,8 +782,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                              <svg className="w-4 h-4 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
                                           </div>
                                         </button>
-                                        <span className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-[11px] md:text-xs font-semibold text-[#14532d] bg-white border border-[#14532d]/20 px-3 py-1.5 rounded shadow-lg pointer-events-none z-50 block">
-                                            Nâng cấp {currentLesson.bookmarkAccessTier} để bookmark tài liệu
+                                        <span className={`absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-[11px] md:text-xs font-semibold bg-white border px-3 py-1.5 rounded shadow-lg pointer-events-none z-50 block ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-purple-700 border-purple-200' : 'text-amber-600 border-amber-200'}`}>
+                                            Nâng cấp {currentLesson.bookmarkAccessTier} để lưu và xem lại câu này
                                         </span>
                                       </div>
                                     )

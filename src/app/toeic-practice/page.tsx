@@ -405,7 +405,7 @@ function ToeicPracticeContent() {
 }
 
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
-	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540 });
+	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, readingTopics: 10, vocabTopics: 50, detailedQuestions: 1200 });
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
@@ -420,7 +420,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
 						<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-[#14532d] block line-clamp-1 break-words">Chinh phục TOEIC</span>
 						<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block line-clamp-1 break-words mt-1 lg:mt-2">
-							<span className="text-amber-500">Dễ dàng</span> <span className="text-[#14532d]">và hiệu quả hơn</span>
+							<span className="text-amber-500">dễ dàng</span> <span className="text-[#14532d]">và hiệu quả hơn</span>
 						</span>
 					</h1>
 					<p className="mt-4 max-w-xl text-base sm:text-lg font-medium text-[#14532d] leading-relaxed">
@@ -432,29 +432,37 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							<span>Bắt đầu luyện tập</span>
 							<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
 						</button>
-						<button onClick={() => onTabClick('actual-test')} className="brand-cta brand-cta-filled !text-[15px] sm:!text-base !px-7 !py-3.5 group">
-							<span>Thi thử TOEIC</span>
-							<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1">→</span>
-						</button>
 					</div>
 				</div>
 
 				{/* Right Cards Area */}
 				<div className="rounded-[1.25rem] border border-slate-200 bg-white p-6 sm:p-8 shadow-xl shadow-slate-200/50">
-					<div className="relative w-full rounded-xl overflow-hidden flex flex-col justify-center items-center gap-8 bg-slate-50/80 border border-slate-100 py-10 px-6">
+					<div className="relative w-full rounded-xl overflow-hidden grid grid-cols-2 justify-center items-center gap-x-2 gap-y-7 sm:gap-y-9 bg-slate-50/80 border border-slate-100 py-8 px-4 sm:px-6">
 						<div className="text-center w-full">
-							<p className="text-[2.5rem] sm:text-5xl lg:text-[54px] font-black tracking-tight text-amber-500 leading-none mb-2">{stats.grammarTopics.toLocaleString()}+</p>
-							<p className="text-[13px] sm:text-[15px] font-bold text-[#14532d] uppercase tracking-wide">Chủ đề Ngữ pháp</p>
+							<p className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.grammarTopics.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Chủ đề Ngữ pháp</p>
 						</div>
-						<div className="w-[80px] h-1 rounded-full bg-slate-200/60" />
 						<div className="text-center w-full">
-							<p className="text-[2.5rem] sm:text-5xl lg:text-[54px] font-black tracking-tight text-amber-500 leading-none mb-2">{stats.vocabularies.toLocaleString()}+</p>
-							<p className="text-[13px] sm:text-[15px] font-bold text-[#14532d] uppercase tracking-wide">Từ vựng TOEIC</p>
+							<p className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.readingTopics.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Bộ đề Reading</p>
 						</div>
-						<div className="w-[80px] h-1 rounded-full bg-slate-200/60" />
+
 						<div className="text-center w-full">
-							<p className="text-[2.5rem] sm:text-5xl lg:text-[54px] font-black tracking-tight text-amber-500 leading-none mb-2">{stats.users.toLocaleString()}+</p>
-							<p className="text-[13px] sm:text-[15px] font-bold text-[#14532d] uppercase tracking-wide">Học viên tham gia</p>
+							<p className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.vocabTopics.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Chủ đề từ vựng</p>
+						</div>
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.vocabularies.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Từ vựng TOEIC</p>
+						</div>
+
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.detailedQuestions.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Giải thích chi tiết</p>
+						</div>
+						<div className="text-center w-full">
+							<p className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-amber-500 leading-none mb-1.5">{stats.users.toLocaleString()}+</p>
+							<p className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14532d] uppercase tracking-wide">Học viên tham gia</p>
 						</div>
 					</div>
 				</div>
