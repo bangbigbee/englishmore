@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, Suspense, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const TOEIC_TABS = [
@@ -195,21 +195,6 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
         )}
 
         {session && (
-          <>
-            <div className="w-[1px] h-5 bg-[#14532d]/20 mx-1 shrink-0"></div>
-            <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap px-3 py-1.5 rounded-[12px] bg-rose-50 hover:bg-rose-100/80 border border-rose-100 hover:border-rose-200 shrink-0"
-            >
-                <span className="transition-transform duration-300 scale-100 group-hover:scale-110 text-rose-500">
-                  <LogoutIcon />
-                </span>
-                <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-rose-600 border-transparent">
-                  Đăng Xuất
-                </span>
-            </button>
-          </>
         )}
       </div>
 
@@ -448,14 +433,26 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
     setAvatarLoadFailed(false)
   }, [session?.user?.image])
 
-  // Optional: close dropdown on escape key
+  // Optional: close dropdown on escape key and click outside
+  const dropdownRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!isDropdownOpen) return
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsDropdownOpen(false)
     }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [isDropdownOpen])
 
   return (
@@ -485,7 +482,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         <div className="shrink-0 flex items-center gap-2 sm:gap-3">
           {/* Desktop More Menu */}
           {(isToeicDomain || session) && (
-              <div className="relative isolate hidden lg:flex items-center">
+              <div ref={dropdownRef} className="relative isolate hidden lg:flex items-center">
                    <button
                       type="button"
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -495,7 +492,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                    </button>
                    {isDropdownOpen && (
                        <>
-                           <button className="fixed inset-0 z-40 w-full h-full cursor-default" onClick={() => setIsDropdownOpen(false)} aria-hidden="true"></button>
                            <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[200px] rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5 flex flex-col gap-1">
                                {isToeicDomain && (
                                    <Link
