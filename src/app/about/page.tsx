@@ -13,7 +13,13 @@ export default async function AboutPage() {
     const setting = await prisma.systemSetting.findUnique({
         where: { key: 'about_page' }
     });
-    const aboutData = setting?.value as { title?: string; subtitle?: string; description?: string } | undefined;
+    const aboutData = setting?.value as { 
+        title?: string; subtitle?: string; description?: string;
+        grid1Title?: string; grid1Desc?: string;
+        grid2Title?: string; grid2Desc?: string;
+        grid3Title?: string; grid3Desc?: string;
+        grid4Title?: string; grid4Desc?: string;
+    } | undefined;
     
     const title = aboutData?.title || "Thầy Nguyễn Trí Bằng";
     const subtitle = aboutData?.subtitle || "Giám đốc Sáng lập";
