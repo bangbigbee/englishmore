@@ -71,6 +71,24 @@ function ToeicNavTabs() {
             </button>
           );
         })}
+        
+        <Link
+          href="/toeic-progress"
+          className="flex items-center gap-2 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap ml-4"
+        >
+          <span className={`transition-transform duration-300 ${pathname.startsWith('/toeic-progress') ? 'scale-110 text-[#14532d]' : 'opacity-60 scale-100 group-hover:opacity-100 text-slate-500'}`}>
+             <svg className="w-5 h-5 scale-[0.9]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+             </svg>
+          </span>
+          <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all pb-[6px] border-b-[2px] mt-1 ${
+             pathname.startsWith('/toeic-progress')
+               ? "text-[#14532d] border-[#ea980c]"
+               : "text-slate-400 border-transparent group-hover:text-slate-600 group-hover:border-slate-200"
+          }`}>
+             Tiến Độ Của Tôi
+          </span>
+        </Link>
       </div>
 
       <div className="lg:hidden flex items-center relative ml-1 sm:ml-4">

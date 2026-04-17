@@ -6,11 +6,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 const TABS = [
 	{ id: 'vocabulary-bank', label: 'Sổ Từ Vựng', icon: '📔' },
-	{ id: 'grammar', label: 'Ngữ Pháp', icon: '📝' },
-	{ id: 'vocabulary', label: 'Từ Vựng', icon: '🎯' },
-	{ id: 'listening', label: 'Listening', icon: '🎧' },
-	{ id: 'reading', label: 'Reading', icon: '📖' },
+	{ id: 'grammar', label: 'Sổ Ngữ Pháp', icon: '📝' },
+	{ id: 'reading', label: 'Sổ Luyện Đọc', icon: '📖' },
+	{ id: 'listening', label: 'Sổ Luyện Nghe', icon: '🎧' },
 	{ id: 'actual-test', label: 'Luyện Đề', icon: '🎓' },
+	{ id: 'reports', label: 'Báo Cáo Tiến Độ', icon: '📈' },
 ];
 
 export default function ProgressNavigation({ activeTab }: { activeTab: string }) {

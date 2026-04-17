@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Suspense } from "react";
 import VocabularyFilter from "./VocabularyFilter";
-import VocabularyDashboard from "./VocabularyDashboard";
+import ReportsWrapper from "./ReportsWrapper";
 import GrammarBank from "./GrammarBank";
 import ReadingBank from "./ReadingBank";
 import ProgressNavigation from "./ProgressNavigation";
@@ -168,9 +168,9 @@ export default async function ToeicProgressPage({
 								</Suspense>
 							</div>
 						)}
-						{activeTab === 'vocabulary' && (
+						{activeTab === 'reports' && (
 							<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
-								<VocabularyDashboard />
+								<ReportsWrapper />
 							</Suspense>
 						)}
 						{activeTab === 'listening' && <ComingSoonPlaceholder title="Tiến Độ Listening" icon="🎧" />}
