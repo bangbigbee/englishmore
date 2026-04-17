@@ -408,7 +408,7 @@ function ToeicPracticeContent() {
 function GrammarFeatureCard({ onClick, icon }: any) {
 	return (
 		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick}>
-			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 group-hover:opacity-0">
+			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
 					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
 						{icon}
@@ -416,22 +416,14 @@ function GrammarFeatureCard({ onClick, icon }: any) {
 					<h3 className="text-xl font-bold text-[#14532d]">Ngữ pháp</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0">
+					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 group-hover:opacity-0">
 						Hệ thống bài học và luyện tập toàn diện.
 					</p>
-				</div>
-			</div>
-			
-			<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center pointer-events-none bg-[#f8fafc]">
-				<div className="relative h-14 w-[85%] flex items-center justify-center">
-					{/* Icon quyển sổ mờ làm nền */}
-					<svg className="w-12 h-12 text-emerald-100 absolute left-2 top-0" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4v16a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H6a2 2 0 00-2 2zm2 0h12v16H6V4zm2 2v2h8V6H8zm0 4v2h8v-2H8zm0 4v2h6v-2H8z"/></svg>
-
-					<div className="absolute left-[38px] top-6 right-8">
-						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2s_infinite_ease-out]" style={{ width: '100%' }} />
+					<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mt-2">
+						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2s_infinite_ease-out]" style={{ width: '85%' }} />
 						
 						{/* Typed "Grammar" text above the line */}
-						<div className="absolute -top-6 left-1 text-[#14532d] font-serif italic font-bold text-lg leading-none animate-[fadeInText_2s_infinite_ease-out]">
+						<div className="absolute -top-[22px] left-1 text-[#14532d] font-serif italic text-[15px] font-bold leading-none animate-[fadeInText_2s_infinite_ease-out]">
 							Grammar
 						</div>
 
@@ -493,16 +485,14 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-[#14532d]/10" />
 
 				{/* Left half (static background under flipped page) */}
-				<div className="w-1/2 h-full bg-white flex flex-col items-center justify-center border-r-[1px] border-slate-100 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2">
+				<div className="w-1/2 h-full bg-white flex flex-col items-center justify-center border-r-[1px] border-slate-100 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2" />
+
+				{/* Right half (background of upcoming page side) */}
+				<div className="w-1/2 h-full bg-slate-50 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center pl-4 pr-2">
 					<div className="w-10 h-10 text-[#14532d]/30 mb-2">
 						{icon}
 					</div>
 					<span className="font-bold text-[#14532d]/40 text-[10px] uppercase tracking-widest text-center mt-1">Reading<br/>TOEIC</span>
-				</div>
-
-				{/* Right half (background of upcoming page side) */}
-				<div className="w-1/2 h-full bg-slate-50 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center">
-					<div className="w-6 h-6 border-b-2 border-slate-300 rounded-full blur-[1px] animate-pulse opacity-50" />
 				</div>
 
 				{/* Animated Pages Flipping */}
