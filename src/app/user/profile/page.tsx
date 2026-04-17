@@ -469,7 +469,6 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-        </div>
       </div>
     </div>
   )
