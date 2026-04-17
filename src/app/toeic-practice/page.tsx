@@ -398,11 +398,183 @@ function ToeicPracticeContent() {
 			<footer className="mt-20 pt-8 pb-4 border-t border-slate-200 text-center text-sm font-medium text-slate-500 opacity-80">
 				<p className="mb-2 uppercase tracking-wider text-[11px] font-bold text-[#14532d]">ToeicMore &copy; {new Date().getFullYear()}</p>
 				<p>Bản quyền được bảo lưu.</p>
-				<p>Thương hiệu và sản phẩm trực thuộc nền tảng Luyện Tiếng Anh Giao Tiếp EnglishMore.</p>
+				<p>Thương hiệu và sản phẩm trực thuộc nền tảng Luyện Tiếng Anh Giao Tiếp <a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline" style={{color: '#14532d'}}><span style={{color: '#14532d'}}>English</span><span style={{color: '#ea980c'}}>More</span></a>.</p>
 			</footer>
 		</div>
 	</div>
 	);
+}
+
+function GrammarFeatureCard({ onClick, icon }: any) {
+	return (
+		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick}>
+			<div className="p-6 h-full flex flex-col relative z-10 w-full">
+				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+						{icon}
+					</div>
+					<h3 className="text-xl font-bold text-[#14532d]">Ngữ pháp</h3>
+				</div>
+				<div className="relative flex-1 mt-2">
+					<p className="text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 group-hover:opacity-0 absolute inset-0">
+						Hệ thống bài học và luyện tập toàn diện.
+					</p>
+					<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center pointer-events-none">
+						<div className="relative h-2 w-[80%] flex items-center">
+							<div className="h-[3px] bg-amber-500/80 rounded-full animate-[drawLine_1.5s_infinite_ease-in-out]" style={{ width: '100%' }} />
+							<svg className="w-6 h-6 text-[#14532d] absolute -top-4 -ml-1 animate-[moveRight_1.5s_infinite_ease-in-out] origin-bottom-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+							</svg>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* Overlay Button on Hover */}
+			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md">
+					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function ReadingFeatureCard({ onClick, icon }: any) {
+	const [activePage, setActivePage] = useState(0);
+	const [isHovered, setIsHovered] = useState(false);
+	const pages = ["Part 5", "Part 6", "Part 7", "Giải thích chi tiết"];
+
+	useEffect(() => {
+		let int: NodeJS.Timeout;
+		if (isHovered) {
+			int = setInterval(() => {
+				setActivePage((p) => (p + 1) % 4);
+			}, 700);
+		} else {
+			setActivePage(0);
+		}
+		return () => clearInterval(int);
+	}, [isHovered]);
+
+	return (
+		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+			<div className="p-6 h-full flex flex-col relative z-10 w-full">
+				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+						{icon}
+					</div>
+					<h3 className="text-xl font-bold text-[#14532d]">Reading</h3>
+				</div>
+				<div className="relative flex-1 mt-2">
+					<p className={`text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 absolute inset-0 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+						Luyện Part 5, 6, 7 giải thích cặn kẽ chi tiết.
+					</p>
+					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center justify-start ml-2 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+						<div className="w-[124px] h-8 bg-[#14532d]/5 border border-[#14532d]/20 rounded-md shadow flex items-center justify-center relative perspective-[1000px]">
+							<AnimatePresence mode="popLayout">
+								<motion.div 
+									key={activePage}
+									initial={{ rotateX: -90, opacity: 0 }}
+									animate={{ rotateX: 0, opacity: 1 }}
+									exit={{ rotateX: 90, opacity: 0 }}
+									transition={{ duration: 0.3 }}
+									className="absolute font-bold text-[#14532d] text-[11px] uppercase tracking-wider text-center w-full truncate px-2"
+								>
+									{pages[activePage]}
+								</motion.div>
+							</AnimatePresence>
+							<div className="absolute left-0 top-0 bottom-0 w-1.5 border-r border-[#14532d]/20 bg-[#14532d]/10" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md">
+					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function ActualTestFeatureCard({ onClick, icon }: any) {
+	const [timeLeft, setTimeLeft] = useState(720000);
+	const [isHovered, setIsHovered] = useState(false);
+
+	useEffect(() => {
+		let int: NodeJS.Timeout;
+		if (isHovered) {
+			int = setInterval(() => {
+				setTimeLeft((prev) => (prev > 0 ? prev - 17 : 0));
+			}, 20);
+		} else {
+			setTimeLeft(720000);
+		}
+		return () => clearInterval(int);
+	}, [isHovered]);
+
+	const formatTime = (time: number) => {
+		const m = Math.floor(time / 6000).toString().padStart(2, '0');
+		const s = Math.floor((time % 6000) / 100).toString().padStart(2, '0');
+		const ms = (time % 100).toString().padStart(2, '0');
+		return `${m}:${s}:${ms}`;
+	};
+
+	return (
+		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+			<div className="p-6 h-full flex flex-col relative z-10 w-full">
+				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+						{icon}
+					</div>
+					<h3 className="text-xl font-bold text-[#14532d]">Luyện đề</h3>
+				</div>
+				<div className="relative flex-1 mt-2">
+					<p className={`text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 absolute inset-0 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+						Luyện đề thi thử bám sát cấu trúc đề thi thực.
+					</p>
+					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center delay-100 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+						<div className="flex items-center space-x-2 text-amber-500 font-mono font-bold text-sm bg-red-50/50 px-3 py-1.5 rounded-lg border border-red-100/50 shadow-inner">
+							<svg className="w-4 h-4 animate-pulse text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+							<span className="text-red-500 tracking-wider w-[64px] text-left">{formatTime(timeLeft)}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md">
+					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function VocabFeatureCard({ onClick, icon }: any) {
+    return (
+		<div className="perspective-[1000px] w-full min-h-[160px] group cursor-pointer" onClick={onClick}>
+            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] rounded-[20px] shadow-sm hover:shadow-xl">
+                <div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
+                    <div className="w-full flex items-center gap-4 pb-1">
+                        <div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
+                            {icon}
+                        </div>
+                        <h3 className="text-xl font-bold text-[#14532d]">Từ vựng</h3>
+                    </div>
+                    <p className="text-slate-500 font-medium text-sm text-left w-full mt-2">
+                        Học từ vựng thông minh bằng thuật toán Flashcard.
+                    </p>
+                </div>
+                <div className="absolute inset-0 w-full h-full bg-white border-2 border-[#14532d]/20 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] p-6">
+                        <button className="bg-[#14532d] text-[#eab308] px-6 py-2.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform flex items-center gap-1.5 focus:outline-none">
+                            Bắt đầu <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
@@ -446,6 +618,17 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							0% { transform: translateX(0); }
 							100% { transform: translateX(calc(-50% - 1rem)); } 
 						}
+						@keyframes drawLine {
+							0% { width: 0%; }
+							100% { width: 100%; }
+						}
+						@keyframes moveRight {
+							0% { left: 0%; transform: rotate(-5deg); }
+							25% { transform: rotate(5deg); }
+							50% { transform: rotate(-5deg); }
+							75% { transform: rotate(5deg); }
+							100% { left: calc(100% - 20px); transform: rotate(-5deg); }
+						}
 						.animate-marquee {
 							animation: marquee 25s linear infinite;
 						}
@@ -466,9 +649,8 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							{ label: 'Giải thích chi tiết', value: stats.detailedQuestions },
 							{ label: 'Học viên tham gia', value: stats.users },
 						].map((stat, idx) => (
-							<div key={idx} className="flex items-center gap-1.5 shrink-0">
-								<svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-								<span><strong className="text-[#14532d]">{stat.value.toLocaleString()}+</strong> {stat.label}</span>
+							<div key={idx} className="flex items-center shrink-0">
+								<span><strong className="text-[#14532d] text-[15px]">{stat.value.toLocaleString()}+</strong> <span className="ml-[2px]">{stat.label}</span></span>
 							</div>
 						))}
 					</div>
@@ -478,57 +660,10 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Features Section removed text */}
 			
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-				{[
-					{ 
-						id: 'grammar', 
-						title: 'Ngữ pháp', 
-						desc: 'Hệ thống bài học và luyện tập toàn diện.', 
-						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg> 
-					},
-					{ 
-						id: 'reading', 
-						title: 'Reading', 
-						desc: 'Luyện Part 5, 6, 7 giải thích cặn kẽ chi tiết.', 
-						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg> 
-					},
-					{ 
-						id: 'vocabulary', 
-						title: 'Từ vựng', 
-						desc: 'Học từ vựng thông minh bằng thuật toán Flashcard.', 
-						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> 
-					},
-					{ 
-						id: 'actual-test', 
-						title: 'Luyện đề', 
-						desc: 'Luyện đề thi thử bám sát cấu trúc đề thi thực.', 
-						icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
-					}
-				].map((f) => (
-					<div key={f.id} className="perspective-[1000px] w-full min-h-[160px] group cursor-pointer" onClick={() => onTabClick(f.id)}>
-						<div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] rounded-[20px] shadow-sm hover:shadow-xl">
-							{/* Mặt trước */}
-							<div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex items-center justify-start gap-4 flex-col [backface-visibility:hidden]">
-								<div className="w-full flex items-center gap-4">
-									<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
-										{f.icon}
-									</div>
-									<h3 className="text-xl font-bold text-[#14532d]">{f.title}</h3>
-								</div>
-								<p className="text-slate-500 font-medium text-sm text-left w-full line-clamp-2">
-									{f.desc}
-								</p>
-							</div>
-							{/* Mặt sau */}
-							<div className="absolute inset-0 w-full h-full bg-white border-2 border-[#14532d]/20 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-								<div className="w-full h-full flex flex-col items-center justify-center bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] p-6">
-									<button className="bg-[#14532d] text-[#eab308] px-6 py-2.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform flex items-center gap-1.5 focus:outline-none">
-										Bắt đầu <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				))}
+				<GrammarFeatureCard onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
+				<ReadingFeatureCard onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
+				<VocabFeatureCard onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>} />
+				<ActualTestFeatureCard onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
 			</div>
 		</div>
 	);
