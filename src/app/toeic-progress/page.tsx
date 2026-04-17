@@ -8,7 +8,10 @@ import VocabularyFilter from "./VocabularyFilter";
 import ReportsWrapper from "./ReportsWrapper";
 import GrammarBank from "./GrammarBank";
 import ReadingBank from "./ReadingBank";
+import ListeningBank from "./ListeningBank";
+import ActualTestBank from "./ActualTestBank";
 import ProgressNavigation from "./ProgressNavigation";
+import QuestionBankFilter from "./QuestionBankFilter";
 
 export const metadata = {
 	title: 'Tiến Độ Của Tôi',
@@ -131,6 +134,7 @@ export default async function ToeicProgressPage({
 	const activeTab = resolvedParams.tab || 'vocabulary-bank';
 	const topicFilter = resolvedParams.topic;
 	const tagFilter = resolvedParams.tag;
+	const qbFilter = resolvedParams.filter || 'mistakes';
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
@@ -161,10 +165,11 @@ export default async function ToeicProgressPage({
 							<div>
 								<div className="mb-6">
 									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Ngữ Pháp</h2>
-									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi hay và điểm ngữ pháp bạn đã lưu lại</p>
+									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi hay, điểm ngữ pháp và lỗi sai bạn đã gặp</p>
 								</div>
+                                <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
-									<GrammarBank />
+									<GrammarBank filter={qbFilter} />
 								</Suspense>
 							</div>
 						)}
@@ -173,19 +178,42 @@ export default async function ToeicProgressPage({
 								<ReportsWrapper />
 							</Suspense>
 						)}
-						{activeTab === 'listening' && <ComingSoonPlaceholder title="Tiến Độ Listening" icon="🎧" />}
+						{activeTab === 'listening' && (
+							<div>
+								<div className="mb-6">
+									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Luyện Nghe</h2>
+									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi khó nghe và lỗi sai bạn đã gặp trong Part 1-4</p>
+								</div>
+                                <QuestionBankFilter />
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
+									<ListeningBank filter={qbFilter} />
+								</Suspense>
+							</div>
+						)}
 						{activeTab === 'reading' && (
 							<div>
 								<div className="mb-6">
 									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Luyện Đọc</h2>
-									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi dài và khó trong Part 6-7 bạn đã lưu lại</p>
+									<p className="text-slate-500 font-medium mt-1">Danh sách các bài đọc khó hoặc lỗi sai bạn đã gặp trong Part 5-7</p>
 								</div>
+                                <QuestionBankFilter />
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
-									<ReadingBank />
+									<ReadingBank filter={qbFilter} />
 								</Suspense>
 							</div>
 						)}
-						{activeTab === 'actual-test' && <ComingSoonPlaceholder title="Tiến Độ Đề Thực Tế" icon="🎓" />}
+						{activeTab === 'actual-test' && (
+							<div>
+								<div className="mb-6">
+									<h2 className="text-2xl font-black text-slate-800">Sổ Tay Luyện Đề (Actual Test)</h2>
+									<p className="text-slate-500 font-medium mt-1">Danh sách các câu hỏi hay, bẫy hoặc làm sai trong quá trình thi thử</p>
+								</div>
+                                <QuestionBankFilter />
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
+									<ActualTestBank filter={qbFilter} />
+								</Suspense>
+							</div>
+						)}
 					</div>
 			</div>
 		</main>

@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
-export default async function ReadingBank() {
+export default async function ReadingBank({ filter = 'mistakes' }: { filter?: string }) {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
 
@@ -42,40 +42,81 @@ export default async function ReadingBank() {
 		);
 	}
 
-	const bookmarks = await prisma.toeicQuestionBookmark.findMany({
-		where: { 
-			userId: session.user.id,
-			question: {
-				lesson: {
-					topic: {
-						type: 'READING'
-					}
-				}
-			}
-		},
-		include: {
-			question: {
-				include: {
-					lesson: {
-						include: {
-							topic: true
-						}
-					}
-				}
-			}
-		},
-		orderBy: { createdAt: 'desc' }
-	});
+	const isMistakes = filter === 'mistakes';
 
-	if (bookmarks.length === 0) {
+    let items: any[] = [];
+
+    if (isMistakes) {
+        const answers = await prisma.toeicAnswer.findMany({
+            where: { 
+                userId: session.user.id,
+                isCorrect: false,
+                question: {
+                    lesson: {
+                        topic: {
+                            type: 'READING'
+                        }
+                    }
+                }
+            },
+            include: {
+                question: {
+                    include: {
+                        lesson: {
+                            include: {
+                                topic: true
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { updatedAt: 'desc' },
+            take: 200
+        });
+        
+        items = answers;
+    } else {
+        const bookmarks = await prisma.toeicQuestionBookmark.findMany({
+            where: { 
+                userId: session.user.id,
+                question: {
+                    lesson: {
+                        topic: {
+                            type: 'READING'
+                        }
+                    }
+                }
+            },
+            include: {
+                question: {
+                    include: {
+                        lesson: {
+                            include: {
+                                topic: true
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 200
+        });
+        items = bookmarks;
+    }
+
+	if (items.length === 0) {
 		return (
 			<div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
-				<div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-blue-100">
+				<div className="w-16 h-16 bg-slate-50 text-slate-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-slate-100">
 					<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
 				</div>
-				<h3 className="text-xl font-bold text-slate-800 mb-2">Chưa có bài đọc nào được lưu</h3>
+				<h3 className="text-xl font-bold text-slate-800 mb-2">
+                    {isMistakes ? "Tuyệt vời! Bạn chưa có câu làm sai nào" : "Chưa có bài đọc nào được lưu"}
+                </h3>
 				<p className="text-slate-500 max-w-sm mx-auto">
-					Khi làm bài tập Reading, hãy bấm vào icon Bookmark để lưu lại những câu khó hoặc hay nhé.
+                    {isMistakes 
+                        ? "Hệ thống sẽ tự động lưu lại những bài đọc bạn làm sai để tiện ôn tập lại sau này." 
+                        : "Khi làm bài tập Reading, hãy bấm vào icon Bookmark để lưu lại những câu khó hoặc hay nhé."}
 				</p>
 			</div>
 		);
@@ -83,17 +124,24 @@ export default async function ReadingBank() {
 
 	return (
 		<div className="space-y-4">
-			{bookmarks.map((bookmark) => {
-				const q = bookmark.question;
+			{items.map((item) => {
+				const q = item.question;
 				return (
 					<Link 
 						key={q.id}
 						href={`/toeic-practice/grammar/${q.lesson.topic.slug}`}
 						className="block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group relative"
 					>
-                        <div className="absolute top-4 right-4 text-blue-500 bg-blue-50 p-1.5 rounded-lg border border-blue-200 opacity-80 group-hover:opacity-100 transition-opacity">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-                        </div>
+                        {isMistakes && item.selectedOption && (
+                            <div className="absolute top-4 right-4 text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 opacity-90 text-[11px] font-bold">
+                                CÂU SAI
+                            </div>
+                        )}
+                        {!isMistakes && (
+                            <div className="absolute top-4 right-4 text-blue-500 bg-blue-50 p-1.5 rounded-lg border border-blue-200 opacity-80 group-hover:opacity-100 transition-opacity">
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                            </div>
+                        )}
 						
                         <div className="flex items-center gap-2 mb-3">
 							<span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded whitespace-nowrap">
