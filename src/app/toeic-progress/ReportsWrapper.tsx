@@ -56,5 +56,30 @@ export default async function ReportsWrapper() {
         learnedCount, hardCount, bookmarkedCount, totalWords, completionRate
     };
 
-	return <ReportsDashboard vocabularyStats={vocabStats} vocabularyHeatmap={heatMapDays} />;
+    // 2. Fetch Quiz Answers for Grammar, Reading, Listening, Actual Test
+    const answers = await prisma.toeicAnswer.findMany({
+        where: { userId: session.user.id },
+        include: { question: { include: { lesson: { include: { topic: true } } } } }
+    });
+
+    const quizStats = {
+        grammar: { correct: 0, incorrect: 0 },
+        reading: { correct: 0, incorrect: 0 },
+        listening: { correct: 0, incorrect: 0 },
+        'actual-test': { correct: 0, incorrect: 0 }
+    };
+
+    answers.forEach(a => {
+        const type = a.question?.lesson?.topic?.type;
+        let key = 'grammar';
+        if (type === 'READING') key = 'reading';
+        else if (type === 'LISTENING') key = 'listening';
+        else if (type === 'ACTUAL_TEST') key = 'actual-test';
+        else if (type !== 'GRAMMAR') return; // Skip unknown
+
+        if (a.isCorrect) quizStats[key as keyof typeof quizStats].correct++;
+        else quizStats[key as keyof typeof quizStats].incorrect++;
+    });
+
+	return <ReportsDashboard vocabularyStats={vocabStats} vocabularyHeatmap={heatMapDays} quizStats={quizStats} />;
 }

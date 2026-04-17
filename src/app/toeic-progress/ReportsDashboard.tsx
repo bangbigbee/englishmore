@@ -9,7 +9,7 @@ const SUB_TABS = [
     { id: 'actual-test', label: 'Luyện đề' }
 ];
 
-export default function ReportsDashboard({ vocabularyHeatmap, vocabularyStats }: any) {
+export default function ReportsDashboard({ vocabularyHeatmap, vocabularyStats, quizStats }: any) {
     const [subTab, setSubTab] = useState('vocabulary');
 
     return (
@@ -41,19 +41,19 @@ export default function ReportsDashboard({ vocabularyHeatmap, vocabularyStats }:
             )}
             
             {subTab === 'grammar' && (
-                <QuizReport title="Báo Cáo Tiến Độ Ngữ Pháp" description="Thống kê kết quả làm bài tập ngữ pháp" />
+                <QuizReport title="Báo Cáo Tiến Độ Ngữ Pháp" description="Thống kê kết quả làm bài tập ngữ pháp" stats={quizStats?.grammar} />
             )}
             
             {subTab === 'reading' && (
-                <QuizReport title="Báo Cáo Tiến Độ Luyện Đọc" description="Thống kê kết quả làm bài tập đọc hiểu (Part 6-7)" />
+                <QuizReport title="Báo Cáo Tiến Độ Luyện Đọc" description="Thống kê kết quả làm bài tập đọc hiểu (Part 5-7)" stats={quizStats?.reading} />
             )}
 
             {subTab === 'listening' && (
-                <QuizReport title="Báo Cáo Tiến Độ Luyện Nghe" description="Thống kê kết quả phần thi nghe (Part 1-4)" />
+                <QuizReport title="Báo Cáo Tiến Độ Luyện Nghe" description="Thống kê kết quả phần thi nghe (Part 1-4)" stats={quizStats?.listening} />
             )}
 
             {subTab === 'actual-test' && (
-                <QuizReport title="Báo Cáo Tiến Độ Luyện Đề" description="Thống kê kết quả làm bài Full Test thực tế" isFullTest />
+                <QuizReport title="Báo Cáo Tiến Độ Luyện Đề" description="Thống kê kết quả làm bài Full Test thực tế" isFullTest stats={quizStats?.['actual-test']} />
             )}
         </div>
     );
@@ -168,7 +168,11 @@ function VocabularyReport({ stats, heatmap }: any) {
     )
 }
 
-function QuizReport({ title, description, isFullTest }: { title: string, description: string, isFullTest?: boolean }) {
+function QuizReport({ title, description, isFullTest, stats }: { title: string, description: string, isFullTest?: boolean, stats?: any }) {
+    const hasData = stats && (stats.correct > 0 || stats.incorrect > 0);
+    const timeSpent = (stats?.correct || 0) * 35 + (stats?.incorrect || 0) * 45; // Simulated time: 35s correct, 45s incorrect
+    const timeValue = isFullTest ? Math.round(timeSpent / 60) : timeSpent;
+
     return (
         <div className="mt-8 animate-in fade-in zoom-in-95 duration-300">
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -176,11 +180,11 @@ function QuizReport({ title, description, isFullTest }: { title: string, descrip
 					<div className="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full blur-2xl"></div>
 					<h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2 relative">Câu trả lời đúng</h3>
 					<div className="flex items-baseline gap-2 relative">
-						<span className="text-4xl font-black text-slate-800">0</span>
+						<span className="text-4xl font-black text-slate-800">{stats?.correct || 0}</span>
 						<span className="text-slate-400 font-medium text-sm">câu</span>
 					</div>
 					<div className="mt-4 w-full bg-slate-100 rounded-full h-2">
-						<div className="bg-green-500 h-2 rounded-full" style={{ width: `0%` }} />
+						<div className="bg-green-500 h-2 rounded-full" style={{ width: hasData ? `${Math.round((stats.correct / (stats.correct + stats.incorrect)) * 100)}%` : '0%' }} />
 					</div>
 				</div>
 
@@ -188,7 +192,7 @@ function QuizReport({ title, description, isFullTest }: { title: string, descrip
 					<div className="absolute -right-6 -top-6 w-24 h-24 bg-red-50 rounded-full blur-2xl"></div>
 					<h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2 relative">Câu trả lời sai</h3>
 					<div className="flex items-baseline gap-2 relative">
-						<span className="text-4xl font-black text-slate-800">0</span>
+						<span className="text-4xl font-black text-slate-800">{stats?.incorrect || 0}</span>
 						<span className="text-slate-400 font-medium text-sm">câu</span>
 					</div>
                     <div className="mt-4 flex items-center gap-2">
@@ -201,7 +205,7 @@ function QuizReport({ title, description, isFullTest }: { title: string, descrip
 					<div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full blur-2xl"></div>
 					<h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2 relative">Thời gian làm bài</h3>
 					<div className="flex items-baseline gap-2 relative">
-						<span className="text-4xl font-black text-slate-800">0</span>
+						<span className="text-4xl font-black text-slate-800">{timeValue}</span>
 						<span className="text-slate-400 font-medium text-sm">{isFullTest ? 'phút' : 'giây'}</span>
 					</div>
 					<div className="mt-4 flex items-center gap-2">
@@ -212,6 +216,7 @@ function QuizReport({ title, description, isFullTest }: { title: string, descrip
 			</div>
 
             {/* Empty State placeholder */}
+            {!hasData && (
 			<div className="bg-slate-50 rounded-2xl border border-slate-200 border-dashed p-12 text-center mt-6">
                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-slate-100 shadow-sm">
                     📊
@@ -221,6 +226,7 @@ function QuizReport({ title, description, isFullTest }: { title: string, descrip
                     Biểu đồ và lịch sử luyện tập sẽ xuất hiện tại đây sau khi bạn tiến hành hoàn thành các bài tập liên quan.
                 </p>
             </div>
+            )}
 		</div>
     )
 }
