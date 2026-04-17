@@ -433,49 +433,49 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					</button>
 				</div>
 
-				<div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[13px] font-medium text-slate-500">
-					<div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg><span>Miễn phí đăng ký</span></div>
-					<div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg><span>Theo dõi tiến độ học tập</span></div>
-					<div className="flex items-center gap-1.5"><svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg><span>Giải thích chi tiết từng câu</span></div>
-				</div>
-
-				<div className="w-full mt-16 pt-10 border-t border-slate-200/70 relative">
-					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-10 gap-x-4 relative z-10 w-full max-w-6xl mx-auto">
-						<div className="text-center w-full">
-							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.grammarTopics.toLocaleString()}+</p>
-							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chủ đề Ngữ pháp</p>
-						</div>
-						<div className="text-center w-full">
-							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.readingTopics.toLocaleString()}+</p>
-							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Bộ đề Reading</p>
-						</div>
-						<div className="text-center w-full">
-							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.vocabTopics.toLocaleString()}+</p>
-							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chủ đề từ vựng</p>
-						</div>
-						<div className="text-center w-full">
-							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.vocabularies.toLocaleString()}+</p>
-							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Từ vựng TOEIC</p>
-						</div>
-						<div className="text-center w-full">
-							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-amber-500 leading-none mb-2">{stats.detailedQuestions.toLocaleString()}+</p>
-							<p className="text-[11px] sm:text-[12px] font-bold text-amber-600 uppercase tracking-wide">Giải thích chi tiết</p>
-						</div>
-						<div className="text-center w-full">
-							<p className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#14532d] leading-none mb-2">{stats.users.toLocaleString()}+</p>
-							<p className="text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wide">Học viên tham gia</p>
-						</div>
+				<div 
+					className="w-full max-w-4xl mx-auto mt-7 overflow-hidden relative"
+					style={{
+						WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+						maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+					}}
+				>
+					<style dangerouslySetInnerHTML={{
+						__html: `
+						@keyframes marquee {
+							0% { transform: translateX(0); }
+							100% { transform: translateX(calc(-50% - 1rem)); } 
+						}
+						.animate-marquee {
+							animation: marquee 25s linear infinite;
+						}
+						`
+					}} />
+					<div className="flex animate-marquee items-center gap-x-8 text-[13px] font-medium text-slate-500 w-max hover:[animation-play-state:paused]">
+						{[
+							{ label: 'Chủ đề Ngữ pháp', value: stats.grammarTopics },
+							{ label: 'Bộ đề Reading', value: stats.readingTopics },
+							{ label: 'Chủ đề từ vựng', value: stats.vocabTopics },
+							{ label: 'Từ vựng TOEIC', value: stats.vocabularies },
+							{ label: 'Giải thích chi tiết', value: stats.detailedQuestions },
+							{ label: 'Học viên tham gia', value: stats.users },
+							{ label: 'Chủ đề Ngữ pháp', value: stats.grammarTopics },
+							{ label: 'Bộ đề Reading', value: stats.readingTopics },
+							{ label: 'Chủ đề từ vựng', value: stats.vocabTopics },
+							{ label: 'Từ vựng TOEIC', value: stats.vocabularies },
+							{ label: 'Giải thích chi tiết', value: stats.detailedQuestions },
+							{ label: 'Học viên tham gia', value: stats.users },
+						].map((stat, idx) => (
+							<div key={idx} className="flex items-center gap-1.5 shrink-0">
+								<svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+								<span><strong className="text-[#14532d]">{stat.value.toLocaleString()}+</strong> {stat.label}</span>
+							</div>
+						))}
 					</div>
 				</div>
 			</section>
 
-			{/* Features Section */}
-			<div className="text-center mb-12">
-				<h2 className="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">
-					Trên <span className="text-[#14532d]">Toeic</span><span className="text-[#ea980c]">More</span> bạn luyện được gì?
-				</h2>
-				<p className="text-slate-500 font-medium max-w-2xl mx-auto">Hệ thống luyện tập toàn diện, từ ngữ pháp đến từ vựng, reading và luyện đề mô phỏng chuẩn xác bài thi thật.</p>
-			</div>
+			{/* Features Section removed text */}
 			
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 				{[
