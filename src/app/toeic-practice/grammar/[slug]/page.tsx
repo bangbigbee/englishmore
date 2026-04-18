@@ -994,7 +994,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                               </div>
                               
                               {topic.type !== 'LISTENING' && isShowingResult && q.translation && (
-                                <div className="mt-5 flex flex-col items-start gap-2.5 animate-in slide-in-from-top-1 fade-in duration-300">
+                                <div className="mt-5 flex flex-row items-start gap-3 animate-in slide-in-from-top-1 fade-in duration-300">
                                    <button 
                                      onClick={() => {
                                          const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
@@ -1005,15 +1005,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                          }
                                          setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
                                      }}
-                                     className={`flex items-center gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1.5 rounded-[12px] transition-all tracking-wide border shadow-sm ${showTranslation[q.id] ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700 border-slate-200'}`}
+                                     className={`flex items-center shrink-0 flex-none gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1 mt-0.5 rounded-lg transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-100 text-orange-700' : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200 hover:text-slate-800'}`}
                                    >
-                                     <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
                                      Dịch nghĩa
                                      {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-500 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
                                      {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                                    </button>
                                    {showTranslation[q.id] && (
-                                     <div className="w-full text-sm md:text-[15px] font-medium text-black leading-relaxed italic animate-in fade-in py-1.5 pl-3.5 border-l-[3px] border-orange-300">
+                                     <div className="flex-1 min-w-0 text-[13px] md:text-sm font-medium text-slate-600 leading-relaxed italic animate-in fade-in py-0.5">
                                        {q.translation}
                                      </div>
                                    )}
