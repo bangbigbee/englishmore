@@ -732,7 +732,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         return activeAudioUrl ? (
                           <div className={`bg-white border-b-2 border-slate-100 p-3 mb-6 shadow-sm shadow-slate-100 flex flex-col items-center rounded-2xl sticky top-20 z-20 transition-all ${!lessonStarted && topic.type === 'LISTENING' ? 'opacity-0 h-0 overflow-hidden mb-0 p-0 absolute pointer-events-none' : ''}`}>
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 leading-none">Audio Trải Dài</span>
-                            <audio ref={audioRef} src={activeAudioUrl} controls className="w-full max-w-lg h-10" />
+                            <audio 
+                               ref={audioRef} 
+                               src={activeAudioUrl} 
+                               controls 
+                               className="w-full max-w-lg h-10"
+                               onEnded={() => {
+                                  if (activeQuestionIndex < currentLesson.questions.length - 1) {
+                                     setActiveQuestionIndex(prev => prev + 1);
+                                  }
+                               }}
+                            />
                           </div>
                         ) : null;
                       })()}
