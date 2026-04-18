@@ -63,6 +63,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [timerStartTime, setTimerStartTime] = useState<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isTestCompleted, setIsTestCompleted] = useState(false)
+  const [lessonStarted, setLessonStarted] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const { data: session, status } = useSession()
   const [isSyncing, setIsSyncing] = useState(false)
   const router = useRouter()
@@ -85,9 +87,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           setSelectedLessonId(data.lessons[0].id)
           setActiveQuestionIndex(0)
           setShowLessonContent(data.lessons[0].questions.length === 0)
+          if (data.type === 'LISTENING') setListeningMode('actual');
           setTimerStartTime(Date.now())
           setElapsedTime(0)
           setIsTestCompleted(false)
+          setLessonStarted(false)
         }
       } catch (error) {
         console.error(error)
@@ -502,18 +506,18 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             </Link>
             <div className="flex flex-col">
               <h1 className="font-black text-slate-900 text-sm md:text-base leading-tight">{topic.title}</h1>
-              <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest">{topic.subtitle || (topic.type === 'READING' ? 'TOEIC Reading' : 'TOEIC Grammar')}</p>
+              <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest">{topic.subtitle || (topic.type === 'READING' ? 'TOEIC Reading' : topic.type === 'LISTENING' ? 'TOEIC Listening' : 'TOEIC Grammar')}</p>
             </div>
           </div>
           
           <div className="hidden md:flex items-center gap-4">
             <Link 
                 ref={notebookRef}
-                href={topic.type === 'READING' ? '/toeic-progress?tab=reading' : '/toeic-progress?tab=grammar'}
+                href={topic.type === 'READING' ? '/toeic-progress?tab=reading' : topic.type === 'LISTENING' ? '/toeic-progress?tab=listening' : '/toeic-progress?tab=grammar'}
                 className="px-3 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors text-xs font-bold rounded-full border border-emerald-100 uppercase tracking-wider cursor-pointer"
                 title="Khám phá sổ tay học tập của bạn"
             >
-              {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : 'Sổ Tay Ngữ Pháp'}
+              {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : topic.type === 'LISTENING' ? 'Sổ Tay Luyện Nghe' : 'Sổ Tay Ngữ Pháp'}
             </Link>
           </div>
         </div>
@@ -539,9 +543,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setSelectedLessonId(lesson.id)
                   setActiveQuestionIndex(0)
                   setShowLessonContent(lesson.questions.length === 0)
+                  if (topic.type === 'LISTENING') setListeningMode('actual');
                   setTimerStartTime(Date.now())
                   setElapsedTime(0)
                   setIsTestCompleted(false)
+                  setLessonStarted(false)
                   setIsMobileSidebarOpen(false)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
@@ -604,22 +610,27 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         {currentLesson.accessTier === 'PRO' && <svg className="w-6 h-6 text-amber-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
                         {currentLesson.accessTier === 'ULTRA' && <svg className="w-6 h-6 text-purple-700 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                       </h2>
-                      {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && currentLesson.questions.length > 0 && (
-                        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg self-start">
-                          <button 
-                            onClick={() => setListeningMode('practice')}
-                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${listeningMode === 'practice' ? 'bg-white shadow text-[#14532d]' : 'text-slate-500 hover:text-slate-700'}`}
-                          >
-                            Practice
-                          </button>
-                          <button 
-                            onClick={() => setListeningMode('actual')}
-                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${listeningMode === 'actual' ? 'bg-white shadow text-rose-600' : 'text-slate-500 hover:text-slate-700'}`}
-                          >
-                            Actual
-                          </button>
-                        </div>
-                      )}
+                      {/* Control Mode Toggle */}
+                      <div className="flex items-center p-1 bg-slate-100 rounded-lg">
+                        <button 
+                          onClick={() => {
+                            if (session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin') {
+                              setShowPricing(true);
+                              return;
+                            }
+                            setListeningMode('practice')
+                          }}
+                          className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${listeningMode === 'practice' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' ? 'opacity-80' : ''}`}
+                        >
+                          Practice {session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' && <span className="ml-1 text-[10px] text-amber-500">🔒</span>}
+                        </button>
+                        <button 
+                          onClick={() => setListeningMode('actual')}
+                          className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${listeningMode === 'actual' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                          Actual
+                        </button>
+                      </div>
                       {!isTestCompleted && timerStartTime !== null && (
                         <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
                           {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
@@ -714,31 +725,50 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         }
 
                         return activeAudioUrl ? (
-                          <div className="bg-white border-b-2 border-slate-100 p-3 mb-6 shadow-sm shadow-slate-100 flex flex-col items-center rounded-2xl sticky top-20 z-20">
+                          <div className={`bg-white border-b-2 border-slate-100 p-3 mb-6 shadow-sm shadow-slate-100 flex flex-col items-center rounded-2xl sticky top-20 z-20 transition-all ${!lessonStarted && topic.type === 'LISTENING' ? 'opacity-0 h-0 overflow-hidden mb-0 p-0 absolute pointer-events-none' : ''}`}>
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 leading-none">Audio Trải Dài</span>
-                            <audio src={activeAudioUrl} controls className="w-full max-w-lg h-10" />
+                            <audio ref={audioRef} src={activeAudioUrl} controls className="w-full max-w-lg h-10" />
                           </div>
                         ) : null;
                       })()}
+                      
+                      {!lessonStarted && topic.type === 'LISTENING' ? (
+                        <div className="flex flex-col items-center justify-center p-16 bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100 text-center min-h-[400px]">
+                            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6">
+                                <svg className="w-10 h-10 ml-2" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <h3 className="text-2xl font-black text-slate-800 mb-3">Sẵn sàng nghiệm thu phần nghe?</h3>
+                            <p className="text-slate-500 mb-8 max-w-md">Bấm Bắt đầu để Audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian thực làm bài sẽ được tính bắt đầu từ bây giờ.</p>
+                            <button onClick={() => {
+                                setLessonStarted(true);
+                                setTimerStartTime(Date.now());
+                                if (audioRef.current) {
+                                    audioRef.current.play().catch(e => console.error("Audio autoplay blocked", e));
+                                }
+                            }} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
+                               Bắt Đầu Làm Bài
+                            </button>
+                        </div>
+                      ) : (
+                        <>
+                          <AnimatePresence mode="wait">
+                            {(() => {
+                              const q = currentLesson.questions[activeQuestionIndex]
+                            if (!q) return null
+                            const isShowingResult = showResults[q.id]
+                            const selectedOption = userAnswers[q.id]
+                            const isCorrect = selectedOption === q.correctOption
+                            const explanationText = status !== 'authenticated' && activeQuestionIndex >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
 
-                      <AnimatePresence mode="wait">
-                        {(() => {
-                          const q = currentLesson.questions[activeQuestionIndex]
-                          if (!q) return null
-                          const isShowingResult = showResults[q.id]
-                          const selectedOption = userAnswers[q.id]
-                          const isCorrect = selectedOption === q.correctOption
-                          const explanationText = status !== 'authenticated' && activeQuestionIndex >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
-
-                          return (
-                            <motion.div
-                              key={q.id}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -20 }}
-                              transition={{ duration: 0.2 }}
-                              className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 relative overflow-hidden"
-                            >
+                            return (
+                              <motion.div
+                                key={q.id}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.2 }}
+                                className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 relative overflow-hidden"
+                              >
                               <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
                                 <motion.div 
                                   className="h-full bg-[#14532d]"
@@ -1049,6 +1079,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           </div>
                         )
                       })()}
+                        </>
+                      )}
                     </section>
                   )}
                 </motion.div>
