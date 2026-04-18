@@ -844,7 +844,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
                                 }
                             }} className="bg-[#14532d] hover:bg-[#14532d]/90 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-900/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
-                               Bắt Đầu Làm Bài
+                               Bắt Đầu
                             </button>
                         </div>
                       ) : (
@@ -964,7 +964,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       disabled={isShowingResult}
                                       className={buttonClass + " flex-col items-start cursor-pointer"}
                                     >
-                                      <div className="flex items-center w-full gap-3 md:gap-3.5">
+                                      <div className="flex items-center w-full gap-2.5 md:gap-3">
                                         <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
                                           selectedOption === opt.label 
                                             ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
@@ -978,7 +978,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       </div>
                                       
                                       {showTranslation[q.id] && q.translation && (
-                                        <div className="w-full pl-11 md:pl-13 text-[13.5px] md:text-sm text-slate-600 font-medium italic mt-1 pb-1 animate-in slide-in-from-top-1 fade-in duration-200">
+                                        <div className="w-full pl-[42px] md:pl-[52px] text-xs md:text-[13px] text-slate-500 font-medium italic mt-0.5 animate-in slide-in-from-top-1 fade-in duration-200 leading-tight">
                                           {(() => {
                                              const parts = q.translation.split('/').map(p => p.trim());
                                              const matched = parts.find(p => p.startsWith(opt.label));
@@ -1020,16 +1020,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                               <div className="flex-1 flex justify-center items-center min-w-0">
                                 {isShowingResultLocal ? (
-                                  <div className={`px-2 flex items-center justify-center gap-2 md:gap-3 transition-all ${isCorrectLocal ? 'text-emerald-700' : 'text-rose-700'}`}>
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
+                                  <div className={`px-2 flex items-center justify-center gap-1.5 md:gap-2 transition-all ${isCorrectLocal ? 'text-emerald-700' : 'text-rose-700'}`}>
+                                    <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
                                         {isCorrectLocal ? (
-                                          <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
+                                          <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
                                         ) : (
-                                          <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                                          <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
                                         )}
                                     </div>
-                                    <div className="flex items-center gap-1.5 md:gap-2 leading-none whitespace-nowrap">
-                                      <span className="text-[11px] md:text-sm font-black uppercase tracking-widest text-slate-500 opacity-90">Kết quả</span>
+                                    <div className="flex items-center leading-none whitespace-nowrap">
                                       <span className="font-bold text-sm md:text-base">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
                                     </div>
                                     {q.translation && (
@@ -1043,7 +1042,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                             }
                                             setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
                                         }}
-                                        className={`ml-1 md:ml-2 flex items-center gap-1 text-[10px] md:text-xs font-bold px-2 py-1 md:py-1.5 rounded-md transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-600 border border-orange-600 text-white shadow-sm' : 'bg-orange-50 border border-orange-200 text-orange-600 hover:bg-orange-100'}`}
+                                        className={`ml-1 flex items-center gap-0.5 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-600 border border-orange-600 text-white shadow-sm' : 'bg-orange-50 border border-orange-200 text-orange-600 hover:bg-orange-100'}`}
                                       >
                                         Dịch nghĩa
                                         {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <span className="">⭐</span>}
@@ -1110,10 +1109,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             </div>
 
                             {/* Full Width Explanation Row below the buttons */}
-                            {isShowingResultLocal && (explanationText || q.translation) && (
+                            {isShowingResultLocal && explanationText && (
                               <div className={`w-full p-4 md:p-6 rounded-2xl border-2 shadow-sm ${isCorrectLocal ? 'bg-emerald-50/40 border-emerald-100' : 'bg-rose-50/40 border-rose-100'}`}>
-                                {explanationText ? (
-                                    explanationText === 'Đăng nhập để xem phần giải thích.' ? (
+                                {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
                                     <button 
                                       onClick={(e) => {
                                         e.preventDefault();
@@ -1156,14 +1154,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       }
                                       
                                       return (
-                                        <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar mb-3">
+                                        <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
                                           {explanationText}
                                         </div>
                                       )
-                                })()
-                                ) : null}
-                                
-                                  {/* Old Translation Removed */}
+                                })()}
                               </div>
                             )}
 
