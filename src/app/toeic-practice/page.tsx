@@ -450,10 +450,25 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
     return (
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <h3 className="text-2xl font-black text-[#14532d] flex items-center gap-3">
-                    <span className="text-3xl drop-shadow-sm">🏆</span>
-                    Bảng Vàng Speed Challenge
-                </h3>
+                <div>
+                    <h3 className="text-2xl font-black text-[#14532d] flex items-center gap-3 mb-1.5">
+                        <span className="text-3xl drop-shadow-sm">🏆</span>
+                        Glossary Grandmaster
+                    </h3>
+                    {leaders.length > 0 && leaders[0]?.topicSlug ? (
+                        <Link 
+                            href={`/toeic-practice?tab=vocabulary&slug=${leaders[0].topicSlug}&chal=1&diff=${leaders[0].difficulty}`} 
+                            className="text-[13px] font-medium text-emerald-600 hover:text-emerald-800 transition-colors flex items-center gap-1.5 group"
+                        >
+                            Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
+                            <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+                        </Link>
+                    ) : (
+                        <div className="text-[13px] font-medium text-emerald-600/80">
+                            Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
+                        </div>
+                    )}
+                </div>
                 {leaders.length > 0 && onPlayClick && (
                     <button onClick={onPlayClick} className="bg-amber-400 hover:bg-amber-300 text-[#14532d] px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer">
                         <span className="text-lg">🔥</span>
@@ -496,7 +511,16 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                 </thead>
                                 <tbody>
                                     {leaders.map((leader, idx) => (
-                                        <tr key={leader.id || idx} className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group">
+                                        <tr 
+                                            key={leader.id || idx} 
+                                            onClick={() => {
+                                                if (idx === 0 && leader.topicSlug && typeof window !== 'undefined') {
+                                                    window.location.href = `/toeic-practice?tab=vocabulary&slug=${leader.topicSlug}&chal=1&diff=${leader.difficulty}`;
+                                                }
+                                            }}
+                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-amber-50/30 hover:bg-amber-50 cursor-pointer relative' : 'hover:bg-slate-50/80'}`}
+                                            title={idx === 0 ? "Thách đấu kỷ lục gia Top 1" : undefined}
+                                        >
                                             <td className="py-4 px-4 text-center">
                                                 {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
                                                 idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
@@ -533,7 +557,15 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                         {/* Mobile View */}
                         <div className="md:hidden space-y-3 relative z-10 mt-2">
                             {leaders.map((leader, idx) => (
-                                <div key={leader.id || idx} className="flex items-center gap-3 bg-slate-50 border border-slate-100 p-3 rounded-2xl">
+                                <div 
+                                    key={leader.id || idx} 
+                                    onClick={() => {
+                                        if (idx === 0 && leader.topicSlug && typeof window !== 'undefined') {
+                                            window.location.href = `/toeic-practice?tab=vocabulary&slug=${leader.topicSlug}&chal=1&diff=${leader.difficulty}`;
+                                        }
+                                    }}
+                                    className={`flex items-center gap-3 border p-3 rounded-2xl ${idx === 0 ? 'bg-amber-50/50 border-amber-200 cursor-pointer shadow-sm relative' : 'bg-slate-50 border-slate-100'}`}
+                                >
                                     <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
                                         {idx === 0 ? <span className="text-2xl">🥇</span> : 
                                         idx === 1 ? <span className="text-2xl">🥈</span> : 
