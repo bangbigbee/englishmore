@@ -165,8 +165,8 @@ const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: strin
 	return null;
 }
 
-const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress, packageType }: any) => {
-	const isCompactType = ['vocabulary', 'grammar', 'reading', 'listening'].includes(type);
+const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress, packageType, disableFlip }: any) => {
+	const isCompactType = ['vocabulary', 'grammar', 'reading', 'listening', 'test'].includes(type);
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
@@ -187,7 +187,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 	return (
 		<div
 			onClick={onClick}
-			className={`relative w-full group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] -translate-y-2 flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-4 hover:shadow-[10px_40px_80px_rgba(234,152,12,0.15)]`}
+			className={`relative w-full group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(20,83,45,0.12)]`}
 		>
             {packageType && (
                 <PackageBadge pkg={packageType} className="absolute top-0 right-0 rounded-bl-[14px] rounded-tr-xl border-b border-l border-amber-200/30 shadow-sm z-20 pointer-events-none" />
@@ -195,19 +195,26 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 			<div className="relative z-10 flex-1 mt-2 flex flex-col">
                 {isCompactType ? (
 					<div className="perspective-[1000px] mb-2 w-full flex-1 flex flex-col justify-center">
-						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${displaySubtitle ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
+						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${(displaySubtitle && !disableFlip) ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
                             {/* Front side (English/Main) */}
-							<div className="flex items-center gap-2.5 [backface-visibility:hidden]">
-                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
-									{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
-								</span>
-                                <h3 className={`font-bold text-[14px] sm:text-[15px] transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
-								    {type === 'vocabulary' ? displayTitle : title}
-                                </h3>
+							<div className="flex flex-col gap-2 [backface-visibility:hidden]">
+                                <div className="flex items-center gap-2.5">
+                                    <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                                        {(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
+                                    </span>
+                                    <h3 className={`font-bold text-[14px] sm:text-[15px] transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
+                                        {type === 'vocabulary' ? displayTitle : title}
+                                    </h3>
+                                </div>
+                                {disableFlip && displaySubtitle && (
+                                    <p className="text-[12px] text-slate-500 font-medium ml-[34px] line-clamp-1 group-hover:text-[#14532d] transition-colors">
+                                        {displaySubtitle}
+                                    </p>
+                                )}
 							</div>
 
                             {/* Back side (Vietnamese/Subtitle) */}
-							{displaySubtitle && (
+							{displaySubtitle && !disableFlip && (
 								<div className="absolute inset-0 flex items-center gap-2.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black">
 									<span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] ${theme.backIconBg} text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
 										{displaySubtitle.charAt(0).toLowerCase()}
@@ -1982,7 +1989,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [selectedPart, setSelectedPart] = useState<number | null>(null);
+	const [selectedPart, setSelectedPart] = useState<number>(1);
 
 	useEffect(() => {
 		const fetchTopics = async () => {
@@ -2012,53 +2019,15 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 		{ id: 4, title: "Part 4: Short Talks", subtitle: "Bài nói ngắn" },
 	];
 
-	if (selectedPart) {
-		const filteredTopics = topics.filter(t => t.part === selectedPart);
-		const currentPartInfo = parts.find(p => p.id === selectedPart);
-
-		// Flatten lessons from all topics in this part
-		const flattenedLessons = filteredTopics.flatMap(t => 
-			(t.lessons || []).map((l: any) => ({
-				...l,
-				topicTitle: t.title,
-				topicSlug: t.slug
-			}))
-		);
-
-		return (
-			<div>
-				<div className="flex items-center gap-3 mb-6">
-					<button
-						onClick={() => setSelectedPart(null)}
-						className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-1"
-					>
-						← Quay lại
-					</button>
-					<h2 className="text-lg font-bold text-green-900 flex items-center gap-2">
-						{currentPartInfo?.title}
-					</h2>
-				</div>
-				
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{flattenedLessons.length === 0 ? (
-						<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-							Chưa có bài tập nào trong phần này được cập nhật.
-						</div>
-					) : (
-						flattenedLessons.map((lesson) => (
-							<TopicCard
-								key={lesson.id}
-								title={lesson.title}
-								subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
-								badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
-								onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-							/>
-						))
-					)}
-				</div>
-			</div>
-		);
-	}
+	const filteredTopics = topics.filter(t => t.part === selectedPart);
+	// Flatten lessons from all topics in this part
+	const flattenedLessons = filteredTopics.flatMap(t => 
+		(t.lessons || []).map((l: any) => ({
+			...l,
+			topicTitle: t.title,
+			topicSlug: t.slug
+		}))
+	);
 
 	return (
 		<div>
@@ -2066,21 +2035,54 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 				Các Phần Thi Listening
 			</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+
+			<div className="flex w-full overflow-x-auto gap-2 md:gap-4 mb-8 pb-4 border-b border-gray-200 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				{parts.map((p) => {
 					const topicsInPart = topics.filter(t => t.part === p.id);
 					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
+					const isActive = selectedPart === p.id;
+					const shortTitle = p.title.replace(`Part ${p.id}: `, '');
 					
 					return (
-						<TopicCard
+						<button
 							key={p.id}
-							title={p.title}
-							subtitle={p.subtitle}
-							badgeText={`${totalLessons} Bài tập`}
 							onClick={() => setSelectedPart(p.id)}
-						/>
+							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] bg-white ${
+								isActive 
+									? 'border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)]' 
+									: 'border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+							}`}
+						>
+							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-gray-200 text-gray-500 group-hover:bg-gray-300'}`}>
+								P{p.id}
+							</div>
+							{shortTitle}
+							<span className={`ml-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-gray-100 text-gray-400'}`}>
+								{totalLessons}
+							</span>
+						</button>
 					);
 				})}
+			</div>
+			
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full min-h-[200px]">
+				{flattenedLessons.length === 0 ? (
+					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 bg-white/50 rounded-3xl font-medium">
+						Chưa có bài tập nào trong phần này.
+					</div>
+				) : (
+					flattenedLessons.map((lesson) => (
+						<TopicCard
+							key={lesson.id}
+							type="test"
+                            disableFlip={true}
+							title={lesson.title}
+							subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
+							badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
+							onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
+						/>
+					))
+				)}
 			</div>
 		</div>
 	);
@@ -2089,7 +2091,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [selectedPart, setSelectedPart] = useState<number | null>(null);
+	const [selectedPart, setSelectedPart] = useState<number>(5);
 
 	useEffect(() => {
 		const fetchTopics = async () => {
@@ -2118,75 +2120,70 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 		{ id: 7, title: "Part 7: Reading Comprehension", subtitle: "Đọc hiểu văn bản" },
 	];
 
-	if (selectedPart) {
-		const filteredTopics = topics.filter(t => t.part === selectedPart);
-		const currentPartInfo = parts.find(p => p.id === selectedPart);
-
-		// Flatten lessons from all topics in this part
-		const flattenedLessons = filteredTopics.flatMap(t => 
-			(t.lessons || []).map((l: any) => ({
-				...l,
-				topicTitle: t.title,
-				topicSlug: t.slug
-			}))
-		);
-
-		return (
-			<div>
-				<div className="flex items-center gap-3 mb-6">
-					<button
-						onClick={() => setSelectedPart(null)}
-						className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-1"
-					>
-						← Quay lại
-					</button>
-					<h2 className="text-lg font-bold text-green-900 flex items-center gap-2">
-						{currentPartInfo?.title}
-					</h2>
-				</div>
-				
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{flattenedLessons.length === 0 ? (
-						<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-							Chưa có bài tập nào trong phần này được cập nhật.
-						</div>
-					) : (
-						flattenedLessons.map((lesson) => (
-							<TopicCard
-								key={lesson.id}
-								title={lesson.title}
-								subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
-								badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
-								onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-							/>
-						))
-					)}
-				</div>
-			</div>
-		);
-	}
+	const filteredTopics = topics.filter(t => t.part === selectedPart);
+	// Flatten lessons from all topics in this part
+	const flattenedLessons = filteredTopics.flatMap(t => 
+		(t.lessons || []).map((l: any) => ({
+			...l,
+			topicTitle: t.title,
+			topicSlug: t.slug
+		}))
+	);
 
 	return (
 		<div>
 			<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
-				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
+				<span className="w-1.5 h-6 rounded-full bg-[#14532d] block shadow-sm"></span>
 				Các Phần Thi Reading
 			</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+			<div className="flex w-full overflow-x-auto gap-2 md:gap-4 mb-8 pb-4 border-b border-gray-200 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				{parts.map((p) => {
 					const topicsInPart = topics.filter(t => t.part === p.id);
 					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
+					const isActive = selectedPart === p.id;
+					const shortTitle = p.title.replace(`Part ${p.id}: `, '');
 					
 					return (
-						<TopicCard
+						<button
 							key={p.id}
-							title={p.title}
-							subtitle={p.subtitle}
-							badgeText={`${totalLessons} Bài tập`}
 							onClick={() => setSelectedPart(p.id)}
-						/>
+							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] bg-white ${
+								isActive 
+									? 'border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)]' 
+									: 'border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+							}`}
+						>
+							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-gray-200 text-gray-500 group-hover:bg-gray-300'}`}>
+								P{p.id}
+							</div>
+							{shortTitle}
+							<span className={`ml-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-gray-100 text-gray-400'}`}>
+								{totalLessons}
+							</span>
+						</button>
 					);
 				})}
+			</div>
+			
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full min-h-[200px]">
+				{flattenedLessons.length === 0 ? (
+					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 bg-white/50 rounded-3xl font-medium">
+						Chưa có bài tập nào trong phần này.
+					</div>
+				) : (
+					flattenedLessons.map((lesson) => (
+						<TopicCard
+							key={lesson.id}
+							type="test"
+                            disableFlip={true}
+							title={lesson.title}
+							subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
+							badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
+							onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
+						/>
+					))
+				)}
 			</div>
 		</div>
 	);
