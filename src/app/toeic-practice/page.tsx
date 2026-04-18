@@ -445,7 +445,7 @@ function SpeedChallengeLeaderboard() {
         }).catch(err => setLoading(false));
     }, []);
 
-    if (loading || leaders.length === 0) return null;
+    if (loading) return null;
 
     return (
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
@@ -458,85 +458,97 @@ function SpeedChallengeLeaderboard() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-green-50 rounded-tr-full opacity-50 pointer-events-none"></div>
                 
-                <div className="overflow-x-auto relative z-10 hidden md:block">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="border-b-2 border-slate-100 text-slate-500 font-bold">
-                                <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
-                                <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Tên</th>
-                                <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chủ đề</th>
-                                <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Độ khó</th>
-                                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm</th>
-                                <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]">Thời gian</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {leaders.map((leader, idx) => (
-                                <tr key={leader.id || idx} className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group">
-                                    <td className="py-4 px-4 text-center">
-                                        {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
-                                         idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
-                                         idx === 2 ? <span className="text-2xl drop-shadow-sm" title="Top 3">🥉</span> : 
-                                         <span className="font-bold text-slate-400">#{idx + 1}</span>}
-                                    </td>
-                                    <td className="py-4 px-4">
-                                        <div className={`font-bold ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
-                                    </td>
-                                    <td className="py-4 px-4 text-sm font-medium text-slate-600">
-                                        <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-[12px] whitespace-nowrap">{leader.topicTitle}</span>
-                                    </td>
-                                    <td className="py-4 px-4">
-                                        {leader.difficulty === 'extreme' ? (
-                                            <span className="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-rose-200">Extreme</span>
-                                        ) : (
-                                            <span className="bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-indigo-200">High</span>
-                                        )}
-                                    </td>
-                                    <td className="py-4 px-4 text-center">
-                                        <span className="font-black text-[16px] text-slate-700">{leader.score}</span>
-                                        <span className="text-slate-400 text-xs mx-1">/</span>
-                                        <span className="font-bold text-slate-400 text-sm">{leader.total}</span>
-                                    </td>
-                                    <td className="py-4 px-4 text-right">
-                                        <div className="font-bold text-[#14532d] font-mono tracking-tighter bg-green-50 px-3 py-1 rounded-lg inline-block border border-green-100">{(leader.timeMs / 1000).toFixed(1)}s</div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Mobile View */}
-                <div className="md:hidden space-y-3 relative z-10 mt-2">
-                    {leaders.map((leader, idx) => (
-                        <div key={leader.id || idx} className="flex items-center gap-3 bg-slate-50 border border-slate-100 p-3 rounded-2xl">
-                            <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
-                                {idx === 0 ? <span className="text-2xl">🥇</span> : 
-                                 idx === 1 ? <span className="text-2xl">🥈</span> : 
-                                 idx === 2 ? <span className="text-2xl">🥉</span> : 
-                                 `#${idx + 1}`}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className={`font-bold truncate text-sm mb-0.5 ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>
-                                    {leader.user?.name || leader.guestName || "Ẩn danh"}
-                                </div>
-                                <div className="text-[10px] text-slate-500 truncate flex items-center gap-1.5">
-                                    <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold truncate max-w-[80px] block">{leader.topicTitle}</span>
-                                    <span className="text-slate-300">•</span>
-                                    {leader.difficulty === 'extreme' ? (
-                                        <span className="text-rose-600 font-bold uppercase">EXT</span>
-                                    ) : (
-                                        <span className="text-indigo-600 font-bold uppercase">HIGH</span>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="text-right shrink-0">
-                                <div className="text-[13px] font-black text-slate-700">{leader.score}<span className="text-[10px] text-slate-400 font-bold ml-0.5">/{leader.total}</span></div>
-                                <div className="text-[11px] font-bold text-[#14532d] bg-green-50 px-1.5 rounded border border-green-100 font-mono mt-0.5">{(leader.timeMs / 1000).toFixed(1)}s</div>
-                            </div>
+                {leaders.length === 0 ? (
+                    <div className="relative z-10 flex flex-col items-center justify-center py-12 text-center">
+                        <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-4 border-4 border-amber-100/50">
+                            <span className="text-4xl">🏆</span>
                         </div>
-                    ))}
-                </div>
+                        <h4 className="text-lg font-bold text-[#14532d] mb-2">Chưa có kỷ lục nào được thiết lập</h4>
+                        <p className="text-slate-500 font-medium text-sm max-w-sm">Hãy là người đầu tiên tham gia Speed Challenge và ghi tên mình lên Bảng Vàng danh giá này nhé!</p>
+                    </div>
+                ) : (
+                    <>
+                        <div className="overflow-x-auto relative z-10 hidden md:block">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b-2 border-slate-100 text-slate-500 font-bold">
+                                        <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
+                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Tên</th>
+                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chủ đề</th>
+                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Độ khó</th>
+                                        <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm</th>
+                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]">Thời gian</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {leaders.map((leader, idx) => (
+                                        <tr key={leader.id || idx} className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group">
+                                            <td className="py-4 px-4 text-center">
+                                                {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
+                                                idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
+                                                idx === 2 ? <span className="text-2xl drop-shadow-sm" title="Top 3">🥉</span> : 
+                                                <span className="font-bold text-slate-400">#{idx + 1}</span>}
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <div className={`font-bold ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
+                                            </td>
+                                            <td className="py-4 px-4 text-sm font-medium text-slate-600">
+                                                <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-[12px] whitespace-nowrap">{leader.topicTitle}</span>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                {leader.difficulty === 'extreme' ? (
+                                                    <span className="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-rose-200">Extreme</span>
+                                                ) : (
+                                                    <span className="bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-indigo-200">High</span>
+                                                )}
+                                            </td>
+                                            <td className="py-4 px-4 text-center">
+                                                <span className="font-black text-[16px] text-slate-700">{leader.score}</span>
+                                                <span className="text-slate-400 text-xs mx-1">/</span>
+                                                <span className="font-bold text-slate-400 text-sm">{leader.total}</span>
+                                            </td>
+                                            <td className="py-4 px-4 text-right">
+                                                <div className="font-bold text-[#14532d] font-mono tracking-tighter bg-green-50 px-3 py-1 rounded-lg inline-block border border-green-100">{(leader.timeMs / 1000).toFixed(1)}s</div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="md:hidden space-y-3 relative z-10 mt-2">
+                            {leaders.map((leader, idx) => (
+                                <div key={leader.id || idx} className="flex items-center gap-3 bg-slate-50 border border-slate-100 p-3 rounded-2xl">
+                                    <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
+                                        {idx === 0 ? <span className="text-2xl">🥇</span> : 
+                                        idx === 1 ? <span className="text-2xl">🥈</span> : 
+                                        idx === 2 ? <span className="text-2xl">🥉</span> : 
+                                        `#${idx + 1}`}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className={`font-bold truncate text-sm mb-0.5 ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>
+                                            {leader.user?.name || leader.guestName || "Ẩn danh"}
+                                        </div>
+                                        <div className="text-[10px] text-slate-500 truncate flex items-center gap-1.5">
+                                            <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold truncate max-w-[80px] block">{leader.topicTitle}</span>
+                                            <span className="text-slate-300">•</span>
+                                            {leader.difficulty === 'extreme' ? (
+                                                <span className="text-rose-600 font-bold uppercase">EXT</span>
+                                            ) : (
+                                                <span className="text-indigo-600 font-bold uppercase">HIGH</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                        <div className="text-[13px] font-black text-slate-700">{leader.score}<span className="text-[10px] text-slate-400 font-bold ml-0.5">/{leader.total}</span></div>
+                                        <div className="text-[11px] font-bold text-[#14532d] bg-green-50 px-1.5 rounded border border-green-100 font-mono mt-0.5">{(leader.timeMs / 1000).toFixed(1)}s</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
