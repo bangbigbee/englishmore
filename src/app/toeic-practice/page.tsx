@@ -1970,8 +1970,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 				</div>
 			)}
-
-			{showUpgrade && <UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} />}
+			<UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} />
 		</div>
 	);
 }

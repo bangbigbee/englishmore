@@ -107,7 +107,9 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
       const checkout = params.get('checkout')
       if (checkout === 'PRO' || checkout === 'ULTRA') {
         setActiveModal(checkout as 'PRO' | 'ULTRA')
-        window.history.replaceState({}, '', window.location.pathname)
+        params.delete('checkout')
+        const newSearch = params.toString() ? `?${params.toString()}` : ''
+        window.history.replaceState({}, '', window.location.pathname + newSearch)
       }
     }
   }, [session])
@@ -247,7 +249,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
       <LoginModal 
         isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)} 
-        callbackUrl={pendingCheckout ? `${typeof window !== 'undefined' ? window.location.pathname : '/upgrade'}?checkout=${pendingCheckout}` : (typeof window !== 'undefined' ? window.location.pathname : '/upgrade')}
+        callbackUrl={pendingCheckout ? (typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}${window.location.search ? '&' : '?'}checkout=${pendingCheckout}` : '/upgrade') : (typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '/upgrade')}
       />
       {!showLoginModal && (
         <motion.div
