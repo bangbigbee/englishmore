@@ -449,31 +449,23 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
 
     return (
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <div>
-                    <h3 className="text-2xl font-black text-[#14532d] flex items-center gap-3 mb-1.5">
-                        <span className="text-3xl drop-shadow-sm">🏆</span>
-                        Glossary Grandmaster
-                    </h3>
-                    {leaders.length > 0 && leaders[0]?.topicSlug ? (
-                        <Link 
-                            href={`/toeic-practice?tab=vocabulary&slug=${leaders[0].topicSlug}&chal=1&diff=${leaders[0].difficulty}`} 
-                            className="text-[13px] font-medium text-emerald-600 hover:text-emerald-800 transition-colors flex items-center gap-1.5 group"
-                        >
-                            Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
-                            <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
-                        </Link>
-                    ) : (
-                        <div className="text-[13px] font-medium text-emerald-600/80">
-                            Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
-                        </div>
-                    )}
-                </div>
-                {leaders.length > 0 && onPlayClick && (
-                    <button onClick={onPlayClick} className="bg-amber-400 hover:bg-amber-300 text-[#14532d] px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer">
-                        <span className="text-lg">🔥</span>
-                        Tham Gia Ngay
-                    </button>
+            <div className="flex flex-col items-center justify-center text-center gap-1 mb-8">
+                <h3 className="text-2xl font-black text-[#14532d] flex items-center justify-center gap-3 mb-1.5">
+                    <span className="text-3xl drop-shadow-sm">🏆</span>
+                    Glossary Grandmaster
+                </h3>
+                {leaders.length > 0 && leaders[0]?.topicSlug ? (
+                    <Link 
+                        href={`/toeic-practice?tab=vocabulary&slug=${leaders[0].topicSlug}&chal=1&diff=${leaders[0].difficulty}`} 
+                        className="text-[14px] font-semibold text-[#14532d] hover:text-[#14532d]/80 transition-colors flex items-center justify-center gap-1.5 group"
+                    >
+                        Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+                    </Link>
+                ) : (
+                    <div className="text-[14px] font-semibold text-[#14532d]/90">
+                        Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
+                    </div>
                 )}
             </div>
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-amber-200 overflow-hidden relative">
