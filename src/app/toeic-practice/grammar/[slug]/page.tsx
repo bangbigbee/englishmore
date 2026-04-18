@@ -301,7 +301,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
   // Auto-play audio when navigating to a new question if in LISTENING mode
   useEffect(() => {
-    if (lessonStarted && topic?.type === 'LISTENING' && currentLesson?.questions[activeQuestionIndex]?.audioUrl) {
+    if (lessonStarted && !isPlayingDirections && topic?.type === 'LISTENING' && currentLesson?.questions[activeQuestionIndex]?.audioUrl) {
        if (audioRef.current) {
            const timeoutId = setTimeout(() => {
              if (audioRef.current && audioRef.current.paused) {
@@ -311,7 +311,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
            return () => clearTimeout(timeoutId);
        }
     }
-  }, [activeQuestionIndex, lessonStarted, topic?.type, currentLesson]);
+  }, [activeQuestionIndex, lessonStarted, isPlayingDirections, topic?.type, currentLesson]);
 
   const handleSelectOption = async (questionId: string, option: string) => {
     if (showResults[questionId]) return
@@ -799,7 +799,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           src={currentLesson.directionAudioUrl || undefined} 
                           onEnded={() => {
                              setIsPlayingDirections(false);
-                             if (audioRef.current) audioRef.current.play().catch(console.error);
                           }} 
                           className="hidden" 
                       />
@@ -811,19 +810,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             </div>
                             <h3 className="text-2xl font-black text-slate-800 mb-3">Sẵn sàng nghiệm thu phần nghe?</h3>
                             <p className="text-slate-500 mb-8 max-w-md">Bấm Bắt đầu để Audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian thực làm bài sẽ được tính bắt đầu từ bây giờ.</p>
-                            <button onClick={async () => {
+                            <button onClick={() => {
                                 setLessonStarted(true);
                                 setTimerStartTime(Date.now());
                                 
-                                // wait for state to propagate so the direction audio is definitely in the DOM and ready
-                                setTimeout(() => {
-                                   if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
-                                       setIsPlayingDirections(true);
-                                       directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
-                                   } else if (audioRef.current) {
-                                       audioRef.current.play().catch(e => console.error("Audio autoplay blocked", e));
-                                   }
-                                }, 100);
+                                if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
+                                    setIsPlayingDirections(true);
+                                    directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
+                                }
                             }} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
                                Bắt Đầu Làm Bài
                             </button>
@@ -863,7 +857,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                              directionAudioRef.current.currentTime = 0;
                                          }
                                          setIsPlayingDirections(false);
-                                         if (audioRef.current) audioRef.current.play().catch(console.error);
                                       }}
                                       className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wider text-sm mx-auto shadow-sm"
                                   >
