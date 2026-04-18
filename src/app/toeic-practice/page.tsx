@@ -850,7 +850,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const pronunciationRewardAudioRef = useRef<HTMLAudioElement | null>(null);
 
 	useEffect(() => {
-		if (searchParams.get('playChallenge') === 'true' && vocabItems.length >= 3) {
+		if ((searchParams.get('playChallenge') === 'true' || searchParams.get('chal') === '1') && vocabItems.length >= 3) {
 			const diff = searchParams.get('diff');
 			if (diff === 'high' || diff === 'extreme') setChallengeDifficulty(diff);
             setChallengeExpanded(true);
@@ -862,6 +862,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
             if (typeof window !== 'undefined') {
                 const newUrl = new URL(window.location.href);
                 newUrl.searchParams.delete('playChallenge');
+                newUrl.searchParams.delete('chal');
                 newUrl.searchParams.delete('diff');
                 window.history.replaceState({}, '', newUrl.toString());
             }
@@ -1071,19 +1072,35 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		const topicFromUrl = searchParams.get('topic');
 		const tabFromUrl = searchParams.get('tab');
 		const wordIdFromUrl = searchParams.get('wordId');
-        const playChal = searchParams.get('playChallenge');
+        const playChal = searchParams.get('playChallenge') === 'true' || searchParams.get('chal') === '1' ? 'true' : null;
+		const slugFromUrl = searchParams.get('slug');
+
+        let matchedTopicName = topicFromUrl;
+        
+        // Match slug to a full topic name if slug is parsed
+        if (slugFromUrl && topics.length > 0 && !matchedTopicName) {
+            const matched = topics.find(t => t.topic.split('-')[0].trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-') === slugFromUrl);
+            if (matched) matchedTopicName = matched.topic;
+        }
 		
-		if (tabFromUrl === 'vocabulary' && topicFromUrl && (topicFromUrl !== loadedTopicRef.current || wordIdFromUrl)) {
+		if (tabFromUrl === 'vocabulary' && matchedTopicName && (matchedTopicName !== loadedTopicRef.current || wordIdFromUrl)) {
             if (playChal === 'true' && !session && searchParams.get('login') !== 'true') {
-                onPracticeClick(topicFromUrl, false);
+                onPracticeClick(matchedTopicName, false);
             }
-            loadedTopicRef.current = topicFromUrl;
-			loadTopic(topicFromUrl, wordIdFromUrl);
-		} else if (!topicFromUrl && selectedTopic) {
+            loadedTopicRef.current = matchedTopicName;
+			loadTopic(matchedTopicName, wordIdFromUrl);
+
+            if (slugFromUrl && typeof window !== 'undefined') {
+                const params = new URLSearchParams(searchParams.toString());
+                params.delete('slug');
+                params.set('topic', matchedTopicName);
+                window.history.replaceState({}, '', `${pathname}?${params.toString()}`);
+            }
+		} else if (!matchedTopicName && selectedTopic) {
             loadedTopicRef.current = null;
 			setSelectedTopic(null);
 		}
-	}, [searchParams, session, selectedTopic]);
+	}, [searchParams, session, selectedTopic, topics]);
 
 	const openTopic = async (topic: string) => {
 		if (!session) { onPracticeClick(topic); return; }
@@ -1917,13 +1934,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                                         <div className="bg-white/10 p-2.5 rounded-xl border border-white/20">
                                             <input 
                                                 readOnly 
-                                                value={`${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`} 
+                                                value={`${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&slug=${(selectedTopic || '').split('-')[0].trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-')}&chal=1&diff=${challengeDifficulty}`} 
                                                 className="w-full bg-transparent text-white/90 px-1 text-sm outline-none truncate text-center" 
                                             />
                                         </div>
                                         <button 
                                             onClick={() => {
-                                                const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(selectedTopic || '')}&playChallenge=true&diff=${challengeDifficulty}`;
+                                                const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&slug=${(selectedTopic || '').split('-')[0].trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-')}&chal=1&diff=${challengeDifficulty}`;
                                                 navigator.clipboard.writeText(url);
                                                 setCopySuccess(true);
                                                 setTimeout(() => setCopySuccess(false), 2000);
