@@ -685,14 +685,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           }}
                           className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${listeningMode === 'practice' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' ? 'opacity-80' : ''}`}
                         >
-                          Practice {session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' && <span className="ml-1 text-[10px] text-amber-500">🔒</span>}
+                          Có lời thoại {session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' && <span className="ml-1 text-[10px]">⭐</span>}
                         </button>
                         <button 
                           title="Không hiển thị lời thoại giống như thi thực tế"
                           onClick={() => setListeningMode('actual')}
                           className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${listeningMode === 'actual' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
-                          Actual
+                          Ẩn lời thoại
                         </button>
                       </div>
                       {!isTestCompleted && timerStartTime !== null && (
@@ -732,17 +732,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         <span className="absolute right-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-[#14532d] pointer-events-none z-10 bg-white px-2 py-1 rounded shadow shadow-emerald-100 hidden md:inline-block">Làm Lại Bài</span>
                       </button>
                     </div>
-                    {currentLesson.questions.length > 0 && (
-                      <button 
-                        onClick={() => setShowLessonContent(!showLessonContent)}
-                        className="text-xs font-bold text-[#14532d] hover:bg-[#14532d]/5 px-3 py-1.5 rounded-lg border border-[#14532d]/20 transition-all flex items-center gap-2 cursor-pointer"
-                      >
-                        <svg className={`w-4 h-4 transition-transform ${showLessonContent ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                        {showLessonContent ? 'Ẩn mẹo làm' : 'Xem mẹo làm'}
-                      </button>
-                    )}
+                    {/* Removed Xem meo lam dropdown button */}
                   </div>
 
                   <AnimatePresence>
@@ -850,10 +840,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         <>
                           {isPlayingDirections ? (
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
-                                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200">
-                                     <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                  </div>
-                                  <h3 className="text-2xl font-black text-slate-800 mb-2">Đang phát Hướng Dẫn (Directions)</h3>
+                                  <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 mt-2">Bạn đang nghe directions của Phần 1 bài thi</h3>
                                   <p className="text-sm text-slate-500 mb-8 font-medium">Hãy tranh thủ thời gian "vàng" này lướt nhanh qua các hình ảnh hoặc câu hỏi bên dưới.</p>
                                   
                                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-left">
