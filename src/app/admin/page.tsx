@@ -798,8 +798,9 @@ export default function AdminDashboard() {
   const [toeicLoading, setToeicLoading] = useState(false)
   const [toeicError, setToeicError] = useState('')
   const [toeicSuccess, setToeicSuccess] = useState('')
-  const [importingToeicDocx, setImportingToeicDocx] = useState(false)
   const toeicFileInputRef = useRef<HTMLInputElement>(null)
+  const bulkMediaInputRef = useRef<HTMLInputElement>(null)
+  const [uploadingBulkMedia, setUploadingBulkMedia] = useState(false)
 
   const [showTopicModal, setShowTopicModal] = useState(false)
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR', part: 5 as number | null })
@@ -1577,6 +1578,101 @@ export default function AdminDashboard() {
       if (toeicFileInputRef.current) toeicFileInputRef.current.value = ''
     }
   }
+
+  const handleBulkMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || !files.length || !selectedToeicLesson) return
+
+    setUploadingBulkMedia(true)
+    let successCount = 0
+    let failCount = 0
+
+    try {
+      const uploadToastId = toast.loading(`Đang xử lý ${files.length} files...`)
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        
+        // Extract first number from filename mapping to Question Number
+        const numMatch = file.name.match(/\d+/)
+        if (!numMatch) {
+          toast.error(`File ${file.name} không chứa số câu (VD: 1.jpg). Bỏ qua.`)
+          failCount++
+          continue
+        }
+        
+        const qNum = parseInt(numMatch[0], 10)
+        
+        // Find matching question
+        let matchedIndex = toeicQuestions.findIndex(q => {
+          const qTextMatch = q.question.match(/^(?:Câu|Question)\s*(\d+)/i)
+          if (qTextMatch) return parseInt(qTextMatch[1], 10) === qNum
+          return false
+        })
+        
+        // Fallback to index if no text match
+        if (matchedIndex === -1) {
+          matchedIndex = toeicQuestions.length >= qNum ? qNum - 1 : -1
+        }
+        
+        if (matchedIndex === -1 || !toeicQuestions[matchedIndex]) {
+          toast.error(`Không thể ghép file ${file.name} vào câu hỏi nào.`)
+          failCount++
+          continue
+        }
+        
+        const q = toeicQuestions[matchedIndex]
+        const isAudio = file.type.startsWith('audio/')
+        const isImage = file.type.startsWith('image/')
+        if (!isAudio && !isImage) {
+          toast.error(`File ${file.name} không hợp lệ (chỉ nhận ảnh/audio)`)
+          failCount++
+          continue
+        }
+        
+        // Upload to R2
+        toast.loading(`Đang up: ${file.name}...`, { id: uploadToastId })
+        const formData = new FormData()
+        formData.append('file', file)
+        
+        const res = await fetch('/api/admin/upload/audio', { method: 'POST', body: formData })
+        const data = await res.json()
+        
+        if (data.success) {
+          // Update the TOEIC Question using its ID
+          const updateRes = await fetch(`/api/admin/toeic/questions/${q.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+               ...(isAudio && { audioUrl: data.url }),
+               ...(isImage && { imageUrl: data.url })
+            })
+          })
+          
+          if (updateRes.ok) {
+            successCount++
+          } else {
+             toast.error(`Lỗi cập nhật DB cho file ${file.name}`)
+             failCount++
+          }
+        } else {
+          toast.error(`Lỗi upload cho file ${file.name}`)
+          failCount++
+        }
+      }
+
+      toast.success(`Đã tự động ghép và tải lên thành công: ${successCount} files. Thất bại: ${failCount}`, { id: uploadToastId })
+      
+      // Refresh questions list so admin can see the media attached
+      fetchToeicQuestions(selectedToeicLesson.id)
+    } catch (err) {
+      toast.error('Có lỗi xảy ra trong quá trình Upload Bulk Media')
+    } finally {
+      setUploadingBulkMedia(false)
+      if (bulkMediaInputRef.current) bulkMediaInputRef.current.value = ''
+    }
+  }
+
 
   const fetchToeicQuestions = useCallback(async (lessonId: string) => {
     try {
@@ -4021,7 +4117,6 @@ export default function AdminDashboard() {
                         {importingToeicDocx ? 'Importing...' : 'Import Quizz'}
                       </button>
                       
-                      {/* Hover Tips Tooltip */}
                       <div className="absolute right-0 bottom-full mb-2 w-64 p-3 bg-gray-900 text-white text-[10px] rounded-lg shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
                         <div className="font-bold border-b border-gray-700 pb-1 mb-1">Cấu trúc file .docx:</div>
                         <div className="space-y-1">
@@ -4032,6 +4127,43 @@ export default function AdminDashboard() {
                           <p><span className="text-amber-400">B.</span> [Lựa chọn B]</p>
                           <p><span className="text-amber-400">Đáp án:</span> [A/B/C/D]</p>
                           <p><span className="text-amber-400">Giải thích:</span> [Giải thích] (Tùy chọn)</p>
+                        </div>
+                        <div className="absolute top-full right-4 transform translate-y-[-50%] rotate-45 w-2 h-2 bg-gray-900"></div>
+                      </div>
+                    </div>
+
+                    <div className="relative group/media-tooltip">
+                      <input
+                        type="file"
+                        multiple
+                        ref={bulkMediaInputRef}
+                        onChange={handleBulkMediaUpload}
+                        accept="image/*,audio/*"
+                        className="hidden"
+                      />
+                      <button
+                        onClick={() => bulkMediaInputRef.current?.click()}
+                        disabled={uploadingBulkMedia}
+                        className="text-xs px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"
+                      >
+                        {uploadingBulkMedia ? 'Tải lên...' : 'Ghép File Nhanh'}
+                      </button>
+                      
+                      {/* Hover Tips Media Tooltip */}
+                      <div className="absolute right-0 bottom-full mb-2 w-56 p-3 bg-gray-900 text-white text-[10px] rounded-lg shadow-xl opacity-0 invisible group-hover/media-tooltip:opacity-100 group-hover/media-tooltip:visible transition-all z-50 pointer-events-none">
+                        <div className="font-bold text-purple-300 border-b border-gray-700 pb-1 mb-1">Quy tắc đặt tên File</div>
+                        <div className="space-y-1 mt-1 font-medium">
+                          <p>Hệ thống sẽ dựa vào <span className="text-amber-400 uppercase tracking-widest font-bold">số ở đầu tên file</span> để tự động ghép vào câu hỏi.</p>
+                          <div className="mt-2 text-slate-300">
+                             Ví dụ cho Câu 1: <br/>
+                             👉 1.png / cau-1.jpg<br/>
+                             👉 1-audio.mp3
+                          </div>
+                          <div className="mt-1 text-slate-300">
+                             Ví dụ cho Câu 10: <br/>
+                             👉 10_hinh.jpg<br/>
+                             👉 10.mp3
+                          </div>
                         </div>
                         <div className="absolute top-full right-4 transform translate-y-[-50%] rotate-45 w-2 h-2 bg-gray-900"></div>
                       </div>
