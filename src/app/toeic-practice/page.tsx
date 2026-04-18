@@ -506,7 +506,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                         <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chủ đề</th>
                                         <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Độ khó</th>
                                         <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm</th>
-                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]">Thời gian</th>
+                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]" title="Trung bình giây / 1 từ đúng">Tốc độ (s/từ)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -530,8 +530,11 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                             <td className="py-4 px-4">
                                                 <div className={`font-bold ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
                                             </td>
-                                            <td className="py-4 px-4 text-sm font-medium text-slate-600">
+                                            <td className="py-4 px-4 text-sm font-medium text-slate-600 flex flex-col gap-1.5 items-start">
                                                 <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-[12px] whitespace-nowrap">{leader.topicTitle}</span>
+                                                {leader.topicPackage && leader.topicPackage !== 'FREE' && leader.topicPackage !== 'BASIC' && (
+                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest ${leader.topicPackage === 'ULTRA' ? 'bg-amber-100 text-amber-700 border border-amber-200' : leader.topicPackage === 'PRO' ? 'bg-blue-100 text-blue-700 border border-blue-200' : leader.topicPackage === 'ADVANCED' ? 'bg-[#ea980c]/10 text-[#ea980c] border border-[#ea980c]/20' : leader.topicPackage === 'MIXED' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-600'}`}>{leader.topicPackage}</span>
+                                                )}
                                             </td>
                                             <td className="py-4 px-4">
                                                 {leader.difficulty === 'extreme' ? (
@@ -546,7 +549,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                                 <span className="font-bold text-slate-400 text-sm">{leader.total}</span>
                                             </td>
                                             <td className="py-4 px-4 text-right">
-                                                <div className="font-bold text-[#14532d] font-mono tracking-tighter bg-green-50 px-3 py-1 rounded-lg inline-block border border-green-100">{(leader.timeMs / 1000).toFixed(1)}s</div>
+                                                <div className="font-bold text-[#14532d] font-mono tracking-tighter bg-green-50 px-3 py-1 rounded-lg inline-block border border-green-100">{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
                                             </td>
                                         </tr>
                                     ))}
@@ -576,8 +579,15 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                         <div className={`font-bold truncate text-sm mb-0.5 ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>
                                             {leader.user?.name || leader.guestName || "Ẩn danh"}
                                         </div>
-                                        <div className="text-[10px] text-slate-500 truncate flex items-center gap-1.5">
+                                        <div className="text-[10px] text-slate-500 truncate flex items-center gap-1.5 flex-wrap mt-1">
                                             <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold truncate max-w-[80px] block">{leader.topicTitle}</span>
+                                            
+                                            {leader.topicPackage && leader.topicPackage !== 'FREE' && leader.topicPackage !== 'BASIC' && (
+                                                <>
+                                                    <span className="text-slate-300">•</span>
+                                                    <span className={`px-1.5 py-0.5 rounded font-bold uppercase tracking-widest ${leader.topicPackage === 'ULTRA' ? 'bg-amber-100 text-amber-700' : leader.topicPackage === 'PRO' ? 'bg-blue-100 text-blue-700' : leader.topicPackage === 'ADVANCED' ? 'bg-[#ea980c]/10 text-[#ea980c]' : leader.topicPackage === 'MIXED' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{leader.topicPackage}</span>
+                                                </>
+                                            )}
                                             <span className="text-slate-300">•</span>
                                             {leader.difficulty === 'extreme' ? (
                                                 <span className="text-rose-600 font-bold uppercase">EXT</span>
@@ -588,7 +598,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                     </div>
                                     <div className="text-right shrink-0">
                                         <div className="text-[13px] font-black text-slate-700">{leader.score}<span className="text-[10px] text-slate-400 font-bold ml-0.5">/{leader.total}</span></div>
-                                        <div className="text-[11px] font-bold text-[#14532d] bg-green-50 px-1.5 rounded border border-green-100 font-mono mt-0.5">{(leader.timeMs / 1000).toFixed(1)}s</div>
+                                        <div className="text-[11px] font-bold text-[#14532d] bg-green-50 px-1.5 rounded border border-green-100 font-mono mt-0.5">{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s<span className="text-[9px] text-[#14532d]/60 font-sans ml-0.5">/từ</span></div>
                                     </div>
                                 </div>
                             ))}
@@ -1531,6 +1541,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                             guestName: session ? null : (guestName.trim() || 'Người chơi Ẩn Danh'),
                             topicTitle: selectedTopic ? selectedTopic.replace(/^Chủ đề:\s*/i, '').split(' - ')[0].trim() : 'Từ vựng',
                             topicSlug: selectedTopic,
+                            topicPackage: topics.find(t => t.topic === selectedTopic)?.packageType || 'BASIC',
                             difficulty: challengeDifficulty,
                             score: currentScore,
                             total: wList.length,

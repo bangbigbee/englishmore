@@ -806,6 +806,7 @@ model ToeicSpeedChallengeRecord {
   guestName  String?
   topicTitle String
   topicSlug  String?
+  topicPackage String?
   difficulty String
   score      Int
   total      Int

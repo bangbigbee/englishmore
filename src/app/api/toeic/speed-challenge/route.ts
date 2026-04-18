@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const body = await req.json();
-    const { guestName, topicTitle, topicSlug, difficulty, score, total, timeMs } = body;
+    const { guestName, topicTitle, topicSlug, topicPackage, difficulty, score, total, timeMs } = body;
 
     const record = await prisma.toeicSpeedChallengeRecord.create({
       data: {
@@ -15,6 +15,7 @@ export async function POST(req: Request) {
         guestName: session?.user?.id ? null : (guestName || 'Người chơi Ẩn Danh'),
         topicTitle,
         topicSlug,
+        topicPackage,
         difficulty,
         score,
         total,
@@ -34,18 +35,26 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
     try {
-        const records = await prisma.toeicSpeedChallengeRecord.findMany({
-            take: 10,
-            orderBy: [
-                { score: 'desc' },
-                { timeMs: 'asc' }
-            ],
+        let records = await prisma.toeicSpeedChallengeRecord.findMany({
             include: {
                 user: { select: { name: true } }
             }
         });
         
-        return NextResponse.json(records);
+        records.sort((a, b) => {
+            // 1. Độ chính xác (score / total) giảm dần
+            const accA = a.total > 0 ? (a.score / a.total) : 0;
+            const accB = b.total > 0 ? (b.score / b.total) : 0;
+            if (accB !== accA) return accB - accA;
+            
+            // 2. Thời gian trung bình mỗi từ đã trả lời ĐÚNG (timeMs / score) hoặc (timeMs / total)
+            // Nếu dùng số giây / mỗi từ vựng hoàn thành -> timeMs / total
+            const avgMsA = a.total > 0 ? (a.timeMs / a.total) : Infinity;
+            const avgMsB = b.total > 0 ? (b.timeMs / b.total) : Infinity;
+            return avgMsA - avgMsB; // Nhanh hơn lên trên
+        });
+        
+        return NextResponse.json(records.slice(0, 10));
     } catch (error) {
         console.error('Error fetching leaderboard:', error);
         return NextResponse.json({ error: 'Lỗi khi tải bảng xếp hạng' }, { status: 500 });
