@@ -334,6 +334,8 @@ interface AdminToeicQuestion {
   translation: string | null
   tips?: string | null
   vocabulary?: any
+  audioUrl?: string | null
+  imageUrl?: string | null
 }
 
 const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
@@ -801,7 +803,7 @@ export default function AdminDashboard() {
 
   const [showTopicModal, setShowTopicModal] = useState(false)
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR', part: 5 as number | null })
-  const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING'>('GRAMMAR')
+  const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING' | 'LISTENING'>('GRAMMAR')
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
   const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
@@ -817,7 +819,9 @@ export default function AdminDashboard() {
     explanation: '',
     translation: '',
     tips: '',
-    vocabulary: ''
+    vocabulary: '',
+    audioUrl: '',
+    imageUrl: ''
   })
   const [editingToeicQuestion, setEditingToeicQuestion] = useState<AdminToeicQuestion | null>(null)
   const [deletingToeicId, setDeletingToeicId] = useState<string | null>(null)
@@ -1714,7 +1718,9 @@ export default function AdminDashboard() {
         explanation: '',
         translation: '',
         tips: '',
-        vocabulary: ''
+        vocabulary: '',
+        audioUrl: '',
+        imageUrl: ''
       })
       fetchToeicQuestions(selectedToeicLesson.id)
     } catch (err) {
@@ -3818,7 +3824,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           
-          {/* Subtabs for GRAMMAR and READING */}
+          {/* Subtabs for GRAMMAR, READING, and LISTENING */}
           <div className="flex gap-4 border-b border-gray-200 mb-6">
             <button
               onClick={() => { setToeicPracticeSubtab('GRAMMAR'); fetchToeicTopics('GRAMMAR'); setSelectedToeicTopic(null) }}
@@ -3831,6 +3837,12 @@ export default function AdminDashboard() {
               className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'READING' ? 'border-[#14532d] text-[#14532d]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
             >
               Reading
+            </button>
+            <button
+              onClick={() => { setToeicPracticeSubtab('LISTENING'); fetchToeicTopics('LISTENING'); setSelectedToeicTopic(null) }}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'LISTENING' ? 'border-[#14532d] text-[#14532d]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            >
+              Listening
             </button>
           </div>
 
@@ -4012,7 +4024,9 @@ export default function AdminDashboard() {
                           explanation: '',
                           translation: '',
                           tips: '',
-                          vocabulary: ''
+                          vocabulary: '',
+                          audioUrl: '',
+                          imageUrl: ''
                         })
                         setEditingToeicQuestion(null)
                         setShowQuestionModal(true)
@@ -4052,7 +4066,9 @@ export default function AdminDashboard() {
                               explanation: q.explanation || '',
                               translation: q.translation || '',
                               tips: q.tips || '',
-                              vocabulary: q.vocabulary ? JSON.stringify(q.vocabulary, null, 2) : ''
+                              vocabulary: q.vocabulary ? JSON.stringify(q.vocabulary, null, 2) : '',
+                              audioUrl: q.audioUrl || '',
+                              imageUrl: q.imageUrl || ''
                             })
                             setEditingToeicQuestion(q)
                             setShowQuestionModal(true)
@@ -7679,6 +7695,31 @@ export default function AdminDashboard() {
                   {editingToeicQuestion ? 'Edit Question' : `Add Question to: ${selectedToeicLesson?.title}`}
                 </h3>
                   <div className="space-y-4">
+                    {/* Media Uploads */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-4">
+                      <div>
+                        <label className="block text-sm font-bold text-amber-900 mb-2">📸 Photograph (Part 1)</label>
+                        {questionForm.imageUrl ? (
+                          <div className="relative inline-block">
+                            <img src={questionForm.imageUrl} alt="preview" className="h-20 w-auto rounded border" />
+                            <button className="absolute -top-2 -right-2 text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs" onClick={() => setQuestionForm({...questionForm, imageUrl: ''})}>✕</button>
+                          </div>
+                        ) : (
+                          <input type="file" accept="image/*" onChange={(e) => handleUploadMedia(e, 'imageUrl')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200" />
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-amber-900 mb-2">🎵 Audio File</label>
+                        {questionForm.audioUrl ? (
+                          <div className="relative inline-block w-full">
+                            <audio src={questionForm.audioUrl} controls className="h-10 w-full" />
+                            <button className="absolute -top-2 -right-2 text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs z-10" onClick={() => setQuestionForm({...questionForm, audioUrl: ''})}>✕</button>
+                          </div>
+                        ) : (
+                          <input type="file" accept="audio/*" onChange={(e) => handleUploadMedia(e, 'audioUrl')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200" />
+                        )}
+                      </div>
+                    </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Question Prompt</label>
                       <textarea
