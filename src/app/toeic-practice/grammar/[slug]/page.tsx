@@ -739,6 +739,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         ) : null;
                       })()}
                       
+                      {/* Mount direction audio unconditionally so it's ready for autoplay when Start is clicked */}
+                      <audio 
+                          ref={directionAudioRef} 
+                          src={currentLesson.directionAudioUrl || undefined} 
+                          onEnded={() => {
+                             setIsPlayingDirections(false);
+                             if (audioRef.current) audioRef.current.play().catch(console.error);
+                          }} 
+                          className="hidden" 
+                      />
+                      
                       {!lessonStarted && topic.type === 'LISTENING' ? (
                         <div className="flex flex-col items-center justify-center p-16 bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100 text-center min-h-[400px]">
                             <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6">
@@ -746,30 +757,25 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             </div>
                             <h3 className="text-2xl font-black text-slate-800 mb-3">Sẵn sàng nghiệm thu phần nghe?</h3>
                             <p className="text-slate-500 mb-8 max-w-md">Bấm Bắt đầu để Audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian thực làm bài sẽ được tính bắt đầu từ bây giờ.</p>
-                            <button onClick={() => {
+                            <button onClick={async () => {
                                 setLessonStarted(true);
                                 setTimerStartTime(Date.now());
-                                if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
-                                    setIsPlayingDirections(true);
-                                    directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
-                                } else if (audioRef.current) {
-                                    audioRef.current.play().catch(e => console.error("Audio autoplay blocked", e));
-                                }
+                                
+                                // wait for state to propagate so the direction audio is definitely in the DOM and ready
+                                setTimeout(() => {
+                                   if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
+                                       setIsPlayingDirections(true);
+                                       directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
+                                   } else if (audioRef.current) {
+                                       audioRef.current.play().catch(e => console.error("Audio autoplay blocked", e));
+                                   }
+                                }, 100);
                             }} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
                                Bắt Đầu Làm Bài
                             </button>
                         </div>
                       ) : (
                         <>
-                          <audio 
-                              ref={directionAudioRef} 
-                              src={currentLesson.directionAudioUrl || undefined} 
-                              onEnded={() => {
-                                 setIsPlayingDirections(false);
-                                 if (audioRef.current) audioRef.current.play().catch(console.error);
-                              }} 
-                              className="hidden" 
-                          />
                           {isPlayingDirections ? (
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
                                   <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200">
