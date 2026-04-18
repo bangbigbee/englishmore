@@ -165,13 +165,66 @@ const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: strin
 	return null;
 }
 
-const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress, packageType, disableFlip }: any) => {
+export const getPartIcon = (partId: number) => {
+    switch (partId) {
+        case 1:
+            return (
+                <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            );
+        case 2:
+            return (
+                <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+            );
+        case 3:
+            return (
+                <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                </svg>
+            );
+        case 4:
+            return (
+                <svg className="w-[14px] h-[14px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                </svg>
+            );
+        case 5:
+            return (
+                <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+            );
+        case 6:
+            return (
+                <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            );
+        case 7:
+            return (
+                <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            );
+        default:
+            return (
+                <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+            );
+    }
+}
+
+const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress, packageType, disableFlip, customIcon }: any) => {
 	const isCompactType = ['vocabulary', 'grammar', 'reading', 'listening', 'test'].includes(type);
     const isTestTopic = type === 'test';
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
-	const minHeightClass = isCompactType ? (isTestTopic ? 'min-h-[85px] sm:min-h-[90px]' : 'min-h-[95px] sm:min-h-[105px]') : 'min-h-[220px]';
+	const minHeightClass = isCompactType ? 'min-h-[95px] sm:min-h-[105px]' : 'min-h-[220px]';
 	const paddingClass = isCompactType ? 'p-4 sm:p-5' : 'p-8';
 
     const theme = {
@@ -204,13 +257,17 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${(displaySubtitle && !disableFlip) ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
                             {/* Front side (English/Main) */}
 							<div className="flex flex-col gap-2 [backface-visibility:hidden]">
-                                <div className="flex items-center gap-2.5">
-                                    {!isTestTopic && (
+								<div className="flex items-center gap-2.5">
+                                    {customIcon ? (
+                                        <span className={`w-[28px] sm:w-[32px] shrink-0 h-[28px] sm:h-[32px] rounded-[6px] sm:rounded-[8px] text-white flex items-center justify-center text-[12px] shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-3' : 'rotate-3'}`}>
+                                            {customIcon}
+                                        </span>
+                                    ) : (!isTestTopic && (
                                         <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
                                             {(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
                                         </span>
-                                    )}
-                                    <h3 className={`font-bold ${isTestTopic ? 'text-[17px] sm:text-[19px] text-[#14532d]' : 'text-[14px] sm:text-[15px]'} transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
+                                    ))}
+                                    <h3 className={`font-bold ${isTestTopic ? 'text-[15px] sm:text-[16px] text-slate-800' : 'text-[14px] sm:text-[15px]'} transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
                                         {type === 'vocabulary' ? displayTitle : title}
                                     </h3>
                                 </div>
@@ -252,8 +309,19 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
                 )}
 
 				{badgeText && !progress && (
-					<div className={`text-[12px] font-medium text-[#14532d] mt-2 opacity-90 ${isCompactType ? 'mt-4' : 'mt-2'}`}>
-						{badgeText}
+					<div className={`mt-auto w-full flex items-center justify-between gap-3 text-[12px] font-medium text-[#14532d]/80 ${isCompactType ? 'pt-3 md:pt-4 border-t border-slate-100/60' : 'mt-2 pt-3 border-t border-slate-100/60'}`}>
+						<span className="flex items-center gap-1.5 font-bold text-slate-500">
+                            {isTestTopic ? (
+                                <svg className="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            ) : null}
+                            {badgeText}
+                        </span>
+                        
+                        {isTestTopic && (
+                            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">Practice &rarr;</span>
+                        )}
 					</div>
 				)}
 
@@ -2088,6 +2156,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 							key={lesson.id}
 							type="test"
                             disableFlip={true}
+                            customIcon={getPartIcon(selectedPart)}
 							title={lesson.title}
 							subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
 							badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
@@ -2193,6 +2262,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 							key={lesson.id}
 							type="test"
                             disableFlip={true}
+                            customIcon={getPartIcon(selectedPart)}
 							title={lesson.title}
 							subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
 							badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
