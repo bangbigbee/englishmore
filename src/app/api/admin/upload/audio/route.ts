@@ -4,9 +4,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 // Cấu hình S3 Client cho Cloudflare R2
+const rawEndpoint = process.env.R2_ENDPOINT || '';
+const endpoint = rawEndpoint.includes('http') ? new URL(rawEndpoint).origin : rawEndpoint;
+
 const s3Client = new S3Client({
   region: "auto", // R2 yêu cầu "auto"
-  endpoint: process.env.R2_ENDPOINT!,
+  endpoint: endpoint,
   credentials: {
     accessKeyId: process.env.R2_ACCESS_KEY_ID!,
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
