@@ -801,6 +801,8 @@ export default function AdminDashboard() {
   const toeicFileInputRef = useRef<HTMLInputElement>(null)
   const bulkMediaInputRef = useRef<HTMLInputElement>(null)
   const [uploadingBulkMedia, setUploadingBulkMedia] = useState(false)
+  const [importingToeicDocx, setImportingToeicDocx] = useState(false)
+
 
   const [showTopicModal, setShowTopicModal] = useState(false)
   const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR', part: 5 as number | null })

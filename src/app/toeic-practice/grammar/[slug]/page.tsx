@@ -695,7 +695,24 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                   {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
-                    <section className="mt-8">
+                    <section className="mt-8 relative">
+                      {/* Global Persistent Audio Player */}
+                      {(() => {
+                        let activeAudioUrl = null;
+                        for (let i = activeQuestionIndex; i >= 0; i--) {
+                          if (currentLesson.questions[i].audioUrl) {
+                            activeAudioUrl = currentLesson.questions[i].audioUrl;
+                            break;
+                          }
+                        }
+                        return activeAudioUrl ? (
+                          <div className="bg-white border-b-2 border-slate-100 p-3 mb-6 shadow-sm shadow-slate-100 flex flex-col items-center rounded-2xl sticky top-20 z-20">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 leading-none">Audio Trải Dài</span>
+                            <audio src={activeAudioUrl} controls className="w-full max-w-lg h-10" />
+                          </div>
+                        ) : null;
+                      })()}
+
                       <AnimatePresence mode="wait">
                         {(() => {
                           const q = currentLesson.questions[activeQuestionIndex]
@@ -724,10 +741,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                               <div className="mb-8 flex flex-col items-center">
                                 {q.imageUrl && (
-                                  <img src={q.imageUrl} alt="Part 1" className="max-w-full md:max-w-[400px] object-contain rounded-xl border border-slate-200 shadow-sm mb-6" />
-                                )}
-                                {q.audioUrl && (
-                                  <audio src={q.audioUrl} controls className="w-full max-w-sm mb-6 bg-slate-50 rounded-full" />
+                                  <img src={q.imageUrl} alt="Part" className="max-w-full md:max-w-[400px] object-contain rounded-xl border border-slate-200 shadow-sm mb-6" />
                                 )}
                                 <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug text-center">
                                   {q.question}
