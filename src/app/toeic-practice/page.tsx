@@ -1298,6 +1298,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		}
 
 		setChallengeExpanded(false);
+		playSound('countdown321.mp3');
 		setChallengePreCtd(3);
 	};
 
