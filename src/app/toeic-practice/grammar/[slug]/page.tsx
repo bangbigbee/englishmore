@@ -53,6 +53,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [loading, setLoading] = useState(true)
   
   // Quiz states
+  // Audio playback speed state
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1)
   const [listeningMode, setListeningMode] = useState<'practice' | 'actual'>('practice')
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
@@ -300,6 +302,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     }
     return () => clearInterval(timer)
   }, [timerStartTime, isTestCompleted, topic?.type, lessonStarted])
+
+  // Sync playback speed
+  useEffect(() => {
+     if (audioRef.current) audioRef.current.playbackRate = playbackSpeed;
+     if (directionAudioRef.current) directionAudioRef.current.playbackRate = playbackSpeed;
+  }, [playbackSpeed, activeQuestionIndex, isPlayingDirections]);
 
   // Auto-play audio when navigating to a new question if in LISTENING mode
   useEffect(() => {
@@ -673,28 +681,32 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         {currentLesson.accessTier === 'ULTRA' && <svg className="w-6 h-6 text-purple-700 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                       </h2>
                       {/* Control Mode Toggle */}
-                      <div className="flex items-center p-1 bg-slate-100 rounded-lg">
-                        <button 
-                          title="Nâng cấp PRO để hiển thị lời thoại hỗ trợ luyện tập"
-                          onClick={() => {
-                            if (session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin') {
-                              setShowPricing(true);
-                              return;
-                            }
-                            setListeningMode('practice')
-                          }}
-                          className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${listeningMode === 'practice' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' ? 'opacity-80' : ''}`}
-                        >
-                          Có lời thoại {session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' && <span className="ml-1 text-[10px]">⭐</span>}
-                        </button>
-                        <button 
-                          title="Không hiển thị lời thoại giống như thi thực tế"
-                          onClick={() => setListeningMode('actual')}
-                          className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${listeningMode === 'actual' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                        >
-                          Ẩn lời thoại
-                        </button>
-                      </div>
+                      {/* Control Speed Toggle */}
+                      {topic.type === 'LISTENING' && (
+                        <div className="flex items-center p-1 bg-slate-100 rounded-lg">
+                          <button 
+                            title="Nghe tốc độ chậm (0.75x)"
+                            onClick={() => setPlaybackSpeed(0.75)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.75 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                          >
+                            Nghe chậm
+                          </button>
+                          <button 
+                            title="Nghe tốc độ bình thường (1.0x)"
+                            onClick={() => setPlaybackSpeed(1)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1 ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                          >
+                            Normal Speed
+                          </button>
+                          <button 
+                            title="Nghe tốc độ nhanh (1.25x)"
+                            onClick={() => setPlaybackSpeed(1.25)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1.25 ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                          >
+                            Nghe nhanh
+                          </button>
+                        </div>
+                      )}
                       {!isTestCompleted && timerStartTime !== null && (
                         <div className="flex items-center gap-2 ml-2">
                            {topic.type === 'LISTENING' && lessonStarted && (
@@ -796,6 +808,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                className="hidden"
                                onPlay={() => setIsAudioNodePlaying(true)}
                                onPause={() => setIsAudioNodePlaying(false)}
+                               onLoadedData={(e) => { (e.target as HTMLAudioElement).playbackRate = playbackSpeed; }}
                                onEnded={() => {
                                   if (activeQuestionIndex < currentLesson.questions.length - 1) {
                                      setActiveQuestionIndex(prev => prev + 1);
@@ -811,6 +824,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           src={currentLesson.directionAudioUrl || undefined} 
                           onPlay={() => setIsAudioNodePlaying(true)}
                           onPause={() => setIsAudioNodePlaying(false)}
+                          onLoadedData={(e) => { (e.target as HTMLAudioElement).playbackRate = playbackSpeed; }}
                           onEnded={() => {
                              setIsPlayingDirections(false);
                           }} 
@@ -819,11 +833,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       
                       {!lessonStarted && topic.type === 'LISTENING' ? (
                         <div className="flex flex-col items-center justify-center p-16 bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100 text-center min-h-[400px]">
-                            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-6">
-                                <svg className="w-10 h-10 ml-2" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            </div>
-                            <h3 className="text-2xl font-black text-slate-800 mb-3">Sẵn sàng nghiệm thu phần nghe?</h3>
-                            <p className="text-slate-500 mb-8 max-w-md">Bấm Bắt đầu để Audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian thực làm bài sẽ được tính bắt đầu từ bây giờ.</p>
+                            <h3 className="text-2xl font-black text-[#14532d] mb-3">Sẵn sàng cho PART I của bài thi?</h3>
+                            <p className="text-slate-500 mb-8 max-w-md">Bắt đầu để audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian làm bài sẽ được tính từ bây giờ.</p>
                             <button onClick={() => {
                                 setLessonStarted(true);
                                 setTimerStartTime(Date.now());
@@ -832,7 +843,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     setIsPlayingDirections(true);
                                     directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
                                 }
-                            }} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
+                            }} className="bg-[#14532d] hover:bg-[#14532d]/90 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-900/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
                                Bắt Đầu Làm Bài
                             </button>
                         </div>
