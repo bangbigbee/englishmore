@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import LoginModal from './LoginModal'
 import { useEffect } from 'react'
+import { ShieldCheck, Info, Copy, Check } from 'lucide-react'
 
 const IconCheck = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -40,6 +41,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [pricingConfig, setPricingConfig] = useState<any>(null)
   const [feedback, setFeedback] = useState<{ type: 'error' | 'success', title: string, message: string, tier?: 'PRO' | 'ULTRA' } | null>(null)
   const [checkingPending, setCheckingPending] = useState(false)
+  const [copyState, setCopyState] = useState<string>('')
 
   const getEffectiveTier = () => {
     if (!session) return 'FREE'
@@ -130,36 +132,93 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
 
     const qrUrl = `https://img.vietqr.io/image/${BANK_BIN}-${BANK_ACCOUNT}-compact.png?amount=${amount}&addInfo=${encodeURIComponent(ADD_INFO)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`
 
+    const handleCopy = (text: string, type: string) => {
+      navigator.clipboard.writeText(text);
+      setCopyState(type);
+      setTimeout(() => setCopyState(''), 2000);
+    }
+
     return (
-      <div className="flex flex-col items-center p-6 bg-slate-50/50 rounded-2xl border border-slate-100">
-        <div className="p-2 bg-white rounded-xl shadow-sm border border-slate-100 mb-4">
-          <img src={qrUrl} alt="VietQR" className="w-56 h-56 object-contain rounded-lg" />
+      <div className="flex flex-col items-center p-0">
+        <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-5 flex flex-col items-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+            
+            <div className="flex items-center gap-2 mb-4 text-emerald-600 font-medium text-sm">
+                <ShieldCheck className="w-4 h-4" />
+                <span>Thanh toán an toàn & bảo mật 100%</span>
+            </div>
+
+            <div className="p-2.5 bg-white rounded-2xl shadow-xl border border-slate-100 mb-2 relative">
+                <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-indigo-500 rounded-tl-lg"></div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-indigo-500 rounded-tr-lg"></div>
+                <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-indigo-500 rounded-bl-lg"></div>
+                <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-indigo-500 rounded-br-lg"></div>
+                <img src={qrUrl} alt="VietQR" className="w-40 h-40 sm:w-48 sm:h-48 object-contain rounded-xl relative z-10" />
+            </div>
+            <p className="text-xs text-slate-500 mt-3 font-medium flex items-center gap-1.5">
+                <Info className="w-3.5 h-3.5" />
+                Sử dụng app ngân hàng để quét mã
+            </p>
         </div>
-        <div className="w-full space-y-2 text-sm text-slate-700">
-          <div className="flex justify-between border-b border-slate-100 pb-2">
-            <span className="font-medium text-slate-500">Ngân hàng</span>
-            <span className="font-bold">Techcombank</span>
+
+        <div className="w-full space-y-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-500">Ngân hàng</span>
+            <span className="text-sm font-bold text-slate-800">Techcombank</span>
           </div>
-          <div className="flex justify-between border-b border-slate-100 pb-2">
-            <span className="font-medium text-slate-500">Số tài khoản</span>
-            <span className="font-bold text-blue-600">{BANK_ACCOUNT}</span>
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-500">Số tài khoản</span>
+            <div className="flex items-center gap-2">
+                <span className="text-sm font-bold tracking-wide text-indigo-600">{BANK_ACCOUNT}</span>
+                <button 
+                  onClick={() => handleCopy(BANK_ACCOUNT, 'account')}
+                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-indigo-600"
+                  title="Copy"
+                >
+                  {copyState === 'account' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                </button>
+            </div>
           </div>
-          <div className="flex justify-between border-b border-slate-100 pb-2">
-            <span className="font-medium text-slate-500">Chủ tài khoản</span>
-            <span className="font-bold uppercase">{ACCOUNT_NAME}</span>
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-500">Chủ tài khoản</span>
+            <span className="text-sm font-bold text-slate-800 uppercase">{ACCOUNT_NAME}</span>
           </div>
-          <div className="flex justify-between border-b border-slate-100 pb-2">
-            <span className="font-medium text-slate-500">Số tiền</span>
-            <span className="font-black text-amber-500 text-base">{amount.toLocaleString()} VNĐ</span>
+
+          <div className="flex items-center justify-between border-t border-dashed border-slate-200 pt-3">
+            <span className="text-sm font-medium text-slate-500">Số tiền</span>
+            <div className="flex items-center gap-2">
+                <span className="text-base font-black text-amber-500">{amount.toLocaleString()} VNĐ</span>
+                <button 
+                  onClick={() => handleCopy(amount.toString(), 'amount')}
+                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-indigo-600"
+                  title="Copy"
+                >
+                  {copyState === 'amount' ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                </button>
+            </div>
           </div>
-          <div className="flex justify-between items-center pt-1">
-            <span className="font-medium text-slate-500">Nội dung <span className="text-red-500">*</span></span>
-            <span className="font-mono bg-amber-100 text-amber-900 px-3 py-1.5 rounded-md font-bold tracking-wider">{ADD_INFO}</span>
+
+          <div className="flex items-center justify-between bg-amber-50/50 p-2.5 rounded-xl border border-amber-100/50">
+            <span className="text-sm font-medium text-slate-600 flex-shrink-0">Nội dung <span className="text-red-500">*</span></span>
+            <div className="flex items-center gap-2 ml-4 overflow-hidden">
+                <span className="text-xs font-mono font-bold text-amber-900 bg-amber-100 px-2.5 py-1 rounded truncate">{ADD_INFO}</span>
+                <button 
+                  onClick={() => handleCopy(ADD_INFO, 'info')}
+                  className="p-1.5 hover:bg-amber-100 rounded-md transition-colors text-amber-600 hover:text-amber-800 shrink-0 bg-white shadow-sm border border-amber-200"
+                  title="Copy"
+                >
+                  {copyState === 'info' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+            </div>
           </div>
         </div>
-        <p className="mt-5 text-[11px] text-center text-slate-400 font-medium">
-          Hệ thống sẽ tự động duyệt trong vòng 1-2 giờ làm việc.
-        </p>
+        
+        <div className="mt-4 flex items-center justify-center gap-1.5 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full border border-indigo-100">
+            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Hệ thống tự động duyệt trong 1-2 giờ</span>
+        </div>
       </div>
     )
   }
@@ -448,8 +507,8 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
             <h2 className="text-2xl font-black text-slate-800">
               Chuyển khoản <span className={activeModal === 'PRO' ? 'text-amber-500' : 'text-purple-800'}>{activeModal}</span>
             </h2>
-            <p className="text-slate-500 text-sm mt-1.5 font-medium">
-              Quét mã QR dưới đây bằng App Ngân hàng
+            <p className="text-slate-500 text-sm mt-1.5 font-medium mb-2">
+              Hoàn tất thanh toán để nhận ngay đặc quyền.
             </p>
           </div>
 
