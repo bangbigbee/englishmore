@@ -1995,9 +1995,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 }
 
 function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+	const searchParams = useSearchParams();
+	const partParam = searchParams.get('part');
+	const initialPart = partParam ? parseInt(partParam) : 1;
+
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [selectedPart, setSelectedPart] = useState<number>(1);
+	const [selectedPart, setSelectedPart] = useState<number>(initialPart);
 
 	useEffect(() => {
 		const fetchTopics = async () => {
@@ -2097,9 +2101,13 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 }
 
 function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+	const searchParams = useSearchParams();
+	const partParam = searchParams.get('part');
+	const initialPart = partParam ? parseInt(partParam) : 5;
+
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [selectedPart, setSelectedPart] = useState<number>(5);
+	const [selectedPart, setSelectedPart] = useState<number>(initialPart);
 
 	useEffect(() => {
 		const fetchTopics = async () => {

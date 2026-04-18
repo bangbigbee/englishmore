@@ -529,7 +529,16 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link 
-              href="/toeic-practice"
+              href={(() => {
+                  let url = '/toeic-practice?tab=home';
+                  if (topic.type === 'LISTENING') url = '/toeic-practice?tab=listening';
+                  else if (topic.type === 'READING') url = '/toeic-practice?tab=reading';
+                  else if (topic.type === 'GRAMMAR') url = '/toeic-practice?tab=grammar';
+                  else if (topic.type === 'VOCABULARY') url = '/toeic-practice?tab=vocabulary';
+                  
+                  if (topic.part) url += `&part=${topic.part}`;
+                  return url;
+              })()}
               onClick={(e) => {
                   const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
                   const isDirectionPlaying = directionAudioRef.current && !directionAudioRef.current.paused && directionAudioRef.current.currentTime > 0;
@@ -1266,11 +1275,23 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 >
                   Bài Tiếp Theo &rarr;
                 </button>
-              ) : (
-                <Link href="/toeic-practice" className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 inline-block cursor-pointer shadow-md shadow-[#14532d]/20">
-                  Về danh sách chủ đề
-                </Link>
-              )}
+              ) : (() => {
+                  let returnUrl = '/toeic-practice?tab=home';
+                  if (topic) {
+                      if (topic.type === 'LISTENING') returnUrl = '/toeic-practice?tab=listening';
+                      else if (topic.type === 'READING') returnUrl = '/toeic-practice?tab=reading';
+                      else if (topic.type === 'GRAMMAR') returnUrl = '/toeic-practice?tab=grammar';
+                      else if (topic.type === 'VOCABULARY') returnUrl = '/toeic-practice?tab=vocabulary';
+                      
+                      if (topic.part) returnUrl += `&part=${topic.part}`;
+                  }
+                  
+                  return (
+                    <Link href={returnUrl} className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 inline-block cursor-pointer shadow-md shadow-[#14532d]/20">
+                      Về danh sách chủ đề
+                    </Link>
+                  )
+              })()}
 
               <button
                 onClick={() => {
