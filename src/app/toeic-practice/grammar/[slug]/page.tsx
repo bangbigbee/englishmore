@@ -503,6 +503,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           <div className="flex items-center gap-4">
             <Link 
               href="/toeic-practice"
+              onClick={(e) => {
+                  const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
+                  const isDirectionPlaying = directionAudioRef.current && !directionAudioRef.current.paused && directionAudioRef.current.currentTime > 0;
+                  
+                  if (lessonStarted && (isAudioPlaying || isDirectionPlaying)) {
+                      if (!confirm("File nghe vẫn đang phát, bạn vẫn muốn rời đi?")) {
+                          e.preventDefault();
+                          return;
+                      }
+                  }
+              }}
               className="p-2 hover:bg-slate-100 rounded-full transition-colors"
             >
               <svg className="w-6 h-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -519,6 +530,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             <Link 
                 ref={notebookRef}
                 href={topic.type === 'READING' ? '/toeic-progress?tab=reading' : topic.type === 'LISTENING' ? '/toeic-progress?tab=listening' : '/toeic-progress?tab=grammar'}
+                onClick={(e) => {
+                    const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
+                    const isDirectionPlaying = directionAudioRef.current && !directionAudioRef.current.paused && directionAudioRef.current.currentTime > 0;
+                    
+                    if (lessonStarted && (isAudioPlaying || isDirectionPlaying)) {
+                        if (!confirm("File nghe vẫn đang phát, bạn vẫn muốn chuyển sang Sổ Tay?")) {
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+                }}
                 className="px-3 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors text-xs font-bold rounded-full border border-emerald-100 uppercase tracking-wider cursor-pointer"
                 title="Khám phá sổ tay học tập của bạn"
             >
@@ -545,6 +567,24 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               <button
                 key={lesson.id}
                 onClick={() => {
+                  const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
+                  const isDirectionPlaying = directionAudioRef.current && !directionAudioRef.current.paused && directionAudioRef.current.currentTime > 0;
+                  
+                  if (lessonStarted && (isAudioPlaying || isDirectionPlaying)) {
+                      if (!confirm("File nghe vẫn đang phát, bạn vẫn muốn chuyển sang bài khác hoặc làm lại?")) {
+                          return;
+                      }
+                  }
+                  
+                  if (audioRef.current) {
+                      audioRef.current.pause();
+                      audioRef.current.currentTime = 0;
+                  }
+                  if (directionAudioRef.current) {
+                      directionAudioRef.current.pause();
+                      directionAudioRef.current.currentTime = 0;
+                  }
+
                   setSelectedLessonId(lesson.id)
                   setActiveQuestionIndex(0)
                   setShowLessonContent(lesson.questions.length === 0)
