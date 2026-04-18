@@ -715,23 +715,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     <section className="mt-8 relative">
                       {/* Global Persistent Audio Player */}
                       {(() => {
-                        let activeAudioUrl = null;
-                        // Tìm ngược lại từ câu hiện tại để lấy Audio gần nhất
-                        for (let i = activeQuestionIndex; i >= 0; i--) {
-                          if (currentLesson.questions[i].audioUrl) {
-                            activeAudioUrl = currentLesson.questions[i].audioUrl;
-                            break;
-                          }
-                        }
-                        // Nếu vẫn không thấy, quét qua cả bài và lấy cái audio đầu tiên có thể tìm được
-                        if (!activeAudioUrl) {
-                          const firstHasAudio = currentLesson.questions.find(q => q.audioUrl);
-                          if (firstHasAudio) activeAudioUrl = firstHasAudio.audioUrl;
-                        }
+                        let activeAudioUrl = currentLesson.questions[activeQuestionIndex]?.audioUrl || null;
 
                         return activeAudioUrl ? (
                           <div className={`bg-white border-b-2 border-slate-100 p-3 mb-6 shadow-sm shadow-slate-100 flex flex-col items-center rounded-2xl sticky top-20 z-20 transition-all ${!lessonStarted && topic.type === 'LISTENING' ? 'opacity-0 h-0 overflow-hidden mb-0 p-0 absolute pointer-events-none' : ''}`}>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 leading-none">Audio Trải Dài</span>
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-2 leading-none flex items-center gap-1">
+                               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"/></svg>
+                               Audio Câu {activeQuestionIndex + 1}
+                            </span>
                             <audio 
                                ref={audioRef} 
                                src={activeAudioUrl} 
