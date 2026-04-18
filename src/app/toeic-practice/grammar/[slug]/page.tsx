@@ -993,7 +993,34 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })}
                               </div>
                               
-                              {showTranslation[q.id] && q.translation && (
+                              {topic.type !== 'LISTENING' && isShowingResult && q.translation && (
+                                <div className="mt-5 flex flex-col items-start gap-2.5 animate-in slide-in-from-top-1 fade-in duration-300">
+                                   <button 
+                                     onClick={() => {
+                                         const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                         const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                         if (translationTierLevel > userTierLevel) {
+                                             setShowPricing(true);
+                                             return;
+                                         }
+                                         setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
+                                     }}
+                                     className={`flex items-center gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1.5 rounded-[12px] transition-all tracking-wide border shadow-sm ${showTranslation[q.id] ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700 border-slate-200'}`}
+                                   >
+                                     <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
+                                     Dịch nghĩa
+                                     {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-500 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                     {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
+                                   </button>
+                                   {showTranslation[q.id] && (
+                                     <div className="w-full text-sm md:text-[15px] font-medium text-black leading-relaxed italic animate-in fade-in py-1.5 pl-3.5 border-l-[3px] border-orange-300">
+                                       {q.translation}
+                                     </div>
+                                   )}
+                                </div>
+                              )}
+                              
+                              {topic.type === 'LISTENING' && showTranslation[q.id] && q.translation && (
                                 <div className="mt-4 p-4 md:p-5 bg-emerald-50/60 border border-emerald-100 rounded-xl text-sm md:text-[15px] font-medium text-[#14532d]/90 leading-relaxed animate-in slide-in-from-top-2 fade-in duration-300">
                                   {q.translation.includes('/') && /^[A-D][\.\:\s]/i.test(q.translation.trim()) ? (
                                       <div className="flex flex-col gap-2.5">
@@ -1057,7 +1084,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     <div className="flex items-center leading-none whitespace-nowrap">
                                       <span className="font-bold text-sm md:text-base">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
                                     </div>
-                                    {q.translation && (
+                                    {topic.type === 'LISTENING' && q.translation && (
                                       <button 
                                         onClick={() => {
                                             const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
