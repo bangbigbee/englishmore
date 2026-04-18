@@ -1897,6 +1897,41 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleUploadDirectionAudio = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      toast.loading(`Khởi tạo upload cho Direction Audio...`, { id: 'dir-audio-upload' })
+      const presignedRes = await fetch('/api/admin/upload/presigned', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, contentType: file.type })
+      })
+      const presignedData = await presignedRes.json()
+
+      if (!presignedData.success) {
+         throw new Error(presignedData.error || 'Server lỗi khởi tạo presigned URL')
+      }
+
+      toast.loading(`Đang tải dữ liệu trực tiếp lên R2...`, { id: 'dir-audio-upload' })
+      const uploadRes = await fetch(presignedData.uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file
+      })
+
+      if (uploadRes.ok) {
+        setLessonForm(prev => ({ ...prev, directionAudioUrl: presignedData.publicUrl }))
+        toast.success('Upload complete!', { id: 'dir-audio-upload' })
+      } else {
+        throw new Error('Lỗi upload lên R2')
+      }
+    } catch (error) {
+      toast.error('Upload failed: ' + String(error), { id: 'dir-audio-upload' })
+    }
+  }
+
   const deleteToeicQuestion = async (questionId: string) => {
     if (!confirm('Are you sure you want to delete this question?')) return
     try {
@@ -7798,13 +7833,22 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Direction Audio URL (Toàn Bài / Part 1, 2, 3, 4)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g., https://pub-xxx.r2.dev/listening-direction.mp3"
-                      value={lessonForm.directionAudioUrl || ''}
-                      onChange={(e) => setLessonForm({ ...lessonForm, directionAudioUrl: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
-                    />
+                    <div className="flex items-center gap-2">
+                       <input
+                         type="text"
+                         placeholder="e.g., https://pub-xxx.r2.dev/listening-direction.mp3"
+                         value={lessonForm.directionAudioUrl || ''}
+                         onChange={(e) => setLessonForm({ ...lessonForm, directionAudioUrl: e.target.value })}
+                         className="flex-1 rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                       />
+                       <label className="cursor-pointer shrink-0">
+                          <input type="file" accept="audio/*" className="hidden" onChange={handleUploadDirectionAudio} />
+                          <div className="bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                             Upload
+                          </div>
+                       </label>
+                    </div>
                     <p className="text-xs text-gray-500 mt-1">Dùng để học viên nghe hướng dẫn và đọc trước câu hỏi Part 1, Part 3, Part 4.</p>
                   </div>
                   <div className="grid grid-cols-5 gap-4">

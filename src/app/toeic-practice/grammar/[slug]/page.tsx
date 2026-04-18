@@ -291,12 +291,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   useEffect(() => {
     let timer: NodeJS.Timeout
     if (timerStartTime && !isTestCompleted) {
+      if (topic?.type === 'LISTENING' && !lessonStarted) return;
       timer = setInterval(() => {
         setElapsedTime(Math.floor((Date.now() - timerStartTime) / 1000))
       }, 1000)
     }
     return () => clearInterval(timer)
-  }, [timerStartTime, isTestCompleted])
+  }, [timerStartTime, isTestCompleted, topic?.type, lessonStarted])
 
   const handleSelectOption = async (questionId: string, option: string) => {
     if (showResults[questionId]) return
