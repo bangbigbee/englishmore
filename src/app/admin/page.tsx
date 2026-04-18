@@ -7804,13 +7804,13 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative w-full max-w-2xl rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
+                className="relative w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-8 shadow-2xl"
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-6">
+                <h3 className="text-2xl font-black text-slate-900 mb-8 border-b border-slate-100 pb-4">
                   {editingToeicLesson ? 'Edit Lesson' : `Add Lesson to: ${selectedToeicTopic?.title}`}
                 </h3>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-4 gap-4">
+                <div className="space-y-6">
+                  <div className="grid grid-cols-4 gap-6">
                     <div className="col-span-3">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Title</label>
                       <input
@@ -7818,7 +7818,7 @@ export default function AdminDashboard() {
                         placeholder="e.g., Personal Pronouns"
                         value={lessonForm.title}
                         onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                        className="w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-[#14532d] focus:ring-[#14532d] shadow-sm transition-shadow"
                       />
                     </div>
                     <div className="col-span-1">
@@ -7827,7 +7827,7 @@ export default function AdminDashboard() {
                         type="number"
                         value={lessonForm.order}
                         onChange={(e) => setLessonForm({ ...lessonForm, order: parseInt(e.target.value) || 0 })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                        className="w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-[#14532d] focus:ring-[#14532d] shadow-sm transition-shadow"
                       />
                     </div>
                   </div>
@@ -7839,11 +7839,11 @@ export default function AdminDashboard() {
                          placeholder="e.g., https://pub-xxx.r2.dev/listening-direction.mp3"
                          value={lessonForm.directionAudioUrl || ''}
                          onChange={(e) => setLessonForm({ ...lessonForm, directionAudioUrl: e.target.value })}
-                         className="flex-1 rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                         className="flex-1 rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-[#14532d] focus:ring-[#14532d] shadow-sm transition-shadow"
                        />
                        <label className="cursor-pointer shrink-0">
                           <input type="file" accept="audio/*" className="hidden" onChange={handleUploadDirectionAudio} />
-                          <div className="bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                          <div className="bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 hover:text-slate-900 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm">
                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                              Upload
                           </div>
@@ -7851,70 +7851,76 @@ export default function AdminDashboard() {
                     </div>
                     <p className="text-xs text-gray-500 mt-1">Dùng để học viên nghe hướng dẫn và đọc trước câu hỏi Part 1, Part 3, Part 4.</p>
                   </div>
-                  <div className="grid grid-cols-5 gap-4">
-                    <div className="col-span-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">General Access</label>
-                      <select
-                        value={lessonForm.accessTier}
-                        onChange={(e) => setLessonForm({ ...lessonForm, accessTier: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
-                      >
-                        <option value="FREE">Tặng Miễn Phí (FREE)</option>
-                        <option value="PRO">Học Viên (PRO)</option>
-                        <option value="ULTRA">VIP (ULTRA)</option>
-                      </select>
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Theory Access</label>
-                      <select
-                        value={lessonForm.theoryAccessTier}
-                        onChange={(e) => setLessonForm({ ...lessonForm, theoryAccessTier: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
-                      >
-                        <option value="">Default (Từ Master Config)</option>
-                        <option value="FREE">Tặng Miễn Phí (FREE)</option>
-                        <option value="PRO">Học Viên (PRO)</option>
-                        <option value="ULTRA">VIP (ULTRA)</option>
-                      </select>
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Explanation Access</label>
-                      <select
-                        className="w-full p-2 border border-gray-300 rounded text-black bg-white"
-                        value={lessonForm.explanationAccessTier}
-                        onChange={(e) => setLessonForm({ ...lessonForm, explanationAccessTier: e.target.value })}
-                      >
-                        <option value="">Default (Từ Master Config)</option>
-                        <option value="FREE">Free</option>
-                        <option value="PRO">Pro</option>
-                        <option value="ULTRA">Ultra</option>
-                      </select>
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Translation Access</label>
-                      <select
-                        className="w-full p-2 border border-gray-300 rounded text-black bg-white"
-                        value={lessonForm.translationAccessTier}
-                        onChange={(e) => setLessonForm({ ...lessonForm, translationAccessTier: e.target.value })}
-                      >
-                        <option value="">Default (Từ Master Config)</option>
-                        <option value="FREE">Free</option>
-                        <option value="PRO">Pro</option>
-                        <option value="ULTRA">Ultra</option>
-                      </select>
-                    </div>
-                    <div className="col-span-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Bookmark Access (Sổ Tay)</label>
-                      <select
-                        className="w-full p-2 border border-blue-300 bg-blue-50 focus:ring-blue-500 rounded text-black"
-                        value={lessonForm.bookmarkAccessTier}
-                        onChange={(e) => setLessonForm({ ...lessonForm, bookmarkAccessTier: e.target.value })}
-                      >
-                        <option value="">Default (Từ Master Config)</option>
-                        <option value="FREE">Free</option>
-                        <option value="PRO">Pro</option>
-                        <option value="ULTRA">Ultra</option>
-                      </select>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
+                    <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                       <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                       Phân quyền truy cập tài liệu
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                      <div className="col-span-1">
+                        <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">General Access</label>
+                        <select
+                          value={lessonForm.accessTier}
+                          onChange={(e) => setLessonForm({ ...lessonForm, accessTier: e.target.value })}
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#14532d] focus:ring-[#14532d] bg-white shadow-sm"
+                        >
+                          <option value="FREE">FREE</option>
+                          <option value="PRO">PRO</option>
+                          <option value="ULTRA">ULTRA</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Theory Access</label>
+                        <select
+                          value={lessonForm.theoryAccessTier}
+                          onChange={(e) => setLessonForm({ ...lessonForm, theoryAccessTier: e.target.value })}
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#14532d] focus:ring-[#14532d] bg-white shadow-sm"
+                        >
+                          <option value="">Default</option>
+                          <option value="FREE">FREE</option>
+                          <option value="PRO">PRO</option>
+                          <option value="ULTRA">ULTRA</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Exp Access</label>
+                        <select
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#14532d] focus:ring-[#14532d] bg-white shadow-sm"
+                          value={lessonForm.explanationAccessTier}
+                          onChange={(e) => setLessonForm({ ...lessonForm, explanationAccessTier: e.target.value })}
+                        >
+                          <option value="">Default</option>
+                          <option value="FREE">Free</option>
+                          <option value="PRO">Pro</option>
+                          <option value="ULTRA">Ultra</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Trans Access</label>
+                        <select
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#14532d] focus:ring-[#14532d] bg-white shadow-sm"
+                          value={lessonForm.translationAccessTier}
+                          onChange={(e) => setLessonForm({ ...lessonForm, translationAccessTier: e.target.value })}
+                        >
+                          <option value="">Default</option>
+                          <option value="FREE">Free</option>
+                          <option value="PRO">Pro</option>
+                          <option value="ULTRA">Ultra</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <label className="block text-[13px] font-semibold text-blue-700 mb-1.5">To Booklet</label>
+                        <select
+                          className="w-full rounded-lg border-blue-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 bg-blue-50/50 shadow-sm font-medium"
+                          value={lessonForm.bookmarkAccessTier}
+                          onChange={(e) => setLessonForm({ ...lessonForm, bookmarkAccessTier: e.target.value })}
+                        >
+                          <option value="">Default</option>
+                          <option value="FREE">Free</option>
+                          <option value="PRO">Pro</option>
+                          <option value="ULTRA">Ultra</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                   <div>
@@ -7925,17 +7931,17 @@ export default function AdminDashboard() {
                     />
                   </div>
                 </div>
-                <div className="mt-8 flex justify-end gap-3">
+                <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3">
                   <button
                     onClick={() => setShowLessonModal(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={createToeicLesson}
                     disabled={savingToeicLesson}
-                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534] disabled:opacity-50"
+                    className="rounded-xl bg-[#14532d] px-8 py-2.5 text-sm font-bold text-white hover:bg-[#166534] disabled:opacity-50 shadow-md transition-all active:scale-95"
                   >
                     {savingToeicLesson ? 'Saving...' : editingToeicLesson ? 'Update Lesson' : 'Save Lesson'}
                   </button>
@@ -7957,10 +7963,10 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative w-full max-w-2xl rounded-xl border border-[#14532d]/40 bg-white p-6 shadow-2xl"
+                className="relative w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-8 shadow-2xl"
               >
-                <div className="max-h-[85vh] overflow-y-auto pr-2">
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">
+                <div className="max-h-[85vh] overflow-y-auto pr-4 custom-scrollbar">
+                  <h3 className="text-2xl font-black text-slate-900 mb-8 border-b border-slate-100 pb-4">
                   {editingToeicQuestion ? 'Edit Question' : `Add Question to: ${selectedToeicLesson?.title}`}
                 </h3>
                   <div className="space-y-4">
@@ -8093,17 +8099,17 @@ export default function AdminDashboard() {
                       />
                     </div>
                   </div>
-                  <div className="mt-8 flex justify-end gap-3 pb-2">
+                  <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end gap-3 pb-2">
                     <button
                       onClick={() => setShowQuestionModal(false)}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                      className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition-colors"
                     >
                       Cancel
                     </button>
                   <button
                     onClick={createToeicQuestion}
                     disabled={savingToeicQuestion}
-                    className="rounded-lg bg-[#14532d] px-6 py-2 font-bold text-white hover:bg-[#166534] disabled:opacity-50"
+                    className="rounded-xl bg-[#14532d] px-8 py-2.5 text-sm font-bold text-white hover:bg-[#166534] disabled:opacity-50 shadow-md transition-all active:scale-95"
                   >
                     {savingToeicQuestion ? 'Saving...' : editingToeicQuestion ? 'Update Question' : 'Save Question'}
                   </button>

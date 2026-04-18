@@ -11,6 +11,18 @@ export async function GET(req: Request) {
       include: {
         _count: {
           select: { lessons: true }
+        },
+        lessons: {
+          select: {
+            id: true,
+            title: true,
+            order: true,
+            accessTier: true,
+            _count: {
+              select: { questions: true }
+            }
+          },
+          orderBy: { order: 'asc' }
         }
       },
       orderBy: { createdAt: 'desc' }

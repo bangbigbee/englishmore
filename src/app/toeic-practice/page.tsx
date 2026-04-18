@@ -2016,6 +2016,15 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 		const filteredTopics = topics.filter(t => t.part === selectedPart);
 		const currentPartInfo = parts.find(p => p.id === selectedPart);
 
+		// Flatten lessons from all topics in this part
+		const flattenedLessons = filteredTopics.flatMap(t => 
+			(t.lessons || []).map((l: any) => ({
+				...l,
+				topicTitle: t.title,
+				topicSlug: t.slug
+			}))
+		);
+
 		return (
 			<div>
 				<div className="flex items-center gap-3 mb-6">
@@ -2031,18 +2040,18 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 				</div>
 				
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{filteredTopics.length === 0 ? (
+					{flattenedLessons.length === 0 ? (
 						<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
 							Chưa có bài tập nào trong phần này được cập nhật.
 						</div>
 					) : (
-						filteredTopics.map((topic) => (
+						flattenedLessons.map((lesson) => (
 							<TopicCard
-								key={topic.id}
-								title={topic.title}
-								subtitle={topic.subtitle}
-								badgeText={`${topic._count?.lessons || 0} Bài tập`}
-								onClick={() => onPracticeClick(topic.slug)}
+								key={lesson.id}
+								title={lesson.title}
+								subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
+								badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
+								onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
 							/>
 						))
 					)}
@@ -2113,6 +2122,15 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 		const filteredTopics = topics.filter(t => t.part === selectedPart);
 		const currentPartInfo = parts.find(p => p.id === selectedPart);
 
+		// Flatten lessons from all topics in this part
+		const flattenedLessons = filteredTopics.flatMap(t => 
+			(t.lessons || []).map((l: any) => ({
+				...l,
+				topicTitle: t.title,
+				topicSlug: t.slug
+			}))
+		);
+
 		return (
 			<div>
 				<div className="flex items-center gap-3 mb-6">
@@ -2128,18 +2146,18 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 				</div>
 				
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-					{filteredTopics.length === 0 ? (
+					{flattenedLessons.length === 0 ? (
 						<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-							Chưa có chủ đề nào trong phần này được cập nhật.
+							Chưa có bài tập nào trong phần này được cập nhật.
 						</div>
 					) : (
-						filteredTopics.map((topic) => (
+						flattenedLessons.map((lesson) => (
 							<TopicCard
-								key={topic.id}
-								title={topic.title}
-								subtitle={topic.subtitle}
-								badgeText={`${topic._count?.lessons || 0} Bài tập`}
-								onClick={() => onPracticeClick(topic.slug)}
+								key={lesson.id}
+								title={lesson.title}
+								subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
+								badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
+								onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
 							/>
 						))
 					)}

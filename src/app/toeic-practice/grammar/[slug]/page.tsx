@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, use, useCallback, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -75,6 +75,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const { data: session, status } = useSession()
   const [isSyncing, setIsSyncing] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialLessonId = searchParams.get('lessonId')
   const retryingLessonsRef = useRef<Set<string>>(new Set())
   const [isReviewing, setIsReviewing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
@@ -91,7 +93,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         const data = await res.json()
         setTopic(data)
         if (data.lessons && data.lessons.length > 0) {
-          setSelectedLessonId(data.lessons[0].id)
+          const targetLesson = data.lessons.find((l: any) => l.id === initialLessonId) || data.lessons[0];
+          setSelectedLessonId(targetLesson.id)
           setActiveQuestionIndex(0)
           setShowLessonContent(data.lessons[0].questions.length === 0)
           if (data.type === 'LISTENING') setListeningMode('actual');
