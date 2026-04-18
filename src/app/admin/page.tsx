@@ -1646,33 +1646,48 @@ export default function AdminDashboard() {
           continue
         }
         
-        // Upload to R2
-        toast.loading(`Đang up: ${file.name}...`, { id: uploadToastId })
-        const formData = new FormData()
-        formData.append('file', file)
-        
-        const res = await fetch('/api/admin/upload/audio', { method: 'POST', body: formData })
-        const data = await res.json()
-        
-        if (data.success) {
-          // Update the TOEIC Question using its ID
-          const updateRes = await fetch(`/api/admin/toeic/questions/${q.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-               ...(isAudio && { audioUrl: data.url }),
-               ...(isImage && { imageUrl: data.url })
-            })
-          })
-          
-          if (updateRes.ok) {
-            successCount++
-          } else {
-             toast.error(`Lỗi cập nhật DB cho file ${file.name}`)
-             failCount++
-          }
+        // Upload to R2 bypass Vercel 4.5MB limits using Presigned URL
+        toast.loading(`Đang khởi tạo upload cho: ${file.name}...`, { id: uploadToastId })
+        const presignedRes = await fetch('/api/admin/upload/presigned', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, contentType: file.type })
+        })
+        const presignedData = await presignedRes.json()
+
+        if (presignedData.success) {
+           toast.loading(`Đang tải lên: ${file.name} (có thể lâu nếu file lớn)...`, { id: uploadToastId })
+           // Upload directly to Cloudflare R2!
+           const uploadRes = await fetch(presignedData.uploadUrl, {
+             method: 'PUT',
+             headers: { 'Content-Type': file.type },
+             body: file
+           })
+
+           if (uploadRes.ok) {
+              const data = { url: presignedData.publicUrl } // Mock data object
+              // Update the TOEIC Question using its ID
+              const updateRes = await fetch(`/api/admin/toeic/questions/${q.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                   ...(isAudio && { audioUrl: data.url }),
+                   ...(isImage && { imageUrl: data.url })
+                })
+              })
+              
+              if (updateRes.ok) {
+                successCount++
+              } else {
+                 toast.error(`Lỗi cập nhật DB: Server error`)
+                 failCount++
+              }
+           } else {
+              toast.error(`Lỗi upload trực tiếp lên R2: ${file.name}`)
+              failCount++
+           }
         } else {
-          toast.error(`Lỗi upload cho file ${file.name}`)
+          toast.error(`Lỗi khởi tạo upload ${file.name}: ${presignedData.error || 'Server error'}`)
           failCount++
         }
       }
@@ -1850,17 +1865,30 @@ export default function AdminDashboard() {
     formData.append('file', file)
 
     try {
-      toast.loading(`Uploading ${field.replace('Url', '')}...`, { id: 'media-upload' })
-      const res = await fetch('/api/admin/upload/audio', {
+      toast.loading(`Khởi tạo upload cho ${field.replace('Url', '')}...`, { id: 'media-upload' })
+      const presignedRes = await fetch('/api/admin/upload/presigned', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, contentType: file.type })
       })
-      const data = await res.json()
-      if (data.success) {
-        setQuestionForm(prev => ({ ...prev, [field]: data.url }))
+      const presignedData = await presignedRes.json()
+
+      if (!presignedData.success) {
+         throw new Error(presignedData.error || 'Server lỗi khởi tạo presigned URL')
+      }
+
+      toast.loading(`Đang tải dữ liệu trực tiếp lên R2...`, { id: 'media-upload' })
+      const uploadRes = await fetch(presignedData.uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file
+      })
+
+      if (uploadRes.ok) {
+        setQuestionForm(prev => ({ ...prev, [field]: presignedData.publicUrl }))
         toast.success('Upload complete!', { id: 'media-upload' })
       } else {
-        throw new Error(data.error)
+        throw new Error('Lỗi từ Server Cloudflare R2 khi tải file lên (Có thể bạn chưa cấp quyền CORS)')
       }
     } catch (error) {
       toast.error('Upload failed: ' + String(error), { id: 'media-upload' })
