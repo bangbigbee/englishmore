@@ -988,20 +988,34 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           {opt.value || 'Option'}
                                         </span>
                                       </div>
-                                      
-                                      {showTranslation[q.id] && q.translation && (
-                                        <div className="w-full pl-[42px] md:pl-[52px] text-xs md:text-[13px] text-slate-500 font-medium italic mt-0.5 animate-in slide-in-from-top-1 fade-in duration-200 leading-tight">
-                                          {(() => {
-                                             const parts = q.translation.split('/').map(p => p.trim());
-                                             const matched = parts.find(p => p.startsWith(opt.label));
-                                             return matched ? matched.substring(1).trim() : '';
-                                          })()}
-                                        </div>
-                                      )}
                                     </button>
                                   )
                                 })}
                               </div>
+                              
+                              {showTranslation[q.id] && q.translation && (
+                                <div className="mt-4 p-4 md:p-5 bg-emerald-50/60 border border-emerald-100 rounded-xl text-sm md:text-[15px] font-medium text-[#14532d]/90 leading-relaxed animate-in slide-in-from-top-2 fade-in duration-300">
+                                  {q.translation.includes('/') && /^[A-D][\.\:\s]/i.test(q.translation.trim()) ? (
+                                      <div className="flex flex-col gap-2.5">
+                                          {q.translation.split('/').map((line, i) => {
+                                              const text = line.trim();
+                                              const match = text.match(/^([A-D])[\.\:\s]*(.*)/i);
+                                              if (match) {
+                                                  return (
+                                                      <div key={i} className="flex items-start gap-2.5">
+                                                          <span className="w-5 h-5 flex items-center justify-center shrink-0 bg-emerald-600 text-white rounded text-xs font-bold mt-0.5">{match[1].toUpperCase()}</span>
+                                                          <span>{match[2]}</span>
+                                                      </div>
+                                                  );
+                                              }
+                                              return <div key={i}>{text}</div>;
+                                          })}
+                                      </div>
+                                  ) : (
+                                      <div className="italic">{q.translation}</div>
+                                  )}
+                                </div>
+                              )}
 
 
                             </motion.div>
