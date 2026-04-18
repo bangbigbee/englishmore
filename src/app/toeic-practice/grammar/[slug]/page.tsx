@@ -685,9 +685,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       {topic.type === 'LISTENING' && (
                         <div className="flex items-center p-1 bg-slate-100 rounded-lg">
                           <button 
-                            title="Nghe tốc độ chậm (0.75x)"
-                            onClick={() => setPlaybackSpeed(0.75)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.75 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            title="Nghe tốc độ chậm (0.85x)"
+                            onClick={() => setPlaybackSpeed(0.85)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.85 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                           >
                             Nghe chậm
                           </button>
@@ -696,7 +696,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             onClick={() => setPlaybackSpeed(1)}
                             className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1 ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                           >
-                            Normal Speed
+                            Thường
                           </button>
                           <button 
                             title="Nghe tốc độ nhanh (1.25x)"
@@ -962,18 +962,30 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       key={opt.label}
                                       onClick={() => handleSelectOption(q.id, opt.label)}
                                       disabled={isShowingResult}
-                                      className={buttonClass + " cursor-pointer"}
+                                      className={buttonClass + " flex-col items-start cursor-pointer"}
                                     >
-                                      <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
-                                        selectedOption === opt.label 
-                                          ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
-                                          : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
-                                      }`}>
-                                        {opt.label}
-                                      </span>
-                                      <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
-                                        {opt.value || 'Option'}
-                                      </span>
+                                      <div className="flex items-center w-full gap-3 md:gap-3.5">
+                                        <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
+                                          selectedOption === opt.label 
+                                            ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
+                                            : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
+                                        }`}>
+                                          {opt.label}
+                                        </span>
+                                        <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
+                                          {opt.value || 'Option'}
+                                        </span>
+                                      </div>
+                                      
+                                      {showTranslation[q.id] && q.translation && (
+                                        <div className="w-full pl-11 md:pl-13 text-[13.5px] md:text-sm text-slate-600 font-medium italic mt-1 pb-1 animate-in slide-in-from-top-1 fade-in duration-200">
+                                          {(() => {
+                                             const parts = q.translation.split('/').map(p => p.trim());
+                                             const matched = parts.find(p => p.startsWith(opt.label));
+                                             return matched ? matched.substring(1).trim() : '';
+                                          })()}
+                                        </div>
+                                      )}
                                     </button>
                                   )
                                 })}
@@ -1020,6 +1032,24 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       <span className="text-[11px] md:text-sm font-black uppercase tracking-widest text-slate-500 opacity-90">Kết quả</span>
                                       <span className="font-bold text-sm md:text-base">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
                                     </div>
+                                    {q.translation && (
+                                      <button 
+                                        onClick={() => {
+                                            const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                            const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                            if (translationTierLevel > userTierLevel) {
+                                                setShowPricing(true);
+                                                return;
+                                            }
+                                            setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
+                                        }}
+                                        className={`ml-1 md:ml-2 flex items-center gap-1 text-[10px] md:text-xs font-bold px-2 py-1 md:py-1.5 rounded-md transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-600 border border-orange-600 text-white shadow-sm' : 'bg-orange-50 border border-orange-200 text-orange-600 hover:bg-orange-100'}`}
+                                      >
+                                        Dịch nghĩa
+                                        {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <span className="">⭐</span>}
+                                        {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <span className="">⭐</span>}
+                                      </button>
+                                    )}
                                   </div>
                                 ) : (
                                   <div className="text-slate-400 font-bold text-xs uppercase tracking-widest">
@@ -1133,58 +1163,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })()
                                 ) : null}
                                 
-                                {q.translation && (
-                                  <div className="mt-3 pt-3 border-t border-slate-200/60">
-                                    {showTranslation[q.id] ? (
-                                      (() => {
-                                        const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
-                                        const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                        const isLocked = translationTierLevel > userTierLevel;
-                                        
-                                        if (isLocked) {
-                                           return (
-                                              <div className="relative w-full overflow-hidden rounded-xl border border-blue-200 bg-blue-50/50">
-                                                <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-4 select-none text-sm leading-relaxed text-blue-900 whitespace-pre-wrap">
-                                                  {q.translation}
-                                                </div>
-                                                <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
-                                                  <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
-                                                     <div className="flex items-center gap-1.5 whitespace-nowrap">
-                                                       {currentLesson.translationAccessTier === 'ULTRA' ? (
-                                                          <svg className="w-4 h-4 text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                                       ) : (
-                                                          <svg className="w-4 h-4 text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                                       )}
-                                                       <span>Nâng cấp</span>
-                                                     </div>
-                                                     <div className="flex items-center gap-1 whitespace-nowrap">
-                                                       <span className={`${currentLesson.translationAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.translationAccessTier}</span>
-                                                       <span>để xem dịch nghĩa.</span>
-                                                     </div>
-                                                  </button>
-                                                </div>
-                                              </div>
-                                           )
-                                        }
-                                        
-                                        return (
-                                          <div className="text-sm md:text-[15px] font-medium text-blue-800 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
-                                            <span className="font-bold text-blue-900">Dịch nghĩa: </span>
-                                            {q.translation}
-                                          </div>
-                                        )
-                                      })()
-                                    ) : (
-                                      <button 
-                                        onClick={() => setShowTranslation(prev => ({ ...prev, [q.id]: true }))}
-                                        className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1 cursor-pointer"
-                                      >
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 9.198 15.53 3 18.051" /></svg>
-                                        Xem dịch tiếng Việt
-                                      </button>
-                                    )}
-                                  </div>
-                                )}
+                                  {/* Old Translation Removed */}
                               </div>
                             )}
 
