@@ -809,13 +809,14 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 	const initialTopic = searchParams.get('topic');
 	const [selectedTopic, setSelectedTopic] = useState<string | null>(initialTopic);
+	const loadedTopicRef = useRef<string | null>(null);
 	const [vocabItems, setVocabItems] = useState<any[]>([]);
 	const [isUltra, setIsUltra] = useState(false);
 	const [isPro, setIsPro] = useState(false);
 	const [topicProFields, setTopicProFields] = useState<string[]>([]);
 	const [topicUltraFields, setTopicUltraFields] = useState<string[]>([]);
 	const [totalWords, setTotalWords] = useState(0);
-	const [vocabLoading, setVocabLoading] = useState(false);
+	const [vocabLoading, setVocabLoading] = useState(!!initialTopic);
 	const [cardIndex, setCardIndex] = useState(0);
 	const [isFlipped, setIsFlipped] = useState(false);
 	const [showUpgrade, setShowUpgrade] = useState(false);
@@ -1072,12 +1073,14 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		const wordIdFromUrl = searchParams.get('wordId');
         const playChal = searchParams.get('playChallenge');
 		
-		if (tabFromUrl === 'vocabulary' && topicFromUrl && (topicFromUrl !== selectedTopic || wordIdFromUrl)) {
+		if (tabFromUrl === 'vocabulary' && topicFromUrl && (topicFromUrl !== loadedTopicRef.current || wordIdFromUrl)) {
             if (playChal === 'true' && !session && searchParams.get('login') !== 'true') {
                 onPracticeClick(topicFromUrl, false);
             }
+            loadedTopicRef.current = topicFromUrl;
 			loadTopic(topicFromUrl, wordIdFromUrl);
 		} else if (!topicFromUrl && selectedTopic) {
+            loadedTopicRef.current = null;
 			setSelectedTopic(null);
 		}
 	}, [searchParams, session, selectedTopic]);
