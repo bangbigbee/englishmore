@@ -66,6 +66,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isTestCompleted, setIsTestCompleted] = useState(false)
   const [lessonStarted, setLessonStarted] = useState(false)
   const [isPlayingDirections, setIsPlayingDirections] = useState(false)
+  const [isAudioNodePlaying, setIsAudioNodePlaying] = useState(false)
+  const [isZoomedImage, setIsZoomedImage] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const directionAudioRef = useRef<HTMLAudioElement>(null)
   const { data: session, status } = useSession()
@@ -673,6 +675,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       {/* Control Mode Toggle */}
                       <div className="flex items-center p-1 bg-slate-100 rounded-lg">
                         <button 
+                          title="Nâng cấp PRO để hiển thị lời thoại hỗ trợ luyện tập"
                           onClick={() => {
                             if (session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin') {
                               setShowPricing(true);
@@ -685,6 +688,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           Practice {session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && listeningMode !== 'practice' && <span className="ml-1 text-[10px] text-amber-500">🔒</span>}
                         </button>
                         <button 
+                          title="Không hiển thị lời thoại giống như thi thực tế"
                           onClick={() => setListeningMode('actual')}
                           className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${listeningMode === 'actual' ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
@@ -692,9 +696,32 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         </button>
                       </div>
                       {!isTestCompleted && timerStartTime !== null && (
-                        <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
-                          {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
-                        </span>
+                        <div className="flex items-center gap-2 ml-2">
+                           {topic.type === 'LISTENING' && lessonStarted && (
+                              <button
+                                onClick={() => {
+                                  if (isPlayingDirections && directionAudioRef.current) {
+                                    if (directionAudioRef.current.paused) directionAudioRef.current.play();
+                                    else directionAudioRef.current.pause();
+                                  } else if (audioRef.current) {
+                                    if (audioRef.current.paused) audioRef.current.play();
+                                    else audioRef.current.pause();
+                                  }
+                                }}
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 transition-colors cursor-pointer shrink-0"
+                                title="Play/Pause Audio"
+                              >
+                                {isAudioNodePlaying ? (
+                                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                ) : (
+                                   <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                )}
+                              </button>
+                           )}
+                           <span className="tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
+                             {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
+                           </span>
+                        </div>
                       )}
                       <button
                         onClick={handleRestartLesson}
@@ -713,7 +740,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         <svg className={`w-4 h-4 transition-transform ${showLessonContent ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                        {showLessonContent ? 'Ẩn lý thuyết' : 'Xem lý thuyết'}
+                        {showLessonContent ? 'Ẩn mẹo làm' : 'Xem mẹo làm'}
                       </button>
                     )}
                   </div>
@@ -753,7 +780,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                        </div>
                                        <div className="flex items-center gap-1 whitespace-nowrap">
                                          <span className={`${currentLesson.theoryAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.theoryAccessTier}</span>
-                                         <span>để xem lý thuyết chi tiết.</span>
+                                         <span>để xem mẹo làm chi tiết.</span>
                                        </div>
                                      </button>
                                   </div>
@@ -773,23 +800,18 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         let activeAudioUrl = currentLesson.questions[activeQuestionIndex]?.audioUrl || null;
 
                         return activeAudioUrl ? (
-                          <div className={`bg-white border-b-2 border-slate-100 p-3 mb-6 shadow-sm shadow-slate-100 flex flex-col items-center rounded-2xl sticky top-20 z-20 transition-all ${!lessonStarted && topic.type === 'LISTENING' ? 'opacity-0 h-0 overflow-hidden mb-0 p-0 absolute pointer-events-none' : ''}`}>
-                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-2 leading-none flex items-center gap-1">
-                               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"/></svg>
-                               Audio Câu {activeQuestionIndex + 1}
-                            </span>
                             <audio 
                                ref={audioRef} 
                                src={activeAudioUrl} 
-                               controls 
-                               className="w-full max-w-lg h-10"
+                               className="hidden"
+                               onPlay={() => setIsAudioNodePlaying(true)}
+                               onPause={() => setIsAudioNodePlaying(false)}
                                onEnded={() => {
                                   if (activeQuestionIndex < currentLesson.questions.length - 1) {
                                      setActiveQuestionIndex(prev => prev + 1);
                                   }
                                }}
                             />
-                          </div>
                         ) : null;
                       })()}
                       
@@ -797,6 +819,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       <audio 
                           ref={directionAudioRef} 
                           src={currentLesson.directionAudioUrl || undefined} 
+                          onPlay={() => setIsAudioNodePlaying(true)}
+                          onPause={() => setIsAudioNodePlaying(false)}
                           onEnded={() => {
                              setIsPlayingDirections(false);
                           }} 
@@ -893,15 +917,20 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                               </div>
 
                               <div className="mb-8 flex flex-col items-center">
-                                {q.imageUrl && (
-                                  <img src={q.imageUrl} alt="Part" className="max-w-full md:max-w-[400px] object-contain rounded-xl border border-slate-200 shadow-sm mb-6" />
-                                )}
-                                <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug text-center">
+                                <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug text-center mb-6">
                                   {q.question}
                                 </p>
+                                {q.imageUrl && (
+                                  <img 
+                                    src={q.imageUrl} 
+                                    alt="Part" 
+                                    onClick={() => setIsZoomedImage(!isZoomedImage)}
+                                    className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-[400px] cursor-zoom-in'}`} 
+                                  />
+                                )}
                               </div>
 
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
                                 {[
                                   { label: 'A', value: q.optionA },
                                   { label: 'B', value: q.optionB },
@@ -912,7 +941,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   
                                   const shouldHideValue = topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual' && !isShowingResult;
                                   
-                                  let buttonClass = "flex items-center gap-3 md:gap-4 px-4 py-3 md:py-3.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
+                                  let buttonClass = "flex items-center gap-3 md:gap-3.5 px-4 py-2 md:py-2.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
                                   
                                   if (isShowingResult) {
                                     if (opt.label === q.correctOption) {
