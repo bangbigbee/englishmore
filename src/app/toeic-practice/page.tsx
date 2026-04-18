@@ -198,7 +198,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${displaySubtitle ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
                             {/* Front side (English/Main) */}
 							<div className="flex items-center gap-2.5 [backface-visibility:hidden]">
-                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                                <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
 									{(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
 								</span>
                                 <h3 className={`font-bold text-[14px] sm:text-[15px] transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
@@ -222,7 +222,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
                 ) : (
                     <>
                         <h3 className={`font-bold text-[22px] leading-snug mb-1 transition-colors duration-300 ${theme.titleHover} flex items-center gap-3 ${theme.title}`}>
-                            <span className={`w-[30px] h-[30px] rounded-[8px] text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-all duration-300 group-hover:rotate-0 group-hover:bg-green-700 leading-none pb-[2px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                            <span className={`w-[30px] h-[30px] rounded-[8px] text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-all duration-300 group-hover:rotate-0 leading-none pb-[2px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
                                 {title.charAt(0).toLowerCase()}
                             </span>
                             <span>{title}</span>
@@ -1085,12 +1085,14 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const openTopic = async (topic: string) => {
 		if (!session) { onPracticeClick(topic); return; }
 		
-		// Update URL to reflect current topic
+		// Update URL to reflect current topic seamlessly without triggering Next.js re-render
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('topic', topic);
 		params.set('tab', 'vocabulary');
 		params.delete('wordId'); // Clear specific cross-linking wordId when normally opening a topic
-		router.push(`${pathname}?${params.toString()}`, { scroll: false });
+		if (typeof window !== 'undefined') {
+			window.history.pushState({}, '', `${pathname}?${params.toString()}`);
+		}
 		
 		loadTopic(topic);
 	};
