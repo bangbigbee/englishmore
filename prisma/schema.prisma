@@ -88,39 +88,40 @@ model Session {
 }
 
 model User {
-  id                      String                 @id @default(cuid())
-  name                    String?
-  phone                   String?                @unique
-  email                   String                 @unique
-  emailVerified           DateTime?
-  image                   String?
-  bio                     String?
-  password                String?
-  method                  String? // PPF, Beyond, Contrast
-  role                    UserRole               @default(user) // user, member, or admin
-  referrerId              String?
-  createdAt               DateTime               @default(now())
-  updatedAt               DateTime               @default(now())
-  classActivityLastReadAt DateTime?
-  activityPoints          Int                    @default(0)
-  referrer                User?                  @relation("UserReferrals", fields: [referrerId], references: [id])
-  referredUsers           User[]                 @relation("UserReferrals")
-  accounts                Account[]
-  sessions                Session[]
-  assignments             Assignment[]
-  homeworkSubmissions     HomeworkSubmission[]
-  exerciseSubmissions     ExerciseSubmission[]
-  enrollments             Enrollment[]
-  dailyGreetingCheckins   DailyGreetingCheckin[]
-  dailyReflections        DailyReflection[]
-  speakYourselfAttempts   SpeakYourselfAttempt[]
-  activityPointLogs       ActivityPointLog[]
-  toeicAnswers            ToeicAnswer[]
-  toeicQuestionBookmarks  ToeicQuestionBookmark[]
-  vocabularyTags          VocabularyTag[]
-  tier                    AccessTier             @default(FREE)
-  tierExpiresAt           DateTime?
-  upgradeOrders           UpgradeOrder[]
+  id                        String                      @id @default(cuid())
+  name                      String?
+  phone                     String?                     @unique
+  email                     String                      @unique
+  emailVerified             DateTime?
+  image                     String?
+  bio                       String?
+  password                  String?
+  method                    String? // PPF, Beyond, Contrast
+  role                      UserRole                    @default(user) // user, member, or admin
+  referrerId                String?
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @default(now())
+  classActivityLastReadAt   DateTime?
+  activityPoints            Int                         @default(0)
+  referrer                  User?                       @relation("UserReferrals", fields: [referrerId], references: [id])
+  referredUsers             User[]                      @relation("UserReferrals")
+  accounts                  Account[]
+  sessions                  Session[]
+  assignments               Assignment[]
+  homeworkSubmissions       HomeworkSubmission[]
+  exerciseSubmissions       ExerciseSubmission[]
+  enrollments               Enrollment[]
+  dailyGreetingCheckins     DailyGreetingCheckin[]
+  dailyReflections          DailyReflection[]
+  speakYourselfAttempts     SpeakYourselfAttempt[]
+  activityPointLogs         ActivityPointLog[]
+  toeicAnswers              ToeicAnswer[]
+  toeicQuestionBookmarks    ToeicQuestionBookmark[]
+  vocabularyTags            VocabularyTag[]
+  tier                      AccessTier                  @default(FREE)
+  tierExpiresAt             DateTime?
+  upgradeOrders             UpgradeOrder[]
+  ToeicSpeedChallengeRecord ToeicSpeedChallengeRecord[]
 
   @@index([referrerId])
 }
@@ -721,9 +722,9 @@ model ToeicQuestion {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  lesson     ToeicGrammarLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  answers    ToeicAnswer[]
-  bookmarks  ToeicQuestionBookmark[]
+  lesson    ToeicGrammarLesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answers   ToeicAnswer[]
+  bookmarks ToeicQuestionBookmark[]
 
   @@index([lessonId])
 }
@@ -746,10 +747,10 @@ model ToeicAnswer {
 }
 
 model ToeicQuestionBookmark {
-  id           String   @id @default(cuid())
-  userId       String
-  questionId   String
-  createdAt    DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
 
   user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   question ToeicQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
@@ -797,4 +798,21 @@ model SystemSetting {
   value       Json
   description String?
   updatedAt   DateTime @updatedAt
+}
+
+model ToeicSpeedChallengeRecord {
+  id         String   @id @default(cuid())
+  userId     String?
+  guestName  String?
+  topicTitle String
+  topicSlug  String?
+  difficulty String
+  score      Int
+  total      Int
+  timeMs     Int
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([difficulty, score(sort: Desc), timeMs(sort: Asc)])
 }

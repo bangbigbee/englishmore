@@ -422,6 +422,8 @@ function ToeicPracticeContent() {
 				 }} />}
 			</div>
 
+            {tab === "home" && <SpeedChallengeLeaderboard />}
+
 			<footer className="mt-20 pt-8 pb-4 border-t border-slate-200 text-center text-sm font-medium text-slate-500 opacity-80">
 				<p className="mb-2 uppercase tracking-wider text-[11px] font-bold text-[#14532d]">ToeicMore &copy; {new Date().getFullYear()}</p>
 				<p>Bản quyền được bảo lưu.</p>
@@ -430,6 +432,114 @@ function ToeicPracticeContent() {
 		</div>
 	</div>
 	);
+}
+
+function SpeedChallengeLeaderboard() {
+    const [leaders, setLeaders] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch('/api/toeic/speed-challenge').then(res => res.json()).then(data => {
+            setLeaders(Array.isArray(data) ? data : []);
+            setLoading(false);
+        }).catch(err => setLoading(false));
+    }, []);
+
+    if (loading || leaders.length === 0) return null;
+
+    return (
+        <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
+            <h3 className="text-2xl font-black text-[#14532d] mb-6 flex items-center gap-3">
+                <span className="text-3xl drop-shadow-sm">🏆</span>
+                Bảng Vàng Speed Challenge
+            </h3>
+            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-amber-200 overflow-hidden relative">
+                {/* Decorative background elements matching the gold/green theme */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-green-50 rounded-tr-full opacity-50 pointer-events-none"></div>
+                
+                <div className="overflow-x-auto relative z-10 hidden md:block">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="border-b-2 border-slate-100 text-slate-500 font-bold">
+                                <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
+                                <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Tên</th>
+                                <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chủ đề</th>
+                                <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Độ khó</th>
+                                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm</th>
+                                <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]">Thời gian</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {leaders.map((leader, idx) => (
+                                <tr key={leader.id || idx} className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group">
+                                    <td className="py-4 px-4 text-center">
+                                        {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
+                                         idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
+                                         idx === 2 ? <span className="text-2xl drop-shadow-sm" title="Top 3">🥉</span> : 
+                                         <span className="font-bold text-slate-400">#{idx + 1}</span>}
+                                    </td>
+                                    <td className="py-4 px-4">
+                                        <div className={`font-bold ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
+                                    </td>
+                                    <td className="py-4 px-4 text-sm font-medium text-slate-600">
+                                        <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-[12px] whitespace-nowrap">{leader.topicTitle}</span>
+                                    </td>
+                                    <td className="py-4 px-4">
+                                        {leader.difficulty === 'extreme' ? (
+                                            <span className="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-rose-200">Extreme</span>
+                                        ) : (
+                                            <span className="bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-indigo-200">High</span>
+                                        )}
+                                    </td>
+                                    <td className="py-4 px-4 text-center">
+                                        <span className="font-black text-[16px] text-slate-700">{leader.score}</span>
+                                        <span className="text-slate-400 text-xs mx-1">/</span>
+                                        <span className="font-bold text-slate-400 text-sm">{leader.total}</span>
+                                    </td>
+                                    <td className="py-4 px-4 text-right">
+                                        <div className="font-bold text-[#14532d] font-mono tracking-tighter bg-green-50 px-3 py-1 rounded-lg inline-block border border-green-100">{(leader.timeMs / 1000).toFixed(1)}s</div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="md:hidden space-y-3 relative z-10 mt-2">
+                    {leaders.map((leader, idx) => (
+                        <div key={leader.id || idx} className="flex items-center gap-3 bg-slate-50 border border-slate-100 p-3 rounded-2xl">
+                            <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
+                                {idx === 0 ? <span className="text-2xl">🥇</span> : 
+                                 idx === 1 ? <span className="text-2xl">🥈</span> : 
+                                 idx === 2 ? <span className="text-2xl">🥉</span> : 
+                                 `#${idx + 1}`}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className={`font-bold truncate text-sm mb-0.5 ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>
+                                    {leader.user?.name || leader.guestName || "Ẩn danh"}
+                                </div>
+                                <div className="text-[10px] text-slate-500 truncate flex items-center gap-1.5">
+                                    <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold truncate max-w-[80px] block">{leader.topicTitle}</span>
+                                    <span className="text-slate-300">•</span>
+                                    {leader.difficulty === 'extreme' ? (
+                                        <span className="text-rose-600 font-bold uppercase">EXT</span>
+                                    ) : (
+                                        <span className="text-indigo-600 font-bold uppercase">HIGH</span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                                <div className="text-[13px] font-black text-slate-700">{leader.score}<span className="text-[10px] text-slate-400 font-bold ml-0.5">/{leader.total}</span></div>
+                                <div className="text-[11px] font-bold text-[#14532d] bg-green-50 px-1.5 rounded border border-green-100 font-mono mt-0.5">{(leader.timeMs / 1000).toFixed(1)}s</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 function GrammarFeatureCard({ onClick, icon }: any) {
@@ -920,9 +1030,11 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const [challengeOptions, setChallengeOptions] = useState<string[]>([]);
 	const [challengeScore, setChallengeScore] = useState(0);
 	const [challengeTimeLeft, setChallengeTimeLeft] = useState(3);
-	const [challengeResult, setChallengeResult] = useState<{show: boolean, score: number, total: number}>({show: false, score: 0, total: 0});
+	const [challengeResult, setChallengeResult] = useState<{show: boolean, score: number, total: number, timeMs?: number}>({show: false, score: 0, total: 0, timeMs: 0});
 	const [challengeDifficulty, setChallengeDifficulty] = useState<'high' | 'extreme'>('extreme');
 	const [copySuccess, setCopySuccess] = useState(false);
+    const [challengeStartTime, setChallengeStartTime] = useState(0);
+    const [guestName, setGuestName] = useState("");
 
 	const [isPronunciationListening, setIsPronunciationListening] = useState(false);
 	const [pronunciationStatus, setPronunciationStatus] = useState('');
@@ -1348,7 +1460,29 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	const setupChallengeRound = (roundIdx: number, currentScore: number, wList = challengeWords) => {
 		if (roundIdx >= wList.length) {
 			setChallengeActive(false);
-			setChallengeResult({ show: true, score: currentScore, total: wList.length });
+            const timeMs = challengeStartTime > 0 ? Date.now() - challengeStartTime : 0;
+			setChallengeResult({ show: true, score: currentScore, total: wList.length, timeMs });
+            
+            // Auto submit score
+            const saveRecord = async () => {
+                try {
+                    await fetch('/api/toeic/speed-challenge', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            guestName: session ? null : (guestName.trim() || 'Người chơi Ẩn Danh'),
+                            topicTitle: selectedTopicTitle,
+                            topicSlug: selectedTopic,
+                            difficulty: challengeDifficulty,
+                            score: currentScore,
+                            total: wList.length,
+                            timeMs
+                        })
+                    });
+                } catch(e) {}
+            };
+            saveRecord();
+            
 			return;
 		}
 		const tWord = wList[roundIdx];
@@ -1365,7 +1499,8 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setChallengeWords(shuffled);
 		setChallengeRound(0);
 		setChallengeScore(0);
-		setChallengeResult({ show: false, score: 0, total: 0 });
+		setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 });
+        setChallengeStartTime(Date.now());
 		setupChallengeRound(0, 0, shuffled);
 		setChallengeActive(true);
 	};
@@ -1943,7 +2078,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									<h3 className="text-xl font-black text-slate-800 mb-2">Hãy chuẩn bị kỹ trước khi tham gia!</h3>
 									<p className="text-slate-500 mb-6 font-medium">Chọn tốc độ ghi nhớ phù hợp với khả năng của bạn trước khi bắt đầu.</p>
 									
-                                    <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+									<div className="flex flex-wrap items-center justify-center gap-4 mb-8">
                                         <button 
                                             onClick={() => setChallengeDifficulty('high')}
                                             className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'high' ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-indigo-300 hover:text-indigo-500'}`}
@@ -1959,6 +2094,18 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                                             <div className="text-[12px] opacity-80 font-medium">(3 giây / từ)</div>
                                         </button>
                                     </div>
+
+                                    {!session && (
+                                        <div className="max-w-sm mx-auto mb-6">
+                                            <input 
+                                                type="text" 
+                                                value={guestName} 
+                                                onChange={e => setGuestName(e.target.value)} 
+                                                placeholder="Nhập tên của bạn để lên bảng vàng" 
+                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-medium text-center focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all bg-white"
+                                            />
+                                        </div>
+                                    )}
 
 									<div className="block mb-5">
 										<button type="button" onClick={handleStartChallenge} className="bg-indigo-600 text-white font-bold text-lg px-8 py-3.5 rounded-full md:hover:bg-indigo-700 md:hover:shadow-lg transition-all active:scale-95 active:bg-indigo-800 cursor-pointer focus:outline-none touch-manipulation select-none">
@@ -2048,7 +2195,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 								<button onClick={handleStartChallenge} className="bg-white text-indigo-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
 									Làm Lại
 								</button>
-								<button onClick={() => { setChallengeResult({ show: false, score: 0, total: 0 }); setChallengeExpanded(false); }} className="bg-indigo-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-indigo-900 transition-all w-full sm:w-auto cursor-pointer">
+								<button onClick={() => { setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 }); setChallengeExpanded(false); }} className="bg-indigo-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-indigo-900 transition-all w-full sm:w-auto cursor-pointer">
 									Quay Lại Học Từ
 								</button>
 							</div>
