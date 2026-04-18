@@ -27,6 +27,7 @@ interface ToeicLesson {
   title: string
   order: number
   content: string | null
+  directionAudioUrl?: string | null
   accessTier: 'FREE' | 'PRO' | 'ULTRA'
   theoryAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   explanationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
@@ -64,7 +65,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isTestCompleted, setIsTestCompleted] = useState(false)
   const [lessonStarted, setLessonStarted] = useState(false)
+  const [isPlayingDirections, setIsPlayingDirections] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
+  const directionAudioRef = useRef<HTMLAudioElement>(null)
   const { data: session, status } = useSession()
   const [isSyncing, setIsSyncing] = useState(false)
   const router = useRouter()
@@ -92,6 +95,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           setElapsedTime(0)
           setIsTestCompleted(false)
           setLessonStarted(false)
+          setIsPlayingDirections(false)
         }
       } catch (error) {
         console.error(error)
@@ -548,6 +552,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setElapsedTime(0)
                   setIsTestCompleted(false)
                   setLessonStarted(false)
+                  setIsPlayingDirections(false)
                   setIsMobileSidebarOpen(false)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
@@ -742,7 +747,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             <button onClick={() => {
                                 setLessonStarted(true);
                                 setTimerStartTime(Date.now());
-                                if (audioRef.current) {
+                                if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
+                                    setIsPlayingDirections(true);
+                                    directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
+                                } else if (audioRef.current) {
                                     audioRef.current.play().catch(e => console.error("Audio autoplay blocked", e));
                                 }
                             }} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
@@ -751,8 +759,60 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         </div>
                       ) : (
                         <>
-                          <AnimatePresence mode="wait">
-                            {(() => {
+                          <audio 
+                              ref={directionAudioRef} 
+                              src={currentLesson.directionAudioUrl || undefined} 
+                              onEnded={() => {
+                                 setIsPlayingDirections(false);
+                                 if (audioRef.current) audioRef.current.play().catch(console.error);
+                              }} 
+                              className="hidden" 
+                          />
+                          {isPlayingDirections ? (
+                              <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
+                                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200">
+                                     <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                  </div>
+                                  <h3 className="text-2xl font-black text-slate-800 mb-2">Đang phát Hướng Dẫn (Directions)</h3>
+                                  <p className="text-sm text-slate-500 mb-8 font-medium">Hãy tranh thủ thời gian "vàng" này lướt nhanh qua các hình ảnh hoặc câu hỏi bên dưới.</p>
+                                  
+                                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-left">
+                                     {currentLesson.questions.map((q, idx) => (
+                                        <div key={q.id} className="relative flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all group">
+                                            <div className="absolute top-2 left-2 bg-[#14532d] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
+                                                <span>Câu {idx + 1}</span>
+                                            </div>
+                                            {q.imageUrl ? (
+                                                <div className="aspect-[4/3] bg-slate-50 relative border-b border-slate-100">
+                                                    <img src={q.imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-contain p-1" />
+                                                </div>
+                                            ) : (
+                                                <div className="p-4 pt-10 text-sm text-slate-700 font-medium line-clamp-4 bg-slate-50/50">
+                                                    {q.question.replace(/^(?:Câu|Question)\s*\d+[:\-\.]?\s*/i, '')}
+                                                </div>
+                                            )}
+                                        </div>
+                                     ))}
+                                  </div>
+                                  <button 
+                                      onClick={() => {
+                                         if (directionAudioRef.current) {
+                                             directionAudioRef.current.pause();
+                                             directionAudioRef.current.currentTime = 0;
+                                         }
+                                         setIsPlayingDirections(false);
+                                         if (audioRef.current) audioRef.current.play().catch(console.error);
+                                      }}
+                                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wider text-sm mx-auto shadow-sm"
+                                  >
+                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
+                                     Skip Directions &rarr; Vào bài ngay
+                                  </button>
+                              </div>
+                          ) : (
+                            <>
+                              <AnimatePresence mode="wait">
+                                {(() => {
                               const q = currentLesson.questions[activeQuestionIndex]
                             if (!q) return null
                             const isShowingResult = showResults[q.id]
@@ -1079,6 +1139,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           </div>
                         )
                       })()}
+                          </>
+                        )}
                         </>
                       )}
                     </section>

@@ -687,6 +687,7 @@ model ToeicGrammarLesson {
   title                 String
   order                 Int // Lesson 1, 2, ...
   content               String?         @db.Text
+  directionAudioUrl     String?
   accessTier            AccessTier      @default(FREE)
   theoryAccessTier      AccessTier      @default(FREE)
   explanationAccessTier AccessTier      @default(FREE)

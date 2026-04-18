@@ -314,10 +314,12 @@ interface AdminToeicLesson {
   title: string
   order: number
   content: string | null
+  directionAudioUrl?: string | null
   accessTier: string
   theoryAccessTier: string
   explanationAccessTier: string
   translationAccessTier: string
+  bookmarkAccessTier: string
   _count?: { questions: number }
 }
 
@@ -809,7 +811,7 @@ export default function AdminDashboard() {
   const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING' | 'LISTENING'>('GRAMMAR')
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
-  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
+  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
   const [editingToeicLesson, setEditingToeicLesson] = useState<AdminToeicLesson | null>(null)
   const [showQuestionModal, setShowQuestionModal] = useState(false)
   const [questionForm, setQuestionForm] = useState({
@@ -1788,7 +1790,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save lesson')
       toast.success(editingToeicLesson ? 'Lesson updated successfully' : 'Lesson created successfully')
       setShowLessonModal(false)
-      setLessonForm({ title: '', order: 0, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
+      setLessonForm({ title: '', order: 0, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
       setEditingToeicLesson(null)
       fetchToeicLessons(selectedToeicTopic.id)
     } catch (err) {
@@ -4072,7 +4074,7 @@ export default function AdminDashboard() {
                 {selectedToeicTopic && (
                   <button
                     onClick={() => {
-                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
@@ -4109,7 +4111,7 @@ export default function AdminDashboard() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || '', explanationAccessTier: (lesson as any).explanationAccessTier || '', translationAccessTier: (lesson as any).translationAccessTier || '', bookmarkAccessTier: (lesson as any).bookmarkAccessTier || '' })
+                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', directionAudioUrl: lesson.directionAudioUrl || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || '', explanationAccessTier: (lesson as any).explanationAccessTier || '', translationAccessTier: (lesson as any).translationAccessTier || '', bookmarkAccessTier: (lesson as any).bookmarkAccessTier || '' })
                             setEditingToeicLesson(lesson)
                             setShowLessonModal(true)
                           }}
@@ -7793,6 +7795,17 @@ export default function AdminDashboard() {
                         className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
                       />
                     </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Direction Audio URL (Toàn Bài / Part 1, 2, 3, 4)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., https://pub-xxx.r2.dev/listening-direction.mp3"
+                      value={lessonForm.directionAudioUrl || ''}
+                      onChange={(e) => setLessonForm({ ...lessonForm, directionAudioUrl: e.target.value })}
+                      className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d]"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Dùng để học viên nghe hướng dẫn và đọc trước câu hỏi Part 1, Part 3, Part 4.</p>
                   </div>
                   <div className="grid grid-cols-5 gap-4">
                     <div className="col-span-1">
