@@ -1617,7 +1617,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save topic')
       toast.success(editingToeicTopic ? 'Topic updated successfully' : 'Topic created successfully')
       setShowTopicModal(false)
-      setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: 5 })
+      setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: toeicPracticeSubtab === 'LISTENING' ? 1 : 5 })
       setEditingToeicTopic(null)
       fetchToeicTopics()
     } catch (err) {
@@ -3838,7 +3838,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => {
-                  setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: 5 })
+                  setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: toeicPracticeSubtab === 'LISTENING' ? 1 : 5 })
                   setEditingToeicTopic(null)
                   setShowTopicModal(true)
                 }}
@@ -7533,17 +7533,28 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {topicForm.type === 'READING' && (
+                {(topicForm.type === 'READING' || topicForm.type === 'LISTENING') && (
                   <div className="mt-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Select Part</label>
                     <select
-                      value={topicForm.part || 5}
+                      value={topicForm.part || (topicForm.type === 'LISTENING' ? 1 : 5)}
                       onChange={(e) => setTopicForm({ ...topicForm, part: parseInt(e.target.value, 10) })}
                       className="w-full rounded-lg border-gray-300 focus:border-[#14532d] focus:ring-[#14532d] p-2 border"
                     >
-                      <option value={5}>Part 5 (Incomplete Sentences)</option>
-                      <option value={6}>Part 6 (Text Completion)</option>
-                      <option value={7}>Part 7 (Reading Comprehension)</option>
+                      {topicForm.type === 'READING' ? (
+                        <>
+                          <option value={5}>Part 5 (Incomplete Sentences)</option>
+                          <option value={6}>Part 6 (Text Completion)</option>
+                          <option value={7}>Part 7 (Reading Comprehension)</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value={1}>Part 1 (Photographs)</option>
+                          <option value={2}>Part 2 (Question-Response)</option>
+                          <option value={3}>Part 3 (Conversations)</option>
+                          <option value={4}>Part 4 (Short Talks)</option>
+                        </>
+                      )}
                     </select>
                   </div>
                 )}

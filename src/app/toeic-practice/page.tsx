@@ -320,8 +320,12 @@ function ToeicPracticeContent() {
 						openLoginModal(`${pathname}?${params.toString()}`, allowGuest);
 					 }
 				 }} />}
-				{tab === "listening" && <ToeicListeningTab onPracticeClick={() => {
-					 if (!session) openLoginModal(`${pathname}?tab=listening`);
+				{tab === "listening" && <ToeicListeningTab onPracticeClick={(slug) => {
+					 if (!session) {
+						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
+					 } else if (slug) {
+						 router.push(`/toeic-practice/grammar/${slug}`);
+					 }
 				 }} />}
 				{tab === "reading" && <ToeicReadingTab onPracticeClick={(slug) => {
 					 if (!session) {
@@ -1975,13 +1979,78 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	);
 }
 
-function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void }) {
-	const topics = [
-		{ title: "Part 1: Photographs", subtitle: "Mô tả tranh", count: "10 bài" },
-		{ title: "Part 2: Question-Response", subtitle: "Hỏi đáp", count: "10 bài" },
-		{ title: "Part 3: Conversations", subtitle: "Hội thoại ngắn", count: "10 bài" },
-		{ title: "Part 4: Short Talks", subtitle: "Bài nói ngắn", count: "10 bài" },
+function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+	const [topics, setTopics] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [selectedPart, setSelectedPart] = useState<number | null>(null);
+
+	useEffect(() => {
+		const fetchTopics = async () => {
+			try {
+				const res = await fetch('/api/toeic/grammar?type=LISTENING');
+				if (res.ok) {
+					const data = await res.json();
+					setTopics(data);
+				}
+			} catch (error) {
+				console.error('Failed to fetch listening topics:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchTopics();
+	}, []);
+
+	if (loading) {
+		return <div className="py-12 text-center text-gray-500 italic">Đang tải các bài nghe...</div>;
+	}
+
+	const parts = [
+		{ id: 1, title: "Part 1: Photographs", subtitle: "Mô tả tranh" },
+		{ id: 2, title: "Part 2: Question-Response", subtitle: "Hỏi đáp" },
+		{ id: 3, title: "Part 3: Conversations", subtitle: "Hội thoại ngắn" },
+		{ id: 4, title: "Part 4: Short Talks", subtitle: "Bài nói ngắn" },
 	];
+
+	if (selectedPart) {
+		const filteredTopics = topics.filter(t => t.part === selectedPart);
+		const currentPartInfo = parts.find(p => p.id === selectedPart);
+
+		return (
+			<div>
+				<div className="flex items-center gap-3 mb-6">
+					<button
+						onClick={() => setSelectedPart(null)}
+						className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-1"
+					>
+						← Quay lại
+					</button>
+					<h2 className="text-lg font-bold text-green-900 flex items-center gap-2">
+						{currentPartInfo?.title}
+					</h2>
+				</div>
+				
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+					{filteredTopics.length === 0 ? (
+						<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
+							Chưa có bài tập nào trong phần này được cập nhật.
+						</div>
+					) : (
+						filteredTopics.map((topic) => (
+							<TopicCard
+								key={topic.id}
+								title={topic.title}
+								subtitle={topic.subtitle}
+								badgeText={`${topic._count?.lessons || 0} Bài tập`}
+								onClick={() => onPracticeClick(topic.slug)}
+							/>
+						))
+					)}
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
@@ -1989,15 +2058,20 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: () => void })
 				Các Phần Thi Listening
 			</h2>
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-				{topics.map((t) => (
-					<TopicCard
-						key={t.title}
-						title={t.title}
-						subtitle={t.subtitle}
-						badgeText={t.count.replace(' bài', ' Bài tập')}
-						onClick={onPracticeClick}
-					/>
-				))}
+				{parts.map((p) => {
+					const topicsInPart = topics.filter(t => t.part === p.id);
+					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
+					
+					return (
+						<TopicCard
+							key={p.id}
+							title={p.title}
+							subtitle={p.subtitle}
+							badgeText={`${totalLessons} Bài tập`}
+							onClick={() => setSelectedPart(p.id)}
+						/>
+					);
+				})}
 			</div>
 		</div>
 	);
