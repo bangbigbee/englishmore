@@ -167,10 +167,11 @@ const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: strin
 
 const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress, packageType, disableFlip }: any) => {
 	const isCompactType = ['vocabulary', 'grammar', 'reading', 'listening', 'test'].includes(type);
+    const isTestTopic = type === 'test';
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
 	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
 	
-	const minHeightClass = isCompactType ? 'min-h-[95px] sm:min-h-[105px]' : 'min-h-[220px]';
+	const minHeightClass = isCompactType ? (isTestTopic ? 'min-h-[85px] sm:min-h-[90px]' : 'min-h-[95px] sm:min-h-[105px]') : 'min-h-[220px]';
 	const paddingClass = isCompactType ? 'p-4 sm:p-5' : 'p-8';
 
     const theme = {
@@ -189,24 +190,31 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 			onClick={onClick}
 			className={`relative w-full group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(20,83,45,0.12)]`}
 		>
-            {packageType && (
+            {isTestTopic && displaySubtitle && (
+                <div className="absolute top-0 right-0 rounded-bl-[14px] px-3 py-1 bg-[#14532d]/5 text-[#14532d] text-[10px] sm:text-[11px] font-bold border-b border-l border-[#14532d]/10 shadow-sm z-20 pointer-events-none uppercase tracking-wide">
+                    {displaySubtitle.replace('Thuộc bộ đề: ', '')}
+                </div>
+            )}
+            {packageType && !isTestTopic && (
                 <PackageBadge pkg={packageType} className="absolute top-0 right-0 rounded-bl-[14px] rounded-tr-xl border-b border-l border-amber-200/30 shadow-sm z-20 pointer-events-none" />
             )}
 			<div className="relative z-10 flex-1 mt-2 flex flex-col">
                 {isCompactType ? (
-					<div className="perspective-[1000px] mb-2 w-full flex-1 flex flex-col justify-center">
+					<div className={`perspective-[1000px] mb-2 w-full flex-1 flex flex-col justify-center ${isTestTopic ? 'mt-3 sm:mt-1' : ''}`}>
 						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${(displaySubtitle && !disableFlip) ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
                             {/* Front side (English/Main) */}
 							<div className="flex flex-col gap-2 [backface-visibility:hidden]">
                                 <div className="flex items-center gap-2.5">
-                                    <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
-                                        {(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
-                                    </span>
-                                    <h3 className={`font-bold text-[14px] sm:text-[15px] transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
+                                    {!isTestTopic && (
+                                        <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
+                                            {(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
+                                        </span>
+                                    )}
+                                    <h3 className={`font-bold ${isTestTopic ? 'text-[17px] sm:text-[19px] text-[#14532d]' : 'text-[14px] sm:text-[15px]'} transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
                                         {type === 'vocabulary' ? displayTitle : title}
                                     </h3>
                                 </div>
-                                {disableFlip && displaySubtitle && (
+                                {disableFlip && displaySubtitle && !isTestTopic && (
                                     <p className="text-[12px] text-slate-500 font-medium ml-[34px] line-clamp-1 group-hover:text-[#14532d] transition-colors">
                                         {displaySubtitle}
                                     </p>
@@ -2036,7 +2044,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 				Các Phần Thi Listening
 			</h2>
 
-			<div className="flex w-full overflow-x-auto gap-2 md:gap-4 mb-8 pb-4 border-b border-gray-200 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+			<div className="flex w-full overflow-x-auto gap-2 md:gap-3 mb-8 pb-4 border-b border-gray-100 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				{parts.map((p) => {
 					const topicsInPart = topics.filter(t => t.part === p.id);
 					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
@@ -2047,17 +2055,17 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 						<button
 							key={p.id}
 							onClick={() => setSelectedPart(p.id)}
-							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] bg-white ${
+							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] ${
 								isActive 
-									? 'border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)]' 
-									: 'border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+									? 'bg-white border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)] z-10' 
+									: 'bg-[#14532d]/[0.03] border-transparent text-[#14532d]/60 hover:text-[#14532d]/80 hover:bg-[#14532d]/6'
 							}`}
 						>
-							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-gray-200 text-gray-500 group-hover:bg-gray-300'}`}>
+							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
 								P{p.id}
 							</div>
 							{shortTitle}
-							<span className={`ml-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-gray-100 text-gray-400'}`}>
+							<span className={`ml-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-colors ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-white text-[#14532d]/50 group-hover:text-[#14532d]/70 shadow-sm'}`}>
 								{totalLessons}
 							</span>
 						</button>
@@ -2137,7 +2145,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 				Các Phần Thi Reading
 			</h2>
 
-			<div className="flex w-full overflow-x-auto gap-2 md:gap-4 mb-8 pb-4 border-b border-gray-200 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+			<div className="flex w-full overflow-x-auto gap-2 md:gap-3 mb-8 pb-4 border-b border-gray-100 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				{parts.map((p) => {
 					const topicsInPart = topics.filter(t => t.part === p.id);
 					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
@@ -2148,17 +2156,17 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 						<button
 							key={p.id}
 							onClick={() => setSelectedPart(p.id)}
-							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] bg-white ${
+							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] ${
 								isActive 
-									? 'border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)]' 
-									: 'border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+									? 'bg-white border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)] z-10' 
+									: 'bg-[#14532d]/[0.03] border-transparent text-[#14532d]/60 hover:text-[#14532d]/80 hover:bg-[#14532d]/6'
 							}`}
 						>
-							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-gray-200 text-gray-500 group-hover:bg-gray-300'}`}>
+							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
 								P{p.id}
 							</div>
 							{shortTitle}
-							<span className={`ml-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-gray-100 text-gray-400'}`}>
+							<span className={`ml-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-colors ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-white text-[#14532d]/50 group-hover:text-[#14532d]/70 shadow-sm'}`}>
 								{totalLessons}
 							</span>
 						</button>
