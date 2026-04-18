@@ -1179,7 +1179,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	};
 
 	const moveCard = (dir: 'prev' | 'next') => {
-		playSound(dir === 'next' ? 'click-next.mp3' : 'click-back.mp3');
+		playSound('bubble.mp3');
 		setIsFlipped(false);
 		setShowExampleVi(false);
 		setPronunciationStatus('');
