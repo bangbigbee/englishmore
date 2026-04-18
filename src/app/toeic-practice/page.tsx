@@ -422,7 +422,7 @@ function ToeicPracticeContent() {
 				 }} />}
 			</div>
 
-            {tab === "home" && <SpeedChallengeLeaderboard />}
+            {tab === "home" && <SpeedChallengeLeaderboard onPlayClick={() => handleTabChange('vocabulary')} />}
 
 			<footer className="mt-20 pt-8 pb-4 border-t border-slate-200 text-center text-sm font-medium text-slate-500 opacity-80">
 				<p className="mb-2 uppercase tracking-wider text-[11px] font-bold text-[#14532d]">ToeicMore &copy; {new Date().getFullYear()}</p>
@@ -434,7 +434,7 @@ function ToeicPracticeContent() {
 	);
 }
 
-function SpeedChallengeLeaderboard() {
+function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }) {
     const [leaders, setLeaders] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 
@@ -449,10 +449,18 @@ function SpeedChallengeLeaderboard() {
 
     return (
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
-            <h3 className="text-2xl font-black text-[#14532d] mb-6 flex items-center gap-3">
-                <span className="text-3xl drop-shadow-sm">🏆</span>
-                Bảng Vàng Speed Challenge
-            </h3>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <h3 className="text-2xl font-black text-[#14532d] flex items-center gap-3">
+                    <span className="text-3xl drop-shadow-sm">🏆</span>
+                    Bảng Vàng Speed Challenge
+                </h3>
+                {leaders.length > 0 && onPlayClick && (
+                    <button onClick={onPlayClick} className="bg-amber-400 hover:bg-amber-300 text-[#14532d] px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer">
+                        <span className="text-lg">🔥</span>
+                        Tham Gia Ngay
+                    </button>
+                )}
+            </div>
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-amber-200 overflow-hidden relative">
                 {/* Decorative background elements matching the gold/green theme */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50 pointer-events-none"></div>
@@ -464,7 +472,13 @@ function SpeedChallengeLeaderboard() {
                             <span className="text-4xl">🏆</span>
                         </div>
                         <h4 className="text-lg font-bold text-[#14532d] mb-2">Chưa có kỷ lục nào được thiết lập</h4>
-                        <p className="text-slate-500 font-medium text-sm max-w-sm">Hãy là người đầu tiên tham gia Speed Challenge và ghi tên mình lên Bảng Vàng danh giá này nhé!</p>
+                        <p className="text-slate-500 font-medium text-sm max-w-sm mb-6">Hãy là người đầu tiên tham gia Speed Challenge và ghi tên mình lên Bảng Vàng danh giá này nhé!</p>
+                        {onPlayClick && (
+                            <button onClick={onPlayClick} className="bg-amber-400 hover:bg-amber-300 text-[#14532d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer">
+                                <span className="text-xl">🔥</span>
+                                Chơi Ngay
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <>
