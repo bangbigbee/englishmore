@@ -1947,7 +1947,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                                             }} 
                                             className="w-full bg-amber-400 hover:bg-amber-300 text-indigo-900 px-4 py-3.5 rounded-xl text-base font-black transition-colors cursor-pointer shadow-lg active:scale-95"
                                         >
-                                            {copySuccess ? 'Đã Copy Link' : 'Khắc Chiến'}
+                                            {copySuccess ? 'Đã Copy Link' : 'Chia sẻ'}
                                         </button>
                                     </div>
                                 </div>
