@@ -1471,7 +1471,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             guestName: session ? null : (guestName.trim() || 'Người chơi Ẩn Danh'),
-                            topicTitle: selectedTopicTitle,
+                            topicTitle: selectedTopic ? selectedTopic.replace(/^Chủ đề:\s*/i, '').split(' - ')[0].trim() : 'Từ vựng',
                             topicSlug: selectedTopic,
                             difficulty: challengeDifficulty,
                             score: currentScore,
