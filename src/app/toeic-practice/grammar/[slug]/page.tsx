@@ -299,6 +299,20 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     return () => clearInterval(timer)
   }, [timerStartTime, isTestCompleted, topic?.type, lessonStarted])
 
+  // Auto-play audio when navigating to a new question if in LISTENING mode
+  useEffect(() => {
+    if (lessonStarted && topic?.type === 'LISTENING' && currentLesson?.questions[activeQuestionIndex]?.audioUrl) {
+       if (audioRef.current) {
+           const timeoutId = setTimeout(() => {
+             if (audioRef.current && audioRef.current.paused) {
+                 audioRef.current.play().catch(() => {});
+             }
+           }, 100);
+           return () => clearTimeout(timeoutId);
+       }
+    }
+  }, [activeQuestionIndex, lessonStarted, topic?.type, currentLesson]);
+
   const handleSelectOption = async (questionId: string, option: string) => {
     if (showResults[questionId]) return
     setUserAnswers(prev => ({ ...prev, [questionId]: option }))
@@ -1176,7 +1190,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 return (
                                   <button 
                                     key={idx}
-                                    onClick={() => setActiveQuestionIndex(idx)}
+                                    onClick={() => {
+                                        if (idx === activeQuestionIndex) return;
+                                        const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
+                                        if (isAudioPlaying) {
+                                            if (!confirm("Audio vẫn đang phát. Bạn chắc chắn muốn chuyển sang câu khác?")) return;
+                                        }
+                                        setActiveQuestionIndex(idx);
+                                    }}
                                     className={`w-6 h-6 sm:w-7 sm:h-7 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
                                   >
                                     {idx + 1}
