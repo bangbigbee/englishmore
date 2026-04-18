@@ -1730,6 +1730,31 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleUploadMedia = async (event: React.ChangeEvent<HTMLInputElement>, field: 'audioUrl' | 'imageUrl') => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      toast.loading(`Uploading ${field.replace('Url', '')}...`, { id: 'media-upload' })
+      const res = await fetch('/api/admin/upload/audio', {
+        method: 'POST',
+        body: formData
+      })
+      const data = await res.json()
+      if (data.success) {
+        setQuestionForm(prev => ({ ...prev, [field]: data.url }))
+        toast.success('Upload complete!', { id: 'media-upload' })
+      } else {
+        throw new Error(data.error)
+      }
+    } catch (error) {
+      toast.error('Upload failed: ' + String(error), { id: 'media-upload' })
+    }
+  }
+
   const deleteToeicQuestion = async (questionId: string) => {
     if (!confirm('Are you sure you want to delete this question?')) return
     try {
