@@ -1157,7 +1157,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	};
 
 	const moveCard = (dir: 'prev' | 'next') => {
-		playSound('transition-sound.mp3');
+		playSound(dir === 'next' ? 'click-next.mp3' : 'click-back.mp3');
 		setIsFlipped(false);
 		setShowExampleVi(false);
 		setPronunciationStatus('');
@@ -1184,8 +1184,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		}
 		
 		playSound(
-			tag === 'bookmarked' ? 'bookmark-sound.mp3' :
-			tag === 'learned' ? 'click-learned.mp3' : 'click-tough.mp3'
+			tag === 'bookmarked' ? 'bookmark-sound.mp3' : 'bubble.mp3'
 		);
 		
 		const current = vocabTags[wordId] || {};
