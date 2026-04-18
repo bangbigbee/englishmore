@@ -700,12 +700,19 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       {/* Global Persistent Audio Player */}
                       {(() => {
                         let activeAudioUrl = null;
+                        // Tìm ngược lại từ câu hiện tại để lấy Audio gần nhất
                         for (let i = activeQuestionIndex; i >= 0; i--) {
                           if (currentLesson.questions[i].audioUrl) {
                             activeAudioUrl = currentLesson.questions[i].audioUrl;
                             break;
                           }
                         }
+                        // Nếu vẫn không thấy, quét qua cả bài và lấy cái audio đầu tiên có thể tìm được
+                        if (!activeAudioUrl) {
+                          const firstHasAudio = currentLesson.questions.find(q => q.audioUrl);
+                          if (firstHasAudio) activeAudioUrl = firstHasAudio.audioUrl;
+                        }
+
                         return activeAudioUrl ? (
                           <div className="bg-white border-b-2 border-slate-100 p-3 mb-6 shadow-sm shadow-slate-100 flex flex-col items-center rounded-2xl sticky top-20 z-20">
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 leading-none">Audio Trải Dài</span>
