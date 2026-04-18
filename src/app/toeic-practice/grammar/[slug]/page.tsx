@@ -923,7 +923,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     src={q.imageUrl} 
                                     alt="Part" 
                                     onClick={() => setIsZoomedImage(!isZoomedImage)}
-                                    className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-[400px] cursor-zoom-in'}`} 
+                                    className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-[400px] max-h-[280px] md:max-h-[320px] w-auto cursor-zoom-in'}`} 
                                   />
                                 )}
                               </div>
