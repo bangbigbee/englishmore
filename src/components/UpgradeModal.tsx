@@ -335,7 +335,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           <div className="overflow-y-auto custom-scrollbar p-6 md:p-10">
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                Nâng Tầm Tiếng Anh Cùng <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span>
+                Nâng Tầm Tiếng Anh Cùng <span className="text-[#14532d]">Toeic</span><span className="text-[#ea980c]">More</span>
               </h2>
               <p className="text-slate-500 text-sm md:text-base">
                 Lựa chọn gói Premium phù hợp để mở khóa toàn bộ kho tàng bài tập độc quyền, giải thích cực kỳ chi tiết và tính năng chấm chữa AI thông minh.
@@ -361,7 +361,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   </li>
                   <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-600">Luyện đề TOEIC (Giới hạn 1 đề/ngày)</span>
+                    <span className="text-slate-600">Luyện đề TOEIC với các tính năng cơ bản</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -369,7 +369,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   </li>
                   <li className="flex items-start gap-3 opacity-40">
                     <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                    <span className="text-slate-500 line-through">Xem giải thích chi tiết cấu trúc TOEIC</span>
+                    <span className="text-slate-500 line-through">Xem đầy đủ giải thích chi tiết mẹo TOEIC</span>
                   </li>
                   <li className="flex items-start gap-3 opacity-40">
                     <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
@@ -481,6 +481,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
                     <span className="text-purple-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+                    <span className="text-purple-100/90 font-semibold text-amber-200">Truy cập toàn bộ kho tài liệu độc quyền</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />

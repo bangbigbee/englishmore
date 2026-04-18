@@ -1045,8 +1045,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         className={`ml-1 flex items-center gap-0.5 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-600 border border-orange-600 text-white shadow-sm' : 'bg-orange-50 border border-orange-200 text-orange-600 hover:bg-orange-100'}`}
                                       >
                                         Dịch nghĩa
-                                        {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <span className="">⭐</span>}
-                                        {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <span className="">⭐</span>}
+                                        {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                        {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-[0_0_3px_rgba(147,51,234,0.6)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                                       </button>
                                     )}
                                   </div>
