@@ -450,21 +450,19 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
     return (
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
             <div className="flex flex-col items-center justify-center text-center gap-1 mb-8">
-                <h3 className="text-2xl font-black text-[#14532d] flex items-center justify-center gap-3 mb-1.5">
-                    <span className="text-3xl drop-shadow-sm">🏆</span>
-                    Glossary Grandmaster
+                <h3 className="text-2xl font-black bg-gradient-to-r from-amber-500 to-emerald-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
+                    Glossary GrandMaster
                 </h3>
                 {leaders.length > 0 && leaders[0]?.topicSlug ? (
                     <Link 
                         href={`/toeic-practice?tab=vocabulary&slug=${leaders[0].topicSlug}&chal=1&diff=${leaders[0].difficulty}`} 
                         className="text-[14px] font-semibold text-[#14532d] hover:text-[#14532d]/80 transition-colors flex items-center justify-center gap-1.5 group"
                     >
-                        Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
-                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+                        SPEED CHALLENGE để trở thành Kiện Tướng Từ Vựng
                     </Link>
                 ) : (
                     <div className="text-[14px] font-semibold text-[#14532d]/90">
-                        Tham gia Speed Challenge để trở thành Đại Kiện Tướng Từ Vựng.
+                        SPEED CHALLENGE để trở thành Kiện Tướng Từ Vựng
                     </div>
                 )}
             </div>
@@ -492,11 +490,12 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                         <div className="overflow-x-auto relative z-10 hidden md:block">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="border-b-2 border-slate-100 text-slate-500 font-bold">
+                                    <tr className="border-b-2 border-slate-100 text-[#14532d]/70 font-semibold">
                                         <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
                                         <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Tên</th>
                                         <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chủ đề</th>
-                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Độ khó</th>
+                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Gói</th>
+                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Áp lực</th>
                                         <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm</th>
                                         <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]" title="Trung bình giây / 1 từ đúng">Tốc độ (s/từ)</th>
                                     </tr>
@@ -510,38 +509,34 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                                     window.location.href = `/toeic-practice?tab=vocabulary&slug=${leader.topicSlug}&chal=1&diff=${leader.difficulty}`;
                                                 }
                                             }}
-                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-amber-50/30 hover:bg-amber-50 cursor-pointer relative' : 'hover:bg-slate-50/80'}`}
+                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-amber-50/30 hover:bg-amber-50 cursor-pointer relative' : 'hover:bg-slate-50/50'}`}
                                             title={idx === 0 ? "Thách đấu kỷ lục gia Top 1" : undefined}
                                         >
                                             <td className="py-4 px-4 text-center">
                                                 {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
                                                 idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
                                                 idx === 2 ? <span className="text-2xl drop-shadow-sm" title="Top 3">🥉</span> : 
-                                                <span className="font-bold text-slate-400">#{idx + 1}</span>}
+                                                <span className="font-semibold text-[#14532d]/60">#{idx + 1}</span>}
                                             </td>
                                             <td className="py-4 px-4">
-                                                <div className={`font-bold ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
+                                                <div className={`text-[#14532d] ${idx < 3 ? 'font-bold text-[15px]' : 'font-medium'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
                                             </td>
-                                            <td className="py-4 px-4 text-sm font-medium text-slate-600 flex flex-col gap-1.5 items-start">
-                                                <span className="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-[12px] whitespace-nowrap">{leader.topicTitle}</span>
-                                                {leader.topicPackage && leader.topicPackage !== 'FREE' && leader.topicPackage !== 'BASIC' && (
-                                                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest ${leader.topicPackage === 'ULTRA' ? 'bg-amber-100 text-amber-700 border border-amber-200' : leader.topicPackage === 'PRO' ? 'bg-blue-100 text-blue-700 border border-blue-200' : leader.topicPackage === 'ADVANCED' ? 'bg-[#ea980c]/10 text-[#ea980c] border border-[#ea980c]/20' : leader.topicPackage === 'MIXED' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-600'}`}>{leader.topicPackage}</span>
-                                                )}
+                                            <td className="py-4 px-4 text-sm font-medium text-[#14532d]/90">
+                                                {leader.topicTitle}
                                             </td>
-                                            <td className="py-4 px-4">
-                                                {leader.difficulty === 'extreme' ? (
-                                                    <span className="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-rose-200">Extreme</span>
-                                                ) : (
-                                                    <span className="bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-indigo-200">High</span>
-                                                )}
+                                            <td className="py-4 px-4 text-[13px] font-medium text-[#14532d]/80 uppercase">
+                                                {leader.topicPackage || 'FREE'}
                                             </td>
-                                            <td className="py-4 px-4 text-center">
-                                                <span className="font-black text-[16px] text-slate-700">{leader.score}</span>
-                                                <span className="text-slate-400 text-xs mx-1">/</span>
-                                                <span className="font-bold text-slate-400 text-sm">{leader.total}</span>
+                                            <td className="py-4 px-4 text-[13px] font-medium text-[#14532d]/80 uppercase tracking-wide">
+                                                {leader.difficulty}
+                                            </td>
+                                            <td className="py-4 px-4 text-center text-[#14532d]">
+                                                <span className="font-semibold">{leader.score}</span>
+                                                <span className="text-[#14532d]/40 text-xs mx-1">/</span>
+                                                <span className="font-medium text-[#14532d]/70 text-sm">{leader.total}</span>
                                             </td>
                                             <td className="py-4 px-4 text-right">
-                                                <div className="font-bold text-[#14532d] font-mono tracking-tighter bg-green-50 px-3 py-1 rounded-lg inline-block border border-green-100">{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
+                                                <div className={`text-[#14532d] font-mono tracking-tighter ${idx < 3 ? 'font-bold text-[15px]' : 'font-semibold'}`}>{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
                                             </td>
                                         </tr>
                                     ))}
@@ -568,29 +563,25 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                         `#${idx + 1}`}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`font-bold truncate text-sm mb-0.5 ${idx < 3 ? 'text-amber-600' : 'text-[#14532d]'}`}>
+                                        <div className={`truncate text-[15px] mb-0.5 text-[#14532d] ${idx < 3 ? 'font-bold' : 'font-medium'}`}>
                                             {leader.user?.name || leader.guestName || "Ẩn danh"}
                                         </div>
-                                        <div className="text-[10px] text-slate-500 truncate flex items-center gap-1.5 flex-wrap mt-1">
-                                            <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold truncate max-w-[80px] block">{leader.topicTitle}</span>
+                                        <div className="text-[12px] font-medium text-[#14532d]/80 truncate flex items-center gap-1.5 flex-wrap mt-0.5">
+                                            <span className="truncate max-w-[120px] block">{leader.topicTitle}</span>
                                             
                                             {leader.topicPackage && leader.topicPackage !== 'FREE' && leader.topicPackage !== 'BASIC' && (
                                                 <>
-                                                    <span className="text-slate-300">•</span>
-                                                    <span className={`px-1.5 py-0.5 rounded font-bold uppercase tracking-widest ${leader.topicPackage === 'ULTRA' ? 'bg-amber-100 text-amber-700' : leader.topicPackage === 'PRO' ? 'bg-blue-100 text-blue-700' : leader.topicPackage === 'ADVANCED' ? 'bg-[#ea980c]/10 text-[#ea980c]' : leader.topicPackage === 'MIXED' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'}`}>{leader.topicPackage}</span>
+                                                    <span className="text-[#14532d]/30">•</span>
+                                                    <span className="uppercase">{leader.topicPackage}</span>
                                                 </>
                                             )}
-                                            <span className="text-slate-300">•</span>
-                                            {leader.difficulty === 'extreme' ? (
-                                                <span className="text-rose-600 font-bold uppercase">EXT</span>
-                                            ) : (
-                                                <span className="text-indigo-600 font-bold uppercase">HIGH</span>
-                                            )}
+                                            <span className="text-[#14532d]/30">•</span>
+                                            <span className="uppercase">{leader.difficulty}</span>
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <div className="text-[13px] font-black text-slate-700">{leader.score}<span className="text-[10px] text-slate-400 font-bold ml-0.5">/{leader.total}</span></div>
-                                        <div className="text-[11px] font-bold text-[#14532d] bg-green-50 px-1.5 rounded border border-green-100 font-mono mt-0.5">{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s<span className="text-[9px] text-[#14532d]/60 font-sans ml-0.5">/từ</span></div>
+                                        <div className="text-[13px] font-semibold text-[#14532d]">{leader.score}<span className="text-[10px] text-[#14532d]/60 font-medium ml-0.5">/{leader.total}</span></div>
+                                        <div className={`text-[12px] text-[#14532d] font-mono mt-0.5 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
                                     </div>
                                 </div>
                             ))}
