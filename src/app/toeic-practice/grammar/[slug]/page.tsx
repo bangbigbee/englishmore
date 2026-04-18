@@ -16,8 +16,10 @@ interface ToeicQuestion {
   optionC: string
   optionD: string | null
   correctOption: string
-  explanation: string | null
   translation: string | null
+  audioUrl: string | null
+  imageUrl: string | null
+  explanation: string | null
 }
 
 interface ToeicLesson {
@@ -49,6 +51,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [loading, setLoading] = useState(true)
   
   // Quiz states
+  const [listeningMode, setListeningMode] = useState<'practice' | 'actual'>('practice')
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
@@ -600,6 +603,22 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         {currentLesson.accessTier === 'PRO' && <svg className="w-6 h-6 text-amber-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
                         {currentLesson.accessTier === 'ULTRA' && <svg className="w-6 h-6 text-purple-700 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                       </h2>
+                      {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && currentLesson.questions.length > 0 && (
+                        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg self-start">
+                          <button 
+                            onClick={() => setListeningMode('practice')}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${listeningMode === 'practice' ? 'bg-white shadow text-[#14532d]' : 'text-slate-500 hover:text-slate-700'}`}
+                          >
+                            Practice
+                          </button>
+                          <button 
+                            onClick={() => setListeningMode('actual')}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${listeningMode === 'actual' ? 'bg-white shadow text-rose-600' : 'text-slate-500 hover:text-slate-700'}`}
+                          >
+                            Actual
+                          </button>
+                        </div>
+                      )}
                       {!isTestCompleted && timerStartTime !== null && (
                         <span className="ml-2 tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
                           {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
@@ -703,7 +722,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 />
                               </div>
 
-                              <div className="mb-8">
+                              <div className="mb-8 flex flex-col items-center">
+                                {q.imageUrl && (
+                                  <img src={q.imageUrl} alt="Part 1" className="max-w-full md:max-w-[400px] object-contain rounded-xl border border-slate-200 shadow-sm mb-6" />
+                                )}
+                                {q.audioUrl && (
+                                  <audio src={q.audioUrl} controls className="w-full max-w-sm mb-6 bg-slate-50 rounded-full" />
+                                )}
                                 <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug text-center">
                                   {q.question}
                                 </p>
@@ -717,6 +742,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   { label: 'D', value: q.optionD },
                                 ].map((opt) => {
                                   if (opt.label === 'D' && !opt.value) return null
+                                  
+                                  const shouldHideValue = topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual' && !isShowingResult;
                                   
                                   let buttonClass = "flex items-center gap-3 md:gap-4 px-4 py-3 md:py-3.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
                                   
@@ -750,7 +777,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       }`}>
                                         {opt.label}
                                       </span>
-                                      <span className="font-bold text-[15px] md:text-base leading-tight md:leading-normal">{opt.value}</span>
+                                      <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
+                                        {opt.value || 'Option'}
+                                      </span>
                                     </button>
                                   )
                                 })}
