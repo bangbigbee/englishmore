@@ -1595,15 +1595,29 @@ export default function AdminDashboard() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
         
-        // Extract first number from filename mapping to Question Number
-        const numMatch = file.name.match(/\d+/)
-        if (!numMatch) {
+        const numbers = file.name.match(/\d+/g)
+        if (!numbers) {
           toast.error(`File ${file.name} không chứa số câu (VD: 1.jpg). Bỏ qua.`)
           failCount++
           continue
         }
         
-        const qNum = parseInt(numMatch[0], 10)
+        // Thông minh lấy số: Lấy số cuối cùng làm ưu tiên (VD: T1-06 -> 06)
+        let qNumStr = numbers[numbers.length - 1]
+        
+        // Nếu có chữ q, câu, question đứng trước số -> Lấy số đó (VD: q1_v2.jpg -> 1)
+        const qMatch = file.name.match(/(?:q|câu|cau|question)[-_\s]*(\d+)/i)
+        if (qMatch) {
+            qNumStr = qMatch[1]
+        }
+        
+        // Nếu có format T1-06, Test1-06 -> Lấy số sau dấu gạch
+        const tMatch = file.name.match(/(?:T|Test)\s*\d+[-_](\d+)/i)
+        if (tMatch) {
+            qNumStr = tMatch[1]
+        }
+
+        const qNum = parseInt(qNumStr, 10)
         
         // Find matching question
         let matchedIndex = toeicQuestions.findIndex(q => {

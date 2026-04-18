@@ -41,8 +41,7 @@ export async function POST(req: NextRequest) {
       Bucket: process.env.R2_BUCKET_NAME,
       Key: fileName,
       Body: buffer,
-      ContentType: file.type, 
-      ACL: 'public-read' // Cấp quyền đọc file ở public (chỉ đọc, không cho sửa)
+      ContentType: file.type
     });
 
     await s3Client.send(uploadCommand);
