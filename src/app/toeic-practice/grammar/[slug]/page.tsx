@@ -38,6 +38,7 @@ interface ToeicLesson {
 interface ToeicTopic {
   id: string
   type: string
+  part: number | null
   title: string
   subtitle: string | null
   slug: string
