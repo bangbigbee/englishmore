@@ -158,10 +158,24 @@ const getTopicVietnamese = (en: string): string => {
 	return "";
 };
 
+const translatePackage = (pkg?: string) => {
+	if (!pkg || pkg.toUpperCase() === 'FREE' || pkg.toUpperCase() === 'BASIC') return 'Cơ bản';
+	if (pkg.toUpperCase() === 'ADVANCED') return 'Nâng cao';
+	if (pkg.toUpperCase() === 'MIXED') return 'Hỗn hợp';
+	return pkg;
+};
+
+const translateDifficulty = (diff?: string) => {
+	if (!diff) return '';
+	if (diff.toUpperCase() === 'EXTREME') return 'Cực cao';
+	if (diff.toUpperCase() === 'HIGH') return 'Cao';
+	return diff;
+};
+
 const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: string }) => {
-	if (pkg === 'BASIC') return (<span className={`inline-flex items-center px-2 py-[3px] bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100 ${className}`}>Cơ bản</span>);
-	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-amber-50 text-[#ea980c] text-[10px] font-medium border border-amber-100 ${className}`}>Nâng cao</span>);
-	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-fuchsia-50 text-[#6b21a8] text-[10px] font-medium border border-fuchsia-100 ${className}`}>Hỗn hợp</span>);
+	if (pkg === 'BASIC' || pkg === 'FREE') return (<span className={`inline-flex items-center px-2 py-[3px] bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100 ${className}`}>Cơ bản</span>);
+	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-green-50 text-green-800 text-[10px] font-medium border border-green-200 ${className}`}>Nâng cao</span>);
+	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-purple-50 text-purple-700 text-[10px] font-medium border border-purple-200 ${className}`}>Hỗn hợp</span>);
 	return null;
 }
 
@@ -228,14 +242,14 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 	const paddingClass = isCompactType ? 'p-4 sm:p-5' : 'p-8';
 
     const theme = {
-        iconBg: packageType === 'BASIC' ? 'bg-blue-600' : packageType === 'ADVANCED' ? 'bg-[#ea980c]' : packageType === 'MIXED' ? 'bg-[#6b21a8]' : 'bg-green-700',
-        titleHover: packageType === 'BASIC' ? 'group-hover:text-blue-700' : packageType === 'ADVANCED' ? 'group-hover:text-amber-600' : packageType === 'MIXED' ? 'group-hover:text-purple-800' : 'group-hover:text-green-700',
-        title: packageType === 'BASIC' ? 'text-blue-700/90' : packageType === 'ADVANCED' ? 'text-[#ea980c]' : packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-black',
-        backIconBg: packageType === 'BASIC' ? 'bg-blue-500' : packageType === 'ADVANCED' ? 'bg-amber-500' : packageType === 'MIXED' ? 'bg-purple-500' : 'bg-[#f59e0b]',
-        subtitle: packageType === 'BASIC' ? 'text-blue-700/90' : packageType === 'ADVANCED' ? 'text-[#ea980c]' : packageType === 'MIXED' ? 'text-[#6b21a8]' : 'text-[#14532d]',
-        progressBg: packageType === 'BASIC' ? 'bg-blue-100/60' : packageType === 'ADVANCED' ? 'bg-amber-100/60' : packageType === 'MIXED' ? 'bg-purple-100/60' : 'bg-slate-100',
-        progressFill: packageType === 'BASIC' ? 'bg-blue-500' : packageType === 'ADVANCED' ? 'bg-amber-500' : packageType === 'MIXED' ? 'bg-purple-500' : (progress?.learned >= progress?.total ? 'bg-green-500' : 'bg-linear-to-r from-[#ea980c] to-[#f59e0b]'),
-        progressText: packageType === 'BASIC' ? 'text-blue-600' : packageType === 'ADVANCED' ? 'text-[#ea980c]' : packageType === 'MIXED' ? 'text-[#6b21a8]' : (progress?.learned >= progress?.total ? 'text-green-600' : 'text-[#ea980c]'),
+        iconBg: packageType === 'BASIC' ? 'bg-blue-600' : packageType === 'ADVANCED' ? 'bg-green-800' : packageType === 'MIXED' ? 'bg-purple-600' : 'bg-green-700',
+        titleHover: packageType === 'BASIC' ? 'group-hover:text-blue-700' : packageType === 'ADVANCED' ? 'group-hover:text-green-800' : packageType === 'MIXED' ? 'group-hover:text-purple-800' : 'group-hover:text-green-700',
+        title: packageType === 'BASIC' ? 'text-blue-700/90' : packageType === 'ADVANCED' ? 'text-green-800' : packageType === 'MIXED' ? 'text-purple-700' : 'text-black',
+        backIconBg: packageType === 'BASIC' ? 'bg-blue-500' : packageType === 'ADVANCED' ? 'bg-green-700' : packageType === 'MIXED' ? 'bg-purple-500' : 'bg-[#f59e0b]',
+        subtitle: packageType === 'BASIC' ? 'text-blue-700/90' : packageType === 'ADVANCED' ? 'text-green-800' : packageType === 'MIXED' ? 'text-purple-700' : 'text-[#14532d]',
+        progressBg: packageType === 'BASIC' ? 'bg-blue-100/60' : packageType === 'ADVANCED' ? 'bg-green-100/60' : packageType === 'MIXED' ? 'bg-purple-100/60' : 'bg-slate-100',
+        progressFill: packageType === 'BASIC' ? 'bg-blue-500' : packageType === 'ADVANCED' ? 'bg-green-600' : packageType === 'MIXED' ? 'bg-purple-500' : (progress?.learned >= progress?.total ? 'bg-green-500' : 'bg-linear-to-r from-[#ea980c] to-[#f59e0b]'),
+        progressText: packageType === 'BASIC' ? 'text-blue-600' : packageType === 'ADVANCED' ? 'text-green-700' : packageType === 'MIXED' ? 'text-purple-600' : (progress?.learned >= progress?.total ? 'text-green-600' : 'text-[#ea980c]'),
     };
 
 	return (
@@ -524,11 +538,11 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                             <td className="py-4 px-4 text-sm font-medium text-[#14532d]/90">
                                                 {leader.topicTitle}
                                             </td>
-                                            <td className="py-4 px-4 text-[13px] font-medium text-[#14532d]/80 uppercase">
-                                                {leader.topicPackage || 'FREE'}
+                                            <td className="py-4 px-4 text-[13px] font-bold text-[#14532d]/90">
+                                                {translatePackage(leader.topicPackage)}
                                             </td>
-                                            <td className="py-4 px-4 text-[13px] font-medium text-[#14532d]/80 uppercase tracking-wide">
-                                                {leader.difficulty}
+                                            <td className="py-4 px-4 text-[13px] font-bold text-[#14532d]/90 tracking-wide">
+                                                {translateDifficulty(leader.difficulty)}
                                             </td>
                                             <td className="py-4 px-4 text-center text-[#14532d]">
                                                 <span className="font-semibold">{leader.score}</span>
@@ -569,14 +583,10 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                         <div className="text-[12px] font-medium text-[#14532d]/80 truncate flex items-center gap-1.5 flex-wrap mt-0.5">
                                             <span className="truncate max-w-[120px] block">{leader.topicTitle}</span>
                                             
-                                            {leader.topicPackage && leader.topicPackage !== 'FREE' && leader.topicPackage !== 'BASIC' && (
-                                                <>
-                                                    <span className="text-[#14532d]/30">•</span>
-                                                    <span className="uppercase">{leader.topicPackage}</span>
-                                                </>
-                                            )}
                                             <span className="text-[#14532d]/30">•</span>
-                                            <span className="uppercase">{leader.difficulty}</span>
+                                            <span className="font-bold">{translatePackage(leader.topicPackage)}</span>
+                                            <span className="text-[#14532d]/30">•</span>
+                                            <span className="font-bold">{translateDifficulty(leader.difficulty)}</span>
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
@@ -1738,9 +1748,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                                         <button
                                             key={pkg}
                                             onClick={() => setActivePackage(pkg)}
-                                            className={`flex-1 min-w-[100px] px-4 py-2.5 rounded-[10px] text-[13px] sm:text-sm font-bold transition-all duration-300 ${activePackage === pkg ? 'bg-white text-[#14532d] shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                                            className={`flex-1 min-w-[100px] px-4 py-2.5 rounded-[10px] text-[13px] sm:text-sm font-bold transition-all duration-300 ${activePackage === pkg ? (pkg === 'BASIC' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-blue-100' : pkg === 'ADVANCED' ? 'bg-white text-green-800 shadow-sm ring-1 ring-green-200' : pkg === 'MIXED' ? 'bg-white text-purple-600 shadow-sm ring-1 ring-purple-100' : 'bg-white text-[#14532d] shadow-sm ring-1 ring-slate-900/5') : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
                                         >
-                                            {pkg === 'ALL' ? 'Tất cả' : pkg === 'BASIC' ? '🌱 Cơ Bản' : pkg === 'ADVANCED' ? '🔥 Nâng Cao' : '🔀 Hỗn Hợp'}
+                                            {pkg === 'ALL' ? 'Tất cả' : pkg === 'BASIC' ? '🌱 Cơ bản' : pkg === 'ADVANCED' ? '🔥 Nâng cao' : '🔀 Hỗn hợp'}
                                         </button>
                                     ))}
                                 </div>
