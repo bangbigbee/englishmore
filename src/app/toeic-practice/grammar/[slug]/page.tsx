@@ -990,8 +990,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     </div>
                                   )}
 
-                                  )}
-
                                   <button 
                                       onClick={() => {
                                          if (directionAudioRef.current) {
