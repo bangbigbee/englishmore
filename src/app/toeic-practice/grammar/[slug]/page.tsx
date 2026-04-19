@@ -492,9 +492,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     }
   }
 
-  const handleRestartLesson = async () => {
-    if (!currentLesson) return;
-    const lessonId = currentLesson.id;
+  const handleRestartLesson = async (targetLesson?: ToeicLesson) => {
+    const lessonToRestart = targetLesson || currentLesson;
+    if (!lessonToRestart) return;
+    const lessonId = lessonToRestart.id;
     
     // Clear persistent storage properly
     if (status === 'authenticated') {
@@ -524,7 +525,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     const newAnswers = { ...userAnswers };
     const newResults = { ...showResults };
     const newTranslations = { ...showTranslation };
-    currentLesson.questions.forEach(q => {
+    lessonToRestart.questions.forEach(q => {
       delete newAnswers[q.id];
       delete newResults[q.id];
       delete newTranslations[q.id];
@@ -535,6 +536,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     
     setIsTestCompleted(false);
     setIsReviewing(false);
+    setLessonStarted(false);
+    if (targetLesson && selectedLessonId !== lessonToRestart.id) {
+        setSelectedLessonId(lessonToRestart.id);
+        setShowLessonContent(false);
+    }
     setTimerStartTime(Date.now());
     setElapsedTime(0);
     setActiveQuestionIndex(0);
@@ -717,9 +723,20 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 {(() => {
                   const lessonTierLevel = lesson.accessTier === 'ULTRA' ? 3 : lesson.accessTier === 'PRO' ? 2 : 1;
                   const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                  return lessonTierLevel > userTierLevel && (
+                  return lessonTierLevel > userTierLevel ? (
                     <div className="shrink-0" onClick={(e) => { e.stopPropagation(); setShowPricing(true); }}>
                       <svg className="w-4 h-4 text-slate-400 opacity-60 cursor-pointer hover:text-amber-500 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+                    </div>
+                  ) : (
+                    <div 
+                        onClick={(e) => { e.stopPropagation(); handleRestartLesson(lesson); }}
+                        className={`shrink-0 flex items-center gap-1.5 transition-all cursor-pointer relative group/restart ${selectedLessonId === lesson.id ? 'opacity-100' : 'md:opacity-0 md:group-hover:opacity-100'}`}
+                        title="Làm Lại Bài"
+                    >
+                       <span className={`text-xs font-bold px-2 py-1 rounded shadow-sm border ${selectedLessonId === lesson.id ? 'bg-[#14532d] text-white border-white/20' : 'bg-white text-[#14532d] border-emerald-50'} opacity-0 group-hover/restart:opacity-100 transition-opacity hidden sm:block whitespace-nowrap`}>Làm Lại Bài</span>
+                       <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${selectedLessonId === lesson.id ? 'border-white/40 text-white hover:bg-white/20' : 'border-[#14532d] text-[#14532d] hover:bg-emerald-50 bg-white'}`}>
+                           <svg className="w-4 h-4 transition-transform group-hover/restart:-rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                       </div>
                     </div>
                   );
                 })()}
@@ -803,14 +820,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                            </span>
                         </div>
                       )}
-                      <button
-                        onClick={handleRestartLesson}
-                        className="group flex flex-none items-center justify-center w-8 h-8 rounded-full border-2 border-slate-200 text-slate-400 hover:text-[#14532d] hover:border-[#14532d] hover:bg-emerald-50 transition-all cursor-pointer relative md:ml-auto"
-                        title="Làm Lại Bài"
-                      >
-                        <svg className="w-4 h-4 transition-transform group-hover:-rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                        <span className="absolute right-full mr-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold text-[#14532d] pointer-events-none z-10 bg-white px-2 py-1 rounded shadow shadow-emerald-100 hidden md:inline-block">Làm Lại Bài</span>
-                      </button>
                     </div>
                     {/* Removed Xem meo lam dropdown button */}
                   </div>
