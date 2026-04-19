@@ -161,12 +161,9 @@ function ComingSoonPlaceholder({ title, icon }: { title: string, icon: string })
 	);
 }
 
-export default async function ToeicProgressPage({
-	searchParams,
-}: {
-	searchParams: Promise<{ tab?: string, topic?: string, tag?: string, filter?: string, q?: string }>;
-}) {
-	const resolvedParams = await searchParams;
+export default async function ToeicProgressPage(props: any) {
+    try {
+	const resolvedParams = await props.searchParams;
 	const activeTab = resolvedParams.tab || 'reports';
 	const topicFilter = resolvedParams.topic;
 	const tagFilter = resolvedParams.tag;
@@ -239,4 +236,16 @@ export default async function ToeicProgressPage({
 			</div>
 		</main>
 	);
+    } catch (e: any) {
+        return (
+            <main className="min-h-screen bg-slate-50/50 p-12">
+                <div className="bg-rose-50 text-rose-700 p-6 rounded-2xl border border-rose-200 shadow-sm max-w-3xl mx-auto">
+                    <h3 className="font-bold text-lg mb-2">Lỗi Server Nghiêm Trọng (ToeicProgressPage):</h3>
+                    <pre className="whitespace-pre-wrap text-sm break-words opacity-80 font-mono bg-white/50 p-4 rounded-xl mt-4">
+                        {e?.stack || e?.message || String(e)}
+                    </pre>
+                </div>
+            </main>
+        );
+    }
 }
