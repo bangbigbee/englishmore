@@ -2374,7 +2374,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 				})}
 			</div>
 			
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full min-h-[200px]">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full">
 				{flattenedLessons.length === 0 ? (
 					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 bg-white/50 rounded-3xl font-medium">
 						Chưa có bài tập nào trong phần này.
@@ -2480,7 +2480,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 				})}
 			</div>
 			
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full min-h-[200px]">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full">
 				{flattenedLessons.length === 0 ? (
 					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 bg-white/50 rounded-3xl font-medium">
 						Chưa có bài tập nào trong phần này.
