@@ -4,10 +4,20 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
+interface PricingPhase {
+  monthlyPrice: number
+  lifetimePrice: number
+  upgradeLifetimePrice?: number
+}
+
 interface PricingConfig {
   name: string
-  price: number
-  durationMonths: number
+  activePhase: 'super_early_bird' | 'early_bird' | 'regular'
+  phases: {
+    super_early_bird: PricingPhase
+    early_bird: PricingPhase
+    regular: PricingPhase
+  }
 }
 
 interface UpgradeOrder {
@@ -61,11 +71,47 @@ export default function PricingSettingsPage() {
       const res = await fetch('/api/admin/settings?key=subscription_pricing')
       const data = await res.json()
       if (data && data.value) {
-        setProPricing(data.value.PRO || { name: 'PRO', price: 299000, durationMonths: 6 })
-        setUltraPricing(data.value.ULTRA || { name: 'ULTRA', price: 899000, durationMonths: 12 })
+        const proData = data.value.PRO || {}
+        const ultraData = data.value.ULTRA || {}
+        
+        setProPricing({
+          name: 'PRO',
+          activePhase: proData.activePhase || 'regular',
+          phases: proData.phases || {
+            super_early_bird: { monthlyPrice: 49000, lifetimePrice: 299000 },
+            early_bird: { monthlyPrice: 69000, lifetimePrice: 399000 },
+            regular: { monthlyPrice: 99000, lifetimePrice: 499000 }
+          }
+        })
+        
+        setUltraPricing({
+          name: 'ULTRA',
+          activePhase: ultraData.activePhase || 'regular',
+          phases: ultraData.phases || {
+            super_early_bird: { monthlyPrice: 99000, lifetimePrice: 599000, upgradeLifetimePrice: 300000 },
+            early_bird: { monthlyPrice: 129000, lifetimePrice: 799000, upgradeLifetimePrice: 400000 },
+            regular: { monthlyPrice: 149000, lifetimePrice: 999000, upgradeLifetimePrice: 500000 }
+          }
+        })
       } else {
-        setProPricing({ name: 'PRO', price: 299000, durationMonths: 6 })
-        setUltraPricing({ name: 'ULTRA', price: 899000, durationMonths: 12 })
+        setProPricing({
+          name: 'PRO',
+          activePhase: 'regular',
+          phases: {
+            super_early_bird: { monthlyPrice: 49000, lifetimePrice: 299000 },
+            early_bird: { monthlyPrice: 69000, lifetimePrice: 399000 },
+            regular: { monthlyPrice: 99000, lifetimePrice: 499000 }
+          }
+        })
+        setUltraPricing({
+          name: 'ULTRA',
+          activePhase: 'regular',
+          phases: {
+            super_early_bird: { monthlyPrice: 99000, lifetimePrice: 599000, upgradeLifetimePrice: 300000 },
+            early_bird: { monthlyPrice: 129000, lifetimePrice: 799000, upgradeLifetimePrice: 400000 },
+            regular: { monthlyPrice: 149000, lifetimePrice: 999000, upgradeLifetimePrice: 500000 }
+          }
+        })
       }
     } catch (e) {
       toast.error('Failed to load settings')
@@ -162,30 +208,63 @@ export default function PricingSettingsPage() {
           {proPricing && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-[#FFD700]"></div>
-              <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <span className="bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] px-2 py-0.5 rounded text-xs tracking-widest font-black uppercase">PRO</span>
-                Gói PRO
-              </h2>
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] px-2 py-0.5 rounded text-xs tracking-widest font-black uppercase">PRO</span>
+                  Gói PRO
+                </h2>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Giai đoạn hiện tại</label>
+                  <select 
+                    value={proPricing.activePhase}
+                    onChange={e => setProPricing({...proPricing, activePhase: e.target.value as any})}
+                    className="border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] text-sm font-semibold"
+                  >
+                    <option value="super_early_bird">Super Early Bird</option>
+                    <option value="early_bird">Early Bird</option>
+                    <option value="regular">Regular</option>
+                  </select>
+                </div>
+              </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Mức giá (VND)</label>
-                  <input 
-                    type="number" 
-                    value={proPricing.price} 
-                    onChange={e => setProPricing({...proPricing, price: Number(e.target.value)})}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Số tháng</label>
-                  <input 
-                    type="number" 
-                    value={proPricing.durationMonths}
-                    onChange={e => setProPricing({...proPricing, durationMonths: Number(e.target.value)})}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700]"
-                  />
-                </div>
+              <div className="space-y-4">
+                {(['super_early_bird', 'early_bird', 'regular'] as const).map(phaseKey => (
+                  <div key={phaseKey} className={`p-4 rounded-lg border ${proPricing.activePhase === phaseKey ? 'border-[#FFD700] bg-amber-50' : 'border-slate-200'}`}>
+                    <h3 className="text-sm font-bold text-slate-700 mb-3 capitalize">{phaseKey.replace(/_/g, ' ')}</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Giá Tháng (VND)</label>
+                        <input 
+                          type="number" 
+                          value={proPricing.phases[phaseKey].monthlyPrice} 
+                          onChange={e => setProPricing({
+                            ...proPricing, 
+                            phases: {
+                              ...proPricing.phases,
+                              [phaseKey]: { ...proPricing.phases[phaseKey], monthlyPrice: Number(e.target.value) }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Giá Trọn Đời (VND)</label>
+                        <input 
+                          type="number" 
+                          value={proPricing.phases[phaseKey].lifetimePrice} 
+                          onChange={e => setProPricing({
+                            ...proPricing, 
+                            phases: {
+                              ...proPricing.phases,
+                              [phaseKey]: { ...proPricing.phases[phaseKey], lifetimePrice: Number(e.target.value) }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -194,30 +273,78 @@ export default function PricingSettingsPage() {
           {ultraPricing && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-              <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <span className="bg-gradient-to-r from-emerald-500 to-[#14532d] text-white px-2 py-0.5 rounded text-xs tracking-widest font-black uppercase">ULTRA</span>
-                Gói ULTRA
-              </h2>
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-emerald-500 to-[#14532d] text-white px-2 py-0.5 rounded text-xs tracking-widest font-black uppercase">ULTRA</span>
+                  Gói ULTRA
+                </h2>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Giai đoạn hiện tại</label>
+                  <select 
+                    value={ultraPricing.activePhase}
+                    onChange={e => setUltraPricing({...ultraPricing, activePhase: e.target.value as any})}
+                    className="border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-semibold"
+                  >
+                    <option value="super_early_bird">Super Early Bird</option>
+                    <option value="early_bird">Early Bird</option>
+                    <option value="regular">Regular</option>
+                  </select>
+                </div>
+              </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Mức giá (VND)</label>
-                  <input 
-                    type="number" 
-                    value={ultraPricing.price} 
-                    onChange={e => setUltraPricing({...ultraPricing, price: Number(e.target.value)})}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Số tháng</label>
-                  <input 
-                    type="number" 
-                    value={ultraPricing.durationMonths}
-                    onChange={e => setUltraPricing({...ultraPricing, durationMonths: Number(e.target.value)})}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-                  />
-                </div>
+              <div className="space-y-4">
+                {(['super_early_bird', 'early_bird', 'regular'] as const).map(phaseKey => (
+                  <div key={phaseKey} className={`p-4 rounded-lg border ${ultraPricing.activePhase === phaseKey ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200'}`}>
+                    <h3 className="text-sm font-bold text-slate-700 mb-3 capitalize">{phaseKey.replace(/_/g, ' ')}</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Giá Tháng (VND)</label>
+                        <input 
+                          type="number" 
+                          value={ultraPricing.phases[phaseKey].monthlyPrice} 
+                          onChange={e => setUltraPricing({
+                            ...ultraPricing, 
+                            phases: {
+                              ...ultraPricing.phases,
+                              [phaseKey]: { ...ultraPricing.phases[phaseKey], monthlyPrice: Number(e.target.value) }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Giá Trọn Đời (VND)</label>
+                        <input 
+                          type="number" 
+                          value={ultraPricing.phases[phaseKey].lifetimePrice} 
+                          onChange={e => setUltraPricing({
+                            ...ultraPricing, 
+                            phases: {
+                              ...ultraPricing.phases,
+                              [phaseKey]: { ...ultraPricing.phases[phaseKey], lifetimePrice: Number(e.target.value) }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Giá Nâng cấp Trọn Đời từ PRO (VND)</label>
+                        <input 
+                          type="number" 
+                          value={ultraPricing.phases[phaseKey].upgradeLifetimePrice || 0} 
+                          onChange={e => setUltraPricing({
+                            ...ultraPricing, 
+                            phases: {
+                              ...ultraPricing.phases,
+                              [phaseKey]: { ...ultraPricing.phases[phaseKey], upgradeLifetimePrice: Number(e.target.value) }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

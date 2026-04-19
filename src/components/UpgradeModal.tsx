@@ -61,6 +61,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [feedback, setFeedback] = useState<{ type: 'error' | 'success', title: string, message: string, tier?: 'PRO' | 'ULTRA' } | null>(null)
   const [checkingPending, setCheckingPending] = useState(false)
   const [copyState, setCopyState] = useState<string>('')
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'lifetime'>('lifetime')
 
   const getEffectiveTier = () => {
     if (!session) return 'FREE'
@@ -82,11 +83,33 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
       .catch(console.error)
   }, [])
 
-  const proPrice = pricingConfig?.PRO?.price ?? 299000
-  const proDuration = pricingConfig?.PRO?.durationMonths ?? 6
-  const ultraPrice = pricingConfig?.ULTRA?.price ?? 899000
-  const ultraUpgradePrice = pricingConfig?.ULTRA?.upgradePrice ?? 599000
-  const ultraDuration = pricingConfig?.ULTRA?.durationMonths ?? 120
+  const proConfig = pricingConfig?.PRO
+  const ultraConfig = pricingConfig?.ULTRA
+
+  // Fallback map phase -> phase data
+  const proPhaseMap = proConfig?.phases || {
+    super_early_bird: { monthlyPrice: 49000, lifetimePrice: 299000 },
+    early_bird: { monthlyPrice: 69000, lifetimePrice: 399000 },
+    regular: { monthlyPrice: 99000, lifetimePrice: 499000 }
+  }
+  const ultraPhaseMap = ultraConfig?.phases || {
+    super_early_bird: { monthlyPrice: 99000, lifetimePrice: 599000, upgradeLifetimePrice: 300000 },
+    early_bird: { monthlyPrice: 129000, lifetimePrice: 799000, upgradeLifetimePrice: 400000 },
+    regular: { monthlyPrice: 149000, lifetimePrice: 999000, upgradeLifetimePrice: 500000 }
+  }
+
+  const activeProPhaseStr = proConfig?.activePhase || 'regular';
+  const activeUltraPhaseStr = ultraConfig?.activePhase || 'regular';
+
+  const currentPro = proPhaseMap[activeProPhaseStr as keyof typeof proPhaseMap] || proPhaseMap.regular;
+  const currentUltra = ultraPhaseMap[activeUltraPhaseStr as keyof typeof ultraPhaseMap] || ultraPhaseMap.regular;
+
+  const proPrice = billingCycle === 'monthly' ? currentPro.monthlyPrice : currentPro.lifetimePrice;
+  const proDuration = billingCycle === 'monthly' ? 1 : 120; // 120 months = lifetime
+
+  const ultraPrice = billingCycle === 'monthly' ? currentUltra.monthlyPrice : currentUltra.lifetimePrice;
+  const ultraUpgradePrice = billingCycle === 'monthly' ? currentUltra.monthlyPrice : (currentUltra.upgradeLifetimePrice || currentUltra.lifetimePrice);
+  const ultraDuration = billingCycle === 'monthly' ? 1 : 120;
 
   const currentUltraPrice = effectiveTier === 'PRO' ? ultraUpgradePrice : ultraPrice
 
@@ -337,14 +360,30 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
                 Nâng Tầm Tiếng Anh Cùng <span className="text-[#14532d]">Toeic</span><span className="text-[#ea980c]">More</span>
               </h2>
-              <p className="text-slate-500 text-sm md:text-base">
+              <p className="text-slate-500 text-sm md:text-base mb-8">
                 Lựa chọn gói Premium phù hợp để mở khóa toàn bộ kho tàng bài tập độc quyền, giải thích cực kỳ chi tiết và tính năng chấm chữa AI thông minh.
               </p>
+
+              <div className="inline-flex bg-slate-100 p-1.5 rounded-full border border-slate-200">
+                <button 
+                  onClick={() => setBillingCycle('monthly')}
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                >
+                  Theo Tháng
+                </button>
+                <button 
+                  onClick={() => setBillingCycle('lifetime')}
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${billingCycle === 'lifetime' ? 'bg-[#14532d] text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                >
+                  Trọn Đời
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full uppercase tracking-wider font-bold ${billingCycle === 'lifetime' ? 'bg-amber-400 text-amber-950' : 'bg-slate-200 text-slate-600'}`}>Tiết kiệm 80%</span>
+                </button>
+              </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 items-stretch">
+            <div className="flex md:grid md:grid-cols-3 gap-6 snap-x snap-mandatory overflow-x-auto pb-6 -mx-6 px-6 md:mx-0 md:px-0 md:overflow-visible items-stretch custom-scrollbar">
               {/* FREE Tier */}
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col relative">
+              <div className="flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col relative">
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     Mặc định
@@ -382,7 +421,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               </div>
 
               {/* PRO Tier */}
-              <div className={`bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 border-amber-300 flex flex-col relative transition-transform ${effectiveTier === 'FREE' ? 'transform md:-translate-y-2 shadow-xl shadow-amber-500/10' : 'shadow-md'}`}>
+              <div className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 border-amber-300 flex flex-col relative transition-transform ${effectiveTier === 'FREE' ? 'transform md:-translate-y-2 shadow-xl shadow-amber-500/10' : 'shadow-md'}`}>
                 {effectiveTier === 'FREE' && (
                   <div className="absolute top-0 right-6 transform -translate-y-1/2">
                     <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
@@ -446,7 +485,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               </div>
 
               {/* ULTRA Tier */}
-              <div className={`bg-[#2b0c36] rounded-2xl p-6 border border-purple-900 flex flex-col relative text-white shadow-2xl transition-transform ${effectiveTier === 'PRO' || effectiveTier === 'ULTRA' ? 'transform md:-translate-y-2' : ''}`}>
+              <div className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-[#2b0c36] rounded-2xl p-6 border border-purple-900 flex flex-col relative text-white shadow-2xl transition-transform ${effectiveTier === 'PRO' || effectiveTier === 'ULTRA' ? 'transform md:-translate-y-2' : ''}`}>
                 {(effectiveTier === 'PRO' || effectiveTier === 'ULTRA') && (
                   <div className="absolute top-0 right-6 transform -translate-y-1/2">
                     <span className="bg-gradient-to-r from-purple-600 to-purple-800 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
