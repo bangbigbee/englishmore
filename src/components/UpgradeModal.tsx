@@ -364,6 +364,61 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 Lựa chọn gói Premium phù hợp để mở khóa toàn bộ kho tàng bài tập độc quyền, giải thích cực kỳ chi tiết và tính năng chấm chữa AI thông minh.
               </p>
 
+              <div className="mb-10 max-w-lg mx-auto bg-amber-50/50 border border-amber-200/60 rounded-3xl p-5 md:p-6 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
+                  <IconZap className="w-24 h-24 text-amber-500" />
+                </div>
+                
+                <div className="flex items-center gap-2 justify-center mb-6 text-amber-600 relative z-10">
+                  <IconZap className="w-4 h-4" />
+                  <span className="text-xs font-bold uppercase tracking-widest bg-amber-100 rounded-full px-3 py-1 border border-amber-200/50">Lộ Trình Tăng Giá {billingCycle === 'monthly' ? 'Hàng Tháng' : 'Trọn Đời'}</span>
+                </div>
+
+                <div className="relative flex justify-between items-end mt-4 h-16 pointer-events-none z-10">
+                   {/* Background track */}
+                   <div className="absolute bottom-1.5 left-[10%] right-[10%] h-1 bg-amber-200/50 rounded-full"></div>
+                   
+                   {/* Active progress track */}
+                   <div 
+                      className="absolute bottom-1.5 left-[10%] h-1 bg-amber-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(245,158,11,0.5)]" 
+                      style={{ width: activeProPhaseStr === 'super_early_bird' ? '0%' : activeProPhaseStr === 'early_bird' ? '40%' : '80%' }}
+                   ></div>
+                   
+                   {/* Steps */}
+                   {(['super_early_bird', 'early_bird', 'regular'] as const).map((phase, idx) => {
+                       const isCurrent = activeProPhaseStr === phase;
+                       const isPast = (activeProPhaseStr === 'early_bird' && idx === 0) || (activeProPhaseStr === 'regular' && idx < 2);
+                       const pricePhase = proPhaseMap[phase] || proPhaseMap.regular;
+                       const priceDisplay = billingCycle === 'monthly' ? formatPrice(pricePhase.monthlyPrice) : formatPrice(pricePhase.lifetimePrice);
+                       
+                       return (
+                           <div key={phase} className="relative z-10 flex flex-col items-center w-1/3">
+                              {/* Price Label */}
+                              <div className={`text-[11px] sm:text-xs font-black mb-3 transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-400'}`}>
+                                 {priceDisplay}
+                              </div>
+                              {/* Node Circle */}
+                              <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 relative ${
+                                  isCurrent ? 'border-amber-500 scale-125 ring-4 ring-amber-500/20 shadow-md' : 
+                                  isPast ? 'border-amber-400 bg-amber-400' : 
+                                  'border-amber-200'
+                              }`}>
+                                  {isCurrent && <div className="absolute inset-0 m-auto w-1 h-1 sm:w-1.5 sm:h-1.5 bg-amber-500 rounded-full animate-pulse"></div>}
+                              </div>
+                              {/* Name Label */}
+                              <div className={`text-[9px] sm:text-[10px] uppercase tracking-wider mt-2.5 font-bold whitespace-nowrap transition-colors ${
+                                  isCurrent ? 'text-amber-800' : 
+                                  isPast ? 'text-amber-600/70' : 
+                                  'text-slate-400'
+                              }`}>
+                                 {phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}
+                              </div>
+                           </div>
+                       )
+                   })}
+                </div>
+              </div>
+
               <div className="inline-flex bg-slate-100 p-1.5 rounded-full border border-slate-200">
                 <button 
                   onClick={() => setBillingCycle('monthly')}
