@@ -595,19 +595,19 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
 
 function GrammarFeatureCard({ onClick, icon }: any) {
 	return (
-		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick}>
+		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-xl hover:shadow-sm transition-all relative overflow-hidden bg-white" onClick={onClick}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center scale-110 group-hover:scale-100 transition-transform">
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-[#14532d]">Ngữ pháp</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 group-hover:opacity-0">
+					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
 						Hệ thống bài học và luyện tập toàn diện.
 					</p>
-					<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mt-7 ml-[2px]">
+					<div className="absolute inset-0 opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none mt-7 ml-[2px]">
 						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2s_infinite_ease-out]" style={{ width: '85%' }} />
 						
 						{/* Typed "Grammar" text above the line */}
@@ -624,7 +624,7 @@ function GrammarFeatureCard({ onClick, icon }: any) {
 			</div>
 
 			{/* Overlay Button on Hover */}
-			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+			<div className="absolute top-4 right-4 opacity-100 group-hover:opacity-0 transition-opacity z-30">
 				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
@@ -635,12 +635,12 @@ function GrammarFeatureCard({ onClick, icon }: any) {
 
 function ReadingFeatureCard({ onClick, icon }: any) {
 	const [activePage, setActivePage] = useState(0);
-	const [isHovered, setIsHovered] = useState(false);
+	const [isActive, setIsActive] = useState(true);
 	const pages = ["Part 5", "Part 6", "Part 7", "Giải thích chi tiết"];
 
 	useEffect(() => {
 		let int: NodeJS.Timeout;
-		if (isHovered) {
+		if (isActive) {
 			int = setInterval(() => {
 				setActivePage((p) => (p + 1) % 4);
 			}, 900);
@@ -648,12 +648,12 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 			setActivePage(0);
 		}
 		return () => clearInterval(int);
-	}, [isHovered]);
+	}, [isActive]);
 
 	return (
-		<div className="w-full min-h-[160px] group cursor-pointer border border-[#14532d]/10 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+		<div className="w-full min-h-[160px] group cursor-pointer border border-[#14532d]/10 rounded-[20px] shadow-xl hover:shadow-sm transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsActive(false)} onMouseLeave={() => setIsActive(true)}>
 			{/* Front/Default view */}
-			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
 					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
 						{icon}
@@ -668,7 +668,7 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 			</div>
 
 			{/* Full Card Book Flip View */}
-			<div className={`absolute inset-0 z-20 pointer-events-none perspective-[1200px] flex ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 bg-[#f8fafc]`}>
+			<div className={`absolute inset-0 z-20 pointer-events-none perspective-[1200px] flex ${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 bg-[#f8fafc]`}>
 				{/* Book Spine Center line */}
 				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-[#14532d]/10" />
 
@@ -712,7 +712,7 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 				</div>
 			</div>
 
-			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+			<div className="absolute top-4 right-4 opacity-100 group-hover:opacity-0 transition-opacity z-50">
 				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
@@ -723,11 +723,11 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 
 function ActualTestFeatureCard({ onClick, icon }: any) {
 	const [timeLeft, setTimeLeft] = useState(720000);
-	const [isHovered, setIsHovered] = useState(false);
+	const [isActive, setIsActive] = useState(true);
 
 	useEffect(() => {
 		let int: NodeJS.Timeout;
-		if (isHovered) {
+		if (isActive) {
 			int = setInterval(() => {
 				setTimeLeft((prev) => (prev > 0 ? prev - 17 : 0));
 			}, 20);
@@ -735,7 +735,7 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 			setTimeLeft(720000);
 		}
 		return () => clearInterval(int);
-	}, [isHovered]);
+	}, [isActive]);
 
 	const formatTime = (time: number) => {
 		const m = Math.floor(time / 6000).toString().padStart(2, '0');
@@ -745,19 +745,19 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 	};
 
 	return (
-		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-sm hover:shadow-xl transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-xl hover:shadow-sm transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsActive(false)} onMouseLeave={() => setIsActive(true)}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center scale-110 group-hover:scale-100 transition-transform">
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-[#14532d]">Luyện đề</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className={`text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 absolute inset-0 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+					<p className={`text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 absolute inset-0 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 						Luyện đề thi thử bám sát cấu trúc đề thi thực.
 					</p>
-					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center delay-100 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center delay-100 ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
 						<div className="flex items-center space-x-0 text-amber-500 font-mono font-bold text-sm bg-red-50/50 px-2 py-1.5 rounded-lg border border-red-100/50 shadow-inner">
                             <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10V9a9 9 0 0118 0v1m-18 0v5a2 2 0 002 2h2V10H3zm18 0v5a2 2 0 01-2 2h-2V10h4z" /></svg>
 							<div className="flex items-center space-x-1.5 mx-1.5 px-1.5 border-x border-red-200/50">
@@ -769,7 +769,7 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 					</div>
 				</div>
 			</div>
-			<div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+			<div className="absolute top-4 right-4 opacity-100 group-hover:opacity-0 transition-opacity z-30">
 				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
@@ -781,7 +781,7 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 function VocabFeatureCard({ onClick, icon }: any) {
     return (
 		<div className="perspective-[1000px] w-full min-h-[160px] group cursor-pointer" onClick={onClick}>
-            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] rounded-[20px] shadow-sm hover:shadow-xl">
+            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] [transform:rotateY(180deg)] group-hover:[transform:rotateY(0deg)] rounded-[20px] shadow-xl hover:shadow-sm">
                 <div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
                     <div className="w-full flex items-center gap-4 pb-1">
                         <div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
