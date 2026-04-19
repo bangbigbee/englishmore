@@ -187,10 +187,12 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           const correctOption = correctOptionMatch[0] || 'A';
           const questionText = $(cells[2]).text().trim();
           
-          if (!questionText) continue;
+          const optionsHtml = $(cells[3]).html() || '';
+          const transHtml = $(cells[4]).html() || '';
+          
+          if (!questionText && !optionsHtml.trim() && !transHtml.trim()) continue;
 
           // Process options
-          const optionsHtml = $(cells[3]).html() || '';
           const optsCleaned = optionsHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
           
           const rgxA = /(?:\(A\)|A\.)[.\s:]+([\s\S]*?)(?=\(B\)|B\.|$)/i;
@@ -209,7 +211,6 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           const optionD = matchD ? matchD[1].trim() : '';
 
           // Process translation
-          const transHtml = $(cells[4]).html() || '';
           const transCleaned = transHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
           
           const transA = transCleaned.match(rgxA);
