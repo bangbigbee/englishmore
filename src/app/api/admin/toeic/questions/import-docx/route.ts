@@ -165,11 +165,11 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
   const results: ExtractedToeicQuestion[] = []
   
   $('table').each((_, table) => {
-    const rows = $(table).find('tr').toArray()
+    const rows = $(table).find('tr').filter((_, tr) => $(tr).closest('table')[0] === table).toArray()
     if (rows.length < 2) return
     
     // Check if it's the expected format by checking headers or column count
-    const headerCells = $(rows[0]).find('td, th').toArray()
+    const headerCells = $(rows[0]).children('td, th').toArray()
     const firstRowText = $(rows[0]).text().toLowerCase()
     if (!firstRowText.includes('đáp án') && !firstRowText.includes('nội dung') && headerCells.length < 5) {
       return // Not the right table
@@ -177,7 +177,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
 
     // Process from the second row (or first row if it has data)
     for (let i = 0; i < rows.length; i++) {
-        const cells = $(rows[i]).find('td, th').toArray()
+        const cells = $(rows[i]).children('td, th').toArray()
         
         // Skip header row if it seems to be one
         if (i === 0 && (firstRowText.includes('đáp án') || firstRowText.includes('nội dung'))) continue;
@@ -190,7 +190,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           const optionsHtml = $(cells[3]).html() || '';
           const transHtml = $(cells[4]).html() || '';
           
-          if (!questionText && !optionsHtml.trim() && !transHtml.trim()) continue;
+          if (!questionText && !$(cells[3]).text().trim() && !$(cells[4]).text().trim()) continue;
 
           // Process options
           const optsCleaned = optionsHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
