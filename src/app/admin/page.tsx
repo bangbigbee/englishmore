@@ -4199,7 +4199,25 @@ export default function AdminDashboard() {
                       accept=".docx"
                       className="hidden"
                     />
-                    <div className="relative group/tooltip">
+                    <div className="relative group/tooltip flex items-center">
+                      <button
+                        onClick={async () => {
+                          if (confirm('Bạn có chắc chắn muốn XÓA TOÀN BỘ câu hỏi của bài học này? Mọi file media liên quan trên Cloud cũng sẽ bị gỡ bỏ vĩnh viễn.')) {
+                            try {
+                              const res = await fetch(`/api/admin/toeic/lessons/${selectedToeicLesson.id}/questions`, { method: 'DELETE' });
+                              if (res.ok) {
+                                toast.success('Đã xóa toàn bộ câu hỏi và file media liên quan');
+                                fetchToeicQuestions(selectedToeicLesson.id);
+                              } else throw new Error();
+                            } catch (e) {
+                              toast.error('Lỗi khi xóa câu hỏi');
+                            }
+                          }
+                        }}
+                        className="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 mr-2"
+                      >
+                        Clear All
+                      </button>
                       <button
                         onClick={() => toeicFileInputRef.current?.click()}
                         disabled={importingToeicDocx}

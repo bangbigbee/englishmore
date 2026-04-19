@@ -183,14 +183,14 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
         if (i === 0 && (firstRowText.includes('đáp án') || firstRowText.includes('nội dung'))) continue;
         
         if (cells.length >= 6) {
-          const correctOptionMatch = $(cells[1]).text().trim().replace(/[^A-D]/gi, '').toUpperCase()
+          const correctOptionMatch = $(cells[3]).text().trim().replace(/[^A-D]/gi, '').toUpperCase()
           const correctOption = correctOptionMatch[0] || 'A';
-          const questionText = $(cells[2]).text().trim();
+          const questionText = $(cells[1]).text().trim();
           
-          const optionsHtml = $(cells[3]).html() || '';
+          const optionsHtml = $(cells[2]).html() || '';
           const transHtml = $(cells[4]).html() || '';
           
-          if (!questionText && !$(cells[3]).text().trim() && !$(cells[4]).text().trim()) continue;
+          if (!questionText && !$(cells[2]).text().trim() && !$(cells[4]).text().trim()) continue;
 
           // Process options
           const optsCleaned = optionsHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
