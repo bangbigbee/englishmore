@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
 		const questions = await prisma.toeicQuestion.findMany({
 			where: { lessonId },
-			orderBy: { createdAt: 'asc' }
+			orderBy: [{ createdAt: 'asc' }, { id: 'asc' }]
 		})
 
 		return NextResponse.json(questions)

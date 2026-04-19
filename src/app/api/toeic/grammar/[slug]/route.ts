@@ -14,7 +14,9 @@ export async function GET(
         lessons: {
           orderBy: { order: 'asc' },
           include: {
-            questions: true,
+            questions: {
+              orderBy: [{ createdAt: 'asc' }, { id: 'asc' }]
+            },
             _count: {
               select: { questions: true }
             }

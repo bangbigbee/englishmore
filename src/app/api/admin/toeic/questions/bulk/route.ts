@@ -22,8 +22,9 @@ export async function POST(req: Request) {
     }
 
     // Use a transaction for bulk creation
+    const now = Date.now()
     const createdQuestions = await prisma.$transaction(
-      questions.map((q: any) =>
+      questions.map((q: any, i: number) =>
         prisma.toeicQuestion.create({
           data: {
             lessonId,
@@ -36,7 +37,8 @@ export async function POST(req: Request) {
             explanation: q.explanation || null,
             translation: q.translation || null,
             tips: q.tips || null,
-            vocabulary: q.vocabulary && q.vocabulary.length > 0 ? q.vocabulary : null
+            vocabulary: q.vocabulary && q.vocabulary.length > 0 ? q.vocabulary : null,
+            createdAt: new Date(now + i * 1000) // Stagger by 1 second to ensure deterministic sorting
           }
         })
       )
