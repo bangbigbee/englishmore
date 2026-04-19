@@ -608,15 +608,15 @@ function GrammarFeatureCard({ onClick, icon, isActive }: any) {
 						Hệ thống bài học và luyện tập toàn diện.
 					</p>
 					<div className={`absolute inset-0 transition-opacity duration-300 pointer-events-none mt-7 ml-[2px] ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2s_infinite_ease-out]" style={{ width: '85%' }} />
+						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2.5s_infinite_ease-out]" style={{ width: '100%' }} />
 						
-						{/* Typed "Grammar" text above the line */}
-						<div className="absolute -top-[20px] left-0 text-[#14532d] font-serif italic text-[15px] font-bold leading-none animate-[fadeInText_2s_infinite_ease-out]">
-							Grammar
+						{/* Typed text above the line */}
+						<div className="absolute -top-[20px] left-0 text-[#14532d] font-semibold text-[11.5px] tracking-wide leading-none animate-[fadeInText_2.5s_infinite_ease-out] whitespace-nowrap">
+							Lưu lại câu hay xem sau
 						</div>
 
 						{/* Cây viết */}
-						<svg className="w-5 h-5 text-[#14532d] absolute -top-4 -ml-1 animate-[moveWritingPen_2s_infinite_ease-out] origin-bottom-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<svg className="w-5 h-5 text-[#14532d] absolute -top-4 -ml-1 animate-[moveWritingPen_2.5s_infinite_ease-out] origin-bottom-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
 						</svg>
 					</div>
@@ -642,7 +642,7 @@ function ReadingFeatureCard({ onClick, icon, isActive }: any) {
 		if (isActive) {
 			int = setInterval(() => {
 				setActivePage((p) => (p + 1) % 4);
-			}, 900);
+			}, 1250);
 		} else {
 			setActivePage(0);
 		}
@@ -676,10 +676,10 @@ function ReadingFeatureCard({ onClick, icon, isActive }: any) {
 
 				{/* Right half (background of upcoming page side) */}
 				<div className="w-1/2 h-full bg-slate-50 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center pl-4 pr-2">
-					<div className="w-10 h-10 text-[#14532d]/30 mb-2">
+					<div className="w-10 h-10 text-[#14532d]/30 mb-1">
 						{icon}
 					</div>
-					<span className="font-bold text-[#14532d]/40 text-[10px] uppercase tracking-widest text-center mt-1">Reading<br/>TOEIC</span>
+					<span className="font-bold text-[#14532d]/40 text-[9px] uppercase tracking-wider text-center mt-1">Giải thích<br/>chi tiết</span>
 				</div>
 
 				{/* Animated Pages Flipping */}
@@ -816,7 +816,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 		
 		const int = setInterval(() => {
 			setActiveCardIndex((prev) => (prev + 1) % 4);
-		}, 3000);
+		}, 5000);
 		return () => clearInterval(int);
 	}, []);
 
