@@ -1023,6 +1023,27 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             const selectedOption = userAnswers[q.id]
                             const isCorrect = selectedOption === q.correctOption
                             const explanationText = status !== 'authenticated' && activeQuestionIndex >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
+                            
+                            const parsedTranslations = (() => {
+                                if (!q.translation) return { question: '', options: {} as Record<string, string> };
+                                if (topic.type !== 'LISTENING' || (topic.part !== 1 && topic.part !== 2)) {
+                                     return { question: q.translation, options: {} as Record<string, string> };
+                                }
+                                const parts = q.translation.split('/');
+                                const result = { question: '', options: {} as Record<string, string> };
+                                parts.forEach(part => {
+                                    const text = part.trim();
+                                    const match = text.match(/^([A-D])[\.\:\s]+(.*)/i);
+                                    if (match) {
+                                        result.options[match[1].toUpperCase()] = match[2].trim();
+                                    } else if (!result.question) {
+                                        result.question = text;
+                                    } else {
+                                        result.question += ' ' + text;
+                                    }
+                                });
+                                return result;
+                            })();
 
                             return (
                               <motion.div
@@ -1054,6 +1075,30 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     onClick={() => setIsZoomedImage(!isZoomedImage)}
                                     className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-[400px] max-h-[280px] md:max-h-[320px] w-auto cursor-zoom-in'}`} 
                                   />
+                                )}
+                                
+                                {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && q.translation && isShowingResult && (
+                                   <div className="mt-6 flex flex-col items-center">
+                                     <button 
+                                       onClick={() => {
+                                           const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                           const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                           if (translationTierLevel > userTierLevel) {
+                                               setShowPricing(true);
+                                               return;
+                                           }
+                                           setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
+                                       }}
+                                       className={`flex items-center gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1.5 rounded-lg transition-all tracking-wide shadow-sm border ${showTranslation[q.id] ? 'bg-orange-600 border-orange-600 text-white' : 'bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100'}`}
+                                     >
+                                       Dịch nghĩa
+                                       {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                       {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-[0_0_3px_rgba(147,51,234,0.6)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
+                                     </button>
+                                     {showTranslation[q.id] && parsedTranslations.question && (
+                                         <p className="mt-3 text-sm font-medium text-emerald-800 italic bg-emerald-50 px-4 py-2 rounded border border-emerald-100 animate-in fade-in slide-in-from-top-2">{parsedTranslations.question}</p>
+                                     )}
+                                   </div>
                                 )}
                               </div>
 
@@ -1093,7 +1138,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       disabled={isShowingResult}
                                       className={buttonClass + " flex-col items-start cursor-pointer"}
                                     >
-                                      <div className="flex items-center w-full gap-2.5 md:gap-3">
+                                      <div className="flex items-center w-full gap-2.5 md:gap-3 relative">
                                         <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
                                           selectedOption === opt.label 
                                             ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
@@ -1101,9 +1146,16 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         }`}>
                                           {opt.label}
                                         </span>
-                                        <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
-                                          {opt.value || 'Option'}
-                                        </span>
+                                        <div className="flex flex-col flex-1 pb-1">
+                                            <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
+                                              {opt.value || 'Option'}
+                                            </span>
+                                            {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && showTranslation[q.id] && parsedTranslations.options[opt.label] && (
+                                                <span className="text-[13px] md:text-sm font-medium text-emerald-700 italic mt-0.5 animate-in fade-in leading-snug">
+                                                    {parsedTranslations.options[opt.label]}
+                                                </span>
+                                            )}
+                                        </div>
                                       </div>
                                     </button>
                                   )
@@ -1135,31 +1187,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                    )}
                                 </div>
                               )}
-                              
-                              {topic.type === 'LISTENING' && showTranslation[q.id] && q.translation && (
-                                <div className="mt-4 p-4 md:p-5 bg-emerald-50/60 border border-emerald-100 rounded-xl text-sm md:text-[15px] font-medium text-[#14532d]/90 leading-relaxed animate-in slide-in-from-top-2 fade-in duration-300">
-                                  {q.translation.includes('/') && /^[A-D][\.\:\s]/i.test(q.translation.trim()) ? (
-                                      <div className="flex flex-col gap-2.5">
-                                          {q.translation.split('/').map((line, i) => {
-                                              const text = line.trim();
-                                              const match = text.match(/^([A-D])[\.\:\s]*(.*)/i);
-                                              if (match) {
-                                                  return (
-                                                      <div key={i} className="flex items-start gap-2.5">
-                                                          <span className="w-5 h-5 flex items-center justify-center shrink-0 bg-emerald-600 text-white rounded text-xs font-bold mt-0.5">{match[1].toUpperCase()}</span>
-                                                          <span>{match[2]}</span>
-                                                      </div>
-                                                  );
-                                              }
-                                              return <div key={i}>{text}</div>;
-                                          })}
-                                      </div>
-                                  ) : (
-                                      <div className="italic">{q.translation}</div>
-                                  )}
-                                </div>
-                              )}
-
 
                             </motion.div>
                           )
@@ -1200,24 +1227,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     <div className="flex items-center leading-none whitespace-nowrap">
                                       <span className="font-bold text-sm md:text-base">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
                                     </div>
-                                    {topic.type === 'LISTENING' && q.translation && (
-                                      <button 
-                                        onClick={() => {
-                                            const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
-                                            const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                            if (translationTierLevel > userTierLevel) {
-                                                setShowPricing(true);
-                                                return;
-                                            }
-                                            setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
-                                        }}
-                                        className={`ml-1 flex items-center gap-0.5 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-600 border border-orange-600 text-white shadow-sm' : 'bg-orange-50 border border-orange-200 text-orange-600 hover:bg-orange-100'}`}
-                                      >
-                                        Dịch nghĩa
-                                        {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
-                                        {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-[0_0_3px_rgba(147,51,234,0.6)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
-                                      </button>
-                                    )}
                                   </div>
                                 ) : (
                                   <div className="text-slate-400 font-bold text-xs uppercase tracking-widest">
