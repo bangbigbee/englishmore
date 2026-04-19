@@ -1630,7 +1630,17 @@ export default function AdminDashboard() {
         
         // Fallback to index if no text match
         if (matchedIndex === -1) {
-          matchedIndex = toeicQuestions.length >= qNum ? qNum - 1 : -1
+          let expectedIndex = qNum - 1
+          if (selectedToeicTopic?.type === 'LISTENING') {
+            if (selectedToeicTopic.part === 2 && qNum >= 7) expectedIndex = qNum - 7;
+            else if (selectedToeicTopic.part === 3 && qNum >= 32) expectedIndex = qNum - 32;
+            else if (selectedToeicTopic.part === 4 && qNum >= 71) expectedIndex = qNum - 71;
+          } else if (selectedToeicTopic?.type === 'READING') {
+            if (selectedToeicTopic.part === 5 && qNum >= 101) expectedIndex = qNum - 101;
+            else if (selectedToeicTopic.part === 6 && qNum >= 131) expectedIndex = qNum - 131;
+            else if (selectedToeicTopic.part === 7 && qNum >= 147) expectedIndex = qNum - 147;
+          }
+          matchedIndex = expectedIndex >= 0 && expectedIndex < toeicQuestions.length ? expectedIndex : -1
         }
         
         if (matchedIndex === -1 || !toeicQuestions[matchedIndex]) {
@@ -4324,7 +4334,20 @@ export default function AdminDashboard() {
                         </button>
                       </div>
                       <div className="flex justify-between items-start mb-2 pr-12">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">Question {idx + 1}</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">
+                          Question {(() => {
+                            if (selectedToeicTopic?.type === 'LISTENING') {
+                              if (selectedToeicTopic.part === 2) return idx + 7;
+                              if (selectedToeicTopic.part === 3) return idx + 32;
+                              if (selectedToeicTopic.part === 4) return idx + 71;
+                            } else if (selectedToeicTopic?.type === 'READING') {
+                              if (selectedToeicTopic.part === 5) return idx + 101;
+                              if (selectedToeicTopic.part === 6) return idx + 131;
+                              if (selectedToeicTopic.part === 7) return idx + 147;
+                            }
+                            return idx + 1;
+                          })()}
+                        </span>
                         <span className="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-100 font-bold">
                           Key: {q.correctOption}
                         </span>
