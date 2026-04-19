@@ -220,7 +220,11 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
 
           let translation = '';
           if (transA && transA[1]) {
-             translation = `(A) ${transA[1].trim()}`;
+             const textBeforeA = transCleaned.split(/(?:\(A\)|A\.)/i)[0].trim();
+             if (textBeforeA) {
+                 translation = textBeforeA + '\n';
+             }
+             translation += `(A) ${transA[1].trim()}`;
              if (transB && transB[1]) translation += `\n(B) ${transB[1].trim()}`;
              if (transC && transC[1]) translation += `\n(C) ${transC[1].trim()}`;
              if (transD && transD[1]) translation += `\n(D) ${transD[1].trim()}`;
