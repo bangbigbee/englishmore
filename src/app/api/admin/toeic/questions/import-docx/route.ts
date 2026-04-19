@@ -168,17 +168,23 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
     const rows = $(table).find('tr').toArray()
     if (rows.length < 2) return
     
-    // Check if it's the expected format by checking headers
+    // Check if it's the expected format by checking headers or column count
+    const headerCells = $(rows[0]).find('td, th').toArray()
     const firstRowText = $(rows[0]).text().toLowerCase()
-    if (!firstRowText.includes('đáp án') || !firstRowText.includes('nội dung')) {
+    if (!firstRowText.includes('đáp án') && !firstRowText.includes('nội dung') && headerCells.length < 5) {
       return // Not the right table
     }
 
-    // Process from the second row
-    for (let i = 1; i < rows.length; i++) {
-        const cells = $(rows[i]).find('td').toArray()
+    // Process from the second row (or first row if it has data)
+    for (let i = 0; i < rows.length; i++) {
+        const cells = $(rows[i]).find('td, th').toArray()
+        
+        // Skip header row if it seems to be one
+        if (i === 0 && (firstRowText.includes('đáp án') || firstRowText.includes('nội dung'))) continue;
+        
         if (cells.length >= 6) {
-          const correctOption = $(cells[1]).text().trim().replace(/[^A-D]/gi, '').toUpperCase()[0] || 'A';
+          const correctOptionMatch = $(cells[1]).text().trim().replace(/[^A-D]/gi, '').toUpperCase()
+          const correctOption = correctOptionMatch[0] || 'A';
           const questionText = $(cells[2]).text().trim();
           
           if (!questionText) continue;
@@ -294,7 +300,8 @@ export async function POST(request: NextRequest) {
     if (questions.length === 0) {
       return NextResponse.json(
         {
-          error: 'No valid questions were found. Please check your DOCX format.'
+          error: 'Không tìm thấy câu hỏi hợp lệ. Vui lòng kiểm tra định dạng bảng hoặc file.',
+          debugHtml: htmlOutput.substring(0, 1000)
         },
         { status: 400 }
       )
