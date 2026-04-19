@@ -544,6 +544,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     setTimerStartTime(Date.now());
     setElapsedTime(0);
     setActiveQuestionIndex(0);
+    
+    if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+    }
+    if (directionAudioRef.current) {
+        directionAudioRef.current.pause();
+        directionAudioRef.current.currentTime = 0;
+    }
+    setIsAudioNodePlaying(false);
+    setIsPlayingDirections(false);
   }
 
   if (loading) {
