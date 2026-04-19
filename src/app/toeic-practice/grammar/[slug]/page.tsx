@@ -68,6 +68,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isTestCompleted, setIsTestCompleted] = useState(false)
   const [lessonStarted, setLessonStarted] = useState(false)
   const [isPlayingDirections, setIsPlayingDirections] = useState(false)
+  
+  // Actual Mode States
+  const [actualCheckingMode, setActualCheckingMode] = useState<boolean>(false);
+  const [actualCheckTimeLeft, setActualCheckTimeLeft] = useState<number>(30);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
   const [isAudioNodePlaying, setIsAudioNodePlaying] = useState(false)
   const [isZoomedImage, setIsZoomedImage] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -314,7 +319,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
   // Auto-play audio when navigating to a new question if in LISTENING mode
   useEffect(() => {
-    if (lessonStarted && !isPlayingDirections && topic?.type === 'LISTENING' && currentLesson?.questions[activeQuestionIndex]?.audioUrl) {
+    // DO NOT autoplay if they are in the 30-second checking phase, or the test has completed.
+    if (lessonStarted && !isPlayingDirections && topic?.type === 'LISTENING' && currentLesson?.questions[activeQuestionIndex]?.audioUrl && !actualCheckingMode && !isTestCompleted) {
        if (audioRef.current) {
            const timeoutId = setTimeout(() => {
              if (audioRef.current && audioRef.current.paused) {
@@ -324,11 +330,61 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
            return () => clearTimeout(timeoutId);
        }
     }
-  }, [activeQuestionIndex, lessonStarted, isPlayingDirections, topic?.type, currentLesson]);
+  }, [activeQuestionIndex, lessonStarted, isPlayingDirections, topic?.type, currentLesson, actualCheckingMode, isTestCompleted]);
+
+  // Exam Mode Timer & Submit Logic
+  useEffect(() => {
+    let checkTimer: NodeJS.Timeout;
+    if (actualCheckingMode && !isTestCompleted && actualCheckTimeLeft > 0) {
+        checkTimer = setInterval(() => {
+            setActualCheckTimeLeft(prev => prev - 1);
+        }, 1000);
+    } else if (actualCheckingMode && actualCheckTimeLeft <= 0 && !isTestCompleted) {
+        submitActualExam();
+    }
+    return () => clearInterval(checkTimer);
+  }, [actualCheckingMode, actualCheckTimeLeft, isTestCompleted]);
+
+  const submitActualExam = () => {
+      setActualCheckingMode(false);
+      setIsSubmitModalOpen(false);
+      
+      const newResults: Record<string, boolean> = {};
+      if (currentLesson) {
+          currentLesson.questions.forEach(q => {
+              newResults[q.id] = true;
+          });
+      }
+      setShowResults(prev => ({...prev, ...newResults}));
+      setIsTestCompleted(true);
+      
+      // Calculate score conceptually
+      let correctCnt = 0;
+      if (currentLesson) {
+         currentLesson.questions.forEach(q => {
+             if (userAnswers[q.id] === q.correctOption) correctCnt++;
+         });
+      }
+      new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
+      toast.success(`Bạn đã đúng ${correctCnt}/${currentLesson?.questions.length || 0} câu!`, { position: 'top-center', duration: 7000 });
+  };
 
   const handleSelectOption = async (questionId: string, option: string) => {
     if (showResults[questionId]) return
     setUserAnswers(prev => ({ ...prev, [questionId]: option }))
+    
+    // Exam mode interception: DO NOT EVALUATE results!
+    if (topic?.type === 'LISTENING' && topic?.part && topic.part <= 2 && listeningMode === 'actual' && !isTestCompleted) {
+       if (actualCheckingMode) return; // User is in checking phase, just record answer
+       
+       // If currently testing
+       if (currentLesson && activeQuestionIndex === currentLesson.questions.length - 1) {
+           setTimeout(() => setIsSubmitModalOpen(true), 500);
+       } else {
+           setTimeout(() => setActiveQuestionIndex(prev => prev + 1), 500);
+       }
+       return;
+    }
 
     const q = currentLesson?.questions.find(quest => quest.id === questionId)
     if (!q) return
@@ -822,8 +878,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                onPause={() => setIsAudioNodePlaying(false)}
                                onLoadedData={(e) => { (e.target as HTMLAudioElement).playbackRate = playbackSpeed; }}
                                onEnded={() => {
-                                  if (activeQuestionIndex < currentLesson.questions.length - 1) {
-                                     setActiveQuestionIndex(prev => prev + 1);
+                                  if (listeningMode === 'actual') {
+                                    if (activeQuestionIndex < currentLesson.questions.length - 1) {
+                                       setActiveQuestionIndex(prev => prev + 1);
+                                    } else if (!isTestCompleted && !actualCheckingMode) {
+                                       setIsSubmitModalOpen(true);
+                                    }
                                   }
                                }}
                             />
@@ -906,6 +966,27 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                      ))}
                                     </div>
                                   )}
+
+                                  {topic.type === 'LISTENING' && topic.part && topic.part <= 2 ? (
+                                    <div className="flex flex-col items-center mb-8">
+                                      <p className="text-sm text-slate-500 font-medium mb-3">Chọn chế độ làm bài trước khi bắt đầu</p>
+                                      <div className="flex items-center bg-slate-100 p-1 rounded-xl w-full max-w-sm mx-auto shadow-sm">
+                                        <button 
+                                          onClick={() => setListeningMode('practice')}
+                                          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${listeningMode === 'practice' ? 'bg-white text-[#14532d] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                        >
+                                          Luyện tập
+                                        </button>
+                                        <button 
+                                          onClick={() => setListeningMode('actual')}
+                                          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${listeningMode === 'actual' ? 'bg-[#14532d] text-white shadow-sm ring-2 ring-[#14532d]/20' : 'text-slate-500 hover:text-slate-700'}`}
+                                        >
+                                          Thi thật (Auto Next)
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : null}
+
                                   <button 
                                       onClick={() => {
                                          if (directionAudioRef.current) {
@@ -950,7 +1031,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                               <div className="mb-8 flex flex-col items-center">
                                 <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug text-center mb-6">
-                                  {q.question}
+                                  {topic.part === 2 && !isShowingResult ? (
+                                      <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
+                                  ) : q.question}
                                 </p>
                                 {q.imageUrl && (
                                   <img 
@@ -971,7 +1054,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 ].map((opt) => {
                                   if (opt.label === 'D' && !opt.value) return null
                                   
-                                  const shouldHideValue = topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual' && !isShowingResult;
+                                  const shouldHideValue = topic.type === 'LISTENING' && topic.part && topic.part <= 2 && !isShowingResult;
                                   
                                   let buttonClass = "flex items-center gap-3 md:gap-3.5 px-4 py-2 md:py-2.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
                                   
@@ -1375,6 +1458,66 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               </button>
             </div>
           </motion.div>
+        </div>
+      )}
+
+      {/* Actual Mode - Checking Banner */}
+      {actualCheckingMode && !isTestCompleted && (
+         <div className="fixed top-0 left-0 right-0 max-w-4xl mx-auto z-50 p-2 md:p-4 pointer-events-none">
+            <div className="bg-white/90 backdrop-blur-md border border-amber-200 shadow-xl shadow-amber-900/10 rounded-2xl p-4 flex items-center justify-between pointer-events-auto">
+               <div className="flex flex-col">
+                  <span className="text-amber-800 font-bold">Thời gian kiểm tra bài</span>
+                  <span className="text-xs text-amber-600 font-medium">Bạn có 30 giây để hoàn thiện các câu chưa chọn</span>
+               </div>
+               <div className="flex items-center gap-4">
+                  <div className="bg-amber-100 text-amber-700 font-mono font-bold text-2xl px-4 py-1.5 rounded-lg border border-amber-200">
+                     00:{actualCheckTimeLeft.toString().padStart(2, '0')}
+                  </div>
+                  <button 
+                     onClick={submitActualExam}
+                     className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-6 rounded-xl transition-all shadow-md active:scale-95 whitespace-nowrap"
+                  >
+                     Nộp Bài
+                  </button>
+               </div>
+            </div>
+         </div>
+      )}
+
+      {/* Actual Mode - Finish Submit Modal */}
+      {isSubmitModalOpen && !isTestCompleted && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
+           <motion.div 
+             initial={{ opacity: 0, scale: 0.9, y: 20 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
+             className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center"
+           >
+              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shrink-0">
+                  <svg className="w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <h3 className="text-2xl font-black text-slate-800 mb-2">Hoàn thành bài nghe</h3>
+              <p className="text-slate-500 mb-8 font-medium">Bạn đã nghe xong tất cả câu hỏi. Vui lòng chọn hành động tiếp theo.</p>
+              
+              <div className="flex flex-col gap-3">
+                 <button 
+                    onClick={submitActualExam}
+                    className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all shadow-md active:scale-95"
+                 >
+                    Nộp Bài & Xem Đáp Án
+                 </button>
+                 <button 
+                    onClick={() => {
+                        setIsSubmitModalOpen(false);
+                        setActualCheckingMode(true);
+                        setActualCheckTimeLeft(30);
+                    }}
+                    className="w-full py-3.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold rounded-xl transition-all active:scale-95"
+                 >
+                    Kiểm Tra Lại Lựa Chọn (30s)
+                 </button>
+              </div>
+           </motion.div>
         </div>
       )}
 
