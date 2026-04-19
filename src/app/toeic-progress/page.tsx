@@ -88,17 +88,17 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 					<p className="text-slate-500 font-medium">Không tìm thấy từ vựng nào khớp với bộ lọc điều kiện trên.</p>
 				</div>
 			) : (
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-5 xl:gap-6">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{tags.map(tag => (
 				<Link 
 					key={tag.id} 
 					href={`/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(tag.vocabulary.topic)}&wordId=${tag.vocabId}`}
 					className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-green-300 transition-all cursor-pointer relative"
 				>
-					<div className="p-4 flex-1">
+					<div className="p-4 flex-1 flex flex-col">
 						<div className="flex justify-between items-start mb-2">
-							<span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-50 text-green-700 uppercase tracking-wider">
-								{tag.vocabulary.topic.split('(')[0].trim()}
+							<span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-50 text-green-700 uppercase tracking-wider line-clamp-1 max-w-[180px]" title={tag.vocabulary.topic}>
+								{tag.vocabulary.topic.split('-')[0].split('(')[0].trim()}
 							</span>
 							<div className="flex gap-1">
 								{tag.isHard && (
@@ -120,7 +120,7 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 						)}
 
                         {/* Personal Notes Placeholder */}
-                        <div className="mt-3 pt-3 border-t border-slate-100">
+                        <div className="mt-auto pt-2 border-t border-slate-100">
                             <div
                                 className="w-full text-left p-2 rounded-lg bg-green-50/50 border border-green-100/50 hover:bg-green-50 transition-colors group/note relative cursor-not-allowed"
                                 title="Tính năng thêm ghi chú cá nhân đang được phát triển!"
