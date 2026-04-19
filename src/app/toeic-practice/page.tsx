@@ -2362,10 +2362,10 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 									: 'bg-[#14532d]/[0.03] border-transparent text-[#14532d]/60 hover:text-[#14532d]/80 hover:bg-[#14532d]/6'
 							}`}
 						>
-							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
-								P{p.id}
+							<div className={`px-2 py-1 rounded-[6px] flex items-center justify-center text-[10px] sm:text-[11px] font-black shadow-sm transition-colors uppercase ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
+								Part {p.id}
 							</div>
-							{shortTitle}
+							{p.subtitle}
 							<span className={`ml-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-colors ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-white text-[#14532d]/50 group-hover:text-[#14532d]/70 shadow-sm'}`}>
 								{totalLessons}
 							</span>
@@ -2468,10 +2468,10 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 									: 'bg-[#14532d]/[0.03] border-transparent text-[#14532d]/60 hover:text-[#14532d]/80 hover:bg-[#14532d]/6'
 							}`}
 						>
-							<div className={`w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-black shadow-sm transition-colors ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
-								P{p.id}
+							<div className={`px-2 py-1 rounded-[6px] flex items-center justify-center text-[10px] sm:text-[11px] font-black shadow-sm transition-colors uppercase ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
+								Part {p.id}
 							</div>
-							{shortTitle}
+							{p.subtitle}
 							<span className={`ml-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-colors ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-white text-[#14532d]/50 group-hover:text-[#14532d]/70 shadow-sm'}`}>
 								{totalLessons}
 							</span>
