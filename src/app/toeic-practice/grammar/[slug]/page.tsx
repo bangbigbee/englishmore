@@ -55,7 +55,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   // Quiz states
   // Audio playback speed state
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1)
-  const [listeningMode, setListeningMode] = useState<'practice' | 'actual'>('practice')
+  const [listeningMode, setListeningMode] = useState<'practice' | 'actual' | null>(null)
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
@@ -907,7 +907,30 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         <div className="flex flex-col items-center justify-center p-16 bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100 text-center min-h-[400px]">
                             <h3 className="text-2xl font-black text-[#14532d] mb-3">Sẵn sàng cho PART {topic.part} của bài thi?</h3>
                             <p className="text-slate-500 mb-8 max-w-md">Bắt đầu để audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian làm bài sẽ được tính từ bây giờ.</p>
-                            <button onClick={() => {
+                            
+                            {topic.part && topic.part <= 2 && (
+                                <div className="flex flex-col items-center mb-8 w-full">
+                                  <p className="text-sm border-b pb-2 px-6 border-slate-200 uppercase tracking-widest text-slate-400 font-bold mb-4">Chọn chế độ làm bài</p>
+                                  <div className="flex items-center bg-slate-100 p-1.5 rounded-xl w-full max-w-sm mx-auto shadow-inner">
+                                    <button 
+                                      onClick={() => setListeningMode('practice')}
+                                      className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${listeningMode === 'practice' ? 'bg-white text-[#14532d] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                      Luyện tập
+                                    </button>
+                                    <button 
+                                      onClick={() => setListeningMode('actual')}
+                                      className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${listeningMode === 'actual' ? 'bg-[#14532d] text-white shadow-sm ring-2 ring-[#14532d]/20' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                      Thi thật
+                                    </button>
+                                  </div>
+                                </div>
+                            )}
+                            
+                            <button 
+                              disabled={topic.part && topic.part <= 2 ? !listeningMode : false}
+                              onClick={() => {
                                 setLessonStarted(true);
                                 setTimerStartTime(Date.now());
                                 
@@ -915,7 +938,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     setIsPlayingDirections(true);
                                     directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
                                 }
-                            }} className="bg-[#14532d] hover:bg-[#14532d]/90 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-emerald-900/30 transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase">
+                            }} className={`text-white font-bold px-10 py-4 rounded-xl transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase ${topic.part && topic.part <= 2 ? (listeningMode ? 'bg-[#14532d] hover:bg-[#14532d]/90 shadow-lg shadow-emerald-900/30' : 'bg-slate-300 cursor-not-allowed hover:scale-100') : 'bg-[#14532d] hover:bg-[#14532d]/90 shadow-lg shadow-emerald-900/30'}`}>
                                Bắt Đầu
                             </button>
                         </div>
@@ -925,9 +948,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
                                   <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 mt-2">Bạn đang nghe directions của Phần {topic.part} bài thi</h3>
                                   {topic.part === 2 ? (
-                                    <p className="text-lg md:text-xl text-[#14532d] mb-12 mt-4 font-bold max-w-3xl mx-auto px-4 py-3 bg-[#e8f3ec] rounded-xl border border-[#c3e3cf]">
+                                    <p className="text-sm md:text-base text-red-900 mb-12 mt-4 font-bold max-w-3xl mx-auto px-4 py-3 bg-red-50 rounded-xl border border-red-200">
                                       Nội dung câu hỏi từ Câu 7 đến Câu 31 trong phần này sẽ KHÔNG được in sẵn. 
-                                      <br/><span className="text-sm font-medium text-[#1e7c43] mt-1 block">Hãy tập trung lắng nghe hoàn toàn!</span>
+                                      <br/><span className="text-xs md:text-sm font-medium text-red-700 mt-1 block">Hãy tập trung lắng nghe hoàn toàn!</span>
                                     </p>
                                   ) : (
                                     <p className="text-sm text-slate-500 mb-8 font-medium">Hãy tranh thủ thời gian "vàng" này lướt nhanh qua các hình ảnh hoặc câu hỏi bên dưới.</p>
@@ -967,25 +990,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     </div>
                                   )}
 
-                                  {topic.type === 'LISTENING' && topic.part && topic.part <= 2 ? (
-                                    <div className="flex flex-col items-center mb-8">
-                                      <p className="text-sm text-slate-500 font-medium mb-3">Chọn chế độ làm bài trước khi bắt đầu</p>
-                                      <div className="flex items-center bg-slate-100 p-1 rounded-xl w-full max-w-sm mx-auto shadow-sm">
-                                        <button 
-                                          onClick={() => setListeningMode('practice')}
-                                          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${listeningMode === 'practice' ? 'bg-white text-[#14532d] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                                        >
-                                          Luyện tập
-                                        </button>
-                                        <button 
-                                          onClick={() => setListeningMode('actual')}
-                                          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${listeningMode === 'actual' ? 'bg-[#14532d] text-white shadow-sm ring-2 ring-[#14532d]/20' : 'text-slate-500 hover:text-slate-700'}`}
-                                        >
-                                          Thi thật (Auto Next)
-                                        </button>
-                                      </div>
-                                    </div>
-                                  ) : null}
+                                  )}
 
                                   <button 
                                       onClick={() => {
