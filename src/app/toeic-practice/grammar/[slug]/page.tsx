@@ -889,7 +889,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 </div>
                                             ) : (
                                                 <div className="p-4 pt-10 text-sm text-slate-700 font-medium line-clamp-4 bg-slate-50/50">
-                                                    {q.question.replace(/^(?:Câu|Question)\s*\d+[:\-\.]?\s*/i, '')}
+                                                    {topic.part === 2 
+                                                      ? <span className="italic text-slate-400 font-normal">Nội dung câu hỏi không được in sẵn để xem.</span> 
+                                                      : q.question.replace(/^(?:Câu|Question)\s*\d+[:\-\.]?\s*/i, '')}
                                                 </div>
                                             )}
                                         </div>
