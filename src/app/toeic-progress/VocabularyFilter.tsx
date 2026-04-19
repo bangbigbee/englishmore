@@ -187,8 +187,8 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
 			<div>
 				<div className="flex flex-nowrap overflow-x-auto gap-2 pb-3 custom-scrollbar">
 					{[
-						{ id: 'all', label: 'Tất cả trạng thái', icon: '🌈', activeClass: 'bg-slate-800 text-white' },
-						{ id: 'bookmarked', label: '⭐ Câu đã lưu', icon: '⭐', activeClass: 'bg-[#ea980c] text-white' },
+						{ id: 'all', label: 'Tất cả từ', icon: '🌈', activeClass: 'bg-green-100 text-slate-800' },
+						{ id: 'bookmarked', label: '⭐ Đã lưu', icon: '⭐', activeClass: 'bg-[#ea980c] text-white' },
 						{ id: 'hard', label: '● Từ khó', icon: '●', activeClass: 'bg-rose-600 text-white' },
 						{ id: 'learned', label: '✓ Đã thuộc', icon: '✓', activeClass: 'bg-green-600 text-white' }
 					].map(tag => (

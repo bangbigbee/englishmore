@@ -95,39 +95,39 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 					href={`/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(tag.vocabulary.topic)}&wordId=${tag.vocabId}`}
 					className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-green-300 transition-all cursor-pointer relative"
 				>
-					<div className="p-5 flex-1">
-						<div className="flex justify-between items-start mb-3">
-							<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700">
-								{tag.vocabulary.topic}
+					<div className="p-4 flex-1">
+						<div className="flex justify-between items-start mb-2">
+							<span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-50 text-green-700 uppercase tracking-wider">
+								{tag.vocabulary.topic.split('(')[0].trim()}
 							</span>
-							<div className="flex gap-1.5">
+							<div className="flex gap-1">
 								{tag.isHard && (
-									<span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-50 text-rose-600 border border-rose-100 shadow-sm" title="Từ khó">
-										<span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(244,63,94,0.3)]" />
+									<span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-rose-50 text-rose-600 border border-rose-100 shadow-sm" title="Từ khó">
+										<span className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(244,63,94,0.3)]" />
 									</span>
 								)}
-								{tag.isBookmarked && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-50 text-[#ea980c] border border-amber-100 text-xs shadow-sm" title="Câu đã lưu">⭐</span>}
-								{tag.isLearned && <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-50 text-green-600 border border-green-100 text-xs shadow-sm" title="Đã thuộc">✓</span>}
+								{tag.isBookmarked && <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-50 text-[#ea980c] border border-amber-100 text-[10px] shadow-sm" title="Câu đã lưu">⭐</span>}
+								{tag.isLearned && <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-50 text-green-600 border border-green-100 text-[10px] uppercase font-black shadow-sm" title="Đã thuộc">✓</span>}
 							</div>
 						</div>
-						<h3 className="text-xl font-black text-slate-800 mb-1">{tag.vocabulary.word}</h3>
-						{tag.vocabulary.phonetic && <p className="text-sm text-slate-500 font-medium font-mono mb-4">{tag.vocabulary.phonetic}</p>}
-						<p className="font-semibold text-slate-700 leading-relaxed">{tag.vocabulary.meaning}</p>
+						<h3 className="text-lg font-black text-slate-800 mb-0.5">{tag.vocabulary.word}</h3>
+						{tag.vocabulary.phonetic && <p className="text-[12px] text-slate-500 font-medium font-mono mb-2.5">{tag.vocabulary.phonetic}</p>}
+						<p className="font-semibold text-slate-700 text-[13px] leading-relaxed">{tag.vocabulary.meaning}</p>
 						{tag.vocabulary.example && (
-							<p className="mt-3 text-sm text-slate-600 italic bg-slate-50 p-3 rounded-xl border border-slate-100">{tag.vocabulary.example}</p>
+							<p className="mt-2 text-[12px] text-slate-600 italic bg-slate-50 p-2.5 rounded-lg border border-slate-100">{tag.vocabulary.example}</p>
 						)}
 
                         {/* Personal Notes Placeholder */}
-                        <div className="mt-5 pt-4 border-t border-slate-100">
+                        <div className="mt-3 pt-3 border-t border-slate-100">
                             <div
-                                className="w-full text-left p-3 rounded-xl bg-green-50/50 border border-green-100/50 hover:bg-green-50 transition-colors group/note relative cursor-not-allowed"
+                                className="w-full text-left p-2 rounded-lg bg-green-50/50 border border-green-100/50 hover:bg-green-50 transition-colors group/note relative cursor-not-allowed"
                                 title="Tính năng thêm ghi chú cá nhân đang được phát triển!"
                             >
-                                <div className="flex items-center gap-2 mb-1.5 opacity-80 group-hover/note:opacity-100 transition-opacity">
-                                    <svg className="w-3.5 h-3.5 text-[#14532d]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                    <span className="text-[11px] font-bold text-[#14532d] uppercase tracking-wider">Ghi chú cá nhân</span>
+                                <div className="flex items-center gap-1.5 mb-1 opacity-80 group-hover/note:opacity-100 transition-opacity">
+                                    <svg className="w-3 h-3 text-[#14532d]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                    <span className="text-[10px] font-bold text-[#14532d] uppercase tracking-wider">Ghi chú cá nhân</span>
                                 </div>
-                                <div className="text-sm font-medium text-slate-400 italic">
+                                <div className="text-[12px] font-medium text-slate-400 italic">
                                     Tính năng đang được phát triển...
                                 </div>
                             </div>
