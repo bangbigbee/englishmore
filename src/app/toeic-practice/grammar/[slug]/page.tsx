@@ -845,7 +845,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       
                       {!lessonStarted && topic.type === 'LISTENING' ? (
                         <div className="flex flex-col items-center justify-center p-16 bg-white rounded-3xl border border-slate-200 shadow-lg shadow-slate-100 text-center min-h-[400px]">
-                            <h3 className="text-2xl font-black text-[#14532d] mb-3">Sẵn sàng cho PART I của bài thi?</h3>
+                            <h3 className="text-2xl font-black text-[#14532d] mb-3">Sẵn sàng cho PART {topic.part} của bài thi?</h3>
                             <p className="text-slate-500 mb-8 max-w-md">Bắt đầu để audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian làm bài sẽ được tính từ bây giờ.</p>
                             <button onClick={() => {
                                 setLessonStarted(true);
@@ -863,14 +863,25 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         <>
                           {isPlayingDirections ? (
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
-                                  <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 mt-2">Bạn đang nghe directions của Phần 1 bài thi</h3>
+                                  <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 mt-2">Bạn đang nghe directions của Phần {topic.part} bài thi</h3>
                                   <p className="text-sm text-slate-500 mb-8 font-medium">Hãy tranh thủ thời gian "vàng" này lướt nhanh qua các hình ảnh hoặc câu hỏi bên dưới.</p>
                                   
                                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-left">
                                      {currentLesson.questions.map((q, idx) => (
                                         <div key={q.id} className="relative flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all group">
                                             <div className="absolute top-2 left-2 bg-[#14532d] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
-                                                <span>Câu {topic.type === 'LISTENING' && topic.part === 2 ? idx + 7 : idx + 1}</span>
+                                                <span>Câu {(() => {
+                                                    if (topic.type === 'LISTENING') {
+                                                        if (topic.part === 2) return idx + 7;
+                                                        if (topic.part === 3) return idx + 32;
+                                                        if (topic.part === 4) return idx + 71;
+                                                    } else if (topic.type === 'READING') {
+                                                        if (topic.part === 5) return idx + 101;
+                                                        if (topic.part === 6) return idx + 131;
+                                                        if (topic.part === 7) return idx + 147;
+                                                    }
+                                                    return idx + 1;
+                                                })()}</span>
                                             </div>
                                             {q.imageUrl ? (
                                                 <div className="aspect-[4/3] bg-slate-50 relative border-b border-slate-100">

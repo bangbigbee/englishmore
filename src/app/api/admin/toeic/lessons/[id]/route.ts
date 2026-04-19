@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { deleteFileFromR2 } from '@/lib/r2'
 
 export async function PUT(
 	req: Request,
@@ -38,6 +39,10 @@ export async function PUT(
       if (body.bookmarkAccessTier === '') body.bookmarkAccessTier = defaultBookmarkAccessTier
     }
 
+		if (body.directionAudioUrl && currentLesson?.directionAudioUrl && body.directionAudioUrl !== currentLesson.directionAudioUrl) {
+		    await deleteFileFromR2(currentLesson.directionAudioUrl)
+		}
+
 		const lesson = await prisma.toeicGrammarLesson.update({
 			where: { id: id },
 			data: body
@@ -59,6 +64,11 @@ export async function DELETE(
 		const session = await getServerSession(authOptions)
 		if (!session || session.user.role !== 'admin') {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+		}
+
+		const existingLesson = await prisma.toeicGrammarLesson.findUnique({ where: { id } })
+		if (existingLesson?.directionAudioUrl) {
+		    await deleteFileFromR2(existingLesson.directionAudioUrl)
 		}
 
 		await prisma.toeicGrammarLesson.delete({
