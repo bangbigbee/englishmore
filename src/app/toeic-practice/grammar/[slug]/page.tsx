@@ -1222,7 +1222,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             {/* Prev + Result + Next Row */}
                             <div className={`flex flex-row items-center justify-between gap-3 w-full p-2 md:p-3 rounded-2xl shadow-sm transition-all ${isShowingResultLocal ? (isCorrectLocal ? 'bg-emerald-50 border-2 border-emerald-500/30' : 'bg-rose-50 border-2 border-rose-500/30') : 'bg-slate-50 border border-slate-200'}`}>
                               <button
-                                onClick={() => setActiveQuestionIndex(prev => Math.max(0, prev - 1))}
+                                onClick={() => {
+                                    if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
+                                        toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000 });
+                                        return;
+                                    }
+                                    setActiveQuestionIndex(prev => Math.max(0, prev - 1));
+                                }}
                                 disabled={activeQuestionIndex === 0}
                                 className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                 aria-label="Trước đó"
@@ -1292,7 +1298,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   )
                                 })()}
                                 <button
-                                  onClick={() => setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1))}
+                                  onClick={() => {
+                                      if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
+                                          toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000 });
+                                          return;
+                                      }
+                                      setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1));
+                                  }}
                                   disabled={activeQuestionIndex === currentLesson.questions.length - 1}
                                   className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                   aria-label="Tiếp theo"
@@ -1379,6 +1391,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   <button 
                                     key={idx}
                                     onClick={() => {
+                                        if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
+                                            toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000 });
+                                            return;
+                                        }
                                         if (idx === activeQuestionIndex) return;
                                         const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
                                         if (isAudioPlaying) {
