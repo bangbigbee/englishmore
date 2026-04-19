@@ -101,7 +101,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                  <BookIcon className="w-[18px] h-[18px] mt-[-2px]" />
               </span>
               <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                 Sổ Tay Của Tôi
+                 Sổ Tay Từ Vựng
               </span>
             </Link>
             <Link
@@ -220,7 +220,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                             <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-emerald-500' : 'bg-slate-50 text-emerald-500/60'}`}>
                                 <BookIcon className="w-5 h-5 scale-[0.9]" />
                             </span>
-                            <span className="flex-1 truncate text-[14px]">Sổ Tay Của Tôi</span>
+                            <span className="flex-1 truncate text-[14px]">Sổ Tay Từ Vựng</span>
                         </Link>
     
                         <Link 

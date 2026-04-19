@@ -171,7 +171,8 @@ export default async function ToeicProgressPage({
 	const topicFilter = resolvedParams.topic;
 	const tagFilter = resolvedParams.tag;
 	const qbFilter = resolvedParams.filter || 'mistakes';
-    const qFilter = resolvedParams.q;
+    const qFilterArray = resolvedParams.q;
+    const qFilter = Array.isArray(qFilterArray) ? qFilterArray[0] : qFilterArray;
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
