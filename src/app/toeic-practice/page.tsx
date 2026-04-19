@@ -2021,7 +2021,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 															Synonyms:
 														</span>
 														{isFieldLocked('synonyms') ? <LockedValueBadge tier={isFieldLocked('synonyms')!} /> : (
-															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.synonyms}</span>
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.synonyms.replace(/\(Blank\)/gi, 'N/A')}</span>
 														)}
 													</div>
 												)}
@@ -2032,7 +2032,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 															Antonyms:
 														</span>
 														{isFieldLocked('antonyms') ? <LockedValueBadge tier={isFieldLocked('antonyms')!} /> : (
-															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.antonyms}</span>
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.antonyms.replace(/\(Blank\)/gi, 'N/A')}</span>
 														)}
 													</div>
 												)}
@@ -2043,7 +2043,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 															Collocations:
 														</span>
 														{isFieldLocked('collocations') ? <LockedValueBadge tier={isFieldLocked('collocations')!} /> : (
-															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.collocations}</span>
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.collocations.replace(/\(Blank\)/gi, 'N/A')}</span>
 														)}
 													</div>
 												)}
@@ -2054,7 +2054,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 															TOEIC Tip:
 														</span>
 														{isFieldLocked('toeicTrap') ? <LockedValueBadge tier={isFieldLocked('toeicTrap')!} /> : (
-															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.toeicTrap}</span>
+															<span className="text-slate-700 font-medium leading-relaxed">{currentItem.toeicTrap.replace(/\(Blank\)/gi, 'N/A')}</span>
 														)}
 													</div>
 												)}
