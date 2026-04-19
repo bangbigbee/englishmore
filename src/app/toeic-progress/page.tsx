@@ -19,7 +19,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?: string }) {
+async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tagFilter?: string, query?: string }) {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
 
@@ -31,12 +31,24 @@ async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?
 		orClause = [{ isLearned: true }, { isHard: true }, { isBookmarked: true }];
 	}
 
+    let whereClause: any = {
+        userId: session.user.id,
+        OR: orClause,
+        ...(topic && { vocabulary: { topic: topic } }),
+    };
+
+    if (query) {
+        whereClause.vocabulary = {
+            ...whereClause.vocabulary,
+            OR: [
+                { word: { contains: query } },
+                { meaning: { contains: query } }
+            ]
+        };
+    }
+
 	const tags = await prisma.vocabularyTag.findMany({
-		where: {
-			userId: session.user.id,
-			OR: orClause,
-			...(topic && { vocabulary: { topic: topic } }),
-		},
+		where: whereClause,
 		include: {
 			vocabulary: true
 		},
@@ -52,7 +64,7 @@ async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?
 	});
 	const uniqueTopics = Array.from(new Set(allUserTags.map(t => t.vocabulary.topic))).sort();
 
-	if (tags.length === 0 && !topic && !tagFilter) {
+	if (tags.length === 0 && !topic && !tagFilter && !query) {
 		return (
 			<div className="text-center py-20 px-6 bg-white rounded-2xl border border-slate-200">
 				<h3 className="text-2xl font-black text-slate-800 mb-4">Chưa có từ vựng nào</h3>
@@ -103,6 +115,26 @@ async function VocabularyBank({ topic, tagFilter }: { topic?: string, tagFilter?
 						{tag.vocabulary.example && (
 							<p className="mt-3 text-sm text-slate-600 italic bg-slate-50 p-3 rounded-xl border border-slate-100">{tag.vocabulary.example}</p>
 						)}
+
+                        {/* Personal Notes Placeholder */}
+                        <div className="mt-5 pt-4 border-t border-slate-100">
+                            <button
+                                className="w-full text-left p-3 rounded-xl bg-green-50/50 border border-green-100/50 hover:bg-green-50 transition-colors group/note relative"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    // Placeholder for future update
+                                    alert('Tính năng thêm ghi chú cá nhân đang được phát triển!');
+                                }}
+                            >
+                                <div className="flex items-center gap-2 mb-1.5 opacity-80 group-hover/note:opacity-100 transition-opacity">
+                                    <svg className="w-3.5 h-3.5 text-[#14532d]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                    <span className="text-[11px] font-bold text-[#14532d] uppercase tracking-wider">Ghi chú cá nhân</span>
+                                </div>
+                                <div className="text-sm font-medium text-slate-400 italic">
+                                    Bấm vào đây để thêm ghi chú/mẹo nhớ...
+                                </div>
+                            </button>
+                        </div>
 					</div>
 				</Link>
 			))}
@@ -132,13 +164,14 @@ function ComingSoonPlaceholder({ title, icon }: { title: string, icon: string })
 export default async function ToeicProgressPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ tab?: string, topic?: string, tag?: string, filter?: string }>;
+	searchParams: Promise<{ tab?: string, topic?: string, tag?: string, filter?: string, q?: string }>;
 }) {
 	const resolvedParams = await searchParams;
 	const activeTab = resolvedParams.tab || 'reports';
 	const topicFilter = resolvedParams.topic;
 	const tagFilter = resolvedParams.tag;
 	const qbFilter = resolvedParams.filter || 'mistakes';
+    const qFilter = resolvedParams.q;
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
@@ -160,7 +193,7 @@ export default async function ToeicProgressPage({
 						{activeTab === 'vocabulary-bank' && (
 							<div>
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
-									<VocabularyBank topic={topicFilter} tagFilter={tagFilter} />
+									<VocabularyBank topic={topicFilter} tagFilter={tagFilter} query={qFilter} />
 								</Suspense>
 							</div>
 						)}
