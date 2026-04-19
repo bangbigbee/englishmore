@@ -1743,16 +1743,31 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							</div>
 						) : (
                             <>
-                                <div className="flex flex-wrap gap-2 mb-6 p-1 bg-slate-100 rounded-[14px]">
-                                    {(['ALL', 'BASIC', 'ADVANCED', 'MIXED']).map(pkg => (
-                                        <button
-                                            key={pkg}
-                                            onClick={() => setActivePackage(pkg)}
-                                            className={`flex-1 min-w-[100px] px-4 py-2.5 rounded-[10px] text-[13px] sm:text-sm font-bold transition-all duration-300 ${activePackage === pkg ? (pkg === 'BASIC' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-blue-100' : pkg === 'ADVANCED' ? 'bg-white text-green-800 shadow-sm ring-1 ring-green-200' : pkg === 'MIXED' ? 'bg-white text-purple-600 shadow-sm ring-1 ring-purple-100' : 'bg-white text-[#14532d] shadow-sm ring-1 ring-slate-900/5') : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                                        >
-                                            {pkg === 'ALL' ? 'Tất cả' : pkg === 'BASIC' ? '🌱 Cơ bản' : pkg === 'ADVANCED' ? '🔥 Nâng cao' : '🔀 Hỗn hợp'}
-                                        </button>
-                                    ))}
+                                <div className="inline-flex flex-wrap gap-1.5 sm:gap-2 mb-6 p-1.5 bg-slate-100/80 rounded-[14px]">
+                                    {(['ALL', 'BASIC', 'ADVANCED', 'MIXED']).map(pkg => {
+                                        const isActive = activePackage === pkg;
+                                        const colorClass = pkg === 'BASIC' ? 'text-blue-600' : 
+                                                           pkg === 'ADVANCED' ? 'text-green-800' : 
+                                                           pkg === 'MIXED' ? 'text-purple-600' : 
+                                                           'text-[#14532d]';
+                                        
+                                        const activeBg = pkg === 'BASIC' ? 'bg-white shadow-sm ring-1 ring-blue-100' :
+                                                         pkg === 'ADVANCED' ? 'bg-white shadow-sm ring-1 ring-green-200' :
+                                                         pkg === 'MIXED' ? 'bg-white shadow-sm ring-1 ring-purple-100' :
+                                                         'bg-white shadow-sm ring-1 ring-slate-200';
+                                                         
+                                        const inactiveBg = 'hover:bg-white/60 opacity-70 hover:opacity-100';
+
+                                        return (
+                                            <button
+                                                key={pkg}
+                                                onClick={() => setActivePackage(pkg)}
+                                                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-[10px] text-[13px] sm:text-sm font-bold transition-all duration-300 ${colorClass} ${isActive ? activeBg : inactiveBg}`}
+                                            >
+                                                {pkg === 'ALL' ? 'Tất cả' : pkg === 'BASIC' ? 'Cơ bản' : pkg === 'ADVANCED' ? 'Nâng cao' : 'Hỗn hợp'}
+                                            </button>
+                                        )
+                                    })}
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                     {topics.filter(t => activePackage === 'ALL' || t.packageType === activePackage).map((t) => (
