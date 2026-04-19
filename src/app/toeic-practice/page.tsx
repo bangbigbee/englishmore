@@ -593,21 +593,21 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
     );
 }
 
-function GrammarFeatureCard({ onClick, icon }: any) {
+function GrammarFeatureCard({ onClick, icon, isActive }: any) {
 	return (
-		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-xl hover:shadow-sm transition-all relative overflow-hidden bg-white" onClick={onClick}>
+		<div className={`w-full min-h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center scale-110 group-hover:scale-100 transition-transform">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-[#14532d]">Ngữ pháp</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+					<p className={`text-slate-500 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 						Hệ thống bài học và luyện tập toàn diện.
 					</p>
-					<div className="absolute inset-0 opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none mt-7 ml-[2px]">
+					<div className={`absolute inset-0 transition-opacity duration-300 pointer-events-none mt-7 ml-[2px] ${isActive ? 'opacity-100' : 'opacity-0'}`}>
 						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2s_infinite_ease-out]" style={{ width: '85%' }} />
 						
 						{/* Typed "Grammar" text above the line */}
@@ -624,7 +624,7 @@ function GrammarFeatureCard({ onClick, icon }: any) {
 			</div>
 
 			{/* Overlay Button on Hover */}
-			<div className="absolute top-4 right-4 opacity-100 group-hover:opacity-0 transition-opacity z-30">
+			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
 				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
@@ -633,9 +633,8 @@ function GrammarFeatureCard({ onClick, icon }: any) {
 	);
 }
 
-function ReadingFeatureCard({ onClick, icon }: any) {
+function ReadingFeatureCard({ onClick, icon, isActive }: any) {
 	const [activePage, setActivePage] = useState(0);
-	const [isActive, setIsActive] = useState(true);
 	const pages = ["Part 5", "Part 6", "Part 7", "Giải thích chi tiết"];
 
 	useEffect(() => {
@@ -651,7 +650,7 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 	}, [isActive]);
 
 	return (
-		<div className="w-full min-h-[160px] group cursor-pointer border border-[#14532d]/10 rounded-[20px] shadow-xl hover:shadow-sm transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsActive(false)} onMouseLeave={() => setIsActive(true)}>
+		<div className={`w-full min-h-[160px] cursor-pointer border border-[#14532d]/10 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick}>
 			{/* Front/Default view */}
 			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
@@ -712,7 +711,7 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 				</div>
 			</div>
 
-			<div className="absolute top-4 right-4 opacity-100 group-hover:opacity-0 transition-opacity z-50">
+			<div className={`absolute top-4 right-4 transition-opacity z-50 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
 				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
@@ -721,9 +720,8 @@ function ReadingFeatureCard({ onClick, icon }: any) {
 	);
 }
 
-function ActualTestFeatureCard({ onClick, icon }: any) {
+function ActualTestFeatureCard({ onClick, icon, isActive }: any) {
 	const [timeLeft, setTimeLeft] = useState(720000);
-	const [isActive, setIsActive] = useState(true);
 
 	useEffect(() => {
 		let int: NodeJS.Timeout;
@@ -745,10 +743,10 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 	};
 
 	return (
-		<div className="w-full min-h-[160px] group cursor-pointer border border-slate-200 rounded-[20px] shadow-xl hover:shadow-sm transition-all relative overflow-hidden bg-white" onClick={onClick} onMouseEnter={() => setIsActive(false)} onMouseLeave={() => setIsActive(true)}>
+		<div className={`w-full min-h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center scale-110 group-hover:scale-100 transition-transform">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-[#14532d]">Luyện đề</h3>
@@ -769,7 +767,7 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 					</div>
 				</div>
 			</div>
-			<div className="absolute top-4 right-4 opacity-100 group-hover:opacity-0 transition-opacity z-30">
+			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
 				<div className="bg-[#14532d] text-amber-400 p-2 rounded-full shadow-md">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
@@ -778,10 +776,10 @@ function ActualTestFeatureCard({ onClick, icon }: any) {
 	);
 }
 
-function VocabFeatureCard({ onClick, icon }: any) {
+function VocabFeatureCard({ onClick, icon, isActive }: any) {
     return (
-		<div className="perspective-[1000px] w-full min-h-[160px] group cursor-pointer" onClick={onClick}>
-            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] [transform:rotateY(180deg)] group-hover:[transform:rotateY(0deg)] rounded-[20px] shadow-xl hover:shadow-sm">
+		<div className="perspective-[1000px] w-full min-h-[160px] cursor-pointer" onClick={onClick}>
+            <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl' : 'shadow-sm hover:shadow-md'}`}>
                 <div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
                     <div className="w-full flex items-center gap-4 pb-1">
                         <div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
@@ -811,9 +809,15 @@ function VocabFeatureCard({ onClick, icon }: any) {
 
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, readingTopics: 10, vocabTopics: 50, detailedQuestions: 1200 });
+	const [activeCardIndex, setActiveCardIndex] = useState(0);
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
+		
+		const int = setInterval(() => {
+			setActiveCardIndex((prev) => (prev + 1) % 4);
+		}, 3000);
+		return () => clearInterval(int);
 	}, []);
 
 	return (
@@ -903,10 +907,10 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Features Section removed text */}
 			
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-				<GrammarFeatureCard onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
-				<ReadingFeatureCard onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
-				<VocabFeatureCard onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>} />
-				<ActualTestFeatureCard onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
+				<VocabFeatureCard isActive={activeCardIndex === 0} onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>} />
+				<GrammarFeatureCard isActive={activeCardIndex === 1} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
+				<ReadingFeatureCard isActive={activeCardIndex === 2} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
+				<ActualTestFeatureCard isActive={activeCardIndex === 3} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
 			</div>
 		</div>
 	);
