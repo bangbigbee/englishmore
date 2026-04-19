@@ -408,7 +408,7 @@ export default function PricingSettingsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="font-bold text-slate-800">{o.targetTier} <span className="font-normal text-slate-500">({o.durationMonths} tháng)</span></div>
+                        <div className="font-bold text-slate-800">{o.targetTier} <span className="font-normal text-slate-500">({o.durationMonths >= 99 ? 'Trọn đời' : `${o.durationMonths} tháng`})</span></div>
                         <div className="text-amber-500 font-bold">{o.price.toLocaleString()}đ</div>
                       </td>
                       <td className="px-6 py-4">
