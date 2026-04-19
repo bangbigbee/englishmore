@@ -968,9 +968,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
                                   <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 mt-2">Bạn đang nghe directions của Phần {topic.part} bài thi</h3>
                                   {topic.part === 2 ? (
-                                    <p className="text-sm md:text-base text-red-900 mb-12 mt-4 font-bold max-w-3xl mx-auto px-4 py-3 bg-red-50 rounded-xl border border-red-200">
-                                      Nội dung câu hỏi từ Câu 7 đến Câu 31 trong phần này sẽ KHÔNG được in sẵn. 
-                                      <br/><span className="text-xs md:text-sm font-medium text-red-700 mt-1 block">Hãy tập trung lắng nghe hoàn toàn!</span>
+                                    <p className="mb-12 mt-4 max-w-3xl mx-auto px-4 py-3 bg-red-50 rounded-xl border border-red-200 text-center">
+                                      <span className="text-xs md:text-sm font-medium text-red-700 block">Nội dung câu hỏi từ Câu 7 đến Câu 31 trong phần này sẽ KHÔNG được in sẵn.</span>
+                                      <span className="text-xs md:text-sm font-medium text-red-700 mt-1 block">Hãy tập trung lắng nghe hoàn toàn!</span>
                                     </p>
                                   ) : (
                                     <p className="text-sm text-slate-500 mb-8 font-medium">Hãy tranh thủ thời gian "vàng" này lướt nhanh qua các hình ảnh hoặc câu hỏi bên dưới.</p>
@@ -1075,11 +1075,18 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                               </div>
 
                               <div className="mb-8 flex flex-col items-center">
-                                <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug text-center mb-6">
-                                  {topic.part === 2 && !isShowingResult ? (
-                                      <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
-                                  ) : q.question}
-                                </p>
+                                <div className="text-center mb-6">
+                                  <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug">
+                                    {topic.part === 2 && !isShowingResult ? (
+                                        <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
+                                    ) : q.question}
+                                  </p>
+                                  {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && showTranslation[q.id] && parsedTranslations.question && (
+                                    <p className="mt-2 text-base md:text-lg font-medium text-slate-500 italic animate-in fade-in slide-in-from-top-1">
+                                      {parsedTranslations.question.replace(/^(?:Câu\s*hỏi|Question)[\s]*[:\-]?\s*/i, '').trim()}
+                                    </p>
+                                  )}
+                                </div>
                                 {q.imageUrl && (
                                   <img 
                                     src={q.imageUrl} 
@@ -1107,9 +1114,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                        {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
                                        {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-[0_0_3px_rgba(147,51,234,0.6)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                                      </button>
-                                     {showTranslation[q.id] && parsedTranslations.question && (
-                                         <p className="mt-3 text-sm font-medium text-emerald-800 italic bg-emerald-50 px-4 py-2 rounded border border-emerald-100 animate-in fade-in slide-in-from-top-2">{parsedTranslations.question}</p>
-                                     )}
                                    </div>
                                 )}
                               </div>
