@@ -870,7 +870,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                      {currentLesson.questions.map((q, idx) => (
                                         <div key={q.id} className="relative flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all group">
                                             <div className="absolute top-2 left-2 bg-[#14532d] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
-                                                <span>Câu {idx + 1}</span>
+                                                <span>Câu {topic.type === 'LISTENING' && topic.part === 2 ? idx + 7 : idx + 1}</span>
                                             </div>
                                             {q.imageUrl ? (
                                                 <div className="aspect-[4/3] bg-slate-50 relative border-b border-slate-100">
@@ -1104,7 +1104,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   </div>
                                 ) : (
                                   <div className="text-slate-400 font-bold text-xs uppercase tracking-widest">
-                                    Câu {activeQuestionIndex + 1} / {currentLesson.questions.length}
+                                    Câu {topic.type === 'LISTENING' && topic.part === 2 ? activeQuestionIndex + 7 : activeQuestionIndex + 1} / {currentLesson.questions.length}
                                   </div>
                                 )}
                               </div>
@@ -1246,7 +1246,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     }}
                                     className={`w-6 h-6 sm:w-7 sm:h-7 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
                                   >
-                                    {idx + 1}
+                                    {topic.type === 'LISTENING' && topic.part === 2 ? idx + 7 : idx + 1}
                                   </button>
                                 )
                               })}

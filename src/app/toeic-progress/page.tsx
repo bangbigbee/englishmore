@@ -43,8 +43,8 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
         whereClause.vocabulary = {
             ...whereClause.vocabulary,
             OR: [
-                { word: { contains: query } },
-                { meaning: { contains: query } }
+                { word: { contains: query, mode: 'insensitive' } },
+                { meaning: { contains: query, mode: 'insensitive' } }
             ]
         };
     }

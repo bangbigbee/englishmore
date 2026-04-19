@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import mammoth from 'mammoth'
+import * as cheerio from 'cheerio'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
@@ -159,6 +160,91 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
   return results
 }
 
+function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
+  const $ = cheerio.load(html)
+  const results: ExtractedToeicQuestion[] = []
+  
+  $('table').each((_, table) => {
+    const rows = $(table).find('tr').toArray()
+    if (rows.length < 2) return
+    
+    // Check if it's the expected format by checking headers
+    const firstRowText = $(rows[0]).text().toLowerCase()
+    if (!firstRowText.includes('đáp án') || !firstRowText.includes('nội dung')) {
+      return // Not the right table
+    }
+
+    // Process from the second row
+    for (let i = 1; i < rows.length; i++) {
+        const cells = $(rows[i]).find('td').toArray()
+        if (cells.length >= 6) {
+          const correctOption = $(cells[1]).text().trim().replace(/[^A-D]/gi, '').toUpperCase()[0] || 'A';
+          const questionText = $(cells[2]).text().trim();
+          
+          if (!questionText) continue;
+
+          // Process options
+          const optionsHtml = $(cells[3]).html() || '';
+          const optsCleaned = optionsHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
+          
+          const rgxA = /(?:\(A\)|A\.)[.\s:]+([\s\S]*?)(?=\(B\)|B\.|$)/i;
+          const rgxB = /(?:\(B\)|B\.)[.\s:]+([\s\S]*?)(?=\(C\)|C\.|$)/i;
+          const rgxC = /(?:\(C\)|C\.)[.\s:]+([\s\S]*?)(?=\(D\)|D\.|$)/i;
+          const rgxD = /(?:\(D\)|D\.)[.\s:]+([\s\S]*?)$/i;
+
+          const matchA = optsCleaned.match(rgxA);
+          const matchB = optsCleaned.match(rgxB);
+          const matchC = optsCleaned.match(rgxC);
+          const matchD = optsCleaned.match(rgxD);
+
+          const optionA = matchA ? matchA[1].trim() : '';
+          const optionB = matchB ? matchB[1].trim() : '';
+          const optionC = matchC ? matchC[1].trim() : '';
+          const optionD = matchD ? matchD[1].trim() : '';
+
+          // Process translation
+          const transHtml = $(cells[4]).html() || '';
+          const transCleaned = transHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
+          
+          const transA = transCleaned.match(rgxA);
+          const transB = transCleaned.match(rgxB);
+          const transC = transCleaned.match(rgxC);
+          const transD = transCleaned.match(rgxD);
+
+          let translation = '';
+          if (transA && transA[1]) {
+             translation = `(A) ${transA[1].trim()}`;
+             if (transB && transB[1]) translation += `\n(B) ${transB[1].trim()}`;
+             if (transC && transC[1]) translation += `\n(C) ${transC[1].trim()}`;
+             if (transD && transD[1]) translation += `\n(D) ${transD[1].trim()}`;
+          } else {
+             translation = $(cells[4]).text().trim();
+          }
+
+          const explanation = $(cells[5]).text().trim();
+          let tips = '';
+          if (cells.length > 6) {
+             tips = $(cells[6]).text().trim();
+          }
+
+          results.push({
+             question: questionText,
+             optionA,
+             optionB,
+             optionC,
+             optionD,
+             correctOption,
+             explanation,
+             translation,
+             tips,
+             vocabulary: []
+          })
+        }
+    }
+  })
+  return results
+}
+
 export async function POST(request: NextRequest) {
   const auth = await requireAdmin()
   if (!auth.ok) {
@@ -184,14 +270,26 @@ export async function POST(request: NextRequest) {
 
     const arrayBuffer = await docxFile.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
-    const parsed = await mammoth.extractRawText({ buffer })
-    const rawText = String(parsed.value || '').trim()
-
-    if (!rawText) {
-      return NextResponse.json({ error: 'The file appears to be empty.' }, { status: 400 })
+    
+    const htmlParsed = await mammoth.convertToHtml({ buffer })
+    const htmlOutput = htmlParsed.value || ''
+    
+    let questions: ExtractedToeicQuestion[] = []
+    
+    if (htmlOutput.includes('<table')) {
+      questions = parseTableQuestionsFromHtml(htmlOutput)
     }
+    
+    if (questions.length === 0) {
+      const parsed = await mammoth.extractRawText({ buffer })
+      const rawText = String(parsed.value || '').trim()
 
-    const questions = parseQuestionsFromDocxText(rawText)
+      if (!rawText) {
+        return NextResponse.json({ error: 'The file appears to be empty.' }, { status: 400 })
+      }
+
+      questions = parseQuestionsFromDocxText(rawText)
+    }
 
     if (questions.length === 0) {
       return NextResponse.json(
