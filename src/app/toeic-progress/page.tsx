@@ -119,22 +119,18 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 
                         {/* Personal Notes Placeholder */}
                         <div className="mt-5 pt-4 border-t border-slate-100">
-                            <button
-                                className="w-full text-left p-3 rounded-xl bg-green-50/50 border border-green-100/50 hover:bg-green-50 transition-colors group/note relative"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    // Placeholder for future update
-                                    alert('Tính năng thêm ghi chú cá nhân đang được phát triển!');
-                                }}
+                            <div
+                                className="w-full text-left p-3 rounded-xl bg-green-50/50 border border-green-100/50 hover:bg-green-50 transition-colors group/note relative cursor-not-allowed"
+                                title="Tính năng thêm ghi chú cá nhân đang được phát triển!"
                             >
                                 <div className="flex items-center gap-2 mb-1.5 opacity-80 group-hover/note:opacity-100 transition-opacity">
                                     <svg className="w-3.5 h-3.5 text-[#14532d]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                                     <span className="text-[11px] font-bold text-[#14532d] uppercase tracking-wider">Ghi chú cá nhân</span>
                                 </div>
                                 <div className="text-sm font-medium text-slate-400 italic">
-                                    Bấm vào đây để thêm ghi chú/mẹo nhớ...
+                                    Tính năng đang được phát triển...
                                 </div>
-                            </button>
+                            </div>
                         </div>
 					</div>
 				</Link>
