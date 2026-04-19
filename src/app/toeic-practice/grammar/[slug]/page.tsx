@@ -1040,11 +1040,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 if (topic.type !== 'LISTENING' || (topic.part !== 1 && topic.part !== 2)) {
                                      return { question: q.translation, options: {} as Record<string, string> };
                                 }
-                                const parts = q.translation.split('/');
+                                const parts = q.translation.split(/[\/\n]+/);
                                 const result = { question: '', options: {} as Record<string, string> };
                                 parts.forEach(part => {
                                     const text = part.trim();
-                                    const match = text.match(/^([A-D])[\.\:\s]+(.*)/i);
+                                    if (!text) return;
+                                    const match = text.match(/^\s*\(?([A-D])\)?[.\:\-\s]+(.*)/i);
                                     if (match) {
                                         result.options[match[1].toUpperCase()] = match[2].trim();
                                     } else if (!result.question) {
