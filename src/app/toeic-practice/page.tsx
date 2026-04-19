@@ -2291,6 +2291,19 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	);
 }
 
+function getPartColors(partId: number) {
+    switch (partId) {
+        case 1: return { baseHex: '#14532d' };
+        case 2: return { baseHex: '#3b7418' };
+        case 3: return { baseHex: '#9cb510' };
+        case 4: return { baseHex: '#ea980c' };
+        case 5: return { baseHex: '#14532d' };
+        case 6: return { baseHex: '#719f16' };
+        case 7: return { baseHex: '#ea980c' };
+        default: return { baseHex: '#475569' };
+    }
+}
+
 function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
 	const searchParams = useSearchParams();
 	const partParam = searchParams.get('part');
@@ -2345,28 +2358,43 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 				Các Phần Thi Listening
 			</h2>
 
-			<div className="flex w-full overflow-x-auto gap-2 md:gap-3 mb-8 pb-4 border-b border-gray-100 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+			<div className="flex w-full overflow-x-auto gap-2.5 md:gap-3 mb-8 pb-3 hide-scrollbar snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				{parts.map((p) => {
 					const topicsInPart = topics.filter(t => t.part === p.id);
 					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
 					const isActive = selectedPart === p.id;
-					const shortTitle = p.title.replace(`Part ${p.id}: `, '');
+					const colors = getPartColors(p.id);
 					
 					return (
 						<button
 							key={p.id}
 							onClick={() => setSelectedPart(p.id)}
-							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] ${
-								isActive 
-									? 'bg-white border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)] z-10' 
-									: 'bg-[#14532d]/[0.03] border-transparent text-[#14532d]/60 hover:text-[#14532d]/80 hover:bg-[#14532d]/6'
-							}`}
+							className={`group flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-[14px] transition-all duration-300 font-bold text-[12px] md:text-[13px] whitespace-nowrap shrink-0 snap-center border ${isActive ? 'scale-[1.02] border-transparent shadow-md ring-2' : 'border-current/10 hover:border-current/30'}`}
+                            style={{
+                                backgroundColor: isActive ? colors.baseHex : `${colors.baseHex}14`,
+                                color: isActive ? '#ffffff' : colors.baseHex,
+                                boxShadow: isActive ? `0 4px 14px -4px ${colors.baseHex}66` : 'none',
+                                '--tw-ring-color': `${colors.baseHex}40`
+                            } as any}
 						>
-							<div className={`px-2 py-1 rounded-[6px] flex items-center justify-center text-[10px] sm:text-[11px] font-black shadow-sm transition-colors uppercase ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
+							<div 
+                                className={`px-2 py-0.5 rounded-[5px] flex items-center justify-center text-[10px] font-black transition-colors uppercase`}
+                                style={{
+                                    backgroundColor: isActive ? '#ffffff' : colors.baseHex,
+                                    color: isActive ? colors.baseHex : '#ffffff'
+                                }}
+                            >
 								Part {p.id}
 							</div>
 							{p.subtitle}
-							<span className={`ml-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-colors ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-white text-[#14532d]/50 group-hover:text-[#14532d]/70 shadow-sm'}`}>
+							<span 
+                                className={`ml-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-colors`}
+                                style={{
+                                    backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#ffffff',
+                                    color: isActive ? '#ffffff' : colors.baseHex,
+                                    boxShadow: isActive ? 'none' : '0 1px 2px rgba(0,0,0,0.05)'
+                                }}
+                            >
 								{totalLessons}
 							</span>
 						</button>
@@ -2451,28 +2479,43 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 				Các Phần Thi Reading
 			</h2>
 
-			<div className="flex w-full overflow-x-auto gap-2 md:gap-3 mb-8 pb-4 border-b border-gray-100 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+			<div className="flex w-full overflow-x-auto gap-2.5 md:gap-3 mb-8 pb-3 hide-scrollbar snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				{parts.map((p) => {
 					const topicsInPart = topics.filter(t => t.part === p.id);
 					const totalLessons = topicsInPart.reduce((acc, t) => acc + (t._count?.lessons || 0), 0);
 					const isActive = selectedPart === p.id;
-					const shortTitle = p.title.replace(`Part ${p.id}: `, '');
+					const colors = getPartColors(p.id);
 					
 					return (
 						<button
 							key={p.id}
 							onClick={() => setSelectedPart(p.id)}
-							className={`group flex items-center gap-2.5 px-5 py-3 rounded-t-2xl transition-all font-bold text-[13px] md:text-[14px] whitespace-nowrap border-b-[3px] ${
-								isActive 
-									? 'bg-white border-[#14532d] text-[#14532d] shadow-[0_-4px_10px_rgba(20,83,45,0.05)] z-10' 
-									: 'bg-[#14532d]/[0.03] border-transparent text-[#14532d]/60 hover:text-[#14532d]/80 hover:bg-[#14532d]/6'
-							}`}
+							className={`group flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-[14px] transition-all duration-300 font-bold text-[12px] md:text-[13px] whitespace-nowrap shrink-0 snap-center border ${isActive ? 'scale-[1.02] border-transparent shadow-md ring-2' : 'border-current/10 hover:border-current/30'}`}
+                            style={{
+                                backgroundColor: isActive ? colors.baseHex : `${colors.baseHex}14`,
+                                color: isActive ? '#ffffff' : colors.baseHex,
+                                boxShadow: isActive ? `0 4px 14px -4px ${colors.baseHex}66` : 'none',
+                                '--tw-ring-color': `${colors.baseHex}40`
+                            } as any}
 						>
-							<div className={`px-2 py-1 rounded-[6px] flex items-center justify-center text-[10px] sm:text-[11px] font-black shadow-sm transition-colors uppercase ${isActive ? 'bg-[#14532d] text-white' : 'bg-[#14532d]/10 text-[#14532d]/70 group-hover:bg-[#14532d]/20 group-hover:text-[#14532d]'}`}>
+							<div 
+                                className={`px-2 py-0.5 rounded-[5px] flex items-center justify-center text-[10px] font-black transition-colors uppercase`}
+                                style={{
+                                    backgroundColor: isActive ? '#ffffff' : colors.baseHex,
+                                    color: isActive ? colors.baseHex : '#ffffff'
+                                }}
+                            >
 								Part {p.id}
 							</div>
 							{p.subtitle}
-							<span className={`ml-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-colors ${isActive ? 'bg-[#14532d]/10 text-[#14532d]' : 'bg-white text-[#14532d]/50 group-hover:text-[#14532d]/70 shadow-sm'}`}>
+							<span 
+                                className={`ml-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-colors`}
+                                style={{
+                                    backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#ffffff',
+                                    color: isActive ? '#ffffff' : colors.baseHex,
+                                    boxShadow: isActive ? 'none' : '0 1px 2px rgba(0,0,0,0.05)'
+                                }}
+                            >
 								{totalLessons}
 							</span>
 						</button>
