@@ -593,9 +593,9 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
     );
 }
 
-function GrammarFeatureCard({ onClick, icon, isActive }: any) {
+function GrammarFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
-		<div className={`w-full min-h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick}>
+		<div className={`w-full min-h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -633,7 +633,7 @@ function GrammarFeatureCard({ onClick, icon, isActive }: any) {
 	);
 }
 
-function ReadingFeatureCard({ onClick, icon, isActive }: any) {
+function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	const [activePage, setActivePage] = useState(0);
 	const pages = ["Part 5", "Part 6", "Part 7", "Giải thích chi tiết"];
 
@@ -650,7 +650,7 @@ function ReadingFeatureCard({ onClick, icon, isActive }: any) {
 	}, [isActive]);
 
 	return (
-		<div className={`w-full min-h-[160px] cursor-pointer border border-[#14532d]/10 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick}>
+		<div className={`w-full min-h-[160px] cursor-pointer border border-[#14532d]/10 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			{/* Front/Default view */}
 			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
@@ -720,7 +720,7 @@ function ReadingFeatureCard({ onClick, icon, isActive }: any) {
 	);
 }
 
-function ActualTestFeatureCard({ onClick, icon, isActive }: any) {
+function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	const [timeLeft, setTimeLeft] = useState(720000);
 
 	useEffect(() => {
@@ -743,7 +743,7 @@ function ActualTestFeatureCard({ onClick, icon, isActive }: any) {
 	};
 
 	return (
-		<div className={`w-full min-h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick}>
+		<div className={`w-full min-h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -776,9 +776,9 @@ function ActualTestFeatureCard({ onClick, icon, isActive }: any) {
 	);
 }
 
-function VocabFeatureCard({ onClick, icon, isActive }: any) {
+function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
     return (
-		<div className="perspective-[1000px] w-full min-h-[160px] cursor-pointer" onClick={onClick}>
+		<div className="perspective-[1000px] w-full min-h-[160px] cursor-pointer" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl' : 'shadow-sm hover:shadow-md'}`}>
                 <div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
                     <div className="w-full flex items-center gap-4 pb-1">
@@ -810,6 +810,7 @@ function VocabFeatureCard({ onClick, icon, isActive }: any) {
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, readingTopics: 10, vocabTopics: 50, detailedQuestions: 1200 });
 	const [activeCardIndex, setActiveCardIndex] = useState(0);
+	const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
@@ -907,10 +908,10 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Features Section removed text */}
 			
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-				<VocabFeatureCard isActive={activeCardIndex === 0} onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>} />
-				<GrammarFeatureCard isActive={activeCardIndex === 1} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
-				<ReadingFeatureCard isActive={activeCardIndex === 2} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
-				<ActualTestFeatureCard isActive={activeCardIndex === 3} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
+				<VocabFeatureCard onMouseEnter={() => setHoveredCardIndex(0)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 0 || (hoveredCardIndex === null && activeCardIndex === 0)} onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>} />
+				<GrammarFeatureCard onMouseEnter={() => setHoveredCardIndex(1)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 1 || (hoveredCardIndex === null && activeCardIndex === 1)} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
+				<ReadingFeatureCard onMouseEnter={() => setHoveredCardIndex(2)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 2 || (hoveredCardIndex === null && activeCardIndex === 2)} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
+				<ActualTestFeatureCard onMouseEnter={() => setHoveredCardIndex(3)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 3 || (hoveredCardIndex === null && activeCardIndex === 3)} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
 			</div>
 		</div>
 	);
