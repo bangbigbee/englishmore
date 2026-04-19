@@ -2293,11 +2293,11 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 function getPartColors(partId: number) {
     switch (partId) {
-        case 1: return { baseHex: '#14532d' };
+        case 1: return { baseHex: '#0f766e' };
         case 2: return { baseHex: '#3b7418' };
         case 3: return { baseHex: '#9cb510' };
         case 4: return { baseHex: '#ea980c' };
-        case 5: return { baseHex: '#14532d' };
+        case 5: return { baseHex: '#0f766e' };
         case 6: return { baseHex: '#719f16' };
         case 7: return { baseHex: '#ea980c' };
         default: return { baseHex: '#475569' };
