@@ -20,6 +20,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tagFilter?: string, query?: string }) {
+    try {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
 
@@ -142,6 +143,14 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 			)}
 		</div>
 	);
+    } catch (error: any) {
+        return (
+            <div className="bg-rose-50 text-rose-700 p-6 rounded-2xl border border-rose-200">
+                <h3 className="font-bold text-lg mb-2">Lỗi tải dữ liệu (VocabularyBank):</h3>
+                <pre className="whitespace-pre-wrap text-sm break-words opacity-80">{error.stack || error.message || String(error)}</pre>
+            </div>
+        );
+    }
 }
 
 function ComingSoonPlaceholder({ title, icon }: { title: string, icon: string }) {
