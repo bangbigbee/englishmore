@@ -88,7 +88,7 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 					<p className="text-slate-500 font-medium">Không tìm thấy từ vựng nào khớp với bộ lọc điều kiện trên.</p>
 				</div>
 			) : (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-5 xl:gap-6">
 			{tags.map(tag => (
 				<Link 
 					key={tag.id} 
@@ -110,8 +110,10 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 								{tag.isLearned && <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-50 text-green-600 border border-green-100 text-[10px] uppercase font-black shadow-sm" title="Đã thuộc">✓</span>}
 							</div>
 						</div>
-						<h3 className="text-lg font-black text-slate-800 mb-0.5">{tag.vocabulary.word}</h3>
-						{tag.vocabulary.phonetic && <p className="text-[12px] text-slate-500 font-medium font-mono mb-2.5">{tag.vocabulary.phonetic}</p>}
+						<div className="flex items-baseline gap-2.5 mb-1.5 flex-wrap">
+							<h3 className="text-[19px] font-black text-slate-800">{tag.vocabulary.word}</h3>
+							{tag.vocabulary.phonetic && <span className="text-[13px] text-slate-500 font-medium font-mono">{tag.vocabulary.phonetic}</span>}
+						</div>
 						<p className="font-semibold text-slate-700 text-[13px] leading-relaxed">{tag.vocabulary.meaning}</p>
 						{tag.vocabulary.example && (
 							<p className="mt-2 text-[12px] text-slate-600 italic bg-slate-50 p-2.5 rounded-lg border border-slate-100">{tag.vocabulary.example}</p>
