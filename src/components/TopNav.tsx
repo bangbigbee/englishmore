@@ -89,20 +89,21 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
               <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]`}>
                  <ModernUserIcon className="w-[18px] h-[18px]" />
               </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/user/profile' ? "opacity-100" : "opacity-80 group-hover:opacity-100"} max-w-[120px] truncate`} title={session.user?.name || "Cá Nhân"}>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/user/profile' ? "opacity-100" : "opacity-80 group-hover:opacity-100"} max-w-[120px] truncate`} title={session.user?.name || "Cá Nhân"}>
                  {session.user?.name?.split(' ').pop() || "Cá Nhân"}
               </span>
             </Link>
             <Link
               href="/toeic-progress?tab=vocabulary-bank"
-              className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
+              className={`relative overflow-hidden flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "border-[#14532d]" : "border-transparent hover:border-[#14532d]/20"}`}
             >
               <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-emerald-500`}>
                  <BookIcon className="w-[18px] h-[18px] mt-[-2px]" />
               </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] relative z-10 ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
                  Sổ tay của tôi
               </span>
+              <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-[#4c1d95]/10 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
             </Link>
             <Link
               href="/toeic-progress?tab=reports-vocabulary"
@@ -113,7 +114,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                  </svg>
               </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#14532d] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
                  Tiến độ học
               </span>
             </Link>

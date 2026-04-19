@@ -899,13 +899,13 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							{ label: 'Chủ đề từ vựng', value: stats.vocabTopics },
 							{ label: 'Từ vựng TOEIC', value: stats.vocabularies },
 							{ label: 'Giải thích chi tiết', value: stats.detailedQuestions },
-							{ label: 'Học viên tham gia', value: stats.users },
+							{ label: 'học viên đang học', value: stats.users },
 							{ label: 'Chủ đề Ngữ pháp', value: stats.grammarTopics },
 							{ label: 'Bộ đề Reading', value: stats.readingTopics },
 							{ label: 'Chủ đề từ vựng', value: stats.vocabTopics },
 							{ label: 'Từ vựng TOEIC', value: stats.vocabularies },
 							{ label: 'Giải thích chi tiết', value: stats.detailedQuestions },
-							{ label: 'Học viên tham gia', value: stats.users },
+							{ label: 'học viên đang học', value: stats.users },
 						].map((stat, idx) => (
 							<div key={idx} className="flex items-center shrink-0">
 								<span><strong className="text-[#14532d] text-[15px]">{stat.value.toLocaleString()}+</strong> <span className="ml-[2px]">{stat.label}</span></span>

@@ -1224,7 +1224,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                               <button
                                 onClick={() => {
                                     if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
-                                        toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000 });
+                                        toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
                                         return;
                                     }
                                     setActiveQuestionIndex(prev => Math.max(0, prev - 1));
@@ -1300,7 +1300,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 <button
                                   onClick={() => {
                                       if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
-                                          toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000 });
+                                          toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
                                           return;
                                       }
                                       setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1));
@@ -1392,7 +1392,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     key={idx}
                                     onClick={() => {
                                         if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
-                                            toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000 });
+                                            toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
                                             return;
                                         }
                                         if (idx === activeQuestionIndex) return;
