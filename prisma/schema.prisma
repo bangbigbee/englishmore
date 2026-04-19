@@ -658,6 +658,7 @@ model VocabularyTag {
   isLearned    Boolean  @default(false)
   isHard       Boolean  @default(false)
   isBookmarked Boolean  @default(false)
+  personalNote String?  @db.Text
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

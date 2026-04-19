@@ -12,6 +12,7 @@ import ListeningBank from "./ListeningBank";
 import ActualTestBank from "./ActualTestBank";
 import ProgressNavigation from "./ProgressNavigation";
 import QuestionBankFilter from "./QuestionBankFilter";
+import PersonalNoteUI from "./PersonalNoteUI";
 
 export const metadata = {
 	title: 'Tiến Độ Của Tôi',
@@ -119,20 +120,9 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 							<p className="mt-2 text-[12px] text-slate-600 italic bg-slate-50 p-2.5 rounded-lg border border-slate-100">{tag.vocabulary.example}</p>
 						)}
 
-                        {/* Personal Notes Placeholder */}
-                        <div className="mt-auto pt-2 border-t border-slate-100">
-                            <div
-                                className="w-full text-left p-2 rounded-lg bg-green-50/50 border border-green-100/50 hover:bg-green-50 transition-colors group/note relative cursor-not-allowed"
-                                title="Tính năng thêm ghi chú cá nhân đang được phát triển!"
-                            >
-                                <div className="flex items-center gap-1.5 mb-1 opacity-80 group-hover/note:opacity-100 transition-opacity">
-                                    <svg className="w-3 h-3 text-[#14532d]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                    <span className="text-[10px] font-bold text-[#14532d] uppercase tracking-wider">Ghi chú cá nhân</span>
-                                </div>
-                                <div className="text-[12px] font-medium text-slate-400 italic">
-                                    Tính năng đang được phát triển...
-                                </div>
-                            </div>
+                        {/* Personal Notes UI */}
+                        <div className="mt-auto pt-2 border-t border-slate-100 relative z-10">
+                            <PersonalNoteUI tagId={tag.id} initialNote={tag.personalNote} />
                         </div>
 					</div>
 				</Link>
