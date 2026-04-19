@@ -864,9 +864,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           {isPlayingDirections ? (
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
                                   <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 mt-2">Bạn đang nghe directions của Phần {topic.part} bài thi</h3>
-                                  <p className="text-sm text-slate-500 mb-8 font-medium">Hãy tranh thủ thời gian "vàng" này lướt nhanh qua các hình ảnh hoặc câu hỏi bên dưới.</p>
+                                  {topic.part === 2 ? (
+                                    <p className="text-lg md:text-xl text-[#14532d] mb-12 mt-4 font-bold max-w-3xl mx-auto px-4 py-3 bg-[#e8f3ec] rounded-xl border border-[#c3e3cf]">
+                                      Nội dung câu hỏi từ Câu 7 đến Câu 31 trong phần này sẽ KHÔNG được in sẵn. 
+                                      <br/><span className="text-sm font-medium text-[#1e7c43] mt-1 block">Hãy tập trung lắng nghe hoàn toàn!</span>
+                                    </p>
+                                  ) : (
+                                    <p className="text-sm text-slate-500 mb-8 font-medium">Hãy tranh thủ thời gian "vàng" này lướt nhanh qua các hình ảnh hoặc câu hỏi bên dưới.</p>
+                                  )}
                                   
-                                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-left">
+                                  {topic.part !== 2 && (
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-left">
                                      {currentLesson.questions.map((q, idx) => (
                                         <div key={q.id} className="relative flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all group">
                                             <div className="absolute top-2 left-2 bg-[#14532d] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
@@ -896,6 +904,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                             )}
                                         </div>
                                      ))}
+                                    </div>
+                                  )}
                                   </div>
                                   <button 
                                       onClick={() => {
