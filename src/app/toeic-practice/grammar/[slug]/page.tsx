@@ -923,13 +923,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   <div className="flex items-center bg-slate-100 p-1.5 rounded-xl w-full max-w-sm mx-auto shadow-inner">
                                     <button 
                                       onClick={() => setListeningMode('practice')}
-                                      className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${listeningMode === 'practice' ? 'bg-white text-[#14532d] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                      className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all duration-300 ${listeningMode === 'practice' ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20 translate-y-[-1px]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
                                     >
                                       Luyện tập
                                     </button>
                                     <button 
                                       onClick={() => setListeningMode('actual')}
-                                      className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${listeningMode === 'actual' ? 'bg-[#14532d] text-white shadow-sm ring-2 ring-[#14532d]/20' : 'text-slate-500 hover:text-slate-700'}`}
+                                      className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all duration-300 ${listeningMode === 'actual' ? 'bg-[#14532d] text-white shadow-md shadow-[#14532d]/20 translate-y-[-1px]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
                                     >
                                       Thi thật
                                     </button>
