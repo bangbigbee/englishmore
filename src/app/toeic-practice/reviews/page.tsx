@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import FooterContentClient from '@/components/FooterContentClient'
 
 export const dynamic = 'force-dynamic'

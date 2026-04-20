@@ -486,6 +486,7 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
+        </div>
         ) : (
           <div className="w-full">
             <Suspense fallback={<div className="h-40 flex items-center justify-center">Đang tải...</div>}>
