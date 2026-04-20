@@ -1391,7 +1391,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                 params.set('topic', matchedTopicName);
                 window.history.replaceState({}, '', `${pathname}?${params.toString()}`);
             }
-		} else if (!matchedTopicName && selectedTopic) {
+		} else if (!matchedTopicName && selectedTopic && selectedTopic !== 'GLOBAL') {
             loadedTopicRef.current = null;
 			setSelectedTopic(null);
 		}
