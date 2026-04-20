@@ -533,9 +533,12 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                 <h3 className="text-2xl font-black bg-gradient-to-r from-amber-500 to-emerald-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
                     Bảng xếp hạng Kiện Tướng Từ Vựng
                 </h3>
-                <div className="text-[14px] font-semibold text-[#14532d]/90">
-                    SPEED CHALLENGE để ghi danh trên bảng vàng
-                </div>
+                <button 
+                    onClick={onPlayClick} 
+                    className="text-[14px] font-bold text-[#2e1065] hover:text-[#4c1d95] cursor-pointer transition-colors active:scale-95 underline decoration-dotted underline-offset-4"
+                >
+                    Tham gia Speed Challenge để ghi danh Bảng vàng
+                </button>
             </div>
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-amber-200 overflow-hidden relative">
                 {/* Decorative background elements matching the gold/green theme */}
