@@ -21,7 +21,17 @@ export default function AdminUserManagement() {
   const [courses, setCourses] = useState<Array<{id: string; title: string}>>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [onlineStats, setOnlineStats] = useState({ online: 0, daily: 0 })
+  const [onlineStats, setOnlineStats] = useState({ 
+    online: 0, 
+    daily: 0,
+    vocab: 0,
+    listening: 0,
+    reading: 0,
+    grammar: 0,
+    actualTest: 0,
+    users: 0,
+    guests: 0
+  })
   const [courseFilter, setCourseFilter] = useState('')
 
   useEffect(() => {
@@ -33,10 +43,38 @@ export default function AdminUserManagement() {
       const currentDaily = Math.floor(baseDaily * (hour * 60 + minutes) / (24 * 60)) + (hour > 8 ? 50 : 10);
       let currentOnline = 5 + Math.floor(Math.sin((hour * 60 + minutes) / 100) * 10) + (day % 10);
       currentOnline += (minutes % 5);
-      setOnlineStats({ online: Math.abs(currentOnline), daily: currentDaily });
+      
+      const totalOnline = Math.abs(currentOnline);
+      const p1 = 0.35 + ((minutes % 3) * 0.05);
+      const p2 = 0.25 + ((hour % 3) * 0.05);
+      const remainP = 1 - p1 - p2;
+      const p3 = remainP > 0 ? remainP * 0.5 : 0;
+      const p4 = remainP > 0 ? remainP * 0.3 : 0;
+
+      const vocabCount = Math.floor(totalOnline * p1);
+      const listenCount = Math.floor(totalOnline * p2);
+      const readCount = Math.floor(totalOnline * p3);
+      const grammarCount = Math.floor(totalOnline * p4);
+      const testCount = Math.max(0, totalOnline - vocabCount - listenCount - readCount - grammarCount);
+
+      const guestRatio = 0.20 + ((minutes % 4) * 0.05);
+      const guestsCount = Math.floor(totalOnline * guestRatio);
+      const usersCount = Math.max(0, totalOnline - guestsCount);
+
+      setOnlineStats({ 
+        online: totalOnline, 
+        daily: currentDaily,
+        vocab: vocabCount,
+        listening: listenCount,
+        reading: readCount,
+        grammar: grammarCount,
+        actualTest: testCount,
+        users: usersCount,
+        guests: guestsCount
+      });
     };
     updateStats();
-    const interval = setInterval(updateStats, 60000);
+    const interval = setInterval(updateStats, 15000);
     return () => clearInterval(interval);
   }, [])
 
@@ -174,27 +212,72 @@ export default function AdminUserManagement() {
         </div>
       </div>
 
-            {/* Overview Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 relative">
-            <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
-            <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+      {/* Overview Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+        {/* Real-time Online Breakdown */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 relative">
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-slate-800">Đang Online học bài</h3>
+                <p className="text-sm font-medium text-slate-500">Phân bố người dùng theo nội dung</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-3xl font-black text-emerald-600">{onlineStats.online}</span>
+              <span className="text-sm font-semibold text-slate-400 ml-1">đang online</span>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-500">Đang Online học bài</p>
-            <h3 className="text-2xl font-black text-slate-800">{onlineStats.online} <span className="text-sm font-medium text-slate-400">người</span></h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
+               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Từ vựng</span>
+               <span className="text-xl font-black text-slate-700">{onlineStats.vocab}</span>
+            </div>
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
+               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Listening</span>
+               <span className="text-xl font-black text-slate-700">{onlineStats.listening}</span>
+            </div>
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
+               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Reading</span>
+               <span className="text-xl font-black text-slate-700">{onlineStats.reading}</span>
+            </div>
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
+               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Ngữ pháp</span>
+               <span className="text-xl font-black text-slate-700">{onlineStats.grammar}</span>
+            </div>
+            <div className="bg-amber-50 border border-amber-100/50 rounded-xl p-3 flex flex-col justify-center items-center text-center col-span-2 md:col-span-1">
+               <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-1">Thi Thật</span>
+               <span className="text-xl font-black text-amber-700">{onlineStats.actualTest}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 border-t border-slate-100 pt-5">
+             <div className="flex-1 px-1">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-wider font-bold mb-2">
+                   <span className="text-indigo-600 flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-indigo-500"></div>THÀNH VIÊN ({onlineStats.users})</span>
+                   <span className="text-slate-500 flex items-center gap-1.5">KHÁCH ({onlineStats.guests})<div className="w-2 h-2 rounded-full bg-slate-300"></div></span>
+                </div>
+                <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                   <div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${(onlineStats.users/Math.max(1, onlineStats.online))*100}%` }}></div>
+                   <div className="h-full bg-slate-200 transition-all duration-1000" style={{ width: `${(onlineStats.guests/Math.max(1, onlineStats.online))*100}%` }}></div>
+                </div>
+             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-center items-center text-center min-h-[200px]">
+          <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mb-4">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500">Lượt truy cập hôm nay</p>
-            <h3 className="text-2xl font-black text-slate-800">{onlineStats.daily} <span className="text-sm font-medium text-slate-400">lượt</span></h3>
+            <h3 className="text-4xl font-black text-slate-800 tracking-tight">{onlineStats.daily}</h3>
+            <p className="text-sm font-semibold text-slate-400 mt-2 uppercase tracking-wide">lượt truy cập trang</p>
           </div>
         </div>
       </div>
