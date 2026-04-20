@@ -1648,13 +1648,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			return;
 		}
 
-		if (!session && typeof window !== 'undefined') {
-			plays.push(now);
-			localStorage.setItem(storageKey, JSON.stringify(plays));
-		} else if (session && !isPro && !isUltra && typeof window !== 'undefined') {
-			plays.push(now);
-			localStorage.setItem(storageKey, JSON.stringify(plays));
-		}
+
 
 		setChallengeExpanded(false);
 		playSound('countdown321.mp3');
@@ -1671,10 +1665,11 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		plays = plays.filter(time => now - time < 24 * 60 * 60 * 1000);
 		
 		let allowed = false;
+		const isPremiumBySession = session?.user?.role === 'admin' || session?.user?.tier === 'PRO' || session?.user?.tier === 'ULTRA';
 		if (!session) {
 			allowed = plays.length < 1;
 		} else {
-			if (isPro || isUltra) allowed = true;
+			if (isPro || isUltra || isPremiumBySession) allowed = true;
 			else allowed = plays.length < 3;
 		}
 
@@ -1685,6 +1680,13 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 				setShowUpgrade(true);
 			}
 			return;
+		}
+		
+		if (typeof window !== 'undefined') {
+			if (!isPremiumBySession) {
+				plays.push(now);
+				localStorage.setItem(storageKey, JSON.stringify(plays));
+			}
 		}
 
 		if (typeof window !== 'undefined') {
