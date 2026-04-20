@@ -2,9 +2,10 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
+import { UpgradeContent } from '@/app/toeic-practice/upgrade/page'
 import LinkifiedText from '@/components/LinkifiedText'
 
 interface BadgeItem {
@@ -57,6 +58,7 @@ export default function ProfilePage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imagePreviewFailed, setImagePreviewFailed] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [activeTab, setActiveTab] = useState<'info' | 'upgrade'>('info')
 
   const [formData, setFormData] = useState({
     name: '',
@@ -241,8 +243,24 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-8">
-          {/* Main Info Box */}
+        <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto custom-scrollbar mb-6 border border-slate-200 w-full md:w-max">
+          <button
+            onClick={() => setActiveTab('info')}
+            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all ${activeTab === 'info' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+          >
+            Thông tin cá nhân
+          </button>
+          <button
+            onClick={() => setActiveTab('upgrade')}
+            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center gap-2 ${activeTab === 'upgrade' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+          >
+            <span className="text-amber-500 text-lg">⚡</span> Nâng cấp tài khoản
+          </button>
+        </div>
+
+        {activeTab === 'info' ? (
+          <div className="flex flex-col gap-8">
+            {/* Main Info Box */}
           <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm p-6 sm:p-8 relative">
             <h2 className="text-xl font-black text-slate-800 mb-6 border-b pb-4">Thông tin cá nhân</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -468,7 +486,13 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="w-full">
+            <Suspense fallback={<div className="h-40 flex items-center justify-center">Đang tải...</div>}>
+              <UpgradeContent />
+            </Suspense>
+          </div>
+        )}
       </div>
     </div>
   )

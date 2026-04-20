@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
@@ -59,9 +59,11 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
   const [pendingCheckout, setPendingCheckout] = useState<'PRO' | 'ULTRA' | null>(null)
   const [pricingConfig, setPricingConfig] = useState<any>(null)
   const [feedback, setFeedback] = useState<{ type: 'error' | 'success', title: string, message: string, tier?: 'PRO' | 'ULTRA' } | null>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [checkingPending, setCheckingPending] = useState(false)
   const [copyState, setCopyState] = useState<string>('')
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'lifetime'>('lifetime')
+  const [diagramTier, setDiagramTier] = useState<'PRO' | 'ULTRA'>('PRO')
 
   const getEffectiveTier = () => {
     if (!session) return 'FREE'
@@ -136,6 +138,20 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
       }
     }
   }, [session])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024 && scrollContainerRef.current) {
+      const el = scrollContainerRef.current;
+      const timer = setTimeout(() => {
+        el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+        setTimeout(() => {
+          const proOffset = el.children[1] instanceof HTMLElement ? (el.children[1] as HTMLElement).offsetLeft - 24 : 300;
+          el.scrollTo({ left: proOffset, behavior: 'smooth' });
+        }, 1000);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen])
 
   if (!isOpen && !activeModal && !showLoginModal && !feedback) return null;
 
@@ -363,82 +379,79 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               <p className="text-slate-500 text-sm md:text-base mb-8">
                 Lựa chọn gói Premium phù hợp để mở khóa toàn bộ kho tàng bài tập độc quyền, giải thích cực kỳ chi tiết và tính năng chấm chữa AI thông minh.
               </p>
-
-              <div className="mb-10 max-w-lg mx-auto bg-amber-50/50 border border-amber-200/60 rounded-3xl p-5 md:p-6 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
-                  <IconZap className="w-24 h-24 text-amber-500" />
-                </div>
-                
-                <div className="flex items-center gap-2 justify-center mb-6 text-amber-600 relative z-10">
-                  <IconZap className="w-4 h-4" />
-                  <span className="text-xs font-bold uppercase tracking-widest bg-amber-100 rounded-full px-3 py-1 border border-amber-200/50">Lộ Trình Tăng Giá {billingCycle === 'monthly' ? 'Hàng Tháng' : 'Trọn Đời'}</span>
-                </div>
-
-                <div className="relative flex justify-between items-end mt-4 h-16 pointer-events-none z-10">
-                   {/* Background track */}
-                   <div className="absolute bottom-1.5 left-[10%] right-[10%] h-1 bg-amber-200/50 rounded-full"></div>
-                   
-                   {/* Active progress track */}
-                   <div 
-                      className="absolute bottom-1.5 left-[10%] h-1 bg-amber-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(245,158,11,0.5)]" 
-                      style={{ width: activeProPhaseStr === 'super_early_bird' ? '0%' : activeProPhaseStr === 'early_bird' ? '40%' : '80%' }}
-                   ></div>
-                   
-                   {/* Steps */}
-                   {(['super_early_bird', 'early_bird', 'regular'] as const).map((phase, idx) => {
-                       const isCurrent = activeProPhaseStr === phase;
-                       const isPast = (activeProPhaseStr === 'early_bird' && idx === 0) || (activeProPhaseStr === 'regular' && idx < 2);
-                       const pricePhase = proPhaseMap[phase] || proPhaseMap.regular;
-                       const priceDisplay = billingCycle === 'monthly' ? formatPrice(pricePhase.monthlyPrice) : formatPrice(pricePhase.lifetimePrice);
-                       
-                       return (
-                           <div key={phase} className="relative z-10 flex flex-col items-center w-1/3">
-                              {/* Price Label */}
-                              <div className={`text-[11px] sm:text-xs font-black mb-3 transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-slate-400 line-through decoration-slate-300' : 'text-slate-400'}`}>
-                                 {priceDisplay}
-                              </div>
-                              {/* Node Circle */}
-                              <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 relative ${
-                                  isCurrent ? 'border-amber-500 scale-125 ring-4 ring-amber-500/20 shadow-md' : 
-                                  isPast ? 'border-amber-400 bg-amber-400' : 
-                                  'border-amber-200'
-                              }`}>
-                                  {isCurrent && <div className="absolute inset-0 m-auto w-1 h-1 sm:w-1.5 sm:h-1.5 bg-amber-500 rounded-full animate-pulse"></div>}
-                              </div>
-                              {/* Name Label */}
-                              <div className={`text-[9px] sm:text-[10px] uppercase tracking-wider mt-2.5 font-bold whitespace-nowrap transition-colors ${
-                                  isCurrent ? 'text-amber-800' : 
-                                  isPast ? 'text-amber-600/70' : 
-                                  'text-slate-400'
-                              }`}>
-                                 {phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}
-                              </div>
-                           </div>
-                       )
-                   })}
-                </div>
-              </div>
-
-              <div className="inline-flex bg-slate-100 p-1.5 rounded-full border border-slate-200">
-                <button 
-                  onClick={() => setBillingCycle('monthly')}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${billingCycle === 'monthly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                >
-                  Theo Tháng
-                </button>
-                <button 
-                  onClick={() => setBillingCycle('lifetime')}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${billingCycle === 'lifetime' ? 'bg-[#14532d] text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                >
-                  Trọn Đời
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full uppercase tracking-wider font-bold ${billingCycle === 'lifetime' ? 'bg-amber-400 text-amber-950' : 'bg-slate-200 text-slate-600'}`}>Tiết kiệm 80%</span>
-                </button>
-              </div>
             </div>
 
-            <div className="flex md:grid md:grid-cols-3 gap-6 snap-x snap-mandatory overflow-x-auto pb-6 -mx-6 px-6 md:mx-0 md:px-0 md:overflow-visible items-stretch custom-scrollbar">
+      <div className="mb-10 w-full bg-[#14532d]/[0.02] border border-[#14532d]/10 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-visible">
+        
+        <div className="text-center mb-16 relative z-10 mt-2">
+          <h2 className="text-xl sm:text-2xl font-black tracking-wide text-[#14532d]">
+            Lộ trình nâng cấp và đồng hành cùng Toeic<span className="text-[#ea980c]">More</span>
+          </h2>
+        </div>
+
+        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] mx-auto h-1 bg-[#14532d]/10 rounded-full mt-10 mb-16">
+            {/* Active progress track */}
+            <motion.div 
+              initial={{ width: "0%" }}
+              animate={{ width: (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'super_early_bird' ? '15%' : (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'early_bird' ? '50%' : '85%' }}
+              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#14532d] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
+            >
+              {/* Glowing dot at the end of the track */}
+              <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white border-2 border-amber-500 rounded-full absolute -right-[7px] sm:-right-[8px] flex items-center justify-center shadow-[0_0_10px_rgba(234,152,12,0.8)] z-20">
+                 <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
+              </div>
+            </motion.div>
+            
+            {/* Steps */}
+            {(['super_early_bird', 'early_bird', 'regular'] as const).map((phase, idx) => {
+                const phaseConfigMap = diagramTier === 'PRO' ? proPhaseMap : ultraPhaseMap;
+                const activePhaseStrForDiagram = diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr;
+
+                const isCurrent = activePhaseStrForDiagram === phase;
+                const isPast = (activePhaseStrForDiagram === 'early_bird' && idx === 0) || (activePhaseStrForDiagram === 'regular' && idx < 2);
+                const pricePhase = phaseConfigMap[phase] || phaseConfigMap.regular;
+                const priceDisplay = billingCycle === 'monthly' ? formatPrice(pricePhase.monthlyPrice) : formatPrice(pricePhase.lifetimePrice);
+                
+                const leftPos = idx === 0 ? '15%' : idx === 1 ? '50%' : '85%';
+                
+                return (
+                    <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
+                        {/* Price Label */}
+                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-[#14532d]/60 line-through decoration-[#14532d]/30' : 'text-slate-400'}`}>
+                            {priceDisplay}
+                        </div>
+                        
+                        {/* Node Circle */}
+                        <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 ${
+                            isPast ? 'border-[#14532d] bg-[#14532d]' : 
+                            'border-[#14532d]/20'
+                        } ${isCurrent ? 'opacity-0' : ''}`}>
+                        </div>
+                        
+                        {/* Name Label */}
+                        <div className={`absolute top-full mt-3 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold whitespace-nowrap transition-colors flex flex-col items-center gap-1 ${
+                            isCurrent ? 'text-amber-700' : 
+                            isPast ? 'text-[#14532d]/80' : 
+                            'text-slate-400'
+                        }`}>
+                            <span>{phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}</span>
+                            <span className={`px-2 py-0.5 rounded-full ${isCurrent ? 'bg-amber-100/70 text-amber-900 border border-amber-200' : isPast ? 'text-[#14532d]/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
+                                {pricePhase.label || '...'}
+                            </span>
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+      </div>
+
+            <div 
+              ref={scrollContainerRef}
+              className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto overflow-y-visible pb-6 pt-4 -mt-4 items-stretch green-scrollbar snap-x snap-mandatory px-6 -mx-6 md:mx-0 md:px-0 md:overflow-visible"
+            >
               {/* FREE Tier */}
-              <div className="flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col relative">
+              <div className="flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-emerald-50/50 rounded-2xl p-6 border-2 border-emerald-100/50 flex flex-col relative focus:outline-none">
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     Mặc định
@@ -471,19 +484,19 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   </li>
                 </ul>
                 {effectiveTier === 'FREE' && (
-                  <div className="py-3 text-center text-slate-400 text-xs font-bold uppercase tracking-widest border-t border-slate-200/60 mt-auto">Gói Hiện Tại</div>
+                  <div className="w-full bg-emerald-100/50 text-emerald-800 font-bold rounded-xl py-3.5 text-center mt-auto text-sm border border-emerald-200/50">Gói Hiện Tại</div>
                 )}
+                <p className="text-[10px] text-center text-slate-400 mt-3 font-medium invisible">
+                  Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
+                </p>
               </div>
 
               {/* PRO Tier */}
-              <div className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 border-amber-300 flex flex-col relative transition-transform ${effectiveTier === 'FREE' ? 'transform md:-translate-y-2 shadow-xl shadow-amber-500/10' : 'shadow-md'}`}>
-                {effectiveTier === 'FREE' && (
-                  <div className="absolute top-0 right-6 transform -translate-y-1/2">
-                    <span className="bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
-                      Nâng Cấp
-                    </span>
-                  </div>
-                )}
+              <div 
+                onMouseEnter={() => setDiagramTier('PRO')}
+                onClick={() => setDiagramTier('PRO')}
+                className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 flex flex-col relative transition-all cursor-pointer hover:-translate-y-1 hover:shadow-xl focus:outline-none ${diagramTier === 'PRO' ? 'border-amber-400 shadow-amber-500/20 shadow-xl opacity-100 ring-0 z-10' : 'border-amber-200/50 shadow-amber-500/5 opacity-80'} ${effectiveTier === 'FREE' ? 'transform md:-translate-y-2' : ''}`}
+              >
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     <IconStar className="w-4 h-4" /> PRO Pass
@@ -540,7 +553,11 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               </div>
 
               {/* ULTRA Tier */}
-              <div className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-[#2b0c36] rounded-2xl p-6 border border-purple-900 flex flex-col relative text-white shadow-2xl transition-transform ${effectiveTier === 'PRO' || effectiveTier === 'ULTRA' ? 'transform md:-translate-y-2' : ''}`}>
+              <div 
+                onMouseEnter={() => setDiagramTier('ULTRA')}
+                onClick={() => setDiagramTier('ULTRA')}
+                className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-[#2b0c36] rounded-2xl p-6 border-2 flex flex-col relative text-white shadow-2xl transition-all cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'ULTRA' ? 'border-purple-400 shadow-purple-900/60 shadow-2xl opacity-100 ring-0 z-10' : 'border-purple-900 border-opacity-80 shadow-purple-900/30 opacity-90'} ${effectiveTier === 'PRO' || effectiveTier === 'ULTRA' ? 'transform md:-translate-y-2' : ''}`}
+              >
                 {(effectiveTier === 'PRO' || effectiveTier === 'ULTRA') && (
                   <div className="absolute top-0 right-6 transform -translate-y-1/2">
                     <span className="bg-gradient-to-r from-purple-600 to-purple-800 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
@@ -604,6 +621,9 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                      {checkingPending ? 'Đang tải...' : 'Bứt Phá Cùng ULTRA'}
                    </button>
                 )}
+                <p className="text-[10px] text-center text-slate-400 mt-3 font-medium invisible">
+                  Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
+                </p>
               </div>
             </div>
           </div>

@@ -8,6 +8,7 @@ interface PricingPhase {
   monthlyPrice: number
   lifetimePrice: number
   upgradeLifetimePrice?: number
+  label?: string
 }
 
 interface PricingConfig {
@@ -262,6 +263,22 @@ export default function PricingSettingsPage() {
                           className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] text-sm"
                         />
                       </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Mốc Thời Gian (VD: Tháng 5)</label>
+                        <input 
+                          type="text" 
+                          value={proPricing.phases[phaseKey].label || ''} 
+                          onChange={e => setProPricing({
+                            ...proPricing, 
+                            phases: {
+                              ...proPricing.phases,
+                              [phaseKey]: { ...proPricing.phases[phaseKey], label: e.target.value }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-[#FFD700] focus:ring-1 focus:ring-[#FFD700] text-sm"
+                          placeholder="e.g. Từ 1/5 - 31/5"
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -340,6 +357,22 @@ export default function PricingSettingsPage() {
                             }
                           })}
                           className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Mốc Thời Gian (VD: Tháng 5)</label>
+                        <input 
+                          type="text" 
+                          value={ultraPricing.phases[phaseKey].label || ''} 
+                          onChange={e => setUltraPricing({
+                            ...ultraPricing, 
+                            phases: {
+                              ...ultraPricing.phases,
+                              [phaseKey]: { ...ultraPricing.phases[phaseKey], label: e.target.value }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                          placeholder="e.g. Từ 1/5 - 31/5"
                         />
                       </div>
                     </div>

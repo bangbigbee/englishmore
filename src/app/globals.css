@@ -473,3 +473,28 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #e2e8f0 transparent;
 }
+
+/* Green Scrollbar Customization */
+.green-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.green-scrollbar::-webkit-scrollbar-track {
+  background: rgba(20, 83, 45, 0.05);
+  border-radius: 10px;
+}
+
+.green-scrollbar::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 10px;
+}
+
+.green-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #16a34a;
+}
+
+.green-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #22c55e rgba(20, 83, 45, 0.05);
+}

@@ -438,10 +438,76 @@ function ToeicPracticeContent() {
 
             {tab === "home" && <SpeedChallengeLeaderboard onPlayClick={() => handleTabChange('vocabulary')} />}
 
-			<footer className="mt-20 pt-8 pb-4 border-t border-slate-200 text-center text-sm font-medium text-slate-500 opacity-80">
-				<p className="mb-2 uppercase tracking-wider text-[11px] font-bold text-[#14532d]">ToeicMore &copy; {new Date().getFullYear()}</p>
-				<p>Bản quyền được bảo lưu.</p>
-				<p>Thương hiệu và sản phẩm trực thuộc nền tảng Luyện Tiếng Anh Giao Tiếp <a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline" style={{color: '#14532d'}}><span style={{color: '#14532d'}}>English</span><span style={{color: '#ea980c'}}>More</span></a>.</p>
+			<footer className="mt-20 pt-10 pb-6 border-t border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 mb-10 text-left">
+                    {/* Brand Column */}
+                    <div className="flex flex-col">
+                        <div className="flex items-center gap-2 mb-4">
+							<div className="w-8 h-8 rounded shrink-0 bg-[#14532d] flex items-center justify-center -rotate-6 shadow-sm">
+								<span className="text-white font-black text-sm rotate-6">t</span>
+							</div>
+                            <span className="font-black text-xl text-[#14532d]">Toeic<span className="text-[#ea980c]">More</span></span>
+                        </div>
+                        <p className="text-[12px] text-slate-500 font-medium leading-relaxed max-w-[200px]">
+                            Đồng hành cùng bạn chinh phục TOEIC nhanh và hiệu quả hơn.
+                        </p>
+                    </div>
+
+                    {/* Column 1 for links */}
+                    <div className="flex flex-col">
+                        <h4 className="font-bold text-[#14532d] mb-4 text-[14px]">Sản phẩm</h4>
+                        <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
+                            <li><button onClick={() => handleTabChange('vocabulary')} className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Học từ vựng</button></li>
+                            <li><button onClick={() => handleTabChange('grammar')} className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Luyện ngữ pháp</button></li>
+                            <li><button onClick={() => handleTabChange('listening')} className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Luyện Listening</button></li>
+                            <li><button onClick={() => handleTabChange('reading')} className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Luyện Reading</button></li>
+                        </ul>
+                    </div>
+
+                    {/* Column 2 for links */}
+                    <div className="flex flex-col">
+                        <h4 className="font-bold text-[#14532d] mb-4 text-[14px]">Tài nguyên</h4>
+                        <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
+                            <li><a href="#" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block">Sổ tay học tập</a></li>
+                            <li><Link href="/toeic-practice/documents" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Kho tài liệu</Link></li>
+                            <li><button onClick={() => handleTabChange('home')} className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Bảng xếp hạng</button></li>
+                        </ul>
+                    </div>
+
+                    {/* Column Default - Học tập trọn đời */}
+                    <div className="flex flex-col">
+                        <h4 className="font-bold text-[#14532d] mb-4 text-[14px]">Học tập trọn đời</h4>
+                        <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
+                            <li><a href="#" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block">Lộ trình học của tôi</a></li>
+                            <li><Link href="/toeic-practice/upgrade" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Nâng cấp tài khoản</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Column 3 for links (Chia sẻ) */}
+                    <div className="flex flex-col">
+                        <h4 className="font-bold text-[#14532d] mb-4 text-[14px]">Chia sẻ</h4>
+                        <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
+                            <li><a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block">Luyện Speaking</a></li>
+                            <li><Link href="/toeic-practice/reviews" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Review đề TOEIC</Link></li>
+                            <li><Link href="/toeic-practice/experience" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">Kinh nghiệm Học & Thi</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Column 4 for links */}
+                    <div className="flex flex-col">
+                        <h4 className="font-bold text-[#14532d] mb-4 text-[14px]">Hỗ trợ</h4>
+                        <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
+                            <li><Link href="/about-toeicmore" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block text-left">About ToeicMore</Link></li>
+                            <li><a href="#" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block">Liên hệ</a></li>
+                            <li><a href="https://www.facebook.com/ninhdaik" target="_blank" rel="noopener noreferrer" className="hover:text-[#14532d] hover:translate-x-1 transition-all duration-200 block">Cộng đồng</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="pt-6 border-t border-slate-200/60 flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] font-medium text-slate-500 opacity-80 mt-auto">
+                    <p>&copy; {new Date().getFullYear()} ToeicMore. Bản quyền được bảo lưu.</p>
+				    <p>Powered by <a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline transition-colors text-[#14532d]">Tiếng Anh giao tiếp <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span></a></p>
+                </div>
 			</footer>
 		</div>
 	</div>
