@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
     createUser: async (message) => {
       try {
         const { cookies } = await import('next/headers')
-        const cookieStore = cookies()
+        const cookieStore = await cookies()
         const toeicRef = cookieStore.get('toeic_ref')?.value
         if (toeicRef) {
           await prisma.user.update({

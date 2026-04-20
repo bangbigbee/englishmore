@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const passwordHash = await bcrypt.hash(password, 10)
 
     const { cookies } = await import('next/headers')
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const toeicRef = cookieStore.get('toeic_ref')?.value
 
     const user = await prisma.user.create({
