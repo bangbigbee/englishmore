@@ -1676,6 +1676,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
         setChallengeResult({ show: false, score: 0, total: 0 });
         setChallengeActive(false);
         setVocabLoading(true);
+		if (typeof window !== 'undefined') {
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		}
         try {
             const res = await fetch('/api/toeic/speed-challenge/words');
             const data = await res.json();
@@ -1812,8 +1815,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 						Các Chủ Đề Luyện Tập
 					</h2>
-                    <button onClick={handleStartGlobalSpeedChallenge} className="bg-amber-400 hover:bg-amber-300 text-[#14532d] px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer text-[13px] sm:text-sm md:text-base border border-amber-500/20 group">
-                        <span className="text-base sm:text-xl leading-none group-hover:scale-110 transition-transform">⚡</span> Speed Challenge
+                    <button onClick={handleStartGlobalSpeedChallenge} className="relative overflow-hidden bg-gradient-to-br from-[#4a044e] to-[#2e1065] text-amber-400 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-black text-[11px] sm:text-[12px] uppercase tracking-wider flex items-center gap-1.5 border border-[#701a75]/40 shadow-[0_0_12px_rgba(88,28,135,0.4)] hover:shadow-[0_0_15px_rgba(88,28,135,0.6)] hover:from-[#581c87] hover:to-[#3b0764] transition-all active:scale-95 group">
+                        <div className="absolute top-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] animate-[metallic-shine-sweep_4s_ease-in-out_infinite]"></div>
+                        <span className="relative z-10 text-sm sm:text-base leading-none group-hover:scale-110 transition-transform text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.6)] pt-[1px]">⚡</span> 
+                        <span className="relative z-10 pt-[1px]">Speed Challenge</span>
                     </button>
 				</div>
 
