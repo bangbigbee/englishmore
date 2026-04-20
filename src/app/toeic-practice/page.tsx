@@ -1817,34 +1817,27 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 	if (!selectedTopic) {
 		return (
 			<div>
-				<div className="flex justify-between items-center mb-6 border-b border-slate-200 pb-3">
-					<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] flex items-center gap-2.5 tracking-tight px-1">
-						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
-						Các Chủ Đề Luyện Tập
-					</h2>
-				</div>
-
-				<div className="mb-8 bg-gradient-to-br from-[#4a044e] to-[#2e1065] rounded-3xl overflow-hidden shadow-lg border border-[#701a75]/40 transition-all duration-300">
-                    <button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between p-5 bg-transparent hover:bg-white/5 transition-colors cursor-pointer focus:outline-none group">
-                        <div className="flex items-center gap-3.5">
-                            <div className="w-10 h-10 bg-amber-400/10 text-amber-400 rounded-xl flex items-center justify-center border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.2)] group-hover:scale-110 transition-transform">
-                                <span className="text-xl leading-none pt-[1px]">⚡</span>
+				<div className="mb-6 bg-gradient-to-br from-[#4a044e] to-[#2e1065] rounded-2xl overflow-hidden shadow-md border border-[#701a75]/40 transition-all duration-300">
+                    <button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-4 sm:px-5 bg-transparent hover:bg-white/5 transition-colors cursor-pointer focus:outline-none group">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-amber-500/10 text-amber-500 rounded-lg flex items-center justify-center border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)] group-hover:scale-110 transition-transform">
+                                <span className="text-lg leading-none pt-[1px]">⚡</span>
                             </div>
-                            <h3 className="text-base sm:text-[17px] font-black text-white uppercase tracking-wider">Speed Challenge</h3>
+                            <h3 className="text-[15px] sm:text-base font-black text-amber-500 uppercase tracking-wider mt-[1px]">Speed Challenge</h3>
                         </div>
-                        <svg className={`w-6 h-6 text-amber-400/70 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
+                        <svg className={`w-5 h-5 text-amber-500/70 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
                     </button>
 
                     {challengeExpanded && (
-                        <div className="p-6 md:p-8 text-center border-t border-purple-800/50 animate-in slide-in-from-top-4 duration-300">
-                            <h3 className="text-xl text-amber-400 font-black mb-2 tracking-tight">Thử thách Bảng Vàng</h3>
-                            <p className="text-purple-200/80 mb-6 font-medium text-sm sm:text-base max-w-lg mx-auto">
-                                Làm bài test tốc độ với <b className="text-amber-400">30 từ vựng ngẫu nhiên</b>. Thời gian <b className="text-amber-400">3 giây/từ</b>. Kết quả sẽ được lưu vào Bảng Vàng nếu bạn không đăng xuất.
+                        <div className="p-5 sm:p-6 text-center border-t border-purple-800/50 animate-in slide-in-from-top-2 duration-300">
+                            <h3 className="text-lg sm:text-xl text-amber-500 font-black mb-1.5 tracking-tight">Thử thách Bảng Vàng</h3>
+                            <p className="text-purple-200/80 mb-5 font-medium text-sm sm:text-base max-w-lg mx-auto">
+                                Làm bài test tốc độ với <b className="text-amber-500">30 từ vựng ngẫu nhiên</b>. Thời gian <b className="text-amber-500">3 giây/từ</b>. Kết quả sẽ được lưu vào Bảng Vàng nếu bạn không đăng xuất.
                             </p>
                             
                             {!session && (
-                                <div className="max-w-sm mx-auto mb-6">
-                                    <input type="text" placeholder="Nhập tên của bạn (khách)" value={guestName} onChange={e => setGuestName(e.target.value)} maxLength={20} className="w-full text-center px-5 py-3 rounded-xl border border-purple-500/30 bg-purple-900/50 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 font-bold" />
+                                <div className="max-w-sm mx-auto mb-5">
+                                    <input type="text" placeholder="Nhập tên của bạn (khách)" value={guestName} onChange={e => setGuestName(e.target.value)} maxLength={20} className="w-full text-center px-4 py-2.5 rounded-xl border border-purple-500/30 bg-purple-900/50 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-amber-500/50 font-bold" />
                                 </div>
                             )}
 
@@ -1854,13 +1847,20 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                                     return;
                                 }
                                 handleStartGlobalSpeedChallenge();
-                            }} className="relative overflow-hidden bg-amber-400 hover:bg-amber-300 text-purple-900 font-black px-10 py-3.5 rounded-full shadow-[0_0_20px_rgba(251,191,36,0.4)] transition-all cursor-pointer active:scale-95 group">
+                            }} className="relative overflow-hidden bg-amber-500 hover:bg-amber-400 text-purple-950 font-black px-8 py-3 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.4)] transition-all cursor-pointer active:scale-95 group">
                                 BẮT ĐẦU NGAY
                                 <div className="absolute inset-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-25deg] group-hover:animate-[metallic-shine-sweep_1.5s_ease-in-out_infinite] animate-[metallic-shine-sweep_3s_ease-in-out_infinite]"></div>
                             </button>
                         </div>
                     )}
                 </div>
+
+				<div className="flex justify-between items-center mb-5 sm:mb-6 border-b border-slate-200 pb-3">
+					<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] flex items-center gap-2.5 tracking-tight px-1">
+						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
+						Các Chủ Đề Luyện Tập
+					</h2>
+				</div>
 
 				<>
 						{loading ? (
