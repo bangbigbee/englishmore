@@ -1597,11 +1597,6 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                             timeMs,
                             difficulty: challengeDifficulty
                         }));
-                        alert('Bạn vui lòng đăng nhập nếu muốn ghi danh lên Bảng vàng nhé!');
-                        const dest = `${typeof window !== 'undefined' ? window.location.origin : ''}${pathname}?tab=vocabulary&topic=GLOBAL&savePending=1`;
-                        if (openLoginModal) {
-                            openLoginModal(dest, false);
-                        }
                     }
                     savePending();
 				} else {
@@ -2470,6 +2465,22 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                             ) : (
                                 <div className="mb-8">
                                     <h4 className="text-xl font-bold text-amber-300">Bạn đã rất nỗ lực rồi! Chúc mừng bạn nhé!</h4>
+                                </div>
+                            )}
+
+                            {selectedTopic === 'GLOBAL' && (!session || session.user?.role === 'guest') && (
+                                <div className="mb-8 p-6 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl border border-amber-400/30">
+                                    <h4 className="text-xl font-black text-amber-300 mb-2">Bạn có muốn lưu thành tích?</h4>
+                                    <p className="text-indigo-50 text-sm mb-5 font-medium">Ghi danh điểm số của bạn lên Bảng Vàng để thách đấu cùng mọi người nha!</p>
+                                    <button 
+                                        onClick={() => {
+                                            const dest = `${typeof window !== 'undefined' ? window.location.origin : ''}${pathname}?tab=vocabulary&topic=GLOBAL&savePending=1`;
+                                            if (openLoginModal) openLoginModal(dest, false);
+                                        }} 
+                                        className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 font-black px-8 py-3.5 rounded-xl shadow-lg hover:from-amber-300 hover:to-orange-300 transition-all w-full sm:w-auto cursor-pointer"
+                                    >
+                                        Đăng nhập Ghi danh
+                                    </button>
                                 </div>
                             )}
 
