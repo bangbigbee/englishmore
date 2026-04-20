@@ -70,6 +70,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isPlayingDirections, setIsPlayingDirections] = useState(false)
   const [showGroupTranscriptEng, setShowGroupTranscriptEng] = useState<Record<number, boolean>>({});
   const [showGroupTranscriptViet, setShowGroupTranscriptViet] = useState<Record<number, boolean>>({});
+  const [previewPage, setPreviewPage] = useState(0);
   
   // Actual Mode States
   const [actualCheckingMode, setActualCheckingMode] = useState<boolean>(false);
@@ -110,6 +111,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           setIsTestCompleted(false)
           setLessonStarted(false)
           setIsPlayingDirections(false)
+          setPreviewPage(0)
         }
       } catch (error) {
         console.error(error)
@@ -987,37 +989,63 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   )}
                                   
                                   {topic.part !== 2 && (
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 text-left">
-                                     {currentLesson.questions.map((q, idx) => (
-                                        <div key={q.id} className="relative flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all group">
-                                            <div className="absolute top-2 left-2 bg-[#14532d] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
-                                                <span>Câu {(() => {
-                                                    if (topic.type === 'LISTENING') {
-                                                        if (topic.part === 2) return idx + 7;
-                                                        if (topic.part === 3) return idx + 32;
-                                                        if (topic.part === 4) return idx + 71;
-                                                    } else if (topic.type === 'READING') {
-                                                        if (topic.part === 5) return idx + 101;
-                                                        if (topic.part === 6) return idx + 131;
-                                                        if (topic.part === 7) return idx + 147;
-                                                    }
-                                                    return idx + 1;
-                                                })()}</span>
+                                    <>
+                                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4 text-left min-h-[200px]">
+                                       {currentLesson.questions.slice(previewPage * 9, (previewPage + 1) * 9).map((q, idx) => {
+                                          const actualIdx = previewPage * 9 + idx;
+                                          return (
+                                            <div key={q.id} className="relative flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all group">
+                                                <div className="absolute top-2 left-2 bg-[#14532d] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
+                                                    <span>Câu {(() => {
+                                                        if (topic.type === 'LISTENING') {
+                                                            if (topic.part === 2) return actualIdx + 7;
+                                                            if (topic.part === 3) return actualIdx + 32;
+                                                            if (topic.part === 4) return actualIdx + 71;
+                                                        } else if (topic.type === 'READING') {
+                                                            if (topic.part === 5) return actualIdx + 101;
+                                                            if (topic.part === 6) return actualIdx + 131;
+                                                            if (topic.part === 7) return actualIdx + 147;
+                                                        }
+                                                        return actualIdx + 1;
+                                                    })()}</span>
+                                                </div>
+                                                {q.imageUrl ? (
+                                                    <div className="aspect-[4/3] bg-slate-50 relative border-b border-slate-100">
+                                                        <img src={q.imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-contain p-1" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="p-4 pt-10 text-sm text-slate-700 font-medium line-clamp-4 bg-slate-50/50">
+                                                        {topic.part === 2 
+                                                          ? <span className="italic text-slate-400 font-normal">Nội dung câu hỏi không được in sẵn để xem.</span> 
+                                                          : q.question.replace(/^(?:Câu|Question)\s*\d+[:\-\.]?\s*/i, '')}
+                                                    </div>
+                                                )}
                                             </div>
-                                            {q.imageUrl ? (
-                                                <div className="aspect-[4/3] bg-slate-50 relative border-b border-slate-100">
-                                                    <img src={q.imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-contain p-1" />
-                                                </div>
-                                            ) : (
-                                                <div className="p-4 pt-10 text-sm text-slate-700 font-medium line-clamp-4 bg-slate-50/50">
-                                                    {topic.part === 2 
-                                                      ? <span className="italic text-slate-400 font-normal">Nội dung câu hỏi không được in sẵn để xem.</span> 
-                                                      : q.question.replace(/^(?:Câu|Question)\s*\d+[:\-\.]?\s*/i, '')}
-                                                </div>
-                                            )}
+                                          )
+                                       })}
+                                      </div>
+                                      {currentLesson.questions.length > 9 && (
+                                        <div className="flex items-center justify-center gap-3 mb-10 mt-2">
+                                           <button 
+                                              onClick={() => setPreviewPage(p => Math.max(0, p - 1))}
+                                              disabled={previewPage === 0}
+                                              className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-slate-600"
+                                           >
+                                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                                           </button>
+                                           <span className="text-sm font-bold text-slate-500 min-w-[3rem] text-center">
+                                              {previewPage + 1} / {Math.ceil(currentLesson.questions.length / 9)}
+                                           </span>
+                                           <button 
+                                              onClick={() => setPreviewPage(p => Math.min(Math.ceil(currentLesson.questions.length / 9) - 1, p + 1))}
+                                              disabled={previewPage === Math.ceil(currentLesson.questions.length / 9) - 1}
+                                              className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-slate-600"
+                                           >
+                                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                           </button>
                                         </div>
-                                     ))}
-                                    </div>
+                                      )}
+                                    </>
                                   )}
 
                                   <button 
