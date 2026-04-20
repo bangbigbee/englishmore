@@ -1641,9 +1641,11 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 		if (!allowed) {
 			if (!session) {
-				onPracticeClick(selectedTopic || undefined, false); // prompt login for guest
+				alert("Bạn đã dùng hết lượt trải nghiệm miễn phí hôm nay. Vui lòng đăng nhập để có thêm lượt chơi!");
+				onPracticeClick(selectedTopic || undefined, false);
 			} else {
-				setShowUpgrade(true); // prompt upgrade for normal user
+				alert("Bạn đã thực hiện hết 3 lượt thử thách miễn phí hôm nay. Hãy nâng cấp tài khoản để chơi thả ga không giới hạn nhé!");
+				setShowUpgrade(true);
 			}
 			return;
 		}
@@ -1675,8 +1677,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 
 		if (!allowed) {
 			if (!session) {
+				alert("Bạn đã dùng hết lượt trải nghiệm miễn phí hôm nay. Vui lòng đăng nhập để có thêm lượt chơi!");
 				onPracticeClick(selectedTopic || undefined, false);
 			} else {
+				alert("Bạn đã thực hiện hết 3 lượt thử thách miễn phí hôm nay. Hãy nâng cấp tài khoản để chơi thả ga không giới hạn nhé!");
 				setShowUpgrade(true);
 			}
 			return;
