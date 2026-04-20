@@ -29,6 +29,7 @@ export default function AdminUserManagement() {
     reading: 0,
     grammar: 0,
     actualTest: 0,
+    speedChallenge: 0,
     users: 0,
     guests: 0
   })
@@ -45,17 +46,19 @@ export default function AdminUserManagement() {
       currentOnline += (minutes % 5);
       
       const totalOnline = Math.abs(currentOnline);
-      const p1 = 0.35 + ((minutes % 3) * 0.05);
-      const p2 = 0.25 + ((hour % 3) * 0.05);
-      const remainP = 1 - p1 - p2;
+      const p1 = 0.25 + ((minutes % 3) * 0.05);
+      const p2 = 0.20 + ((hour % 3) * 0.05);
+      const pSpeed = 0.20 + ((minutes % 2) * 0.05);
+      const remainP = 1 - p1 - p2 - pSpeed;
       const p3 = remainP > 0 ? remainP * 0.5 : 0;
       const p4 = remainP > 0 ? remainP * 0.3 : 0;
 
       const vocabCount = Math.floor(totalOnline * p1);
       const listenCount = Math.floor(totalOnline * p2);
+      const speedCount = Math.floor(totalOnline * pSpeed);
       const readCount = Math.floor(totalOnline * p3);
       const grammarCount = Math.floor(totalOnline * p4);
-      const testCount = Math.max(0, totalOnline - vocabCount - listenCount - readCount - grammarCount);
+      const testCount = Math.max(0, totalOnline - vocabCount - listenCount - speedCount - readCount - grammarCount);
 
       const guestRatio = 0.20 + ((minutes % 4) * 0.05);
       const guestsCount = Math.floor(totalOnline * guestRatio);
@@ -69,6 +72,7 @@ export default function AdminUserManagement() {
         reading: readCount,
         grammar: grammarCount,
         actualTest: testCount,
+        speedChallenge: speedCount,
         users: usersCount,
         guests: guestsCount
       });
@@ -224,17 +228,13 @@ export default function AdminUserManagement() {
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
               </div>
               <div>
-                <h3 className="text-lg font-black text-slate-800">Đang Online học bài</h3>
+                <h3 className="text-lg flex font-black items-center gap-1.5 text-slate-800"><span className="text-emerald-600 text-xl">{onlineStats.online}</span> Đang online học bài</h3>
                 <p className="text-sm font-medium text-slate-500">Phân bố người dùng theo nội dung</p>
               </div>
             </div>
-            <div className="text-right">
-              <span className="text-3xl font-black text-emerald-600">{onlineStats.online}</span>
-              <span className="text-sm font-semibold text-slate-400 ml-1">đang online học bài</span>
-            </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
             <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Từ vựng</span>
                <span className="text-xl font-black text-slate-700">{onlineStats.vocab}</span>
@@ -251,7 +251,11 @@ export default function AdminUserManagement() {
                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Ngữ pháp</span>
                <span className="text-xl font-black text-slate-700">{onlineStats.grammar}</span>
             </div>
-            <div className="bg-amber-50 border border-amber-100/50 rounded-xl p-3 flex flex-col justify-center items-center text-center col-span-2 md:col-span-1">
+            <div className="bg-emerald-50 border border-emerald-100/50 rounded-xl p-3 flex flex-col justify-center items-center text-center">
+               <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1 truncate max-w-full"><span className="hidden sm:inline">Speed </span>Challenge</span>
+               <span className="text-xl font-black text-emerald-700">{onlineStats.speedChallenge}</span>
+            </div>
+            <div className="bg-amber-50 border border-amber-100/50 rounded-xl p-3 flex flex-col justify-center items-center text-center">
                <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-1">Thi Thật</span>
                <span className="text-xl font-black text-amber-700">{onlineStats.actualTest}</span>
             </div>
