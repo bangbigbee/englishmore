@@ -531,20 +531,11 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
             <div className="flex flex-col items-center justify-center text-center gap-1 mb-8">
                 <h3 className="text-2xl font-black bg-gradient-to-r from-amber-500 to-emerald-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
-                    Glossary GrandMaster
+                    Bảng xếp hạng Kiện Tướng Từ Vựng
                 </h3>
-                {leaders.length > 0 && leaders[0]?.topicSlug ? (
-                    <Link 
-                        href={`/toeic-practice?tab=vocabulary&slug=${leaders[0].topicSlug}&chal=1&diff=${leaders[0].difficulty}`} 
-                        className="text-[14px] font-semibold text-[#14532d] hover:text-[#14532d]/80 transition-colors flex items-center justify-center gap-1.5 group"
-                    >
-                        SPEED CHALLENGE để trở thành Kiện Tướng Từ Vựng
-                    </Link>
-                ) : (
-                    <div className="text-[14px] font-semibold text-[#14532d]/90">
-                        SPEED CHALLENGE để trở thành Kiện Tướng Từ Vựng
-                    </div>
-                )}
+                <div className="text-[14px] font-semibold text-[#14532d]/90">
+                    SPEED CHALLENGE để ghi danh trên bảng vàng
+                </div>
             </div>
             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-amber-200 overflow-hidden relative">
                 {/* Decorative background elements matching the gold/green theme */}
@@ -572,25 +563,17 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                 <thead>
                                     <tr className="border-b-2 border-slate-100 text-[#14532d]/70 font-semibold">
                                         <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
-                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Tên</th>
-                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chủ đề</th>
-                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Gói</th>
-                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Áp lực</th>
-                                        <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm</th>
-                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]" title="Trung bình giây / 1 từ đúng">Tốc độ (s/từ)</th>
+                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Họ tên</th>
+                                        <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm số</th>
+                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]">Thời gian hoàn thành</th>
+                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]" title="Trung bình giây / 1 từ">Tốc độ (s/từ)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {leaders.map((leader, idx) => (
                                         <tr 
-                                            key={leader.id || idx} 
-                                            onClick={() => {
-                                                if (idx === 0 && leader.topicSlug && typeof window !== 'undefined') {
-                                                    window.location.href = `/toeic-practice?tab=vocabulary&slug=${leader.topicSlug}&chal=1&diff=${leader.difficulty}`;
-                                                }
-                                            }}
-                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-amber-50/30 hover:bg-amber-50 cursor-pointer relative' : 'hover:bg-slate-50/50'}`}
-                                            title={idx === 0 ? "Thách đấu kỷ lục gia Top 1" : undefined}
+                                            key={leader.id || idx}
+                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-amber-50/30' : 'hover:bg-slate-50/50'}`}
                                         >
                                             <td className="py-4 px-4 text-center">
                                                 {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
@@ -601,19 +584,13 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                             <td className="py-4 px-4">
                                                 <div className={`text-[#14532d] ${idx < 3 ? 'font-bold text-[15px]' : 'font-medium'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
                                             </td>
-                                            <td className="py-4 px-4 text-sm font-medium text-[#14532d]/90">
-                                                {leader.topicTitle}
-                                            </td>
-                                            <td className="py-4 px-4 text-[13px] font-bold text-[#14532d]/90">
-                                                {translatePackage(leader.topicPackage)}
-                                            </td>
-                                            <td className="py-4 px-4 text-[13px] font-bold text-[#14532d]/90 tracking-wide">
-                                                {translateDifficulty(leader.difficulty)}
-                                            </td>
                                             <td className="py-4 px-4 text-center text-[#14532d]">
                                                 <span className="font-semibold">{leader.score}</span>
                                                 <span className="text-[#14532d]/40 text-xs mx-1">/</span>
                                                 <span className="font-medium text-[#14532d]/70 text-sm">{leader.total}</span>
+                                            </td>
+                                            <td className="py-4 px-4 text-right">
+                                                <div className={`text-[#14532d] ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{(leader.timeMs / 1000).toFixed(2)}s</div>
                                             </td>
                                             <td className="py-4 px-4 text-right">
                                                 <div className={`text-[#14532d] font-mono tracking-tighter ${idx < 3 ? 'font-bold text-[15px]' : 'font-semibold'}`}>{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
@@ -628,13 +605,8 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                         <div className="md:hidden space-y-3 relative z-10 mt-2">
                             {leaders.map((leader, idx) => (
                                 <div 
-                                    key={leader.id || idx} 
-                                    onClick={() => {
-                                        if (idx === 0 && leader.topicSlug && typeof window !== 'undefined') {
-                                            window.location.href = `/toeic-practice?tab=vocabulary&slug=${leader.topicSlug}&chal=1&diff=${leader.difficulty}`;
-                                        }
-                                    }}
-                                    className={`flex items-center gap-3 border p-3 rounded-2xl ${idx === 0 ? 'bg-amber-50/50 border-amber-200 cursor-pointer shadow-sm relative' : 'bg-slate-50 border-slate-100'}`}
+                                    key={leader.id || idx}
+                                    className={`flex items-center gap-3 border p-3 rounded-2xl ${idx === 0 ? 'bg-amber-50/50 border-amber-200 shadow-sm relative' : 'bg-slate-50 border-slate-100'}`}
                                 >
                                     <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
                                         {idx === 0 ? <span className="text-2xl">🥇</span> : 
@@ -646,18 +618,10 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                         <div className={`truncate text-[15px] mb-0.5 text-[#14532d] ${idx < 3 ? 'font-bold' : 'font-medium'}`}>
                                             {leader.user?.name || leader.guestName || "Ẩn danh"}
                                         </div>
-                                        <div className="text-[12px] font-medium text-[#14532d]/80 truncate flex items-center gap-1.5 flex-wrap mt-0.5">
-                                            <span className="truncate max-w-[120px] block">{leader.topicTitle}</span>
-                                            
-                                            <span className="text-[#14532d]/30">•</span>
-                                            <span className="font-bold">{translatePackage(leader.topicPackage)}</span>
-                                            <span className="text-[#14532d]/30">•</span>
-                                            <span className="font-bold">{translateDifficulty(leader.difficulty)}</span>
-                                        </div>
                                     </div>
                                     <div className="text-right shrink-0">
                                         <div className="text-[13px] font-semibold text-[#14532d]">{leader.score}<span className="text-[10px] text-[#14532d]/60 font-medium ml-0.5">/{leader.total}</span></div>
-                                        <div className={`text-[12px] text-[#14532d] font-mono mt-0.5 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
+                                        <div className="text-[12px] text-[#14532d] mt-0.5">{(leader.timeMs / 1000).toFixed(2)}s ({((leader.timeMs / 1000) / Math.max(1, leader.total)).toFixed(2)}s/từ)</div>
                                     </div>
                                 </div>
                             ))}
@@ -1443,6 +1407,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		params.delete('wordId'); // Clear specific cross-linking wordId when normally opening a topic
 		if (typeof window !== 'undefined') {
 			window.history.pushState({}, '', `${pathname}?${params.toString()}`);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 		}
 		
 		loadTopic(topic);
@@ -1595,26 +1560,28 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
             const timeMs = challengeStartTime > 0 ? Date.now() - challengeStartTime : 0;
 			setChallengeResult({ show: true, score: currentScore, total: wList.length, timeMs });
             
-            // Auto submit score
-            const saveRecord = async () => {
-                try {
-                    await fetch('/api/toeic/speed-challenge', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            guestName: session ? null : (guestName.trim() || 'Người chơi Ẩn Danh'),
-                            topicTitle: selectedTopic ? selectedTopic.replace(/^Chủ đề:\s*/i, '').split(' - ')[0].trim() : 'Từ vựng',
-                            topicSlug: selectedTopic,
-                            topicPackage: topics.find(t => t.topic === selectedTopic)?.packageType || 'BASIC',
-                            difficulty: challengeDifficulty,
-                            score: currentScore,
-                            total: wList.length,
-                            timeMs
-                        })
-                    });
-                } catch(e) {}
-            };
-            saveRecord();
+            // Only autosubmit score for the exact GLOBAL speed challenge
+            if (selectedTopic === 'GLOBAL') {
+                const saveRecord = async () => {
+                    try {
+                        await fetch('/api/toeic/speed-challenge', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                guestName: session ? null : (guestName.trim() || 'Người chơi Ẩn Danh'),
+                                topicTitle: 'Kiện Tướng Từ Vựng',
+                                topicSlug: 'GLOBAL',
+                                topicPackage: 'MIXED',
+                                difficulty: challengeDifficulty,
+                                score: currentScore,
+                                total: wList.length,
+                                timeMs
+                            })
+                        });
+                    } catch(e) {}
+                };
+                saveRecord();
+            }
             
 			return;
 		}
@@ -1664,8 +1631,11 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			return;
 		}
 
-		plays.push(now);
-		if (typeof window !== 'undefined') {
+		if (!session && typeof window !== 'undefined') {
+			plays.push(now);
+			localStorage.setItem(storageKey, JSON.stringify(plays));
+		} else if (session && !isPro && !isUltra && typeof window !== 'undefined') {
+			plays.push(now);
 			localStorage.setItem(storageKey, JSON.stringify(plays));
 		}
 
@@ -1673,6 +1643,50 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		playSound('countdown321.mp3');
 		setChallengePreCtd(3);
 	};
+
+    const handleStartGlobalSpeedChallenge = async () => {
+		let plays: number[] = [];
+		const storageKey = `speed-challenge-plays-${session?.user?.id || 'guest'}`;
+		if (typeof window !== 'undefined') {
+			try { plays = JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch {}
+		}
+		const now = Date.now();
+		plays = plays.filter(time => now - time < 24 * 60 * 60 * 1000);
+		
+		let allowed = false;
+		if (!session) {
+			allowed = plays.length < 1;
+		} else {
+			if (isPro || isUltra) allowed = true;
+			else allowed = plays.length < 3;
+		}
+
+		if (!allowed) {
+			if (!session) {
+				onPracticeClick(selectedTopic || undefined, false);
+			} else {
+				setShowUpgrade(true);
+			}
+			return;
+		}
+
+        setSelectedTopic('GLOBAL');
+		setChallengeExpanded(true); // Must show the Intro to ask for guestName
+		setChallengeDifficulty('extreme'); // Enforce extreme logic
+        setChallengeResult({ show: false, score: 0, total: 0 });
+        setChallengeActive(false);
+        setVocabLoading(true);
+        try {
+            const res = await fetch('/api/toeic/speed-challenge/words');
+            const data = await res.json();
+            if (data.items) {
+                setVocabItems(data.items);
+            }
+        } catch (err) {
+        } finally {
+            setVocabLoading(false);
+        }
+    };
 
 	useEffect(() => {
 		if (challengePreCtd !== null) {
@@ -1798,6 +1812,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 						Các Chủ Đề Luyện Tập
 					</h2>
+                    <button onClick={handleStartGlobalSpeedChallenge} className="bg-amber-400 hover:bg-amber-300 text-[#14532d] px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer text-[13px] sm:text-sm md:text-base border border-amber-500/20 group">
+                        <span className="text-base sm:text-xl leading-none group-hover:scale-110 transition-transform">⚡</span> Speed Challenge
+                    </button>
 				</div>
 
 				<>
@@ -2216,7 +2233,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 									<div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
 										<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
 									</div>
-									<h3 className="text-lg font-black text-slate-800">Speed Challenge</h3>
+									<h3 className="text-lg font-black text-slate-800">{selectedTopic === 'GLOBAL' ? 'Speed Challenge' : 'Challenge Yourself'}</h3>
 								</div>
 								<svg className={`w-6 h-6 text-slate-400 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
 							</button>
@@ -2224,26 +2241,30 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							{challengeExpanded && (
 								<div className="p-8 text-center border-t border-indigo-50 animate-in slide-in-from-top-4 duration-300">
 									<h3 className="text-xl font-black text-slate-800 mb-2">Hãy chuẩn bị kỹ trước khi tham gia!</h3>
-									<p className="text-slate-500 mb-6 font-medium">Chọn tốc độ ghi nhớ phù hợp với khả năng của bạn trước khi bắt đầu.</p>
+									<p className="text-slate-500 mb-6 font-medium">
+                                        {selectedTopic === 'GLOBAL' ? 'Thời gian hoàn thành sẽ được lưu vào Bảng Vàng nếu bạn không đăng xuất.' : 'Chọn tốc độ ghi nhớ phù hợp với khả năng của bạn trước khi bắt đầu.'}
+                                    </p>
 									
-									<div className="flex flex-wrap items-center justify-center gap-4 mb-8">
-                                        <button 
-                                            onClick={() => setChallengeDifficulty('high')}
-                                            className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'high' ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-indigo-300 hover:text-indigo-500'}`}
-                                        >
-                                            <div className="mb-0.5">Áp lực cao</div>
-                                            <div className="text-[12px] opacity-80 font-medium">(5 giây / từ)</div>
-                                        </button>
-                                        <button 
-                                            onClick={() => setChallengeDifficulty('extreme')}
-                                            className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'extreme' ? 'bg-rose-50 border-rose-500 text-rose-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500'}`}
-                                        >
-                                            <div className="mb-0.5">Áp lực cực cao</div>
-                                            <div className="text-[12px] opacity-80 font-medium">(3 giây / từ)</div>
-                                        </button>
-                                    </div>
+                                    {selectedTopic !== 'GLOBAL' && (
+                                        <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
+                                            <button 
+                                                onClick={() => setChallengeDifficulty('high')}
+                                                className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'high' ? 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-indigo-300 hover:text-indigo-500'}`}
+                                            >
+                                                <div className="mb-0.5">Áp lực cao</div>
+                                                <div className="text-[12px] opacity-80 font-medium">(5 giây / từ)</div>
+                                            </button>
+                                            <button 
+                                                onClick={() => setChallengeDifficulty('extreme')}
+                                                className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'extreme' ? 'bg-rose-50 border-rose-500 text-rose-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500'}`}
+                                            >
+                                                <div className="mb-0.5">Áp lực cực cao</div>
+                                                <div className="text-[12px] opacity-80 font-medium">(3 giây / từ)</div>
+                                            </button>
+                                        </div>
+                                    )}
 
-                                    {!session && (
+                                    {selectedTopic === 'GLOBAL' && !session && (
                                         <div className="max-w-sm mx-auto mb-6">
                                             <input 
                                                 type="text" 
@@ -2308,31 +2329,30 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 							<h3 className="text-3xl font-black mb-4 tracking-tight">🎉 Thử Thách Hoàn Tất!</h3>
 							<p className="text-indigo-200 text-lg mb-8 font-medium">Bạn đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ.</p>
 							
-                            {challengeResult.score / Math.max(1, challengeResult.total) >= 0.8 ? (
-                                <div className="mb-8 p-6 bg-white/10 rounded-2xl border border-white/20">
-                                    <h4 className="text-xl font-bold text-amber-300 mb-2">Bạn quá xuất sắc với chủ đề này rồi!</h4>
-                                    <p className="text-indigo-100 text-sm mb-5">Chia sẻ kết quả này để thách đấu cùng bạn bè nhé.</p>
-                                    <div className="flex flex-col gap-3 max-w-sm mx-auto">
-                                        <div className="bg-white/10 p-2.5 rounded-xl border border-white/20">
-                                            <input 
-                                                readOnly 
-                                                value={`${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&slug=${(selectedTopic || '').split('-')[0].trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-')}&chal=1&diff=${challengeDifficulty}`} 
-                                                className="w-full bg-transparent text-white/90 px-1 text-sm outline-none truncate text-center" 
-                                            />
+                            {selectedTopic === 'GLOBAL' ? (
+                                challengeResult.score / Math.max(1, challengeResult.total) >= 0.8 ? (
+                                    <div className="mb-8 p-6 bg-white/10 rounded-2xl border border-white/20">
+                                        <h4 className="text-xl font-bold text-amber-300 mb-2">Bạn quá xuất sắc quá! Cố gắng giữ đỉnh bảng nhé!</h4>
+                                        <p className="text-indigo-100 text-sm mb-5">Chia sẻ kết quả này để thách đấu cùng bạn bè nhé.</p>
+                                        <div className="flex flex-col gap-3 max-w-sm mx-auto">
+                                            <button 
+                                                onClick={() => {
+                                                    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=home`;
+                                                    navigator.clipboard.writeText(url);
+                                                    setCopySuccess(true);
+                                                    setTimeout(() => setCopySuccess(false), 2000);
+                                                }} 
+                                                className="w-full bg-amber-400 hover:bg-amber-300 text-indigo-900 px-4 py-3.5 rounded-xl text-base font-black transition-colors cursor-pointer shadow-lg active:scale-95"
+                                            >
+                                                {copySuccess ? 'Đã Copy Link' : 'Copy Link Thách Đấu'}
+                                            </button>
                                         </div>
-                                        <button 
-                                            onClick={() => {
-                                                const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&slug=${(selectedTopic || '').split('-')[0].trim().toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-')}&chal=1&diff=${challengeDifficulty}`;
-                                                navigator.clipboard.writeText(url);
-                                                setCopySuccess(true);
-                                                setTimeout(() => setCopySuccess(false), 2000);
-                                            }} 
-                                            className="w-full bg-amber-400 hover:bg-amber-300 text-indigo-900 px-4 py-3.5 rounded-xl text-base font-black transition-colors cursor-pointer shadow-lg active:scale-95"
-                                        >
-                                            {copySuccess ? 'Đã Copy Link' : 'Chia sẻ'}
-                                        </button>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="mb-8">
+                                        <h4 className="text-xl font-bold text-amber-300">Bạn đã rất nỗ lực rồi! Hãy thử lại để ghi danh nhé!</h4>
+                                    </div>
+                                )
                             ) : (
                                 <div className="mb-8">
                                     <h4 className="text-xl font-bold text-amber-300">Bạn đã rất nỗ lực rồi! Chúc mừng bạn nhé!</h4>
@@ -2340,10 +2360,10 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                             )}
 
 							<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-								<button onClick={handleStartChallenge} className="bg-white text-indigo-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
+								<button onClick={selectedTopic === 'GLOBAL' ? handleStartGlobalSpeedChallenge : handleStartChallenge} className="bg-white text-indigo-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
 									Làm Lại
 								</button>
-								<button onClick={() => { setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 }); setChallengeExpanded(false); }} className="bg-indigo-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-indigo-900 transition-all w-full sm:w-auto cursor-pointer">
+								<button onClick={() => { setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 }); setChallengeExpanded(false); if (selectedTopic === 'GLOBAL') { backToTopics(); } }} className="bg-indigo-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-indigo-900 transition-all w-full sm:w-auto cursor-pointer">
 									Quay Lại Học Từ
 								</button>
 							</div>

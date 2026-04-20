@@ -262,7 +262,6 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-8">
             {/* Main Info Box */}
           <div className="rounded-xl border-2 border-slate-200 bg-white shadow-sm p-6 sm:p-8 relative">
-            <h2 className="text-xl font-black text-slate-800 mb-6 border-b pb-4">Thông tin cá nhân</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Avatar Upload */}
               <div>
