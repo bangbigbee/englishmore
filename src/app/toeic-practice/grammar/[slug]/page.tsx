@@ -374,10 +374,16 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     setUserAnswers(prev => ({ ...prev, [questionId]: option }))
     
     // Exam mode interception: DO NOT EVALUATE results!
-    if (topic?.type === 'LISTENING' && topic?.part && topic.part <= 2 && listeningMode === 'actual' && !isTestCompleted) {
+    if (topic?.type === 'LISTENING' && topic?.part && topic.part <= 4 && listeningMode === 'actual' && !isTestCompleted) {
        if (actualCheckingMode) return; // User is in checking phase, just record answer
        
-       // If currently testing
+       if (topic.part >= 3) {
+           // For Part 3 and 4, we DO NOT auto-advance because there are 3 questions per group.
+           // User manually goes to next group or audio triggers it.
+           return;
+       }
+
+       // If currently testing (Part 1 and 2 auto-advance)
        if (currentLesson && activeQuestionIndex === currentLesson.questions.length - 1) {
            setTimeout(() => setIsSubmitModalOpen(true), 500);
        } else {
@@ -887,7 +893,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     <section className="mt-8 relative">
                       {/* Global Persistent Audio Player */}
                       {(() => {
-                        let activeAudioUrl = currentLesson.questions[activeQuestionIndex]?.audioUrl || null;
+                        const questionsPerView = (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) ? 3 : 1;
+                        const activeGroupStartIndex = Math.floor(activeQuestionIndex / questionsPerView) * questionsPerView;
+                        let activeAudioUrl = currentLesson.questions[activeGroupStartIndex]?.audioUrl || null;
 
                         return activeAudioUrl ? (
                             <audio 
@@ -899,8 +907,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                onLoadedData={(e) => { (e.target as HTMLAudioElement).playbackRate = playbackSpeed; }}
                                onEnded={() => {
                                   if (listeningMode === 'actual') {
-                                    if (activeQuestionIndex < currentLesson.questions.length - 1) {
-                                       setActiveQuestionIndex(prev => prev + 1);
+                                    if (activeQuestionIndex < currentLesson.questions.length - questionsPerView) {
+                                       setActiveQuestionIndex(prev => prev + questionsPerView);
                                     } else if (!isTestCompleted && !actualCheckingMode) {
                                        setIsSubmitModalOpen(true);
                                     }
@@ -928,7 +936,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             <h3 className="text-2xl font-black text-[#14532d] mb-3">Sẵn sàng cho PART {topic.part} của bài thi?</h3>
                             <p className="text-slate-500 mb-8 max-w-md">Bắt đầu để audio tự động phát và hiển thị nội dung câu hỏi đầu tiên. Thời gian làm bài sẽ được tính từ bây giờ.</p>
                             
-                            {topic.part && topic.part <= 2 && (
+                            {topic.part && topic.part <= 4 && (
                                 <div className="flex flex-col items-center mb-8 w-full">
                                   <p className="text-sm border-b pb-2 px-6 border-slate-200 uppercase tracking-widest text-slate-400 font-bold mb-4">Chọn chế độ làm bài</p>
                                   <div className="flex items-center bg-slate-100 p-1.5 rounded-xl w-full max-w-sm mx-auto shadow-inner">
@@ -949,7 +957,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             )}
                             
                             <button 
-                              disabled={topic.part && topic.part <= 2 ? !listeningMode : false}
+                              disabled={topic.part && topic.part <= 4 ? !listeningMode : false}
                               onClick={() => {
                                 setLessonStarted(true);
                                 setTimerStartTime(Date.now());
@@ -958,7 +966,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     setIsPlayingDirections(true);
                                     directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
                                 }
-                            }} className={`text-white font-bold px-10 py-4 rounded-xl transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase ${topic.part && topic.part <= 2 ? (listeningMode ? 'bg-[#14532d] hover:bg-[#14532d]/90 shadow-lg shadow-emerald-900/30' : 'bg-slate-300 cursor-not-allowed hover:scale-100') : 'bg-[#14532d] hover:bg-[#14532d]/90 shadow-lg shadow-emerald-900/30'}`}>
+                            }} className={`text-white font-bold px-10 py-4 rounded-xl transition-all hover:scale-105 active:scale-95 text-lg flex items-center gap-2 tracking-wide uppercase ${topic.part && topic.part <= 4 ? (listeningMode ? 'bg-[#14532d] hover:bg-[#14532d]/90 shadow-lg shadow-emerald-900/30' : 'bg-slate-300 cursor-not-allowed hover:scale-100') : 'bg-[#14532d] hover:bg-[#14532d]/90 shadow-lg shadow-emerald-900/30'}`}>
                                Bắt Đầu
                             </button>
                         </div>
@@ -1028,390 +1036,397 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             <>
                               <AnimatePresence mode="wait">
                                 {(() => {
-                              const q = currentLesson.questions[activeQuestionIndex]
-                            if (!q) return null
-                            const isShowingResult = showResults[q.id]
-                            const selectedOption = userAnswers[q.id]
-                            const isCorrect = selectedOption === q.correctOption
-                            const explanationText = status !== 'authenticated' && activeQuestionIndex >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
-                            
-                            const parsedTranslations = (() => {
-                                if (!q.translation) return { question: '', options: {} as Record<string, string> };
-                                if (topic.type !== 'LISTENING' || (topic.part !== 1 && topic.part !== 2)) {
-                                     return { question: q.translation, options: {} as Record<string, string> };
-                                }
-                                const parts = q.translation.split(/[\/\n]+/);
-                                const result = { question: '', options: {} as Record<string, string> };
-                                parts.forEach(part => {
-                                    const text = part.trim();
-                                    if (!text) return;
-                                    const match = text.match(/^\s*\(?([A-D])\)?[.\:\-\s]+(.*)/i);
-                                    if (match) {
-                                        result.options[match[1].toUpperCase()] = match[2].trim();
-                                    } else if (!result.question) {
-                                        result.question = text;
-                                    } else {
-                                        result.question += ' ' + text;
-                                    }
-                                });
-                                return result;
-                            })();
-
-                            return (
-                              <motion.div
-                                key={q.id}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
-                                transition={{ duration: 0.2 }}
-                                className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 relative overflow-hidden"
-                              >
-                              <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
-                                <motion.div 
-                                  className="h-full bg-[#14532d]"
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${((activeQuestionIndex + 1) / currentLesson.questions.length) * 100}%` }}
-                                />
-                              </div>
-
-                              <div className="mb-8 flex flex-col items-center">
-                                <div className="text-center mb-6">
-                                  <p className="text-xl md:text-2xl font-black text-slate-800 leading-snug">
-                                    {topic.part === 2 && !isShowingResult ? (
-                                        <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
-                                    ) : q.question}
-                                  </p>
-                                  {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && showTranslation[q.id] && parsedTranslations.question && (
-                                    <p className="mt-2 text-base md:text-lg font-medium text-slate-500 italic animate-in fade-in slide-in-from-top-1">
-                                      {parsedTranslations.question.replace(/^(?:Câu\s*hỏi|Question)[\s]*[:\-]?\s*/i, '').trim()}
-                                    </p>
-                                  )}
-                                </div>
-                                {q.imageUrl && (
-                                  <img 
-                                    src={q.imageUrl} 
-                                    alt="Part" 
-                                    onClick={() => setIsZoomedImage(!isZoomedImage)}
-                                    className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-[400px] max-h-[280px] md:max-h-[320px] w-auto cursor-zoom-in'}`} 
-                                  />
-                                )}
-                                
-                                {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && q.translation && isShowingResult && (
-                                   <div className="mt-6 flex flex-col items-center">
-                                     <button 
-                                       onClick={() => {
-                                           const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
-                                           const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                           if (translationTierLevel > userTierLevel) {
-                                               setShowPricing(true);
-                                               return;
-                                           }
-                                           setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
-                                       }}
-                                       className={`flex items-center gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1.5 rounded-lg transition-all tracking-wide shadow-sm border ${showTranslation[q.id] ? 'bg-orange-600 border-orange-600 text-white' : 'bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100'}`}
-                                     >
-                                       Dịch nghĩa
-                                       {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
-                                       {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-[0_0_3px_rgba(147,51,234,0.6)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
-                                     </button>
-                                   </div>
-                                )}
-                              </div>
-
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
-                                {[
-                                  { label: 'A', value: q.optionA },
-                                  { label: 'B', value: q.optionB },
-                                  { label: 'C', value: q.optionC },
-                                  { label: 'D', value: q.optionD },
-                                ].map((opt) => {
-                                  if (opt.label === 'D' && !opt.value) return null
+                                  const questionsPerView = (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) ? 3 : 1;
+                                  const activeGroupStartIndex = Math.floor(activeQuestionIndex / questionsPerView) * questionsPerView;
+                                  const currentQuestionsGroup = currentLesson.questions.slice(activeGroupStartIndex, activeGroupStartIndex + questionsPerView);
                                   
-                                  const shouldHideValue = topic.type === 'LISTENING' && topic.part && topic.part <= 2 && !isShowingResult;
-                                  
-                                  let buttonClass = "flex items-center gap-3 md:gap-3.5 px-4 py-2 md:py-2.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
-                                  
-                                  if (isShowingResult) {
-                                    if (opt.label === q.correctOption) {
-                                      buttonClass += "bg-emerald-50 border-emerald-500 text-emerald-900 ring-4 ring-emerald-500/10"
-                                    } else if (opt.label === selectedOption) {
-                                      buttonClass += "bg-rose-50 border-rose-500 text-rose-900"
-                                    } else {
-                                      buttonClass += "bg-white border-slate-50 opacity-40 shadow-none scale-95"
-                                    }
-                                  } else {
-                                    if (selectedOption === opt.label) {
-                                      buttonClass += "bg-[#14532d] border-[#14532d] text-white shadow-lg shadow-[#14532d]/30 scale-[1.02]"
-                                    } else {
-                                      buttonClass += "bg-white border-slate-100 hover:border-[#14532d]/30 hover:bg-slate-50 hover:shadow-md"
-                                    }
-                                  }
+                                  if (currentQuestionsGroup.length === 0) return null;
 
                                   return (
-                                    <button
-                                      key={opt.label}
-                                      onClick={() => handleSelectOption(q.id, opt.label)}
-                                      disabled={isShowingResult}
-                                      className={buttonClass + " flex-col items-start cursor-pointer"}
+                                    <motion.div
+                                      key={`group-${activeGroupStartIndex}`}
+                                      initial={{ opacity: 0, x: 20 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      exit={{ opacity: 0, x: -20 }}
+                                      transition={{ duration: 0.2 }}
+                                      className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 relative overflow-hidden"
                                     >
-                                      <div className="flex items-center w-full gap-2.5 md:gap-3 relative">
-                                        <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
-                                          selectedOption === opt.label 
-                                            ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
-                                            : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
-                                        }`}>
-                                          {opt.label}
-                                        </span>
-                                        <div className="flex flex-col flex-1 pb-1">
-                                            <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
-                                              {opt.value || 'Option'}
-                                            </span>
-                                            {topic.type === 'LISTENING' && topic.part && topic.part <= 2 && showTranslation[q.id] && parsedTranslations.options[opt.label] && (
-                                                <span className="text-[13px] md:text-sm font-medium text-emerald-700 italic mt-0.5 animate-in fade-in leading-snug">
-                                                    {parsedTranslations.options[opt.label]}
-                                                </span>
-                                            )}
-                                        </div>
+                                      <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
+                                        <motion.div 
+                                          className="h-full bg-[#14532d]"
+                                          initial={{ width: 0 }}
+                                          animate={{ width: `${((Math.min(activeGroupStartIndex + questionsPerView, currentLesson.questions.length)) / currentLesson.questions.length) * 100}%` }}
+                                        />
                                       </div>
+                                      
+                                      <div className="flex flex-col gap-10">
+                                        {currentQuestionsGroup.map((q, localIdx) => {
+                                          const isShowingResult = showResults[q.id];
+                                          const selectedOption = userAnswers[q.id];
+                                          const isCorrect = selectedOption === q.correctOption;
+                                          const globalIdx = activeGroupStartIndex + localIdx;
+                                          const explanationText = status !== 'authenticated' && globalIdx >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
+                                          
+                                          const parsedTranslations = (() => {
+                                              if (!q.translation) return { question: '', options: {} as Record<string, string> };
+                                              if (topic.type !== 'LISTENING' || !topic.part || topic.part > 4) {
+                                                   return { question: q.translation, options: {} as Record<string, string> };
+                                              }
+                                              const parts = q.translation.split(/[\/\n]+/);
+                                              const result = { question: '', options: {} as Record<string, string> };
+                                              parts.forEach(part => {
+                                                  const text = part.trim();
+                                                  if (!text) return;
+                                                  const match = text.match(/^\s*\(?([A-D])\)?[.\:\-\s]+(.*)/i);
+                                                  if (match) {
+                                                      result.options[match[1].toUpperCase()] = match[2].trim();
+                                                  } else if (!result.question) {
+                                                      result.question = text;
+                                                  } else {
+                                                      result.question += ' ' + text;
+                                                  }
+                                              });
+                                              return result;
+                                          })();
+
+                                          return (
+                                            <div key={q.id} className={`flex flex-col ${localIdx > 0 ? 'pt-10 border-t border-dashed border-slate-200' : ''}`}>
+                                              <div className="mb-6 flex flex-col items-center relative">
+                                                {/* Question Number Badge for Part 3/4 context */}
+                                                {(topic.part === 3 || topic.part === 4) && (
+                                                    <div className="absolute top-0 left-0 text-5xl md:text-6xl font-black text-slate-100 -mt-4 -ml-2 sm:-ml-4 pointer-events-none z-0">
+                                                        Q{topic.part === 3 ? globalIdx + 32 : globalIdx + 71}
+                                                    </div>
+                                                )}
+
+                                                <div className="text-center mb-6 relative z-10 font-medium w-full">
+                                                  <p className={`text-xl md:text-2xl font-black text-slate-800 leading-snug ${(topic.part === 3 || topic.part === 4) ? 'text-left pl-2' : ''}`}>
+                                                    {topic.part === 2 && !isShowingResult ? (
+                                                        <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
+                                                    ) : q.question}
+                                                  </p>
+                                                  {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && showTranslation[q.id] && parsedTranslations.question && (
+                                                    <p className={`mt-2 text-base md:text-lg font-medium text-slate-500 italic animate-in fade-in slide-in-from-top-1 ${(topic.part === 3 || topic.part === 4) ? 'text-left pl-2' : ''}`}>
+                                                      {parsedTranslations.question.replace(/^(?:Câu\s*hỏi|Question)[\s]*[:\-]?\s*/i, '').trim()}
+                                                    </p>
+                                                  )}
+                                                </div>
+                                                {q.imageUrl && (
+                                                  <img 
+                                                    src={q.imageUrl} 
+                                                    alt="Part" 
+                                                    onClick={() => setIsZoomedImage(!isZoomedImage)}
+                                                    className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-[400px] max-h-[280px] md:max-h-[320px] w-auto cursor-zoom-in'} mb-4`} 
+                                                  />
+                                                )}
+                                                
+                                                {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && q.translation && isShowingResult && (
+                                                   <div className={`mt-6 flex flex-col ${topic.part === 3 || topic.part === 4 ? 'items-start w-full' : 'items-center'} `}>
+                                                     <button 
+                                                       onClick={() => {
+                                                           const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                                           const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                           if (translationTierLevel > userTierLevel) {
+                                                               setShowPricing(true);
+                                                               return;
+                                                           }
+                                                           setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
+                                                       }}
+                                                       className={`flex items-center gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1.5 rounded-lg transition-all tracking-wide shadow-sm border ${showTranslation[q.id] ? 'bg-orange-600 border-orange-600 text-white' : 'bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100'}`}
+                                                     >
+                                                       Dịch nghĩa
+                                                       {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                                       {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-[0_0_3px_rgba(147,51,234,0.6)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
+                                                     </button>
+                                                   </div>
+                                                )}
+                                              </div>
+
+                                              <div className={`grid grid-cols-1 ${topic.part === 3 || topic.part === 4 ? '' : 'md:grid-cols-2'} gap-2 md:gap-3`}>
+                                                {[
+                                                  { label: 'A', value: q.optionA },
+                                                  { label: 'B', value: q.optionB },
+                                                  { label: 'C', value: q.optionC },
+                                                  { label: 'D', value: q.optionD },
+                                                ].map((opt) => {
+                                                  if (opt.label === 'D' && !opt.value) return null
+                                                  
+                                                  const shouldHideValue = topic.type === 'LISTENING' && topic.part && topic.part <= 2 && !isShowingResult;
+                                                  
+                                                  let buttonClass = "flex items-center gap-3 md:gap-3.5 px-4 py-2 md:py-2.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
+                                                  
+                                                  if (isShowingResult) {
+                                                    if (opt.label === q.correctOption) {
+                                                      buttonClass += "bg-emerald-50 border-emerald-500 text-emerald-900 ring-4 ring-emerald-500/10"
+                                                    } else if (opt.label === selectedOption) {
+                                                      buttonClass += "bg-rose-50 border-rose-500 text-rose-900"
+                                                    } else {
+                                                      buttonClass += "bg-white border-slate-50 opacity-40 shadow-none scale-95"
+                                                    }
+                                                  } else {
+                                                    if (selectedOption === opt.label) {
+                                                      buttonClass += "bg-[#14532d] border-[#14532d] text-white shadow-lg shadow-[#14532d]/30 scale-[1.02]"
+                                                    } else {
+                                                      buttonClass += "bg-white border-slate-100 hover:border-[#14532d]/30 hover:bg-slate-50 hover:shadow-md"
+                                                    }
+                                                  }
+
+                                                  return (
+                                                    <button
+                                                      key={opt.label}
+                                                      onClick={() => handleSelectOption(q.id, opt.label)}
+                                                      disabled={isShowingResult}
+                                                      className={buttonClass + " flex-col items-start cursor-pointer"}
+                                                    >
+                                                      <div className="flex items-center w-full gap-2.5 md:gap-3 relative">
+                                                        <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
+                                                          selectedOption === opt.label 
+                                                            ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
+                                                            : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
+                                                        }`}>
+                                                          {opt.label}
+                                                        </span>
+                                                        <div className="flex flex-col flex-1 pb-1">
+                                                            <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
+                                                              {opt.value || 'Option'}
+                                                            </span>
+                                                            {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && showTranslation[q.id] && parsedTranslations.options[opt.label] && (
+                                                                <span className="text-[13px] md:text-sm font-medium text-emerald-700 italic mt-0.5 animate-in fade-in leading-snug">
+                                                                    {parsedTranslations.options[opt.label]}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                      </div>
+                                                    </button>
+                                                  )
+                                                })}
+                                              </div>
+                                              
+                                              {topic.type !== 'LISTENING' && isShowingResult && q.translation && (
+                                                <div className="mt-5 flex flex-row items-start gap-3 animate-in slide-in-from-top-1 fade-in duration-300">
+                                                   <button 
+                                                     onClick={() => {
+                                                         const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                                         const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                         if (translationTierLevel > userTierLevel) {
+                                                             setShowPricing(true);
+                                                             return;
+                                                         }
+                                                         setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
+                                                     }}
+                                                     className={`flex items-center shrink-0 flex-none gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1 mt-0.5 rounded-lg transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-100 text-orange-700' : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200 hover:text-slate-800'}`}
+                                                   >
+                                                     Dịch nghĩa
+                                                     {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-500 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                                     {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
+                                                   </button>
+                                                   {showTranslation[q.id] && (
+                                                     <div className="flex-1 min-w-0 text-[13px] md:text-sm font-medium text-slate-600 leading-relaxed italic animate-in fade-in py-0.5">
+                                                       {q.translation}
+                                                     </div>
+                                                   )}
+                                                </div>
+                                              )}
+                                              
+                                              {/* Post-Question Explanation & Tools */}
+                                              <div className="mt-6 flex flex-col gap-4 w-full">
+                                                {/* Single Result Row purely for Part 3 individual feedback, hidden if not answered */}
+                                                {isShowingResult && (
+                                                    <div className={`flex flex-row items-center justify-between gap-3 w-full p-2 md:p-3 rounded-2xl shadow-sm transition-all ${isCorrect ? 'bg-emerald-50 border-2 border-emerald-500/30' : 'bg-rose-50 border-2 border-rose-500/30'}`}>
+                                                      <div className="flex-1 flex justify-center items-center min-w-0">
+                                                        <div className={`px-2 flex items-center justify-center gap-1.5 md:gap-2 transition-all ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
+                                                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
+                                                              {isCorrect ? (
+                                                                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
+                                                              ) : (
+                                                                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                                                              )}
+                                                          </div>
+                                                          <div className="flex items-center leading-none whitespace-nowrap">
+                                                            <span className="font-bold text-sm md:text-base">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+
+                                                      <div className="flex items-center gap-2 shrink-0">
+                                                        {(() => {
+                                                          const bookmarkTierLevel = currentLesson.bookmarkAccessTier === 'ULTRA' ? 3 : currentLesson.bookmarkAccessTier === 'PRO' ? 2 : 1;
+                                                          const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                          const isLocked = bookmarkTierLevel > userTierLevel;
+
+                                                          if (isLocked) {
+                                                            return (
+                                                              <div className="relative group">
+                                                                <button
+                                                                  onClick={() => setShowPricing(true)}
+                                                                  className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none`}
+                                                                  aria-label="Lưu tay"
+                                                                >
+                                                                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                                                  <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}>
+                                                                     <svg className="w-4 h-4 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                                                  </div>
+                                                                </button>
+                                                              </div>
+                                                            )
+                                                          }
+
+                                                          return (
+                                                            <button
+                                                              onClick={() => toggleBookmark(q.id)}
+                                                              className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`}
+                                                              title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}
+                                                            >
+                                                              <svg className="w-5 h-5 md:w-6 md:h-6" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                                            </button>
+                                                          )
+                                                        })()}
+                                                      </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Explanation specific to this question */}
+                                                {isShowingResult && explanationText && (
+                                                  <div className={`w-full p-4 md:p-6 rounded-2xl border-2 shadow-sm ${isCorrect ? 'bg-emerald-50/40 border-emerald-100' : 'bg-rose-50/40 border-rose-100'}`}>
+                                                    {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
+                                                        <button 
+                                                          onClick={(e) => {
+                                                            e.preventDefault();
+                                                            const currentPath = window.location.pathname;
+                                                            router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
+                                                          }}
+                                                          className="text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full"
+                                                        >
+                                                          {explanationText}
+                                                        </button>
+                                                    ) : (() => {
+                                                          const explanationTierLevel = currentLesson.explanationAccessTier === 'ULTRA' ? 3 : currentLesson.explanationAccessTier === 'PRO' ? 2 : 1;
+                                                          const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                          const isLocked = explanationTierLevel > userTierLevel;
+                                                          
+                                                          if (isLocked) {
+                                                             return (
+                                                                <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                                                  <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-4 select-none text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
+                                                                    {explanationText}
+                                                                  </div>
+                                                                  <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
+                                                                    <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                                                       <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                                                         {currentLesson.explanationAccessTier === 'ULTRA' ? (
+                                                                            <svg className="w-4 h-4 text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                                                         ) : (
+                                                                            <svg className="w-4 h-4 text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                                                         )}
+                                                                         <span>Nâng cấp</span>
+                                                                       </div>
+                                                                       <div className="flex items-center gap-1 whitespace-nowrap">
+                                                                         <span className={`${currentLesson.explanationAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.explanationAccessTier}</span>
+                                                                         <span>để xem giải thích chi tiết.</span>
+                                                                       </div>
+                                                                    </button>
+                                                                  </div>
+                                                                </div>
+                                                             )
+                                                          }
+                                                          
+                                                          return (
+                                                            <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
+                                                              {explanationText}
+                                                            </div>
+                                                          )
+                                                    })()}
+                                                  </div>
+                                                )}
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                      
+                                      {/* Unified Navigation at Bottom of Group */}
+                                      <div className="mt-10 flex flex-row items-center justify-between gap-3 w-full border-t border-slate-200 pt-6">
+                                        <button
+                                          onClick={() => {
+                                              setActiveQuestionIndex(prev => Math.max(0, prev - questionsPerView));
+                                              window.scrollTo({ top: 300, behavior: 'smooth' });
+                                          }}
+                                          disabled={activeGroupStartIndex === 0}
+                                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                          aria-label="Trước đó"
+                                        >
+                                          <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                                        </button>
+                                        
+                                        <div className="flex-1 text-center font-bold text-slate-300 text-sm md:text-base uppercase tracking-widest">
+                                           {topic.part === 3 ? `${activeGroupStartIndex + 32} - ${activeGroupStartIndex + 32 + currentQuestionsGroup.length - 1}` : topic.part === 4 ? `${activeGroupStartIndex + 71} - ${activeGroupStartIndex + 71 + currentQuestionsGroup.length - 1}` : `Câu ${activeGroupStartIndex + 1}`}
+                                        </div>
+
+                                        <button
+                                          onClick={() => {
+                                              if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual') {
+                                                  toast('Đang ở chế độ thi thật. Câu hỏi sẽ tự chuyển khi hết đoạn Audio. Nếu muốn chủ động, hãy chọn chế độ Luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
+                                                  return;
+                                              }
+                                              setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + questionsPerView));
+                                              window.scrollTo({ top: 300, behavior: 'smooth' });
+                                          }}
+                                          disabled={activeGroupStartIndex + questionsPerView >= currentLesson.questions.length}
+                                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                          aria-label="Tiếp theo"
+                                        >
+                                          <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                        </button>
+                                      </div>
+                                    </motion.div>
+                                  )
+                                })()}
+                              </AnimatePresence>
+
+                              {/* Small Numbers Row at the very bottom without vertical scroll */}
+                              <div className="mt-6 flex flex-wrap justify-center items-center gap-1 sm:gap-1.5 w-full">
+                                {currentLesson.questions.map((_, idx) => {
+                                  const questionsPerView = (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) ? 3 : 1;
+                                  const activeGroupStartIndex = Math.floor(activeQuestionIndex / questionsPerView) * questionsPerView;
+                                  
+                                  const isActive = idx >= activeGroupStartIndex && idx < activeGroupStartIndex + questionsPerView;
+                                  const qt = currentLesson.questions[idx]
+                                  const isShowingResultQt = !!showResults[qt.id]
+                                  const isCorrectQt = userAnswers[qt.id] === qt.correctOption
+
+                                  let btnStyle = ''
+                                  if (isActive) {
+                                     btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
+                                  } else if (isShowingResultQt) {
+                                     btnStyle = isCorrectQt ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
+                                  } else if (userAnswers[qt.id]) {
+                                     btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                                  } else {
+                                     btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                                  }
+                                  
+                                  return (
+                                    <button 
+                                      key={idx}
+                                      onClick={() => {
+                                          if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual') {
+                                              toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
+                                              return;
+                                          }
+                                          if (isActive) return;
+                                          const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
+                                          if (isAudioPlaying) {
+                                              if (!confirm("Audio vẫn đang phát. Bạn chắc chắn muốn chuyển sang câu khác?")) return;
+                                          }
+                                          setActiveQuestionIndex(idx);
+                                      }}
+                                      className={`h-6 sm:h-7 min-w-[24px] sm:min-w-[28px] px-1 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
+                                    >
+                                      {topic.part === 3 ? idx + 32 : topic.part === 4 ? idx + 71 : topic.part === 2 ? idx + 7 : idx + 1}
                                     </button>
                                   )
                                 })}
                               </div>
-                              
-                              {topic.type !== 'LISTENING' && isShowingResult && q.translation && (
-                                <div className="mt-5 flex flex-row items-start gap-3 animate-in slide-in-from-top-1 fade-in duration-300">
-                                   <button 
-                                     onClick={() => {
-                                         const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
-                                         const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                         if (translationTierLevel > userTierLevel) {
-                                             setShowPricing(true);
-                                             return;
-                                         }
-                                         setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
-                                     }}
-                                     className={`flex items-center shrink-0 flex-none gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1 mt-0.5 rounded-lg transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-100 text-orange-700' : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200 hover:text-slate-800'}`}
-                                   >
-                                     Dịch nghĩa
-                                     {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-500 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
-                                     {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
-                                   </button>
-                                   {showTranslation[q.id] && (
-                                     <div className="flex-1 min-w-0 text-[13px] md:text-sm font-medium text-slate-600 leading-relaxed italic animate-in fade-in py-0.5">
-                                       {q.translation}
-                                     </div>
-                                   )}
-                                </div>
-                              )}
-
-                            </motion.div>
-                          )
-                        })()}
-                      </AnimatePresence>
-
-                      {/* Outside AnimatePresence: Result, Navigation, and Explanation */ }
-                      {(() => {
-                        const q = currentLesson.questions[activeQuestionIndex];
-                        if (!q) return null;
-                        const isShowingResultLocal = !!showResults[q.id];
-                        const isCorrectLocal = userAnswers[q.id] === q.correctOption;
-                        const explanationText = status !== 'authenticated' && activeQuestionIndex >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
-                        
-                        return (
-                          <div className="mt-6 flex flex-col gap-4 w-full">
-                            {/* Prev + Result + Next Row */}
-                            <div className={`flex flex-row items-center justify-between gap-3 w-full p-2 md:p-3 rounded-2xl shadow-sm transition-all ${isShowingResultLocal ? (isCorrectLocal ? 'bg-emerald-50 border-2 border-emerald-500/30' : 'bg-rose-50 border-2 border-rose-500/30') : 'bg-slate-50 border border-slate-200'}`}>
-                              <button
-                                onClick={() => {
-                                    if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
-                                        toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
-                                        return;
-                                    }
-                                    setActiveQuestionIndex(prev => Math.max(0, prev - 1));
-                                }}
-                                disabled={activeQuestionIndex === 0}
-                                className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
-                                aria-label="Trước đó"
-                              >
-                                <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                              </button>
-
-                              <div className="flex-1 flex justify-center items-center min-w-0">
-                                {isShowingResultLocal ? (
-                                  <div className={`px-2 flex items-center justify-center gap-1.5 md:gap-2 transition-all ${isCorrectLocal ? 'text-emerald-700' : 'text-rose-700'}`}>
-                                    <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
-                                        {isCorrectLocal ? (
-                                          <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
-                                        ) : (
-                                          <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
-                                        )}
-                                    </div>
-                                    <div className="flex items-center leading-none whitespace-nowrap">
-                                      <span className="font-bold text-sm md:text-base">{isCorrectLocal ? 'Correct!' : 'Incorrect!'}</span>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="text-slate-400 font-bold text-xs uppercase tracking-widest">
-                                    Câu {topic.type === 'LISTENING' && topic.part === 2 ? activeQuestionIndex + 7 : activeQuestionIndex + 1} / {currentLesson.questions.length}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-2 shrink-0">
-                                {(() => {
-                                  const bookmarkTierLevel = currentLesson.bookmarkAccessTier === 'ULTRA' ? 3 : currentLesson.bookmarkAccessTier === 'PRO' ? 2 : 1;
-                                  const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                  const isLocked = bookmarkTierLevel > userTierLevel;
-
-                                  if (isLocked) {
-                                    return (
-                                      <div className="relative group">
-                                        <button
-                                          onClick={() => setShowPricing(true)}
-                                          className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none`}
-                                          aria-label="Lưu tay bị khóa"
-                                        >
-                                          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                          
-                                          {/* Lock icon overlay without outer border */}
-                                          <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}>
-                                             <svg className="w-4 h-4 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
-                                          </div>
-                                        </button>
-                                        <span className={`absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-[11px] md:text-xs font-semibold bg-white border px-3 py-1.5 rounded shadow-lg pointer-events-none z-50 block ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-purple-700 border-purple-200' : 'text-amber-600 border-amber-200'}`}>
-                                            Nâng cấp {currentLesson.bookmarkAccessTier} để lưu và xem lại câu này
-                                        </span>
-                                      </div>
-                                    )
-                                  }
-
-                                  return (
-                                    <button
-                                      ref={bookmarkBtnRef}
-                                      onClick={() => toggleBookmark(q.id)}
-                                      className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`}
-                                      aria-label="Lưu tay"
-                                      title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}
-                                    >
-                                      <svg className="w-5 h-5 md:w-6 md:h-6" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                    </button>
-                                  )
-                                })()}
-                                <button
-                                  onClick={() => {
-                                      if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
-                                          toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
-                                          return;
-                                      }
-                                      setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + 1));
-                                  }}
-                                  disabled={activeQuestionIndex === currentLesson.questions.length - 1}
-                                  className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
-                                  aria-label="Tiếp theo"
-                                >
-                                  <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Full Width Explanation Row below the buttons */}
-                            {isShowingResultLocal && explanationText && (
-                              <div className={`w-full p-4 md:p-6 rounded-2xl border-2 shadow-sm ${isCorrectLocal ? 'bg-emerald-50/40 border-emerald-100' : 'bg-rose-50/40 border-rose-100'}`}>
-                                {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
-                                    <button 
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        const currentPath = window.location.pathname;
-                                        router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
-                                      }}
-                                      className="text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full"
-                                    >
-                                      {explanationText}
-                                    </button>
-                                ) : (() => {
-                                      const explanationTierLevel = currentLesson.explanationAccessTier === 'ULTRA' ? 3 : currentLesson.explanationAccessTier === 'PRO' ? 2 : 1;
-                                      const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                      const isLocked = explanationTierLevel > userTierLevel;
-                                      
-                                      if (isLocked) {
-                                         return (
-                                            <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                              <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-4 select-none text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
-                                                {explanationText}
-                                              </div>
-                                              <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
-                                                <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
-                                                   <div className="flex items-center gap-1.5 whitespace-nowrap">
-                                                     {currentLesson.explanationAccessTier === 'ULTRA' ? (
-                                                        <svg className="w-4 h-4 text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                                     ) : (
-                                                        <svg className="w-4 h-4 text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                                     )}
-                                                     <span>Nâng cấp</span>
-                                                   </div>
-                                                   <div className="flex items-center gap-1 whitespace-nowrap">
-                                                     <span className={`${currentLesson.explanationAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.explanationAccessTier}</span>
-                                                     <span>để xem giải thích chi tiết.</span>
-                                                   </div>
-                                                </button>
-                                              </div>
-                                            </div>
-                                         )
-                                      }
-                                      
-                                      return (
-                                        <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
-                                          {explanationText}
-                                        </div>
-                                      )
-                                })()}
-                              </div>
-                            )}
-
-                            {/* Small Numbers Row at the very bottom without vertical scroll */}
-                            <div className="mt-2 flex flex-wrap justify-center items-center gap-1 sm:gap-1.5 w-full">
-                              {currentLesson.questions.map((_, idx) => {
-                                const isActive = idx === activeQuestionIndex
-                                const qt = currentLesson.questions[idx]
-                                const isShowingResultQt = !!showResults[qt.id]
-                                const isCorrectQt = userAnswers[qt.id] === qt.correctOption
-
-                                let btnStyle = ''
-                                if (isActive) {
-                                   btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
-                                } else if (isShowingResultQt) {
-                                   btnStyle = isCorrectQt ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
-                                } else if (userAnswers[qt.id]) {
-                                   btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
-                                } else {
-                                   btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
-                                }
-                                
-                                return (
-                                  <button 
-                                    key={idx}
-                                    onClick={() => {
-                                        if (topic.type === 'LISTENING' && topic.part && topic.part <= 2 && listeningMode === 'actual') {
-                                            toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
-                                            return;
-                                        }
-                                        if (idx === activeQuestionIndex) return;
-                                        const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
-                                        if (isAudioPlaying) {
-                                            if (!confirm("Audio vẫn đang phát. Bạn chắc chắn muốn chuyển sang câu khác?")) return;
-                                        }
-                                        setActiveQuestionIndex(idx);
-                                    }}
-                                    className={`w-6 h-6 sm:w-7 sm:h-7 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
-                                  >
-                                    {topic.type === 'LISTENING' && topic.part === 2 ? idx + 7 : idx + 1}
-                                  </button>
-                                )
-                              })}
-                            </div>
-                          </div>
-                        )
-                      })()}
                           </>
                         )}
                         </>

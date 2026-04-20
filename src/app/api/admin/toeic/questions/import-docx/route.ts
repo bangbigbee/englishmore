@@ -175,30 +175,47 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
       return // Not the right table
     }
 
+    let currentGroupData: any = null;
+
     // Process from the second row (or first row if it has data)
     for (let i = 0; i < rows.length; i++) {
         const cells = $(rows[i]).children('td, th').toArray()
         
         // Skip header row if it seems to be one
-        if (i === 0 && (firstRowText.includes('đáp án') || firstRowText.includes('nội dung'))) continue;
+        if (i === 0 && (firstRowText.includes('đáp án') || firstRowText.includes('nội dung') || firstRowText.includes('stt'))) continue;
         
-        if (cells.length >= 6) {
+        const stt = $(cells[0]).text().trim().toLowerCase()
+
+        // If this is a conversation context row for Part 3 or Part 4
+        if (stt.includes('hội thoại') || stt.includes('đoạn') || stt.includes('talk') || stt.includes('conversation')) {
+           currentGroupData = {
+              transcriptEng: $(cells[1]).html() || $(cells[1]).text().trim(),
+              transcriptViet: $(cells[2]).html() || $(cells[2]).text().trim(),
+              vocabularyStr: cells.length > 4 ? $(cells[4]).text().trim() : '',
+              explanation: cells.length > 5 ? $(cells[5]).text().trim() : '',
+              tips: cells.length > 6 ? $(cells[6]).text().trim() : ''
+           };
+           continue; // Skip creating a question for this row
+        }
+
+        if (cells.length >= 4) {
           const correctOptionMatch = $(cells[3]).text().trim().replace(/[^A-D]/gi, '').toUpperCase()
           const correctOption = correctOptionMatch[0] || 'A';
           const questionText = $(cells[1]).text().trim();
           
-          const optionsHtml = $(cells[2]).html() || '';
-          const transHtml = $(cells[4]).html() || '';
+          const optionsHtml = $(cells[1]).html() + ' ' + ($(cells[2]).html() || ''); // Search A B C D in col 1 and 2
+          const transHtml = $(cells[2]).html() || '';
           
-          if (!questionText && !$(cells[2]).text().trim() && !$(cells[4]).text().trim()) continue;
+          if (!questionText && !$(cells[1]).text().trim() && !$(cells[2]).text().trim()) continue;
 
           // Process options
-          const optsCleaned = optionsHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
+          const optsCleaned = $(cells[1]).text().trim().replace(/\s+/g, ' ');
           
-          const rgxA = /(?:\(A\)|A\.)[.\s:]+([\s\S]*?)(?=\(B\)|B\.|$)/i;
-          const rgxB = /(?:\(B\)|B\.)[.\s:]+([\s\S]*?)(?=\(C\)|C\.|$)/i;
-          const rgxC = /(?:\(C\)|C\.)[.\s:]+([\s\S]*?)(?=\(D\)|D\.|$)/i;
-          const rgxD = /(?:\(D\)|D\.)[.\s:]+([\s\S]*?)$/i;
+          // Flexible regex to grab (A) or A. or A) inside the question text column
+          const rgxA = /(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=\(B\)|B\.|B\)|$)/i;
+          const rgxB = /(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=\(C\)|C\.|C\)|$)/i;
+          const rgxC = /(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=\(D\)|D\.|D\)|$)/i;
+          const rgxD = /(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i;
 
           const matchA = optsCleaned.match(rgxA);
           const matchB = optsCleaned.match(rgxB);
@@ -210,8 +227,14 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           const optionC = matchC ? matchC[1].trim() : '';
           const optionD = matchD ? matchD[1].trim() : '';
 
+          // Clean question text (remove options)
+          let finalQuestionText = questionText;
+          if (optionA) {
+             finalQuestionText = questionText.split(/(?:\(A\)|A\.|A\))/i)[0].trim();
+          }
+
           // Process translation
-          const transCleaned = transHtml.replace(/<p>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<br[^>]*>/gi, ' ').replace(/\s+/g, ' ').trim();
+          const transCleaned = $(cells[2]).text().trim().replace(/\s+/g, ' ');
           
           const transA = transCleaned.match(rgxA);
           const transB = transCleaned.match(rgxB);
@@ -220,7 +243,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
 
           let translation = '';
           if (transA && transA[1]) {
-             const textBeforeA = transCleaned.split(/(?:\(A\)|A\.)/i)[0].trim();
+             const textBeforeA = transCleaned.split(/(?:\(A\)|A\.|A\))/i)[0].trim();
              if (textBeforeA) {
                  translation = textBeforeA + '\n';
              }
@@ -229,26 +252,63 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
              if (transC && transC[1]) translation += `\n(C) ${transC[1].trim()}`;
              if (transD && transD[1]) translation += `\n(D) ${transD[1].trim()}`;
           } else {
-             translation = $(cells[4]).text().trim();
+             translation = $(cells[2]).text().trim();
           }
 
-          const explanation = $(cells[5]).text().trim();
-          let tips = '';
-          if (cells.length > 6) {
-             tips = $(cells[6]).text().trim();
+          let finalExplanation = '';
+          let finalTips = '';
+          let finalVocab: { word: string; meaning: string }[] = [];
+
+          if (currentGroupData) {
+             // Merging group conversation context into explanation
+             const engText = currentGroupData.transcriptEng.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+             const vietText = currentGroupData.transcriptViet.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+             
+             finalExplanation = `[Transcript]\n${engText}\n\n[Dịch nghĩa]\n${vietText}\n\n[Giải thích]\n${currentGroupData.explanation}`;
+             finalTips = currentGroupData.tips;
+
+             if (currentGroupData.vocabularyStr) {
+                 const lines = currentGroupData.vocabularyStr.split(/\n|<br[^>]*>/gi);
+                 for (const line of lines) {
+                     const cleaned = line.replace(/<[^>]+>/g, ' ').trim();
+                     if (!cleaned) continue;
+                     const matchVocab = cleaned.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]?\s*(.+)$/);
+                     if (matchVocab && matchVocab[1].length < 30) {
+                         finalVocab.push({
+                             word: matchVocab[1].trim(),
+                             meaning: (matchVocab[2] ? `(${matchVocab[2].trim()}) ` : '') + matchVocab[3].trim()
+                         });
+                     } else {
+                         finalVocab.push({ word: cleaned.split(':')[0] || cleaned, meaning: cleaned.split(':').slice(1).join(':').trim() || '' });
+                     }
+                 }
+             }
+          } else {
+             const vocabRaw = cells.length > 4 ? $(cells[4]).text().trim() : '';
+             if (vocabRaw) {
+                 const lines = vocabRaw.split(/\n|<br[^>]*>/gi);
+                 for (const line of lines) {
+                     const cleaned = line.replace(/<[^>]+>/g, '').trim();
+                     if (cleaned) {
+                        finalVocab.push({ word: cleaned.split(':')[0] || cleaned, meaning: cleaned.split(':').slice(1).join(':').trim() || '' });
+                     }
+                 }
+             }
+             finalExplanation = cells.length > 5 ? $(cells[5]).text().trim() : '';
+             finalTips = cells.length > 6 ? $(cells[6]).text().trim() : '';
           }
 
           results.push({
-             question: questionText,
+             question: finalQuestionText,
              optionA,
              optionB,
              optionC,
              optionD,
              correctOption,
-             explanation,
+             explanation: finalExplanation,
              translation,
-             tips,
-             vocabulary: []
+             tips: finalTips,
+             vocabulary: finalVocab
           })
         }
     }
