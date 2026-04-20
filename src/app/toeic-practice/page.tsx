@@ -1672,7 +1672,13 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 			return;
 		}
 
-
+		if (typeof window !== 'undefined') {
+			const isPremium = session?.user?.role === 'admin' || session?.user?.tier === 'PRO' || session?.user?.tier === 'ULTRA';
+			if (!isPremium) {
+				plays.push(now);
+				localStorage.setItem(storageKey, JSON.stringify(plays));
+			}
+		}
 
 		setChallengeExpanded(false);
 		playSound('countdown321.mp3');
