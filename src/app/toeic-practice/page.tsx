@@ -1421,10 +1421,21 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setShowExampleVi(false);
 		setChallengeResult({ show: false, score: 0, total: 0 });
 		setChallengeActive(false);
-		setChallengeExpanded(false);
+		setChallengeExpanded(topic === 'GLOBAL');
 		setChallengePreCtd(null);
+        if (topic === 'GLOBAL') setChallengeDifficulty('extreme');
 
 		try {
+            if (topic === 'GLOBAL') {
+				const vocabRes = await fetch('/api/toeic/speed-challenge/words');
+				if (vocabRes.ok) {
+					const data = await vocabRes.json();
+					setVocabItems(data.items || []);
+				}
+                setVocabLoading(false);
+                return;
+            }
+
 			const [vocabRes, tagsRes] = await Promise.all([
 				fetch(`/api/toeic/vocabulary?topic=${encodeURIComponent(topic)}`),
 				session ? fetch('/api/toeic/vocabulary/tags') : Promise.resolve(null)
@@ -1670,25 +1681,15 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			return;
 		}
 
-        setSelectedTopic('GLOBAL');
-		setChallengeExpanded(true); // Must show the Intro to ask for guestName
-		setChallengeDifficulty('extreme'); // Enforce extreme logic
-        setChallengeResult({ show: false, score: 0, total: 0 });
-        setChallengeActive(false);
-        setVocabLoading(true);
 		if (typeof window !== 'undefined') {
+			const params = new URLSearchParams(searchParams.toString());
+			params.set('topic', 'GLOBAL');
+			params.set('tab', 'vocabulary');
+			params.delete('wordId');
+			window.history.pushState({}, '', `${pathname}?${params.toString()}`);
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		}
-        try {
-            const res = await fetch('/api/toeic/speed-challenge/words');
-            const data = await res.json();
-            if (data.items) {
-                setVocabItems(data.items);
-            }
-        } catch (err) {
-        } finally {
-            setVocabLoading(false);
-        }
+		loadTopic('GLOBAL');
     };
 
 	useEffect(() => {
