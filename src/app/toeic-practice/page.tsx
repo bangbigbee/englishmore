@@ -1759,8 +1759,8 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 							params.delete('topic');
 							params.set('tab', 'home');
 							window.history.replaceState({}, '', `${pathname}?${params.toString()}`);
+                            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
 						}
-						setTab('home');
 					});
 				} catch(e) {}
 			}
