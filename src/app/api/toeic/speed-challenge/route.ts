@@ -36,6 +36,9 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
     try {
         let records = await prisma.toeicSpeedChallengeRecord.findMany({
+            where: {
+                topicSlug: 'GLOBAL'
+            },
             include: {
                 user: { select: { name: true } }
             }
