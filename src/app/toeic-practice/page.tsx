@@ -1413,7 +1413,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		loadTopic(topic);
 	};
 
-	const loadTopic = async (topic: string, specificWordId?: string | null) => {
+	const loadTopic = async (topic: string, specificWordId?: string | null, autoStartChallenge = false) => {
 		setSelectedTopic(topic);
 		setVocabLoading(true);
 		setCardIndex(0);
@@ -1421,7 +1421,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		setShowExampleVi(false);
 		setChallengeResult({ show: false, score: 0, total: 0 });
 		setChallengeActive(false);
-		setChallengeExpanded(topic === 'GLOBAL');
+		setChallengeExpanded(topic === 'GLOBAL' && !autoStartChallenge);
 		setChallengePreCtd(null);
         if (topic === 'GLOBAL') setChallengeDifficulty('extreme');
 
@@ -1433,6 +1433,12 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 					setVocabItems(data.items || []);
 				}
                 setVocabLoading(false);
+                
+                if (autoStartChallenge) {
+                    setChallengeExpanded(false);
+                    playSound('countdown321.mp3');
+                    setChallengePreCtd(3);
+                }
                 return;
             }
 
@@ -1689,7 +1695,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			window.history.pushState({}, '', `${pathname}?${params.toString()}`);
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		}
-		loadTopic('GLOBAL');
+		loadTopic('GLOBAL', null, true);
     };
 
 	useEffect(() => {
@@ -1816,12 +1822,45 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 						Các Chủ Đề Luyện Tập
 					</h2>
-                    <button onClick={handleStartGlobalSpeedChallenge} className="relative overflow-hidden bg-gradient-to-br from-[#4a044e] to-[#2e1065] text-amber-400 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-black text-[11px] sm:text-[12px] uppercase tracking-wider flex items-center gap-1.5 border border-[#701a75]/40 shadow-[0_0_12px_rgba(88,28,135,0.4)] hover:shadow-[0_0_15px_rgba(88,28,135,0.6)] hover:from-[#581c87] hover:to-[#3b0764] transition-all active:scale-95 group">
-                        <div className="absolute top-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] animate-[metallic-shine-sweep_4s_ease-in-out_infinite]"></div>
-                        <span className="relative z-10 text-sm sm:text-base leading-none group-hover:scale-110 transition-transform text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.6)] pt-[1px]">⚡</span> 
-                        <span className="relative z-10 pt-[1px]">Speed Challenge</span>
-                    </button>
 				</div>
+
+				<div className="mb-8 bg-gradient-to-br from-[#4a044e] to-[#2e1065] rounded-3xl overflow-hidden shadow-lg border border-[#701a75]/40 transition-all duration-300">
+                    <button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between p-5 bg-transparent hover:bg-white/5 transition-colors cursor-pointer focus:outline-none group">
+                        <div className="flex items-center gap-3.5">
+                            <div className="w-10 h-10 bg-amber-400/10 text-amber-400 rounded-xl flex items-center justify-center border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.2)] group-hover:scale-110 transition-transform">
+                                <span className="text-xl leading-none pt-[1px]">⚡</span>
+                            </div>
+                            <h3 className="text-base sm:text-[17px] font-black text-white uppercase tracking-wider">Speed Challenge</h3>
+                        </div>
+                        <svg className={`w-6 h-6 text-amber-400/70 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+
+                    {challengeExpanded && (
+                        <div className="p-6 md:p-8 text-center border-t border-purple-800/50 animate-in slide-in-from-top-4 duration-300">
+                            <h3 className="text-xl text-amber-400 font-black mb-2 tracking-tight">Thử thách Bảng Vàng</h3>
+                            <p className="text-purple-200/80 mb-6 font-medium text-sm sm:text-base max-w-lg mx-auto">
+                                Làm bài test tốc độ với <b className="text-amber-400">30 từ vựng ngẫu nhiên</b>. Thời gian <b className="text-amber-400">3 giây/từ</b>. Kết quả sẽ được lưu vào Bảng Vàng nếu bạn không đăng xuất.
+                            </p>
+                            
+                            {!session && (
+                                <div className="max-w-sm mx-auto mb-6">
+                                    <input type="text" placeholder="Nhập tên của bạn (khách)" value={guestName} onChange={e => setGuestName(e.target.value)} maxLength={20} className="w-full text-center px-5 py-3 rounded-xl border border-purple-500/30 bg-purple-900/50 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-amber-400/50 font-bold" />
+                                </div>
+                            )}
+
+                            <button onClick={() => {
+                                if (!session && guestName.trim().length < 2) {
+                                    alert("Vui lòng nhập tên của bạn (ít nhất 2 ký tự) để ghi danh Bảng Vàng!");
+                                    return;
+                                }
+                                handleStartGlobalSpeedChallenge();
+                            }} className="relative overflow-hidden bg-amber-400 hover:bg-amber-300 text-purple-900 font-black px-10 py-3.5 rounded-full shadow-[0_0_20px_rgba(251,191,36,0.4)] transition-all cursor-pointer active:scale-95 group">
+                                BẮT ĐẦU NGAY
+                                <div className="absolute inset-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-25deg] group-hover:animate-[metallic-shine-sweep_1.5s_ease-in-out_infinite] animate-[metallic-shine-sweep_3s_ease-in-out_infinite]"></div>
+                            </button>
+                        </div>
+                    )}
+                </div>
 
 				<>
 						{loading ? (
