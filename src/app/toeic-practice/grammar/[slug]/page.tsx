@@ -1200,7 +1200,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                   <p className={`text-xl md:text-2xl font-black text-slate-800 leading-snug ${(topic.part === 3 || topic.part === 4) ? 'text-left pl-2' : ''}`}>
                                                     {topic.part === 2 && !isShowingResult ? (
                                                         <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
-                                                    ) : q.question}
+                                                    ) : (
+                                                        <>
+                                                           {(topic.part === 3 || topic.part === 4) && (
+                                                              <span className="mr-2 text-slate-700">{topic.part === 3 ? globalIdx + 32 : globalIdx + 71}.</span>
+                                                           )}
+                                                           <span>{q.question}</span>
+                                                        </>
+                                                    )}
                                                   </p>
                                                   {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && showTranslation[q.id] && parsedTranslations.question && (
                                                     <p className={`mt-2 text-base md:text-lg font-medium text-slate-500 italic animate-in fade-in slide-in-from-top-1 ${(topic.part === 3 || topic.part === 4) ? 'text-left pl-2' : ''}`}>
