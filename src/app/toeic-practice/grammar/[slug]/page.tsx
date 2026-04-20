@@ -68,6 +68,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isTestCompleted, setIsTestCompleted] = useState(false)
   const [lessonStarted, setLessonStarted] = useState(false)
   const [isPlayingDirections, setIsPlayingDirections] = useState(false)
+  const [showGroupTranscriptEng, setShowGroupTranscriptEng] = useState<Record<number, boolean>>({});
+  const [showGroupTranscriptViet, setShowGroupTranscriptViet] = useState<Record<number, boolean>>({});
   
   // Actual Mode States
   const [actualCheckingMode, setActualCheckingMode] = useState<boolean>(false);
@@ -1060,12 +1062,107 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       </div>
                                       
                                       <div className="flex flex-col gap-10">
-                                        {currentQuestionsGroup.map((q, localIdx) => {
-                                          const isShowingResult = showResults[q.id];
-                                          const selectedOption = userAnswers[q.id];
-                                          const isCorrect = selectedOption === q.correctOption;
-                                          const globalIdx = activeGroupStartIndex + localIdx;
-                                          const explanationText = status !== 'authenticated' && globalIdx >= 4 ? 'Đăng nhập để xem phần giải thích.' : q.explanation;
+                                        {(() => {
+                                           const extractExplanationParts = (text: string) => {
+                                               if (!text || !text.includes('[Transcript]')) {
+                                                   return { eng: '', viet: '', explanation: text };
+                                               }
+                                               const engMatch = text.match(/\[Transcript\]\n([\s\S]*?)(?=\n\n\[Dịch nghĩa\])/i);
+                                               const vietMatch = text.match(/\[Dịch nghĩa\]\n([\s\S]*?)(?=\n\n\[Giải thích\])/i);
+                                               const expMatch = text.match(/\[Giải thích\]\n([\s\S]*)$/i);
+                                               return {
+                                                   eng: engMatch ? engMatch[1].trim() : '',
+                                                   viet: vietMatch ? vietMatch[1].trim() : '',
+                                                   explanation: expMatch ? expMatch[1].trim() : text,
+                                               };
+                                           };
+                                           const groupParts = extractExplanationParts(currentQuestionsGroup[0]?.explanation || '');
+                                           const hasGroupTranscript = (topic.part === 3 || topic.part === 4) && !!groupParts.eng;
+                                           const someResultShown = currentQuestionsGroup.some(q => showResults[q.id]);
+                                           
+                                           return (
+                                              <>
+                                                 {hasGroupTranscript && (someResultShown || (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'practice')) && (
+                                                    <div className="mb-2 flex flex-col items-center">
+                                                       <div className="flex flex-wrap gap-3 items-center justify-center bg-slate-50 p-2 rounded-2xl border border-slate-100">
+                                                          <button 
+                                                             onClick={() => {
+                                                                 const tierLevel = currentLesson.theoryAccessTier === 'ULTRA' ? 3 : currentLesson.theoryAccessTier === 'PRO' ? 2 : 1;
+                                                                 const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                                 if (tierLevel > userTierLevel) {
+                                                                     setShowPricing(true);
+                                                                     return;
+                                                                 }
+                                                                 setShowGroupTranscriptEng(prev => ({ ...prev, [activeGroupStartIndex]: !prev[activeGroupStartIndex] }));
+                                                             }}
+                                                             className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptEng[activeGroupStartIndex] ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600'}`}
+                                                          >
+                                                             Thoại tiếng Anh
+                                                             {currentLesson.theoryAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                                             {currentLesson.theoryAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
+                                                          </button>
+                                                          
+                                                          {groupParts.viet && (
+                                                             <button 
+                                                                onClick={() => {
+                                                                    const tierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                                                    const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                                    if (tierLevel > userTierLevel) {
+                                                                        setShowPricing(true);
+                                                                        return;
+                                                                    }
+                                                                    setShowGroupTranscriptViet(prev => ({ ...prev, [activeGroupStartIndex]: !prev[activeGroupStartIndex] }));
+                                                                }}
+                                                                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptViet[activeGroupStartIndex] ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-orange-600'}`}
+                                                             >
+                                                                Thoại tiếng Việt
+                                                                {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                                                {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
+                                                             </button>
+                                                          )}
+                                                       </div>
+                                                       
+                                                       <AnimatePresence>
+                                                          {(showGroupTranscriptEng[activeGroupStartIndex] || showGroupTranscriptViet[activeGroupStartIndex]) && (
+                                                              <motion.div 
+                                                                 initial={{ opacity: 0, height: 0 }}
+                                                                 animate={{ opacity: 1, height: 'auto' }}
+                                                                 exit={{ opacity: 0, height: 0 }}
+                                                                 className="w-full overflow-hidden mt-4"
+                                                              >
+                                                                 <div className="bg-slate-50/80 p-5 md:p-6 rounded-2xl border border-slate-200 shadow-inner grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                                                                    {showGroupTranscriptEng[activeGroupStartIndex] && (
+                                                                        <div className="flex flex-col">
+                                                                           <div className="text-xs font-black uppercase text-blue-600 mb-2 border-b border-blue-100 pb-2">Tiếng Anh</div>
+                                                                           <div className="text-sm text-slate-700 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: groupParts.eng.replace(/\n/g, '<br/>') }} />
+                                                                        </div>
+                                                                    )}
+                                                                    {showGroupTranscriptViet[activeGroupStartIndex] && (
+                                                                        <div className="flex flex-col">
+                                                                           <div className="text-xs font-black uppercase text-orange-600 mb-2 border-b border-orange-100 pb-2">Tiếng Việt</div>
+                                                                           <div className="text-sm text-slate-700 leading-relaxed italic" dangerouslySetInnerHTML={{ __html: groupParts.viet.replace(/\n/g, '<br/>') }} />
+                                                                        </div>
+                                                                    )}
+                                                                 </div>
+                                                              </motion.div>
+                                                          )}
+                                                       </AnimatePresence>
+                                                    </div>
+                                                 )}
+
+                                         {currentQuestionsGroup.map((q, localIdx) => {
+                                           const isShowingResult = showResults[q.id];
+                                           const selectedOption = userAnswers[q.id];
+                                           const isCorrect = selectedOption === q.correctOption;
+                                           const globalIdx = activeGroupStartIndex + localIdx;
+                                           
+                                           // Isolate explanation logic directly
+                                           let cleanExplanation = q.explanation || '';
+                                           if (cleanExplanation.includes('[Transcript]')) {
+                                               const expMatch = cleanExplanation.match(/\[Giải thích\]\n([\s\S]*)$/i);
+                                               cleanExplanation = expMatch ? expMatch[1].trim() : '';
+                                           }
+                                           const explanationText = status !== 'authenticated' && globalIdx >= 4 ? 'Đăng nhập để xem phần giải thích.' : cleanExplanation;
                                           
                                           const parsedTranslations = (() => {
                                               if (!q.translation) return { question: '', options: {} as Record<string, string> };
@@ -1342,6 +1439,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                             </div>
                                           );
                                         })}
+                                        </>
+                                        );
+                                      })()}
                                       </div>
                                       
                                       {/* Unified Navigation at Bottom of Group */}
