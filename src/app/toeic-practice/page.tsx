@@ -373,6 +373,12 @@ function ToeicPracticeContent() {
         } else if (!t) {
             setTab('home');
         }
+        
+		const ref = searchParams.get('ref');
+		if (ref && typeof document !== 'undefined') {
+			// expires in 30 days
+			document.cookie = `toeic_ref=${ref}; path=/; max-age=2592000`;
+		}
 	}, [searchParams]);
 
 	const openLoginModal = (destination?: string, allowGuest = true) => {

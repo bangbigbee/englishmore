@@ -53,6 +53,23 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
     error: '/login'
   },
+  events: {
+    createUser: async (message) => {
+      try {
+        const { cookies } = await import('next/headers')
+        const cookieStore = cookies()
+        const toeicRef = cookieStore.get('toeic_ref')?.value
+        if (toeicRef) {
+          await prisma.user.update({
+            where: { id: message.user.id },
+            data: { toeicReferrerId: toeicRef }
+          })
+        }
+      } catch (error) {
+        // Suppress errors about cookies() outside of request context, though it should be safe here
+      }
+    }
+  },
   callbacks: {
     session: async ({ session, token }) => {
       if (token.sub) {

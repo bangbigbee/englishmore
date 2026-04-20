@@ -62,6 +62,10 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await bcrypt.hash(password, 10)
 
+    const { cookies } = await import('next/headers')
+    const cookieStore = cookies()
+    const toeicRef = cookieStore.get('toeic_ref')?.value
+
     const user = await prisma.user.create({
       data: {
         email: normalizedEmail,
@@ -69,6 +73,7 @@ export async function POST(request: NextRequest) {
         phone: normalizedPhone,
         password: passwordHash,
         emailVerified: new Date(),
+        toeicReferrerId: toeicRef || null
       }
     })
 

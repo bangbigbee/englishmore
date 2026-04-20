@@ -105,6 +105,10 @@ model User {
   activityPoints            Int                         @default(0)
   referrer                  User?                       @relation("UserReferrals", fields: [referrerId], references: [id])
   referredUsers             User[]                      @relation("UserReferrals")
+  
+  toeicReferrerId           String?
+  toeicReferrer             User?                       @relation("ToeicUserReferrals", fields: [toeicReferrerId], references: [id])
+  toeicReferredUsers        User[]                      @relation("ToeicUserReferrals")
   accounts                  Account[]
   sessions                  Session[]
   assignments               Assignment[]
