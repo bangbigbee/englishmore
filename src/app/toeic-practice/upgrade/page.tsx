@@ -454,12 +454,19 @@ export function UpgradeContent() {
 
 
 
+      {/* Mobile Swipe Hint */}
+      <div className="flex justify-center items-center gap-2.5 mb-2 mt-4 lg:hidden text-emerald-700/80 text-[13px] font-bold bg-emerald-50/60 py-2 px-5 rounded-full w-max mx-auto border border-emerald-100/60 shadow-sm pointer-events-none">
+        <span className="animate-pulse">←</span>
+        <span>Vuốt ngang để xem thêm gói</span>
+        <span className="animate-pulse">→</span>
+      </div>
+
       <div 
         ref={scrollContainerRef}
-        className="flex lg:grid lg:grid-cols-3 gap-6 overflow-x-auto overflow-y-visible pb-6 pt-4 -mt-4 items-stretch green-scrollbar snap-x snap-mandatory px-4 md:px-0"
+        className="flex lg:grid lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto overflow-y-visible pb-6 pt-2 items-stretch snap-x snap-mandatory px-4 md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {/* FREE Tier */}
-        <div className="min-w-[280px] w-[85vw] max-w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-emerald-50/50 rounded-2xl p-6 border-2 border-emerald-100/50 flex flex-col relative focus:outline-none">
+        <div className="w-[82vw] sm:w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-emerald-50/50 rounded-2xl p-6 border-2 border-emerald-100/50 flex flex-col relative focus:outline-none">
           <div className="mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
               Mặc định
@@ -503,7 +510,7 @@ export function UpgradeContent() {
         <div 
           onMouseEnter={() => setDiagramTier('PRO')}
           onClick={() => setDiagramTier('PRO')}
-          className={`min-w-[280px] w-[85vw] max-w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 flex flex-col relative transition-all shadow-lg cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'PRO' ? 'border-amber-400 shadow-amber-500/20 shadow-xl opacity-100 ring-0' : 'border-amber-200/50 shadow-amber-500/5 opacity-80'}`}
+          className={`w-[82vw] sm:w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 flex flex-col relative transition-all shadow-lg cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'PRO' ? 'border-amber-400 shadow-amber-500/20 shadow-xl opacity-100 ring-0' : 'border-amber-200/50 shadow-amber-500/5 opacity-80'}`}
         >
           <div className="mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
@@ -564,7 +571,7 @@ export function UpgradeContent() {
         <div 
           onMouseEnter={() => setDiagramTier('ULTRA')}
           onClick={() => setDiagramTier('ULTRA')}
-          className={`min-w-[280px] w-[85vw] max-w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-[#2b0c36] rounded-2xl p-6 border-2 flex flex-col relative text-white shadow-2xl transition-all cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'ULTRA' ? 'border-purple-400 shadow-purple-900/60 shadow-2xl opacity-100 ring-0' : 'border-purple-900 border-opacity-80 shadow-purple-900/30 shadow-lg opacity-90'}`}
+          className={`w-[82vw] sm:w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-[#2b0c36] rounded-2xl p-6 border-2 flex flex-col relative text-white shadow-2xl transition-all cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'ULTRA' ? 'border-purple-400 shadow-purple-900/60 shadow-2xl opacity-100 ring-0' : 'border-purple-900 border-opacity-80 shadow-purple-900/30 shadow-lg opacity-90'}`}
         >
           {(effectiveTier === 'PRO' || effectiveTier === 'ULTRA') && (
             <div className="absolute top-0 right-6 transform -translate-y-1/2">
