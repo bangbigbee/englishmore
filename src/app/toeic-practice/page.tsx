@@ -1582,25 +1582,40 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
             
             // Only autosubmit score for the exact GLOBAL speed challenge
             if (selectedTopic === 'GLOBAL') {
-                const saveRecord = async () => {
-                    try {
-                        await fetch('/api/toeic/speed-challenge', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                guestName: session ? null : (guestName.trim() || 'Người chơi Ẩn Danh'),
-                                topicTitle: 'Kiện Tướng Từ Vựng',
-                                topicSlug: 'GLOBAL',
-                                topicPackage: 'MIXED',
-                                difficulty: challengeDifficulty,
-                                score: currentScore,
-                                total: wList.length,
-                                timeMs
-                            })
-                        });
-                    } catch(e) {}
-                };
-                saveRecord();
+				if (!session || session.user?.role === 'guest') {
+                    const savePending = () => {
+                        localStorage.setItem('pending-speed-challenge-score', JSON.stringify({
+                            score: currentScore,
+                            total: wList.length,
+                            timeMs,
+                            difficulty: challengeDifficulty
+                        }));
+                        alert('Bạn vui lòng đăng nhập nếu muốn ghi danh lên Bảng vàng nhé!');
+                        const dest = `${typeof window !== 'undefined' ? window.location.origin : ''}${pathname}?tab=vocabulary&topic=GLOBAL&savePending=1`;
+                        openLoginModal(dest, false);
+                    }
+                    savePending();
+				} else {
+					const saveRecord = async () => {
+						try {
+							await fetch('/api/toeic/speed-challenge', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({
+									guestName: null,
+									topicTitle: 'Kiện Tướng Từ Vựng',
+									topicSlug: 'GLOBAL',
+									topicPackage: 'MIXED',
+									difficulty: challengeDifficulty,
+									score: currentScore,
+									total: wList.length,
+									timeMs
+								})
+							});
+						} catch(e) {}
+					};
+					saveRecord();
+				}
             }
             
 			return;
@@ -1706,6 +1721,42 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 		}
 		loadTopic('GLOBAL', null, true);
     };
+
+	useEffect(() => {
+		if (session && session.user?.role !== 'guest' && searchParams.get('savePending') === '1') {
+			const pending = localStorage.getItem('pending-speed-challenge-score');
+			if (pending) {
+				try {
+					const data = JSON.parse(pending);
+					fetch('/api/toeic/speed-challenge', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							guestName: null,
+							topicTitle: 'Kiện Tướng Từ Vựng',
+							topicSlug: 'GLOBAL',
+							topicPackage: 'MIXED',
+							difficulty: data.difficulty,
+							score: data.score,
+							total: data.total,
+							timeMs: data.timeMs
+						})
+					}).then(() => {
+						localStorage.removeItem('pending-speed-challenge-score');
+						alert("Tuyệt vời! Kết quả của bạn đã được lưu lên Bảng Vàng!");
+						if (typeof window !== 'undefined') {
+							const params = new URLSearchParams(searchParams.toString());
+							params.delete('savePending');
+							params.delete('topic');
+							params.set('tab', 'home');
+							window.history.replaceState({}, '', `${pathname}?${params.toString()}`);
+						}
+						setTab('home');
+					});
+				} catch(e) {}
+			}
+		}
+	}, [session, searchParams, pathname]);
 
 	useEffect(() => {
 		if (challengePreCtd !== null) {
@@ -2391,7 +2442,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                                         <div className="flex flex-col gap-3 max-w-sm mx-auto">
                                             <button 
                                                 onClick={() => {
-                                                    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=home`;
+                                                    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&topic=GLOBAL&chal=1${session?.user?.id ? `&ref=${session.user.id}` : ''}`;
                                                     navigator.clipboard.writeText(url);
                                                     setCopySuccess(true);
                                                     setTimeout(() => setCopySuccess(false), 2000);
