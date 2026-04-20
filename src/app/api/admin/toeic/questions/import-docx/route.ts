@@ -212,10 +212,10 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           const optsCleaned = $(cells[1]).text().trim().replace(/\s+/g, ' ');
           
           // Flexible regex to grab (A) or A. or A) inside the question text column
-          const rgxA = /(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=\(B\)|B\.|B\)|$)/i;
-          const rgxB = /(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=\(C\)|C\.|C\)|$)/i;
-          const rgxC = /(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=\(D\)|D\.|D\)|$)/i;
-          const rgxD = /(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i;
+          const rgxA = /(?:^|\s)(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(B\)|B\.|B\))|$)/i;
+          const rgxB = /(?:^|\s)(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(C\)|C\.|C\))|$)/i;
+          const rgxC = /(?:^|\s)(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(D\)|D\.|D\))|$)/i;
+          const rgxD = /(?:^|\s)(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i;
 
           const matchA = optsCleaned.match(rgxA);
           const matchB = optsCleaned.match(rgxB);
@@ -230,7 +230,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           // Clean question text (remove options)
           let finalQuestionText = questionText;
           if (optionA) {
-             finalQuestionText = questionText.split(/(?:\(A\)|A\.|A\))/i)[0].trim();
+             finalQuestionText = questionText.split(/(?:^|\s)(?:\(A\)|A\.|A\))/i)[0].trim();
           }
 
           // Process translation
@@ -243,7 +243,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
 
           let translation = '';
           if (transA && transA[1]) {
-             const textBeforeA = transCleaned.split(/(?:\(A\)|A\.|A\))/i)[0].trim();
+             const textBeforeA = transCleaned.split(/(?:^|\s)(?:\(A\)|A\.|A\))/i)[0].trim();
              if (textBeforeA) {
                  translation = textBeforeA + '\n';
              }
