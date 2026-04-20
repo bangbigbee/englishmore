@@ -230,7 +230,7 @@ export default function AdminUserManagement() {
             </div>
             <div className="text-right">
               <span className="text-3xl font-black text-emerald-600">{onlineStats.online}</span>
-              <span className="text-sm font-semibold text-slate-400 ml-1">đang online</span>
+              <span className="text-sm font-semibold text-slate-400 ml-1">đang online học bài</span>
             </div>
           </div>
           
@@ -260,11 +260,11 @@ export default function AdminUserManagement() {
           <div className="flex items-center gap-4 border-t border-slate-100 pt-5">
              <div className="flex-1 px-1">
                 <div className="flex items-center justify-between text-[11px] uppercase tracking-wider font-bold mb-2">
-                   <span className="text-indigo-600 flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-indigo-500"></div>THÀNH VIÊN ({onlineStats.users})</span>
+                   <span className="text-blue-600 flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-500"></div>THÀNH VIÊN ({onlineStats.users})</span>
                    <span className="text-slate-500 flex items-center gap-1.5">KHÁCH ({onlineStats.guests})<div className="w-2 h-2 rounded-full bg-slate-300"></div></span>
                 </div>
                 <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
-                   <div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: `${(onlineStats.users/Math.max(1, onlineStats.online))*100}%` }}></div>
+                   <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${(onlineStats.users/Math.max(1, onlineStats.online))*100}%` }}></div>
                    <div className="h-full bg-slate-200 transition-all duration-1000" style={{ width: `${(onlineStats.guests/Math.max(1, onlineStats.online))*100}%` }}></div>
                 </div>
              </div>
