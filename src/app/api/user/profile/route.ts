@@ -34,7 +34,37 @@ export async function GET() {
           }
         }
       },
+      toeicReferrer: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          enrollments: {
+            select: { studentId: true, createdAt: true },
+            where: { studentId: { not: null } },
+            orderBy: { createdAt: 'desc' },
+            take: 1
+          }
+        }
+      },
       referredUsers: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          createdAt: true,
+          enrollments: {
+            select: { studentId: true, createdAt: true },
+            where: { studentId: { not: null } },
+            orderBy: { createdAt: 'desc' },
+            take: 1
+          }
+        },
+        orderBy: { createdAt: 'desc' }
+      },
+      toeicReferredUsers: {
         select: {
           id: true,
           name: true,
@@ -97,7 +127,24 @@ export async function GET() {
             studentId: user.referrer.enrollments[0]?.studentId || null
           }
         : null,
+      toeicReferrer: user.toeicReferrer
+        ? {
+            id: user.toeicReferrer.id,
+            name: user.toeicReferrer.name,
+            email: user.toeicReferrer.email,
+            phone: user.toeicReferrer.phone,
+            studentId: user.toeicReferrer.enrollments[0]?.studentId || null
+          }
+        : null,
       referredUsers: user.referredUsers.map((item) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        phone: item.phone,
+        createdAt: item.createdAt,
+        studentId: item.enrollments[0]?.studentId || null
+      })),
+      toeicReferredUsers: user.toeicReferredUsers.map((item) => ({
         id: item.id,
         name: item.name,
         email: item.email,

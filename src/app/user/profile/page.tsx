@@ -45,6 +45,21 @@ interface UserProfile {
     studentId: string | null
     createdAt: string
   }>
+  toeicReferrer: {
+    id: string
+    name: string | null
+    email: string
+    phone: string | null
+    studentId: string | null
+  } | null
+  toeicReferredUsers: Array<{
+    id: string
+    name: string | null
+    email: string
+    phone: string | null
+    studentId: string | null
+    createdAt: string
+  }>
 }
 
 export default function ProfilePage() {
@@ -439,11 +454,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Referred By */}
+            {/* Referred By (EnglishMore) */}
             <div className="rounded-xl border-2 border-slate-200 bg-white p-5 shadow-sm flex flex-col">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+              <h2 className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                Người giới thiệu
+                Người giới thiệu (Khóa học)
               </h2>
               <div className="flex-1">
                 {profile?.referrer ? (
@@ -460,11 +475,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* My Referrals */}
+            {/* My Referrals (EnglishMore) */}
             <div className="rounded-xl border-2 border-[#14532d]/20 bg-gradient-to-br from-[#14532d]/5 to-white p-5 shadow-sm flex flex-col">
-              <h2 className="text-xs font-black uppercase tracking-widest text-[#14532d] mb-4 flex items-center gap-2">
+              <h2 className="text-[11px] font-black uppercase tracking-widest text-[#14532d] mb-4 flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                Lượt giới thiệu
+                Lượt giới thiệu (Khóa học)
               </h2>
               <div className="flex-1 overflow-hidden flex flex-col">
                 <div className="text-3xl font-black text-[#14532d] tracking-tighter mb-2">
@@ -481,6 +496,49 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <p className="text-sm font-medium text-slate-400 italic">Chưa giới thiệu được ai.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Referred By (ToeicMore) */}
+            <div className="rounded-xl border-2 border-slate-200 bg-white p-5 shadow-sm flex flex-col">
+              <h2 className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                Người giới thiệu (ToeicMore)
+              </h2>
+              <div className="flex-1">
+                {profile?.toeicReferrer ? (
+                  <div className="space-y-1.5">
+                    <p className="text-slate-800 font-bold text-[15px]">{profile.toeicReferrer.name || 'Thành viên vô danh'}</p>
+                    <p className="text-slate-500 font-medium text-[13px] truncate">{profile.toeicReferrer.email}</p>
+                  </div>
+                ) : (
+                  <p className="text-sm font-medium text-slate-400 italic mt-2">Đăng ký tự do.</p>
+                )}
+              </div>
+            </div>
+
+            {/* My Referrals (ToeicMore) */}
+            <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5 shadow-sm flex flex-col">
+              <h2 className="text-[11px] font-black uppercase tracking-widest text-indigo-700 mb-4 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                Lượt mời chơi (ToeicMore)
+              </h2>
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <div className="text-3xl font-black text-indigo-700 tracking-tighter mb-2">
+                  {profile?.toeicReferredUsers?.length || 0}
+                  <span className="text-sm font-bold text-indigo-700/60 tracking-normal ml-1.5">lượt</span>
+                </div>
+                {profile?.toeicReferredUsers?.length ? (
+                  <div className="space-y-2 overflow-y-auto custom-scrollbar flex-1 pr-1 max-h-[80px]">
+                    {profile.toeicReferredUsers.map((item) => (
+                      <div key={item.id} className="text-[13px] font-medium text-slate-600 truncate border-b border-slate-100 last:border-0 pb-1 last:pb-0">
+                        {item.name || item.email.split('@')[0]}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm font-medium text-slate-400 italic">Chưa mời được ai.</p>
                 )}
               </div>
             </div>

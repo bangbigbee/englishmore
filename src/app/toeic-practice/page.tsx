@@ -415,6 +415,7 @@ function ToeicPracticeContent() {
 					 }
 				 }} />}
 				{tab === "vocabulary" && <ToeicVocabularyTab 
+					openLoginModal={openLoginModal}
 					onPracticeClick={(topic, allowGuest = true) => {
 					 if (!session) {
 						const params = new URLSearchParams(searchParams.toString());
@@ -1098,7 +1099,7 @@ const ProTag = () => (
 	</span>
 );
 
-function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: string, allowGuest?: boolean) => void }) {
+function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeClick: (topic?: string, allowGuest?: boolean) => void, openLoginModal?: (destination?: string, allowGuest?: boolean) => void }) {
 	const { data: session } = useSession();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -1598,7 +1599,9 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
                         }));
                         alert('Bạn vui lòng đăng nhập nếu muốn ghi danh lên Bảng vàng nhé!');
                         const dest = `${typeof window !== 'undefined' ? window.location.origin : ''}${pathname}?tab=vocabulary&topic=GLOBAL&savePending=1`;
-                        openLoginModal(dest, false);
+                        if (openLoginModal) {
+                            openLoginModal(dest, false);
+                        }
                     }
                     savePending();
 				} else {
