@@ -1970,7 +1970,7 @@ function ToeicVocabularyTab({ onPracticeClick }: { onPracticeClick: (topic?: str
 			) : (
 				<div className="space-y-5">
 					{/* 3D Flip Card — same structure as homepage */}
-					{currentItem && (
+					{currentItem && !challengeActive && !challengeResult.show && challengePreCtd === null && selectedTopic !== 'GLOBAL' && (
 						<div className="relative w-full h-[360px] sm:h-[480px] [perspective:1200px]">
 							<div
 								className={`relative h-full w-full rounded-2xl shadow-lg transition-transform duration-500 ease-out [transform-style:preserve-3d] cursor-pointer ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}
