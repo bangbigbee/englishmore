@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import * as xlsx from 'xlsx'
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions)
+  if (!session) return { ok: false, status: 401 }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user?.id as string },
+    select: { role: true }
+  })
+  if (!user || user.role !== 'admin') return { ok: false, status: 403 }
+
+  return { ok: true, status: 200 }
+}
 
 export async function POST(request: NextRequest) {
   const auth = await requireAdmin()
