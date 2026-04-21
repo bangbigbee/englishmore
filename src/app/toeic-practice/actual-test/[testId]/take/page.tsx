@@ -333,7 +333,7 @@ function TakeTestContent() {
                                                             </div>
                                                         </div>
 
-                                                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 mt-auto">
+                                                        <div className="flex flex-col gap-3 mt-4">
                                                             {['A', 'B', 'C', 'D'].map((opt) => {
                                                                 if (!q[`option${opt}`]) return null;
                                                                 const isSelected = answers[startNumber + qIdx] === opt;
