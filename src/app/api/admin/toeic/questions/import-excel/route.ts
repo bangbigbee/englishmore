@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
     // 5: Giải thích đáp án
     // 6: TOEIC Tip
 
-    const rgxA = /(?:^|\s|\n)(?:\(A\)|A\.|A\))\s+(.*?)(?=(?:^|\s|\n)(?:\(B\)|B\.|B\))|$)/s
-    const rgxB = /(?:^|\s|\n)(?:\(B\)|B\.|B\))\s+(.*?)(?=(?:^|\s|\n)(?:\(C\)|C\.|C\))|$)/s
-    const rgxC = /(?:^|\s|\n)(?:\(C\)|C\.|C\))\s+(.*?)(?=(?:^|\s|\n)(?:\(D\)|D\.|D\))|$)/s
-    const rgxD = /(?:^|\s|\n)(?:\(D\)|D\.|D\))\s+(.*?)$/s
+    const rgxA = /(?:^|\s|\n)(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=(?:^|\s|\n)(?:\(B\)|B\.|B\))|$)/i
+    const rgxB = /(?:^|\s|\n)(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=(?:^|\s|\n)(?:\(C\)|C\.|C\))|$)/i
+    const rgxC = /(?:^|\s|\n)(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=(?:^|\s|\n)(?:\(D\)|D\.|D\))|$)/i
+    const rgxD = /(?:^|\s|\n)(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i
 
     for (let i = 1; i < data.length; i++) { // Skip header row
       const row = data[i]
