@@ -1531,21 +1531,21 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                   
                                                   const shouldHideValue = topic.type === 'LISTENING' && topic.part && topic.part <= 2 && !isShowingResult;
                                                   
-                                                  let buttonClass = "flex items-center gap-3 md:gap-3.5 px-4 py-2 md:py-2.5 rounded-xl border-[1.5px] transition-all duration-200 text-left "
+                                                  let buttonClass = "flex items-center gap-2 px-3 py-1.5 md:py-2 rounded-lg border transition-all duration-200 text-left "
                                                   
                                                   if (isShowingResult) {
                                                     if (opt.label === q.correctOption) {
-                                                      buttonClass += "bg-emerald-50 border-emerald-500 text-emerald-900 ring-4 ring-emerald-500/10"
+                                                      buttonClass += "border-slate-100 bg-white text-emerald-600"
                                                     } else if (opt.label === selectedOption) {
-                                                      buttonClass += "bg-rose-50 border-rose-500 text-rose-900"
+                                                      buttonClass += "border-slate-100 bg-white text-rose-600"
                                                     } else {
-                                                      buttonClass += "bg-white border-slate-50 opacity-40 shadow-none scale-95"
+                                                      buttonClass += "border-slate-100 bg-white text-slate-400 opacity-60"
                                                     }
                                                   } else {
                                                     if (selectedOption === opt.label) {
-                                                      buttonClass += "bg-[#14532d] border-[#14532d] text-white shadow-lg shadow-[#14532d]/30 scale-[1.02]"
+                                                      buttonClass += "border-slate-400 bg-slate-50 text-[#14532d]"
                                                     } else {
-                                                      buttonClass += "bg-white border-slate-100 hover:border-[#14532d]/30 hover:bg-slate-50 hover:shadow-md"
+                                                      buttonClass += "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                                                     }
                                                   }
 
@@ -1556,16 +1556,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                       disabled={isShowingResult}
                                                       className={buttonClass + " flex-col items-start cursor-pointer"}
                                                     >
-                                                      <div className="flex items-center w-full gap-2.5 md:gap-3 relative">
-                                                        <span className={`w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-lg md:rounded-xl font-black text-base md:text-lg ${
-                                                          selectedOption === opt.label 
-                                                            ? (isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-white text-[#14532d]') 
-                                                            : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
-                                                        }`}>
-                                                          {opt.label}
+                                                      <div className="flex items-start w-full gap-2 relative">
+                                                        <span className={`shrink-0 flex items-center font-medium text-[15px] md:text-base ${isShowingResult ? (opt.label === q.correctOption ? 'text-emerald-700' : opt.label === selectedOption ? 'text-rose-700' : 'text-slate-400') : (selectedOption === opt.label ? 'text-[#14532d] font-bold' : 'text-slate-500')} w-6`}>
+                                                          {opt.label}.
                                                         </span>
-                                                        <div className="flex flex-col flex-1 pb-1">
-                                                            <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
+                                                        <div className="flex flex-col flex-1">
+                                                            <span className={`text-[15px] md:text-base leading-snug transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
                                                               {opt.value || 'Option'}
                                                             </span>
                                                             {showTranslation[q.id] && parsedTranslations.options[opt.label] && (
