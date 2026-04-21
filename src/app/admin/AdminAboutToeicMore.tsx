@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import AdminSingleImageUpload from '@/components/AdminSingleImageUpload';
 
 export default function AdminAboutToeicMore() {
     const [title, setTitle] = useState('Thầy Nguyễn Trí Bằng');
@@ -82,33 +83,41 @@ export default function AdminAboutToeicMore() {
 				</div>
 			</div>
             
-            <div className="space-y-6 bg-white p-6 rounded-2xl shadow-[0_15px_40px_-15px_rgba(0,0,0,0.05)] border border-slate-200">
-                <div>
-                    <label className="block text-sm font-bold mb-2 text-slate-700">Tên Founder</label>
-                    <input 
-                        type="text" 
-                        value={title} 
-                        onChange={(e) => setTitle(e.target.value)} 
-                        className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#ea980c] focus:ring-1 focus:ring-[#ea980c] transition-all"
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-bold mb-2 text-slate-700">Chức danh</label>
-                    <input 
-                        type="text" 
-                        value={subtitle} 
-                        onChange={(e) => setSubtitle(e.target.value)} 
-                        className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#ea980c] focus:ring-1 focus:ring-[#ea980c] transition-all"
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-bold mb-2 text-slate-700">Đoạn trích (Quote giới thiệu)</label>
-                    <textarea 
-                        rows={4}
-                        value={description} 
-                        onChange={(e) => setDescription(e.target.value)} 
-                        className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#ea980c] focus:ring-1 focus:ring-[#ea980c] transition-all"
-                    />
+            <div className="space-y-6 bg-white p-6 md:p-8 rounded-2xl shadow-[0_15px_40px_-15px_rgba(0,0,0,0.05)] border border-slate-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-bold mb-2 text-slate-700">Tên Founder</label>
+                            <input 
+                                type="text" 
+                                value={title} 
+                                onChange={(e) => setTitle(e.target.value)} 
+                                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#ea980c] focus:ring-1 focus:ring-[#ea980c] transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold mb-2 text-slate-700">Chức danh</label>
+                            <input 
+                                type="text" 
+                                value={subtitle} 
+                                onChange={(e) => setSubtitle(e.target.value)} 
+                                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#ea980c] focus:ring-1 focus:ring-[#ea980c] transition-all"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold mb-2 text-slate-700">Đoạn trích (Quote giới thiệu)</label>
+                            <textarea 
+                                rows={5}
+                                value={description} 
+                                onChange={(e) => setDescription(e.target.value)} 
+                                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-[#ea980c] focus:ring-1 focus:ring-[#ea980c] transition-all"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold mb-2 text-slate-700">Avatar Banner (Ảnh vuông)</label>
+                        <AdminSingleImageUpload section="about_toeicmore_avatar" label="" />
+                    </div>
                 </div>
 
                 <div className="pt-8 pb-4">
@@ -117,34 +126,38 @@ export default function AdminAboutToeicMore() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Item 1 */}
-                    <div className="p-4 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
+                    <div className="p-5 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700">Khối 1: Tiêu đề</label>
                         <input type="text" value={grid1Title} onChange={(e) => setGrid1Title(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
                         <label className="block text-sm font-bold text-slate-700">Khối 1: Nội dung</label>
                         <textarea rows={4} value={grid1Desc} onChange={(e) => setGrid1Desc(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                        <AdminSingleImageUpload section="about_toeicmore_grid1" label="Ảnh minh hoạ khối 1" />
                     </div>
                     {/* Item 2 */}
-					<div className="p-4 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
+					<div className="p-5 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700">Khối 2: Tiêu đề</label>
                         <input type="text" value={grid2Title} onChange={(e) => setGrid2Title(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
                         <label className="block text-sm font-bold text-slate-700">Khối 2: Nội dung</label>
                         <textarea rows={4} value={grid2Desc} onChange={(e) => setGrid2Desc(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                        <AdminSingleImageUpload section="about_toeicmore_grid2" label="Ảnh minh hoạ khối 2" />
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Item 3 */}
-					<div className="p-4 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
+					<div className="p-5 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700">Khối 3: Tiêu đề</label>
                         <input type="text" value={grid3Title} onChange={(e) => setGrid3Title(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
                         <label className="block text-sm font-bold text-slate-700">Khối 3: Nội dung</label>
                         <textarea rows={4} value={grid3Desc} onChange={(e) => setGrid3Desc(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                        <AdminSingleImageUpload section="about_toeicmore_grid3" label="Ảnh minh hoạ khối 3" />
                     </div>
                     {/* Item 4 */}
-					<div className="p-4 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
+					<div className="p-5 bg-slate-50 rounded-xl space-y-4 border border-slate-200">
                         <label className="block text-sm font-bold text-slate-700">Khối 4: Tiêu đề</label>
                         <input type="text" value={grid4Title} onChange={(e) => setGrid4Title(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
                         <label className="block text-sm font-bold text-slate-700">Khối 4: Nội dung</label>
                         <textarea rows={4} value={grid4Desc} onChange={(e) => setGrid4Desc(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-[#ea980c]"/>
+                        <AdminSingleImageUpload section="about_toeicmore_grid4" label="Ảnh minh hoạ khối 4" />
                     </div>
                 </div>
 
