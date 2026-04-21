@@ -14,6 +14,7 @@ export default function TakeTestPage() {
 
     const [testData, setTestData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [answers, setAnswers] = useState<Record<number, string>>({});
 
     const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -68,6 +69,17 @@ export default function TakeTestPage() {
 
     const selectedPartsList = partsParam.split(',').filter(Boolean).map(Number);
     const isActual = mode === 'actual';
+
+    const getPartFromNumber = (n: number) => {
+        if (n >= 1 && n <= 6) return 1;
+        if (n >= 7 && n <= 31) return 2;
+        if (n >= 32 && n <= 70) return 3;
+        if (n >= 71 && n <= 100) return 4;
+        if (n >= 101 && n <= 130) return 5;
+        if (n >= 131 && n <= 146) return 6;
+        if (n >= 147 && n <= 200) return 7;
+        return 1;
+    };
 
     return (
         <div className={`fixed inset-0 z-[9999] ${isActual ? 'bg-black text-white' : 'bg-slate-50 text-slate-800'}`}>
@@ -156,16 +168,18 @@ export default function TakeTestPage() {
                                                             <div className="text-lg font-bold text-slate-800 mb-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: q.question }} />
                                                         )}
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-                                                            {['A', 'B', 'C', 'D'].map((opt) => (
-                                                                q[`option${opt}`] ? (
-                                                                    <div key={opt} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer transition-colors group">
-                                                                        <div className="w-6 h-6 rounded-full border-2 border-slate-300 group-hover:border-blue-500 flex items-center justify-center text-xs font-bold text-slate-500 group-hover:text-blue-600">
+                                                            {['A', 'B', 'C', 'D'].map((opt) => {
+                                                                if (!q[`option${opt}`]) return null;
+                                                                const isSelected = answers[startNumber + qIdx] === opt;
+                                                                return (
+                                                                    <div key={opt} onClick={() => setAnswers(prev => ({ ...prev, [startNumber + qIdx]: opt }))} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors group ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50'}`}>
+                                                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSelected ? 'border-blue-500 bg-blue-500 text-white' : 'border-slate-300 text-slate-500 group-hover:border-blue-500 group-hover:text-blue-600'}`}>
                                                                             {opt}
                                                                         </div>
-                                                                        <span className="text-slate-700 font-medium" dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
+                                                                        <span className={`font-medium ${isSelected ? 'text-blue-800' : 'text-slate-700'}`} dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
                                                                     </div>
-                                                                ) : null
-                                                            ))}
+                                                                );
+                                                            })}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -187,17 +201,33 @@ export default function TakeTestPage() {
                             <h3 className="font-bold text-lg mb-4 text-center">Phiếu Trả Lời</h3>
                             <div className="flex-1 overflow-y-auto custom-scrollbar">
                                 <div className="grid grid-cols-2 gap-2">
-                                    {/* Dummy Sheet */}
-                                    {Array.from({length: 200}).map((_, i) => (
-                                        <div key={i} className="flex items-center justify-between p-2 rounded-lg border border-slate-700/30 text-sm">
-                                            <span className="font-bold w-6">{i + 1}.</span>
-                                            <div className="flex gap-1">
-                                                {['A', 'B', 'C', 'D'].map(opt => (
-                                                    <div key={opt} className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] border ${isActual ? 'border-slate-600 text-slate-500' : 'border-slate-300 text-slate-400'}`}>{opt}</div>
-                                                ))}
+                                    {/* Real Sheet based on state */}
+                                    {Array.from({length: 200}).map((_, i) => {
+                                        const qNum = i + 1;
+                                        const partOfQ = getPartFromNumber(qNum);
+                                        const isEnabled = isActual || selectedPartsList.includes(partOfQ);
+                                        const answeredOpt = answers[qNum];
+
+                                        return (
+                                            <div key={i} className={`flex items-center justify-between p-2 rounded-lg border text-sm transition-all ${isEnabled ? (isActual ? 'border-slate-700/50 hover:bg-slate-800/50' : 'border-slate-200 hover:bg-slate-50') : (isActual ? 'opacity-20 border-slate-800 pointer-events-none grayscale' : 'opacity-30 border-slate-100 pointer-events-none grayscale')}`}>
+                                                <span className={`font-bold w-6 text-right mr-2 ${isActual ? 'text-slate-400' : 'text-slate-500'}`}>{qNum}.</span>
+                                                <div className="flex gap-1.5">
+                                                    {['A', 'B', 'C', 'D'].map(opt => {
+                                                        const isSelected = answeredOpt === opt;
+                                                        return (
+                                                            <div 
+                                                                key={opt} 
+                                                                onClick={() => isEnabled && setAnswers(prev => ({ ...prev, [qNum]: opt }))}
+                                                                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] border cursor-pointer transition-all ${isSelected ? 'bg-blue-500 border-blue-500 text-white font-bold scale-110 shadow-sm' : (isActual ? 'border-slate-600 text-slate-500 hover:border-blue-400 hover:text-blue-400' : 'border-slate-300 text-slate-400 hover:border-blue-300 hover:bg-blue-50')}`}
+                                                            >
+                                                                {opt}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                             <div className="pt-4 mt-auto">
