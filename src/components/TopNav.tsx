@@ -37,7 +37,8 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
       const params = new URLSearchParams(searchParams.toString())
       params.set('tab', key)
       params.delete('topic')
-      router.push(`/toeic-practice?${params.toString()}`, { scroll: false })
+      router.push(`/toeic-practice?${params.toString()}`)
+      window.scrollTo({ top: 0, behavior: 'instant' })
     } else {
       router.push(`/toeic-practice?tab=${key}`)
     }

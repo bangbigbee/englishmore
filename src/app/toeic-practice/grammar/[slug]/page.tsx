@@ -94,6 +94,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const bookmarkBtnRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
+    setTimeout(() => window.scrollTo(0, 0), 10);
     const fetchTopic = async () => {
       try {
         const res = await fetch(`/api/toeic/grammar/${slug}`)

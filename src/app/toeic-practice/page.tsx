@@ -369,7 +369,11 @@ function ToeicPracticeContent() {
 	useEffect(() => {
 		const t = searchParams.get('tab');
 		if (t && TABS.some(item => item.key === t)) {
-            setTab(t);
+            if (tab !== t) {
+                setTab(t);
+                // Force scroll to top after render, essential for mobile flow
+                setTimeout(() => window.scrollTo(0, 0), 10);
+            }
         } else if (!t) {
             setTab('home');
         }
@@ -399,7 +403,8 @@ function ToeicPracticeContent() {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('tab', newTab);
 		params.delete('topic'); // clear topic when switching tabs
-		router.push(`${pathname}?${params.toString()}`, { scroll: false });
+		router.push(`${pathname}?${params.toString()}`);
+		window.scrollTo({ top: 0, behavior: 'instant' });
 	};
 
 	return (
@@ -412,6 +417,7 @@ function ToeicPracticeContent() {
 						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
 					 } else if (slug) {
 						 router.push(`/toeic-practice/grammar/${slug}`);
+						 window.scrollTo({ top: 0, behavior: 'instant' });
 					 }
 				 }} />}
 				{tab === "vocabulary" && <ToeicVocabularyTab 
@@ -429,6 +435,7 @@ function ToeicPracticeContent() {
 						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
 					 } else if (slug) {
 						 router.push(`/toeic-practice/grammar/${slug}`);
+						 window.scrollTo({ top: 0, behavior: 'instant' });
 					 }
 				 }} />}
 				{tab === "reading" && <ToeicReadingTab onPracticeClick={(slug) => {
@@ -436,6 +443,7 @@ function ToeicPracticeContent() {
 						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
 					 } else if (slug) {
 						 router.push(`/toeic-practice/grammar/${slug}`);
+						 window.scrollTo({ top: 0, behavior: 'instant' });
 					 }
 				 }} />}
 				{tab === "actual-test" && <ToeicActualTestTab onPracticeClick={() => {
