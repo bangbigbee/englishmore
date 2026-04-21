@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 export const runtime = 'nodejs'
 
 type ExtractedToeicQuestion = {
+  questionNumber?: number
   question: string
   optionA: string
   optionB: string
@@ -43,6 +44,11 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
   const results: ExtractedToeicQuestion[] = []
   let current: ExtractedToeicQuestion | null = null
 
+  let inAnswerSection = false;
+  let currentGroupNumbers: number[] = [];
+  let currentGroupVocab: { word: string, meaning: string }[] = [];
+  let currentAnswerQuestion: ExtractedToeicQuestion | null = null;
+
   const pushCurrent = () => {
     if (!current) return
 
@@ -60,16 +66,117 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
   }
 
   for (const line of lines) {
+    if (line.match(/\[(?:Từ vựng|Đáp án).*?(?:Đáp án|Giải thích).*?\]/i) || line.match(/\[.*đáp án.*\]/i)) {
+      pushCurrent();
+      inAnswerSection = true;
+      continue;
+    }
+
+    if (inAnswerSection) {
+      const groupMatch = line.match(/^\[(\d+)(?:\s*(?:-|–)\s*(\d+))?\]$/) || line.match(/\((\d+)(?:\s*(?:-|–)\s*(\d+))?\)\s*$/);
+      if (groupMatch) {
+         currentGroupNumbers = [];
+         currentGroupVocab = [];
+         currentAnswerQuestion = null;
+         const start = parseInt(groupMatch[1]);
+         const end = groupMatch[2] ? parseInt(groupMatch[2]) : start;
+         for (let i = start; i <= end; i++) {
+            currentGroupNumbers.push(i);
+         }
+         continue;
+      }
+
+      const vocabPrefixMatch = line.match(/^(?:Vocabulary|Từ\s*vựng|Tu\s*vung)\s*[:\-]\s*(.*)$/i);
+      if (vocabPrefixMatch) {
+         const vocabStr = vocabPrefixMatch[1].trim();
+         if (vocabStr) {
+             const items = vocabStr.split(';');
+             for (const item of items) {
+                 const parts = item.split(':');
+                 if (parts.length >= 2) {
+                     const word = parts[0].trim();
+                     const meaning = parts.slice(1).join(':').trim();
+                     if (word) {
+                         currentGroupVocab.push({ word, meaning });
+                     }
+                 }
+             }
+         }
+         for (const num of currentGroupNumbers) {
+             const q = results.find(q => q.questionNumber === num);
+             if (q) {
+                 q.vocabulary = [...q.vocabulary, ...currentGroupVocab];
+             }
+         }
+         continue;
+      }
+
+      const answerExplanationMatch = line.match(/^(?:Câu|Cau)?\s*(\d{1,3})[.\s]*Đáp\s*án\s*\(?([ABCD])\)?\s*[:\-]\s*(.*)$/i);
+      if (answerExplanationMatch) {
+          const num = parseInt(answerExplanationMatch[1]);
+          const ans = answerExplanationMatch[2].toUpperCase();
+          const exp = answerExplanationMatch[3].trim();
+          
+          const q = results.find(q => q.questionNumber === num);
+          if (q) {
+              q.correctOption = ans;
+              q.explanation = exp;
+              currentAnswerQuestion = q;
+          } else {
+             // In case question body was lost/missing, create stub to ensure admin can map it
+             results.push({
+                 questionNumber: num,
+                 question: '',
+                 optionA: '', optionB: '', optionC: '', optionD: '',
+                 correctOption: ans,
+                 explanation: exp,
+                 translation: '', tips: '', vocabulary: []
+             });
+             currentAnswerQuestion = results[results.length - 1];
+          }
+          continue;
+      }
+      
+      if (currentAnswerQuestion) {
+          currentAnswerQuestion.explanation += '\n' + line;
+      }
+      continue;
+    }
+
     // Match question starts: "Câu 1:", "Question 1:", "Q1:", "1."
     const questionMatch = line.match(/^(?:Q(?:uestion)?|Cau|Câu)?\s*(\d{1,3})\s*[\).:-]\s*(.+)$/i)
     if (questionMatch) {
       pushCurrent()
+      
+      let rawText = questionMatch[2].trim();
+      let questionText = rawText;
+      let optA = '', optB = '', optC = '', optD = '';
+      
+      const rgxA = /(?:^|\s)(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(B\)|B\.|B\))|$)/i;
+      const rgxB = /(?:^|\s)(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(C\)|C\.|C\))|$)/i;
+      const rgxC = /(?:^|\s)(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(D\)|D\.|D\))|$)/i;
+      const rgxD = /(?:^|\s)(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i;
+
+      const matchA = rawText.match(rgxA);
+      if (matchA) {
+         optA = matchA[1].trim();
+         questionText = rawText.split(/(?:^|\s)(?:\(A\)|A\.|A\))/i)[0].trim();
+         
+         const matchB = rawText.match(rgxB);
+         if (matchB) optB = matchB[1].trim();
+         const matchC = rawText.match(rgxC);
+         if (matchC) optC = matchC[1].trim();
+         const matchD = rawText.match(rgxD);
+         if (matchD) optD = matchD[1].trim();
+      }
+
       current = {
-        question: questionMatch[2].trim(),
-        optionA: '',
-        optionB: '',
-        optionC: '',
-        optionD: '',
+        questionNumber: parseInt(questionMatch[1], 10),
+        question: questionText,
+        optionA: optA,
+        optionB: optB,
+        optionC: optC,
+        optionD: optD,
         correctOption: 'A',
         explanation: '',
         translation: '',
@@ -132,13 +239,13 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
       const partsMatch = vocabStr.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]?\s*(.+)$/)
       if (partsMatch) {
         const typeStr = partsMatch[2] ? `(${partsMatch[2].trim()}) ` : ''
-        current.vocabulary = [{
+        current.vocabulary.push({
           word: partsMatch[1].trim(),
           meaning: `${typeStr}${partsMatch[3].trim()}`
-        }]
+        })
       } else {
         // Fallback if they just type "Vocabulary: antique" without meaning
-        current.vocabulary = [{ word: vocabStr, meaning: '' }]
+        current.vocabulary.push({ word: vocabStr, meaning: '' })
       }
       continue
     }

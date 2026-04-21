@@ -1375,7 +1375,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                      {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
                                                    </button>
                                                    {showTranslation[q.id] && (
-                                                     <div className="flex-1 min-w-0 text-[13px] md:text-sm font-medium text-slate-600 leading-relaxed italic animate-in fade-in py-0.5">
+                                                     <div className="flex-1 min-w-0 text-[13px] md:text-sm font-medium text-slate-600 leading-relaxed italic animate-in fade-in py-0.5 whitespace-pre-wrap">
                                                        {q.translation}
                                                      </div>
                                                    )}
@@ -1487,7 +1487,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                           }
                                                           
                                                           return (
-                                                            <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar">
+                                                            <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar whitespace-pre-wrap">
                                                               {explanationText}
                                                             </div>
                                                           )
