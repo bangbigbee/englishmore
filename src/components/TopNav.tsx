@@ -194,7 +194,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
                     <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
                         {isToeicDomain ? (
-                            <img src="/toeicmorelogo.svg" alt="ToeicMore" className="w-auto h-7 object-contain drop-shadow-sm" />
+                            <img src="/toeicmorelogo.svg" alt="ToeicMore" className="w-auto h-[32px] object-contain drop-shadow-sm" />
                         ) : (
                             <>
                                 <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">E</span>
@@ -465,7 +465,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
           <Link href="/" className="lg:static absolute left-1/2 -translate-x-1/2 lg:transform-none flex shrink-0 items-center gap-2 leading-none sm:gap-3 z-10">
             <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[1.8rem]">
               {isToeicDomain ? (
-                  <img src="/toeicmorelogo.svg" alt="ToeicMore" className="w-auto h-7 sm:h-[34px] object-contain drop-shadow-sm mt-1" />
+                  <img src="/toeicmorelogo.svg" alt="ToeicMore" className="w-auto h-[34px] sm:h-[42px] object-contain drop-shadow-sm mt-1" />
               ) : (
                   <>
                   <span className="text-[#14532d]">English</span>

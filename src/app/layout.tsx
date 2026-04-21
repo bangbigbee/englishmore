@@ -44,6 +44,9 @@ export async function generateMetadata(): Promise<Metadata> {
         locale: "vi_VN",
         type: "website",
       },
+      icons: {
+        icon: '/toeicmoreicon.svg',
+      },
       metadataBase: new URL('https://toeicmore.com'),
     };
   }

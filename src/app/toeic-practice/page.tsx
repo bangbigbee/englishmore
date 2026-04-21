@@ -838,18 +838,18 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 
 function VocabFeatureCard({ onClick }: any) {
     return (
-		<div className="relative w-full max-w-[280px] h-[90px] cursor-pointer shrink-0 rounded-[20px] shadow-sm hover:shadow-md transition-shadow group overflow-hidden bg-white border border-[#14532d]/20 flex items-center justify-between px-5 focus:outline-none" onClick={onClick}>
+		<div className="relative w-full max-w-[260px] sm:max-w-[280px] h-[90px] cursor-pointer shrink-0 rounded-[20px] shadow-sm hover:shadow-md transition-shadow group overflow-hidden bg-white border border-[#14532d]/20 flex items-center justify-between px-4 sm:px-5 focus:outline-none" onClick={onClick}>
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
             
             <div className="relative z-10 flex flex-col text-left">
-                <div className="text-[#14532d] font-bold text-lg leading-none tracking-tight">vocabulary</div>
-                <div className="opacity-80 text-xs text-slate-500 font-medium mt-1">/vəˈkæbjələri/</div>
+                <div className="text-[#14532d] font-bold text-[15px] sm:text-[17px] leading-none tracking-tight">vocabulary</div>
+                <div className="opacity-80 text-[11px] sm:text-xs text-slate-500 font-medium mt-1">/vəˈkæbjələri/</div>
             </div>
             
-            <button className="bg-amber-500 text-[#14532d] px-4 py-2 flex items-center gap-1 rounded-full text-[13px] font-black shadow-md hover:scale-105 transition-transform focus:outline-none relative z-10 overflow-hidden">
+            <button className="bg-amber-500 text-[#14532d] px-3.5 sm:px-4 py-2 flex items-center gap-1 shrink-0 rounded-full text-[13px] font-black shadow-md hover:scale-105 transition-transform focus:outline-none relative z-10 overflow-hidden whitespace-nowrap">
                 <span className="relative z-10">Học từ vựng</span>
-                <svg className="w-3.5 h-3.5 ml-0.5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                <svg className="w-3.5 h-3.5 ml-0.5 relative z-10 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 {/* Button Shimmer */}
                 <div className="absolute top-0 -inset-full h-full w-[150%] block bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none animate-shimmer-sweep" />
             </button>
@@ -912,7 +912,7 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
                             </div>
                         </div>
                         <button className="bg-[#14532d] text-white px-6 py-2 rounded-full text-sm font-black shadow-md hover:scale-105 transition-transform flex items-center gap-2 z-10 mt-1">
-                            Bắt đầu <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            Luyện nghe <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </button>
                     </div>
                 </div>
