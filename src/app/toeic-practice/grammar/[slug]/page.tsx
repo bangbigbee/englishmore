@@ -63,6 +63,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState<Record<string, boolean>>({})
+  const [showExplanation, setShowExplanation] = useState<Record<string, boolean>>({})
   const [showTranslation, setShowTranslation] = useState<Record<string, boolean>>({})
   const [showTips, setShowTips] = useState<Record<string, boolean>>({})
   const [showVocab, setShowVocab] = useState<Record<string, boolean>>({})
@@ -1351,80 +1352,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     </div>
                                                  )}
 
-                                         {currentQuestionsGroup.map((q, localIdx) => {
-                                           const isShowingResult = showResults[q.id];
-                                           const selectedOption = userAnswers[q.id];
-                                           const isCorrect = selectedOption === q.correctOption;
-                                           const globalIdx = activeGroupStartIndex + localIdx;
-                                           
-                                           let cleanExplanation = q.explanation || '';
-                                           if (cleanExplanation.includes('[Transcript]')) {
-                                               const expMatch = cleanExplanation.match(/\[Giải thích\]\n([\s\S]*)$/i);
-                                               cleanExplanation = expMatch ? expMatch[1].trim() : '';
-                                           }
-
-                                           // Extract specific question explanation if it's grouped like "32: xxx 33: yyy"
-                                           if (topic.part === 3 || topic.part === 4) {
-                                               const qNumStr = topic.part === 3 ? (activeGroupStartIndex + 32 + localIdx) : (activeGroupStartIndex + 71 + localIdx);
-                                               const regex = new RegExp(`(?:^|[^\\d])(?:Câu\\s*)?(?:${qNumStr})[\\:\\.\\)]\\s*([\\s\\S]*?)(?=(?:Câu\\s*)?\\d{2,}[\\:\\.\\)]|$)`, 'i');
-                                               const m = cleanExplanation.match(regex);
-                                               if (m && m[1]) {
-                                                   cleanExplanation = m[1].trim();
-                                               }
-                                           }
-
-                                           const explanationText = status !== 'authenticated' && globalIdx >= 4 ? 'Đăng nhập để xem phần giải thích.' : cleanExplanation;
-                                          
-                                          const parsedTranslations = (() => {
-                                              if (!q.translation) return { question: '', options: {} as Record<string, string> };
-                                              let normText = q.translation.replace(/(?:\s+|\b)\(([A-D])\)\s*/gi, '\n($1) ').trim();
-                                              const parts = normText.split(/[\/\n]+/);
-                                              const result = { question: '', options: {} as Record<string, string> };
-                                              parts.forEach((part: string) => {
-                                                  const text = part.trim();
-                                                  if (!text) return;
-                                                  const match = text.match(/^\s*\(?([A-D])\)?[.\:\-\s]+(.*)/i);
-                                                  if (match) {
-                                                      result.options[match[1].toUpperCase()] = match[2].trim();
-                                                  } else if (!result.question) {
-                                                      result.question = text;
-                                                  } else {
-                                                      result.question += ' ' + text;
-                                                  }
-                                              });
-                                              return result;
-                                          })();
-
-                                          return (
-                                            <div key={q.id} className={`flex flex-col ${localIdx > 0 ? 'pt-10 border-t border-dashed border-slate-200' : ''}`}>
-                                              <div className="mb-6 flex flex-col items-center relative">
-                                                {/* Question Number Badge for all parts context */}
-                                                {(topic.part && topic.part >= 1 && topic.part <= 7) && (
-                                                    <div className="absolute top-0 left-0 text-5xl md:text-6xl font-black text-slate-100/80 -mt-4 -ml-2 sm:-ml-4 pointer-events-none z-0 select-none">
-                                                        Q{topic.part === 1 ? globalIdx + 1 :
-                                                           topic.part === 2 ? globalIdx + 7 :
-                                                           topic.part === 3 ? globalIdx + 32 :
-                                                           topic.part === 4 ? globalIdx + 71 :
-                                                           topic.part === 5 ? globalIdx + 101 :
-                                                           topic.part === 6 ? globalIdx + 131 :
-                                                           globalIdx + 147}
-                                                    </div>
-                                                )}
-
-                                                {q.imageUrl && (
-                                                  <div className="w-full flex justify-center z-10 relative mb-4">
-                                                    <img 
-                                                      src={q.imageUrl} 
-                                                      alt="Part" 
-                                                      onClick={() => setZoomedImageUrl(q.imageUrl)}
-                                                      className="max-w-full md:max-w-2xl max-h-[350px] md:max-h-[450px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
-                                                    />
-                                                  </div>
-                                                )}
-
-                                                <div className="text-center mb-6 relative z-10 font-medium w-full mt-2">
-                                                  <p className={`text-xl md:text-2xl font-black text-slate-800 leading-snug ${(topic.part === 3 || topic.part === 4 || topic.part === 6 || topic.part === 7) ? 'text-left pl-2' : ''}`}>
-                                                    {topic.part === 2 && !isShowingResult ? (
                                                         <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
                                                     ) : (
                                                         <>
@@ -1535,117 +1462,91 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                                               
                                               {/* Post-Question Explanation & Tools */}
-                                              <div className="mt-6 flex flex-col gap-4 w-full">
-                                                {/* Single Result Row purely for Part 3 individual feedback, hidden if not answered */}
+                                              <div className="mt-4 flex flex-col gap-3 w-full">
                                                 {isShowingResult && (
-                                                    <div className={`flex flex-row items-center justify-between gap-3 w-full p-2 md:p-3 rounded-2xl shadow-sm transition-all ${isCorrect ? 'bg-emerald-50 border-2 border-emerald-500/30' : 'bg-rose-50 border-2 border-rose-500/30'}`}>
-                                                      <div className="flex-1 flex justify-center items-center min-w-0">
-                                                        <div className={`px-2 flex items-center justify-center gap-1.5 md:gap-2 transition-all ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
-                                                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
-                                                              {isCorrect ? (
-                                                                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
-                                                              ) : (
-                                                                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
-                                                              )}
+                                                    <div className={`flex flex-col gap-3 w-full p-2.5 px-3 md:px-4 rounded-2xl shadow-sm transition-all border ${isCorrect ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                                                      <div className="flex flex-row items-center justify-between gap-3 w-full">
+                                                          <div className={`flex items-center gap-1.5 md:gap-2 transition-all ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
+                                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
+                                                                {isCorrect ? (
+                                                                  <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
+                                                                ) : (
+                                                                  <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                                                                )}
+                                                            </div>
+                                                            <span className="font-bold text-sm">{isCorrect ? 'Chính xác' : 'Sai'}</span>
                                                           </div>
-                                                          <div className="flex items-center leading-none whitespace-nowrap">
-                                                            <span className="font-bold text-sm md:text-base">{isCorrect ? 'Correct!' : 'Incorrect!'}</span>
-                                                          </div>
-                                                        </div>
-                                                      </div>
-
-                                                      <div className="flex items-center gap-2 shrink-0">
-                                                        {(() => {
-                                                          const bookmarkTierLevel = currentLesson.bookmarkAccessTier === 'ULTRA' ? 3 : currentLesson.bookmarkAccessTier === 'PRO' ? 2 : 1;
-                                                          const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                                          const isLocked = bookmarkTierLevel > userTierLevel;
-
-                                                          if (isLocked) {
-                                                            return (
-                                                              <div className="relative group">
-                                                                <button
-                                                                  onClick={() => setShowPricing(true)}
-                                                                  className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none`}
-                                                                  aria-label="Lưu tay"
-                                                                >
-                                                                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                                                  <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}>
-                                                                     <svg className="w-4 h-4 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
-                                                                  </div>
-                                                                </button>
-                                                              </div>
-                                                            )
-                                                          }
-
-                                                          return (
-                                                            <button
-                                                              onClick={() => toggleBookmark(q.id)}
-                                                              className={`h-10 w-10 md:w-12 md:h-12 rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`}
-                                                              title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}
-                                                            >
-                                                              <svg className="w-5 h-5 md:w-6 md:h-6" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                                            </button>
-                                                          )
-                                                        })()}
-
-                                                            {/* Buttons moved to the bottom */}
-                                                      </div>
-                                                    </div>
-                                                )}
-
-                                                {/* Explanation specific to this question */}
-                                                {isShowingResult && explanationText && (
-                                                  <div className={`w-full p-4 md:p-6 rounded-2xl border-2 shadow-sm ${isCorrect ? 'bg-emerald-50/40 border-emerald-100' : 'bg-rose-50/40 border-rose-100'}`}>
-                                                    {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
-                                                        <button 
-                                                          onClick={(e) => {
-                                                            e.preventDefault();
-                                                            const currentPath = window.location.pathname;
-                                                            router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
-                                                          }}
-                                                          className="text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full"
-                                                        >
-                                                          {explanationText}
-                                                        </button>
-                                                    ) : (() => {
-                                                          const explanationTierLevel = currentLesson.explanationAccessTier === 'ULTRA' ? 3 : currentLesson.explanationAccessTier === 'PRO' ? 2 : 1;
-                                                          const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                                          const isLocked = explanationTierLevel > userTierLevel;
                                                           
-                                                          if (isLocked) {
-                                                             return (
-                                                                <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                                                  <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-4 select-none text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
-                                                                    {explanationText}
-                                                                  </div>
-                                                                  <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
-                                                                    <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
-                                                                       <div className="flex items-center gap-1.5 whitespace-nowrap">
-                                                                         {currentLesson.explanationAccessTier === 'ULTRA' ? (
-                                                                            <svg className="w-4 h-4 text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                                                         ) : (
-                                                                            <svg className="w-4 h-4 text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                                                         )}
-                                                                         <span>Nâng cấp</span>
-                                                                       </div>
-                                                                       <div className="flex items-center gap-1 whitespace-nowrap">
-                                                                         <span className={`${currentLesson.explanationAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.explanationAccessTier}</span>
-                                                                         <span>để xem giải thích chi tiết.</span>
-                                                                       </div>
+                                                          <div className="flex items-center gap-2 shrink-0">
+                                                            {explanationText && (
+                                                                <button
+                                                                    onClick={() => setShowExplanation(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
+                                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm ${showExplanation[q.id] ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                                                                >
+                                                                    Giải thích
+                                                                </button>
+                                                            )}
+                                                            {(() => {
+                                                              const bookmarkTierLevel = currentLesson.bookmarkAccessTier === 'ULTRA' ? 3 : currentLesson.bookmarkAccessTier === 'PRO' ? 2 : 1;
+                                                              const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                              const isLocked = bookmarkTierLevel > userTierLevel;
+
+                                                              if (isLocked) {
+                                                                return (
+                                                                  <div className="relative group">
+                                                                    <button onClick={() => setShowPricing(true)} className={`h-8 w-8 rounded-lg border bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none`} aria-label="Lưu tay">
+                                                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                                                      <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg></div>
                                                                     </button>
                                                                   </div>
-                                                                </div>
-                                                             )
-                                                          }
-                                                          
-                                                          return (
-                                                            <div className="text-sm md:text-[15px] font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[250px] overflow-y-auto custom-scrollbar whitespace-pre-wrap">
-                                                              {explanationText}
-                                                            </div>
-                                                          )
-                                                    })()}
-                                                  </div>
+                                                                )
+                                                              }
+                                                              return (
+                                                                <button onClick={() => toggleBookmark(q.id)} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`} title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}>
+                                                                  <svg className="w-4 h-4" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                                                                </button>
+                                                              )
+                                                            })()}
+                                                          </div>
+                                                      </div>
+                                                      
+                                                      <AnimatePresence>
+                                                          {showExplanation[q.id] && explanationText && (
+                                                              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                                                                  <div className="pt-3 pb-1 border-t border-slate-200/50 mt-1">
+                                                                    {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
+                                                                        <button onClick={(e) => { e.preventDefault(); const currentPath = window.location.pathname; router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); }} className="text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full">
+                                                                          {explanationText}
+                                                                        </button>
+                                                                    ) : (() => {
+                                                                          const explanationTierLevel = currentLesson.explanationAccessTier === 'ULTRA' ? 3 : currentLesson.explanationAccessTier === 'PRO' ? 2 : 1;
+                                                                          const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                                          const isLocked = explanationTierLevel > userTierLevel;
+                                                                          if (isLocked) {
+                                                                             return (
+                                                                                <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                                                                  <div className="absolute inset-0 blur-md pointer-events-none opacity-40 p-4 select-none text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">{explanationText}</div>
+                                                                                  <div className="relative z-10 flex py-5 flex-col items-center justify-center min-h-[100px]">
+                                                                                    <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm hover:shadow-md rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
+                                                                                       <div className="flex items-center gap-1.5 whitespace-nowrap">
+                                                                                         {currentLesson.explanationAccessTier === 'ULTRA' ? <svg className="w-4 h-4 text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> : <svg className="w-4 h-4 text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
+                                                                                         <span>Nâng cấp</span>
+                                                                                       </div>
+                                                                                       <div className="flex items-center gap-1 whitespace-nowrap"><span className={`${currentLesson.explanationAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.explanationAccessTier}</span><span>để xem giải thích chi tiết.</span></div>
+                                                                                    </button>
+                                                                                  </div>
+                                                                                </div>
+                                                                             )
+                                                                          }
+                                                                          return <div className="text-[13px] md:text-sm font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[300px] overflow-y-auto custom-scrollbar whitespace-pre-wrap">{explanationText}</div>
+                                                                    })()}
+                                                                  </div>
+                                                              </motion.div>
+                                                          )}
+                                                      </AnimatePresence>
+                                                    </div>
                                                 )}
+                                              </div>
 
                                                 {/* Ungrouped Question Footer Buttons */}
                                                 {isShowingResult && questionsPerView === 1 && ((q.vocabulary && q.vocabulary.length > 0) || q.tips) && (
