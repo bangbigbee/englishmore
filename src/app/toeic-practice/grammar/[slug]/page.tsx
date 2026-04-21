@@ -1363,7 +1363,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
 
                                          {currentQuestionsGroup[0]?.imageUrl && (
-                                             <div className="w-full flex justify-center z-10 relative mb-4 border-b border-slate-100 pb-4">
+                                             <div className="w-full flex justify-center z-10 relative mb-2 border-b border-slate-100 pb-2">
                                                <img 
                                                  src={currentQuestionsGroup[0].imageUrl} 
                                                  alt="Part" 
@@ -1374,7 +1374,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                          )}
 
                                          {topic.type === 'READING' && (topic.part === 6 || topic.part === 7) && currentQuestionsGroup.length > 1 && (
-                                             <div className="flex flex-wrap justify-center gap-2 mb-4 w-full px-2 mt-4">
+                                             <div className="flex flex-wrap justify-center gap-2 mb-2 w-full px-2 mt-2">
                                                  {currentQuestionsGroup.map((gq, idx) => {
                                                      const globalIndex = activeGroupStartIndex + idx;
                                                      const isAnswered = !!userAnswers[gq.id];
@@ -1557,9 +1557,20 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                       className={buttonClass + " flex-col items-start cursor-pointer"}
                                                     >
                                                       <div className="flex items-start w-full gap-2 relative">
-                                                        <span className={`shrink-0 flex items-center font-medium text-[15px] md:text-base ${isShowingResult ? (opt.label === q.correctOption ? 'text-emerald-700' : opt.label === selectedOption ? 'text-rose-700' : 'text-slate-400') : (selectedOption === opt.label ? 'text-[#14532d] font-bold' : 'text-slate-500')} w-6`}>
-                                                          {opt.label}.
-                                                        </span>
+                                                        <div className="flex items-center gap-2 mt-0.5 relative shrink-0">
+                                                            <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                                                               isShowingResult 
+                                                                ? (opt.label === q.correctOption ? 'border-emerald-600' : opt.label === selectedOption ? 'border-rose-600' : 'border-slate-300')
+                                                                : (selectedOption === opt.label ? 'border-[#14532d]' : 'border-slate-300')
+                                                             }`}>
+                                                                {(selectedOption === opt.label || (isShowingResult && opt.label === q.correctOption)) && (
+                                                                    <div className={`w-1.5 h-1.5 rounded-full ${isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600' : 'bg-rose-600') : 'bg-[#14532d]'}`} />
+                                                                )}
+                                                            </div>
+                                                            <span className={`shrink-0 font-medium text-[15px] md:text-base ${isShowingResult ? (opt.label === q.correctOption ? 'text-emerald-700' : opt.label === selectedOption ? 'text-rose-700' : 'text-slate-400') : (selectedOption === opt.label ? 'text-[#14532d] font-bold' : 'text-slate-500')}`}>
+                                                              {opt.label}.
+                                                            </span>
+                                                        </div>
                                                         <div className="flex flex-col flex-1">
                                                             <span className={`text-[15px] md:text-base leading-snug transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
                                                               {opt.value || 'Option'}
