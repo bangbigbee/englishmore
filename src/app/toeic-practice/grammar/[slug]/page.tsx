@@ -398,7 +398,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
              const res = [];
              let g: any[] = [];
              qs.forEach((q: any, idx: number) => {
-                 if (idx === 0 || q.imageUrl) {
+                 if (idx === 0 || (q.imageUrl && q.imageUrl !== g[0]?.imageUrl)) {
                      if (g.length > 0) res.push(g);
                      g = [q];
                  } else {
@@ -1015,7 +1015,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                  const res = [];
                                  let g: any[] = [];
                                  qs.forEach((q: any, idx: number) => {
-                                     if (idx === 0 || q.imageUrl) {
+                                     if (idx === 0 || (q.imageUrl && q.imageUrl !== g[0]?.imageUrl)) {
                                          if (g.length > 0) res.push(g);
                                          g = [q];
                                      } else {
@@ -1225,7 +1225,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                            const res = [];
                                            let g: any[] = [];
                                            qs.forEach((q: any, idx: number) => {
-                                               if (idx === 0 || q.imageUrl) {
+                                               if (idx === 0 || (q.imageUrl && q.imageUrl !== g[0]?.imageUrl)) {
                                                    if (g.length > 0) res.push(g);
                                                    g = [q];
                                                } else {
