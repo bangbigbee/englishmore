@@ -8,24 +8,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ test
         const resolvedParams = await params;
         const testId = resolvedParams.testId; // format: ets-2024-test-01
         
-        // This is a naive parsing. In production you might want a better ID mapping or DB table.
-        // Assuming testId = "ets-2024-test-01" -> collectionName="ets 2024", lessonTitle="Test 01"
-        const parts = testId.split('-');
-        if (parts.length < 3) return NextResponse.json({ error: 'Invalid test id' }, { status: 400 });
-
-        const testNum = parts.pop();   // "01"
-        const testText = parts.pop();  // "test"
-        const collection = parts.join(' ').toUpperCase(); // "ETS 2024"
-        const lessonTitle = `${testText!.charAt(0).toUpperCase() + testText!.slice(1)} ${testNum}`; // "Test 01"
-
         const topics = await prisma.toeicGrammarTopic.findMany({
-            where: { title: { contains: collection.replace(' ', '') } }, // Need to match ETS2024, ETS 2024 etc.
+            where: { title: { contains: 'ETS' } },
             include: {
                 lessons: {
-                    where: { title: lessonTitle },
                     include: {
                         questions: {
-                            orderBy: { id: 'asc' } // Questions are usually ordered. Or order implicitly.
+                            orderBy: { id: 'asc' }
                         }
                     }
                 }
@@ -33,23 +22,37 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ test
         });
 
         const testData: any[] = [];
+        let matchedCollection = 'N/A';
+        let matchedTitle = 'N/A';
+
         topics.forEach(topic => {
-            if (topic.lessons.length > 0) {
-                testData.push({
-                    part: topic.part,
-                    topicId: topic.id,
-                    lessonId: topic.lessons[0].id,
-                    questions: topic.lessons[0].questions
-                });
-            }
+            const collectionMatch = topic.title.match(/(ETS)\s*(\d{4})/i);
+            const collectionName = collectionMatch ? `${collectionMatch[1].toUpperCase()} ${collectionMatch[2]}` : 'Other';
+            
+            topic.lessons.forEach(lesson => {
+                const lessonTitle = lesson.title.trim();
+                const id = `${collectionName}-${lessonTitle}`.replace(/\s+/g, '-').toLowerCase();
+                
+                if (id === testId) {
+                    matchedCollection = collectionName;
+                    matchedTitle = lessonTitle;
+                    
+                    testData.push({
+                        part: topic.part,
+                        topicId: topic.id,
+                        lessonId: lesson.id,
+                        questions: lesson.questions
+                    });
+                }
+            });
         });
 
         testData.sort((a, b) => (a.part || 0) - (b.part || 0));
 
         return NextResponse.json({
             id: testId,
-            collection,
-            title: lessonTitle,
+            collection: matchedCollection,
+            title: matchedTitle,
             parts: testData,
         });
     } catch (error) {
