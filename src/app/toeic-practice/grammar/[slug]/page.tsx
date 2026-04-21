@@ -1377,10 +1377,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           
                                           const parsedTranslations = (() => {
                                               if (!q.translation) return { question: '', options: {} as Record<string, string> };
-                                              if (topic.type !== 'LISTENING' || !topic.part || topic.part > 4) {
-                                                   return { question: q.translation, options: {} as Record<string, string> };
-                                              }
-                                              const parts = q.translation.split(/[\/\n]+/);
+                                              let normText = q.translation.replace(/(?:\s+|\b)\(([A-D])\)\s*/gi, '\n($1) ').trim();
+                                              const parts = normText.split(/[\/\n]+/);
                                               const result = { question: '', options: {} as Record<string, string> };
                                               parts.forEach((part: string) => {
                                                   const text = part.trim();
@@ -1445,15 +1443,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                         </>
                                                     )}
                                                   </p>
-                                                  {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && showTranslation[q.id] && parsedTranslations.question && (
-                                                    <p className={`mt-2 text-base md:text-lg font-medium text-slate-500 italic animate-in fade-in slide-in-from-top-1 ${(topic.part === 3 || topic.part === 4) ? 'text-left pl-2' : ''}`}>
+                                                  {showTranslation[q.id] && parsedTranslations.question && (
+                                                    <p className={`mt-2 text-[14px] md:text-base font-medium text-slate-500 italic animate-in fade-in slide-in-from-top-1 ${(topic.part === 3 || topic.part === 4 || topic.type !== 'LISTENING') ? 'text-left pl-2' : ''}`}>
                                                       {parsedTranslations.question.replace(/^(?:Câu\s*hỏi|Question)[\s]*[:\-]?\s*/i, '').trim()}
                                                     </p>
                                                   )}
                                                 </div>
                                                 
-                                                {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && q.translation && isShowingResult && (
-                                                   <div className={`mt-6 flex flex-col ${topic.part === 3 || topic.part === 4 ? 'items-start w-full' : 'items-center'} `}>
+                                                {q.translation && isShowingResult && (
+                                                   <div className={`mt-6 flex flex-col ${topic.part === 3 || topic.part === 4 || topic.type !== 'LISTENING' ? 'items-start w-full' : 'items-center'} `}>
                                                      <button 
                                                        onClick={() => {
                                                            const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
@@ -1522,7 +1520,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                             <span className={`font-bold text-[15px] md:text-base leading-tight md:leading-normal transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
                                                               {opt.value || 'Option'}
                                                             </span>
-                                                            {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && showTranslation[q.id] && parsedTranslations.options[opt.label] && (
+                                                            {showTranslation[q.id] && parsedTranslations.options[opt.label] && (
                                                                 <span className="text-[13px] md:text-sm font-medium text-emerald-700 italic mt-0.5 animate-in fade-in leading-snug">
                                                                     {parsedTranslations.options[opt.label]}
                                                                 </span>
@@ -1534,31 +1532,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 })}
                                               </div>
                                               
-                                                {topic.type !== 'LISTENING' && isShowingResult && q.translation && (
-                                                <div className="mt-5 flex flex-row items-start gap-3 animate-in slide-in-from-top-1 fade-in duration-300">
-                                                   <button 
-                                                     onClick={() => {
-                                                         const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
-                                                         const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                                         if (translationTierLevel > userTierLevel) {
-                                                             setShowPricing(true);
-                                                             return;
-                                                         }
-                                                         setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
-                                                     }}
-                                                     className={`flex items-center shrink-0 flex-none gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1 mt-0.5 rounded-lg transition-all tracking-wide ${showTranslation[q.id] ? 'bg-orange-100 text-orange-700' : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200 hover:text-slate-800'}`}
-                                                   >
-                                                     Dịch nghĩa
-                                                     {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-500 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
-                                                     {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-sm ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
-                                                   </button>
-                                                   {showTranslation[q.id] && (
-                                                     <div className="flex-1 min-w-0 text-[13px] md:text-sm font-medium text-slate-600 leading-relaxed italic animate-in fade-in py-0.5 whitespace-pre-wrap">
-                                                       {q.translation}
-                                                     </div>
-                                                   )}
-                                                </div>
-                                              )}
+
                                               
                                               {/* Post-Question Explanation & Tools */}
                                               <div className="mt-6 flex flex-col gap-4 w-full">
