@@ -1374,7 +1374,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                          )}
 
                                          {topic.type === 'READING' && (topic.part === 6 || topic.part === 7) && currentQuestionsGroup.length > 1 && (
-                                             <div className="flex flex-wrap justify-center gap-2 mb-2 w-full px-2 mt-2">
+                                             <div className="flex flex-wrap justify-center gap-1.5 mb-1 w-full px-2 mt-1">
                                                  {currentQuestionsGroup.map((gq, idx) => {
                                                      const globalIndex = activeGroupStartIndex + idx;
                                                      const isAnswered = !!userAnswers[gq.id];
@@ -1383,7 +1383,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                          <button 
                                                            key={idx}
                                                            onClick={() => setActiveQuestionIndex(globalIndex)}
-                                                           className={`px-3 py-1.5 rounded-xl text-xs md:text-sm font-bold border-2 transition-all shrink-0 ${isActive ? 'bg-[#14532d] text-white border-[#14532d]' : isAnswered ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}
+                                                           className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold border-2 transition-all shrink-0 ${isActive ? 'bg-slate-200 border-slate-700 text-slate-900' : isAnswered ? 'bg-slate-50 border-slate-300 text-slate-700' : 'bg-transparent border-transparent text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
                                                          >
                                                            Câu {globalIndex + (topic.part === 1 ? 1 : topic.part === 2 ? 7 : topic.part === 3 ? 32 : topic.part === 4 ? 71 : topic.part === 5 ? 101 : topic.part === 6 ? 131 : 147)}
                                                          </button>
@@ -1492,32 +1492,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     )}
                                                   </p>
                                                   {showTranslation[q.id] && parsedTranslations.question && (
-                                                    <p className={`mt-2 text-[14px] md:text-base font-medium text-slate-500 italic animate-in fade-in slide-in-from-top-1 ${(topic.part === 3 || topic.part === 4 || topic.type !== 'LISTENING') ? 'text-left pl-2' : ''}`}>
+                                                    <p className={`mt-2 text-[14px] md:text-base font-medium text-slate-500 animate-in fade-in slide-in-from-top-1 ${(topic.part === 3 || topic.part === 4 || topic.type !== 'LISTENING') ? 'text-left pl-2' : ''}`}>
                                                       {parsedTranslations.question.replace(/^(?:Câu\s*hỏi|Question)[\s]*[:\-]?\s*/i, '').trim()}
                                                     </p>
                                                   )}
                                                 </div>
                                                 
-                                                {q.translation && isShowingResult && (
-                                                   <div className={`mt-6 flex flex-col ${topic.part === 3 || topic.part === 4 || topic.type !== 'LISTENING' ? 'items-start w-full' : 'items-center'} `}>
-                                                     <button 
-                                                       onClick={() => {
-                                                           const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
-                                                           const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                                           if (translationTierLevel > userTierLevel) {
-                                                               setShowPricing(true);
-                                                               return;
-                                                           }
-                                                           setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
-                                                       }}
-                                                       className={`flex items-center gap-1.5 text-[11px] md:text-xs font-bold px-3 py-1.5 rounded-lg transition-all tracking-wide shadow-sm border ${showTranslation[q.id] ? 'bg-orange-600 border-orange-600 text-white' : 'bg-orange-50 border-orange-200 text-orange-600 hover:bg-orange-100'}`}
-                                                     >
-                                                       Dịch nghĩa
-                                                       {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-[0_0_3px_rgba(251,191,36,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
-                                                       {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-purple-600 drop-shadow-[0_0_3px_rgba(147,51,234,0.6)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
-                                                     </button>
-                                                   </div>
-                                                )}
                                               </div>
 
                                               <div className={`grid grid-cols-1 ${topic.part === 3 || topic.part === 4 ? '' : 'md:grid-cols-2'} gap-2 md:gap-3`}>
@@ -1571,14 +1551,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                               {opt.label}.
                                                             </span>
                                                         </div>
-                                                        <div className="flex flex-col flex-1">
-                                                            <span className={`text-[15px] md:text-base leading-snug transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
+                                                          <div className="flex flex-col flex-1 pt-[2px]">
+                                                            <div className={`text-[15px] md:text-base leading-snug transition-opacity duration-300 ${shouldHideValue ? 'opacity-0 select-none' : 'opacity-100'}`}>
                                                               {opt.value || 'Option'}
-                                                            </span>
+                                                            </div>
                                                             {showTranslation[q.id] && parsedTranslations.options[opt.label] && (
-                                                                <span className="text-[13px] md:text-sm font-medium text-emerald-700 italic mt-0.5 animate-in fade-in leading-snug">
+                                                                <div className="text-[13px] md:text-[14px] font-medium text-slate-500 mt-1 animate-in fade-in leading-snug">
                                                                     {parsedTranslations.options[opt.label]}
-                                                                </span>
+                                                                </div>
                                                             )}
                                                         </div>
                                                       </div>
@@ -1612,6 +1592,21 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm ${showExplanation[q.id] ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
                                                                 >
                                                                     Giải thích
+                                                                </button>
+                                                            )}
+                                                            {q.translation && (
+                                                                <button onClick={() => {
+                                                                    const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                                                    const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                                    if (translationTierLevel > userTierLevel) {
+                                                                        setShowPricing(true);
+                                                                        return;
+                                                                    }
+                                                                    setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
+                                                                }} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none relative ${showTranslation[q.id] ? 'bg-orange-100 border-orange-300 text-orange-600' : 'bg-white border-slate-200 text-slate-400 hover:border-orange-400 hover:text-orange-500'}`} title={showTranslation[q.id] ? 'Tắt dịch' : 'Dịch nghĩa'}>
+                                                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 17.438l4.498 0" /></svg>
+                                                                  {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <div className="absolute -top-1 -right-1 filter drop-shadow-md text-amber-500"><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>}
+                                                                  {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <div className="absolute -top-1 -right-1 filter drop-shadow-md text-purple-600"><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>}
                                                                 </button>
                                                             )}
                                                             {(() => {
@@ -1747,13 +1742,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                                                 {/* Vocabulary Section (Only for non-grouped) */}
                                                 {isShowingResult && showVocab[q.id] && q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && questionsPerView === 1 && (
-                                                  <div className="w-full mt-4 p-4 md:p-5 rounded-2xl border bg-slate-50 border-slate-200">
-                                                    <ul className="space-y-2">
+                                                  <div className="w-full mt-2">
+                                                    <ul className="space-y-1 md:space-y-1.5 pl-1 md:pl-2">
                                                       {q.vocabulary.map((vocabItem: any, vIdx: number) => (
-                                                        <li key={vIdx} className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
-                                                          <span className="font-semibold text-slate-900">{vocabItem.word}</span>
-                                                          <span className="hidden md:inline text-slate-300">-</span>
-                                                          <span className="text-slate-700 text-sm md:text-base">{vocabItem.meaning}</span>
+                                                        <li key={vIdx} className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-2">
+                                                          <span className="font-bold text-slate-800 text-[15px]">{vocabItem.word}</span>
+                                                          <span className="hidden md:inline text-slate-300 font-bold px-1">&bull;</span>
+                                                          <span className="text-slate-600 text-sm md:text-[15px] leading-snug">{vocabItem.meaning}</span>
                                                         </li>
                                                       ))}
                                                     </ul>
@@ -1824,13 +1819,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 </div>
                                                 
                                                 {showVocab[groupQ.id] && !isLocked && (
-                                                  <div className="w-full p-4 md:p-5 rounded-2xl border border-slate-200 bg-slate-50">
-                                                    <ul className="space-y-2">
+                                                  <div className="w-full mt-0">
+                                                    <ul className="space-y-1 md:space-y-1.5 pl-1 md:pl-2">
                                                       {groupQ.vocabulary.map((vocabItem: any, vIdx: number) => (
-                                                        <li key={vIdx} className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
-                                                          <span className="font-semibold text-slate-900">{vocabItem.word}</span>
-                                                          <span className="hidden md:inline text-slate-300">-</span>
-                                                          <span className="text-slate-700 text-sm md:text-base">{vocabItem.meaning}</span>
+                                                        <li key={vIdx} className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-2">
+                                                          <span className="font-bold text-slate-800 text-[15px]">{vocabItem.word}</span>
+                                                          <span className="hidden md:inline text-slate-300 font-bold px-1">&bull;</span>
+                                                          <span className="text-slate-600 text-sm md:text-[15px] leading-snug">{vocabItem.meaning}</span>
                                                         </li>
                                                       ))}
                                                     </ul>
