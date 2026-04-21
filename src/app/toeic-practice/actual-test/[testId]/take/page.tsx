@@ -324,10 +324,15 @@ function TakeTestContent() {
                                                                          <PracticeAudioPlayer src={q.audioUrl} isPractice={true} />
                                                                      </div>
                                                                 )}
-                                                                {q.question && (
+                                                                {q.question && partInfo.part !== 1 && partInfo.part !== 2 && (
                                                                     <div className="text-lg font-bold text-slate-800 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: q.question }} />
                                                                 )}
-                                                                {!q.question && (q.imageUrl || q.passage) && (
+                                                                {(partInfo.part === 1 || partInfo.part === 2) && (
+                                                                    <div className="text-lg font-bold text-slate-800 whitespace-pre-wrap leading-relaxed">
+                                                                        Nghe đoạn audio và chọn đáp án chính xác nhất:
+                                                                    </div>
+                                                                )}
+                                                                {!q.question && partInfo.part !== 1 && partInfo.part !== 2 && (q.imageUrl || q.passage) && (
                                                                     <div className="text-lg font-bold text-slate-800 whitespace-pre-wrap">Dựa vào ngữ liệu, hãy chọn đáp án đúng nhất:</div>
                                                                 )}
                                                             </div>
@@ -342,7 +347,12 @@ function TakeTestContent() {
                                                                         <div className={`w-6 h-6 flex-shrink-0 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSelected ? 'border-blue-500 bg-blue-500 text-white' : 'border-slate-300 text-slate-500 group-hover:border-blue-500 group-hover:text-blue-600'}`}>
                                                                             {opt}
                                                                         </div>
-                                                                        <span className={`font-medium ${isSelected ? 'text-blue-800' : 'text-slate-700'}`} dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
+                                                                        {partInfo.part !== 1 && partInfo.part !== 2 && (
+                                                                            <span className={`font-medium ${isSelected ? 'text-blue-800' : 'text-slate-700'}`} dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
+                                                                        )}
+                                                                        {(partInfo.part === 1 || partInfo.part === 2) && (
+                                                                            <span className={`font-medium ${isSelected ? 'text-blue-800' : 'text-slate-700'}`}>Option {opt}</span>
+                                                                        )}
                                                                     </div>
                                                                 );
                                                             })}
