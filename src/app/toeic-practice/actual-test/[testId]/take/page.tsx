@@ -68,7 +68,40 @@ export default function TakeTestPage() {
     }
 
     const selectedPartsList = partsParam.split(',').filter(Boolean).map(Number);
+    const timeParam = searchParams.get('time') || '120';
     const isActual = mode === 'actual';
+
+    // Timer logic
+    const initialTimeSeconds = Math.max(1, parseInt(timeParam) * 60);
+    const [timeLeft, setTimeLeft] = useState(initialTimeSeconds);
+
+    useEffect(() => {
+        if (!isFullscreen && isActual) return;
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    alert("Đã hết thời gian làm bài!");
+                    return 0; // TODO: Trigger auto-submit
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [isFullscreen, isActual]);
+
+    const formatTime = (seconds: number) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        
+        if (h > 0) {
+            return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
 
     const getPartFromNumber = (n: number) => {
         if (n >= 1 && n <= 6) return 1;
@@ -108,9 +141,9 @@ export default function TakeTestPage() {
                             </span>
                         </div>
                         <div className="flex items-center gap-4">
-                            {/* Timer Placeholder */}
-                            <div className={`font-mono text-xl font-bold bg-slate-800 px-4 py-2 rounded-lg ${isActual ? 'text-rose-500' : 'text-slate-200'}`}>
-                                120:00
+                            {/* Running Timer */}
+                            <div className={`font-mono text-xl font-bold px-4 py-2 rounded-lg transition-colors duration-500 ${timeLeft <= 60 ? 'bg-red-600 animate-pulse text-white' : (isActual ? 'bg-slate-800 text-rose-500' : 'bg-slate-800 text-slate-200')}`}>
+                                {formatTime(timeLeft)}
                             </div>
                             <button onClick={() => {
                                 exitFullscreen();

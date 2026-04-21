@@ -14,6 +14,12 @@ export default function ActualTestLobbyPage() {
     const [mode, setMode] = useState<'practice' | 'actual'>('practice');
     const [selectedParts, setSelectedParts] = useState<number[]>([1, 2, 3, 4, 5, 6, 7]);
 
+    const DEFAULT_TIMES: Record<number, number> = {
+        1: 4, 2: 10, 3: 17, 4: 15, 5: 12, 6: 8, 7: 55
+    };
+    const [customTimeMinutes, setCustomTimeMinutes] = useState(0);
+    const [isTimeCustomized, setIsTimeCustomized] = useState(false);
+
     useEffect(() => {
         const fetchTest = async () => {
             try {
@@ -33,6 +39,17 @@ export default function ActualTestLobbyPage() {
         };
         fetchTest();
     }, [testId]);
+
+    useEffect(() => {
+        if (!isTimeCustomized) {
+            if (mode === 'practice') {
+                const sum = selectedParts.reduce((acc, part) => acc + (DEFAULT_TIMES[part] || 0), 0);
+                setCustomTimeMinutes(sum);
+            } else {
+                setCustomTimeMinutes(120);
+            }
+        }
+    }, [selectedParts, mode, isTimeCustomized]);
 
     if (loading) {
         return (
@@ -67,11 +84,13 @@ export default function ActualTestLobbyPage() {
 
         const query = new URLSearchParams();
         query.set('mode', mode);
+        query.set('time', customTimeMinutes.toString());
         if (mode === 'practice') {
             query.set('parts', selectedParts.join(','));
         } else {
-            // Actual test mode forces all parts
+            // Actual test mode forces all parts and 120 mins
             query.set('parts', availableParts.join(','));
+            query.set('time', '120');
         }
 
         router.push(`/toeic-practice/actual-test/${testId}/take?${query.toString()}`);
@@ -146,6 +165,29 @@ export default function ActualTestLobbyPage() {
                                             Part {partId}
                                         </button>
                                     ))}
+                                </div>
+
+                                <div className="mt-8 flex flex-col gap-3">
+                                    <label className="font-bold text-slate-800">Thời gian làm bài (phút):</label>
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                                        <input 
+                                            type="number" 
+                                            min="1"
+                                            value={customTimeMinutes}
+                                            onChange={(e) => {
+                                                setIsTimeCustomized(true);
+                                                setCustomTimeMinutes(Number(e.target.value) || 1);
+                                            }}
+                                            className="w-28 px-4 py-2 rounded-xl border-2 border-slate-300 focus:outline-none focus:border-blue-500 font-bold text-slate-700 bg-white shadow-sm" 
+                                        />
+                                        <button 
+                                            onClick={() => setIsTimeCustomized(false)}
+                                            className={`text-sm font-medium transition-colors ${isTimeCustomized ? 'text-blue-600 hover:text-blue-700 underline' : 'text-slate-400'}`}
+                                            disabled={!isTimeCustomized}
+                                        >
+                                            {isTimeCustomized ? 'Khôi phục thời gian chuẩn (Tự tính)' : 'Hệ thống tự tính dựa vào số part đã chọn'}
+                                        </button>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
