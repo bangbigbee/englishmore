@@ -26,13 +26,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
   if (isToeicDomain) {
     return {
-      title: "ToeicMore - Chinh phục TOEIC",
+      title: "ToeicMore - Luyện TOEIC nhanh và hiệu quả hơn",
       description: "Hệ thống luyện thi TOEIC thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.",
       openGraph: {
-        title: "ToeicMore - Chinh phục TOEIC",
+        title: "ToeicMore - Luyện TOEIC nhanh và hiệu quả hơn",
         description: "Hệ thống luyện thi TOEIC thực chiến, hỗ trợ sát sao, và mang lại hiệu quả cao nhất dành cho bạn.",
         url: "https://toeicmore.com",
         siteName: "ToeicMore",
+        images: [
+          {
+            url: "/toeicmorelogo.svg",
+            width: 800,
+            height: 600,
+            alt: "ToeicMore Logo",
+          },
+        ],
         locale: "vi_VN",
         type: "website",
       },

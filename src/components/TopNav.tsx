@@ -193,8 +193,14 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
             <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
                     <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
-                        <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">{isToeicDomain ? 'T' : 'E'}</span>
-                        {isToeicDomain ? 'ToeicMore' : 'EnglishMore'}
+                        {isToeicDomain ? (
+                            <img src="/toeicmorelogo.svg" alt="ToeicMore" className="w-auto h-7 object-contain drop-shadow-sm" />
+                        ) : (
+                            <>
+                                <span className="w-8 h-8 rounded-[10px] bg-green-100 text-[#14532d] flex items-center justify-center font-bold text-lg">E</span>
+                                EnglishMore
+                            </>
+                        )}
                     </Link>
                     <button onClick={() => setIsMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
@@ -459,10 +465,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
           <Link href="/" className="lg:static absolute left-1/2 -translate-x-1/2 lg:transform-none flex shrink-0 items-center gap-2 leading-none sm:gap-3 z-10">
             <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[1.8rem]">
               {isToeicDomain ? (
-                  <>
-                  <span className="text-[#14532d]">Toeic</span>
-                  <span className="text-amber-500">More</span>
-                  </>
+                  <img src="/toeicmorelogo.svg" alt="ToeicMore" className="w-auto h-7 sm:h-[34px] object-contain drop-shadow-sm mt-1" />
               ) : (
                   <>
                   <span className="text-[#14532d]">English</span>
