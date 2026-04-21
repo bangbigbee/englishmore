@@ -7,6 +7,7 @@ import MainWrapper from "@/components/MainWrapper";
 import { Toaster } from "sonner";
 import LoginModalController from "./LoginModalController";
 import GlobalUpgradePoller from "@/components/GlobalUpgradePoller";
+import ToeicMoreNotice from "@/components/ToeicMoreNotice";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -93,6 +94,7 @@ export default async function RootLayout({
           <MainWrapper>{children}</MainWrapper>
           <LoginModalController />
           <GlobalUpgradePoller />
+          <ToeicMoreNotice />
           <Toaster
             richColors
             position="top-center"

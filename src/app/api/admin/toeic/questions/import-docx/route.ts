@@ -272,14 +272,18 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
                  for (const line of lines) {
                      const cleaned = line.replace(/<[^>]+>/g, ' ').trim();
                      if (!cleaned) continue;
-                     const matchVocab = cleaned.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]?\s*(.+)$/);
+                     const matchVocab = cleaned.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/);
                      if (matchVocab && matchVocab[1].length < 30) {
                          finalVocab.push({
                              word: matchVocab[1].trim(),
                              meaning: (matchVocab[2] ? `(${matchVocab[2].trim()}) ` : '') + matchVocab[3].trim()
                          });
-                     } else {
+                     } else if (cleaned.includes(':')) {
                          finalVocab.push({ word: cleaned.split(':')[0] || cleaned, meaning: cleaned.split(':').slice(1).join(':').trim() || '' });
+                     } else if (cleaned.includes('-')) {
+                         finalVocab.push({ word: cleaned.split('-')[0] || cleaned, meaning: cleaned.split('-').slice(1).join('-').trim() || '' });
+                     } else {
+                         finalVocab.push({ word: cleaned, meaning: '' });
                      }
                  }
              }
