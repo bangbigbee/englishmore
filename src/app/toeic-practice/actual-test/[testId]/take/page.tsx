@@ -113,7 +113,22 @@ export default function TakeTestPage() {
                     <div className="flex flex-1 overflow-hidden">
                         {/* Main Stage */}
                         <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
-                            {testData.parts.filter((p: any) => selectedPartsList.includes(p.part)).map((partInfo: any, pIdx: number) => (
+                            {testData.parts.filter((p: any) => selectedPartsList.includes(p.part)).map((partInfo: any, pIdx: number) => {
+                                const getPartStartNumber = (part: number) => {
+                                    switch (part) {
+                                        case 1: return 1;
+                                        case 2: return 7;
+                                        case 3: return 32;
+                                        case 4: return 71;
+                                        case 5: return 101;
+                                        case 6: return 131;
+                                        case 7: return 147;
+                                        default: return 1;
+                                    }
+                                };
+                                const startNumber = getPartStartNumber(partInfo.part);
+
+                                return (
                                 <div key={pIdx} className="mb-12">
                                     <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6">
                                         <h2 className="text-xl font-black text-indigo-900">Part {partInfo.part}</h2>
@@ -123,7 +138,7 @@ export default function TakeTestPage() {
                                             <div key={q.id} className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
                                                 <div className="flex gap-4">
                                                     <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 shrink-0">
-                                                        {qIdx + 1}
+                                                        {startNumber + qIdx}
                                                     </span>
                                                     <div className="flex-1">
                                                         {q.imageUrl && (
@@ -158,7 +173,8 @@ export default function TakeTestPage() {
                                         ))}
                                     </div>
                                 </div>
-                            ))}
+                            );
+                        })}
                             {testData.parts.filter((p: any) => selectedPartsList.includes(p.part)).length === 0 && (
                                 <div className="text-center py-20 text-slate-400 font-medium border-2 border-dashed border-slate-200 rounded-3xl">
                                     Không có dữ liệu cho các Part được chọn.
