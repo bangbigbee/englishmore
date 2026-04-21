@@ -52,7 +52,7 @@ const TABS = [
 	},
 	{ 
 		key: "listening", 
-		label: "Listening", 
+		label: "Luyện Nghe", 
 		icon: (
 			<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path d="M19 14V16C19 18.2091 17.2091 20 15 20H14V14H19Z" fill="#F43F5E" fillOpacity="0.2"/>
@@ -65,7 +65,7 @@ const TABS = [
 	},
 	{ 
 		key: "reading", 
-		label: "Reading", 
+		label: "Luyện Đọc", 
 		icon: (
 			<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path d="M14 3V7C14 7.55228 14.4477 8 15 8H19" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"/>

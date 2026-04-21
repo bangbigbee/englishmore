@@ -19,21 +19,22 @@ export async function GET(req: NextRequest) {
         const collections: Record<string, Record<string, any>> = {};
 
         topics.forEach(topic => {
-            const collectionMatch = topic.title.match(/(ETS\s*\d{4})/i);
-            const collectionName = collectionMatch ? collectionMatch[1].replace(/\s/g, ' ') : 'Other'; // Normalize spaces
+            const collectionMatch = topic.title.match(/(ETS)\s*(\d{4})/i);
+            const collectionName = collectionMatch ? `${collectionMatch[1].toUpperCase()} ${collectionMatch[2]}` : 'Other';
             
             if (!collections[collectionName]) collections[collectionName] = {};
 
             topic.lessons.forEach(lesson => {
-                if (!collections[collectionName][lesson.title]) {
-                    collections[collectionName][lesson.title] = {
-                        id: `${collectionName}-${lesson.title}`.replace(/\s+/g, '-').toLowerCase(),
-                        title: lesson.title,
+                const lessonTitle = lesson.title.trim();
+                if (!collections[collectionName][lessonTitle]) {
+                    collections[collectionName][lessonTitle] = {
+                        id: `${collectionName}-${lessonTitle}`.replace(/\s+/g, '-').toLowerCase(),
+                        title: lessonTitle,
                         collection: collectionName,
                         parts: []
                     };
                 }
-                collections[collectionName][lesson.title].parts.push({
+                collections[collectionName][lessonTitle].parts.push({
                     partId: topic.part,
                     lessonId: lesson.id,
                     topicId: topic.id

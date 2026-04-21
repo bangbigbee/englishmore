@@ -127,7 +127,15 @@ export default function ActualTestLobbyPage() {
                         {/* Part Selection for Practice Mode */}
                         {mode === 'practice' && (
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                                <h4 className="font-bold text-slate-800 mb-4">Các Part muốn luyện tập:</h4>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h4 className="font-bold text-slate-800">Các Part muốn luyện tập:</h4>
+                                    <button 
+                                        onClick={() => selectedParts.length === availableParts.length ? setSelectedParts([]) : setSelectedParts([...availableParts])}
+                                        className="text-sm font-bold text-blue-600 hover:text-blue-700 underline"
+                                    >
+                                        {selectedParts.length === availableParts.length ? 'Bỏ chọn tất cả' : 'Chọn tất cả (Tick All)'}
+                                    </button>
+                                </div>
                                 <div className="flex flex-wrap gap-3">
                                     {availableParts.map(partId => (
                                         <button
