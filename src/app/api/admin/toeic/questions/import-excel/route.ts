@@ -148,6 +148,21 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      let finalTranslation = viet
+      const transMatchA = viet.match(rgxA)
+      const transMatchB = viet.match(rgxB)
+      const transMatchC = viet.match(rgxC)
+      const transMatchD = viet.match(rgxD)
+
+      if (transMatchA && transMatchA[1]) {
+        const textBeforeA = viet.split(/(?:\(A\)|A\.\s+|A\)\s*)/)[0].trim()
+        finalTranslation = textBeforeA ? textBeforeA + '\n' : ''
+        finalTranslation += `(A) ${transMatchA[1].trim()}`
+        if (transMatchB && transMatchB[1]) finalTranslation += `\n(B) ${transMatchB[1].trim()}`
+        if (transMatchC && transMatchC[1]) finalTranslation += `\n(C) ${transMatchC[1].trim()}`
+        if (transMatchD && transMatchD[1]) finalTranslation += `\n(D) ${transMatchD[1].trim()}`
+      }
+
       results.push({
         question: finalQuestionText,
         optionA,
@@ -156,7 +171,7 @@ export async function POST(request: NextRequest) {
         optionD,
         correctOption,
         explanation: finalExplanation,
-        translation: viet, // In Excel, viet column has the full translated question text usually
+        translation: finalTranslation,
         tips: finalTips,
         vocabulary: finalVocab
       })
