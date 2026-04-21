@@ -46,8 +46,46 @@ function TakeTestContent() {
     const [answers, setAnswers] = useState<Record<number, string>>({});
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [timeLeft, setTimeLeft] = useState(initialTimeSeconds);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [playQueue, setPlayQueue] = useState<any[]>([]);
+    const [currentAudioIdx, setCurrentAudioIdx] = useState(0);
+    const globalAudioRef = useRef<HTMLAudioElement>(null);
 
     const isActual = mode === 'actual';
+
+    useEffect(() => {
+        if (!testData || !testData.parts) return;
+        const queue: any[] = [];
+        testData.parts.filter((p: any) => selectedPartsList.includes(p.part) && [1, 2, 3, 4].includes(p.part)).forEach((partInfo: any) => {
+            if (partInfo.directionAudioUrl) {
+                queue.push({ type: 'direction', title: `Hướng dẫn Part ${partInfo.part}`, src: partInfo.directionAudioUrl });
+            }
+            partInfo.questions.forEach((q: any, qIdx: number) => {
+                if (q.audioUrl) {
+                    const getPartStartNumber = (part: number) => {
+                         switch (part) { case 1: return 1; case 2: return 7; case 3: return 32; case 4: return 71; default: return 1; }
+                    };
+                    queue.push({ type: 'question', title: `Câu ${getPartStartNumber(partInfo.part) + qIdx}`, src: q.audioUrl });
+                }
+            });
+        });
+        setPlayQueue(queue);
+    }, [testData]);
+
+    const handleGlobalAudioEnded = () => {
+        if (currentAudioIdx < playQueue.length - 1) {
+            setTimeout(() => {
+                setCurrentAudioIdx(prev => prev + 1);
+            }, 1000); // 1s pause between questions
+        }
+    };
+
+    useEffect(() => {
+        if (isActual && isFullscreen && playQueue.length > 0 && globalAudioRef.current) {
+            globalAudioRef.current.play().catch(e => console.error("Auto-play error:", e));
+        }
+    }, [currentAudioIdx, isFullscreen, playQueue, isActual]);
 
     useEffect(() => {
         const fetchTest = async () => {
@@ -128,6 +166,38 @@ function TakeTestContent() {
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
+    const handleSubmit = async () => {
+        if (!confirm('Bạn có chắc chắn muốn nộp bài?')) return;
+        setIsSubmitting(true);
+        try {
+            const body = {
+                answers,
+                isActual,
+                initialTimeSeconds,
+                timeLeft,
+            };
+            const res = await fetch(`/api/toeic/actual-test/${testId}/submit`, {
+                method: 'POST',
+                body: JSON.stringify(body),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await res.json();
+            if (data.success) {
+                exitFullscreen();
+                // Route to result page later, just alert for now.
+                alert('Nộp bài thành công! Chúng tôi sẽ phát triển giao diện điểm số ở phiên sau.');
+                router.push(`/toeic-practice/actual-test/${testId}`);
+            } else {
+                alert('Có lỗi xảy ra: ' + data.error);
+                setIsSubmitting(false);
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Lỗi mạng khi nộp bài');
+            setIsSubmitting(false);
+        }
+    };
+
     const getPartFromNumber = (n: number) => {
         if (n >= 1 && n <= 6) return 1;
         if (n >= 7 && n <= 31) return 2;
@@ -164,6 +234,16 @@ function TakeTestContent() {
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${isActual ? 'bg-rose-500/20 text-rose-500' : 'bg-blue-100 text-blue-700'}`}>
                                 {isActual ? 'THI THẬT' : 'LUYỆN TẬP'}
                             </span>
+                            {/* Global Audio Indicator for Actual Test */}
+                            {isActual && playQueue.length > 0 && (
+                                <div className="ml-4 flex items-center gap-2 px-4 py-1.5 bg-indigo-900/50 rounded-lg border border-indigo-500/30">
+                                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
+                                    <span className="text-sm font-medium text-indigo-200">
+                                        Đang phát âm thanh: <span className="font-bold text-white">{playQueue[currentAudioIdx]?.title}</span>
+                                    </span>
+                                    <audio ref={globalAudioRef} onEnded={handleGlobalAudioEnded} src={playQueue[currentAudioIdx]?.src} className="hidden" />
+                                </div>
+                            )}
                         </div>
                         <div className="flex items-center gap-4">
                             {/* Running Timer */}
@@ -200,8 +280,14 @@ function TakeTestContent() {
 
                                 return (
                                 <div key={pIdx} className="mb-12">
-                                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6">
+                                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 flex justify-between items-start">
                                         <h2 className="text-xl font-black text-indigo-900">Part {partInfo.part}</h2>
+                                        {!isActual && partInfo.directionAudioUrl && (
+                                            <div className="flex flex-col items-end gap-2">
+                                                <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded">AUDIO HƯỚNG DẪN BÀI LÀM</span>
+                                                <PracticeAudioPlayer src={partInfo.directionAudioUrl} isPractice={true} />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="space-y-10">
                                         {partInfo.questions.map((q: any, qIdx: number) => (
@@ -217,9 +303,9 @@ function TakeTestContent() {
                                                             {q.passage && (
                                                                 <div className="prose prose-sm prose-slate max-w-none bg-slate-50 p-4 rounded-xl border border-slate-100" dangerouslySetInnerHTML={{ __html: q.passage }} />
                                                             )}
-                                                            {q.audioUrl && (
+                                                            {!isActual && q.audioUrl && (
                                                                 <div className="mt-auto pt-4">
-                                                                    <PracticeAudioPlayer src={q.audioUrl} isPractice={!isActual} />
+                                                                    <PracticeAudioPlayer src={q.audioUrl} isPractice={true} />
                                                                 </div>
                                                             )}
                                                         </div>
@@ -233,9 +319,9 @@ function TakeTestContent() {
                                                             </span>
                                                             <div className="flex-1">
                                                                 {/* Audio fallback if no media column exists */}
-                                                                {!(q.imageUrl || q.passage) && q.audioUrl && (
+                                                                {!isActual && !(q.imageUrl || q.passage) && q.audioUrl && (
                                                                      <div className="mb-4">
-                                                                         <PracticeAudioPlayer src={q.audioUrl} isPractice={!isActual} />
+                                                                         <PracticeAudioPlayer src={q.audioUrl} isPractice={true} />
                                                                      </div>
                                                                 )}
                                                                 {q.question && (
@@ -311,8 +397,8 @@ function TakeTestContent() {
                                 </div>
                             </div>
                             <div className="pt-4 mt-auto">
-                                <button className="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl shadow-lg">
-                                    NỘP BÀI
+                                <button disabled={isSubmitting} onClick={handleSubmit} className="w-full py-4 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg">
+                                    {isSubmitting ? 'ĐANG NỘP...' : 'NỘP BÀI'}
                                 </button>
                             </div>
                         </div>

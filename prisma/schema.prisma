@@ -126,6 +126,7 @@ model User {
   tierExpiresAt             DateTime?
   upgradeOrders             UpgradeOrder[]
   ToeicSpeedChallengeRecord ToeicSpeedChallengeRecord[]
+  toeicTestRecords          ToeicTestRecord[]
 
   @@index([referrerId])
 }
@@ -823,4 +824,26 @@ model ToeicSpeedChallengeRecord {
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([difficulty, score(sort: Desc), timeMs(sort: Asc)])
+}
+
+model ToeicTestRecord {
+  id             String   @id @default(cuid())
+  userId         String
+  testId         String
+  title          String?
+  mode           String   @default("practice")
+  totalTimeStart Int
+  totalTimeEnd   Int
+  duration       Int      @default(0) // seconds
+  scoreListening Int?
+  scoreReading   Int?
+  correctAnswers Int
+  totalQuestions Int
+  answersData    Json     // Detailed question answers Map
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([testId])
 }

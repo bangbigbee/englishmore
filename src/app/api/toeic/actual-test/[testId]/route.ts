@@ -41,6 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ test
                         part: topic.part,
                         topicId: topic.id,
                         lessonId: lesson.id,
+                        directionAudioUrl: lesson.directionAudioUrl,
                         questions: lesson.questions
                     });
                 }
