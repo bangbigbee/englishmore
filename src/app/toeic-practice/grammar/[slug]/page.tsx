@@ -1382,7 +1382,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               }
                                               const parts = q.translation.split(/[\/\n]+/);
                                               const result = { question: '', options: {} as Record<string, string> };
-                                              parts.forEach(part => {
+                                              parts.forEach((part: string) => {
                                                   const text = part.trim();
                                                   if (!text) return;
                                                   const match = text.match(/^\s*\(?([A-D])\)?[.\:\-\s]+(.*)/i);
