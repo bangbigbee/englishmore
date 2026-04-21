@@ -1647,59 +1647,81 @@ export default function AdminDashboard() {
         
         // Remove extension before parsing to avoid matching "3" from ".mp3" or "4" from ".mp4"
         const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "")
-        const numbers = nameWithoutExt.match(/\d+/g)
-        if (!numbers) {
-          toast.error(`File ${file.name} không chứa số câu (VD: 1.jpg). Bỏ qua.`)
+        
+        let rangeStart = -1
+        let rangeEnd = -1
+        
+        // Nhận diện dải câu, VD: cau 147-148, 147-150
+        const rangeMatch = nameWithoutExt.match(/(?:q|câu|cau|question)?[-_\s]*(\d+)[\s-]*[-–_]+[\s-]*(\d+)/i)
+        if (rangeMatch) {
+            rangeStart = parseInt(rangeMatch[1], 10)
+            rangeEnd = Math.max(rangeStart, parseInt(rangeMatch[2], 10)) // Ensures end >= start
+        } else {
+            const numbers = nameWithoutExt.match(/\d+/g)
+            if (!numbers) {
+              toast.error(`File ${file.name} không chứa số câu (VD: 1.jpg). Bỏ qua.`)
+              failCount++
+              continue
+            }
+            
+            // Thông minh lấy số: Lấy số cuối cùng làm ưu tiên (VD: T1-06 -> 06)
+            let qNumStr = numbers[numbers.length - 1]
+            
+            // Nếu có chữ q, câu, question đứng trước số -> Lấy số đó (VD: q1_v2.jpg -> 1)
+            const qMatch = nameWithoutExt.match(/(?:q|câu|cau|question)[-_\s]*(\d+)/i)
+            if (qMatch) {
+                qNumStr = qMatch[1]
+            }
+            
+            // Nếu có format T1-06, Test1-06 -> Lấy số sau dấu gạch
+            const tMatch = nameWithoutExt.match(/(?:T|Test)\s*\d+[-_](\d+)/i)
+            if (tMatch) {
+                qNumStr = tMatch[1]
+            }
+            rangeStart = parseInt(qNumStr, 10)
+            rangeEnd = rangeStart
+        }
+        
+        // Cập nhật URL cho TẤT CẢ các câu trong dải (hoặc 1 câu nếu rangeStart == rangeEnd)
+        const targetQuestions: typeof toeicQuestions = []
+        for (let qNum = rangeStart; qNum <= rangeEnd; qNum++) {
+            // Find matching question
+            let matchedIndex = toeicQuestions.findIndex(q => {
+              const qTextMatch = q.question.match(/^(?:Câu|Question)\s*(\d+)/i)
+              if (qTextMatch) return parseInt(qTextMatch[1], 10) === qNum
+              return false
+            })
+            
+            // Fallback to index if no text match
+            if (matchedIndex === -1) {
+              let expectedIndex = qNum - 1
+              if (selectedToeicTopic?.type === 'LISTENING') {
+                if (selectedToeicTopic.part === 2 && qNum >= 7) expectedIndex = qNum - 7;
+                else if (selectedToeicTopic.part === 3 && qNum >= 32) expectedIndex = qNum - 32;
+                else if (selectedToeicTopic.part === 4 && qNum >= 71) expectedIndex = qNum - 71;
+              } else if (selectedToeicTopic?.type === 'READING') {
+                if (selectedToeicTopic.part === 5 && qNum >= 101) expectedIndex = qNum - 101;
+                else if (selectedToeicTopic.part === 6 && qNum >= 131) expectedIndex = qNum - 131;
+                else if (selectedToeicTopic.part === 7 && qNum >= 147) expectedIndex = qNum - 147;
+              }
+              matchedIndex = expectedIndex >= 0 && expectedIndex < toeicQuestions.length ? expectedIndex : -1
+            }
+            
+            const realQ = toeicQuestions.find(q => q.questionNumber === qNum);
+            
+            if (realQ) {
+                 targetQuestions.push(realQ);
+            } else if (matchedIndex !== -1 && toeicQuestions[matchedIndex]) {
+                 targetQuestions.push(toeicQuestions[matchedIndex]);
+            }
+        }
+        
+        if (targetQuestions.length === 0) {
+          toast.error(`Không thể ghép file ${file.name} vào nhóm câu ${rangeStart === rangeEnd ? rangeStart : rangeStart + '-' + rangeEnd}.`)
           failCount++
           continue
         }
         
-        // Thông minh lấy số: Lấy số cuối cùng làm ưu tiên (VD: T1-06 -> 06)
-        let qNumStr = numbers[numbers.length - 1]
-        
-        // Nếu có chữ q, câu, question đứng trước số -> Lấy số đó (VD: q1_v2.jpg -> 1)
-        const qMatch = nameWithoutExt.match(/(?:q|câu|cau|question)[-_\s]*(\d+)/i)
-        if (qMatch) {
-            qNumStr = qMatch[1]
-        }
-        
-        // Nếu có format T1-06, Test1-06 -> Lấy số sau dấu gạch
-        const tMatch = nameWithoutExt.match(/(?:T|Test)\s*\d+[-_](\d+)/i)
-        if (tMatch) {
-            qNumStr = tMatch[1]
-        }
-
-        const qNum = parseInt(qNumStr, 10)
-        
-        // Find matching question
-        let matchedIndex = toeicQuestions.findIndex(q => {
-          const qTextMatch = q.question.match(/^(?:Câu|Question)\s*(\d+)/i)
-          if (qTextMatch) return parseInt(qTextMatch[1], 10) === qNum
-          return false
-        })
-        
-        // Fallback to index if no text match
-        if (matchedIndex === -1) {
-          let expectedIndex = qNum - 1
-          if (selectedToeicTopic?.type === 'LISTENING') {
-            if (selectedToeicTopic.part === 2 && qNum >= 7) expectedIndex = qNum - 7;
-            else if (selectedToeicTopic.part === 3 && qNum >= 32) expectedIndex = qNum - 32;
-            else if (selectedToeicTopic.part === 4 && qNum >= 71) expectedIndex = qNum - 71;
-          } else if (selectedToeicTopic?.type === 'READING') {
-            if (selectedToeicTopic.part === 5 && qNum >= 101) expectedIndex = qNum - 101;
-            else if (selectedToeicTopic.part === 6 && qNum >= 131) expectedIndex = qNum - 131;
-            else if (selectedToeicTopic.part === 7 && qNum >= 147) expectedIndex = qNum - 147;
-          }
-          matchedIndex = expectedIndex >= 0 && expectedIndex < toeicQuestions.length ? expectedIndex : -1
-        }
-        
-        if (matchedIndex === -1 || !toeicQuestions[matchedIndex]) {
-          toast.error(`Không thể ghép file ${file.name} vào câu hỏi nào.`)
-          failCount++
-          continue
-        }
-        
-        const q = toeicQuestions[matchedIndex]
         const isAudio = file.type.startsWith('audio/')
         const isImage = file.type.startsWith('image/')
         if (!isAudio && !isImage) {
@@ -1728,20 +1750,25 @@ export default function AdminDashboard() {
 
            if (uploadRes.ok) {
               const data = { url: presignedData.publicUrl } // Mock data object
-              // Update the TOEIC Question using its ID
-              const updateRes = await fetch(`/api/admin/toeic/questions/${q.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                   ...(isAudio && { audioUrl: data.url }),
-                   ...(isImage && { imageUrl: data.url })
-                })
-              })
               
-              if (updateRes.ok) {
+              // Cập nhật tất cả các target questions
+              let hasAnyUpdateError = false;
+              for (const q of targetQuestions) {
+                  const updateRes = await fetch(`/api/admin/toeic/questions/${q.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                       ...(isAudio && { audioUrl: data.url }),
+                       ...(isImage && { imageUrl: data.url })
+                    })
+                  });
+                  if (!updateRes.ok) hasAnyUpdateError = true;
+              }
+              
+              if (!hasAnyUpdateError) {
                 successCount++
               } else {
-                 toast.error(`Lỗi cập nhật DB: Server error`)
+                 toast.error(`Lỗi cập nhật DB cho file ${file.name}`)
                  failCount++
               }
            } else {
