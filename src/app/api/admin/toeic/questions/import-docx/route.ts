@@ -53,7 +53,7 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
     if (!current) return
 
     if (
-      current.question &&
+      typeof current.question === 'string' &&
       current.optionA &&
       current.optionB &&
       current.optionC &&
