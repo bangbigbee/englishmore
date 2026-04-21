@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
     // 5: Giải thích đáp án
     // 6: TOEIC Tip
 
-    const rgxA = /(?:^|\s|\n)(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=(?:^|\s|\n)(?:\(B\)|B\.|B\))|$)/i
-    const rgxB = /(?:^|\s|\n)(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=(?:^|\s|\n)(?:\(C\)|C\.|C\))|$)/i
-    const rgxC = /(?:^|\s|\n)(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=(?:^|\s|\n)(?:\(D\)|D\.|D\))|$)/i
-    const rgxD = /(?:^|\s|\n)(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i
+    const rgxA = /(?:\(A\)|A\.)\s*([\s\S]*?)(?=(?:\(B\)|B\.)|$)/i
+    const rgxB = /(?:\(B\)|B\.)\s*([\s\S]*?)(?=(?:\(C\)|C\.)|$)/i
+    const rgxC = /(?:\(C\)|C\.)\s*([\s\S]*?)(?=(?:\(D\)|D\.)|$)/i
+    const rgxD = /(?:\(D\)|D\.)\s*([\s\S]*?)$/i
 
     for (let i = 1; i < data.length; i++) { // Skip header row
       const row = data[i]
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       if (matchD && matchD[1]) optionD = matchD[1].trim()
 
       if (matchA) {
-        finalQuestionText = eng.split(/(?:^|\s|\n)(?:\(A\)|A\.|A\))/i)[0].trim()
+        finalQuestionText = eng.split(/(?:\(A\)|A\.)/i)[0].trim()
       }
 
       if (ansMatch) {
