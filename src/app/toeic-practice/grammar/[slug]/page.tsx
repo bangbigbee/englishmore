@@ -1252,14 +1252,25 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     </div>
                                                 )}
 
-                                                <div className="text-center mb-6 relative z-10 font-medium w-full">
-                                                  <p className={`text-xl md:text-2xl font-black text-slate-800 leading-snug ${(topic.part === 3 || topic.part === 4) ? 'text-left pl-2' : ''}`}>
+                                                {q.imageUrl && (
+                                                  <div className="w-full flex justify-center z-10 relative mb-4">
+                                                    <img 
+                                                      src={q.imageUrl} 
+                                                      alt="Part" 
+                                                      onClick={() => setIsZoomedImage(!isZoomedImage)}
+                                                      className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-2xl max-h-[350px] md:max-h-[450px] w-auto cursor-zoom-in'}`} 
+                                                    />
+                                                  </div>
+                                                )}
+
+                                                <div className="text-center mb-6 relative z-10 font-medium w-full mt-2">
+                                                  <p className={`text-xl md:text-2xl font-black text-slate-800 leading-snug ${(topic.part === 3 || topic.part === 4 || topic.part === 6 || topic.part === 7) ? 'text-left pl-2' : ''}`}>
                                                     {topic.part === 2 && !isShowingResult ? (
                                                         <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
                                                     ) : (
                                                         <>
                                                            {topic.part && topic.part >= 1 && topic.part <= 7 && (
-                                                              <span className={`mr-2 font-bold whitespace-nowrap ${q.question ? 'text-slate-700' : 'text-slate-800'}`}>
+                                                              <span className="mr-2 whitespace-nowrap">
                                                                   Câu {topic.part === 1 ? globalIdx + 1 :
                                                                        topic.part === 2 ? globalIdx + 7 :
                                                                        topic.part === 3 ? globalIdx + 32 :
@@ -1279,14 +1290,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     </p>
                                                   )}
                                                 </div>
-                                                {q.imageUrl && (
-                                                  <img 
-                                                    src={q.imageUrl} 
-                                                    alt="Part" 
-                                                    onClick={() => setIsZoomedImage(!isZoomedImage)}
-                                                    className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-[400px] max-h-[280px] md:max-h-[320px] w-auto cursor-zoom-in'} mb-4`} 
-                                                  />
-                                                )}
                                                 
                                                 {topic.type === 'LISTENING' && topic.part && topic.part <= 4 && q.translation && isShowingResult && (
                                                    <div className={`mt-6 flex flex-col ${topic.part === 3 || topic.part === 4 ? 'items-start w-full' : 'items-center'} `}>
