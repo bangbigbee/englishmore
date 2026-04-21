@@ -2,9 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-const MESSAGE = "Hello hello! Hiện tại ToeicMore đang cập nhật các bộ đề thi và nâng cấp bài giảng. Rất mong được đồng hành cùng bạn trong thời gian đến. Chúc bạn học thật tốt nhé!";
-
-export default function ToeicMoreNotice() {
+export default function ToeicMoreNotice({ config }: { config: { title: string, message: string } }) {
   const [isOpen, setIsOpen] = useState(false);
   const [displayText, setDisplayText] = useState('');
   const [isWiggling, setIsWiggling] = useState(false);
@@ -38,10 +36,11 @@ export default function ToeicMoreNotice() {
     setDisplayText('');
     if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
     let i = 0;
+    const message = config?.message || '';
     
     const typeNextChar = () => {
-      if (i < MESSAGE.length) {
-        setDisplayText(MESSAGE.substring(0, i + 1));
+      if (i < message.length) {
+        setDisplayText(message.substring(0, i + 1));
         i++;
         typingTimerRef.current = setTimeout(typeNextChar, 40 + Math.random() * 30);
       }
@@ -76,7 +75,7 @@ export default function ToeicMoreNotice() {
         </button>
 
         <h4 className="text-[13px] sm:text-sm font-bold text-[#14532d] mb-1.5 sm:mb-2 flex items-center gap-1.5">
-          Thông báo nhỏ
+          {config?.title || 'Thông báo nhỏ'}
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>

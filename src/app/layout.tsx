@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import LoginModalController from "./LoginModalController";
 import GlobalUpgradePoller from "@/components/GlobalUpgradePoller";
 import ToeicMoreNotice from "@/components/ToeicMoreNotice";
+import { prisma } from "@/lib/prisma";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -83,6 +84,20 @@ export default async function RootLayout({
   const host = headersList.get('host') || '';
   const isToeicDomain = host.includes('toeicmore');
 
+  let floatingNotiConfig = { 
+    isActive: true, 
+    title: "Thông báo nhỏ", 
+    message: "Hello hello! Hiện tại ToeicMore đang cập nhật các bộ đề thi và nâng cấp bài giảng. Rất mong được đồng hành cùng bạn trong thời gian đến. Chúc bạn học thật tốt nhé!" 
+  };
+  try {
+    const setting = await prisma.systemSetting.findUnique({ where: { key: 'FLOATING_NOTI_SETTING' } });
+    if (setting && setting.value) {
+      floatingNotiConfig = { ...floatingNotiConfig, ...(setting.value as any) };
+    }
+  } catch (e) {
+    console.error("Error fetching floating noti config", e);
+  }
+
   return (
     <html
       lang="en"
@@ -94,7 +109,7 @@ export default async function RootLayout({
           <MainWrapper>{children}</MainWrapper>
           <LoginModalController />
           <GlobalUpgradePoller />
-          <ToeicMoreNotice />
+          {floatingNotiConfig.isActive && <ToeicMoreNotice config={floatingNotiConfig} />}
           <Toaster
             richColors
             position="top-center"
