@@ -320,6 +320,8 @@ interface AdminToeicLesson {
   theoryAccessTier: string
   explanationAccessTier: string
   translationAccessTier: string
+  tipsAccessTier: string
+  vocabularyAccessTier: string
   bookmarkAccessTier: string
   _count?: { questions: number }
 }
@@ -813,7 +815,7 @@ export default function AdminDashboard() {
   const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING' | 'LISTENING'>('GRAMMAR')
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
-  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
+  const [lessonForm, setLessonForm] = useState({ title: '', order: 0, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE', bookmarkAccessTier: 'FREE', tipsAccessTier: 'FREE', vocabularyAccessTier: 'FREE' })
   const [editingToeicLesson, setEditingToeicLesson] = useState<AdminToeicLesson | null>(null)
   const [showQuestionModal, setShowQuestionModal] = useState(false)
   const [questionForm, setQuestionForm] = useState({
@@ -1847,7 +1849,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save lesson')
       toast.success(editingToeicLesson ? 'Lesson updated successfully' : 'Lesson created successfully')
       setShowLessonModal(false)
-      setLessonForm({ title: '', order: 0, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
+      setLessonForm({ title: '', order: 0, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE', bookmarkAccessTier: 'FREE', tipsAccessTier: 'FREE', vocabularyAccessTier: 'FREE' })
       setEditingToeicLesson(null)
       fetchToeicLessons(selectedToeicTopic.id)
     } catch (err) {
@@ -4172,7 +4174,7 @@ export default function AdminDashboard() {
                 {selectedToeicTopic && (
                   <button
                     onClick={() => {
-                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: '', explanationAccessTier: '', translationAccessTier: '', bookmarkAccessTier: '' })
+                      setLessonForm({ title: '', order: toeicLessons.length + 1, content: '', directionAudioUrl: '', accessTier: 'FREE', theoryAccessTier: 'FREE', explanationAccessTier: 'FREE', translationAccessTier: 'FREE', bookmarkAccessTier: 'FREE', tipsAccessTier: 'FREE', vocabularyAccessTier: 'FREE' })
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
@@ -4209,7 +4211,7 @@ export default function AdminDashboard() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', directionAudioUrl: lesson.directionAudioUrl || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || '', explanationAccessTier: (lesson as any).explanationAccessTier || '', translationAccessTier: (lesson as any).translationAccessTier || '', bookmarkAccessTier: (lesson as any).bookmarkAccessTier || '' })
+                            setLessonForm({ title: lesson.title, order: lesson.order, content: lesson.content || '', directionAudioUrl: lesson.directionAudioUrl || '', accessTier: (lesson as any).accessTier || 'FREE', theoryAccessTier: (lesson as any).theoryAccessTier || '', explanationAccessTier: (lesson as any).explanationAccessTier || '', translationAccessTier: (lesson as any).translationAccessTier || '', bookmarkAccessTier: (lesson as any).bookmarkAccessTier || '', tipsAccessTier: (lesson as any).tipsAccessTier || '', vocabularyAccessTier: (lesson as any).vocabularyAccessTier || '' })
                             setEditingToeicLesson(lesson)
                             setShowLessonModal(true)
                           }}
@@ -8022,6 +8024,32 @@ export default function AdminDashboard() {
                           className="w-full rounded-lg border-blue-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 bg-blue-50/50 shadow-sm font-medium"
                           value={lessonForm.bookmarkAccessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, bookmarkAccessTier: e.target.value })}
+                        >
+                          <option value="">Default</option>
+                          <option value="FREE">Free</option>
+                          <option value="PRO">Pro</option>
+                          <option value="ULTRA">Ultra</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <label className="block text-[13px] font-semibold text-amber-700 mb-1.5">Tip Access</label>
+                        <select
+                          className="w-full rounded-lg border-amber-200 px-3 py-2 text-sm focus:border-amber-500 focus:ring-amber-500 bg-amber-50/50 shadow-sm font-medium"
+                          value={lessonForm.tipsAccessTier}
+                          onChange={(e) => setLessonForm({ ...lessonForm, tipsAccessTier: e.target.value })}
+                        >
+                          <option value="">Default</option>
+                          <option value="FREE">Free</option>
+                          <option value="PRO">Pro</option>
+                          <option value="ULTRA">Ultra</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <label className="block text-[13px] font-semibold text-purple-700 mb-1.5">Vocab Access</label>
+                        <select
+                          className="w-full rounded-lg border-purple-200 px-3 py-2 text-sm focus:border-purple-500 focus:ring-purple-500 bg-purple-50/50 shadow-sm font-medium"
+                          value={lessonForm.vocabularyAccessTier}
+                          onChange={(e) => setLessonForm({ ...lessonForm, vocabularyAccessTier: e.target.value })}
                         >
                           <option value="">Default</option>
                           <option value="FREE">Free</option>

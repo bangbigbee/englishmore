@@ -698,6 +698,8 @@ model ToeicGrammarLesson {
   theoryAccessTier      AccessTier      @default(FREE)
   explanationAccessTier AccessTier      @default(FREE)
   translationAccessTier AccessTier      @default(FREE)
+  tipsAccessTier        AccessTier      @default(FREE)
+  vocabularyAccessTier  AccessTier      @default(FREE)
   bookmarkAccessTier    AccessTier      @default(PRO)
   questions             ToeicQuestion[]
   createdAt             DateTime        @default(now())

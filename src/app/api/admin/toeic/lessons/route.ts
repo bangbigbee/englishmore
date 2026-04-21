@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 		}
 
 		const body = await req.json()
-		const { topicId, title, order, content, directionAudioUrl, accessTier, theoryAccessTier, explanationAccessTier, translationAccessTier, bookmarkAccessTier } = body
+		const { topicId, title, order, content, directionAudioUrl, accessTier, theoryAccessTier, explanationAccessTier, translationAccessTier, bookmarkAccessTier, tipsAccessTier, vocabularyAccessTier } = body
 
 		if (!topicId || !title || order === undefined) {
 			return NextResponse.json({ error: 'topicId, title, and order are required' }, { status: 400 })
@@ -69,7 +69,9 @@ export async function POST(req: Request) {
 				theoryAccessTier: theoryAccessTier || masterGrammar.theoryAccessTier || 'FREE',
 				explanationAccessTier: explanationAccessTier || masterGrammar.explanationAccessTier || 'FREE',
 				translationAccessTier: translationAccessTier || masterGrammar.translationAccessTier || 'FREE',
-				bookmarkAccessTier: bookmarkAccessTier || defaultBookmarkAccessTier
+				bookmarkAccessTier: bookmarkAccessTier || defaultBookmarkAccessTier,
+				tipsAccessTier: tipsAccessTier || 'FREE',
+				vocabularyAccessTier: vocabularyAccessTier || 'FREE',
 			}
 		})
 
