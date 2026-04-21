@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, use, useCallback, useRef, useMemo } from 'react'
+import React, { useState, useEffect, use, useCallback, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -67,7 +67,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [showTranslation, setShowTranslation] = useState<Record<string, boolean>>({})
   const [showTips, setShowTips] = useState<Record<string, boolean>>({})
   const [showVocab, setShowVocab] = useState<Record<string, boolean>>({})
-  const [showLessonVocab, setShowLessonVocab] = useState(false)
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Record<string, boolean>>({})
   const [showLessonContent, setShowLessonContent] = useState(false)
   const [correctStreak, setCorrectStreak] = useState(0)
@@ -299,23 +298,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   }, [selectedLessonId, loadProgress])
 
   const currentLesson = topic?.lessons.find(l => l.id === selectedLessonId)
-
-  const allLessonVocab = useMemo(() => {
-    if (!currentLesson) return [];
-    const seen = new Set();
-    const list: any[] = [];
-    currentLesson.questions.forEach(q => {
-      if (q.vocabulary && Array.isArray(q.vocabulary)) {
-        q.vocabulary.forEach(v => {
-          if (!seen.has(v.word)) {
-            seen.add(v.word);
-            list.push(v);
-          }
-        });
-      }
-    });
-    return list;
-  }, [currentLesson]);
 
   // Monitor progress for Test Completion and Timer Start
   useEffect(() => {
@@ -972,89 +954,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         </div>
                       )}
                     </div>
-                    {/* Header Toggle Buttons */}
-                    {(allLessonVocab.length > 0 || currentLesson.content) && (
-                        <div className="flex flex-wrap items-center gap-2 mt-3 w-full border-t border-slate-100 pt-3">
-                             {allLessonVocab.length > 0 && (
-                                <button
-                                   onClick={() => setShowLessonVocab(!showLessonVocab)}
-                                   className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all shadow-sm border flex items-center gap-1.5 ${showLessonVocab ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-white text-slate-500 hover:text-slate-700 border-slate-200 hover:bg-slate-50'}`}
-                                >
-                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                   Từ vựng ({allLessonVocab.length})
-                                </button>
-                             )}
-                             {currentLesson.content && (
-                                <button
-                                   onClick={() => setShowLessonContent(!showLessonContent)}
-                                   className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold transition-all shadow-sm border flex items-center gap-1.5 ${showLessonContent ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-white text-slate-500 hover:text-slate-700 border-slate-200 hover:bg-slate-50'}`}
-                                >
-                                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                   Lý thuyết
-                                </button>
-                             )}
-                        </div>
-                    )}
+                    {/* Removed Xem meo lam dropdown button */}
                   </div>
 
-                  <AnimatePresence>
-                    {showLessonVocab && allLessonVocab.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden mb-8"
-                      >
-                        {(() => {
-                           const vocabTierLevel = currentLesson.vocabularyAccessTier === 'ULTRA' ? 3 : currentLesson.vocabularyAccessTier === 'PRO' ? 2 : 1;
-                           const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                           const isLocked = vocabTierLevel > userTierLevel;
-                           return (
-                             <div className="relative">
-                               <div className={`bg-white p-6 rounded-2xl border border-slate-200 shadow-sm ${isLocked ? 'blur-sm pointer-events-none opacity-40 select-none' : ''}`}>
-                                   <div className="flex items-center gap-2 mb-4">
-                                       <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                       </div>
-                                       <h3 className="font-bold text-slate-800 text-lg">Từ Vựng Quan Trọng</h3>
-                                   </div>
-                                   <div className="w-full mt-2">
-                                     <ul className="space-y-1 md:space-y-1.5 pl-1 md:pl-2">
-                                       {allLessonVocab.map((vocabItem: any, vIdx: number) => (
-                                         <li key={vIdx} className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-2">
-                                           <span className="font-bold text-slate-800 text-[15px]">{vocabItem.word}</span>
-                                           <span className="hidden md:inline text-slate-300 font-bold px-1">&bull;</span>
-                                           <span className="text-slate-600 text-[14px] md:text-[15px] leading-snug">{vocabItem.meaning}</span>
-                                         </li>
-                                       ))}
-                                     </ul>
-                                   </div>
-                               </div>
-                               {isLocked && (
-                                  <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4">
-                                     <button onClick={() => setShowPricing(true)} className="group max-w-[85%] mx-auto bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-md hover:shadow-lg rounded-2xl md:rounded-full px-4 py-2.5 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 cursor-pointer transition-all hover:scale-105 active:scale-95 text-[13px] font-medium text-slate-700">
-                                       <div className="flex items-center gap-1.5 whitespace-nowrap">
-                                         {currentLesson.vocabularyAccessTier === 'ULTRA' ? (
-                                            <svg className="w-4 h-4 text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                         ) : (
-                                            <svg className="w-4 h-4 text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                         )}
-                                         <span>Nâng cấp</span>
-                                       </div>
-                                       <div className="flex items-center gap-1 whitespace-nowrap">
-                                         <span className={`${currentLesson.vocabularyAccessTier === 'ULTRA' ? 'bg-purple-100 text-purple-900 border border-purple-200' : 'bg-amber-100 text-amber-700 border border-amber-200'} font-bold text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded`}>{currentLesson.vocabularyAccessTier}</span>
-                                         <span>để xem từ vựng chi tiết.</span>
-                                       </div>
-                                     </button>
-                                  </div>
-                               )}
-                             </div>
-                           );
-                        })()}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  
                   <AnimatePresence>
                     {showLessonContent && (
                       <motion.div
@@ -1770,7 +1672,39 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               </div>
 
                                                 {/* Ungrouped Question Footer Buttons */}
+                                                {isShowingResult && questionsPerView === 1 && ((q.vocabulary && q.vocabulary.length > 0) || q.tips) && (
                                                   <div className="w-full pt-4 md:pt-6 mt-4 md:mt-6 border-t border-slate-200 flex flex-wrap items-center gap-4">
+                                                    {q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && (() => {
+                                                        const vocabTierLevel = currentLesson.vocabularyAccessTier === 'ULTRA' ? 3 : currentLesson.vocabularyAccessTier === 'PRO' ? 2 : 1;
+                                                        const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                        const isLocked = vocabTierLevel > userTierLevel;
+
+                                                        if (isLocked) {
+                                                          return (
+                                                            <button
+                                                              onClick={() => setShowPricing(true)}
+                                                              className="flex-1 min-w-[140px] max-w-[200px] h-11 px-4 rounded-xl border bg-white border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-700 transition-all flex items-center gap-2 justify-center cursor-pointer shadow-sm relative group"
+                                                            >
+                                                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                              <span className="font-semibold text-sm">Từ vựng quan trọng</span>
+                                                              <div className={`absolute -top-1.5 -right-1.5 filter drop-shadow-md ${currentLesson.vocabularyAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}>
+                                                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.vocabularyAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                                              </div>
+                                                            </button>
+                                                          )
+                                                        }
+
+                                                        return (
+                                                          <button
+                                                            onClick={() => setShowVocab(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
+                                                            className={`flex-1 min-w-[140px] max-w-[200px] h-11 px-4 text-sm font-semibold rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 gap-2 ${showVocab[q.id] ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-800'}`}
+                                                          >
+                                                            <svg className="w-5 h-5" fill={showVocab[q.id] ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                            {q.vocabulary.length} Từ vựng
+                                                          </button>
+                                                        )
+                                                    })()}
+
                                                     {q.tips && (() => {
                                                         const tipsTierLevel = currentLesson.tipsAccessTier === 'ULTRA' ? 3 : currentLesson.tipsAccessTier === 'PRO' ? 2 : 1;
                                                         const tipsLocked = tipsTierLevel > (session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1);
@@ -1793,6 +1727,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                         )
                                                     })()}
                                                   </div>
+                                                )}
 
                                                 {/* Tips Section */}
                                                 {isShowingResult && showTips[q.id] && q.tips && questionsPerView === 1 && (
@@ -1804,24 +1739,62 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     <div className="text-slate-700 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">{q.tips.replace(/^Tip:\s*/i, '').replace(/^Mẹo TOEIC:\s*/i, '')}</div>
                                                   </div>
                                                 )}
+
+                                                {/* Vocabulary Section (Only for non-grouped) */}
+                                                {isShowingResult && showVocab[q.id] && q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && questionsPerView === 1 && (
+                                                  <div className="w-full mt-2">
+                                                    <ul className="space-y-1 md:space-y-1.5 pl-1 md:pl-2">
+                                                      {q.vocabulary.map((vocabItem: any, vIdx: number) => (
+                                                        <li key={vIdx} className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-2">
+                                                          <span className="font-bold text-slate-800 text-[15px]">{vocabItem.word}</span>
+                                                          <span className="hidden md:inline text-slate-300 font-bold px-1">&bull;</span>
+                                                          <span className="text-slate-600 text-sm md:text-[15px] leading-snug">{vocabItem.meaning}</span>
+                                                        </li>
+                                                      ))}
+                                                    </ul>
+                                                  </div>
+                                                )}
                                               </div>
                                             );
-                                          })}
-                                          </>
+                                        })}
+                                        </>
                                         );
                                       })()}
                                       </div>
                                       
-                                      {currentQuestionsGroup.length > 0 && showResults[currentQuestionsGroup[0].id] && questionsPerView > 1 && currentQuestionsGroup[0].tips && (
+                                      {/* Group Level Vocabulary Section */}
+                                      {currentQuestionsGroup.length > 0 && showResults[currentQuestionsGroup[0].id] && questionsPerView > 1 && currentQuestionsGroup[0].vocabulary && Array.isArray(currentQuestionsGroup[0].vocabulary) && currentQuestionsGroup[0].vocabulary.length > 0 && (
                                         <div className="w-full border-t border-slate-200 pt-6 mt-6 flex flex-col gap-4">
                                           {(() => {
                                             const groupQ = currentQuestionsGroup[0];
-                                            const tipsTierLevel = currentLesson.tipsAccessTier === 'ULTRA' ? 3 : currentLesson.tipsAccessTier === 'PRO' ? 2 : 1;
+                                            const vocabTierLevel = currentLesson.vocabularyAccessTier === 'ULTRA' ? 3 : currentLesson.vocabularyAccessTier === 'PRO' ? 2 : 1;
                                             const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                            const isLocked = vocabTierLevel > userTierLevel;
 
                                             return (
                                               <>
                                                 <div className="flex flex-wrap items-center gap-4">
+                                                  {isLocked ? (
+                                                    <button
+                                                      onClick={() => setShowPricing(true)}
+                                                      className="flex-1 min-w-[140px] max-w-[200px] h-11 px-4 rounded-xl border bg-white border-slate-200 text-slate-500 hover:border-slate-400 hover:text-slate-700 transition-all flex items-center gap-2 justify-center cursor-pointer shadow-sm relative group"
+                                                    >
+                                                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                      <span className="font-semibold text-sm">Từ vựng quan trọng</span>
+                                                      <div className={`absolute -top-1.5 -right-1.5 filter drop-shadow-md ${currentLesson.vocabularyAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}>
+                                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.vocabularyAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                                      </div>
+                                                    </button>
+                                                  ) : (
+                                                    <button
+                                                      onClick={() => setShowVocab(prev => ({ ...prev, [groupQ.id]: !prev[groupQ.id] }))}
+                                                      className={`flex-1 min-w-[140px] max-w-[200px] h-11 px-4 text-sm font-semibold rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 gap-2 ${showVocab[groupQ.id] ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-800'}`}
+                                                    >
+                                                      <svg className="w-5 h-5" fill={showVocab[groupQ.id] ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                      {groupQ.vocabulary.length} Từ vựng
+                                                    </button>
+                                                  )}
+
                                                   {groupQ.tips && (() => {
                                                     const tipsTierLevel = currentLesson.tipsAccessTier === 'ULTRA' ? 3 : currentLesson.tipsAccessTier === 'PRO' ? 2 : 1;
                                                     const tipsLocked = tipsTierLevel > userTierLevel;
@@ -1844,6 +1817,21 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     )
                                                   })()}
                                                 </div>
+                                                
+                                                {showVocab[groupQ.id] && !isLocked && (
+                                                  <div className="w-full mt-0">
+                                                    <ul className="space-y-1 md:space-y-1.5 pl-1 md:pl-2">
+                                                      {groupQ.vocabulary.map((vocabItem: any, vIdx: number) => (
+                                                        <li key={vIdx} className="flex flex-col md:flex-row md:items-center gap-0.5 md:gap-2">
+                                                          <span className="font-bold text-slate-800 text-[15px]">{vocabItem.word}</span>
+                                                          <span className="hidden md:inline text-slate-300 font-bold px-1">&bull;</span>
+                                                          <span className="text-slate-600 text-sm md:text-[15px] leading-snug">{vocabItem.meaning}</span>
+                                                        </li>
+                                                      ))}
+                                                    </ul>
+                                                  </div>
+                                                )}
+
                                                 {groupQ.tips && showTips[groupQ.id] && (() => {
                                                     const tipsTierLevel = currentLesson.tipsAccessTier === 'ULTRA' ? 3 : currentLesson.tipsAccessTier === 'PRO' ? 2 : 1;
                                                     if (tipsTierLevel > userTierLevel) return null;
