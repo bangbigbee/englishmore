@@ -1711,7 +1711,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         </button>
                                         
                                         <div className="flex-1 text-center font-bold text-slate-300 text-sm md:text-base uppercase tracking-widest">
-                                           {topic.part === 3 ? `${activeGroupStartIndex + 32} - ${activeGroupStartIndex + 32 + currentQuestionsGroup.length - 1}` : topic.part === 4 ? `${activeGroupStartIndex + 71} - ${activeGroupStartIndex + 71 + currentQuestionsGroup.length - 1}` : `Câu ${activeGroupStartIndex + 1}`}
+                                           {topic.part === 3 ? `Câu ${activeGroupStartIndex + 32} - ${activeGroupStartIndex + 32 + currentQuestionsGroup.length - 1}` : 
+                                            topic.part === 4 ? `Câu ${activeGroupStartIndex + 71} - ${activeGroupStartIndex + 71 + currentQuestionsGroup.length - 1}` : 
+                                            `Câu ${topic.part === 1 ? activeGroupStartIndex + 1 :
+                                                   topic.part === 2 ? activeGroupStartIndex + 7 :
+                                                   topic.part === 5 ? activeGroupStartIndex + 101 :
+                                                   topic.part === 6 ? activeGroupStartIndex + 131 :
+                                                   topic.part === 7 ? activeGroupStartIndex + 147 :
+                                                   activeGroupStartIndex + 1}`}
                                         </div>
 
                                         <button
@@ -1774,7 +1781,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       }}
                                       className={`h-6 sm:h-7 min-w-[24px] sm:min-w-[28px] px-1 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
                                     >
-                                      {topic.part === 3 ? idx + 32 : topic.part === 4 ? idx + 71 : topic.part === 2 ? idx + 7 : idx + 1}
+                                      {topic.part === 1 ? idx + 1 :
+                                       topic.part === 2 ? idx + 7 :
+                                       topic.part === 3 ? idx + 32 :
+                                       topic.part === 4 ? idx + 71 :
+                                       topic.part === 5 ? idx + 101 :
+                                       topic.part === 6 ? idx + 131 :
+                                       topic.part === 7 ? idx + 147 : idx + 1}
                                     </button>
                                   )
                                 })}
