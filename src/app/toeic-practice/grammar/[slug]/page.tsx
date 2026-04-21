@@ -1192,12 +1192,22 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                            const isCorrect = selectedOption === q.correctOption;
                                            const globalIdx = activeGroupStartIndex + localIdx;
                                            
-                                           // Isolate explanation logic directly
                                            let cleanExplanation = q.explanation || '';
                                            if (cleanExplanation.includes('[Transcript]')) {
                                                const expMatch = cleanExplanation.match(/\[Giải thích\]\n([\s\S]*)$/i);
                                                cleanExplanation = expMatch ? expMatch[1].trim() : '';
                                            }
+
+                                           // Extract specific question explanation if it's grouped like "32: xxx 33: yyy"
+                                           if (topic.part === 3 || topic.part === 4) {
+                                               const qNumStr = topic.part === 3 ? (activeGroupStartIndex + 32 + localIdx) : (activeGroupStartIndex + 71 + localIdx);
+                                               const regex = new RegExp(`(?:^|[^\\d])(?:Câu\\s*)?(?:${qNumStr})[\\:\\.\\)]\\s*([\\s\\S]*?)(?=(?:Câu\\s*)?\\d{2,}[\\:\\.\\)]|$)`, 'i');
+                                               const m = cleanExplanation.match(regex);
+                                               if (m && m[1]) {
+                                                   cleanExplanation = m[1].trim();
+                                               }
+                                           }
+
                                            const explanationText = status !== 'authenticated' && globalIdx >= 4 ? 'Đăng nhập để xem phần giải thích.' : cleanExplanation;
                                           
                                           const parsedTranslations = (() => {
