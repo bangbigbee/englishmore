@@ -1425,7 +1425,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               let transText = q.translation;
 
                                               // Try parsing inline (A) ... (B) ... (C) ... (D) ...
-                                              const pattern = /(.*?)\s*\(\s*A\s*\)\s*(.*?)\s*\(\s*B\s*\)\s*(.*?)(?:\s*\(\s*C\s*\)\s*(.*?))?(?:\s*\(\s*D\s*\)\s*(.*?))?$/is;
+                                              const pattern = /([\s\S]*?)\s*\(\s*A\s*\)\s*([\s\S]*?)\s*\(\s*B\s*\)\s*([\s\S]*?)(?:\s*\(\s*C\s*\)\s*([\s\S]*?))?(?:\s*\(\s*D\s*\)\s*([\s\S]*?))?$/i;
                                               const matchInline = transText.match(pattern);
                                               
                                               if (matchInline && matchInline[2] && matchInline[3]) {
