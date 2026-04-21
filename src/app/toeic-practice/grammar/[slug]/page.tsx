@@ -83,7 +83,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [actualCheckTimeLeft, setActualCheckTimeLeft] = useState<number>(30);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
   const [isAudioNodePlaying, setIsAudioNodePlaying] = useState(false)
-  const [isZoomedImage, setIsZoomedImage] = useState(false)
+  const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const directionAudioRef = useRef<HTMLAudioElement>(null)
   const { data: session, status } = useSession()
@@ -384,6 +384,32 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     if (showResults[questionId]) return
     setUserAnswers(prev => ({ ...prev, [questionId]: option }))
     
+    // Determine if it's a grouped reading question (Part 6 or 7)
+    const isGroupedReading = topic?.type === 'READING' && (topic.part === 6 || topic.part === 7);
+    let group: any[] = [];
+    if (isGroupedReading) {
+         const qs = currentLesson!.questions;
+         if (topic.part === 6) {
+             for(let i=0; i<qs.length; i+=4) {
+                 const g = qs.slice(i, i+4);
+                 if (g.some((q: any) => q.id === questionId)) { group = g; break; }
+             }
+         } else if (topic.part === 7) {
+             const res = [];
+             let g = [];
+             qs.forEach((q: any, idx: number) => {
+                 if (idx === 0 || q.imageUrl) {
+                     if (g.length > 0) res.push(g);
+                     g = [q];
+                 } else {
+                     g.push(q);
+                 }
+             });
+             if (g.length > 0) res.push(g);
+             group = res.find(gr => gr.some((q: any) => q.id === questionId)) || [];
+         }
+    }
+    
     // Exam mode interception: DO NOT EVALUATE results!
     if (topic?.type === 'LISTENING' && topic?.part && topic.part <= 4 && listeningMode === 'actual' && !isTestCompleted) {
        if (actualCheckingMode) return; // User is in checking phase, just record answer
@@ -401,6 +427,74 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
            setTimeout(() => setActiveQuestionIndex(prev => prev + 1), 500);
        }
        return;
+    }
+
+    // For Grouped Reading Practice Mode: Only evaluate if ALL questions in the group have an answer
+    if (isGroupedReading && listeningMode !== 'actual') {
+         const allAnswered = group.every((gq: any) => {
+             if (gq.id === questionId) return true; // Just clicked
+             return !!userAnswers[gq.id];
+         });
+         
+         if (!allAnswered) {
+             // Save silently to localstorage for guest just in case, but no DB points or showResults
+             try {
+                const stored = localStorage.getItem('toeic_guest_progress') || '{}';
+                const allData = JSON.parse(stored);
+                if (selectedLessonId) {
+                    if (!allData[selectedLessonId]) allData[selectedLessonId] = {};
+                    allData[selectedLessonId][questionId] = { selected: option, isCorrect: option === currentLesson?.questions.find(quest => quest.id === questionId)?.correctOption };
+                    localStorage.setItem('toeic_guest_progress', JSON.stringify(allData));
+                }
+             } catch (error) {}
+             return;
+         }
+         
+         // Trigger reveal for all in group
+         const updates: Record<string, boolean> = {};
+         group.forEach((gq: any) => updates[gq.id] = true);
+         setShowResults(prev => ({ ...prev, ...updates }));
+         
+         // Process scoring for the whole group
+         let groupStreak = correctStreak;
+         let allCorrect = true;
+         for (const gq of group) {
+             const ans = gq.id === questionId ? option : userAnswers[gq.id];
+             if (ans === gq.correctOption) {
+                 groupStreak++;
+             } else {
+                 groupStreak = 0;
+                 allCorrect = false;
+             }
+             
+             // Persist each silently
+             if (status === 'authenticated') {
+                 fetch('/api/toeic/progress', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ questionId: gq.id, selectedOption: ans, isCorrect: ans === gq.correctOption, currentStreak: groupStreak })
+                 }).catch(() => {});
+             } else {
+                 try {
+                    const stored = localStorage.getItem('toeic_guest_progress') || '{}';
+                    const allData = JSON.parse(stored);
+                    if (selectedLessonId) {
+                        if (!allData[selectedLessonId]) allData[selectedLessonId] = {};
+                        allData[selectedLessonId][gq.id] = { selected: ans, isCorrect: ans === gq.correctOption };
+                        localStorage.setItem('toeic_guest_progress', JSON.stringify(allData));
+                    }
+                 } catch (error) {}
+             }
+         }
+         
+         setCorrectStreak(groupStreak);
+         if (allCorrect) {
+             new Audio('/audio/toeic-correct-ting-sound.mp3').play().catch(() => {});
+         } else {
+             new Audio('/audio/toeic-incorrect-sound.mp3').play().catch(() => {});
+         }
+         
+         return;
     }
 
     const q = currentLesson?.questions.find(quest => quest.id === questionId)
@@ -905,8 +999,40 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     <section className="mt-8 relative">
                       {/* Global Persistent Audio Player */}
                       {(() => {
-                        const questionsPerView = (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) ? 3 : 1;
-                        const activeGroupStartIndex = Math.floor(activeQuestionIndex / questionsPerView) * questionsPerView;
+                        const questionGroups = (() => {
+                             const qs = currentLesson.questions;
+                             if (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) {
+                                 const res = [];
+                                 for(let i=0; i<qs.length; i+=3) res.push(qs.slice(i, i+3));
+                                 return res;
+                             }
+                             if (topic.type === 'READING' && topic.part === 6) {
+                                 const res = [];
+                                 for(let i=0; i<qs.length; i+=4) res.push(qs.slice(i, i+4));
+                                 return res;
+                             }
+                             if (topic.type === 'READING' && topic.part === 7) {
+                                 const res = [];
+                                 let g = [];
+                                 qs.forEach((q: any, idx: number) => {
+                                     if (idx === 0 || q.imageUrl) {
+                                         if (g.length > 0) res.push(g);
+                                         g = [q];
+                                     } else {
+                                         g.push(q);
+                                     }
+                                 });
+                                 if (g.length > 0) res.push(g);
+                                 return res;
+                             }
+                             return qs.map(q => [q]);
+                        })();
+                          
+                        const activeGroupIndex = questionGroups.findIndex(g => g.some(q => q.id === currentLesson.questions[activeQuestionIndex]?.id));
+                        const currentQuestionsGroup = questionGroups[activeGroupIndex] || [];
+                        const activeGroupStartIndex = currentLesson.questions.findIndex(q => q.id === currentQuestionsGroup[0]?.id);
+                        const questionsPerView = currentQuestionsGroup.length;
+                        
                         let activeAudioUrl = currentLesson.questions[activeGroupStartIndex]?.audioUrl || null;
 
                         return activeAudioUrl ? (
@@ -1022,8 +1148,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     })()}</span>
                                                 </div>
                                                 {q.imageUrl ? (
-                                                    <div className="aspect-[4/3] bg-slate-50 relative border-b border-slate-100">
-                                                        <img src={q.imageUrl} alt="Preview" className="absolute inset-0 w-full h-full object-contain p-1" />
+                                                    <div className="aspect-[4/3] bg-slate-50 relative border-b border-slate-100 overflow-hidden group/img">
+                                                        <img 
+                                                           src={q.imageUrl} 
+                                                           alt="Preview" 
+                                                           className="absolute inset-0 w-full h-full object-contain p-1 cursor-zoom-in group-hover/img:scale-105 transition-transform duration-300" 
+                                                           onClick={(e) => { e.stopPropagation(); setZoomedImageUrl(q.imageUrl); }}
+                                                        />
                                                     </div>
                                                 ) : (
                                                     <div className="p-4 pt-10 text-sm text-slate-700 font-medium line-clamp-4 bg-slate-50/50">
@@ -1078,9 +1209,39 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             <>
                               <AnimatePresence mode="wait">
                                 {(() => {
-                                  const questionsPerView = (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) ? 3 : 1;
-                                  const activeGroupStartIndex = Math.floor(activeQuestionIndex / questionsPerView) * questionsPerView;
-                                  const currentQuestionsGroup = currentLesson.questions.slice(activeGroupStartIndex, activeGroupStartIndex + questionsPerView);
+                                  const questionGroups = (() => {
+                                       const qs = currentLesson.questions;
+                                       if (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) {
+                                           const res = [];
+                                           for(let i=0; i<qs.length; i+=3) res.push(qs.slice(i, i+3));
+                                           return res;
+                                       }
+                                       if (topic.type === 'READING' && topic.part === 6) {
+                                           const res = [];
+                                           for(let i=0; i<qs.length; i+=4) res.push(qs.slice(i, i+4));
+                                           return res;
+                                       }
+                                       if (topic.type === 'READING' && topic.part === 7) {
+                                           const res = [];
+                                           let g = [];
+                                           qs.forEach((q: any, idx: number) => {
+                                               if (idx === 0 || q.imageUrl) {
+                                                   if (g.length > 0) res.push(g);
+                                                   g = [q];
+                                               } else {
+                                                   g.push(q);
+                                               }
+                                           });
+                                           if (g.length > 0) res.push(g);
+                                           return res;
+                                       }
+                                       return qs.map(q => [q]);
+                                  })();
+                                  
+                                  const activeGroupIndex = questionGroups.findIndex(g => g.some(q => q.id === currentLesson.questions[activeQuestionIndex]?.id));
+                                  const currentQuestionsGroup = questionGroups[activeGroupIndex] || [];
+                                  const activeGroupStartIndex = currentLesson.questions.findIndex(q => q.id === currentQuestionsGroup[0]?.id);
+                                  const questionsPerView = currentQuestionsGroup.length;
                                   
                                   if (currentQuestionsGroup.length === 0) return null;
 
@@ -1257,8 +1418,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     <img 
                                                       src={q.imageUrl} 
                                                       alt="Part" 
-                                                      onClick={() => setIsZoomedImage(!isZoomedImage)}
-                                                      className={`object-contain rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${isZoomedImage ? 'w-full md:max-w-2xl cursor-zoom-out shadow-2xl' : 'max-w-full md:max-w-2xl max-h-[350px] md:max-h-[450px] w-auto cursor-zoom-in'}`} 
+                                                      onClick={() => setZoomedImageUrl(q.imageUrl)}
+                                                      className="max-w-full md:max-w-2xl max-h-[350px] md:max-h-[450px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
                                                     />
                                                   </div>
                                                 )}
@@ -1373,7 +1534,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 })}
                                               </div>
                                               
-                                              {topic.type !== 'LISTENING' && isShowingResult && q.translation && (
+                                                {topic.type !== 'LISTENING' && isShowingResult && q.translation && (
                                                 <div className="mt-5 flex flex-row items-start gap-3 animate-in slide-in-from-top-1 fade-in duration-300">
                                                    <button 
                                                      onClick={() => {
@@ -1953,6 +2114,35 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
            </motion.div>
         </div>
       )}
+
+      {/* Zoom Image Modal Overlay */}
+      <AnimatePresence>
+         {zoomedImageUrl && (
+            <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+               onClick={() => setZoomedImageUrl(null)}
+               className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-6 bg-slate-900/90 backdrop-blur-sm cursor-zoom-out overflow-y-auto"
+            >
+               <motion.img 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  src={zoomedImageUrl} 
+                  alt="Zoomed" 
+                  className="max-w-full max-h-none md:max-h-[95vh] object-contain rounded-xl shadow-2xl pointer-events-auto"
+                  onClick={(e) => e.stopPropagation()}
+               />
+               <button 
+                  onClick={() => setZoomedImageUrl(null)}
+                  className="fixed top-4 right-4 md:top-8 md:right-8 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 backdrop-blur-md transition-colors shadow-lg"
+               >
+                  <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+               </button>
+            </motion.div>
+         )}
+      </AnimatePresence>
 
       {/* Pricing Modal for PRO/ULTRA */}
       <UpgradeModal isOpen={showPricing} onClose={() => setShowPricing(false)} />

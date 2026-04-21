@@ -1,0 +1,19 @@
+[Câu hỏi]
+
+147. Where is the information most likely found? (A) On a door (B) On a receipt (C) In a box (D) On a Web site
+
+Dịch nghĩa: Thông tin này có khả năng nhất được tìm thấy ở đâu? (A) Trên một cánh cửa (B) Trên một hóa đơn (C) Trong một chiếc hộp (D) Trên một trang web
+
+148. What kind of item is most likely discussed? (A) A desktop computer (B) A piece of furniture (C) A household appliance (D) A power tool
+
+Dịch nghĩa: Loại đồ vật nào có khả năng nhất đang được thảo luận? (A) Một máy tính để bàn (B) Một món đồ nội thất (C) Một thiết bị gia dụng (D) Một công cụ điện
+
+[Từ vựng, Đáp án, Giải thích]
+
+[147-148]
+
+Từ vựng: Component: Thành phần, linh kiện; Overtighten: Siết quá chặt; Maintenance: Bảo trì, bảo dưỡng; Warranty coverage: Phạm vi bảo hành.
+
+Câu 147. Đáp án (C): Ngay dòng thứ hai, văn bản viết: "As you do the unpacking, please verify that all components are included..." (Khi bạn đang mở hộp, vui lòng kiểm tra xem các linh kiện có đầy đủ không...). Dòng tiếp theo có nhắc đến: "...on the flattened empty box." (...trên chiếc vỏ hộp đã được trải phẳng). Những cụm từ này cho thấy đây là một tờ hướng dẫn đi kèm bên trong hộp sản phẩm khi khách hàng mua về và bắt đầu lắp ráp.
+
+Câu 148. Đáp án (B): Từ khóa 1: "Assemble the item" (Lắp ráp sản phẩm) – Đồ nội thất thường cần lắp ráp khi mua về. Từ khóa 2: "...you may damage the wood or cushioning." (...bạn có thể làm hỏng phần gỗ hoặc đệm/lớp lót). "Gỗ" và "đệm" là hai vật liệu đặc trưng của các món đồ nội thất như bàn, ghế, hoặc giường. Từ khóa 3: Tên trang web là indoordelight.com (indoor: trong nhà), phù hợp với các vật dụng trang trí nội thất. Các phương án khác như máy tính (A), thiết bị gia dụng (C) hay dụng cụ điện (D) thường không đi kèm với mô tả có cả "gỗ" và "lớp đệm" cùng lúc như vậy.
