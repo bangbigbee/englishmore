@@ -802,6 +802,7 @@ export default function AdminDashboard() {
   const [toeicError, setToeicError] = useState('')
   const [toeicSuccess, setToeicSuccess] = useState('')
   const toeicFileInputRef = useRef<HTMLInputElement>(null)
+  const toeicExcelInputRef = useRef<HTMLInputElement>(null)
   const bulkMediaInputRef = useRef<HTMLInputElement>(null)
   const [uploadingBulkMedia, setUploadingBulkMedia] = useState(false)
   const [importingToeicDocx, setImportingToeicDocx] = useState(false)
@@ -1583,6 +1584,49 @@ export default function AdminDashboard() {
       if (toeicFileInputRef.current) toeicFileInputRef.current.value = ''
     }
   }
+
+  const handleToeicExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !selectedToeicLesson) return
+
+    try {
+      setImportingToeicDocx(true)
+      setToeicError('')
+      
+      const formData = new FormData()
+      formData.append('file', file)
+
+      // Step 1: Parse Excel
+      const parseRes = await fetch('/api/admin/toeic/questions/import-excel', {
+        method: 'POST',
+        body: formData
+      })
+      const parseData = await parseRes.json()
+      if (!parseRes.ok) throw new Error(parseData.error || 'Failed to parse Excel file')
+
+      // Step 2: Bulk create
+      const bulkRes = await fetch('/api/admin/toeic/questions/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lessonId: selectedToeicLesson.id,
+          questions: parseData.questions
+        })
+      })
+      const bulkData = await bulkRes.json()
+      if (!bulkRes.ok) throw new Error(bulkData.error || 'Failed to bulk create questions')
+
+      toast.success(`Successfully imported ${bulkData.count} questions from Excel`)
+      fetchToeicQuestions(selectedToeicLesson.id)
+    } catch (err) {
+      setToeicError(err instanceof Error ? err.message : 'Error importing questions')
+      toast.error('Import failed')
+    } finally {
+      setImportingToeicDocx(false)
+      if (toeicExcelInputRef.current) toeicExcelInputRef.current.value = ''
+    }
+  }
+
 
   const handleBulkMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -4208,6 +4252,13 @@ export default function AdminDashboard() {
                       accept=".docx"
                       className="hidden"
                     />
+                    <input
+                      type="file"
+                      ref={toeicExcelInputRef}
+                      onChange={handleToeicExcelImport}
+                      accept=".xlsx, .xls"
+                      className="hidden"
+                    />
                     <div className="relative group/tooltip flex items-center">
                       <button
                         onClick={async () => {
@@ -4232,7 +4283,14 @@ export default function AdminDashboard() {
                         disabled={importingToeicDocx}
                         className="text-xs px-2 py-1 bg-amber-600 text-white rounded hover:bg-amber-700 disabled:opacity-50"
                       >
-                        {importingToeicDocx ? 'Importing...' : 'Import Quizz'}
+                        {importingToeicDocx ? 'Importing...' : 'Nhập Word'}
+                      </button>
+                      <button
+                        onClick={() => toeicExcelInputRef.current?.click()}
+                        disabled={importingToeicDocx}
+                        className="text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                      >
+                        {importingToeicDocx ? 'Importing...' : 'Nhập Excel'}
                       </button>
                       
                       <div className="absolute right-0 bottom-full mb-2 w-64 p-3 bg-gray-900 text-white text-[10px] rounded-lg shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
