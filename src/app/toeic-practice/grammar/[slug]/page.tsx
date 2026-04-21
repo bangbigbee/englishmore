@@ -20,6 +20,8 @@ interface ToeicQuestion {
   audioUrl: string | null
   imageUrl: string | null
   explanation: string | null
+  tips: string | null
+  vocabulary: any
 }
 
 interface ToeicLesson {
@@ -33,6 +35,8 @@ interface ToeicLesson {
   explanationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   translationAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   bookmarkAccessTier: 'FREE' | 'PRO' | 'ULTRA'
+  tipsAccessTier: 'FREE' | 'PRO' | 'ULTRA'
+  vocabularyAccessTier: 'FREE' | 'PRO' | 'ULTRA'
   questions: ToeicQuestion[]
 }
 
@@ -1429,6 +1433,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                             >
                                                               <svg className="w-5 h-5 md:w-6 md:h-6" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                                                             </button>
+                                                          )
+                                                        })()}
 
                                                           {q.tips && (() => {
                                                               const tipsTierLevel = currentLesson.tipsAccessTier === 'ULTRA' ? 3 : currentLesson.tipsAccessTier === 'PRO' ? 2 : 1;
@@ -1544,7 +1550,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                             </div>
                                                           )
                                                     })()}
-                                                  </div>
                                                   </div>
                                                 )}
 
