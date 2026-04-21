@@ -788,26 +788,26 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       </h2>
                       {/* Control Mode Toggle */}
                       {/* Control Speed Toggle */}
-                      {topic.type === 'LISTENING' && listeningMode !== 'actual' && (
-                        <div className="flex items-center p-1 bg-slate-100 rounded-lg">
+                      {topic.type === 'LISTENING' && (
+                        <div className={`flex items-center p-1 bg-slate-100 rounded-lg transition-all ${listeningMode === 'actual' ? 'opacity-60' : ''}`}>
                           <button 
                             title="Nghe tốc độ chậm (0.85x)"
-                            onClick={() => setPlaybackSpeed(0.85)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.85 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            onClick={() => listeningMode !== 'actual' && setPlaybackSpeed(0.85)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.85 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${listeningMode === 'actual' ? 'cursor-not-allowed' : ''}`}
                           >
                             Nghe chậm
                           </button>
                           <button 
                             title="Nghe tốc độ bình thường (1.0x)"
-                            onClick={() => setPlaybackSpeed(1)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1 ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            onClick={() => listeningMode !== 'actual' && setPlaybackSpeed(1)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1 ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${listeningMode === 'actual' ? 'cursor-not-allowed' : ''}`}
                           >
                             Thường
                           </button>
                           <button 
                             title="Nghe tốc độ nhanh (1.25x)"
-                            onClick={() => setPlaybackSpeed(1.25)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1.25 ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            onClick={() => listeningMode !== 'actual' && setPlaybackSpeed(1.25)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1.25 ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${listeningMode === 'actual' ? 'cursor-not-allowed' : ''}`}
                           >
                             Nghe nhanh
                           </button>
@@ -815,9 +815,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       )}
                       {!isTestCompleted && timerStartTime !== null && (
                         <div className="flex items-center gap-2 ml-2">
-                           {topic.type === 'LISTENING' && lessonStarted && listeningMode !== 'actual' && (
+                           {topic.type === 'LISTENING' && lessonStarted && (
                               <button
                                 onClick={() => {
+                                  if (listeningMode === 'actual') return;
                                   if (isPlayingDirections && directionAudioRef.current) {
                                     if (directionAudioRef.current.paused) directionAudioRef.current.play();
                                     else directionAudioRef.current.pause();
@@ -826,8 +827,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     else audioRef.current.pause();
                                   }
                                 }}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 transition-colors cursor-pointer shrink-0"
-                                title="Play/Pause Audio"
+                                className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${listeningMode === 'actual' ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 cursor-pointer'}`}
+                                title={listeningMode === 'actual' ? "Không thể điều khiển ở chế độ Thi thật" : "Play/Pause Audio"}
                               >
                                 {isAudioNodePlaying ? (
                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -944,22 +945,23 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             <p className="text-sm text-slate-500 mb-8 max-w-sm mx-auto">Audio sẽ tự động phát sau khi bạn bắt đầu. Thời gian làm bài sẽ được tính ngay lập tức.</p>
                             
                             {topic.part && topic.part <= 4 && (
-                                <div className="flex flex-col items-center mb-8 w-full">
-                                  <div className="flex items-center bg-slate-100/80 p-1 rounded-xl w-full max-w-[260px] mx-auto border border-slate-200/50">
-                                    <button 
-                                      onClick={() => setListeningMode('practice')}
-                                      className={`flex-1 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-300 ${listeningMode === 'practice' ? 'bg-white text-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-200/60' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                                    >
-                                      Luyện tập
-                                    </button>
-                                    <button 
-                                      onClick={() => setListeningMode('actual')}
-                                      className={`flex-1 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-300 ${listeningMode === 'actual' ? 'bg-white text-emerald-700 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-200/60' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                                    >
-                                      Thi thật
-                                    </button>
+                                  <div className="flex flex-col items-center mb-8 w-full gap-2">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#14532d] opacity-80">Chọn chế độ làm bài</span>
+                                    <div className="flex items-center bg-slate-200/50 p-1 rounded-lg w-full max-w-[160px] mx-auto border border-slate-300/30 shadow-inner">
+                                      <button 
+                                        onClick={() => setListeningMode('practice')}
+                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'practice' ? 'bg-orange-400 text-[#14532d] shadow-[0_2px_4px_rgba(251,146,60,0.4)] border border-orange-300' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
+                                      >
+                                        Luyện tập
+                                      </button>
+                                      <button 
+                                        onClick={() => setListeningMode('actual')}
+                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'actual' ? 'bg-[#1e1b4b] text-amber-400 shadow-[0_2px_4px_rgba(30,27,75,0.4)] border border-indigo-900' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
+                                      >
+                                        Thi thật
+                                      </button>
+                                    </div>
                                   </div>
-                                </div>
                             )}
                             
                             <button 
