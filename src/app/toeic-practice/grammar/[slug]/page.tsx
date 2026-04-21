@@ -1361,7 +1361,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     </div>
                                                  )}
 
-<<<<<<< HEAD
+
                                          {currentQuestionsGroup[0]?.imageUrl && (
                                              <div className="w-full flex justify-center z-10 relative mb-4 border-b border-slate-100 pb-4">
                                                <img 
