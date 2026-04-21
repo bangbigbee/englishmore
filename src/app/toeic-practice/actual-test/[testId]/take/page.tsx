@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
@@ -35,7 +35,7 @@ const PracticeAudioPlayer = ({ src, isPractice }: { src: string, isPractice: boo
     );
 };
 
-export default function TakeTestPage() {
+function TakeTestContent() {
     const params = useParams();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -327,5 +327,13 @@ export default function TakeTestPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function TakeTestPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4"><div className="w-8 h-8 md:w-12 md:h-12 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin"></div><div className="text-slate-500 font-medium">Đang thiết lập phòng thi...</div></div>}>
+            <TakeTestContent />
+        </Suspense>
     );
 }
