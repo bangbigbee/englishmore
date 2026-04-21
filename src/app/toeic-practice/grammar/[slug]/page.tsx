@@ -1239,10 +1239,16 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           return (
                                             <div key={q.id} className={`flex flex-col ${localIdx > 0 ? 'pt-10 border-t border-dashed border-slate-200' : ''}`}>
                                               <div className="mb-6 flex flex-col items-center relative">
-                                                {/* Question Number Badge for Part 3/4 context */}
-                                                {(topic.part === 3 || topic.part === 4) && (
-                                                    <div className="absolute top-0 left-0 text-5xl md:text-6xl font-black text-slate-100 -mt-4 -ml-2 sm:-ml-4 pointer-events-none z-0">
-                                                        Q{topic.part === 3 ? globalIdx + 32 : globalIdx + 71}
+                                                {/* Question Number Badge for all parts context */}
+                                                {(topic.part && topic.part >= 1 && topic.part <= 7) && (
+                                                    <div className="absolute top-0 left-0 text-5xl md:text-6xl font-black text-slate-100/80 -mt-4 -ml-2 sm:-ml-4 pointer-events-none z-0 select-none">
+                                                        Q{topic.part === 1 ? globalIdx + 1 :
+                                                           topic.part === 2 ? globalIdx + 7 :
+                                                           topic.part === 3 ? globalIdx + 32 :
+                                                           topic.part === 4 ? globalIdx + 71 :
+                                                           topic.part === 5 ? globalIdx + 101 :
+                                                           topic.part === 6 ? globalIdx + 131 :
+                                                           globalIdx + 147}
                                                     </div>
                                                 )}
 
@@ -1252,8 +1258,16 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                         <span className="italic text-slate-400 font-normal text-lg">Nội dung câu hỏi không được in sẵn. Mời bạn nghe câu hỏi từ Audio.</span>
                                                     ) : (
                                                         <>
-                                                           {(topic.part === 3 || topic.part === 4) && (
-                                                              <span className="mr-2 text-slate-700">{topic.part === 3 ? globalIdx + 32 : globalIdx + 71}.</span>
+                                                           {topic.part && topic.part >= 1 && topic.part <= 7 && (
+                                                              <span className={`mr-2 font-bold whitespace-nowrap ${q.question ? 'text-slate-700' : 'text-slate-800'}`}>
+                                                                  Câu {topic.part === 1 ? globalIdx + 1 :
+                                                                       topic.part === 2 ? globalIdx + 7 :
+                                                                       topic.part === 3 ? globalIdx + 32 :
+                                                                       topic.part === 4 ? globalIdx + 71 :
+                                                                       topic.part === 5 ? globalIdx + 101 :
+                                                                       topic.part === 6 ? globalIdx + 131 :
+                                                                       globalIdx + 147}.
+                                                              </span>
                                                            )}
                                                            <span>{q.question}</span>
                                                         </>
