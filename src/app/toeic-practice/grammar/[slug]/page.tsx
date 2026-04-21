@@ -1466,7 +1466,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                               )
                                                           })()}
 
-                                                          {q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && !isGrouped && (() => {
+                                                          {q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && questionsPerView === 1 && (() => {
                                                               const vocabTierLevel = currentLesson.vocabularyAccessTier === 'ULTRA' ? 3 : currentLesson.vocabularyAccessTier === 'PRO' ? 2 : 1;
                                                               const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
                                                               const isLocked = vocabTierLevel > userTierLevel;
@@ -1565,7 +1565,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 )}
 
                                                 {/* Vocabulary Section (Only for non-grouped) */}
-                                                {isShowingResult && showVocab[q.id] && q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && !isGrouped && (
+                                                {isShowingResult && showVocab[q.id] && q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && questionsPerView === 1 && (
                                                   <div className="w-full mt-4 p-4 md:p-5 rounded-2xl border-2 border-blue-200 bg-blue-50/50">
                                                     <div className="flex items-center gap-2 mb-3 text-blue-800 font-bold">
                                                       <span className="text-base md:text-lg">📚</span>
@@ -1592,7 +1592,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       </div>
                                       
                                       {/* Group Level Vocabulary Section */}
-                                      {isShowingResult && isGrouped && currentQuestionsGroup.length > 0 && currentQuestionsGroup[0].vocabulary && Array.isArray(currentQuestionsGroup[0].vocabulary) && currentQuestionsGroup[0].vocabulary.length > 0 && (
+                                      {currentQuestionsGroup.length > 0 && showResults[currentQuestionsGroup[0].id] && questionsPerView > 1 && currentQuestionsGroup[0].vocabulary && Array.isArray(currentQuestionsGroup[0].vocabulary) && currentQuestionsGroup[0].vocabulary.length > 0 && (
                                         <div className="w-full border-t border-slate-200 pt-6 mt-6 flex flex-col gap-4">
                                           {(() => {
                                             const groupQ = currentQuestionsGroup[0];
