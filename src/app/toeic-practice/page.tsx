@@ -76,7 +76,7 @@ const TABS = [
 	},
 	{ 
 		key: "actual-test", 
-		label: "Actual Test", 
+		label: "Luyện Đề", 
 		icon: (
 			<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<rect x="6" y="4" width="12" height="18" rx="2" fill="#8B5CF6" fillOpacity="0.15" stroke="#8B5CF6" strokeWidth="2"/>
