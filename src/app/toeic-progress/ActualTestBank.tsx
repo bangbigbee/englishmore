@@ -43,10 +43,18 @@ export default async function ActualTestBank({ filter = 'mistakes' }: { filter?:
 	}
 
 	const isMistakes = filter === 'mistakes';
+    const isHistory = filter === 'history';
 
     let items: any[] = [];
+    let records: any[] = [];
 
-    if (isMistakes) {
+    if (isHistory) {
+        records = await prisma.toeicTestRecord.findMany({
+            where: { userId: session.user.id },
+            orderBy: { createdAt: 'desc' },
+            take: 100
+        });
+    } else if (isMistakes) {
         const answers = await prisma.toeicAnswer.findMany({
             where: { 
                 userId: session.user.id,
@@ -104,7 +112,7 @@ export default async function ActualTestBank({ filter = 'mistakes' }: { filter?:
         items = bookmarks;
     }
 
-	if (items.length === 0) {
+	if (!isHistory && items.length === 0) {
 		return (
 			<div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
 				<div className="w-16 h-16 bg-slate-50 text-slate-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-slate-100">
@@ -122,9 +130,59 @@ export default async function ActualTestBank({ filter = 'mistakes' }: { filter?:
 		);
 	}
 
+    if (isHistory && records.length === 0) {
+        return (
+			<div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+				<div className="w-16 h-16 bg-slate-50 text-slate-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-slate-100">
+					<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+				</div>
+				<h3 className="text-xl font-bold text-slate-800 mb-2">Chưa có lịch sử thi</h3>
+				<p className="text-slate-500 max-w-sm mx-auto">
+                    Bạn chưa thực hiện bài thi thật nào. Hãy làm một bài thi và quay lại đây nhé.
+				</p>
+			</div>
+		);
+    }
+
 	return (
 		<div className="space-y-4">
-			{items.map((item) => {
+            {isHistory && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {records.map((record) => {
+                        const dateObj = new Date(record.createdAt);
+                        const displayDate = dateObj.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                        let scoreStr = 'N/A';
+                        if (record.scoreListening != null || record.scoreReading != null) {
+                            scoreStr = ((record.scoreListening || 0) + (record.scoreReading || 0)).toString();
+                        }
+                        
+                        return (
+                            <Link key={record.id} href={`/toeic-practice/actual-test/${record.testId}`} className="block bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all group relative">
+                                <div className="flex justify-between items-start mb-4">
+                                    <span className={`px-2 py-1 rounded text-xs font-bold ${record.mode === 'actual' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}`}>
+                                        {record.mode === 'actual' ? 'THI THẬT' : 'LUYỆN TẬP'}
+                                    </span>
+                                    <span className="text-xs text-slate-400 font-medium">{displayDate}</span>
+                                </div>
+                                <h3 className="font-black text-slate-800 text-lg mb-4 line-clamp-2">{record.title || record.testId}</h3>
+                                
+                                <div className="flex items-center gap-4 bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                    <div className="flex-1 text-center border-r border-slate-200">
+                                        <div className="text-[11px] font-bold text-slate-400 mb-1">TỔNG ĐIỂM</div>
+                                        <div className="text-xl font-black text-indigo-600">{scoreStr}</div>
+                                    </div>
+                                    <div className="flex-1 text-center">
+                                        <div className="text-[11px] font-bold text-slate-400 mb-1">SỐ CÂU ĐÚNG</div>
+                                        <div className="text-xl font-black text-slate-700">{record.correctAnswers}/{record.totalQuestions}</div>
+                                    </div>
+                                </div>
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
+            
+			{!isHistory && items.map((item) => {
 				const q = item.question;
 				return (
 					<Link 

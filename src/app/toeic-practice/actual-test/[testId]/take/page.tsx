@@ -44,6 +44,7 @@ function TakeTestContent() {
     const [testData, setTestData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [answers, setAnswers] = useState<Record<number, string>>({});
+    const [bookmarkedIds, setBookmarkedIds] = useState<Record<string, boolean>>({});
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [timeLeft, setTimeLeft] = useState(initialTimeSeconds);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -103,6 +104,43 @@ function TakeTestContent() {
         };
         fetchTest();
     }, [testId]);
+
+    useEffect(() => {
+        const fetchBookmarks = async () => {
+            try {
+                const res = await fetch('/api/toeic/grammar/bookmark');
+                if (res.ok) {
+                    const data = await res.json();
+                    const bMap: Record<string, boolean> = {};
+                    data.forEach((id: string) => { bMap[id] = true; });
+                    setBookmarkedIds(bMap);
+                }
+            } catch (e) {
+                console.error('Failed to fetch bookmarks', e);
+            }
+        };
+        fetchBookmarks();
+    }, []);
+
+    const toggleBookmark = async (questionId: string) => {
+        const current = !!bookmarkedIds[questionId];
+        const next = !current;
+        setBookmarkedIds(prev => ({ ...prev, [questionId]: next }));
+        
+        try {
+            const res = await fetch('/api/toeic/grammar/bookmark', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ questionId, isBookmarked: next })
+            });
+            if (!res.ok) {
+                throw new Error('Failed');
+            }
+        } catch (e) {
+            setBookmarkedIds(prev => ({ ...prev, [questionId]: current }));
+            alert('Cần nâng cấp gói để lưu câu hỏi này. Tính năng Sổ tay tuỳ thuộc vào gói truy cập (PRO/ULTRA).');
+        }
+    };
 
     useEffect(() => {
         if (!isFullscreen && isActual) return;
@@ -184,9 +222,8 @@ function TakeTestContent() {
             const data = await res.json();
             if (data.success) {
                 exitFullscreen();
-                // Route to result page later, just alert for now.
-                alert('Nộp bài thành công! Chúng tôi sẽ phát triển giao diện điểm số ở phiên sau.');
-                router.push(`/toeic-practice/actual-test/${testId}`);
+                alert('Nộp bài thành công! Kết quả đã được lưu vào Lịch sử thi trong Sổ Tay Luyện Đề.');
+                router.push(`/toeic-progress?tab=actual-test-bank&filter=history`);
             } else {
                 alert('Có lỗi xảy ra: ' + data.error);
                 setIsSubmitting(false);
@@ -291,7 +328,18 @@ function TakeTestContent() {
                                     </div>
                                     <div className="space-y-10">
                                         {partInfo.questions.map((q: any, qIdx: number) => (
-                                            <div key={q.id} className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                                            <div key={q.id} className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm relative group">
+                                                {/* Bookmark Button for Reading Parts in Practice Mode */}
+                                                {!isActual && partInfo.part >= 5 && partInfo.part <= 7 && (
+                                                    <button
+                                                        onClick={() => toggleBookmark(q.id)}
+                                                        className={`absolute top-4 right-4 p-2 rounded-xl transition-all z-10 border ${bookmarkedIds[q.id] ? 'bg-amber-50 border-amber-200 text-amber-500 shadow-sm' : 'bg-white border-transparent text-slate-300 hover:text-amber-400 hover:bg-slate-50'}`}
+                                                        title={bookmarkedIds[q.id] ? "Đã lưu vào Sổ tay" : "Lưu vào Sổ tay"}
+                                                    >
+                                                        <svg className={`w-6 h-6 ${bookmarkedIds[q.id] ? 'fill-amber-500' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                                    </button>
+                                                )}
+                                                
                                                 <div className="flex flex-col lg:flex-row gap-6">
                                                     
                                                     {/* Left Column: Media (Image, Passage) */}
