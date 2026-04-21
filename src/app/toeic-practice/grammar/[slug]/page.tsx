@@ -1450,7 +1450,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                               )
                                                           })()}
 
-                                                          {q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && (() => {
+                                                          {q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && !isGrouped && (() => {
                                                               const vocabTierLevel = currentLesson.vocabularyAccessTier === 'ULTRA' ? 3 : currentLesson.vocabularyAccessTier === 'PRO' ? 2 : 1;
                                                               const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
                                                               const isLocked = vocabTierLevel > userTierLevel;
@@ -1549,8 +1549,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                   </div>
                                                 )}
 
-                                                {/* Vocabulary Section */}
-                                                {isShowingResult && showVocab[q.id] && q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && (
+                                                {/* Vocabulary Section (Only for non-grouped) */}
+                                                {isShowingResult && showVocab[q.id] && q.vocabulary && Array.isArray(q.vocabulary) && q.vocabulary.length > 0 && !isGrouped && (
                                                   <div className="w-full mt-4 p-4 md:p-5 rounded-2xl border-2 border-blue-200 bg-blue-50/50">
                                                     <div className="flex items-center gap-2 mb-3 text-blue-800 font-bold">
                                                       <span className="text-base md:text-lg">📚</span>
@@ -1576,6 +1576,61 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       })()}
                                       </div>
                                       
+                                      {/* Group Level Vocabulary Section */}
+                                      {isShowingResult && isGrouped && currentQuestionsGroup.length > 0 && currentQuestionsGroup[0].vocabulary && Array.isArray(currentQuestionsGroup[0].vocabulary) && currentQuestionsGroup[0].vocabulary.length > 0 && (
+                                        <div className="w-full border-t border-slate-200 pt-6 mt-6 flex flex-col gap-4">
+                                          {(() => {
+                                            const groupQ = currentQuestionsGroup[0];
+                                            const vocabTierLevel = currentLesson.vocabularyAccessTier === 'ULTRA' ? 3 : currentLesson.vocabularyAccessTier === 'PRO' ? 2 : 1;
+                                            const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                            const isLocked = vocabTierLevel > userTierLevel;
+
+                                            return (
+                                              <>
+                                                {isLocked ? (
+                                                  <button
+                                                    onClick={() => setShowPricing(true)}
+                                                    className="w-full max-w-[200px] h-11 px-4 rounded-xl border bg-white border-slate-200 text-slate-400 hover:border-blue-400 hover:text-blue-500 transition-all flex items-center gap-2 justify-center cursor-pointer shadow-sm relative group"
+                                                  >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                    <span className="font-semibold text-sm">Từ vựng quan trọng</span>
+                                                    <div className={`absolute -top-1.5 -right-1.5 filter drop-shadow-md ${currentLesson.vocabularyAccessTier === 'ULTRA' ? 'text-purple-600' : 'text-amber-500'}`}>
+                                                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.vocabularyAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                                    </div>
+                                                  </button>
+                                                ) : (
+                                                  <button
+                                                    onClick={() => setShowVocab(prev => ({ ...prev, [groupQ.id]: !prev[groupQ.id] }))}
+                                                    className={`w-full max-w-[200px] h-11 px-4 text-sm font-semibold rounded-xl border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none gap-2 ${showVocab[groupQ.id] ? 'bg-blue-100 border-blue-300 text-blue-700' : 'bg-white border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600'}`}
+                                                  >
+                                                    <svg className="w-5 h-5" fill={showVocab[groupQ.id] ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                                    {groupQ.vocabulary.length} Từ vựng
+                                                  </button>
+                                                )}
+                                                
+                                                {showVocab[groupQ.id] && !isLocked && (
+                                                  <div className="w-full p-4 md:p-5 rounded-2xl border-2 border-blue-200 bg-blue-50/50">
+                                                    <div className="flex items-center gap-2 mb-3 text-blue-800 font-bold">
+                                                      <span className="text-base md:text-lg">📚</span>
+                                                      <span>Từ vựng quan trọng của Nhóm {topic.part === 3 ? `${activeGroupStartIndex + 32} - ${activeGroupStartIndex + 32 + currentQuestionsGroup.length - 1}` : topic.part === 4 ? `${activeGroupStartIndex + 71} - ${activeGroupStartIndex + 71 + currentQuestionsGroup.length - 1}` : ''}</span>
+                                                    </div>
+                                                    <ul className="space-y-2">
+                                                      {groupQ.vocabulary.map((vocabItem: any, vIdx: number) => (
+                                                        <li key={vIdx} className="bg-white p-2.5 rounded-lg border border-blue-100 shadow-sm flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+                                                          <span className="font-semibold text-blue-900">{vocabItem.word}</span>
+                                                          <span className="hidden md:inline text-blue-300">-</span>
+                                                          <span className="text-gray-700 text-sm md:text-base">{vocabItem.meaning}</span>
+                                                        </li>
+                                                      ))}
+                                                    </ul>
+                                                  </div>
+                                                )}
+                                              </>
+                                            );
+                                          })()}
+                                        </div>
+                                      )}
+
                                       {/* Unified Navigation at Bottom of Group */}
                                       <div className="mt-10 flex flex-row items-center justify-between gap-3 w-full border-t border-slate-200 pt-6">
                                         <button
