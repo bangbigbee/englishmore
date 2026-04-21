@@ -1707,11 +1707,7 @@ export default function AdminDashboard() {
               matchedIndex = expectedIndex >= 0 && expectedIndex < toeicQuestions.length ? expectedIndex : -1
             }
             
-            const realQ = toeicQuestions.find(q => q.questionNumber === qNum);
-            
-            if (realQ) {
-                 targetQuestions.push(realQ);
-            } else if (matchedIndex !== -1 && toeicQuestions[matchedIndex]) {
+            if (matchedIndex !== -1 && toeicQuestions[matchedIndex]) {
                  targetQuestions.push(toeicQuestions[matchedIndex]);
             }
         }
