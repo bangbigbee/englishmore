@@ -70,7 +70,7 @@ export default function TakeTestPage() {
     const isActual = mode === 'actual';
 
     return (
-        <div className={`min-h-screen ${isActual ? 'bg-black text-white' : 'bg-slate-50 text-slate-800'}`}>
+        <div className={`fixed inset-0 z-[9999] ${isActual ? 'bg-black text-white' : 'bg-slate-50 text-slate-800'}`}>
             {!isFullscreen && isActual ? (
                 <div className="min-h-screen flex flex-col items-center justify-center bg-black gap-6 px-4">
                     <svg className="w-20 h-20 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -113,8 +113,57 @@ export default function TakeTestPage() {
                     <div className="flex flex-1 overflow-hidden">
                         {/* Main Stage */}
                         <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
-                            <h2 className="text-2xl font-bold mb-4">Các Part đã chọn: {selectedPartsList.join(', ')}</h2>
-                            <p className="text-slate-500">Khu vực hiển thị câu hỏi và đoạn văn... (Sẽ ghép nối logic từ part.tsx hiện tại sau)</p>
+                            {testData.parts.filter((p: any) => selectedPartsList.includes(p.part)).map((partInfo: any, pIdx: number) => (
+                                <div key={pIdx} className="mb-12">
+                                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6">
+                                        <h2 className="text-xl font-black text-indigo-900">Part {partInfo.part}</h2>
+                                    </div>
+                                    <div className="space-y-10">
+                                        {partInfo.questions.map((q: any, qIdx: number) => (
+                                            <div key={q.id} className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                                                <div className="flex gap-4">
+                                                    <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 shrink-0">
+                                                        {qIdx + 1}
+                                                    </span>
+                                                    <div className="flex-1">
+                                                        {q.imageUrl && (
+                                                            <div className="mb-4">
+                                                                <img src={q.imageUrl} alt="Question Context" className="max-w-full lg:max-w-[70%] rounded-xl cursor-pointer shadow-sm hover:opacity-90 transition-opacity" />
+                                                            </div>
+                                                        )}
+                                                        {/* In actual listening test, audio is usually a single global track. But for now we show individual tracks if present */}
+                                                        {q.audioUrl && (
+                                                            <div className="mb-4">
+                                                                <audio src={q.audioUrl} controls className="w-full max-w-sm h-10" />
+                                                            </div>
+                                                        )}
+                                                        {q.question && (
+                                                            <div className="text-lg font-bold text-slate-800 mb-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: q.question }} />
+                                                        )}
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                                                            {['A', 'B', 'C', 'D'].map((opt) => (
+                                                                q[`option${opt}`] ? (
+                                                                    <div key={opt} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer transition-colors group">
+                                                                        <div className="w-6 h-6 rounded-full border-2 border-slate-300 group-hover:border-blue-500 flex items-center justify-center text-xs font-bold text-slate-500 group-hover:text-blue-600">
+                                                                            {opt}
+                                                                        </div>
+                                                                        <span className="text-slate-700 font-medium" dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
+                                                                    </div>
+                                                                ) : null
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                            {testData.parts.filter((p: any) => selectedPartsList.includes(p.part)).length === 0 && (
+                                <div className="text-center py-20 text-slate-400 font-medium border-2 border-dashed border-slate-200 rounded-3xl">
+                                    Không có dữ liệu cho các Part được chọn.
+                                </div>
+                            )}
                         </div>
 
                         {/* Answer Sheet Sidebar */}
