@@ -17,17 +17,11 @@ const PracticeAudioPlayer = ({ src, isPractice }: { src: string, isPractice: boo
             <audio ref={audioRef} src={src} controls className="w-full h-10" />
             {isPractice && (
                 <div className="flex items-center gap-1.5 justify-start">
-                    <button type="button" onClick={() => handleSeek(-6)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua lùi 6 giây">
-                        -6s
-                    </button>
                     <button type="button" onClick={() => handleSeek(-3)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua lùi 3 giây">
                         -3s
                     </button>
                     <button type="button" onClick={() => handleSeek(3)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua tới 3 giây">
                         +3s
-                    </button>
-                    <button type="button" onClick={() => handleSeek(6)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua tới 6 giây">
-                        +6s
                     </button>
                 </div>
             )}
@@ -44,11 +38,16 @@ function TakeTestContent() {
     const mode = searchParams.get('mode') || 'practice';
     const partsParam = searchParams.get('parts') || '';
 
+    const timeParam = searchParams.get('time') || '120';
+    const initialTimeSeconds = Math.max(1, parseInt(timeParam) * 60);
+
     const [testData, setTestData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [answers, setAnswers] = useState<Record<number, string>>({});
-
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(initialTimeSeconds);
+
+    const isActual = mode === 'actual';
 
     useEffect(() => {
         const fetchTest = async () => {
@@ -66,6 +65,23 @@ function TakeTestContent() {
         };
         fetchTest();
     }, [testId]);
+
+    useEffect(() => {
+        if (!isFullscreen && isActual) return;
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    alert("Đã hết thời gian làm bài!");
+                    return 0; // TODO: Trigger auto-submit
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [isFullscreen, isActual]);
 
     const enterFullscreen = () => {
         const elem = document.documentElement;
@@ -100,29 +116,6 @@ function TakeTestContent() {
     }
 
     const selectedPartsList = partsParam.split(',').filter(Boolean).map(Number);
-    const timeParam = searchParams.get('time') || '120';
-    const isActual = mode === 'actual';
-
-    // Timer logic
-    const initialTimeSeconds = Math.max(1, parseInt(timeParam) * 60);
-    const [timeLeft, setTimeLeft] = useState(initialTimeSeconds);
-
-    useEffect(() => {
-        if (!isFullscreen && isActual) return;
-
-        const timer = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    alert("Đã hết thời gian làm bài!");
-                    return 0; // TODO: Trigger auto-submit
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [isFullscreen, isActual]);
 
     const formatTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600);
