@@ -645,7 +645,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
 
 function GrammarFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
-		<div className={`w-[260px] sm:w-[280px] h-[160px] cursor-pointer shrink-0 border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -700,7 +700,7 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 	}, [isActive]);
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] h-[160px] cursor-pointer shrink-0 border border-[#14532d]/10 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-[#14532d]/10 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			{/* Front/Default view */}
 			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
@@ -793,7 +793,7 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 	};
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] h-[160px] cursor-pointer shrink-0 border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full">
 				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -826,40 +826,46 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 	);
 }
 
-function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
+function VocabFeatureCard({ onClick }: any) {
     return (
-		<div className="perspective-[1000px] w-[260px] sm:w-[280px] h-[160px] cursor-pointer shrink-0" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl' : 'shadow-sm hover:shadow-md'}`}>
-                <div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
-                    <div className="w-full flex items-center gap-4 pb-1">
-                        <div className="w-12 h-12 shrink-0 bg-slate-50 text-[#14532d] rounded-xl flex items-center justify-center">
-                            {icon}
-                        </div>
-                        <h3 className="text-xl font-bold text-[#14532d]">Từ vựng</h3>
-                    </div>
-                    <p className="text-slate-500 font-medium text-sm text-left w-full mt-2">
-                        Học từ vựng thông minh bằng thuật toán Flashcard.
-                    </p>
-                </div>
-                <div className="absolute inset-0 w-full h-full bg-white border-2 border-[#14532d]/20 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] p-6">
-                        <div className="mb-3 text-center">
-                            <div className="text-[#14532d] font-bold text-xl leading-none tracking-tight">vocabulary</div>
-                            <div className="opacity-80 text-[11px] text-slate-500 font-medium mt-1">/vəˈkæbjələri/ <span className="text-amber-600 ml-1 italic font-semibold">noun</span></div>
-                        </div>
-                        <button className="bg-[#14532d] text-[#eab308] px-5 py-2 rounded-full text-sm font-bold shadow-md hover:scale-105 transition-transform flex items-center gap-1.5 focus:outline-none relative z-10 w-max">
-                            Học Ngay <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </button>
-                    </div>
-                </div>
+		<div className="relative w-full max-w-[280px] h-[90px] cursor-pointer shrink-0 rounded-[20px] shadow-sm hover:shadow-md transition-shadow group overflow-hidden bg-white border border-[#14532d]/20 flex items-center justify-between px-5 focus:outline-none" onClick={onClick}>
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col text-left">
+                <div className="text-[#14532d] font-bold text-lg leading-none tracking-tight">vocabulary</div>
+                <div className="opacity-80 text-xs text-slate-500 font-medium mt-1">/vəˈkæbjələri/</div>
             </div>
+            
+            <button className="bg-amber-500 text-[#14532d] px-4 py-2 flex items-center gap-1 rounded-full text-[13px] font-black shadow-md hover:scale-105 transition-transform focus:outline-none relative z-10 overflow-hidden">
+                <span className="relative z-10">Từ vựng</span>
+                <svg className="w-3.5 h-3.5 ml-0.5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                {/* Button Shimmer */}
+                <div className="absolute top-0 -inset-full h-full w-[150%] block bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none animate-shimmer-sweep" />
+            </button>
         </div>
     )
 }
 
 function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
+    const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+
+    useEffect(() => {
+        let int: NodeJS.Timeout;
+        if (isActive) {
+            const letters = ['A', 'B', 'C', 'D'];
+            int = setInterval(() => {
+                const random = letters[Math.floor(Math.random() * letters.length)];
+                setSelectedLetter(random);
+            }, 750);
+        } else {
+            setSelectedLetter(null);
+        }
+        return () => clearInterval(int);
+    }, [isActive]);
+
     return (
-		<div className="perspective-[1000px] w-[260px] sm:w-[280px] h-[160px] cursor-pointer shrink-0" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className="perspective-[1000px] w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl' : 'shadow-sm hover:shadow-md'}`}>
                 {/* Front side */}
                 <div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
@@ -875,11 +881,27 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
                 </div>
                 {/* Back side */}
                 <div className="absolute inset-0 w-full h-full bg-white border-2 border-[#14532d]/20 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 p-6">
-                        <div className="mb-4 text-[#14532d] bg-white p-3 rounded-full shadow-sm border border-slate-100">
-                           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 p-6 relative">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="text-[#14532d] bg-white p-2.5 rounded-full shadow-sm border border-slate-100 flex-shrink-0">
+                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            </div>
+                            <div className="flex gap-2 z-10 w-full justify-center">
+                                {['A', 'B', 'C', 'D'].map((letter) => (
+                                    <span 
+                                        key={letter} 
+                                        className={`flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-black shadow-sm transition-all duration-300 ${
+                                            selectedLetter === letter 
+                                            ? 'bg-[#14532d] text-white border-transparent scale-110 ring-2 ring-[#14532d]/30 ring-offset-1' 
+                                            : 'bg-white border border-slate-300 text-[#14532d]'
+                                        }`}
+                                    >
+                                        {letter}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
-                        <button className="bg-[#14532d] text-white px-6 py-2.5 rounded-full text-sm font-black shadow-md hover:scale-105 transition-transform flex items-center gap-2">
+                        <button className="bg-[#14532d] text-white px-6 py-2 rounded-full text-sm font-black shadow-md hover:scale-105 transition-transform flex items-center gap-2 z-10 mt-1">
                             Bắt đầu <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </button>
                     </div>
@@ -893,22 +915,6 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, readingTopics: 10, vocabTopics: 50, detailedQuestions: 1200 });
 	const [activeCardIndex, setActiveCardIndex] = useState(0);
 	const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
-	const [showExerciseOptions, setShowExerciseOptions] = useState(false);
-	const [buttonXOffset, setButtonXOffset] = useState(-260);
-
-	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			setButtonXOffset(window.innerWidth < 640 ? -50 : -260);
-		}
-	}, []);
-
-	const exerciseOptions = [
-		{ label: 'Từ vựng', tab: 'vocabulary' },
-		{ label: 'Ngữ Pháp', tab: 'grammar' },
-		{ label: 'Reading', tab: 'reading' },
-		{ label: 'Listening', tab: 'listening' },
-		{ label: 'Luyện Đề', tab: 'actual-test' },
-	];
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
@@ -935,63 +941,8 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					Học từ vựng siêu hiệu quả và nhớ lâu. Giải thích ngữ pháp và mẹo làm bài chi tiết. Giúp bạn nâng cao điểm số TOEIC và hơn thế nữa
 				</p>
 
-				<div className="mt-8 flex items-center justify-center min-h-[72px]">
-					<AnimatePresence mode="wait">
-						{!showExerciseOptions ? (
-							<motion.button 
-								key="main-cta"
-								initial={{ opacity: 0, scale: 0.9 }}
-								animate={{ opacity: 1, scale: 1 }}
-								exit={{ opacity: 0, scale: 0.8 }}
-								transition={{ type: "spring", damping: 20, stiffness: 200 }}
-								onClick={() => setShowExerciseOptions(true)} 
-								className="brand-cta brand-cta-register !text-[15px] sm:!text-base !px-8 !py-3.5 group relative shadow-md whitespace-nowrap"
-							>
-								<span>Bắt đầu luyện tập</span>
-								<span aria-hidden="true" className="brand-cta-arrow transition-transform group-hover:translate-x-1 ml-2">→</span>
-							</motion.button>
-						) : (
-							<motion.div 
-								key="exercise-options"
-								initial={{ opacity: 0, y: 10 }}
-								animate={{ opacity: 1, y: 0 }}
-								exit={{ opacity: 0, y: 10 }}
-								className="flex flex-wrap items-center justify-center gap-2.5 px-4"
-							>
-								<motion.button
-									initial={{ opacity: 0, x: -10 }}
-									animate={{ opacity: 1, x: 0 }}
-									onClick={() => setShowExerciseOptions(false)}
-									className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-[#14532d] shadow-sm border border-[#14532d]/20 transition-all active:scale-90"
-									title="Quay lại"
-								>
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-								</motion.button>
-
-								{exerciseOptions.map((opt, idx) => (
-									<motion.button
-										key={opt.tab}
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 1 }}
-										transition={{ 
-											delay: idx * 0.1,
-											duration: 0.6,
-											ease: "easeInOut"
-										}}
-										onClick={() => onTabClick(opt.tab)}
-										style={{
-											background: `linear-gradient(to right, #14532d, #f59e0b)`,
-											backgroundSize: '500% 100%',
-											backgroundPosition: `${idx * 25}% 0`,
-										}}
-										className="px-4 py-2.5 sm:px-6 sm:py-3 rounded-full text-white text-[13px] sm:text-sm font-bold shadow-lg shadow-[#14532d]/10 transition-all hover:scale-105 hover:brightness-110 active:scale-95 whitespace-nowrap border border-white/10"
-									>
-										{opt.label}
-									</motion.button>
-								))}
-							</motion.div>
-						)}
-					</AnimatePresence>
+				<div className="mt-8 flex justify-center w-full px-4 relative z-20">
+					<VocabFeatureCard onClick={() => onTabClick('vocabulary')} />
 				</div>
 
 				<div 
@@ -1007,6 +958,15 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							0% { transform: translateX(0); }
 							100% { transform: translateX(calc(-50% - 1rem)); } 
 						}
+						@keyframes shimmerSweep {
+							0% { transform: translateX(-150%) skewX(-15deg); }
+							100% { transform: translateX(300%) skewX(-15deg); }
+						}
+						.animate-shimmer-sweep {
+							animation: shimmerSweep 3s infinite;
+						}
+						.hide-scrollbar::-webkit-scrollbar { display: none; }
+						.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 						@keyframes marquee-features {
 							0% { transform: translateX(-50%); }
 							100% { transform: translateX(0); } 
@@ -1059,27 +1019,12 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				</div>
 			</section>
 
-			{/* Features Section removed text */}
-			
-			<div 
-				className="w-full relative overflow-hidden mb-12"
-				style={{
-					WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
-					maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)'
-				}}
-			>
-				<div 
-					className="flex gap-6 py-4 px-2 w-max animate-[marquee-features_40s_linear_infinite] hover:[animation-play-state:paused]"
-				>
-					{[1, 2].map((loop) => (
-						<div key={loop} className="flex gap-6">
-							<VocabFeatureCard onMouseEnter={() => setHoveredCardIndex(0)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 0 || (hoveredCardIndex === null && activeCardIndex === 0)} onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>} />
-							<GrammarFeatureCard onMouseEnter={() => setHoveredCardIndex(1)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 1 || (hoveredCardIndex === null && activeCardIndex === 1)} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
-							<ReadingFeatureCard onMouseEnter={() => setHoveredCardIndex(2)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 2 || (hoveredCardIndex === null && activeCardIndex === 2)} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
-							<ListeningFeatureCard onMouseEnter={() => setHoveredCardIndex(3)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 3 || (hoveredCardIndex === null && activeCardIndex === 3)} onClick={() => onTabClick('listening')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>} />
-							<ActualTestFeatureCard onMouseEnter={() => setHoveredCardIndex(4)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 4 || (hoveredCardIndex === null && activeCardIndex === 4)} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
-						</div>
-					))}
+			<div className="w-full max-w-6xl mx-auto mb-12 px-4 mt-8 pb-8">
+				<div className="flex flex-nowrap overflow-x-auto justify-start lg:justify-center gap-6 py-4 px-2 hide-scrollbar">
+					<GrammarFeatureCard onMouseEnter={() => setHoveredCardIndex(1)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 1 || (hoveredCardIndex === null && activeCardIndex === 1)} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
+					<ListeningFeatureCard onMouseEnter={() => setHoveredCardIndex(2)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 2 || (hoveredCardIndex === null && activeCardIndex === 2)} onClick={() => onTabClick('listening')} icon={<svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>} />
+					<ReadingFeatureCard onMouseEnter={() => setHoveredCardIndex(3)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 3 || (hoveredCardIndex === null && activeCardIndex === 3)} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
+					<ActualTestFeatureCard onMouseEnter={() => setHoveredCardIndex(4)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 4 || (hoveredCardIndex === null && activeCardIndex === 4)} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
 				</div>
 			</div>
 		</div>
