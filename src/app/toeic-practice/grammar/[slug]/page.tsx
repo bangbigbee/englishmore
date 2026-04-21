@@ -396,7 +396,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
              }
          } else if (topic.part === 7) {
              const res = [];
-             let g = [];
+             let g: any[] = [];
              qs.forEach((q: any, idx: number) => {
                  if (idx === 0 || q.imageUrl) {
                      if (g.length > 0) res.push(g);
@@ -1013,7 +1013,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                              }
                              if (topic.type === 'READING' && topic.part === 7) {
                                  const res = [];
-                                 let g = [];
+                                 let g: any[] = [];
                                  qs.forEach((q: any, idx: number) => {
                                      if (idx === 0 || q.imageUrl) {
                                          if (g.length > 0) res.push(g);
@@ -1223,7 +1223,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                        }
                                        if (topic.type === 'READING' && topic.part === 7) {
                                            const res = [];
-                                           let g = [];
+                                           let g: any[] = [];
                                            qs.forEach((q: any, idx: number) => {
                                                if (idx === 0 || q.imageUrl) {
                                                    if (g.length > 0) res.push(g);
