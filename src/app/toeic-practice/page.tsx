@@ -2796,29 +2796,60 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 	);
 }
 
-function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: () => void }) {
-	const testPacks = [
-		{ title: "ETS 2024", subtitle: "Bộ đề thi thực tế mới nhất 2024", count: "10 bài test" },
-		{ title: "ETS 2023", subtitle: "Bộ đề thi thực tế năm 2023", count: "10 bài test" },
-		{ title: "Hackers TOEIC", subtitle: "Bộ đề luyện tập nâng cao", count: "10 bài test" },
-	];
+function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: string) => void }) {
+	const router = useRouter();
+	const [collections, setCollections] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchCollections = async () => {
+			try {
+				const res = await fetch('/api/toeic/actual-test');
+				if (res.ok) {
+					const data = await res.json();
+					setCollections(data);
+				}
+			} catch (error) {
+				console.error('Failed to fetch actual tests:', error);
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchCollections();
+	}, []);
+
+	if (loading) {
+		return <div className="py-12 text-center text-gray-500 italic">Đang tải bộ đề thi...</div>;
+	}
+
 	return (
-		<div>
-			<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
-				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
-				Đề Thi Thực Tế (Actual Test)
-			</h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-				{testPacks.map((test) => (
-					<TopicCard
-						key={test.title}
-						title={test.title}
-						subtitle={test.subtitle}
-						badgeText={test.count.replace(' bài test', ' TESTS')}
-						onClick={onPracticeClick}
-					/>
-				))}
-			</div>
+		<div className="flex flex-col gap-10">
+			{collections.map((col, cIdx) => (
+				<div key={cIdx}>
+					<h2 className="text-xl sm:text-[22px] font-black text-[#14532d] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+						<span className="w-1.5 h-6 rounded-full bg-[#8B5CF6] block shadow-sm"></span>
+						Bộ Đề {col.collection}
+					</h2>
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+						{col.tests.map((test: any) => (
+							<TopicCard
+								key={test.id}
+                                type="test"
+								title={test.title}
+								subtitle={`Gồm ${test.parts.length} parts`}
+								badgeText={test.collection}
+								onClick={() => router.push(`/toeic-practice/actual-test/${test.id}`)}
+							/>
+						))}
+					</div>
+				</div>
+			))}
+			
+			{collections.length === 0 && (
+				<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 bg-white/50 rounded-3xl font-medium">
+					Chưa có bộ đề thi nào được tạo.
+				</div>
+			)}
 		</div>
 	);
 }
