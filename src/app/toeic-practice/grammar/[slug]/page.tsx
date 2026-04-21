@@ -1420,11 +1420,25 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           
                                           const parsedTranslations = (() => {
                                               if (!q.translation) return { question: '', options: {} as Record<string, string> };
-                                              if (topic.type !== 'LISTENING' || !topic.part || topic.part > 4) {
-                                                   return { question: q.translation, options: {} as Record<string, string> };
+                                              
+                                              let result = { question: '', options: {} as Record<string, string> };
+                                              let transText = q.translation;
+
+                                              // Try parsing inline (A) ... (B) ... (C) ... (D) ...
+                                              const pattern = /(.*?)\s*\(\s*A\s*\)\s*(.*?)\s*\(\s*B\s*\)\s*(.*?)(?:\s*\(\s*C\s*\)\s*(.*?))?(?:\s*\(\s*D\s*\)\s*(.*?))?$/is;
+                                              const matchInline = transText.match(pattern);
+                                              
+                                              if (matchInline && matchInline[2] && matchInline[3]) {
+                                                  result.question = matchInline[1].trim();
+                                                  result.options['A'] = matchInline[2].trim().replace(/^[.\:\-\s]+/, '');
+                                                  result.options['B'] = matchInline[3].trim().replace(/^[.\:\-\s]+/, '');
+                                                  if (matchInline[4]) result.options['C'] = matchInline[4].trim().replace(/^[.\:\-\s]+/, '');
+                                                  if (matchInline[5]) result.options['D'] = matchInline[5].trim().replace(/^[.\:\-\s]+/, '');
+                                                  return result;
                                               }
-                                              const parts = q.translation.split(/[\/\n]+/);
-                                              const result = { question: '', options: {} as Record<string, string> };
+
+                                              // Fallback to line by line parsing
+                                              const parts = transText.split(/[\/\n]+/);
                                               parts.forEach((part: string) => {
                                                   const text = part.trim();
                                                   if (!text) return;
