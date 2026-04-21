@@ -148,32 +148,54 @@ export default function TakeTestPage() {
                                     <div className="space-y-10">
                                         {partInfo.questions.map((q: any, qIdx: number) => (
                                             <div key={q.id} className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
-                                                <div className="flex gap-4">
-                                                    <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 shrink-0">
-                                                        {startNumber + qIdx}
-                                                    </span>
-                                                    <div className="flex-1">
-                                                        {q.imageUrl && (
-                                                            <div className="mb-4">
-                                                                <img src={q.imageUrl} alt="Question Context" className="max-w-full lg:max-w-[70%] rounded-xl cursor-pointer shadow-sm hover:opacity-90 transition-opacity" />
+                                                <div className="flex flex-col lg:flex-row gap-6">
+                                                    
+                                                    {/* Left Column: Media (Image, Passage) */}
+                                                    {(q.imageUrl || q.passage) && (
+                                                        <div className="lg:w-1/2 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6">
+                                                            {q.imageUrl && (
+                                                                <img src={q.imageUrl} alt="Question Context" className="w-full rounded-xl shadow-sm cursor-pointer hover:opacity-95 transition-opacity" />
+                                                            )}
+                                                            {q.passage && (
+                                                                <div className="prose prose-sm prose-slate max-w-none bg-slate-50 p-4 rounded-xl border border-slate-100" dangerouslySetInnerHTML={{ __html: q.passage }} />
+                                                            )}
+                                                            {q.audioUrl && (
+                                                                <div className="mt-auto pt-4">
+                                                                    <audio src={q.audioUrl} controls className="w-full h-10" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Right Column: Question & Options */}
+                                                    <div className="flex-1 flex flex-col">
+                                                        <div className="flex gap-4 mb-5">
+                                                            <span className="w-8 h-8 rounded-full bg-slate-100 flex flex-shrink-0 items-center justify-center font-bold text-slate-500 shadow-sm">
+                                                                {startNumber + qIdx}
+                                                            </span>
+                                                            <div className="flex-1">
+                                                                {/* Audio fallback if no media column exists */}
+                                                                {!(q.imageUrl || q.passage) && q.audioUrl && (
+                                                                     <div className="mb-4">
+                                                                         <audio src={q.audioUrl} controls className="w-full max-w-sm h-10" />
+                                                                     </div>
+                                                                )}
+                                                                {q.question && (
+                                                                    <div className="text-lg font-bold text-slate-800 whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: q.question }} />
+                                                                )}
+                                                                {!q.question && (q.imageUrl || q.passage) && (
+                                                                    <div className="text-lg font-bold text-slate-800 whitespace-pre-wrap">Dựa vào ngữ liệu, hãy chọn đáp án đúng nhất:</div>
+                                                                )}
                                                             </div>
-                                                        )}
-                                                        {/* In actual listening test, audio is usually a single global track. But for now we show individual tracks if present */}
-                                                        {q.audioUrl && (
-                                                            <div className="mb-4">
-                                                                <audio src={q.audioUrl} controls className="w-full max-w-sm h-10" />
-                                                            </div>
-                                                        )}
-                                                        {q.question && (
-                                                            <div className="text-lg font-bold text-slate-800 mb-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: q.question }} />
-                                                        )}
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                                                        </div>
+
+                                                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 mt-auto">
                                                             {['A', 'B', 'C', 'D'].map((opt) => {
                                                                 if (!q[`option${opt}`]) return null;
                                                                 const isSelected = answers[startNumber + qIdx] === opt;
                                                                 return (
-                                                                    <div key={opt} onClick={() => setAnswers(prev => ({ ...prev, [startNumber + qIdx]: opt }))} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors group ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50'}`}>
-                                                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSelected ? 'border-blue-500 bg-blue-500 text-white' : 'border-slate-300 text-slate-500 group-hover:border-blue-500 group-hover:text-blue-600'}`}>
+                                                                    <div key={opt} onClick={() => setAnswers(prev => ({ ...prev, [startNumber + qIdx]: opt }))} className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all duration-200 group ${isSelected ? 'border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20' : 'border-slate-200 hover:border-blue-400 hover:bg-slate-50'}`}>
+                                                                        <div className={`w-6 h-6 flex-shrink-0 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSelected ? 'border-blue-500 bg-blue-500 text-white' : 'border-slate-300 text-slate-500 group-hover:border-blue-500 group-hover:text-blue-600'}`}>
                                                                             {opt}
                                                                         </div>
                                                                         <span className={`font-medium ${isSelected ? 'text-blue-800' : 'text-slate-700'}`} dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
