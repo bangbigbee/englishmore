@@ -1,7 +1,39 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+
+const PracticeAudioPlayer = ({ src, isPractice }: { src: string, isPractice: boolean }) => {
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    const handleSeek = (seconds: number) => {
+        if (audioRef.current) {
+            audioRef.current.currentTime += seconds;
+        }
+    };
+
+    return (
+        <div className="flex flex-col gap-2 w-full max-w-sm">
+            <audio ref={audioRef} src={src} controls className="w-full h-10" />
+            {isPractice && (
+                <div className="flex items-center gap-1.5 justify-start">
+                    <button type="button" onClick={() => handleSeek(-6)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua lùi 6 giây">
+                        -6s
+                    </button>
+                    <button type="button" onClick={() => handleSeek(-3)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua lùi 3 giây">
+                        -3s
+                    </button>
+                    <button type="button" onClick={() => handleSeek(3)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua tới 3 giây">
+                        +3s
+                    </button>
+                    <button type="button" onClick={() => handleSeek(6)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua tới 6 giây">
+                        +6s
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default function TakeTestPage() {
     const params = useParams();
@@ -187,14 +219,14 @@ export default function TakeTestPage() {
                                                     {(q.imageUrl || q.passage) && (
                                                         <div className="lg:w-1/2 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6">
                                                             {q.imageUrl && (
-                                                                <img src={q.imageUrl} alt="Question Context" className="w-full rounded-xl shadow-sm cursor-pointer hover:opacity-95 transition-opacity" />
+                                                                <img src={q.imageUrl} alt="Question Context" className="w-[80%] max-w-[400px] rounded-xl shadow-sm cursor-pointer hover:opacity-95 transition-opacity" />
                                                             )}
                                                             {q.passage && (
                                                                 <div className="prose prose-sm prose-slate max-w-none bg-slate-50 p-4 rounded-xl border border-slate-100" dangerouslySetInnerHTML={{ __html: q.passage }} />
                                                             )}
                                                             {q.audioUrl && (
                                                                 <div className="mt-auto pt-4">
-                                                                    <audio src={q.audioUrl} controls className="w-full h-10" />
+                                                                    <PracticeAudioPlayer src={q.audioUrl} isPractice={!isActual} />
                                                                 </div>
                                                             )}
                                                         </div>
@@ -210,7 +242,7 @@ export default function TakeTestPage() {
                                                                 {/* Audio fallback if no media column exists */}
                                                                 {!(q.imageUrl || q.passage) && q.audioUrl && (
                                                                      <div className="mb-4">
-                                                                         <audio src={q.audioUrl} controls className="w-full max-w-sm h-10" />
+                                                                         <PracticeAudioPlayer src={q.audioUrl} isPractice={!isActual} />
                                                                      </div>
                                                                 )}
                                                                 {q.question && (
