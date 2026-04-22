@@ -119,26 +119,26 @@ export default function ActualTestLobbyPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <button
                                 onClick={() => setMode('practice')}
-                                className={`p-6 rounded-2xl border-2 text-left transition-all ${mode === 'practice' ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-500/10' : 'border-slate-200 hover:border-blue-200'}`}
+                                className={`p-6 rounded-2xl border-2 text-left transition-all ${mode === 'practice' ? 'border-purple-500 bg-purple-50 ring-4 ring-purple-500/10' : 'border-slate-200 hover:border-purple-200'}`}
                             >
                                 <div className="flex items-center justify-between mb-2">
-                                    <h3 className={`text-xl font-bold ${mode === 'practice' ? 'text-blue-700' : 'text-slate-700'}`}>Luyện Tập</h3>
-                                    {mode === 'practice' && <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
+                                    <h3 className={`text-xl font-bold ${mode === 'practice' ? 'text-purple-700' : 'text-slate-700'}`}>Luyện Tập</h3>
+                                    {mode === 'practice' && <svg className="w-6 h-6 text-purple-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
                                 </div>
-                                <p className={`text-sm ${mode === 'practice' ? 'text-blue-600/80' : 'text-slate-500'}`}>
+                                <p className={`text-sm ${mode === 'practice' ? 'text-purple-600/80' : 'text-slate-500'}`}>
                                     Không giới hạn thời gian. Có thể tua audio, xem giải thích, và chọn từng Part cụ thể.
                                 </p>
                             </button>
 
                             <button
                                 onClick={() => setMode('actual')}
-                                className={`p-6 rounded-2xl border-2 text-left transition-all ${mode === 'actual' ? 'border-rose-500 bg-rose-50 ring-4 ring-rose-500/10' : 'border-slate-200 hover:border-rose-200'}`}
+                                className={`p-6 rounded-2xl border-2 text-left transition-all ${mode === 'actual' ? 'border-slate-800 bg-slate-50 ring-4 ring-slate-800/10' : 'border-slate-200 hover:border-slate-400'}`}
                             >
                                 <div className="flex items-center justify-between mb-2">
-                                    <h3 className={`text-xl font-bold ${mode === 'actual' ? 'text-rose-700' : 'text-slate-700'}`}>Thi Thử</h3>
-                                    {mode === 'actual' && <svg className="w-6 h-6 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
+                                    <h3 className={`text-xl font-bold ${mode === 'actual' ? 'text-slate-800' : 'text-slate-700'}`}>Thi Thử</h3>
+                                    {mode === 'actual' && <svg className="w-6 h-6 text-slate-800" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
                                 </div>
-                                <p className={`text-sm ${mode === 'actual' ? 'text-rose-600/80' : 'text-slate-500'}`}>
+                                <p className={`text-sm ${mode === 'actual' ? 'text-slate-700' : 'text-slate-500'}`}>
                                     Trải nghiệm thi như thật. Thời gian tự động dựa trên các part có sẵn. Full màn hình. Không tua audio. Làm liên tục test.
                                 </p>
                             </button>
@@ -149,19 +149,22 @@ export default function ActualTestLobbyPage() {
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
                                 <div className="flex items-center justify-between mb-4">
                                     <h4 className="font-bold text-slate-800">Các Part muốn luyện tập:</h4>
-                                    <button 
-                                        onClick={() => selectedParts.length === availableParts.length ? setSelectedParts([]) : setSelectedParts([...availableParts])}
-                                        className="text-sm font-bold text-blue-600 hover:text-blue-700 underline"
-                                    >
-                                        {selectedParts.length === availableParts.length ? 'Bỏ chọn tất cả' : 'Chọn tất cả (Tick All)'}
-                                    </button>
+                                    <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-slate-600 hover:text-purple-600 transition-colors select-none">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={selectedParts.length === availableParts.length} 
+                                            onChange={() => selectedParts.length === availableParts.length ? setSelectedParts([]) : setSelectedParts([...availableParts])}
+                                            className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                                        />
+                                        Chọn tất cả parts
+                                    </label>
                                 </div>
                                 <div className="flex flex-wrap gap-3">
                                     {availableParts.map(partId => (
                                         <button
                                             key={partId}
                                             onClick={() => togglePart(partId)}
-                                            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${selectedParts.includes(partId) ? 'bg-[#14532d] text-white border-[#14532d]' : 'bg-white text-slate-600 border-slate-300 hover:border-[#14532d]'}`}
+                                            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${selectedParts.includes(partId) ? 'bg-purple-600 text-white border-purple-600 shadow-sm' : 'bg-white text-slate-600 border-slate-300 hover:border-purple-300'}`}
                                         >
                                             Part {partId}
                                         </button>
@@ -179,11 +182,11 @@ export default function ActualTestLobbyPage() {
                                                 setIsTimeCustomized(true);
                                                 setCustomTimeMinutes(Number(e.target.value) || 1);
                                             }}
-                                            className="w-28 px-4 py-2 rounded-xl border-2 border-slate-300 focus:outline-none focus:border-blue-500 font-bold text-slate-700 bg-white shadow-sm" 
+                                            className="w-28 px-4 py-2 rounded-xl border-2 border-slate-300 focus:outline-none focus:border-purple-500 font-bold text-slate-700 bg-white shadow-sm" 
                                         />
                                         <button 
                                             onClick={() => setIsTimeCustomized(false)}
-                                            className={`text-sm font-medium transition-colors ${isTimeCustomized ? 'text-blue-600 hover:text-blue-700 underline' : 'text-slate-400'}`}
+                                            className={`text-sm font-medium transition-colors ${isTimeCustomized ? 'text-purple-600 hover:text-purple-700 underline' : 'text-slate-400'}`}
                                             disabled={!isTimeCustomized}
                                         >
                                             {isTimeCustomized ? 'Khôi phục thời gian chuẩn (Tự tính)' : 'Hệ thống tự tính dựa vào số part đã chọn'}
@@ -196,12 +199,12 @@ export default function ActualTestLobbyPage() {
                         <div className="pt-6 text-center">
                             <button
                                 onClick={handleStart}
-                                className={`px-10 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95 shadow-xl ${mode === 'actual' ? 'bg-rose-600 hover:bg-rose-700 hover:shadow-rose-600/20' : 'bg-blue-600 hover:bg-blue-700 hover:shadow-blue-600/20'}`}
+                                className={`px-10 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95 shadow-xl ${mode === 'actual' ? 'bg-slate-800 hover:bg-black hover:shadow-slate-800/20' : 'bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-600/20'}`}
                             >
                                 {mode === 'actual' ? 'VÀO PHÒNG THI' : 'BẮT ĐẦU LUYỆN TẬP'}
                             </button>
                             {mode === 'actual' && (
-                                <p className="mt-4 text-sm text-rose-500 font-medium">Bấm để hệ thống chuyển sang chế độ Toàn Màn Hình.</p>
+                                <p className="mt-4 text-sm text-slate-500 font-medium">Bấm để hệ thống chuyển sang chế độ Toàn Màn Hình.</p>
                             )}
                         </div>
                     </div>
