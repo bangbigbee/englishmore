@@ -2878,16 +2878,54 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
 						Bộ Đề {col.collection}
 					</h2>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-						{col.tests.map((test: any) => (
-							<TopicCard
+						{col.tests.map((test: any) => {
+                            const testParts = Array.from(new Set(test.parts.map((p: any) => p.part))).sort((a: any, b: any) => Number(a) - Number(b));
+                            return (
+							<div
 								key={test.id}
-                                type="test"
-								title={test.title}
-								subtitle={`Gồm ${test.parts.length} parts`}
-								badgeText={test.collection}
-								onClick={() => router.push(`/toeic-practice/actual-test/${test.id}`)}
-							/>
-						))}
+								className="group relative bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
+                                onClick={() => router.push(`/toeic-practice/actual-test/${test.id}`)}
+							>
+                                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#14532d] to-amber-500 opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                                <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <h3 className="text-xl font-black text-slate-800 group-hover:text-[#14532d] transition-colors">{test.title}</h3>
+                                        <div className="w-7 h-7 rounded-full bg-slate-50 group-hover:bg-[#14532d]/10 flex items-center justify-center text-slate-400 group-hover:text-[#14532d] transition-colors flex-shrink-0">
+                                            <svg className="w-3.5 h-3.5 translate-x-px group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex flex-col gap-2 mb-5 flex-1">
+                                        <div className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Parts có trong đề</div>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {testParts.map((pNum: any) => (
+                                                <div key={pNum} className="w-6 h-6 rounded-md bg-slate-100 text-slate-600 font-bold text-[11px] flex items-center justify-center border border-slate-200">
+                                                    {pNum}
+                                                </div>
+                                            ))}
+                                            {testParts.length === 0 && (
+                                                <span className="text-xs text-slate-400 font-medium">Đề trống</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-2.5 mt-auto pt-4 border-t border-slate-100">
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}`); }}
+                                            className="flex-1 py-2 focus:outline-none rounded-xl border border-slate-200 bg-white text-[#14532d] font-bold text-xs hover:bg-[#14532d]/5 hover:border-[#14532d]/30 transition-colors shadow-sm"
+                                        >
+                                            Luyện tập
+                                        </button>
+                                        <button 
+                                            onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}/take?mode=actual`); }}
+                                            className="flex-1 py-2 focus:outline-none rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold text-xs hover:from-violet-700 hover:to-fuchsia-700 transition-colors shadow-md shadow-purple-200"
+                                        >
+                                            Thi thử
+                                        </button>
+                                    </div>
+                                </div>
+							</div>
+						)})}
 					</div>
 				</div>
 			))}
