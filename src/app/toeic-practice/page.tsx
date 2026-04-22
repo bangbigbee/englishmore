@@ -2918,13 +2918,13 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                     <div className="flex items-center gap-2.5 mt-auto pt-4 border-t border-slate-100">
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}`); }}
-                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-slate-200 bg-white text-slate-600 font-bold text-xs hover:bg-slate-50 hover:text-slate-800 transition-colors cursor-pointer"
+                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-purple-200 bg-purple-50/50 text-purple-700 font-bold text-xs hover:bg-purple-100 hover:border-purple-300 transition-colors shadow-sm cursor-pointer"
                                         >
                                             Luyện tập
                                         </button>
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}/take?mode=actual&parts=${partsParam}&time=${computedTime}`); }}
-                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-purple-200 bg-purple-50/50 text-purple-700 font-bold text-xs hover:bg-purple-100 hover:border-purple-300 transition-colors shadow-sm cursor-pointer"
+                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-slate-200 bg-white text-slate-600 font-bold text-xs hover:bg-slate-100 hover:border-slate-300 hover:text-slate-800 transition-colors cursor-pointer"
                                         >
                                             Thi thử
                                         </button>
