@@ -188,10 +188,11 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
     }
 
     // Match options: "A. ...", "(A) ...", "A) ...", "A: ..."
-    const optionMatch = line.match(/^(?:Option\s*)?\(?([ABCD])\)?\s*[\).:-]?\s*(.+)$/i)
+    const optionMatch = line.match(/^(?:Option\s*)?(?:\(([ABCD])\)|([ABCD])[\).:-])\s*(.+)$/i)
     if (optionMatch) {
-      const key = `option${optionMatch[1].toUpperCase()}` as 'optionA' | 'optionB' | 'optionC' | 'optionD'
-      current[key] = optionMatch[2].trim()
+      const letter = (optionMatch[1] || optionMatch[2]).toUpperCase()
+      const key = `option${letter}` as 'optionA' | 'optionB' | 'optionC' | 'optionD'
+      current[key] = optionMatch[3].trim()
       continue
     }
 
