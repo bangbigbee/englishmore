@@ -157,26 +157,63 @@ export default async function ActualTestBank({ filter = 'mistakes' }: { filter?:
                         }
                         
                         return (
-                            <Link key={record.id} href={`/toeic-practice/actual-test/${record.testId}`} className="block bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all group relative">
+                            <div key={record.id} className="block bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-all group relative flex flex-col h-full">
                                 <div className="flex justify-between items-start mb-4">
-                                    <span className={`px-2 py-1 rounded text-xs font-bold ${record.mode === 'actual' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}`}>
+                                    <span className={`px-2.5 py-1 rounded-md text-[10px] uppercase font-black tracking-wider ${record.mode === 'actual' ? 'bg-orange-100 text-orange-700 border border-orange-200' : 'bg-purple-100 text-purple-700 border border-purple-200'}`}>
                                         {record.mode === 'actual' ? 'THI THỬ' : 'LUYỆN TẬP'}
                                     </span>
-                                    <span className="text-xs text-slate-400 font-medium">{displayDate}</span>
+                                    <span className="text-xs text-slate-400 font-bold bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">{displayDate}</span>
                                 </div>
-                                <h3 className="font-black text-slate-800 text-lg mb-4 line-clamp-2">{record.title || record.testId}</h3>
                                 
-                                <div className="flex items-center gap-4 bg-slate-50 rounded-xl p-3 border border-slate-100">
-                                    <div className="flex-1 text-center border-r border-slate-200">
-                                        <div className="text-[11px] font-bold text-slate-400 mb-1">TỔNG ĐIỂM</div>
-                                        <div className="text-xl font-black text-indigo-600">{scoreStr}</div>
+                                <h3 className="font-black text-slate-800 text-xl mb-6 line-clamp-2 leading-tight">
+                                    {record.title || record.testId}
+                                </h3>
+                                
+                                <div className="grid grid-cols-2 gap-3 mb-6 mt-auto">
+                                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col items-center justify-center">
+                                        <div className="text-[10px] font-bold text-slate-400 mb-1 flex items-center gap-1">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            THỜI GIAN LÀM
+                                        </div>
+                                        <div className="text-lg font-black text-slate-700 tabular-nums">
+                                            {Math.floor(record.duration / 60)} phút
+                                        </div>
                                     </div>
-                                    <div className="flex-1 text-center">
-                                        <div className="text-[11px] font-bold text-slate-400 mb-1">SỐ CÂU ĐÚNG</div>
-                                        <div className="text-xl font-black text-slate-700">{record.correctAnswers}/{record.totalQuestions}</div>
+                                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 flex flex-col items-center justify-center">
+                                        <div className="text-[10px] font-bold text-slate-400 mb-1 flex items-center gap-1">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            SỐ CÂU ĐÚNG
+                                        </div>
+                                        <div className="text-lg font-black text-slate-700 tabular-nums">
+                                            <span className={record.correctAnswers > 0 ? "text-emerald-600" : ""}>{record.correctAnswers}</span><span className="text-slate-400 text-sm">/{record.totalQuestions}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </Link>
+
+                                {record.mode === 'actual' && scoreStr !== 'N/A' && (
+                                    <div className="flex items-center justify-between bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100 mb-6">
+                                        <div>
+                                            <div className="text-[10px] font-black text-orange-600/80 mb-0.5">DỰ KIẾN ĐIỂM TOEIC</div>
+                                            <div className="flex items-center gap-2 text-xs font-bold text-orange-900">
+                                                <span>L: {record.scoreListening || 0}</span>
+                                                <span className="text-orange-300">|</span>
+                                                <span>R: {record.scoreReading || 0}</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-3xl font-black text-orange-600 tracking-tight">
+                                            {scoreStr}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <Link 
+                                    href={`/toeic-practice/actual-test/${record.testId}/review/${record.id}`}
+                                    className="mt-auto w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-colors shadow-[0_4px_14px_0_rgba(15,23,42,0.15)] group-hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)]"
+                                >
+                                    Xem Chi Tiết Mắc Lỗi
+                                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </Link>
+                            </div>
                         );
                     })}
                 </div>
