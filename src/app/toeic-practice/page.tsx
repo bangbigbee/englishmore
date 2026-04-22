@@ -2879,7 +2879,10 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
 					</h2>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 						{col.tests.map((test: any) => {
-                            const testParts = Array.from(new Set(test.parts.map((p: any) => Number(p.partId || p.part)))).sort((a, b) => a - b);
+                            const testParts = Array.from(new Set(test.parts.map((p: any) => Number(p.partId || p.part)))).sort((a: any, b: any) => a - b);
+                            const DEFAULT_TIMES: Record<number, number> = { 1: 4, 2: 10, 3: 17, 4: 15, 5: 12, 6: 8, 7: 55 };
+                            const computedTime = testParts.reduce((sum: number, p: any) => sum + (DEFAULT_TIMES[Number(p)] || 0), 0) || 120;
+                            const partsParam = testParts.length > 0 ? testParts.join(',') : '1,2,3,4,5,6,7';
                             return (
 							<div
 								key={test.id}
@@ -2920,7 +2923,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                             Luyện tập
                                         </button>
                                         <button 
-                                            onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}/take?mode=actual`); }}
+                                            onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}/take?mode=actual&parts=${partsParam}&time=${computedTime}`); }}
                                             className="flex-1 py-2.5 rounded-xl focus:outline-none border border-purple-200 bg-purple-50/50 text-purple-700 font-bold text-xs hover:bg-purple-100 hover:border-purple-300 transition-colors shadow-sm cursor-pointer"
                                         >
                                             Thi thử

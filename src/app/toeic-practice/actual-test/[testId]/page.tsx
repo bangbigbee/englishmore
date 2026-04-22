@@ -88,9 +88,10 @@ export default function ActualTestLobbyPage() {
         if (mode === 'practice') {
             query.set('parts', selectedParts.join(','));
         } else {
-            // Actual test mode forces all parts and 120 mins
+            // Actual test mode forces available parts dynamically and auto computes time
             query.set('parts', availableParts.join(','));
-            query.set('time', '120');
+            const actualTestTime = availableParts.reduce((acc, part) => acc + (DEFAULT_TIMES[part] || 0), 0) || 120;
+            query.set('time', actualTestTime.toString());
         }
 
         router.push(`/toeic-practice/actual-test/${testId}/take?${query.toString()}`);
@@ -138,7 +139,7 @@ export default function ActualTestLobbyPage() {
                                     {mode === 'actual' && <svg className="w-6 h-6 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
                                 </div>
                                 <p className={`text-sm ${mode === 'actual' ? 'text-rose-600/80' : 'text-slate-500'}`}>
-                                    Trải nghiệm thi như thật (120 phút). Full màn hình. Không tua audio. Làm liên tục Part 1-7.
+                                    Trải nghiệm thi như thật. Thời gian tự động dựa trên các part có sẵn. Full màn hình. Không tua audio. Làm liên tục test.
                                 </p>
                             </button>
                         </div>
