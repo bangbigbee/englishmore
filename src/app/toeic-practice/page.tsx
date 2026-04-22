@@ -2883,13 +2883,13 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                             return (
 							<div
 								key={test.id}
-								className="group relative bg-white rounded-none border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
+								className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer hover:border-purple-300"
                                 onClick={() => router.push(`/toeic-practice/actual-test/${test.id}`)}
 							>
                                 <div className="p-4 sm:p-5 flex-1 flex flex-col">
                                     <div className="flex justify-between items-start mb-3">
-                                        <h3 className="text-xl font-black text-slate-800 group-hover:text-[#14532d] transition-colors">{test.title}</h3>
-                                        <div className="w-7 h-7 bg-slate-50 group-hover:bg-[#14532d]/10 flex items-center justify-center text-slate-400 group-hover:text-[#14532d] transition-colors flex-shrink-0">
+                                        <h3 className="text-xl font-black text-slate-800 group-hover:text-purple-700 transition-colors">{test.title}</h3>
+                                        <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-purple-100 flex items-center justify-center text-slate-400 group-hover:text-purple-600 transition-colors flex-shrink-0">
                                             <svg className="w-3.5 h-3.5 translate-x-px group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                         </div>
                                     </div>
@@ -2902,7 +2902,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                                 return (
                                                     <div 
                                                         key={pNum} 
-                                                        className={`w-6 h-6 flex items-center justify-center font-bold text-[11px] transition-colors ${isActive ? 'bg-[#14532d] text-amber-500 border border-[#14532d] shadow-sm' : 'bg-slate-50 text-slate-300 border border-slate-100'}`}
+                                                        className={`w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] transition-colors ${isActive ? 'bg-gradient-to-br from-violet-600 to-fuchsia-600 text-yellow-300 border-none shadow-sm' : 'bg-slate-50 text-slate-300 border border-slate-100'}`}
                                                     >
                                                         {pNum}
                                                     </div>
@@ -2914,14 +2914,14 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                     <div className="flex items-center gap-2.5 mt-auto pt-4 border-t border-slate-100">
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}`); }}
-                                            className="relative overflow-hidden flex-1 py-2 rounded-none focus:outline-none border-none bg-amber-400 text-[#14532d] font-black text-xs hover:brightness-105 transition-colors shadow-sm cursor-pointer"
+                                            className="relative overflow-hidden flex-1 py-2 rounded-xl focus:outline-none border border-purple-200 bg-purple-50 text-purple-700 font-bold text-xs hover:bg-purple-100 hover:border-purple-300 transition-colors shadow-sm cursor-pointer"
                                         >
-                                            <div className="absolute inset-0 translate-x-[-100%] animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
+                                            <div className="absolute inset-0 translate-x-[-100%] animate-shimmer bg-gradient-to-r from-transparent via-white/50 to-transparent text-xs"></div>
                                             <span className="relative z-10">Luyện tập</span>
                                         </button>
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}/take?mode=actual`); }}
-                                            className="relative overflow-hidden flex-1 py-2 rounded-none focus:outline-none border-none bg-[#4c1d95] text-amber-400 font-black text-xs hover:brightness-105 transition-colors shadow-md cursor-pointer"
+                                            className="relative overflow-hidden flex-1 py-2 rounded-xl focus:outline-none border-none bg-gradient-to-r from-purple-600 to-fuchsia-600 text-yellow-300 font-bold text-xs hover:from-purple-700 hover:to-fuchsia-700 transition-colors shadow-md shadow-purple-200 cursor-pointer"
                                         >
                                             <div className="absolute inset-0 translate-x-[-100%] animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" style={{ animationDelay: '1s' }}></div>
                                             <span className="relative z-10">Thi thử</span>
