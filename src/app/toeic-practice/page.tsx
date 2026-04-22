@@ -2892,8 +2892,8 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                 <div className="absolute inset-0 bg-gradient-to-br from-transparent to-purple-50/40 group-hover:to-purple-100/50 transition-colors pointer-events-none"></div>
                                 <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                     <div className="flex justify-between items-start mb-3">
-                                        <h3 className="text-xl font-black text-slate-800 group-hover:text-purple-700 transition-colors">{test.title}</h3>
-                                        <div className="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-white flex items-center justify-center text-slate-400 group-hover:text-purple-600 transition-colors flex-shrink-0 group-hover:shadow-sm">
+                                        <h3 className="text-xl font-black text-[#4c1d95] transition-colors">{test.title}</h3>
+                                        <div className="w-7 h-7 rounded-lg bg-purple-100/50 group-hover:bg-purple-100 flex items-center justify-center text-purple-700 transition-colors flex-shrink-0 group-hover:shadow-sm">
                                             <svg className="w-3.5 h-3.5 translate-x-px group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                         </div>
                                     </div>
