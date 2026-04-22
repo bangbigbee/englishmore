@@ -1039,12 +1039,13 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			</div>
 
             {/* Quick Links Marquee Section */}
-            <div className="w-full max-w-6xl mx-auto mt-4 mb-2 overflow-hidden relative"
-                style={{
-                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
-                    maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
-                }}
-            >
+            <div className="w-full max-w-6xl mx-auto mt-10 pt-8 border-t border-slate-200/80">
+                <div className="w-full overflow-hidden relative"
+                    style={{
+                        WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+                        maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+                    }}
+                >
                 <style dangerouslySetInnerHTML={{
 						__html: `
                         @keyframes marquee-ltr {
@@ -1081,6 +1082,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
                         </Link>
                     ))}
                 </div>
+            </div>
             </div>
 		</div>
 	);
