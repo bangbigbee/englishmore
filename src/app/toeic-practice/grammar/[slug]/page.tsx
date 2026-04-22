@@ -939,7 +939,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   }
                                 }}
                                 className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${listeningMode === 'actual' ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 cursor-pointer'}`}
-                                title={listeningMode === 'actual' ? "Không thể điều khiển ở chế độ Thi thật" : "Play/Pause Audio"}
+                                title={listeningMode === 'actual' ? "Không thể điều khiển ở chế độ Thi thử" : "Play/Pause Audio"}
                               >
                                 {isAudioNodePlaying ? (
                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -1101,7 +1101,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         onClick={() => setListeningMode('actual')}
                                         className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'actual' ? 'bg-[#1e1b4b] text-amber-400 shadow-[0_2px_4px_rgba(30,27,75,0.4)] border border-indigo-900' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
                                       >
-                                        Thi thật
+                                        Thi thử
                                       </button>
                                     </div>
                                   </div>
@@ -1882,7 +1882,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         <button
                                           onClick={() => {
                                               if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual') {
-                                                  toast('Đang ở chế độ thi thật. Câu hỏi sẽ tự chuyển khi hết đoạn Audio. Nếu muốn chủ động, hãy chọn chế độ Luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
+                                                  toast('Đang ở chế độ thi thử. Câu hỏi sẽ tự chuyển khi hết đoạn Audio. Nếu muốn chủ động, hãy chọn chế độ Luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
                                                   return;
                                               }
                                               setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + questionsPerView));
@@ -1927,7 +1927,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       key={idx}
                                       onClick={() => {
                                           if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual') {
-                                              toast('Đang ở chế độ thi thật. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
+                                              toast('Đang ở chế độ thi thử. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
                                               return;
                                           }
                                           if (isActive) return;

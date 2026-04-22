@@ -306,7 +306,7 @@ function TakeTestContent() {
                 <div className="min-h-screen flex flex-col items-center justify-center bg-black gap-6 px-4">
                     <svg className="w-20 h-20 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                     <div className="text-center">
-                        <h2 className="text-3xl font-black text-white mb-2">Chế độ thi thật yêu cầu toàn màn hình</h2>
+                        <h2 className="text-3xl font-black text-white mb-2">Chế độ thi thử yêu cầu toàn màn hình</h2>
                         <p className="text-slate-400">Bạn không được phép thoát màn hình trong suốt 120 phút.</p>
                     </div>
                     <button onClick={enterFullscreen} className="px-10 py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl text-xl animate-bounce">
@@ -323,7 +323,7 @@ function TakeTestContent() {
                         <div className="flex items-center gap-1.5 md:gap-4 flex-shrink-0">
                             <h1 className="font-black text-sm md:text-xl max-w-[60px] md:max-w-none truncate" title={testData.title}>{testData.title}</h1>
                             <span className={`px-1.5 md:px-3 py-0.5 md:py-1 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap ${isActual ? 'bg-rose-500/20 text-rose-500' : 'bg-blue-100 text-blue-700'}`}>
-                                {isActual ? 'THI THẬT' : 'LUYỆN TẬP'}
+                                {isActual ? 'THI THỬ' : 'LUYỆN TẬP'}
                             </span>
                         </div>
 

@@ -256,7 +256,7 @@ export default function AdminUserManagement() {
                <span className="text-xl font-black text-emerald-700">{onlineStats.speedChallenge}</span>
             </div>
             <div className="bg-amber-50 border border-amber-100/50 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-               <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-1">Thi Thật</span>
+               <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-1">Thi Thử</span>
                <span className="text-xl font-black text-amber-700">{onlineStats.actualTest}</span>
             </div>
           </div>

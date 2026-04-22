@@ -134,7 +134,7 @@ export default function ActualTestLobbyPage() {
                                 className={`p-6 rounded-2xl border-2 text-left transition-all ${mode === 'actual' ? 'border-rose-500 bg-rose-50 ring-4 ring-rose-500/10' : 'border-slate-200 hover:border-rose-200'}`}
                             >
                                 <div className="flex items-center justify-between mb-2">
-                                    <h3 className={`text-xl font-bold ${mode === 'actual' ? 'text-rose-700' : 'text-slate-700'}`}>Thi Thật</h3>
+                                    <h3 className={`text-xl font-bold ${mode === 'actual' ? 'text-rose-700' : 'text-slate-700'}`}>Thi Thử</h3>
                                     {mode === 'actual' && <svg className="w-6 h-6 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
                                 </div>
                                 <p className={`text-sm ${mode === 'actual' ? 'text-rose-600/80' : 'text-slate-500'}`}>
