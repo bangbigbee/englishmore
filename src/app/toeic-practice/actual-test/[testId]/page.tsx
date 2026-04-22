@@ -146,32 +146,32 @@ export default function ActualTestLobbyPage() {
                         {/* Part Selection for Practice Mode */}
                         {mode === 'practice' && (
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                                <div className="flex items-center justify-end mb-3">
-                                    <label className="flex items-center gap-2 cursor-pointer text-[13px] font-bold text-slate-500 hover:text-purple-600 transition-colors select-none">
-                                        <input 
-                                            type="checkbox" 
-                                            checked={selectedParts.length === availableParts.length} 
-                                            onChange={() => selectedParts.length === availableParts.length ? setSelectedParts([]) : setSelectedParts([...availableParts])}
-                                            className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
-                                        />
-                                        Tất cả
-                                    </label>
-                                </div>
-                                <div className="flex flex-wrap gap-3">
-                                    {availableParts.map(partId => (
-                                        <button
-                                            key={partId}
-                                            onClick={() => togglePart(partId)}
-                                            className={`px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all border ${selectedParts.includes(partId) ? 'bg-purple-600 text-white border-purple-600 shadow-sm' : 'bg-white text-slate-600 border-slate-300 hover:border-purple-300'}`}
-                                        >
-                                            Part {partId}
-                                        </button>
-                                    ))}
-                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-2.5">
+                                        <label className="flex items-center gap-2 cursor-pointer text-[13px] font-bold text-slate-600 hover:text-purple-600 transition-colors select-none self-start">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={selectedParts.length === availableParts.length} 
+                                                onChange={() => selectedParts.length === availableParts.length ? setSelectedParts([]) : setSelectedParts([...availableParts])}
+                                                className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                                            />
+                                            Tất cả
+                                        </label>
+                                        <div className="flex flex-wrap items-center gap-1.5">
+                                            {availableParts.map(partId => (
+                                                <button
+                                                    key={partId}
+                                                    onClick={() => togglePart(partId)}
+                                                    className={`px-2 py-1.5 rounded-md text-[12px] font-bold transition-all border ${selectedParts.includes(partId) ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-slate-600 border-slate-300 hover:border-purple-300'}`}
+                                                >
+                                                    Part {partId}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
 
-                                <div className="mt-6 flex flex-col gap-2">
-                                    <label className="font-bold text-slate-800 text-[13px]">Thời gian:</label>
-                                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <label className="font-bold text-slate-800 text-[13px] whitespace-nowrap">Thời gian tham khảo:</label>
                                         <input 
                                             type="number" 
                                             min="1"
@@ -180,15 +180,8 @@ export default function ActualTestLobbyPage() {
                                                 setIsTimeCustomized(true);
                                                 setCustomTimeMinutes(Number(e.target.value) || 1);
                                             }}
-                                            className="w-28 px-4 py-2 rounded-xl border-2 border-slate-300 focus:outline-none focus:border-purple-500 font-bold text-slate-700 bg-white shadow-sm" 
+                                            className="w-16 px-2 py-1 rounded-lg border border-slate-300 focus:outline-none focus:border-purple-500 font-bold text-sm text-center text-slate-700 bg-white" 
                                         />
-                                        <button 
-                                            onClick={() => setIsTimeCustomized(false)}
-                                            className={`text-sm font-medium transition-colors ${isTimeCustomized ? 'text-purple-600 hover:text-purple-700 underline' : 'text-slate-400'}`}
-                                            disabled={!isTimeCustomized}
-                                        >
-                                            {isTimeCustomized ? 'Khôi phục thời gian chuẩn (Tự tính)' : 'Hệ thống tự tính dựa vào số part đã chọn'}
-                                        </button>
                                     </div>
                                 </div>
                             </motion.div>
@@ -199,7 +192,7 @@ export default function ActualTestLobbyPage() {
                                 onClick={handleStart}
                                 className={`px-10 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95 shadow-xl ${mode === 'actual' ? 'bg-slate-800 hover:bg-black hover:shadow-slate-800/20' : 'bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-600/20'}`}
                             >
-                                {mode === 'actual' ? 'VÀO PHÒNG THI' : 'BẮT ĐẦU LUYỆN TẬP'}
+                                {mode === 'actual' ? 'VÀO PHÒNG THI' : 'BẮT ĐẦU'}
                             </button>
                             {mode === 'actual' && (
                                 <p className="mt-4 text-sm text-slate-500 font-medium">Bấm để hệ thống chuyển sang chế độ Toàn Màn Hình.</p>
