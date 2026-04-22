@@ -2680,14 +2680,24 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 	];
 
 	const filteredTopics = topics.filter(t => t.part === selectedPart);
-	// Flatten lessons from all topics in this part
-	const flattenedLessons = filteredTopics.flatMap(t => 
-		(t.lessons || []).map((l: any) => ({
+	const groupedLessons = filteredTopics.reduce((acc, topic) => {
+		const match = topic.title.match(/(ETS)\s*(\d{4})/i);
+		const collectionName = match ? `${match[1].toUpperCase()} ${match[2]}` : 'Khác';
+		if (!acc[collectionName]) acc[collectionName] = [];
+		const lessons = (topic.lessons || []).map((l: any) => ({
 			...l,
-			topicTitle: t.title,
-			topicSlug: t.slug
-		}))
-	);
+			topicTitle: topic.title,
+			topicSlug: topic.slug
+		}));
+		acc[collectionName].push(...lessons);
+		return acc;
+	}, {} as Record<string, any[]>);
+
+    const sortedCollections = Object.entries(groupedLessons).sort((a, b) => {
+        if (a[0] === 'Khác') return 1;
+        if (b[0] === 'Khác') return -1;
+        return b[0].localeCompare(a[0]);
+    });
 
 	return (
 		<div>
@@ -2719,25 +2729,52 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 				})}
 			</div>
 			
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full">
-				{flattenedLessons.length === 0 ? (
+			<div className="flex flex-col gap-10 relative z-10 w-full mt-2">
+				{sortedCollections.length === 0 ? (
 					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 bg-white/50 rounded-3xl font-medium">
 						Chưa có bài tập nào trong phần này.
 					</div>
 				) : (
-					flattenedLessons.map((lesson) => (
-						<TopicCard
-							key={lesson.id}
-							type="test"
-                            disableFlip={true}
-                            customIcon={getPartIcon(selectedPart)}
-							title={lesson.title}
-							subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
-							badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
-							onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-						/>
-					))
-				)}
+                    sortedCollections.map(([collectionName, lessons]: [string, any]) => (
+                        <div key={collectionName}>
+                            <h3 className="text-xl font-bold text-slate-300 mb-6 flex items-center gap-4">
+                                <div className="h-px bg-slate-200 flex-1"></div>
+                                <span className="text-slate-500 bg-slate-50 px-4 py-1 rounded-full border border-slate-200 text-sm tracking-wide shadow-sm">
+                                    {collectionName} - PART {selectedPart}
+                                </span>
+                                <div className="h-px bg-slate-200 flex-1"></div>
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                                {lessons.map((lesson: any) => (
+                                    <div
+                                        key={lesson.id}
+                                        onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
+                                        className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer hover:border-[#14532d]"
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-[#14532d]/5 group-hover:to-[#14532d]/10 transition-colors pointer-events-none"></div>
+                                        <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="w-10 h-10 rounded-lg bg-[#14532d]/10 group-hover:bg-[#14532d]/20 flex flex-shrink-0 items-center justify-center text-[#14532d] transition-colors shadow-sm">
+                                                    {getPartIcon(selectedPart)}
+                                                </div>
+                                                <h3 className="text-[17px] font-black text-slate-800 transition-colors group-hover:text-[#14532d]">{lesson.title}</h3>
+                                            </div>
+                                            <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-400">
+                                                <div className="flex items-center gap-1.5 group-hover:text-[#14532d] transition-colors">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                                    {lesson._count?.questions || 0} Câu hỏi
+                                                </div>
+                                                <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#14532d] group-hover:text-white transition-colors duration-300">
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))
+                )}
 			</div>
 		</div>
 	);
@@ -2780,14 +2817,24 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 	];
 
 	const filteredTopics = topics.filter(t => t.part === selectedPart);
-	// Flatten lessons from all topics in this part
-	const flattenedLessons = filteredTopics.flatMap(t => 
-		(t.lessons || []).map((l: any) => ({
+	const groupedLessons = filteredTopics.reduce((acc, topic) => {
+		const match = topic.title.match(/(ETS)\s*(\d{4})/i);
+		const collectionName = match ? `${match[1].toUpperCase()} ${match[2]}` : 'Khác';
+		if (!acc[collectionName]) acc[collectionName] = [];
+		const lessons = (topic.lessons || []).map((l: any) => ({
 			...l,
-			topicTitle: t.title,
-			topicSlug: t.slug
-		}))
-	);
+			topicTitle: topic.title,
+			topicSlug: topic.slug
+		}));
+		acc[collectionName].push(...lessons);
+		return acc;
+	}, {} as Record<string, any[]>);
+
+    const sortedCollections = Object.entries(groupedLessons).sort((a, b) => {
+        if (a[0] === 'Khác') return 1;
+        if (b[0] === 'Khác') return -1;
+        return b[0].localeCompare(a[0]);
+    });
 
 	return (
 		<div>
@@ -2819,25 +2866,52 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 				})}
 			</div>
 			
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10 w-full">
-				{flattenedLessons.length === 0 ? (
+			<div className="flex flex-col gap-10 relative z-10 w-full mt-2">
+				{sortedCollections.length === 0 ? (
 					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 bg-white/50 rounded-3xl font-medium">
 						Chưa có bài tập nào trong phần này.
 					</div>
 				) : (
-					flattenedLessons.map((lesson) => (
-						<TopicCard
-							key={lesson.id}
-							type="test"
-                            disableFlip={true}
-                            customIcon={getPartIcon(selectedPart)}
-							title={lesson.title}
-							subtitle={`Thuộc bộ đề: ${lesson.topicTitle}`}
-							badgeText={`${lesson._count?.questions || 0} Câu hỏi`}
-							onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-						/>
-					))
-				)}
+                    sortedCollections.map(([collectionName, lessons]: [string, any]) => (
+                        <div key={collectionName}>
+                            <h3 className="text-xl font-bold text-slate-300 mb-6 flex items-center gap-4">
+                                <div className="h-px bg-slate-200 flex-1"></div>
+                                <span className="text-slate-500 bg-slate-50 px-4 py-1 rounded-full border border-slate-200 text-sm tracking-wide shadow-sm">
+                                    {collectionName} - PART {selectedPart}
+                                </span>
+                                <div className="h-px bg-slate-200 flex-1"></div>
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                                {lessons.map((lesson: any) => (
+                                    <div
+                                        key={lesson.id}
+                                        onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
+                                        className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer hover:border-[#14532d]"
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-[#14532d]/5 group-hover:to-[#14532d]/10 transition-colors pointer-events-none"></div>
+                                        <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <div className="w-10 h-10 rounded-lg bg-[#14532d]/10 group-hover:bg-[#14532d]/20 flex flex-shrink-0 items-center justify-center text-[#14532d] transition-colors shadow-sm">
+                                                    {getPartIcon(selectedPart)}
+                                                </div>
+                                                <h3 className="text-[17px] font-black text-slate-800 transition-colors group-hover:text-[#14532d]">{lesson.title}</h3>
+                                            </div>
+                                            <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-400">
+                                                <div className="flex items-center gap-1.5 group-hover:text-[#14532d] transition-colors">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                                    {lesson._count?.questions || 0} Câu hỏi
+                                                </div>
+                                                <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#14532d] group-hover:text-white transition-colors duration-300">
+                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))
+                )}
 			</div>
 		</div>
 	);
