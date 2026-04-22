@@ -840,6 +840,7 @@ model ToeicTestRecord {
   correctAnswers Int
   totalQuestions Int
   answersData    Json     // Detailed question answers Map
+  partStats      Json?    // Detailed correct/total stats per part
   createdAt      DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

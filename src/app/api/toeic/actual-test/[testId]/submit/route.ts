@@ -63,7 +63,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
         let hasListening = false;
         let hasReading = false;
         
+        let partStats: Record<string, { correct: number, total: number }> = {};
+        
         testData.forEach(partInfo => {
+            const partKey = `part${partInfo.part}`;
+            partStats[partKey] = { correct: 0, total: partInfo.questions.length };
+
             if (partInfo.part >= 1 && partInfo.part <= 4) hasListening = true;
             if (partInfo.part >= 5 && partInfo.part <= 7) hasReading = true;
 
@@ -80,6 +85,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
                 const userAns = answers[String(qNum)] || answers[qNum];
                 if (userAns && userAns === q.correctOption) {
                     totalCorrect++;
+                    partStats[partKey].correct++;
                     if (partInfo.part >= 1 && partInfo.part <= 4) {
                         listeningCorrect++;
                     } else if (partInfo.part >= 5 && partInfo.part <= 7) {
@@ -166,6 +172,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
                 correctAnswers: totalCorrect,
                 totalQuestions: totalQuestionsSubmitted,
                 answersData: answers,
+                partStats: partStats,
             }
         });
 
