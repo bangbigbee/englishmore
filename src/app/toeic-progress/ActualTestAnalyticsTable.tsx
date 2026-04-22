@@ -139,12 +139,13 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                 <th className="py-4 px-6 font-bold text-center">TG Dùng</th>
                                 <th className="py-4 px-6 font-bold text-center">Số Câu</th>
                                 <th className="py-4 px-6 font-bold text-right">Tổng Điểm</th>
+                                <th className="py-4 px-6 font-bold text-center w-24">Tuỳ Chọn</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-slate-700">
                             {filteredRecords.length === 0 ? (
                                 <tr>
-                                    <td colSpan={7} className="py-8 text-center text-slate-400 font-medium">Không tìm thấy bản ghi nào khớp lọc.</td>
+                                    <td colSpan={8} className="py-8 text-center text-slate-400 font-medium">Không tìm thấy bản ghi nào khớp lọc.</td>
                                 </tr>
                             ) : filteredRecords.map((r) => {
                                 const isExpanded = expandedRows[r.id];
@@ -183,10 +184,20 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                                     <span className="text-slate-300">-</span>
                                                 )}
                                             </td>
+                                            <td className="py-4 px-6 text-center">
+                                                <Link
+                                                    href={`/toeic-practice/actual-test/${r.testId}/review/${r.id}`}
+                                                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs transition-colors"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    Review
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                                </Link>
+                                            </td>
                                         </tr>
                                         {isExpanded && (
                                             <tr className="bg-slate-50/50">
-                                                <td colSpan={7} className="py-5 px-6 border-b-2 border-slate-100">
+                                                <td colSpan={8} className="py-5 px-6 border-b-2 border-slate-100">
                                                     <div className="flex flex-col lg:flex-row gap-6 items-start">
                                                         <div className="flex-1 w-full bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                                                             <div className="font-bold text-slate-600 text-sm mb-4 border-b border-slate-100 pb-2">CHỈ SỐ PER PART</div>
@@ -220,25 +231,16 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                                             )}
                                                         </div>
 
-                                                        <div className="lg:w-[320px] shrink-0 w-full flex flex-col gap-3">
-                                                            {r.mode === 'actual' && (
-                                                                <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100 w-full flex justify-between items-center shadow-sm">
-                                                                    <div className="flex flex-col">
-                                                                        <span className="text-[10px] font-bold text-orange-600/80 mb-1">SCORE PBT</span>
-                                                                        <span className="text-sm font-bold text-orange-900">List: <span className="text-orange-600">{r.scoreListening || 0}</span></span>
-                                                                        <span className="text-sm font-bold text-orange-900">Read: <span className="text-orange-600">{r.scoreReading || 0}</span></span>
-                                                                    </div>
-                                                                    <div className="text-3xl font-black text-orange-600">{scoreCombo}</div>
+                                                        {r.mode === 'actual' && (
+                                                            <div className="lg:w-[320px] shrink-0 w-full bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100 flex justify-between items-center shadow-sm">
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-[10px] font-bold text-orange-600/80 mb-1">SCORE PBT</span>
+                                                                    <span className="text-sm font-bold text-orange-900">List: <span className="text-orange-600">{r.scoreListening || 0}</span></span>
+                                                                    <span className="text-sm font-bold text-orange-900">Read: <span className="text-orange-600">{r.scoreReading || 0}</span></span>
                                                                 </div>
-                                                            )}
-                                                            <Link 
-                                                                href={`/toeic-practice/actual-test/${r.testId}/review/${r.id}`}
-                                                                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-colors shadow-md group"
-                                                            >
-                                                                Đọc Review Chi Tiết Mắc Lỗi
-                                                                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                                            </Link>
-                                                        </div>
+                                                                <div className="text-3xl font-black text-orange-600">{scoreCombo}</div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
