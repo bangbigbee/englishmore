@@ -11,13 +11,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
         const testId = resolvedParams.testId;
         const session = await getServerSession();
 
-        if (!session || !session.user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
-        if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
-
+        // Removed early 401 return
         const body = await req.json();
         const { answers, isActual, initialTimeSeconds, timeLeft } = body;
 
@@ -96,9 +90,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
         });
 
         const totalQuestionsSubmitted = Object.keys(answers).length;
-        // The user only gets a score if they do the full 7 parts (which is essentially what isActual enforces)
-        // We'll calculate score if isActual is true OR if listening and reading counts resemble a full test.
-        // As per requirements: "tính điểm (nếu học viên chọn thi thật cả 7 part), còn nếu thi từng part thì chỉ có lưu bài chứ chưa tính điểm"
         let scoreListening = null;
         let scoreReading = null;
 
@@ -106,6 +97,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
             if (hasListening) scoreListening = calculateToeicListeningScore(listeningCorrect);
             if (hasReading) scoreReading = calculateToeicReadingScore(readingCorrect);
         }
+
+        if (!session || !session.user) {
+            return NextResponse.json({ 
+                success: true, 
+                requiresLogin: true, 
+                totalCorrect, 
+                scoreListening, 
+                scoreReading,
+                promptMessage: "Hệ thống đã tính điểm cho bạn. Tuy nhiên, bạn cần Đăng Nhập để lưu lại kết quả này vào Lịch sử thi!"
+            });
+        }
+
+        const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
+        if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
         const record = await prisma.toeicTestRecord.create({
             data: {

@@ -1,7 +1,9 @@
 'use client';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { delay, motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import LoginModal from '@/components/LoginModal';
 
 const PartDirectionAudio = ({ src }: { src: string }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -109,6 +111,36 @@ function TakeTestContent() {
 
     const isActual = mode === 'actual';
 
+    const { data: session, status } = useSession();
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [loginModalSubtitle, setLoginModalSubtitle] = useState('');
+    const [guestPromptedFor3Qs, setGuestPromptedFor3Qs] = useState(false);
+
+    useEffect(() => {
+        if (status === 'authenticated') {
+            const savedAnswers = localStorage.getItem(`toeic_guest_answers_${testId}`);
+            if (savedAnswers) {
+                setAnswers(JSON.parse(savedAnswers));
+                localStorage.removeItem(`toeic_guest_answers_${testId}`);
+                const savedTime = localStorage.getItem(`toeic_guest_timeLeft_${testId}`);
+                if (savedTime) setTimeLeft(Number(savedTime));
+            }
+        }
+    }, [status, testId]);
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            localStorage.setItem(`toeic_guest_answers_${testId}`, JSON.stringify(answers));
+            localStorage.setItem(`toeic_guest_timeLeft_${testId}`, String(timeLeft));
+        }
+        
+        if (status === 'unauthenticated' && mode === 'practice' && Object.keys(answers).length >= 3 && !guestPromptedFor3Qs && !showLoginModal) {
+            setGuestPromptedFor3Qs(true);
+            setLoginModalSubtitle('Bạn đã làm được 3 câu! Đăng nhập ngay để hệ thống lưu lại đáp án và tiến trình học tập nhé.');
+            setShowLoginModal(true);
+        }
+    }, [answers, timeLeft, status, testId, mode, guestPromptedFor3Qs, showLoginModal]);
+
     useEffect(() => {
         if (!testData || !testData.parts) return;
         const queue: any[] = [];
@@ -177,6 +209,11 @@ function TakeTestContent() {
     }, []);
 
     const toggleBookmark = async (questionId: string) => {
+        if (status === 'unauthenticated') {
+            setLoginModalSubtitle('Tính năng Sổ Tay yêu cầu bạn đăng nhập để lưu trữ câu hỏi.');
+            setShowLoginModal(true);
+            return;
+        }
         const current = !!bookmarkedIds[questionId];
         const next = !current;
         setBookmarkedIds(prev => ({ ...prev, [questionId]: next }));
@@ -276,8 +313,15 @@ function TakeTestContent() {
             const data = await res.json();
             if (data.success) {
                 exitFullscreen();
-                alert('Nộp bài thành công! Kết quả đã được lưu vào Lịch sử thi trong Sổ Tay Luyện Đề.');
-                router.push(`/toeic-progress?tab=actual-test-bank&filter=history`);
+                if (data.requiresLogin) {
+                    const msg = `Hoàn thành! Bạn làm đúng ${data.totalCorrect} câu. Đăng nhập ngay để lưu Lịch sử thi & check đáp án nha!`;
+                    setLoginModalSubtitle(msg);
+                    setShowLoginModal(true);
+                    setIsSubmitting(false);
+                } else {
+                    alert('Nộp bài thành công! Kết quả đã được lưu vào Lịch sử thi trong Sổ Tay Luyện Đề.');
+                    router.push(`/toeic-progress?tab=actual-test-bank&filter=history`);
+                }
             } else {
                 alert('Có lỗi xảy ra: ' + data.error);
                 setIsSubmitting(false);
@@ -553,6 +597,13 @@ function TakeTestContent() {
                     </div>
                 </div>
             )}
+        <LoginModal 
+            isOpen={showLoginModal} 
+            onClose={() => setShowLoginModal(false)}
+            subtitle={loginModalSubtitle || undefined}
+            allowGuest={true}
+            onGuest={() => setShowLoginModal(false)}
+        />
         </div>
     );
 }
