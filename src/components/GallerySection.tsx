@@ -116,6 +116,8 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
     return Array(40).fill(shifted).flat()
   }
 
+const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-893032104cbe4ffd8e39c725263d8ee1.r2.dev'
+
   // Vertical layout - 6 columns
   if (group.animation === 'vertical') {
     const colConfigurations = [
@@ -145,7 +147,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
               {createRandomizedInfiniteList(colIdx).map((image, idx) => (
                 <img 
                   key={`v${colIdx}-${idx}`} 
-                  src={`/api/gallery/${image.id}`} 
+                  src={`${r2PublicUrl}/landing-gallery/${image.id}`} 
                   alt={group.title} 
                   className="w-full h-auto object-cover rounded-none shadow-sm transition-transform duration-300 hover:scale-[1.02]" 
                   loading="lazy" 
@@ -184,7 +186,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
               style={{ animationDelay: config.delay, marginLeft: config.offset }}
             >
                {createRandomizedInfiniteList(rowIdx).map((image, idx) => (
-                 <img key={`h${rowIdx}-${idx}`} src={`/api/gallery/${image.id}`} alt={group.title} className="h-full w-auto object-cover rounded-none shadow-sm transition-transform duration-300 hover:scale-[1.02]" loading="lazy" />
+                 <img key={`h${rowIdx}-${idx}`} src={`${r2PublicUrl}/landing-gallery/${image.id}`} alt={group.title} className="h-full w-auto object-cover rounded-none shadow-sm transition-transform duration-300 hover:scale-[1.02]" loading="lazy" />
                ))}
             </div>
           ))}
@@ -222,7 +224,7 @@ function CourseGalleryBlock({ group, index }: { group: GroupedGallery, index: nu
               {createRandomizedInfiniteList(rowIdx).map((image, idx) => (
                  <img 
                    key={`d${rowIdx}-${idx}`} 
-                   src={`/api/gallery/${image.id}`} 
+                   src={`${r2PublicUrl}/landing-gallery/${image.id}`} 
                    alt={group.title} 
                    className="h-full w-36 md:w-48 object-cover rounded-none shadow-md transition-transform duration-300 hover:scale-105" 
                    loading="lazy" 

@@ -21,23 +21,23 @@ export async function GET(
       select: { mimeType: true, data: true, isActive: true },
     })
 
-    if (!image || !image.data) {
+    if (!image) {
       return new NextResponse('Not found', { status: 404 })
     }
 
-    // You might want to allow serving inactive images only to admins, 
-    // but for simplicity, we serve it if it exists since the ID is a long CUID and hard to guess.
-    
-    // Add caching headers
+    // If data is empty or missing, it means it was migrated to R2. Redirect to R2.
+    if (!image.data || image.data.length === 0) {
+      const r2Url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-893032104cbe4ffd8e39c725263d8ee1.r2.dev';
+      return NextResponse.redirect(`${r2Url}/landing-gallery/${id}`, 301);
+    }
+
+    // Original logic for items not yet migrated
     const headers = new Headers()
     headers.set('Content-Type', image.mimeType || 'application/octet-stream')
-    // Cache for 1 year since the content won't change for a given CUID, 
-    // if replaced, a new upload creates a new CUID.
     headers.set('Cache-Control', 'public, max-age=31536000, immutable')
 
     const payload = new Uint8Array(image.data)
     
-    // Support Range request for video
     const range = request.headers.get('range')
     if (range && image.mimeType?.startsWith('video/')) {
       const parts = range.replace(/bytes=/, "").split("-")
