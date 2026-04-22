@@ -54,9 +54,6 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
 
     if (
       typeof current.question === 'string' &&
-      current.optionA &&
-      current.optionB &&
-      current.optionC &&
       ['A', 'B', 'C', 'D'].includes(current.correctOption)
     ) {
       results.push(current)
@@ -144,7 +141,7 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
     }
 
     // Match question starts: "Câu 1:", "Question 1:", "Q1:", "1."
-    const questionMatch = line.match(/^(?:Q(?:uestion)?|Cau|Câu)?\s*(\d{1,3})\s*[\).:-]\s*(.+)$/i)
+    const questionMatch = line.match(/^(?:Q(?:uestion)?|Cau|Câu)?\s*(\d{1,3})\s*[\).:-]\s*(.*)$/i)
     if (questionMatch) {
       pushCurrent()
       
@@ -190,8 +187,8 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
       continue
     }
 
-    // Match options: "A. ...", "A) ...", "A: ..."
-    const optionMatch = line.match(/^(?:Option\s*)?([ABCD])\s*[\).:-]\s*(.+)$/i)
+    // Match options: "A. ...", "(A) ...", "A) ...", "A: ..."
+    const optionMatch = line.match(/^(?:Option\s*)?\(?([ABCD])\)?\s*[\).:-]?\s*(.+)$/i)
     if (optionMatch) {
       const key = `option${optionMatch[1].toUpperCase()}` as 'optionA' | 'optionB' | 'optionC' | 'optionD'
       current[key] = optionMatch[2].trim()
