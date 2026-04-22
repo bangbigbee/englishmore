@@ -347,15 +347,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   // Exam Mode Timer & Submit Logic
   useEffect(() => {
     let checkTimer: NodeJS.Timeout;
-    if (actualCheckingMode && !isTestCompleted && actualCheckTimeLeft > 0) {
+    if ((actualCheckingMode || isSubmitModalOpen) && !isTestCompleted && actualCheckTimeLeft > 0) {
         checkTimer = setInterval(() => {
             setActualCheckTimeLeft(prev => prev - 1);
         }, 1000);
-    } else if (actualCheckingMode && actualCheckTimeLeft <= 0 && !isTestCompleted) {
+    } else if ((actualCheckingMode || isSubmitModalOpen) && actualCheckTimeLeft <= 0 && !isTestCompleted) {
         submitActualExam();
     }
     return () => clearInterval(checkTimer);
-  }, [actualCheckingMode, actualCheckTimeLeft, isTestCompleted]);
+  }, [actualCheckingMode, isSubmitModalOpen, actualCheckTimeLeft, isTestCompleted]);
 
   const submitActualExam = () => {
       setActualCheckingMode(false);
@@ -897,25 +897,25 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       {/* Control Mode Toggle */}
                       {/* Control Speed Toggle */}
                       {topic.type === 'LISTENING' && (
-                        <div className={`flex items-center p-1 bg-slate-100 rounded-lg transition-all ${listeningMode === 'actual' ? 'opacity-60' : ''}`}>
+                        <div className={`flex items-center p-1 bg-slate-100 rounded-lg transition-all ${(listeningMode === 'actual' && !isTestCompleted) ? 'opacity-60' : ''}`}>
                           <button 
                             title="Nghe tốc độ chậm (0.85x)"
-                            onClick={() => listeningMode !== 'actual' && setPlaybackSpeed(0.85)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.85 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${listeningMode === 'actual' ? 'cursor-not-allowed' : ''}`}
+                            onClick={() => (listeningMode !== 'actual' || isTestCompleted) && setPlaybackSpeed(0.85)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.85 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${(listeningMode === 'actual' && !isTestCompleted) ? 'cursor-not-allowed' : ''}`}
                           >
                             Nghe chậm
                           </button>
                           <button 
                             title="Nghe tốc độ bình thường (1.0x)"
-                            onClick={() => listeningMode !== 'actual' && setPlaybackSpeed(1)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1 ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${listeningMode === 'actual' ? 'cursor-not-allowed' : ''}`}
+                            onClick={() => (listeningMode !== 'actual' || isTestCompleted) && setPlaybackSpeed(1)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1 ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${(listeningMode === 'actual' && !isTestCompleted) ? 'cursor-not-allowed' : ''}`}
                           >
                             Thường
                           </button>
                           <button 
                             title="Nghe tốc độ nhanh (1.25x)"
-                            onClick={() => listeningMode !== 'actual' && setPlaybackSpeed(1.25)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1.25 ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${listeningMode === 'actual' ? 'cursor-not-allowed' : ''}`}
+                            onClick={() => (listeningMode !== 'actual' || isTestCompleted) && setPlaybackSpeed(1.25)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 1.25 ? 'bg-white text-red-500 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${(listeningMode === 'actual' && !isTestCompleted) ? 'cursor-not-allowed' : ''}`}
                           >
                             Nghe nhanh
                           </button>
@@ -926,7 +926,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                            {topic.type === 'LISTENING' && lessonStarted && (
                               <button
                                 onClick={() => {
-                                  if (listeningMode === 'actual') return;
+                                  if (listeningMode === 'actual' && !isTestCompleted) return;
                                   if (isPlayingDirections && directionAudioRef.current) {
                                     if (directionAudioRef.current.paused) directionAudioRef.current.play();
                                     else directionAudioRef.current.pause();
@@ -935,8 +935,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     else audioRef.current.pause();
                                   }
                                 }}
-                                className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${listeningMode === 'actual' ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 cursor-pointer'}`}
-                                title={listeningMode === 'actual' ? "Không thể điều khiển ở chế độ Thi thử" : "Play/Pause Audio"}
+                                className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${(listeningMode === 'actual' && !isTestCompleted) ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 cursor-pointer'}`}
+                                title={(listeningMode === 'actual' && !isTestCompleted) ? "Không thể điều khiển ở chế độ Thi thử" : "Play/Pause Audio"}
                               >
                                 {isAudioNodePlaying ? (
                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -1878,7 +1878,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                                         <button
                                           onClick={() => {
-                                              if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual') {
+                                              if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual' && !isTestCompleted) {
                                                   toast('Đang ở chế độ thi thử. Câu hỏi sẽ tự chuyển khi hết đoạn Audio. Nếu muốn chủ động, hãy chọn chế độ Luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
                                                   return;
                                               }
@@ -1923,7 +1923,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     <button 
                                       key={idx}
                                       onClick={() => {
-                                          if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual') {
+                                          if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual' && !isTestCompleted) {
                                               toast('Đang ở chế độ thi thử. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
                                               return;
                                           }
@@ -2098,11 +2098,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     onClick={() => {
                         setIsSubmitModalOpen(false);
                         setActualCheckingMode(true);
-                        setActualCheckTimeLeft(30);
+                        // Do not reset the timer here, let it continue counting down.
                     }}
                     className="w-full py-3.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold rounded-xl transition-all active:scale-95"
                  >
-                    Kiểm Tra Lại Lựa Chọn (30s)
+                    Kiểm Tra Lại Lựa Chọn ({actualCheckTimeLeft}s)
                  </button>
               </div>
            </motion.div>
