@@ -10,7 +10,10 @@ export default async function ToeicReviewsPage() {
             where: { key: 'footer_content' }
         })
         if (setting && setting.value) {
-            const val = setting.value as any
+            let val = setting.value as any
+            if (typeof val === 'string') {
+                try { val = JSON.parse(val) } catch(e) {}
+            }
             items = val.reviews || []
         }
     } catch (err) {

@@ -31,14 +31,18 @@ export default function AdminFooterContent() {
   const [uploadingImage, setUploadingImage] = useState(false)
 
   useEffect(() => {
-    fetch('/api/public/settings?key=footer_content')
+    fetch('/api/public/settings?key=footer_content', { cache: 'no-store' })
       .then(res => res.json())
       .then(res => {
         if (res && res.value) {
+          let val = res.value
+          if (typeof val === 'string') {
+            try { val = JSON.parse(val) } catch(e) {}
+          }
           setData({
-            reviews: res.value.reviews || [],
-            experiences: res.value.experiences || [],
-            documents: res.value.documents || []
+            reviews: val.reviews || [],
+            experiences: val.experiences || [],
+            documents: val.documents || []
           })
         }
       })

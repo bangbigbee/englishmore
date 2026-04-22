@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const key = searchParams.get('key')
     
     // Only allow specific keys to be fetched publicly for security
-    const allowedKeys = ['subscription_pricing']
+    const allowedKeys = ['subscription_pricing', 'footer_content']
     
     if (key && allowedKeys.includes(key)) {
       const setting = await prisma.systemSetting.findUnique({ where: { key } })
