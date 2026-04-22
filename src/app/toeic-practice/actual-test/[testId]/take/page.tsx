@@ -4,6 +4,7 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { delay, motion } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 import LoginModal from '@/components/LoginModal';
+import ZoomableImage from '@/components/ZoomableImage';
 
 const PartDirectionAudio = ({ src }: { src: string }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -486,7 +487,7 @@ function TakeTestContent() {
                                                     {(q.imageUrl || q.passage) && (
                                                         <div className="lg:w-1/2 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6">
                                                             {q.imageUrl && (
-                                                                <img src={q.imageUrl} alt="Question Context" className="w-[80%] max-w-[400px] rounded-xl shadow-sm cursor-pointer hover:opacity-95 transition-opacity" />
+                                                                <ZoomableImage src={q.imageUrl} alt="Question Context" />
                                                             )}
                                                             {q.passage && (
                                                                 <div className="prose prose-sm prose-slate max-w-none bg-slate-50 p-4 rounded-xl border border-slate-100" dangerouslySetInnerHTML={{ __html: q.passage }} />

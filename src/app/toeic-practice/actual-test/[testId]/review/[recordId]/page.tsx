@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import ZoomableImage from '@/components/ZoomableImage';
 
 const PartDirectionAudio = ({ src }: { src: string }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -265,7 +266,7 @@ function ReviewTestContent() {
                                                     {/* Left Media */}
                                                     {(q.imageUrl || q.passage) && (
                                                         <div className="lg:w-1/2 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6">
-                                                            {q.imageUrl && <img src={q.imageUrl} alt="Tài liệu" className="w-[80%] max-w-[400px] rounded-xl shadow-sm" />}
+                                                            {q.imageUrl && <ZoomableImage src={q.imageUrl} alt="Tài liệu" />}
                                                             {q.passage && <div className="prose prose-sm prose-slate max-w-none bg-white p-4 rounded-xl border border-slate-200 shadow-sm" dangerouslySetInnerHTML={{ __html: q.passage }} />}
                                                             {q.audioUrl && (
                                                                 <div className="mt-auto pt-4">
@@ -382,11 +383,17 @@ function ReviewTestContent() {
                                     
                                     // Try to find correct answer in testData
                                     let cAnswer = undefined;
+                                    const partOfQ = getPartFromNumber(qNum);
                                     for(const p of testData.parts) {
-                                        const startN = getPartFromNumber(p.part);
-                                        if (qNum >= startN && qNum < startN + p.questions.length) {
+                                        if (p.part === partOfQ) {
+                                            const getStartNumber = (part: number) => {
+                                                switch (part) { case 1: return 1; case 2: return 7; case 3: return 32; case 4: return 71; case 5: return 101; case 6: return 131; case 7: return 147; default: return 1; }
+                                            };
+                                            const startN = getStartNumber(p.part);
                                             const idx = qNum - startN;
-                                            cAnswer = p.questions[idx].correctOption;
+                                            if (idx >= 0 && idx < p.questions.length) {
+                                                cAnswer = p.questions[idx].correctOption;
+                                            }
                                             break;
                                         }
                                     }

@@ -95,7 +95,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
             });
         });
 
-        const totalQuestionsSubmitted = Object.keys(answers).length;
+        const totalQuestionsSubmitted = testData.reduce((acc: number, p: any) => acc + p.questions.length, 0);
         let scoreListening = null;
         let scoreReading = null;
 
