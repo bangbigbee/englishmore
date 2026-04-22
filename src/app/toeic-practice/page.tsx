@@ -1039,7 +1039,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			</div>
 
             {/* Quick Links Marquee Section */}
-            <div className="w-full max-w-6xl mx-auto mt-10 pt-8 border-t border-slate-200/80">
+            <div className="w-full max-w-6xl mx-auto mt-8 mb-4">
                 <div className="w-full overflow-hidden relative"
                     style={{
                         WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
