@@ -3,6 +3,59 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
+const PartDirectionAudio = ({ src }: { src: string }) => {
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const togglePlay = () => {
+        if (!audioRef.current) return;
+        if (isPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+        setIsPlaying(!isPlaying);
+    };
+
+    const handleSkip = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = audioRef.current.duration || 0;
+            setIsPlaying(false);
+        }
+    };
+
+    return (
+        <div className="flex items-center gap-3">
+            <audio ref={audioRef} src={src} onEnded={() => setIsPlaying(false)} className="hidden" />
+            
+            <button 
+                type="button"
+                onClick={togglePlay}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95"
+            >
+                {isPlaying ? (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                ) : (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" /></svg>
+                )}
+                <span>{isPlaying ? 'Tạm Dừng' : 'Nghe Hướng Dẫn'}</span>
+            </button>
+
+            {isPlaying && (
+                <button 
+                    type="button"
+                    onClick={handleSkip}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-all active:scale-95"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
+                    <span>SKIP</span>
+                </button>
+            )}
+        </div>
+    );
+};
+
 const PracticeAudioPlayer = ({ src, isPractice }: { src: string, isPractice: boolean }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -317,14 +370,11 @@ function TakeTestContent() {
 
                                 return (
                                 <div key={pIdx} className="mb-12">
-                                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 flex justify-between items-start">
-                                        <h2 className="text-xl font-black text-indigo-900">Part {partInfo.part}</h2>
+                                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+                                        <h2 className="text-xl font-black text-indigo-900 mb-2 md:mb-0">Part {partInfo.part}</h2>
                                         {!isActual && partInfo.directionAudioUrl && (
-                                            <div className="flex flex-col md:flex-row items-center justify-end gap-3 md:gap-4 w-full md:w-auto mt-4 md:mt-0">
-                                                <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1.5 rounded whitespace-nowrap">AUDIO HƯỚNG DẪN BÀI LÀM</span>
-                                                <div className="w-full md:w-auto flex-1 md:min-w-[400px]">
-                                                    <PracticeAudioPlayer src={partInfo.directionAudioUrl} isPractice={true} />
-                                                </div>
+                                            <div className="mt-4 md:mt-0">
+                                                <PartDirectionAudio src={partInfo.directionAudioUrl} />
                                             </div>
                                         )}
                                     </div>
