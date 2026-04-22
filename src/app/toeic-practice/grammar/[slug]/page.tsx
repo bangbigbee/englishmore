@@ -862,8 +862,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         className={`shrink-0 flex items-center gap-1.5 transition-all cursor-pointer relative group/restart ${selectedLessonId === lesson.id ? 'opacity-100' : 'md:opacity-0 md:group-hover:opacity-100'}`}
                         title="Làm Lại Bài"
                     >
-                       <span className={`text-xs font-bold px-2 py-1 rounded shadow-sm border ${selectedLessonId === lesson.id ? 'bg-[#14532d] text-white border-white/20' : 'bg-white text-[#14532d] border-emerald-50'} opacity-0 group-hover/restart:opacity-100 transition-opacity hidden sm:block whitespace-nowrap`}>Làm Lại Bài</span>
-                       <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all ${selectedLessonId === lesson.id ? 'border-white/40 text-white hover:bg-white/20' : 'border-[#14532d] text-[#14532d] hover:bg-emerald-50 bg-white'}`}>
+                       <span className="text-xs font-bold px-2 py-1 rounded shadow-sm border bg-white text-[#14532d] border-emerald-50 opacity-0 group-hover/restart:opacity-100 transition-opacity hidden sm:block whitespace-nowrap">Làm Lại Bài</span>
+                       <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all border-[#14532d] text-[#14532d] hover:bg-[#14532d]/10 bg-white/80">
                            <svg className="w-4 h-4 transition-transform group-hover/restart:-rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                        </div>
                     </div>
@@ -1078,25 +1078,25 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       
                       {!lessonStarted && topic.type === 'LISTENING' ? (
                         <div className="flex flex-col items-center justify-center p-8 md:p-12 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center min-h-[320px] max-w-2xl mx-auto">
-                            <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-5 text-[#14532d]">
+                            <div className="w-14 h-14 bg-[#0f766e]/10 rounded-2xl flex items-center justify-center mb-5 text-[#0f766e]">
                                 <svg className="w-6 h-6 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 leading-tight">Sẵn sàng cho PART {topic.part}?</h3>
+                            <h3 className="text-xl md:text-2xl font-black text-[#0f766e] mb-2 leading-tight">Sẵn sàng cho PART {topic.part}?</h3>
                             <p className="text-sm text-slate-500 mb-8 max-w-sm mx-auto">Audio sẽ tự động phát sau khi bạn bắt đầu. Thời gian làm bài sẽ được tính ngay lập tức.</p>
                             
                             {topic.part && topic.part <= 4 && (
                                   <div className="flex flex-col items-center mb-8 w-full gap-2">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#14532d] opacity-80">Chọn chế độ làm bài</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#0f766e] opacity-80">Chọn chế độ làm bài</span>
                                     <div className="flex items-center bg-slate-200/50 p-1 rounded-lg w-full max-w-[160px] mx-auto border border-slate-300/30 shadow-inner">
                                       <button 
                                         onClick={() => setListeningMode('practice')}
-                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'practice' ? 'bg-orange-400 text-[#14532d] shadow-[0_2px_4px_rgba(251,146,60,0.4)] border border-orange-300' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
+                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'practice' ? 'bg-[#0f766e] text-white shadow-[0_2px_4px_rgba(15,118,110,0.4)] border border-[#0f766e]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
                                       >
                                         Luyện tập
                                       </button>
                                       <button 
                                         onClick={() => setListeningMode('actual')}
-                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'actual' ? 'bg-[#1e1b4b] text-amber-400 shadow-[0_2px_4px_rgba(30,27,75,0.4)] border border-indigo-900' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
+                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'actual' ? 'bg-[#0f766e] text-white shadow-[0_2px_4px_rgba(15,118,110,0.4)] border border-[#0f766e]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
                                       >
                                         Thi thử
                                       </button>
@@ -1114,7 +1114,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     setIsPlayingDirections(true);
                                     directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
                                 }
-                            }} className={`font-bold px-8 py-3.5 rounded-xl transition-all shadow-sm text-[14px] uppercase tracking-wider active:scale-95 flex items-center justify-center gap-2 ${topic.part && topic.part <= 4 ? (listeningMode ? 'bg-[#14532d] text-white hover:bg-[#166534] hover:-translate-y-0.5' : 'bg-slate-100 text-slate-400 cursor-not-allowed') : 'bg-[#14532d] text-white hover:bg-[#166534] hover:-translate-y-0.5'}`}>
+                            }} className={`font-bold px-8 py-3.5 rounded-xl transition-all shadow-sm text-[14px] uppercase tracking-wider active:scale-95 flex items-center justify-center gap-2 ${topic.part && topic.part <= 4 ? (listeningMode ? 'bg-[#0f766e] text-white hover:bg-[#0d645e] hover:-translate-y-0.5' : 'bg-slate-100 text-slate-400 cursor-not-allowed') : 'bg-[#0f766e] text-white hover:bg-[#0d645e] hover:-translate-y-0.5'}`}>
                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                Bắt Đầu Ngay
                             </button>
