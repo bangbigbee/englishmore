@@ -1037,6 +1037,51 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					<ActualTestFeatureCard onMouseEnter={() => setHoveredCardIndex(4)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 4 || (hoveredCardIndex === null && activeCardIndex === 4)} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
 				</div>
 			</div>
+
+            {/* Quick Links Marquee Section */}
+            <div className="w-full max-w-6xl mx-auto mt-4 mb-2 overflow-hidden relative"
+                style={{
+                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+                    maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+                }}
+            >
+                <style dangerouslySetInnerHTML={{
+						__html: `
+                        @keyframes marquee-ltr {
+                            0% { transform: translateX(calc(-50% - 0.75rem)); }
+                            100% { transform: translateX(0); }
+                        }
+                        .animate-marquee-ltr {
+                            animation: marquee-ltr 35s linear infinite;
+                        }
+                        `
+                }} />
+                <div className="flex animate-marquee-ltr items-center gap-x-4 py-3 w-max hover:[animation-play-state:paused]">
+                    {[
+                        { title: 'Review Đề TOEIC', href: '/toeic-practice/reviews', icon: '📝' },
+                        { title: 'Lộ Trình Học Của Tôi', href: '#', icon: '🗺️' },
+                        { title: 'Nâng Cấp Học Trọn Đời', href: '/toeic-practice/upgrade', icon: '⭐' },
+                        { title: 'Kho Tài Liệu', href: '/toeic-practice/documents', icon: '📚' },
+                        { title: 'Về ToeicMore', href: '/about-toeicmore', icon: '✨' },
+                        
+                        // DUPLICATE FOR INFINITE EFFECT
+                        { title: 'Review Đề TOEIC', href: '/toeic-practice/reviews', icon: '📝' },
+                        { title: 'Lộ Trình Học Của Tôi', href: '#', icon: '🗺️' },
+                        { title: 'Nâng Cấp Học Trọn Đời', href: '/toeic-practice/upgrade', icon: '⭐' },
+                        { title: 'Kho Tài Liệu', href: '/toeic-practice/documents', icon: '📚' },
+                        { title: 'Về ToeicMore', href: '/about-toeicmore', icon: '✨' },
+                    ].map((item, idx) => (
+                        <Link 
+                            key={idx} 
+                            href={item.href}
+                            className="bg-white/90 backdrop-blur-sm border border-[#14532d]/10 px-6 py-3.5 rounded-[16px] shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-[#14532d]/20 transition-all duration-300 flex items-center gap-3 group shrink-0 min-w-[200px]"
+                        >
+                            <span className="text-xl group-hover:scale-110 transition-transform">{item.icon}</span>
+                            <span className="text-[13px] font-bold text-slate-700 group-hover:text-[#14532d] transition-colors">{item.title}</span>
+                        </Link>
+                    ))}
+                </div>
+            </div>
 		</div>
 	);
 }
