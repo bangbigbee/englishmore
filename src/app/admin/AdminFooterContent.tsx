@@ -50,7 +50,7 @@ export default function AdminFooterContent() {
     setSaving(true)
     try {
       const res = await fetch('/api/admin/settings', {
-        method: 'POST',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'footer_content', value: newData })
       })
