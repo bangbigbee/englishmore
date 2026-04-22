@@ -101,6 +101,7 @@ function TakeTestContent() {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [timeLeft, setTimeLeft] = useState(initialTimeSeconds);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
 
     const [playQueue, setPlayQueue] = useState<any[]>([]);
     const [currentAudioIdx, setCurrentAudioIdx] = useState(0);
@@ -335,15 +336,24 @@ function TakeTestContent() {
                                 </div>
                             )}
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 md:gap-4">
+                            {/* Answer Sheet Toggle for Mobile */}
+                            <button 
+                                onClick={() => setIsSheetOpen(!isSheetOpen)} 
+                                className={`lg:hidden px-3 py-2 md:px-4 rounded-xl text-sm font-bold flex items-center gap-1.5 md:gap-2 ${isActual ? 'bg-indigo-600 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
+                            >
+                                <svg className="w-5 h-5 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                {isSheetOpen ? 'Đóng Đáp Án' : 'Đáp Án'}
+                            </button>
+
                             {/* Running Timer */}
-                            <div className={`font-mono text-xl font-bold px-4 py-2 rounded-lg transition-colors duration-500 ${timeLeft <= 60 ? 'bg-red-600 animate-pulse text-white' : (isActual ? 'bg-slate-800 text-rose-500' : 'bg-slate-800 text-slate-200')}`}>
+                            <div className={`font-mono text-base md:text-xl font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors duration-500 ${timeLeft <= 60 ? 'bg-red-600 animate-pulse text-white' : (isActual ? 'bg-slate-800 text-rose-500' : 'bg-slate-800 text-slate-200')}`}>
                                 {formatTime(timeLeft)}
                             </div>
                             <button onClick={() => {
                                 exitFullscreen();
                                 router.push(`/toeic-practice/actual-test/${testId}`);
-                            }} className={`px-4 py-2 rounded-xl text-sm font-bold ${isActual ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}`}>
+                            }} className={`px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-sm font-bold ${isActual ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}`}>
                                 Thoát
                             </button>
                         </div>
@@ -352,7 +362,14 @@ function TakeTestContent() {
                     {/* Content Room */}
                     <div className="flex flex-1 overflow-hidden">
                         {/* Main Stage */}
-                        <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
+                        <div className="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar relative">
+                            {/* Mobile Backdrop Overlay */}
+                            {isSheetOpen && (
+                                <div 
+                                    className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
+                                    onClick={() => setIsSheetOpen(false)}
+                                />
+                            )}
                             {testData.parts.filter((p: any) => selectedPartsList.includes(p.part)).map((partInfo: any, pIdx: number) => {
                                 const getPartStartNumber = (part: number) => {
                                     switch (part) {
@@ -473,9 +490,17 @@ function TakeTestContent() {
                         </div>
 
                         {/* Answer Sheet Sidebar */}
-                        <div className={`w-80 border-l p-4 flex flex-col ${isActual ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
-                            <h3 className="font-bold text-lg mb-4 text-center">Phiếu Trả Lời</h3>
-                            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                        <div className={`
+                            absolute lg:relative right-0 top-0 bottom-0 z-50 transform transition-transform duration-300 w-80 max-w-[85vw] border-l p-4 flex flex-col shadow-2xl lg:shadow-none
+                            ${isSheetOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+                            ${isActual ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}
+                        `}>
+                            {/* Close overlay on mobile */}
+                            <button onClick={() => setIsSheetOpen(false)} className={`lg:hidden absolute top-4 right-4 p-2 rounded-full ${isActual ? 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                            <h3 className="font-bold text-lg mb-4 text-center pr-8 lg:pr-0">Phiếu Trả Lời</h3>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
                                 <div className="grid grid-cols-2 gap-2">
                                     {/* Real Sheet based on state */}
                                     {Array.from({length: 200}).map((_, i) => {
