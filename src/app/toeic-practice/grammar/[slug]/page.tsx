@@ -784,13 +784,15 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         {/* Sidebar */}
         <aside className="w-full md:w-80 bg-white border-b md:border-b-0 md:border-r border-slate-200 md:sticky md:top-16 md:h-[calc(100vh-64px)] md:overflow-y-auto">
           <div 
-            className="p-4 border-b border-slate-100 flex justify-between items-center cursor-pointer md:cursor-default"
+            className="p-3 border-b border-slate-100 flex justify-end md:hidden cursor-pointer"
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
           >
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Danh sách bài học</h2>
-            <svg className={`w-5 h-5 text-slate-400 md:hidden transition-transform ${isMobileSidebarOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-400">MENU</span>
+                <svg className={`w-5 h-5 text-slate-400 transition-transform ${isMobileSidebarOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
           </div>
           <nav className={`p-2 space-y-1 ${isMobileSidebarOpen ? 'block' : 'hidden md:block'}`}>
             {topic.lessons.map((lesson) => (
@@ -827,29 +829,24 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setIsMobileSidebarOpen(false)
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
-                className={`w-full text-left p-4 rounded-xl transition-all duration-200 group flex items-start gap-4 cursor-pointer ${
+                className={`w-full text-left p-3 rounded-xl transition-all duration-200 group flex items-center gap-3 cursor-pointer ${
                   selectedLessonId === lesson.id
-                    ? 'bg-[#14532d] text-white shadow-lg shadow-[#14532d]/20 ring-1 ring-[#14532d]'
+                    ? 'bg-[#14532d]/10 text-[#14532d] shadow-sm ring-1 ring-[#14532d]/20'
                     : 'hover:bg-slate-100 text-slate-700 hover:translate-x-1'
                 }`}
               >
-                <div className={`w-8 h-8 shrink-0 flex items-center justify-center rounded-lg font-bold text-sm ${
-                  selectedLessonId === lesson.id ? 'bg-white/20' : 'bg-slate-100 text-slate-500 group-hover:bg-[#14532d]/10'
-                }`}>
-                  {lesson.order}
-                </div>
                 <div className="min-w-0 flex-1">
-                  <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-white' : 'text-slate-800'}`}>
+                  <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-[#14532d]' : 'text-slate-800'}`}>
                     <span className="truncate">{lesson.title}</span>
                     {lesson.accessTier === 'PRO' && (
-                      <svg className="w-[18px] h-[18px] text-amber-400 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                      <svg className="w-[18px] h-[18px] text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     )}
                     {lesson.accessTier === 'ULTRA' && (
                       <svg className="w-[18px] h-[18px] text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     )}
                   </div>
-                  <div className={`text-[11px] mt-1 ${selectedLessonId === lesson.id ? 'text-white/60' : 'text-slate-500'}`}>
-                    {lesson.questions.length} câu hỏi luyện tập
+                  <div className={`text-[11px] mt-0.5 font-medium ${selectedLessonId === lesson.id ? 'text-[#14532d]/70' : 'text-slate-500'}`}>
+                    {lesson.questions.length} câu hỏi
                   </div>
                 </div>
                 {(() => {
