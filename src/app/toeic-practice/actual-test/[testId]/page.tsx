@@ -100,10 +100,10 @@ export default function ActualTestLobbyPage() {
     return (
         <div className="min-h-screen bg-slate-50 py-10 md:py-16 px-4">
             <div className="max-w-4xl mx-auto">
-                <Link href="/toeic-practice" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-8 font-medium">
+                <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-8 font-medium cursor-pointer">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                     Quay lại danh sách
-                </Link>
+                </button>
 
                 <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-200">
                     <div className="text-center mb-10">
@@ -111,7 +111,6 @@ export default function ActualTestLobbyPage() {
                             {testData.collection}
                         </div>
                         <h1 className="text-3xl md:text-5xl font-black text-slate-800 tracking-tight">{testData.title}</h1>
-                        <p className="mt-4 text-slate-500 font-medium">Đề gồm {availableParts.length} parts hiện có.</p>
                     </div>
 
                     <div className="max-w-2xl mx-auto space-y-10">
@@ -126,7 +125,7 @@ export default function ActualTestLobbyPage() {
                                     {mode === 'practice' && <svg className="w-6 h-6 text-purple-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
                                 </div>
                                 <p className={`text-sm ${mode === 'practice' ? 'text-purple-600/80' : 'text-slate-500'}`}>
-                                    Không giới hạn thời gian. Có thể tua audio, xem giải thích, và chọn từng Part cụ thể.
+                                    Chỉnh thời gian, tua audio và xem giải thích kèm song ngữ
                                 </p>
                             </button>
 
@@ -139,7 +138,7 @@ export default function ActualTestLobbyPage() {
                                     {mode === 'actual' && <svg className="w-6 h-6 text-slate-800" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
                                 </div>
                                 <p className={`text-sm ${mode === 'actual' ? 'text-slate-700' : 'text-slate-500'}`}>
-                                    Trải nghiệm thi như thật. Thời gian tự động dựa trên các part có sẵn. Full màn hình. Không tua audio. Làm liên tục test.
+                                    Trải nghiệm như thi thật, làm liên tục bài test trong 120 phút
                                 </p>
                             </button>
                         </div>
@@ -147,16 +146,15 @@ export default function ActualTestLobbyPage() {
                         {/* Part Selection for Practice Mode */}
                         {mode === 'practice' && (
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h4 className="font-bold text-slate-800">Các Part muốn luyện tập:</h4>
-                                    <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-slate-600 hover:text-purple-600 transition-colors select-none">
+                                <div className="flex items-center justify-end mb-3">
+                                    <label className="flex items-center gap-2 cursor-pointer text-[13px] font-bold text-slate-500 hover:text-purple-600 transition-colors select-none">
                                         <input 
                                             type="checkbox" 
                                             checked={selectedParts.length === availableParts.length} 
                                             onChange={() => selectedParts.length === availableParts.length ? setSelectedParts([]) : setSelectedParts([...availableParts])}
                                             className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
                                         />
-                                        Chọn tất cả parts
+                                        Tất cả
                                     </label>
                                 </div>
                                 <div className="flex flex-wrap gap-3">
@@ -164,15 +162,15 @@ export default function ActualTestLobbyPage() {
                                         <button
                                             key={partId}
                                             onClick={() => togglePart(partId)}
-                                            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${selectedParts.includes(partId) ? 'bg-purple-600 text-white border-purple-600 shadow-sm' : 'bg-white text-slate-600 border-slate-300 hover:border-purple-300'}`}
+                                            className={`px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all border ${selectedParts.includes(partId) ? 'bg-purple-600 text-white border-purple-600 shadow-sm' : 'bg-white text-slate-600 border-slate-300 hover:border-purple-300'}`}
                                         >
                                             Part {partId}
                                         </button>
                                     ))}
                                 </div>
 
-                                <div className="mt-8 flex flex-col gap-3">
-                                    <label className="font-bold text-slate-800">Thời gian làm bài (phút):</label>
+                                <div className="mt-6 flex flex-col gap-2">
+                                    <label className="font-bold text-slate-800 text-[13px]">Thời gian:</label>
                                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                                         <input 
                                             type="number" 
