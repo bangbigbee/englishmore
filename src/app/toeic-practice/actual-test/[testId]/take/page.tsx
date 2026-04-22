@@ -13,17 +13,17 @@ const PracticeAudioPlayer = ({ src, isPractice }: { src: string, isPractice: boo
     };
 
     return (
-        <div className="flex flex-col gap-2 w-full max-w-sm">
-            <audio ref={audioRef} src={src} controls className="w-full h-10" />
+        <div className="flex flex-row items-center gap-3 w-full max-w-xl">
             {isPractice && (
-                <div className="flex items-center gap-1.5 justify-start">
-                    <button type="button" onClick={() => handleSeek(-3)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua lùi 3 giây">
-                        -3s
-                    </button>
-                    <button type="button" onClick={() => handleSeek(3)} className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors" title="Tua tới 3 giây">
-                        +3s
-                    </button>
-                </div>
+                <button type="button" onClick={() => handleSeek(-3)} className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors flex-shrink-0" title="Tua lùi 3 giây">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7M19 19l-7-7 7-7" /></svg>
+                </button>
+            )}
+            <audio ref={audioRef} src={src} controls className="w-full h-11 flex-1" />
+            {isPractice && (
+                <button type="button" onClick={() => handleSeek(3)} className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors flex-shrink-0" title="Tua tới 3 giây">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
+                </button>
             )}
         </div>
     );
@@ -320,9 +320,11 @@ function TakeTestContent() {
                                     <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-6 flex justify-between items-start">
                                         <h2 className="text-xl font-black text-indigo-900">Part {partInfo.part}</h2>
                                         {!isActual && partInfo.directionAudioUrl && (
-                                            <div className="flex flex-col items-end gap-2">
-                                                <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-1 rounded">AUDIO HƯỚNG DẪN BÀI LÀM</span>
-                                                <PracticeAudioPlayer src={partInfo.directionAudioUrl} isPractice={true} />
+                                            <div className="flex flex-col md:flex-row items-center justify-end gap-3 md:gap-4 w-full md:w-auto mt-4 md:mt-0">
+                                                <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2.5 py-1.5 rounded whitespace-nowrap">AUDIO HƯỚNG DẪN BÀI LÀM</span>
+                                                <div className="w-full md:w-auto flex-1 md:min-w-[400px]">
+                                                    <PracticeAudioPlayer src={partInfo.directionAudioUrl} isPractice={true} />
+                                                </div>
                                             </div>
                                         )}
                                     </div>
