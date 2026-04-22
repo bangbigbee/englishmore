@@ -319,45 +319,58 @@ function TakeTestContent() {
             ) : (
                 <div className="flex flex-col h-screen overflow-hidden">
                     {/* Header Room */}
-                    <div className={`flex items-center justify-between p-4 ${isActual ? 'bg-slate-900 border-b border-slate-800' : 'bg-white shadow-sm'}`}>
-                        <div className="flex items-center gap-4">
-                            <h1 className="font-black text-xl">{testData.title}</h1>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${isActual ? 'bg-rose-500/20 text-rose-500' : 'bg-blue-100 text-blue-700'}`}>
+                    <div className={`flex flex-row items-center justify-between px-2 py-3 md:p-4 gap-1 md:gap-4 ${isActual ? 'bg-slate-900 border-b border-slate-800' : 'bg-white shadow-sm'}`}>
+                        <div className="flex items-center gap-1.5 md:gap-4 flex-shrink-0">
+                            <h1 className="font-black text-sm md:text-xl max-w-[60px] md:max-w-none truncate" title={testData.title}>{testData.title}</h1>
+                            <span className={`px-1.5 md:px-3 py-0.5 md:py-1 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap ${isActual ? 'bg-rose-500/20 text-rose-500' : 'bg-blue-100 text-blue-700'}`}>
                                 {isActual ? 'THI THẬT' : 'LUYỆN TẬP'}
                             </span>
-                            {/* Global Audio Indicator for Actual Test */}
-                            {isActual && playQueue.length > 0 && (
-                                <div className="ml-4 flex items-center gap-2 px-4 py-1.5 bg-indigo-900/50 rounded-lg border border-indigo-500/30">
-                                    <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-                                    <span className="text-sm font-medium text-indigo-200">
-                                        Đang phát âm thanh: <span className="font-bold text-white">{playQueue[currentAudioIdx]?.title}</span>
-                                    </span>
-                                    <audio ref={globalAudioRef} onEnded={handleGlobalAudioEnded} src={playQueue[currentAudioIdx]?.src} className="hidden" />
-                                </div>
-                            )}
                         </div>
-                        <div className="flex items-center gap-2 md:gap-4">
+
+                        <div className="flex items-center gap-1.5 md:gap-4 flex-1 justify-end">
                             {/* Answer Sheet Toggle for Mobile */}
                             <button 
                                 onClick={() => setIsSheetOpen(!isSheetOpen)} 
-                                className={`lg:hidden px-3 py-2 md:px-4 rounded-xl text-sm font-bold flex items-center gap-1.5 md:gap-2 ${isActual ? 'bg-indigo-600 text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
+                                className={`lg:hidden px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold flex items-center gap-1 md:gap-2 whitespace-nowrap flex-shrink-0 ${isActual ? 'bg-indigo-600 text-white' : 'bg-blue-100 text-blue-700'}`}
                             >
-                                <svg className="w-5 h-5 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                                {isSheetOpen ? 'Đóng Đáp Án' : 'Đáp Án'}
+                                <svg className="w-3 h-3 md:w-5 md:h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                {isSheetOpen ? 'Đóng Phiếu' : 'Phiếu trả lời'}
                             </button>
 
                             {/* Running Timer */}
-                            <div className={`font-mono text-base md:text-xl font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors duration-500 ${timeLeft <= 60 ? 'bg-red-600 animate-pulse text-white' : (isActual ? 'bg-slate-800 text-rose-500' : 'bg-slate-800 text-slate-200')}`}>
+                            <div className={`font-mono text-[11px] md:text-xl font-bold px-1.5 py-1 md:px-4 md:py-2 rounded-lg transition-colors duration-500 whitespace-nowrap flex-shrink-0 ${timeLeft <= 60 ? 'bg-red-600 animate-pulse text-white' : (isActual ? 'bg-slate-800 text-rose-500' : 'bg-slate-800 text-slate-200')}`}>
                                 {formatTime(timeLeft)}
                             </div>
+
                             <button onClick={() => {
                                 exitFullscreen();
                                 router.push(`/toeic-practice/actual-test/${testId}`);
-                            }} className={`px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-sm font-bold ${isActual ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}`}>
+                            }} className={`px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold whitespace-nowrap flex-shrink-0 ${isActual ? 'bg-slate-800 text-white' : 'bg-slate-200 text-slate-700'}`}>
                                 Thoát
                             </button>
                         </div>
                     </div>
+
+                    {/* Global Audio Indicator for Actual Test */}
+                    {isActual && playQueue.length > 0 && (
+                        <>
+                            <audio ref={globalAudioRef} onEnded={handleGlobalAudioEnded} src={playQueue[currentAudioIdx]?.src} className="hidden" />
+                            {/* Mobile Indicator - Second line */}
+                            <div className="md:hidden flex items-center gap-2 px-3 py-1.5 bg-indigo-900/50 border-b border-indigo-500/30">
+                                <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse"></div>
+                                <span className="text-xs font-medium text-indigo-200 truncate">
+                                    Đang phát: <span className="font-bold text-white max-w-[200px] truncate">{playQueue[currentAudioIdx]?.title}</span>
+                                </span>
+                            </div>
+                            {/* Desktop Indicator - Absolute center */}
+                            <div className="hidden md:flex absolute top-4 right-1/2 translate-x-1/2 items-center gap-2 px-4 py-1.5 bg-indigo-900/50 rounded-lg border border-indigo-500/30 z-10 pointer-events-none">
+                                <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
+                                <span className="text-sm font-medium text-indigo-200">
+                                    Đang phát âm thanh: <span className="font-bold text-white">{playQueue[currentAudioIdx]?.title}</span>
+                                </span>
+                            </div>
+                        </>
+                    )}
 
                     {/* Content Room */}
                     <div className="flex flex-1 overflow-hidden">
