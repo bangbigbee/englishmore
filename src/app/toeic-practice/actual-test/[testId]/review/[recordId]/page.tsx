@@ -365,7 +365,7 @@ function ReviewTestContent() {
                     </div>
 
                     {/* Review Answer Sheet Sidebar */}
-                    <div className={`absolute lg:relative right-0 top-0 bottom-0 z-50 transform transition-transform duration-300 w-80 max-w-[85vw] bg-white border-l border-slate-200 p-4 flex flex-col shadow-2xl lg:shadow-none ${isSheetOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+                    <div className={`absolute lg:relative right-0 top-0 bottom-0 z-50 transform transition-transform duration-300 w-[340px] max-w-[90vw] bg-white border-l border-slate-200 p-4 flex flex-col shadow-2xl lg:shadow-none ${isSheetOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
                         <button onClick={() => setIsSheetOpen(false)} className="lg:hidden absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
@@ -399,13 +399,15 @@ function ReviewTestContent() {
                                     }
 
                                     const isEnabled = cAnswer !== undefined; // Exists in test
+                                    const isBlank = isEnabled && !answeredOpt;
                                     const isCorrect = isEnabled && answeredOpt === cAnswer;
                                     const isWrong = isEnabled && answeredOpt && answeredOpt !== cAnswer;
+                                    const isIncorrectOrBlank = isWrong || isBlank;
 
                                     return (
-                                        <a href={`#q-${qNum}`} onClick={() => {if(window.innerWidth < 1024) setIsSheetOpen(false)}} key={i} className={`flex items-center justify-between p-2 rounded-lg border text-sm transition-all ${isEnabled ? 'bg-slate-50 hover:border-indigo-300' : 'opacity-20 pointer-events-none grayscale'}`}>
-                                            <span className={`font-bold w-6 text-right mr-2 ${isCorrect ? 'text-emerald-500' : isWrong ? 'text-rose-500' : 'text-slate-400'}`}>{qNum}.</span>
-                                            <div className="flex gap-1.5">
+                                        <a href={`#q-${qNum}`} onClick={() => {if(window.innerWidth < 1024) setIsSheetOpen(false)}} key={i} className={`flex items-center justify-between px-2 py-1.5 rounded-lg border text-sm transition-all ${isEnabled ? 'bg-slate-50 hover:border-indigo-300' : 'opacity-20 pointer-events-none grayscale'}`}>
+                                            <span className={`font-bold w-6 text-right mr-1 sm:mr-1.5 ${isCorrect ? 'text-emerald-500' : isIncorrectOrBlank ? 'text-rose-500' : 'text-slate-400'}`}>{qNum}.</span>
+                                            <div className="flex gap-1 shrink-0">
                                                 {['A', 'B', 'C', 'D'].map(opt => {
                                                     const isSelected = answeredOpt === opt;
                                                     const isCorrectOpt = cAnswer === opt;
