@@ -2895,17 +2895,20 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                         </div>
                                     </div>
                                     
-                                    <div className="flex flex-col gap-2 mb-5 flex-1">
-                                        <div className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Parts có trong đề</div>
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {testParts.map((pNum: any) => (
-                                                <div key={pNum} className="w-6 h-6 rounded-md bg-slate-100 text-slate-600 font-bold text-[11px] flex items-center justify-center border border-slate-200">
-                                                    {pNum}
-                                                </div>
-                                            ))}
-                                            {testParts.length === 0 && (
-                                                <span className="text-xs text-slate-400 font-medium">Đề trống</span>
-                                            )}
+                                    <div className="flex flex-col gap-2 mb-4 flex-1">
+                                        <div className="text-[12px] font-bold text-slate-500">Bạn sẽ làm các part</div>
+                                        <div className="flex gap-1.5">
+                                            {[1, 2, 3, 4, 5, 6, 7].map((pNum) => {
+                                                const isActive = testParts.includes(pNum);
+                                                return (
+                                                    <div 
+                                                        key={pNum} 
+                                                        className={`w-6 h-6 rounded-md flex items-center justify-center font-bold text-[11px] transition-colors ${isActive ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm' : 'bg-slate-50 text-slate-300 border border-slate-100'}`}
+                                                    >
+                                                        {pNum}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                     
