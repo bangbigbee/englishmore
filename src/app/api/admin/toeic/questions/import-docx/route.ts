@@ -43,6 +43,7 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
 
   const results: ExtractedToeicQuestion[] = []
   let current: ExtractedToeicQuestion | null = null
+  let currentMode: 'question' | 'explanation' | 'translation' | 'tips' | 'vocabulary' | '' = ''
 
   let inAnswerSection = false;
   let currentGroupNumbers: number[] = [];
@@ -60,6 +61,7 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
     }
 
     current = null
+    currentMode = ''
   }
 
   for (const line of lines) {
@@ -120,7 +122,6 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
               q.explanation = exp;
               currentAnswerQuestion = q;
           } else {
-             // In case question body was lost/missing, create stub to ensure admin can map it
              results.push({
                  questionNumber: num,
                  question: '',
@@ -144,6 +145,7 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
     const questionMatch = line.match(/^(?:Q(?:uestion)?|Cau|Câu)?\s*(\d{1,3})\s*[\).:-]\s*(.*)$/i)
     if (questionMatch) {
       pushCurrent()
+      currentMode = 'question'
       
       let rawText = questionMatch[2].trim();
       let questionText = rawText;
@@ -187,15 +189,6 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
       continue
     }
 
-    // Match options: "A. ...", "(A) ...", "A) ...", "A: ..."
-    const optionMatch = line.match(/^(?:Option\s*)?(?:\(([ABCD])\)|([ABCD])[\).:-])\s*(.+)$/i)
-    if (optionMatch) {
-      const letter = (optionMatch[1] || optionMatch[2]).toUpperCase()
-      const key = `option${letter}` as 'optionA' | 'optionB' | 'optionC' | 'optionD'
-      current[key] = optionMatch[3].trim()
-      continue
-    }
-
     // Match answers: "Đáp án: A", "Answer: A", "Dap an: A"
     const answerMatch = line.match(/^(?:ANSWER|CORRECT(?:\s*OPTION)?|DAP\s*AN|ĐÁP\s*ÁN|Dap\s*an)\s*[:\-]?\s*([ABCD])\b/i)
     if (answerMatch) {
@@ -204,22 +197,25 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
     }
 
     // Match explanation: "Giải thích: ...", "Explanation: ..."
-    const explanationMatch = line.match(/^(?:Explanation|Giai\s*thich|Giải\s*thích)\s*[:\-]?\s*(.+)$/i)
+    const explanationMatch = line.match(/^(?:Explanation|Giai\s*thich|Giải\s*thích)\s*[:\-]?\s*(.*)$/i)
     if (explanationMatch) {
-      current.explanation = explanationMatch[1].trim()
+      currentMode = 'explanation'
+      if (explanationMatch[1].trim()) current.explanation = explanationMatch[1].trim()
       continue
     }
 
     // Match translation: "Dịch nghĩa: ...", "Translation: ..."
-    const translationMatch = line.match(/^(?:Translation|Dich\s*nghia|Dịch\s*nghĩa)\s*[:\-]?\s*(.+)$/i)
+    const translationMatch = line.match(/^(?:Translation|Dich\s*nghia|Dịch\s*nghĩa)\s*[:\-]?\s*(.*)$/i)
     if (translationMatch) {
-      current.translation = translationMatch[1].trim()
+      currentMode = 'translation'
+      if (translationMatch[1].trim()) current.translation = translationMatch[1].trim()
       continue
     }
 
     // Match tip: "Tip: ...", "Mẹo: ..."
     const tipMatch = line.match(/^(?:Tip|Mẹo|Meo|Mẹo\s*TOEIC)\s*[:\-]?\s*(.*)$/i)
     if (tipMatch) {
+      currentMode = 'tips'
       const parsedTip = tipMatch[1].trim()
       current.tips = parsedTip === '(Blank)' ? '' : parsedTip
       continue
@@ -228,9 +224,10 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
     // Match inline vocabulary item: "Vocabulary: policy (n) : chính sách" or "Vocabulary: (Blank)"
     const vocabMatch = line.match(/^(?:Vocabulary|Từ\s*vựng|Tu\s*vung)\s*[:\-]\s*(.*)$/i)
     if (vocabMatch) {
+      currentMode = 'vocabulary'
       const vocabStr = vocabMatch[1].trim()
       if (vocabStr === '(Blank)' || !vocabStr) {
-        current.vocabulary = []
+        // Just entering vocab mode, or explicitly blank
         continue
       }
       
@@ -242,21 +239,41 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
           meaning: `${typeStr}${partsMatch[3].trim()}`
         })
       } else {
-        // Fallback if they just type "Vocabulary: antique" without meaning
         current.vocabulary.push({ word: vocabStr, meaning: '' })
       }
       continue
     }
 
-    // Append to either question, explanation, translation or tip if it doesn't match a prefix
-    if (current.tips) {
-      current.tips += ' ' + line
-    } else if (current.translation) {
-      current.translation += ' ' + line
-    } else if (current.explanation) {
-      current.explanation += ' ' + line
-    } else if (current.question && !current.optionA) {
-      current.question += ' ' + line
+    // Match options: "A. ...", "(A) ...", "A) ...", "A: ..."
+    const optionMatch = line.match(/^(?:Option\s*)?(?:\(([ABCD])\)|([ABCD])[\).:-])\s*(.+)$/i)
+    if (optionMatch && currentMode === 'question') {
+      const letter = (optionMatch[1] || optionMatch[2]).toUpperCase()
+      const key = `option${letter}` as 'optionA' | 'optionB' | 'optionC' | 'optionD'
+      current[key] = optionMatch[3].trim()
+      continue
+    }
+
+    // Append to the current mode
+    if (currentMode === 'vocabulary') {
+      // Parse multi-line vocabulary: "policy (n) : chính sách" or "policy: chính sách"
+      const partsMatch = line.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/)
+      if (partsMatch) {
+        const typeStr = partsMatch[2] ? `(${partsMatch[2].trim()}) ` : ''
+        current.vocabulary.push({
+          word: partsMatch[1].trim(),
+          meaning: `${typeStr}${partsMatch[3].trim()}`
+        })
+      } else {
+        current.vocabulary.push({ word: line.trim(), meaning: '' })
+      }
+    } else if (currentMode === 'tips') {
+      current.tips += (current.tips ? '\n' : '') + line
+    } else if (currentMode === 'translation') {
+      current.translation += (current.translation ? '\n' : '') + line
+    } else if (currentMode === 'explanation') {
+      current.explanation += (current.explanation ? '\n' : '') + line
+    } else if (currentMode === 'question' && !current.optionA) {
+      current.question += (current.question ? '\n' : '') + line
     }
   }
 
