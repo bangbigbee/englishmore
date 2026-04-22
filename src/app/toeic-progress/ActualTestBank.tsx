@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import ActualTestBankList from "./ActualTestBankList";
 
 export default async function ActualTestBank({ filter = 'mistakes' }: { filter?: string }) {
 	const session = await getServerSession(authOptions);
@@ -62,7 +63,7 @@ export default async function ActualTestBank({ filter = 'mistakes' }: { filter?:
                 question: {
                     lesson: {
                         topic: {
-                            type: 'ACTUAL_TEST'
+                            title: { contains: 'ETS' }
                         }
                     }
                 }
@@ -90,7 +91,7 @@ export default async function ActualTestBank({ filter = 'mistakes' }: { filter?:
                 question: {
                     lesson: {
                         topic: {
-                            type: 'ACTUAL_TEST'
+                            title: { contains: 'ETS' }
                         }
                     }
                 }
@@ -219,68 +220,9 @@ export default async function ActualTestBank({ filter = 'mistakes' }: { filter?:
                 </div>
             )}
             
-			{!isHistory && items.map((item) => {
-				const q = item.question;
-				return (
-					<Link 
-						key={q.id}
-						href={`/toeic-practice/grammar/${q.lesson.topic.slug}`}
-						className="block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group relative"
-					>
-                        {isMistakes && item.selectedOption && (
-                            <div className="absolute top-4 right-4 text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 opacity-90 text-[10px] font-bold">
-                                CÂU SAI
-                            </div>
-                        )}
-                        {!isMistakes && (
-                            <div className="absolute top-4 right-4 text-blue-500 bg-blue-50 p-1.5 rounded-lg border border-blue-200 opacity-80 group-hover:opacity-100 transition-opacity">
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-                            </div>
-                        )}
-						
-                        <div className="flex items-center gap-2 mb-3">
-							<span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded whitespace-nowrap">
-								{q.lesson.topic.title}
-							</span>
-                            <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded whitespace-nowrap">
-								{q.lesson.title}
-							</span>
-						</div>
-						
-                        <p className="text-lg font-black text-slate-800 mb-4 pr-8 line-clamp-2 leading-snug">
-							{q.question}
-						</p>
-
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-sm font-medium">
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'A' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">A</span> {q.optionA}
-							</div>
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'B' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">B</span> {q.optionB}
-							</div>
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'C' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">C</span> {q.optionC}
-							</div>
-							{q.optionD && (
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'D' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">D</span> {q.optionD}
-							</div>
-							)}
-						</div>
-                        
-                        {(q.translation || q.explanation) && (
-                            <div className="mt-4 pt-3 border-t border-slate-100/60">
-                                {q.translation && (
-                                    <div className="text-sm italic text-blue-700 opacity-90 mb-2">{q.translation}</div>
-                                )}
-                                {q.explanation && (
-                                    <div className="text-[13px] font-medium text-slate-600">{q.explanation}</div>
-                                )}
-                            </div>
-                        )}
-					</Link>
-				);
-			})}
+			{!isHistory && (
+                <ActualTestBankList items={items} isMistakes={isMistakes} />
+            )}
 		</div>
 	);
 }

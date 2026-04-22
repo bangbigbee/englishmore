@@ -112,6 +112,46 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
         const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
+        // Save detailed answers to ToeicAnswer table for Mistake tab tracking
+        const answerDataList: any[] = [];
+        const answeredQuestionIds: string[] = [];
+
+        testData.forEach(partInfo => {
+            const getPartStartNumber = (part: number) => {
+                switch (part) {
+                    case 1: return 1; case 2: return 7; case 3: return 32; case 4: return 71;
+                    case 5: return 101; case 6: return 131; case 7: return 147; default: return 1;
+                }
+            };
+            const startNumber = getPartStartNumber(partInfo.part);
+            
+            partInfo.questions.forEach((q: any, qIdx: number) => {
+                const qNum = startNumber + qIdx;
+                const userAns = answers[String(qNum)] || answers[qNum];
+                if (userAns) {
+                    answeredQuestionIds.push(q.id);
+                    answerDataList.push({
+                        userId: user.id,
+                        questionId: q.id,
+                        selectedOption: userAns,
+                        isCorrect: userAns === q.correctOption,
+                    });
+                }
+            });
+        });
+
+        if (answeredQuestionIds.length > 0) {
+            await prisma.toeicAnswer.deleteMany({
+                where: {
+                    userId: user.id,
+                    questionId: { in: answeredQuestionIds }
+                }
+            });
+            await prisma.toeicAnswer.createMany({
+                data: answerDataList
+            });
+        }
+
         const record = await prisma.toeicTestRecord.create({
             data: {
                 userId: user.id,
