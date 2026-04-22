@@ -117,21 +117,20 @@ function TakeTestContent() {
     const [guestPromptedFor3Qs, setGuestPromptedFor3Qs] = useState(false);
 
     useEffect(() => {
-        if (status === 'authenticated') {
-            const savedAnswers = localStorage.getItem(`toeic_guest_answers_${testId}`);
-            if (savedAnswers) {
-                setAnswers(JSON.parse(savedAnswers));
-                localStorage.removeItem(`toeic_guest_answers_${testId}`);
-                const savedTime = localStorage.getItem(`toeic_guest_timeLeft_${testId}`);
-                if (savedTime) setTimeLeft(Number(savedTime));
-            }
+        // Hydrate from localStorage on initial load
+        const savedAnswers = localStorage.getItem(`toeic_progress_answers_${testId}`);
+        if (savedAnswers && Object.keys(answers).length === 0) {
+            setAnswers(JSON.parse(savedAnswers));
+            const savedTime = localStorage.getItem(`toeic_progress_timeLeft_${testId}`);
+            if (savedTime) setTimeLeft(Number(savedTime));
         }
-    }, [status, testId]);
+    }, [testId]);
 
     useEffect(() => {
-        if (status === 'unauthenticated') {
-            localStorage.setItem(`toeic_guest_answers_${testId}`, JSON.stringify(answers));
-            localStorage.setItem(`toeic_guest_timeLeft_${testId}`, String(timeLeft));
+        // Save to localStorage continuously for all users
+        if (Object.keys(answers).length > 0 && !isSubmitting) {
+            localStorage.setItem(`toeic_progress_answers_${testId}`, JSON.stringify(answers));
+            localStorage.setItem(`toeic_progress_timeLeft_${testId}`, String(timeLeft));
         }
         
         if (status === 'unauthenticated' && mode === 'practice' && Object.keys(answers).length >= 3 && !guestPromptedFor3Qs && !showLoginModal) {
@@ -139,7 +138,19 @@ function TakeTestContent() {
             setLoginModalSubtitle('Bạn đã làm được 3 câu! Đăng nhập ngay để hệ thống lưu lại đáp án và tiến trình học tập nhé.');
             setShowLoginModal(true);
         }
-    }, [answers, timeLeft, status, testId, mode, guestPromptedFor3Qs, showLoginModal]);
+    }, [answers, timeLeft, status, testId, mode, guestPromptedFor3Qs, showLoginModal, isSubmitting]);
+
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (Object.keys(answers).length > 0 && !isSubmitting) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [answers, isSubmitting]);
 
     useEffect(() => {
         if (!testData || !testData.parts) return;
@@ -312,6 +323,8 @@ function TakeTestContent() {
             });
             const data = await res.json();
             if (data.success) {
+                localStorage.removeItem(`toeic_progress_answers_${testId}`);
+                localStorage.removeItem(`toeic_progress_timeLeft_${testId}`);
                 exitFullscreen();
                 if (data.requiresLogin) {
                     const msg = `Hoàn thành! Bạn làm đúng ${data.totalCorrect} câu. Đăng nhập để lưu lịch sử luyện thi và kiểm tra đáp án chi tiết hơn.`;
