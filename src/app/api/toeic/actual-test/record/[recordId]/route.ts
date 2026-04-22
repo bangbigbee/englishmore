@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { recordId: string } }
+    { params }: { params: Promise<{ recordId: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -13,8 +13,9 @@ export async function GET(
             return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
 
+        const resolvedParams = await params;
         const record = await prisma.toeicTestRecord.findUnique({
-            where: { id: params.recordId }
+            where: { id: resolvedParams.recordId }
         });
 
         if (!record) {
