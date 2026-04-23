@@ -1,6 +1,10 @@
 'use client'
 
 import Image from 'next/image'
+import LoginModal from './LoginModal'
+import UpgradeModal from './UpgradeModal'
+import ToeicStarInfoModal from './ToeicStarInfoModal'
+import { motion, AnimatePresence } from 'framer-motion'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -388,7 +392,10 @@ function BookIcon({ className = "h-4 w-4" }: { className?: string }) {
 
 export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: boolean }) {
   const { data: session, status } = useSession()
-  const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false)
+  const [isStarModalOpen, setIsStarModalOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
   const pathname = usePathname()
@@ -540,12 +547,16 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
           {session && (
             <div className="flex items-center gap-2">
               {isToeicDomain && (
-                 <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-[6px] border border-amber-200 cursor-default shadow-sm" title="Toeic Stars (Điểm Rèn Luyện)">
+                 <button 
+                    onClick={() => setIsStarModalOpen(true)}
+                    className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-[6px] border border-amber-200 cursor-pointer shadow-sm select-none hover:bg-amber-100 transition-colors" 
+                    title="Tìm hiểu về Toeic Stars"
+                 >
                     <span className="text-[14px] mt-[-2px] drop-shadow-sm">⭐</span>
                     <span className="text-[12px] font-black text-amber-600">
                         {(session.user as any)?.toeicStars || 0}
                     </span>
-                 </div>
+                 </button>
               )}
               {session.user?.tier === 'PRO' && (
                 <span 
@@ -571,6 +582,12 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
           )}
         </div>
       </div>
+
+      <ToeicStarInfoModal 
+        isOpen={isStarModalOpen} 
+        onClose={() => setIsStarModalOpen(false)} 
+        currentStars={(session?.user as any)?.toeicStars || 0}
+      />
     </header>
   )
 }

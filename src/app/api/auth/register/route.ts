@@ -12,6 +12,31 @@ export async function POST(request: NextRequest) {
     const normalizedPhone = String(phone || '').trim()
     const normalizedOtp = String(otp || '').trim()
 
+    // Chốt chặn 3: Chặn Disposable Emails
+    const DISPOSABLE_DOMAINS = ['10minutemail.com', 'tempmail.org', 'yopmail.com', 'mailinator.com', 'guerrillamail.com', 'temp-mail.org', 'throwawaymail.com']
+    const emailDomain = normalizedEmail.split('@')[1]
+    if (DISPOSABLE_DOMAINS.includes(emailDomain)) {
+      return NextResponse.json({ error: 'Please use a valid personal email address (Gmail, Outlook, etc.)' }, { status: 400 })
+    }
+
+    // Lấy IP của người dùng (Chốt chặn 2)
+    const forwardedFor = request.headers.get('x-forwarded-for')
+    const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : request.headers.get('x-real-ip') || 'unknown'
+
+    // Giới hạn IP: Tối đa 3 tài khoản / IP trong 7 ngày
+    if (ip !== 'unknown' && ip !== '127.0.0.1' && ip !== '::1') {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      const ipCount = await prisma.user.count({
+        where: {
+          registrationIp: ip,
+          createdAt: { gte: sevenDaysAgo }
+        }
+      })
+      if (ipCount >= 3) {
+        return NextResponse.json({ error: 'Too many accounts registered from this IP. Please try again later.' }, { status: 429 })
+      }
+    }
+
     if (!normalizedName || !normalizedEmail || !normalizedPhone || !password || !confirmPassword) {
       return NextResponse.json({ error: 'Please enter your full name, email, phone number, and password' }, { status: 400 })
     }
@@ -88,7 +113,9 @@ export async function POST(request: NextRequest) {
         phone: normalizedPhone,
         password: passwordHash,
         emailVerified: new Date(),
-        toeicReferrerId: actualReferrerId
+        toeicReferrerId: actualReferrerId,
+        registrationIp: ip,
+        toeicReferralStatus: actualReferrerId ? 'PENDING' : 'PENDING'
       }
     })
 

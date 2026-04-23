@@ -3,7 +3,10 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const type = searchParams.get('type') // 'toeicmore' or undefined
+
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -15,6 +18,39 @@ export async function GET() {
   })
   if (!currentUser || currentUser.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  if (type === 'toeicmore') {
+    const toeicReferred = await prisma.user.findMany({
+      where: { toeicReferrerId: { not: null } },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        toeicStars: true,
+        registrationIp: true,
+        toeicReferralStatus: true,
+        createdAt: true,
+        toeicReferrer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    const summary = {
+      totalReferrals: toeicReferred.length,
+      pending: toeicReferred.filter(u => u.toeicReferralStatus === 'PENDING').length,
+      active: toeicReferred.filter(u => u.toeicReferralStatus === 'ACTIVE').length,
+      review: toeicReferred.filter(u => u.toeicReferralStatus === 'REVIEW').length,
+    }
+
+    return NextResponse.json({ summary, rows: toeicReferred })
   }
 
   const referredUsers = await prisma.user.findMany({

@@ -195,6 +195,50 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
                  starReason = `Chúc mừng bạn đã hoàn thành bài thi! Nhận ${result.awardedStars} ⭐.`;
              }
         }
+        
+        // Referral Program: Process PENDING referrals upon meaningful action (completing a test)
+        if (user.toeicReferrerId && user.toeicReferralStatus === 'PENDING') {
+            const startOfToday = new Date()
+            startOfToday.setHours(0, 0, 0, 0)
+            
+            // Check Chốt chặn 4: Daily cap (Max 5 rewards per referrer per day)
+            const todayActiveReferrals = await prisma.user.count({
+                where: {
+                    toeicReferrerId: user.toeicReferrerId,
+                    toeicReferralStatus: 'ACTIVE',
+                    updatedAt: { gte: startOfToday }
+                }
+            })
+
+            if (todayActiveReferrals >= 5) {
+                // Flag for Admin Review if daily cap is exceeded
+                await prisma.user.update({
+                    where: { id: user.id },
+                    data: { toeicReferralStatus: 'REVIEW' }
+                })
+            } else {
+                // Reward both Referrer and Referee
+                await prisma.$transaction([
+                    prisma.user.update({
+                        where: { id: user.id },
+                        data: {
+                            toeicReferralStatus: 'ACTIVE',
+                            toeicStars: { increment: 50 } // Reward Referee
+                        }
+                    }),
+                    prisma.user.update({
+                        where: { id: user.toeicReferrerId },
+                        data: {
+                            toeicStars: { increment: 100 } // Reward Referrer
+                        }
+                    })
+                ])
+                awardedStars += 50;
+                starReason = starReason 
+                    ? `${starReason} + 50⭐ (Thưởng Đăng Ký Giới Thiệu)` 
+                    : `Thưởng 50⭐ vì đã đăng ký qua link giới thiệu và làm bài test đầu tiên!`;
+            }
+        }
 
         return NextResponse.json({ success: true, recordId: record.id, awardedStars, starReason });
     } catch (error) {

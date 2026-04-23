@@ -64,8 +64,8 @@ export default function QuestionBankFilter({ showHistory = false }: { showHistor
             </div>
 
             {/* Multiple Choice Parts Filter */}
-            <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-xl border border-slate-200">
-                <span className="text-sm font-bold text-black mr-2">Lọc theo Part:</span>
+            <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 select-none">
+                <span className="text-sm font-bold text-black mr-2 cursor-default">Lọc theo Part:</span>
                 {[1, 2, 3, 4, 5, 6, 7].map(partNum => (
                     <label key={partNum} className="flex items-center gap-2 cursor-pointer group">
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${currentParts.includes(partNum) ? 'bg-[#14532d] border-[#14532d]' : 'border-slate-300 bg-white group-hover:border-[#14532d]/50'}`}>

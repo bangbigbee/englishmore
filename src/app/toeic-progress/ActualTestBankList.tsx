@@ -119,8 +119,8 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
         <div className="space-y-6">
             {/* Filter */}
             <div className="flex flex-col gap-4">
-                <div className="flex flex-wrap items-center gap-4 bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-fit">
-                    <span className="text-sm font-bold text-slate-800 mr-2">Lọc theo Part:</span>
+                <div className="flex flex-wrap items-center gap-4 bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-fit select-none">
+                    <span className="text-sm font-bold text-slate-800 mr-2 cursor-default">Lọc theo Part:</span>
                     {[1, 2, 3, 4, 5, 6, 7].map(p => {
                         const isActive = selectedParts.includes(String(p));
                         return (

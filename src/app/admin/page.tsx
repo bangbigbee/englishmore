@@ -638,10 +638,12 @@ export default function AdminDashboard() {
     pendingTeacherReplyCount: 0
   })
   const [usersOverview, setUsersOverview] = useState<UserOverviewItem[]>([])
+  const [referralSubtab, setReferralSubtab] = useState<'englishmore' | 'toeicmore'>('englishmore')
   const [referralRows, setReferralRows] = useState<ReferralRowItem[]>([])
+  const [toeicReferralRows, setToeicReferralRows] = useState<any[]>([])
   const [referralLoading, setReferralLoading] = useState(false)
   const [referralError, setReferralError] = useState('')
-  const [referralSummary, setReferralSummary] = useState<{ totalReferrals: number; uniqueReferrers: number; referredMembers: number }>({
+  const [referralSummary, setReferralSummary] = useState<{ totalReferrals: number; uniqueReferrers: number; referredMembers: number; pending?: number; active?: number; review?: number }>({
     totalReferrals: 0,
     uniqueReferrers: 0,
     referredMembers: 0
@@ -1267,23 +1269,57 @@ export default function AdminDashboard() {
     try {
       setReferralLoading(true)
       setReferralError('')
-      const res = await fetch('/api/admin/referrals')
+      const isToeic = referralSubtab === 'toeicmore'
+      const res = await fetch(`/api/admin/referrals${isToeic ? '?type=toeicmore' : ''}`)
       if (!res.ok) throw new Error('Failed to fetch referral data')
       const data = await res.json()
-      setReferralRows(data.rows || [])
-      setReferralSummary({
-        totalReferrals: data.summary?.totalReferrals || 0,
-        uniqueReferrers: data.summary?.uniqueReferrers || 0,
-        referredMembers: data.summary?.referredMembers || 0
-      })
+      
+      if (isToeic) {
+        setToeicReferralRows(data.rows || [])
+        setReferralSummary({
+          totalReferrals: data.summary?.totalReferrals || 0,
+          uniqueReferrers: 0,
+          referredMembers: 0,
+          pending: data.summary?.pending || 0,
+          active: data.summary?.active || 0,
+          review: data.summary?.review || 0,
+        })
+      } else {
+        setReferralRows(data.rows || [])
+        setReferralSummary({
+          totalReferrals: data.summary?.totalReferrals || 0,
+          uniqueReferrers: data.summary?.uniqueReferrers || 0,
+          referredMembers: data.summary?.referredMembers || 0
+        })
+      }
     } catch (err) {
       setReferralError(err instanceof Error ? err.message : 'Could not load referral data.')
       setReferralRows([])
+      setToeicReferralRows([])
       setReferralSummary({ totalReferrals: 0, uniqueReferrers: 0, referredMembers: 0 })
     } finally {
       setReferralLoading(false)
     }
-  }, [])
+  }, [referralSubtab])
+
+  const handleToeicReferralAction = async (id: string, action: 'approve' | 'reject') => {
+    if (!confirm(`Are you sure you want to ${action} this referral?`)) return;
+    try {
+      const res = await fetch(`/api/admin/referrals/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      });
+      if (res.ok) {
+        toast.success(`Referral ${action}d successfully`);
+        fetchReferralData();
+      } else {
+        toast.error(`Failed to ${action} referral`);
+      }
+    } catch (err) {
+      toast.error('An error occurred');
+    }
+  }
 
   const openTopicLocksConfig = async (topic: string) => {
     setConfiguringTopicLocks(topic)
@@ -4027,7 +4063,7 @@ export default function AdminDashboard() {
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Referral Management</h2>
-              <p className="mt-1 text-sm text-gray-600">Track who referred whom based on student ID or email entered during course registration.</p>
+              <p className="mt-1 text-sm text-gray-600">Track and manage referrals for both EnglishMore and ToeicMore.</p>
             </div>
             <button
               type="button"
@@ -4038,63 +4074,173 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500">Total referrals</p>
-              <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.totalReferrals}</p>
-            </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500">Unique referrers</p>
-              <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.uniqueReferrers}</p>
-            </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs uppercase tracking-wide text-slate-500">Referred members</p>
-              <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.referredMembers}</p>
-            </div>
+          {/* Subtabs for EnglishMore and ToeicMore */}
+          <div className="flex gap-4 border-b border-gray-200 mb-6">
+            <button
+              onClick={() => setReferralSubtab('englishmore')}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${referralSubtab === 'englishmore' ? 'border-[#14532d] text-[#14532d]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            >
+              EnglishMore Referrals
+            </button>
+            <button
+              onClick={() => setReferralSubtab('toeicmore')}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${referralSubtab === 'toeicmore' ? 'border-[#ea980c] text-[#ea980c]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            >
+              ToeicMore Referrals
+            </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referred user</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referred ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
-                </tr>
-              </thead>
-              <tbody>
-                {referralRows.map((row) => (
-                  <tr key={row.referredUserId} className="border-b hover:bg-gray-50 align-top">
-                    <td className="px-4 py-3 text-sm text-gray-900">
-                      <div>{row.referrerName || row.referrerEmail || 'Unknown'}</div>
-                      {row.referrerEmail && <div className="text-xs text-gray-500">{row.referrerEmail}</div>}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{row.referrerStudentId || 'N/A'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
-                      <div>{row.referredUserName || row.referredUserEmail}</div>
-                      <div className="text-xs text-gray-500">{row.referredUserEmail}</div>
-                    </td>
-                    <td className="px-4 py-3 text-sm font-mono text-gray-700">{row.referredStudentId || 'Pending'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{row.referredCourseTitle || 'N/A'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{new Date(row.registeredAt).toLocaleDateString('en-GB')}</td>
-                  </tr>
-                ))}
-                {!referralLoading && referralRows.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No referrals recorded yet.</td>
-                  </tr>
-                )}
-                {referralLoading && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Loading referral data...</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          {referralSubtab === 'englishmore' ? (
+            <>
+              <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Total referrals</p>
+                  <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.totalReferrals}</p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Unique referrers</p>
+                  <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.uniqueReferrers}</p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Referred members</p>
+                  <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.referredMembers}</p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead className="bg-gray-50 border-b">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer ID</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referred user</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referred ID</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registered</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referralRows.map((row) => (
+                      <tr key={row.referredUserId} className="border-b hover:bg-gray-50 align-top">
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <div>{row.referrerName || row.referrerEmail || 'Unknown'}</div>
+                          {row.referrerEmail && <div className="text-xs text-gray-500">{row.referrerEmail}</div>}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-mono text-gray-700">{row.referrerStudentId || 'N/A'}</td>
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <div>{row.referredUserName || row.referredUserEmail}</div>
+                          <div className="text-xs text-gray-500">{row.referredUserEmail}</div>
+                        </td>
+                        <td className="px-4 py-3 text-sm font-mono text-gray-700">{row.referredStudentId || 'Pending'}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">{row.referredCourseTitle || 'N/A'}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{new Date(row.registeredAt).toLocaleDateString('en-GB')}</td>
+                      </tr>
+                    ))}
+                    {!referralLoading && referralRows.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No referrals recorded yet.</td>
+                      </tr>
+                    )}
+                    {referralLoading && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Loading referral data...</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Total referrals</p>
+                  <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.totalReferrals}</p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-blue-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-blue-500">Pending</p>
+                  <p className="mt-2 text-3xl font-black text-blue-900">{referralSummary.pending || 0}</p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-green-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-green-500">Active</p>
+                  <p className="mt-2 text-3xl font-black text-green-900">{referralSummary.active || 0}</p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-amber-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-amber-500">Review Required</p>
+                  <p className="mt-2 text-3xl font-black text-amber-900">{referralSummary.review || 0}</p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead className="bg-gray-50 border-b">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referrer</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Referred User</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reg. IP</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {toeicReferralRows.map((row) => (
+                      <tr key={row.id} className="border-b hover:bg-gray-50 align-top">
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <div>{row.toeicReferrer?.name || row.toeicReferrer?.email || 'Unknown'}</div>
+                          {row.toeicReferrer?.email && <div className="text-xs text-gray-500">{row.toeicReferrer.email}</div>}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          <div>{row.name || row.email}</div>
+                          <div className="text-xs text-gray-500">{row.email}</div>
+                        </td>
+                        <td className="px-4 py-3 text-sm font-mono text-gray-500">{row.registrationIp || 'N/A'}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{new Date(row.createdAt).toLocaleDateString('en-GB')}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                            row.toeicReferralStatus === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                            row.toeicReferralStatus === 'PENDING' ? 'bg-blue-100 text-blue-800' :
+                            row.toeicReferralStatus === 'REVIEW' ? 'bg-amber-100 text-amber-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {row.toeicReferralStatus}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right space-x-2">
+                          {row.toeicReferralStatus === 'REVIEW' && (
+                            <>
+                              <button
+                                onClick={() => handleToeicReferralAction(row.id, 'approve')}
+                                className="text-green-600 hover:text-green-900 font-medium"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleToeicReferralAction(row.id, 'reject')}
+                                className="text-red-600 hover:text-red-900 font-medium"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {!referralLoading && toeicReferralRows.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-3 text-center text-gray-500">No ToeicMore referrals recorded yet.</td>
+                      </tr>
+                    )}
+                    {referralLoading && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-3 text-center text-gray-500">Loading referral data...</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </div>
 
         {/* TOEIC Management Section */}

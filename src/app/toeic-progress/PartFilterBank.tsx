@@ -40,8 +40,8 @@ export default function PartFilterBank({ type, activePart }: { type: 'reading' |
     };
 
     return (
-        <div className="flex flex-wrap items-center gap-4 mb-6 bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-fit">
-            <span className="text-sm font-bold text-slate-800 mr-2">Lọc theo Part:</span>
+        <div className="flex flex-wrap items-center gap-4 mb-6 bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-fit select-none">
+            <span className="text-sm font-bold text-slate-800 mr-2 cursor-default">Lọc theo Part:</span>
             {parts.map(p => {
                 const isActive = selectedParts.includes(String(p));
                 return (

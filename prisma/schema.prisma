@@ -108,6 +108,8 @@ model User {
   referredUsers             User[]                      @relation("UserReferrals")
   
   toeicReferrerId           String?
+  toeicReferralStatus       String                      @default("PENDING") // PENDING, ACTIVE, REVIEW
+  registrationIp            String?
   toeicReferrer             User?                       @relation("ToeicUserReferrals", fields: [toeicReferrerId], references: [id])
   toeicReferredUsers        User[]                      @relation("ToeicUserReferrals")
   accounts                  Account[]
