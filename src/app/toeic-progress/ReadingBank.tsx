@@ -157,7 +157,7 @@ export default async function ReadingBank({ filter = 'mistakes' }: { filter?: st
 				return (
 					<Link 
 						key={q.id}
-						href={`/toeic-practice/grammar/${q.lesson.topic.slug}`}
+						href={`/toeic-practice/grammar/${q.lesson.topic.slug}?lessonId=${q.lesson.id}&reviewId=${q.id}`}
 						className="block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group relative"
 					>
                         {isMistakes && item.selectedOption && (

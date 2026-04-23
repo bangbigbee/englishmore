@@ -111,15 +111,28 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         if (data.lessons && data.lessons.length > 0) {
           const targetLesson = data.lessons.find((l: any) => l.id === initialLessonId) || data.lessons[0];
           setSelectedLessonId(targetLesson.id)
-          setActiveQuestionIndex(0)
-          setShowLessonContent(data.lessons[0].questions.length === 0)
+          
+          const initialReviewId = searchParams.get('reviewId')
+          if (initialReviewId) {
+             const groupIndex = targetLesson.questions.findIndex((q: any) => q.id === initialReviewId);
+             setActiveQuestionIndex(groupIndex !== -1 ? groupIndex : 0);
+             setShowLessonContent(false);
+             setLessonStarted(true);
+             setIsTestCompleted(true);
+             setIsReviewing(true);
+          } else {
+             setActiveQuestionIndex(0)
+             setShowLessonContent(targetLesson.questions.length === 0)
+             setLessonStarted(false)
+             setIsTestCompleted(false)
+             setIsReviewing(false)
+             setPreviewPage(0)
+          }
+
           if (data.type === 'LISTENING') setListeningMode('practice');
           setTimerStartTime(Date.now())
           setElapsedTime(0)
-          setIsTestCompleted(false)
-          setLessonStarted(false)
           setIsPlayingDirections(false)
-          setPreviewPage(0)
         }
       } catch (error) {
         console.error(error)
@@ -906,33 +919,79 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       )}
                       
                       {/* Flex container for play button and timer to keep them together if in sidebar */}
-                      {!isTestCompleted && timerStartTime !== null && (
-                        <div className="flex items-center gap-2 mt-1">
-                           {topic.type === 'LISTENING' && lessonStarted && (
-                              <button
-                                onClick={() => {
-                                  if (listeningMode === 'actual' && !isTestCompleted) return;
-                                  if (isPlayingDirections && directionAudioRef.current) {
-                                    if (directionAudioRef.current.paused) directionAudioRef.current.play();
-                                    else directionAudioRef.current.pause();
-                                  } else if (audioRef.current) {
-                                    if (audioRef.current.paused) audioRef.current.play();
-                                    else audioRef.current.pause();
-                                  }
-                                }}
-                                className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${(listeningMode === 'actual' && !isTestCompleted) ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 cursor-pointer'}`}
-                                title={(listeningMode === 'actual' && !isTestCompleted) ? "Không thể điều khiển ở chế độ Thi thử" : "Play/Pause Audio"}
-                              >
-                                {isAudioNodePlaying ? (
-                                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                                ) : (
-                                   <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                )}
-                              </button>
+                      {(timerStartTime !== null || isTestCompleted) && (
+                        <div className="flex flex-col gap-2 mt-1">
+                           {/* Normal state timer & play button */}
+                           {!isTestCompleted && timerStartTime !== null && (
+                             <div className="flex items-center gap-2">
+                               {topic.type === 'LISTENING' && lessonStarted && (
+                                  <button
+                                    onClick={() => {
+                                      if (listeningMode === 'actual' && !isTestCompleted) return;
+                                      if (isPlayingDirections && directionAudioRef.current) {
+                                        if (directionAudioRef.current.paused) directionAudioRef.current.play();
+                                        else directionAudioRef.current.pause();
+                                      } else if (audioRef.current) {
+                                        if (audioRef.current.paused) audioRef.current.play();
+                                        else audioRef.current.pause();
+                                      }
+                                    }}
+                                    className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${(listeningMode === 'actual' && !isTestCompleted) ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 cursor-pointer'}`}
+                                    title={(listeningMode === 'actual' && !isTestCompleted) ? "Không thể điều khiển ở chế độ Thi thử" : "Play/Pause Audio"}
+                                  >
+                                    {isAudioNodePlaying ? (
+                                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                    ) : (
+                                       <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    )}
+                                  </button>
+                               )}
+                               <span className="tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
+                                 {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
+                               </span>
+                             </div>
                            )}
-                           <span className="tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
-                             {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
-                           </span>
+
+                           {/* Enhanced Audio Controls for Review Mode */}
+                           {topic.type === 'LISTENING' && lessonStarted && isTestCompleted && (
+                               <div className="flex items-center gap-2">
+                                  {/* Backward 3s */}
+                                  <button 
+                                      onClick={() => { if (audioRef.current) audioRef.current.currentTime -= 3; }} 
+                                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-[#14532d] hover:bg-emerald-50 border border-slate-200"
+                                      title="Tua lui 3 giây"
+                                  >
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 19 2 12 11 5 11 19"/><polygon points="22 19 13 12 22 5 22 19"/></svg>
+                                  </button>
+                                  
+                                  {/* Play / Pause */}
+                                  <button
+                                    onClick={() => {
+                                      if (audioRef.current) {
+                                        if (audioRef.current.paused) audioRef.current.play();
+                                        else audioRef.current.pause();
+                                      }
+                                    }}
+                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 hover:bg-emerald-200 transition-colors"
+                                    title="Play/Pause Audio"
+                                  >
+                                    {isAudioNodePlaying ? (
+                                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                    ) : (
+                                       <svg className="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    )}
+                                  </button>
+                                  
+                                  {/* Forward 3s */}
+                                  <button 
+                                      onClick={() => { if (audioRef.current) audioRef.current.currentTime += 3; }} 
+                                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-[#14532d] hover:bg-emerald-50 border border-slate-200"
+                                      title="Tua tới 3 giây"
+                                  >
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/></svg>
+                                  </button>
+                               </div>
+                           )}
                         </div>
                       )}
                     </div>
