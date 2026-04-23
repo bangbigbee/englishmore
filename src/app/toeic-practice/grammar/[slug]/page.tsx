@@ -863,13 +863,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className={`w-full flex flex-col ${lessonStarted && !isPlayingDirections ? 'xl:flex-row' : ''} gap-6 items-start`}
+                  className={`w-full flex flex-col ${lessonStarted && !isPlayingDirections ? 'xl:flex-row' : ''} gap-6 items-stretch`}
                 >
                   {/* Left Column: Title + Time */}
-                  <div className={`flex flex-col gap-6 ${lessonStarted && !isPlayingDirections ? 'w-full xl:w-[280px] 2xl:w-[320px] shrink-0 xl:sticky xl:top-24' : 'w-full'}`}>
+                  <div className={`flex flex-col gap-6 ${lessonStarted && !isPlayingDirections ? 'w-full xl:w-[280px] 2xl:w-[320px] shrink-0' : 'w-full'}`}>
                   {/* Compact Lesson Header & Toggle */}
-                  <div className={`bg-white p-4 lg:p-5 rounded-2xl border border-slate-200 shadow-sm flex ${lessonStarted && !isPlayingDirections ? 'flex-col gap-4' : 'flex-col md:flex-row md:items-center justify-between gap-4'}`}>
-                    <div className="flex flex-wrap items-center gap-3 w-full">
+                  <div className={`bg-white rounded-[2rem] border border-slate-200 shadow-sm flex h-full w-full`}>
+                    <div className={`w-full p-4 lg:p-5 xl:sticky xl:top-24 flex ${lessonStarted && !isPlayingDirections ? 'flex-col gap-4' : 'flex-col md:flex-row md:items-center justify-between gap-4'}`}>
+                      <div className="flex flex-wrap items-center gap-3 w-full">
                       <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
                         <span>{currentLesson.title}</span>
                         {currentLesson.accessTier === 'PRO' && <svg className="w-6 h-6 text-amber-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
@@ -957,6 +958,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
                         {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : topic.type === 'LISTENING' ? 'Sổ Tay Luyện Nghe' : 'Sổ Tay Ngữ Pháp'}
                       </Link>
+                    </div>
                     </div>
                   </div>
 
@@ -1358,11 +1360,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                            const groupParts = extractExplanationParts(currentQuestionsGroup[0]?.explanation || '');
                                            const hasGroupTranscript = (topic.part === 3 || topic.part === 4) && !!groupParts.eng;
                                            const someResultShown = currentQuestionsGroup.some(q => showResults[q.id]);
+                                           const isGrammarLayout = topic.type === 'GRAMMAR' || (topic.type === 'READING' && topic.part === 5);
                                            
                                            return (
                                               <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
                                                 {/* Middle Column: Transcripts & Image */}
-                                                {topic.type !== 'GRAMMAR' && (
+                                                {!(topic.type === 'GRAMMAR' || (topic.type === 'READING' && topic.part === 5)) && (
                                                 <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0">
                                                  {hasGroupTranscript && (someResultShown || (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'practice')) && (
                                                     <div className="mb-2 flex flex-col items-center">
@@ -1531,8 +1534,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           })();
 
                                           return (
-                                            <div key={q.id} className={`flex flex-col ${topic.type === 'GRAMMAR' ? 'md:flex-row gap-8' : ''} ${localIdx > 0 && (!topic.part || (topic.part !== 6 && topic.part !== 7)) ? 'pt-6 border-t border-dashed border-slate-200 mt-2' : ''}`}>
-                                              <div className={`flex flex-col ${topic.type === 'GRAMMAR' ? 'flex-1 min-w-0' : 'w-full'}`}>
+                                            <div key={q.id} className={`flex flex-col ${isGrammarLayout ? 'md:flex-row gap-8' : ''} ${localIdx > 0 && (!topic.part || (topic.part !== 6 && topic.part !== 7)) ? 'pt-6 border-t border-dashed border-slate-200 mt-2' : ''}`}>
+                                              <div className={`flex flex-col ${isGrammarLayout ? 'flex-1 min-w-0' : 'w-full'}`}>
                                               <div className="mb-4 flex flex-col items-center relative">
                                                 {/* Question Number Badge for all parts context */}
                                                 {(topic.part && topic.part >= 1 && topic.part <= 7) && (
@@ -1647,9 +1650,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               
 
                                               
-                                              <div className={`flex flex-col ${topic.type === 'GRAMMAR' ? 'flex-1 min-w-0' : 'w-full'}`}>
+                                              <div className={`flex flex-col ${isGrammarLayout ? 'flex-1 min-w-0' : 'w-full'}`}>
                                               {/* Post-Question Explanation & Tools */}
-                                              <div className={`${topic.type === 'GRAMMAR' ? '' : 'mt-4'} flex flex-col gap-3 w-full`}>
+                                              <div className={`${isGrammarLayout ? '' : 'mt-4'} flex flex-col gap-3 w-full`}>
                                                 {isShowingResult && (
                                                     <div className={`flex flex-col gap-3 w-full p-2.5 px-3 md:px-4 rounded-2xl shadow-sm transition-all border ${isCorrect ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
                                                       <div className="flex flex-row items-center justify-between gap-3 w-full">
