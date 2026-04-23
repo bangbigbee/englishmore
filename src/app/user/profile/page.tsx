@@ -579,7 +579,7 @@ export default function ProfilePage() {
             <div className="rounded-xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5 shadow-sm flex flex-col">
               <h2 className="text-[11px] font-black uppercase tracking-widest text-indigo-700 mb-4 flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                Lượt mời chơi (ToeicMore)
+                Lượt giới thiệu ToeicMore
               </h2>
               <div className="flex-1 overflow-hidden flex flex-col">
                 <div className="text-3xl font-black text-indigo-700 tracking-tighter mb-2">
@@ -594,9 +594,7 @@ export default function ProfilePage() {
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <p className="text-sm font-medium text-slate-400 italic">Chưa mời được ai.</p>
-                )}
+                ) : null}
               </div>
             </div>
           </div>

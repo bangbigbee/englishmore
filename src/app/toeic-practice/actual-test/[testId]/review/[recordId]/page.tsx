@@ -83,6 +83,29 @@ const PracticeAudioPlayer = ({ src, isPractice }: { src: string, isPractice: boo
     );
 };
 
+const extractSpecificExplanation = (text: string, qNum: number) => {
+    if (!text) return text;
+    
+    let beforeExplanation = "";
+    let explanationPart = text;
+
+    const giathichMatch = text.match(/(\[Giải thích(?: chi tiết)?\])([\s\S]*)/i);
+    if (giathichMatch) {
+        beforeExplanation = text.substring(0, giathichMatch.index + giathichMatch[1].length) + "\n\n";
+        explanationPart = giathichMatch[2];
+    }
+
+    const regex = new RegExp(`(?:Câu\\s*)?${qNum}[:.](.*?)(?=(?:<[^>]+>|\\s)*(?:Câu\\s*)?\\d{2,3}[:.]|$)`, 'is');
+    const match = explanationPart.match(regex);
+
+    if (match) {
+        let extracted = match[1].trim();
+        return beforeExplanation + `<strong>Câu ${qNum}:</strong> ` + extracted;
+    }
+
+    return text;
+};
+
 function ReviewTestContent() {
     const params = useParams();
     const router = useRouter();
@@ -347,7 +370,7 @@ function ReviewTestContent() {
                                                                 {q.explanation && (
                                                                     <div>
                                                                         <strong className="text-slate-800 text-sm block mb-1">Phân tích:</strong>
-                                                                        <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: q.explanation }} />
+                                                                        <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: extractSpecificExplanation(q.explanation, qNum) }} />
                                                                     </div>
                                                                 )}
                                                             </div>
