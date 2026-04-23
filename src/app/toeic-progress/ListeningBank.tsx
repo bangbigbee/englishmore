@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import PartFilterBank from "./PartFilterBank";
+import ZoomableImage from "@/components/ZoomableImage";
 
 const parseTranslation = (text: string | null) => {
     if (!text) return null;
@@ -99,7 +100,7 @@ export default async function ListeningBank({ filter = 'mistakes', partFilter }:
                     lesson: {
                         topic: {
                             type: 'LISTENING',
-                            part: partFilter ? Number(partFilter) : undefined
+                            part: partFilter ? { in: partFilter.split(',').map(Number).filter(n => !isNaN(n)) } : undefined
                         }
                     }
                 }
@@ -128,7 +129,7 @@ export default async function ListeningBank({ filter = 'mistakes', partFilter }:
                     lesson: {
                         topic: {
                             type: 'LISTENING',
-                            part: partFilter ? Number(partFilter) : undefined
+                            part: partFilter ? { in: partFilter.split(',').map(Number).filter(n => !isNaN(n)) } : undefined
                         }
                     }
                 }
@@ -204,6 +205,12 @@ export default async function ListeningBank({ filter = 'mistakes', partFilter }:
 						</div>
 						
                         <div className="mb-4 pr-8">
+                            {q.imageUrl && (
+                                <ZoomableImage src={q.imageUrl} className="w-[150px] object-cover rounded shadow-sm border border-slate-200 mb-3" />
+                            )}
+                            {q.audioUrl && (
+                                <audio src={q.audioUrl} controls className="h-10 w-full max-w-sm mb-3" />
+                            )}
                             <p className="text-lg font-black text-slate-800 line-clamp-2 leading-snug">
                                 {q.question}
                             </p>

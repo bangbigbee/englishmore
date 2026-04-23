@@ -1,6 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import ZoomableImage from "@/components/ZoomableImage";
 
 const parseTranslation = (text: string | null) => {
     if (!text) return null;
@@ -47,7 +48,7 @@ const hideTranscript = (text: string | null) => {
 
 export default function ActualTestBankList({ items, isMistakes }: { items: any[], isMistakes: boolean }) {
     const [selectedTest, setSelectedTest] = useState<string>('all');
-    const [selectedPart, setSelectedPart] = useState<string>('all');
+    const [selectedParts, setSelectedParts] = useState<string[]>([]);
 
     // Extract test names
     const testNamesMap = useMemo(() => {
@@ -79,14 +80,22 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
         if (selectedTest !== 'all') {
             result = result.filter(item => item._testId === selectedTest);
         }
-        if (selectedPart !== 'all') {
+        if (selectedParts.length > 0) {
             result = result.filter(item => {
                 const part = item.question?.lesson?.topic?.part;
-                return part === Number(selectedPart);
+                return selectedParts.includes(String(part));
             });
         }
         return result;
-    }, [items, selectedTest, selectedPart]);
+    }, [items, selectedTest, selectedParts]);
+
+    const handlePartClick = (part: number) => {
+        const strPart = String(part);
+        setSelectedParts(prev => {
+            if (prev.includes(strPart)) return prev.filter(p => p !== strPart);
+            return [...prev, strPart];
+        });
+    };
 
     if (items.length === 0) {
         return (
@@ -111,9 +120,9 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
             {/* Filter */}
             <div className="flex flex-col gap-4">
                 <div className="flex flex-wrap items-center gap-4 bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-fit">
-                    <span className="text-sm font-bold text-slate-600 mr-2">Lọc theo Part:</span>
+                    <span className="text-sm font-bold text-slate-800 mr-2">Lọc theo Part:</span>
                     {[1, 2, 3, 4, 5, 6, 7].map(p => {
-                        const isActive = selectedPart === String(p);
+                        const isActive = selectedParts.includes(String(p));
                         return (
                             <label key={p} className="flex items-center gap-2 cursor-pointer group">
                                 <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
@@ -123,17 +132,15 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                                 }`}>
                                     {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                                 </div>
-                                <span className={`text-sm font-bold transition-colors ${
-                                    isActive ? 'text-indigo-700' : 'text-slate-600 group-hover:text-indigo-500'
-                                }`}>
+                                <span className="text-sm font-bold text-slate-800 transition-colors">
                                     Part {p}
                                 </span>
                                 <input 
-                                    type="radio" 
+                                    type="checkbox" 
                                     name="test-part-filter" 
                                     className="hidden" 
                                     checked={isActive} 
-                                    onChange={() => setSelectedPart(isActive ? 'all' : String(p))} 
+                                    onChange={() => handlePartClick(p)} 
                                 />
                             </label>
                         );
@@ -187,7 +194,7 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                             {/* Question Context (Image, Passage, Audio placeholders) */}
                             <div className="flex flex-col gap-4 mb-5">
                                 {q.imageUrl && (
-                                    <img src={q.imageUrl} alt="Context" className="w-[150px] object-cover rounded shadow-sm border border-slate-200" />
+                                    <ZoomableImage src={q.imageUrl} className="w-[150px] object-cover rounded shadow-sm border border-slate-200" />
                                 )}
                                 {q.passage && q.lesson?.topic?.type !== 'LISTENING' && (
                                     <div className="prose prose-sm prose-slate max-w-none bg-slate-50 p-3 rounded-lg border border-slate-100" dangerouslySetInnerHTML={{ __html: q.passage }} />
