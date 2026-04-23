@@ -1360,6 +1360,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                            return (
                                               <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
                                                 {/* Middle Column: Transcripts & Image */}
+                                                {topic.type !== 'GRAMMAR' && (
                                                 <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0">
                                                  {hasGroupTranscript && (someResultShown || (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'practice')) && (
                                                     <div className="mb-2 flex flex-col items-center">
@@ -1460,6 +1461,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                              </div>
                                          )}
                                         </div>
+                                        )}
 
                                         {/* Right Column: Questions & Explanations */}
                                         <div className="flex flex-col gap-8 flex-1 min-w-0">
@@ -1527,7 +1529,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           })();
 
                                           return (
-                                            <div key={q.id} className={`flex flex-col ${localIdx > 0 && (!topic.part || (topic.part !== 6 && topic.part !== 7)) ? 'pt-6 border-t border-dashed border-slate-200 mt-2' : ''}`}>
+                                            <div key={q.id} className={`flex flex-col ${topic.type === 'GRAMMAR' ? 'md:flex-row gap-8' : ''} ${localIdx > 0 && (!topic.part || (topic.part !== 6 && topic.part !== 7)) ? 'pt-6 border-t border-dashed border-slate-200 mt-2' : ''}`}>
+                                              <div className={`flex flex-col ${topic.type === 'GRAMMAR' ? 'flex-1 min-w-0' : 'w-full'}`}>
                                               <div className="mb-4 flex flex-col items-center relative">
                                                 {/* Question Number Badge for all parts context */}
                                                 {(topic.part && topic.part >= 1 && topic.part <= 7) && (
@@ -1638,11 +1641,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                   )
                                                 })}
                                               </div>
+                                              </div>
                                               
 
                                               
+                                              <div className={`flex flex-col ${topic.type === 'GRAMMAR' ? 'flex-1 min-w-0' : 'w-full'}`}>
                                               {/* Post-Question Explanation & Tools */}
-                                              <div className="mt-4 flex flex-col gap-3 w-full">
+                                              <div className={`${topic.type === 'GRAMMAR' ? '' : 'mt-4'} flex flex-col gap-3 w-full`}>
                                                 {isShowingResult && (
                                                     <div className={`flex flex-col gap-3 w-full p-2.5 px-3 md:px-4 rounded-2xl shadow-sm transition-all border ${isCorrect ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
                                                       <div className="flex flex-row items-center justify-between gap-3 w-full">
@@ -1827,6 +1832,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                   </div>
                                                 )}
                                               </div>
+                                             </div>
                                             );
                                         })}
                                         </div>
