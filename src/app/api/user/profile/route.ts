@@ -88,14 +88,15 @@ export async function GET() {
       }
     })
 
-    let user: Prisma.UserGetPayload<{ select: typeof baseSelect }> | (Prisma.UserGetPayload<{ select: typeof baseSelect & { activityPoints: true } }> & { activityPoints: number }) | null
+    let user: Prisma.UserGetPayload<{ select: typeof baseSelect }> | (Prisma.UserGetPayload<{ select: typeof baseSelect & { activityPoints: true, toeicStars: true } }> & { activityPoints: number, toeicStars: number }) | null
 
     try {
       user = await prisma.user.findUnique({
         where: { email: session.user.email },
         select: {
           ...baseSelect,
-          activityPoints: true
+          activityPoints: true,
+          toeicStars: true
         }
       })
     } catch (error) {
@@ -114,6 +115,9 @@ export async function GET() {
       ...user,
       activityPoints: typeof (user as { activityPoints?: unknown }).activityPoints === 'number'
         ? (user as { activityPoints: number }).activityPoints
+        : 0,
+      toeicStars: typeof (user as { toeicStars?: unknown }).toeicStars === 'number'
+        ? (user as { toeicStars: number }).toeicStars
         : 0,
       studentId: user.enrollments[0]?.studentId || null,
       courseEnrollmentStatus: user.enrollments[0]?.status || null,

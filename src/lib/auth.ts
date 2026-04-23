@@ -77,13 +77,14 @@ export const authOptions: NextAuthOptions = {
         // Fetch fresh user data from database to sync name and image
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
-          select: { name: true, image: true, tier: true, tierExpiresAt: true }
+          select: { name: true, image: true, tier: true, tierExpiresAt: true, toeicStars: true }
         })
         if (dbUser) {
           session.user.name = dbUser.name
           session.user.image = dbUser.image
           session.user.tier = dbUser.tier
           session.user.tierExpiresAt = dbUser.tierExpiresAt ? dbUser.tierExpiresAt.toISOString() : null
+          ;(session.user as any).toeicStars = dbUser.toeicStars || 0
         }
       }
       if (token.role) {
@@ -92,6 +93,9 @@ export const authOptions: NextAuthOptions = {
       if (token.tier !== undefined) {
         session.user.tier = token.tier as string
         session.user.tierExpiresAt = token.tierExpiresAt as string | null
+      }
+      if (token.toeicStars !== undefined) {
+        ;(session.user as any).toeicStars = token.toeicStars as number
       }
       return session
     },
@@ -104,7 +108,7 @@ export const authOptions: NextAuthOptions = {
       if (token.sub) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
-          select: { role: true, tier: true, tierExpiresAt: true, enrollments: { select: { id: true }, take: 1 } }
+          select: { role: true, tier: true, tierExpiresAt: true, toeicStars: true, enrollments: { select: { id: true }, take: 1 } }
         })
         if (dbUser) {
           let currentTier = dbUser.tier
@@ -124,6 +128,7 @@ export const authOptions: NextAuthOptions = {
           token.role = dbUser.role
           token.tier = currentTier
           token.tierExpiresAt = dbUser.tierExpiresAt ? dbUser.tierExpiresAt.toISOString() : null
+          token.toeicStars = dbUser.toeicStars || 0
         }
       }
 

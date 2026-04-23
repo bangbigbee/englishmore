@@ -539,6 +539,14 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
 
           {session && (
             <div className="flex items-center gap-2">
+              {isToeicDomain && (
+                 <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-[6px] border border-amber-200 cursor-default shadow-sm" title="Toeic Stars (Điểm Rèn Luyện)">
+                    <span className="text-[14px] mt-[-2px] drop-shadow-sm">⭐</span>
+                    <span className="text-[12px] font-black text-amber-600">
+                        {(session.user as any)?.toeicStars || 0}
+                    </span>
+                 </div>
+              )}
               {session.user?.tier === 'PRO' && (
                 <span 
                   className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-[#FDB931]/50"
