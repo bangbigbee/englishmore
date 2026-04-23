@@ -1277,9 +1277,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         />
                                       </div>
                                       
-                                      <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
-                                        {/* Middle Column: Transcripts & Image */}
-                                        <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0">
                                         {(() => {
                                            const extractExplanationParts = (text: string) => {
                                                if (!text || !text.includes('[Transcript]')) {
@@ -1299,7 +1296,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                            const someResultShown = currentQuestionsGroup.some(q => showResults[q.id]);
                                            
                                            return (
-                                              <>
+                                              <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
+                                                {/* Middle Column: Transcripts & Image */}
+                                                <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0">
                                                  {hasGroupTranscript && (someResultShown || (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'practice')) && (
                                                     <div className="mb-2 flex flex-col items-center">
                                                        <div className="flex flex-wrap gap-3 items-center justify-center bg-slate-50 p-2 rounded-2xl border border-slate-100">
@@ -1768,10 +1767,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               </div>
                                             );
                                         })}
-                                        </>
-                                        );
-                                      })()}
+                                        </div>
                                       </div>
+                                    );
+                                  })()}
                                       
                                       {/* Group Level Vocabulary Section */}
                                       {currentQuestionsGroup.length > 0 && showResults[currentQuestionsGroup[0].id] && questionsPerView > 1 && currentQuestionsGroup[0].vocabulary && Array.isArray(currentQuestionsGroup[0].vocabulary) && currentQuestionsGroup[0].vocabulary.length > 0 && (
@@ -1864,8 +1863,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           })()}
                                         </div>
                                       )}
-                                      </div> {/* End of Right Column (Questions) */}
-                                      </div> {/* End of 2-column active view layout */}
 
                                       {/* Unified Navigation at Bottom of Group */}
                                       <div className="mt-10 flex flex-row items-center justify-between gap-3 w-full border-t border-slate-200 pt-6">
@@ -1969,6 +1966,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       )}
                     </section>
                   )}
+                  </div> {/* End of Main Area */}
                 </motion.div>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-400 italic">
