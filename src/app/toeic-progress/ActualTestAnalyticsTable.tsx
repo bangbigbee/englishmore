@@ -135,6 +135,7 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                 <th className="py-4 px-6 font-bold w-12"></th>
                                 <th className="py-4 px-6 font-bold">Ngày Làm</th>
                                 <th className="py-4 px-6 font-bold">Tên Đề</th>
+                                <th className="py-4 px-6 font-bold text-center">Parts Đã Làm</th>
                                 <th className="py-4 px-6 font-bold text-center">Chế Độ</th>
                                 <th className="py-4 px-6 font-bold text-center">TG Dùng</th>
                                 <th className="py-4 px-6 font-bold text-center">Số Câu</th>
@@ -145,11 +146,21 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                         <tbody className="divide-y divide-slate-100 text-slate-700">
                             {filteredRecords.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} className="py-8 text-center text-slate-400 font-medium">Không tìm thấy bản ghi nào khớp lọc.</td>
+                                    <td colSpan={9} className="py-8 text-center text-slate-400 font-medium">Không tìm thấy bản ghi nào khớp lọc.</td>
                                 </tr>
                             ) : filteredRecords.map((r) => {
                                 const isExpanded = expandedRows[r.id];
                                 const scoreCombo = (r.scoreListening || 0) + (r.scoreReading || 0);
+
+                                let partsTakenStr = 'N/A';
+                                if (r.partStats) {
+                                    const parts = Object.keys(r.partStats).map(k => k.replace('part', '')).sort((a, b) => Number(a) - Number(b));
+                                    if (parts.length === 7) {
+                                        partsTakenStr = 'Tất cả';
+                                    } else if (parts.length > 0) {
+                                        partsTakenStr = `Part ${parts.join(', ')}`;
+                                    }
+                                }
 
                                 return (
                                     <React.Fragment key={r.id}>
@@ -165,6 +176,9 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                             </td>
                                             <td className="py-4 px-6 font-bold text-slate-800 truncate max-w-[200px]" title={r.title || r.testId}>
                                                 {r.title || r.testId}
+                                            </td>
+                                            <td className="py-4 px-6 text-center text-slate-500 text-xs font-bold">
+                                                {partsTakenStr}
                                             </td>
                                             <td className="py-4 px-6 text-center">
                                                 <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${r.mode === 'actual' ? 'bg-orange-100 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
@@ -197,7 +211,7 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                         </tr>
                                         {isExpanded && (
                                             <tr className="bg-slate-50/50">
-                                                <td colSpan={8} className="py-5 px-6 border-b-2 border-slate-100">
+                                                <td colSpan={9} className="py-5 px-6 border-b-2 border-slate-100">
                                                     <div className="flex flex-col lg:flex-row gap-6 items-start">
                                                         <div className="flex-1 w-full bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                                                             <div className="font-bold text-slate-600 text-sm mb-4 border-b border-slate-100 pb-2">CHỈ SỐ PER PART</div>
