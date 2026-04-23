@@ -170,7 +170,7 @@ export default async function ToeicProgressPage(props: any) {
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
-		redirect('/login');
+		redirect(`/login?callbackUrl=${encodeURIComponent(`/toeic-progress?tab=${activeTab}`)}`);
 	}
 
 	return (
@@ -234,6 +234,9 @@ export default async function ToeicProgressPage(props: any) {
 		</main>
 	);
     } catch (e: any) {
+        if (e?.message === 'NEXT_REDIRECT' || e?.digest?.startsWith('NEXT_REDIRECT')) {
+            throw e;
+        }
         return (
             <main className="min-h-screen bg-slate-50/50 p-12">
                 <div className="bg-rose-50 text-rose-700 p-6 rounded-2xl border border-rose-200 shadow-sm max-w-3xl mx-auto">

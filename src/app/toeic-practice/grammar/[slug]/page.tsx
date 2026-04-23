@@ -863,8 +863,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className={`w-full flex flex-col ${lessonStarted && !isPlayingDirections ? 'xl:flex-row' : ''} gap-6 items-stretch`}
+                  className="w-full flex flex-col gap-6"
                 >
+                  <div className={`w-full flex flex-col ${lessonStarted && !isPlayingDirections ? 'xl:flex-row' : ''} gap-6 items-stretch`}>
                   {/* Left Column: Title + Time */}
                   <div className={`flex flex-col gap-6 ${lessonStarted && !isPlayingDirections ? 'w-full xl:w-[280px] 2xl:w-[320px] shrink-0' : 'w-full'}`}>
                   {/* Compact Lesson Header & Toggle */}
@@ -936,11 +937,36 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       )}
                     </div>
                     
+                    {/* Progress Stats during lesson */}
+                    {lessonStarted && (
+                      <div className="w-full pt-3 mt-1 border-t border-slate-100">
+                         <div className="flex flex-col gap-2.5">
+                            <h4 className="text-[13px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                                <svg className="w-4 h-4 text-[#0f766e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2.5"/><circle cx="12" cy="12" r="6" strokeWidth="2.5"/><circle cx="12" cy="12" r="2" strokeWidth="2.5"/></svg>
+                                Tiến độ
+                            </h4>
+                            <div className="flex justify-between items-center text-sm bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
+                               <span className="text-slate-600 font-medium">Đã làm:</span>
+                               <span className="font-bold text-slate-800">{Object.keys(userAnswers).filter(k => currentLesson.questions.some(q => q.id === k)).length} / {currentLesson.questions.length}</span>
+                            </div>
+                            {(topic.type === 'GRAMMAR' || topic.type === 'READING' || (topic.type === 'LISTENING' && listeningMode === 'practice')) && (
+                               <div className="flex justify-between items-center text-sm bg-emerald-50/50 px-3 py-2 rounded-lg border border-emerald-100/50">
+                                  <span className="text-slate-600 font-medium">Số câu đúng:</span>
+                                  <span className="font-bold text-emerald-600">{Object.keys(userAnswers).filter(k => {
+                                     const q = currentLesson.questions.find(q => q.id === k);
+                                     return q && userAnswers[k] === q.correctOption;
+                                  }).length}</span>
+                               </div>
+                            )}
+                         </div>
+                      </div>
+                    )}
+
                     {/* Sổ Tay Link */}
-                    <div className="w-full pt-3 mt-1 border-t border-slate-100">
+                    <div className="w-full pt-4 mt-auto">
                       <Link 
                           ref={notebookRef}
-                          href={topic.type === 'READING' ? '/toeic-progress?tab=reading' : topic.type === 'LISTENING' ? '/toeic-progress?tab=listening' : '/toeic-progress?tab=grammar'}
+                          href={topic.type === 'READING' ? '/toeic-progress?tab=reading-bank' : topic.type === 'LISTENING' ? '/toeic-progress?tab=listening-bank' : '/toeic-progress?tab=grammar-bank'}
                           onClick={(e) => {
                               const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
                               const isDirectionPlaying = directionAudioRef.current && !directionAudioRef.current.paused && directionAudioRef.current.currentTime > 0;
@@ -952,11 +978,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   }
                               }
                           }}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors text-[13px] font-bold rounded-xl border border-emerald-100 uppercase tracking-wider cursor-pointer"
+                          className="w-full flex items-center justify-center gap-1.5 text-slate-500 hover:text-[#0f766e] transition-colors text-[13px] font-medium cursor-pointer"
                           title="Khám phá sổ tay học tập của bạn"
                       >
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
-                        {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : topic.type === 'LISTENING' ? 'Sổ Tay Luyện Nghe' : 'Sổ Tay Ngữ Pháp'}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                        Xem Sổ Tay Của Tôi
                       </Link>
                     </div>
                     </div>
@@ -1011,11 +1037,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   </div> {/* End of Left Column */}
 
                   {/* Main Area */}
-                  <div className={`flex-1 w-full min-w-0`}>
+                  <div className={`flex-1 w-full min-w-0 flex flex-col`}>
 
                   {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
-                    <section className="mt-8 relative">
+                    <section className="relative h-full flex flex-col">
                       {/* Global Persistent Audio Player */}
                       {(() => {
                         const questionGroups = (() => {
@@ -1333,15 +1359,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       animate={{ opacity: 1, x: 0 }}
                                       exit={{ opacity: 0, x: -20 }}
                                       transition={{ duration: 0.2 }}
-                                      className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-5 md:p-8 relative overflow-hidden"
+                                      className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-5 md:p-8 relative overflow-hidden h-full flex flex-col"
                                     >
-                                      <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
-                                        <motion.div 
-                                          className="h-full bg-[#14532d]"
-                                          initial={{ width: 0 }}
-                                          animate={{ width: `${((Math.min(activeGroupStartIndex + questionsPerView, currentLesson.questions.length)) / currentLesson.questions.length) * 100}%` }}
-                                        />
-                                      </div>
                                       
                                         {(() => {
                                            const extractExplanationParts = (text: string) => {
@@ -1983,56 +2002,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                 })()}
                               </AnimatePresence>
 
-                              {/* Small Numbers Row at the very bottom without vertical scroll */}
-                              <div className="mt-6 flex flex-wrap justify-center items-center gap-1 sm:gap-1.5 w-full">
-                                {currentLesson.questions.map((_, idx) => {
-                                  const questionsPerView = (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) ? 3 : 1;
-                                  const activeGroupStartIndex = Math.floor(activeQuestionIndex / questionsPerView) * questionsPerView;
-                                  
-                                  const isActive = idx >= activeGroupStartIndex && idx < activeGroupStartIndex + questionsPerView;
-                                  const qt = currentLesson.questions[idx]
-                                  const isShowingResultQt = !!showResults[qt.id]
-                                  const isCorrectQt = userAnswers[qt.id] === qt.correctOption
 
-                                  let btnStyle = ''
-                                  if (isActive) {
-                                     btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
-                                  } else if (isShowingResultQt) {
-                                     btnStyle = isCorrectQt ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
-                                  } else if (userAnswers[qt.id]) {
-                                     btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
-                                  } else {
-                                     btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
-                                  }
-                                  
-                                  return (
-                                    <button 
-                                      key={idx}
-                                      onClick={() => {
-                                          if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual' && !isTestCompleted) {
-                                              toast('Đang ở chế độ thi thử. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
-                                              return;
-                                          }
-                                          if (isActive) return;
-                                          const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
-                                          if (isAudioPlaying) {
-                                              if (!confirm("Audio vẫn đang phát. Bạn chắc chắn muốn chuyển sang câu khác?")) return;
-                                          }
-                                          setActiveQuestionIndex(idx);
-                                      }}
-                                      className={`h-6 sm:h-7 min-w-[24px] sm:min-w-[28px] px-1 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
-                                    >
-                                      {topic.part === 1 ? idx + 1 :
-                                       topic.part === 2 ? idx + 7 :
-                                       topic.part === 3 ? idx + 32 :
-                                       topic.part === 4 ? idx + 71 :
-                                       topic.part === 5 ? idx + 101 :
-                                       topic.part === 6 ? idx + 131 :
-                                       topic.part === 7 ? idx + 147 : idx + 1}
-                                    </button>
-                                  )
-                                })}
-                              </div>
                           </>
                         )}
                         </>
@@ -2040,6 +2010,64 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     </section>
                   )}
                   </div> {/* End of Main Area */}
+                  </div> {/* End of Flex Row */}
+
+                  {/* Small Numbers Row at the very bottom without vertical scroll */}
+                  {currentLesson.questions.length > 0 && lessonStarted && (
+                    <div className="w-full flex flex-col xl:flex-row gap-6 items-stretch">
+                       <div className="hidden xl:block w-[280px] 2xl:w-[320px] shrink-0"></div>
+                       <div className="flex-1 mt-2 mb-8 flex flex-wrap justify-center items-center gap-1 sm:gap-1.5 min-w-0">
+                      {currentLesson.questions.map((_, idx) => {
+                        const questionsPerView = (topic.type === 'LISTENING' && (topic.part === 3 || topic.part === 4)) ? 3 : 1;
+                        const activeGroupStartIndex = Math.floor(activeQuestionIndex / questionsPerView) * questionsPerView;
+                        
+                        const isActive = idx >= activeGroupStartIndex && idx < activeGroupStartIndex + questionsPerView;
+                        const qt = currentLesson.questions[idx]
+                        const isShowingResultQt = !!showResults[qt.id]
+                        const isCorrectQt = userAnswers[qt.id] === qt.correctOption
+
+                        let btnStyle = ''
+                        if (isActive) {
+                           btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
+                        } else if (isShowingResultQt) {
+                           btnStyle = isCorrectQt ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
+                        } else if (userAnswers[qt.id]) {
+                           btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                        } else {
+                           btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                        }
+                        
+                        return (
+                          <button 
+                            key={idx}
+                            onClick={() => {
+                                if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual' && !isTestCompleted) {
+                                    toast('Đang ở chế độ thi thử. Nếu muốn thực hành, bạn hãy làm lại bài và chọn chế độ luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
+                                    return;
+                                }
+                                if (isActive) return;
+                                const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
+                                if (isAudioPlaying) {
+                                    if (!confirm("Audio vẫn đang phát. Bạn chắc chắn muốn chuyển sang câu khác?")) return;
+                                }
+                                setActiveQuestionIndex(idx);
+                            }}
+                            className={`h-6 sm:h-7 min-w-[24px] sm:min-w-[28px] px-1 shrink-0 rounded-md flex items-center justify-center font-bold text-[10px] sm:text-[11px] transition-all duration-200 cursor-pointer border-[1.5px] ${btnStyle}`}
+                          >
+                            {topic.part === 1 ? idx + 1 :
+                             topic.part === 2 ? idx + 7 :
+                             topic.part === 3 ? idx + 32 :
+                             topic.part === 4 ? idx + 71 :
+                             topic.part === 5 ? idx + 101 :
+                             topic.part === 6 ? idx + 131 :
+                             topic.part === 7 ? idx + 147 : idx + 1}
+                          </button>
+                        )
+                      })}
+                    </div>
+                    </div>
+                  )}
+
                 </motion.div>
               ) : (
                 <div className="h-64 flex items-center justify-center text-slate-400 italic">
