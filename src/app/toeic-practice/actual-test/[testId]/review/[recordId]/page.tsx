@@ -90,7 +90,7 @@ const extractSpecificExplanation = (text: string, qNum: number) => {
     let explanationPart = text;
 
     const giathichMatch = text.match(/(\[Giải thích(?: chi tiết)?\])([\s\S]*)/i);
-    if (giathichMatch) {
+    if (giathichMatch && giathichMatch.index !== undefined) {
         beforeExplanation = text.substring(0, giathichMatch.index + giathichMatch[1].length) + "\n\n";
         explanationPart = giathichMatch[2];
     }
