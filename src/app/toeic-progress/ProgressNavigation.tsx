@@ -74,9 +74,9 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
     };
 
     return (
-        <div className="w-full relative z-20">
+        <div className="w-full">
             {/* Desktop Sidebar */}
-            <div className="hidden md:flex flex-col gap-1.5 bg-white rounded-2xl border border-slate-200 p-3 shadow-sm sticky top-24">
+            <div className="hidden md:flex flex-col gap-1.5 bg-white rounded-2xl border border-slate-200 p-3 shadow-sm sticky top-24 z-20">
                 <div className="mb-2 px-3">
                     {activeTab?.startsWith('reports') && (
                         <div className="animate-in fade-in slide-in-from-left-2 duration-300">
