@@ -83,6 +83,13 @@ const PracticeAudioPlayer = ({ src, isPractice }: { src: string, isPractice: boo
     );
 };
 
+const cleanAIFiller = (text: string) => {
+    if (!text) return text;
+    return text.replace(/Dưới đây là.*?yêu cầu[:.]?\s*/gi, '')
+               .replace(/Dưới đây là nội dung trích xuất.*?[:.]\s*/gi, '')
+               .trim();
+};
+
 const extractSpecificExplanation = (text: string, qNum: number) => {
     if (!text) return text;
     
@@ -361,16 +368,16 @@ function ReviewTestContent() {
                                                                     <svg className="w-5 h-5 text-sky-500" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" /></svg>
                                                                     Giải Thích Chi Tiết
                                                                 </h4>
-                                                                {q.translation && (
+                                                                {q.translation && cleanAIFiller(q.translation) && (
                                                                     <div className="mb-4">
                                                                         <strong className="text-slate-800 text-sm block mb-1">Dịch nghĩa:</strong>
-                                                                        <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: q.translation }} />
+                                                                        <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: cleanAIFiller(q.translation) }} />
                                                                     </div>
                                                                 )}
-                                                                {q.explanation && (
+                                                                {q.explanation && cleanAIFiller(q.explanation) && (
                                                                     <div>
                                                                         <strong className="text-slate-800 text-sm block mb-1">Phân tích:</strong>
-                                                                        <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: extractSpecificExplanation(q.explanation, qNum) }} />
+                                                                        <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed" dangerouslySetInnerHTML={{ __html: extractSpecificExplanation(cleanAIFiller(q.explanation), qNum) }} />
                                                                     </div>
                                                                 )}
                                                             </div>
