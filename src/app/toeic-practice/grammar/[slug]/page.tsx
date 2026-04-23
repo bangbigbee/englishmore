@@ -720,7 +720,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
       </AnimatePresence>
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="w-full mx-auto px-4 sm:px-6 xl:px-8 2xl:px-12 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link 
               href={(() => {
@@ -780,9 +780,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
+      <div className="w-full mx-auto px-0 sm:px-6 xl:px-8 2xl:px-12 flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
         {/* Sidebar */}
-        <aside className="w-full md:w-80 bg-white border-b md:border-b-0 md:border-r border-slate-200 md:sticky md:top-16 md:h-[calc(100vh-64px)] md:overflow-y-auto">
+        <aside className="w-full md:w-80 bg-white border-b md:border-b-0 md:border-r md:border-l md:border-slate-200 md:sticky md:top-16 md:h-[calc(100vh-64px)] md:overflow-y-auto">
           <div 
             className="p-3 border-b border-slate-100 flex justify-end md:hidden cursor-pointer"
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
