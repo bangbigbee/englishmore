@@ -104,6 +104,7 @@ function TakeTestContent() {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [timeLeft, setTimeLeft] = useState(initialTimeSeconds);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPendingLoginToSubmit, setIsPendingLoginToSubmit] = useState(false);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
 
     const [playQueue, setPlayQueue] = useState<any[]>([]);
@@ -143,7 +144,7 @@ function TakeTestContent() {
 
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (Object.keys(answers).length > 0 && !isSubmitting) {
+            if (Object.keys(answers).length > 0 && !isSubmitting && !isPendingLoginToSubmit) {
                 e.preventDefault();
                 e.returnValue = '';
             }
@@ -151,7 +152,17 @@ function TakeTestContent() {
 
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-    }, [answers, isSubmitting]);
+    }, [answers, isSubmitting, isPendingLoginToSubmit]);
+
+    // Auto submit after successful login
+    useEffect(() => {
+        if (status === 'authenticated' && Object.keys(answers).length > 0) {
+            const pendingSubmit = localStorage.getItem(`toeic_pending_submit_${testId}`);
+            if (pendingSubmit === 'true' && !isSubmitting) {
+                handleSubmit(true);
+            }
+        }
+    }, [status, answers, isSubmitting, testId]);
 
     useEffect(() => {
         if (!testData || !testData.parts) return;
@@ -307,8 +318,8 @@ function TakeTestContent() {
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    const handleSubmit = async () => {
-        if (!confirm('Bạn có chắc chắn muốn nộp bài?')) return;
+    const handleSubmit = async (autoSubmit = false) => {
+        if (!autoSubmit && !confirm('Bạn có chắc chắn muốn nộp bài?')) return;
         setIsSubmitting(true);
         try {
             const body = {
@@ -324,15 +335,18 @@ function TakeTestContent() {
             });
             const data = await res.json();
             if (data.success) {
-                localStorage.removeItem(`toeic_progress_answers_${testId}`);
-                localStorage.removeItem(`toeic_progress_timeLeft_${testId}`);
                 exitFullscreen();
                 if (data.requiresLogin) {
+                    setIsPendingLoginToSubmit(true);
+                    localStorage.setItem(`toeic_pending_submit_${testId}`, 'true');
                     const msg = `Hoàn thành! Bạn làm đúng ${data.totalCorrect} câu. Đăng nhập để lưu lịch sử luyện thi và kiểm tra đáp án chi tiết hơn.`;
                     setLoginModalSubtitle(msg);
                     setShowLoginModal(true);
                     setIsSubmitting(false);
                 } else {
+                    localStorage.removeItem(`toeic_progress_answers_${testId}`);
+                    localStorage.removeItem(`toeic_progress_timeLeft_${testId}`);
+                    localStorage.removeItem(`toeic_pending_submit_${testId}`);
                     if (data.awardedStars > 0) {
                         try {
                             new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
@@ -611,7 +625,7 @@ function TakeTestContent() {
                                 </div>
                             </div>
                             <div className="pt-4 mt-auto">
-                                <button disabled={isSubmitting} onClick={handleSubmit} className="w-full py-4 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg">
+                                <button disabled={isSubmitting} onClick={() => handleSubmit(false)} className="w-full py-4 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg">
                                     {isSubmitting ? 'ĐANG NỘP...' : 'NỘP BÀI'}
                                 </button>
                             </div>
