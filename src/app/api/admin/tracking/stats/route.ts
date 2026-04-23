@@ -14,7 +14,8 @@ export async function GET(req: Request) {
 
     const activeSessions = await prisma.activeSession.findMany({
       where: {
-        lastPingAt: { gte: threeMinsAgo }
+        lastPingAt: { gte: threeMinsAgo },
+        domain: { contains: 'toeicmore' }
       },
       include: {
         user: {
@@ -25,16 +26,18 @@ export async function GET(req: Request) {
 
     let vocab = 0, listening = 0, reading = 0, grammar = 0, actualTest = 0, speedChallenge = 0;
     
+    // Group all non-core ones into a map or add variables for Sổ Tay
+    const sectionCounts: Record<string, number> = {};
+
     const usersOnline: any[] = [];
     const guestsOnline: any[] = [];
 
     activeSessions.forEach(s => {
-      if (s.section === 'vocab') vocab++;
-      else if (s.section === 'listening') listening++;
-      else if (s.section === 'reading') reading++;
-      else if (s.section === 'grammar') grammar++;
-      else if (s.section === 'actualTest') actualTest++;
-      else if (s.section === 'speedChallenge') speedChallenge++;
+      // Dynamic count for all sections
+      if (!sectionCounts[s.section]) {
+        sectionCounts[s.section] = 0;
+      }
+      sectionCounts[s.section]++;
 
       if (s.userId) {
         usersOnline.push(s);
@@ -43,21 +46,18 @@ export async function GET(req: Request) {
       }
     });
 
-    const now = new Date();
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-    const day = now.getDate();
-    const baseDaily = 120 + (day % 5) * 10;
-    const currentDaily = Math.floor(baseDaily * (hour * 60 + minutes) / (24 * 60)) + (hour > 8 ? 50 : 10);
+    const dateStr = new Date().toISOString().split('T')[0];
+    let currentDaily = 0;
+    const pageViewData = await prisma.dailyPageview.findFirst({
+      where: { date: dateStr, domain: { contains: 'toeicmore' } }
+    });
+    if (pageViewData) {
+      currentDaily = pageViewData.views;
+    }
 
     return NextResponse.json({
       online: activeSessions.length,
-      vocab,
-      listening,
-      reading,
-      grammar,
-      actualTest,
-      speedChallenge,
+      sectionCounts, // New object to pass back all section counts dynamically
       usersCount: usersOnline.length,
       guestsCount: guestsOnline.length,
       daily: currentDaily,

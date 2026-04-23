@@ -24,12 +24,7 @@ export default function AdminUserManagement() {
   const [onlineStats, setOnlineStats] = useState({ 
     online: 0, 
     daily: 0,
-    vocab: 0,
-    listening: 0,
-    reading: 0,
-    grammar: 0,
-    actualTest: 0,
-    speedChallenge: 0,
+    sectionCounts: {} as Record<string, number>,
     users: 0,
     guests: 0,
     usersDetails: [],
@@ -48,12 +43,7 @@ export default function AdminUserManagement() {
           setOnlineStats({
             online: data.online || 0,
             daily: data.daily || 0,
-            vocab: data.vocab || 0,
-            listening: data.listening || 0,
-            reading: data.reading || 0,
-            grammar: data.grammar || 0,
-            actualTest: data.actualTest || 0,
-            speedChallenge: data.speedChallenge || 0,
+            sectionCounts: data.sectionCounts || {},
             users: data.usersCount || 0,
             guests: data.guestsCount || 0,
             usersDetails: data.usersDetails || [],
@@ -215,37 +205,24 @@ export default function AdminUserManagement() {
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
               </div>
               <div>
-                <h3 className="text-lg flex font-black items-center gap-1.5 text-slate-800"><span className="text-emerald-600 text-xl">{onlineStats.online}</span> Đang online học bài</h3>
+                <h3 className="text-lg flex font-black items-center gap-1.5 text-slate-800"><span className="text-emerald-600 text-xl">{onlineStats.online}</span> Đang online học bài ở ToeicMore</h3>
                 <p className="text-sm font-medium text-slate-500">Phân bố người dùng theo nội dung</p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Từ vựng</span>
-               <span className="text-xl font-black text-slate-700">{onlineStats.vocab}</span>
-            </div>
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Listening</span>
-               <span className="text-xl font-black text-slate-700">{onlineStats.listening}</span>
-            </div>
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Reading</span>
-               <span className="text-xl font-black text-slate-700">{onlineStats.reading}</span>
-            </div>
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Ngữ pháp</span>
-               <span className="text-xl font-black text-slate-700">{onlineStats.grammar}</span>
-            </div>
-            <div className="bg-emerald-50 border border-emerald-100/50 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-               <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-1 truncate max-w-full"><span className="hidden sm:inline">Speed </span>Challenge</span>
-               <span className="text-xl font-black text-emerald-700">{onlineStats.speedChallenge}</span>
-            </div>
-            <div className="bg-amber-50 border border-amber-100/50 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-               <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-1">Thi Thử</span>
-               <span className="text-xl font-black text-amber-700">{onlineStats.actualTest}</span>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 mb-5">
+            {Object.entries((onlineStats as any).sectionCounts || {})
+              .sort((a: any, b: any) => b[1] - a[1])
+              .map(([sectionName, count]: any, idx) => (
+                <div key={idx} className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
+                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate w-full px-1">{sectionName}</span>
+                   <span className="text-xl font-black text-slate-700">{count}</span>
+                </div>
+              ))}
+            {Object.keys((onlineStats as any).sectionCounts || {}).length === 0 && (
+               <div className="col-span-full py-4 text-center text-slate-400 text-sm italic">Chưa có dữ liệu phân bố</div>
+            )}
           </div>
 
           <div className="flex items-center gap-4 border-t border-slate-100 pt-5">

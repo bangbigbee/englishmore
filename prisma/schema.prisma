@@ -856,6 +856,7 @@ model ActiveSession {
   guestId     String?
   section     String
   currentPath String
+  domain      String   @default("toeicmore.com")
   ipAddress   String?
   userAgent   String?
   lastPingAt  DateTime @default(now())
@@ -865,4 +866,14 @@ model ActiveSession {
   @@index([lastPingAt])
   @@index([userId])
   @@index([guestId])
+  @@index([domain])
+}
+
+model DailyPageview {
+  id          String   @id @default(cuid())
+  domain      String
+  date        String   // YYYY-MM-DD format for easy querying
+  views       Int      @default(0)
+
+  @@unique([domain, date])
 }
