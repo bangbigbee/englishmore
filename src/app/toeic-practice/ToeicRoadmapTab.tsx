@@ -29,7 +29,7 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
     const roadmapData: Record<string, {
         title: string,
         subtitle: string,
-        icon: string,
+        icon: React.ReactNode,
         color: string,
         bg: string,
         tasks: { title: string, type: string, actionText: string, path?: string, tab?: string }[]
@@ -37,7 +37,14 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
         'BEGINNER': {
             title: 'Lộ trình Xóa Mù (Mất gốc)',
             subtitle: 'Mục tiêu: Xây dựng nền tảng từ vựng và ngữ pháp cơ bản, làm quen Part 1 & 2.',
-            icon: '🌱',
+            icon: (
+                <svg className="w-[1em] h-[1em]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 20h10" />
+                    <path d="M10 20c5.5-2.5.8-6.4 3-10" />
+                    <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z" />
+                    <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z" />
+                </svg>
+            ),
             color: 'text-emerald-700',
             bg: 'bg-emerald-50',
             tasks: [
@@ -49,7 +56,11 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
         'INTERMEDIATE': {
             title: 'Lộ trình Bứt Phá (Cơ bản)',
             subtitle: 'Mục tiêu: Tăng tốc Part 3, 4, 7, mở rộng vốn từ vựng nâng cao.',
-            icon: '🚀',
+            icon: (
+                <svg className="w-[1em] h-[1em]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                </svg>
+            ),
             color: 'text-blue-700',
             bg: 'bg-blue-50',
             tasks: [
@@ -61,7 +72,12 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
         'ADVANCED': {
             title: 'Lộ trình Master (Mục tiêu 800+)',
             subtitle: 'Mục tiêu: Giải đề cường độ cao, tối ưu thời gian, vượt qua bẫy.',
-            icon: '🔥',
+            icon: (
+                <svg className="w-[1em] h-[1em]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+            ),
             color: 'text-amber-700',
             bg: 'bg-amber-50',
             tasks: [
@@ -78,12 +94,12 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div className={`rounded-3xl p-8 mb-8 border shadow-sm relative overflow-hidden ${currentRoadmap.bg} border-white`}>
-                <div className="absolute -right-4 -top-4 text-[120px] opacity-10 pointer-events-none rotate-12">
+                <div className="absolute -right-4 -top-4 text-[120px] opacity-10 pointer-events-none rotate-12 flex items-center justify-center text-current">
                     {currentRoadmap.icon}
                 </div>
                 <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-3">
-                        <span className="text-3xl drop-shadow-sm">{currentRoadmap.icon}</span>
+                        <span className="text-3xl drop-shadow-sm flex items-center justify-center text-current">{currentRoadmap.icon}</span>
                         <h2 className={`text-2xl font-black ${currentRoadmap.color}`}>{currentRoadmap.title}</h2>
                     </div>
                     <p className={`text-[15px] font-medium opacity-80 ${currentRoadmap.color}`}>

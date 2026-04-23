@@ -84,7 +84,11 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-tr-full"></div>
                 
                 <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/20">
-                  <span className="text-3xl">🎯</span>
+                  <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="6" />
+                    <circle cx="12" cy="12" r="2" />
+                  </svg>
                 </div>
                 <h2 className="text-2xl font-black mb-3">Chào mừng bạn!</h2>
                 <p className="text-white/80 text-sm font-medium leading-relaxed">
@@ -106,8 +110,13 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                     onClick={() => handleSelectLevel('BEGINNER')}
                     className="w-full group bg-slate-50 border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-emerald-200 group-hover:bg-emerald-100 transition-colors">
-                      <span className="text-2xl">🌱</span>
+                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-emerald-200 group-hover:bg-emerald-100 transition-colors text-emerald-600">
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M7 20h10" />
+                          <path d="M10 20c5.5-2.5.8-6.4 3-10" />
+                          <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z" />
+                          <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">Mất gốc hoàn toàn</h4>
@@ -119,8 +128,10 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                     onClick={() => handleSelectLevel('INTERMEDIATE')}
                     className="w-full group bg-slate-50 border border-slate-200 hover:border-blue-400 hover:bg-blue-50 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-blue-200 group-hover:bg-blue-100 transition-colors">
-                      <span className="text-2xl">🚀</span>
+                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-blue-200 group-hover:bg-blue-100 transition-colors text-blue-600">
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-800 group-hover:text-blue-700 transition-colors">Đã có nền tảng cơ bản</h4>
@@ -132,8 +143,11 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                     onClick={() => handleSelectLevel('ADVANCED')}
                     className="w-full group bg-slate-50 border border-slate-200 hover:border-amber-400 hover:bg-amber-50 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-amber-200 group-hover:bg-amber-100 transition-colors">
-                      <span className="text-2xl">🔥</span>
+                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-amber-200 group-hover:bg-amber-100 transition-colors text-amber-600">
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-800 group-hover:text-amber-700 transition-colors">Khá vững & Muốn Luyện Đề</h4>
