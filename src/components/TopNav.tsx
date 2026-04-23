@@ -467,7 +467,8 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   }, [isDropdownOpen])
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-[#14532d]/10 px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 transition-all">
+    <>
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-[#14532d]/10 px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 transition-all">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 relative">
         <div className="flex flex-1 items-center min-w-0 pr-4">
           <Link href="/" className="lg:static absolute left-1/2 -translate-x-1/2 lg:transform-none flex shrink-0 items-center gap-2 leading-none sm:gap-3 z-10">
@@ -584,12 +585,14 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </div>
       </div>
 
+      </header>
+
       <ToeicStarInfoModal 
         isOpen={isStarModalOpen} 
         onClose={() => setIsStarModalOpen(false)} 
         currentStars={(session?.user as any)?.toeicStars || 0}
       />
-    </header>
+    </>
   )
 }
 
