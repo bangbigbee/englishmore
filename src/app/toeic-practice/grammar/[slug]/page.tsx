@@ -2072,7 +2072,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   </div> {/* End of Flex Row */}
 
                   {/* Small Numbers Row at the very bottom without vertical scroll */}
-                  {currentLesson.questions.length > 0 && lessonStarted && (
+                  {currentLesson.questions.length > 0 && lessonStarted && !isPlayingDirections && (
                     <div className="w-full flex flex-col xl:flex-row gap-6 items-stretch">
                        <div className="hidden xl:block w-[280px] 2xl:w-[320px] shrink-0"></div>
                        <div className="flex-1 mt-2 mb-8 flex flex-wrap justify-center items-center gap-1 sm:gap-1.5 min-w-0">
