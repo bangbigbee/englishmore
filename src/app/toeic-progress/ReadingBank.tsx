@@ -82,9 +82,9 @@ export default async function ReadingBank({ filter = 'mistakes', partFilter }: {
                 question: {
                     lesson: {
                         topic: {
-                            type: 'READING'
-                        },
-                        title: partFilter ? { contains: `Part ${partFilter}` } : undefined
+                            type: 'READING',
+                            part: partFilter ? Number(partFilter) : undefined
+                        }
                     }
                 }
             },
@@ -111,9 +111,9 @@ export default async function ReadingBank({ filter = 'mistakes', partFilter }: {
                 question: {
                     lesson: {
                         topic: {
-                            type: 'READING'
-                        },
-                        title: partFilter ? { contains: `Part ${partFilter}` } : undefined
+                            type: 'READING',
+                            part: partFilter ? Number(partFilter) : undefined
+                        }
                     }
                 }
             },

@@ -25,22 +25,33 @@ export default function PartFilterBank({ type, activePart }: { type: 'reading' |
     }, [activePart, searchParams, router]);
 
     return (
-        <div className="flex flex-wrap items-center gap-2 mb-6">
-            <span className="text-sm font-bold text-slate-500 mr-2">Lọc theo Part:</span>
+        <div className="flex flex-wrap items-center gap-4 mb-6 bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-fit">
+            <span className="text-sm font-bold text-slate-600 mr-2">Lọc theo Part:</span>
             {parts.map(p => {
                 const isActive = activePart === String(p);
                 return (
-                    <button
-                        key={p}
-                        onClick={() => handlePartClick(p)}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all border ${
+                    <label key={p} className="flex items-center gap-2 cursor-pointer group">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
                             isActive 
-                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
-                            : 'bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-indigo-50'
-                        }`}
-                    >
-                        Part {p}
-                    </button>
+                            ? 'border-indigo-600 bg-indigo-600' 
+                            : 'border-slate-300 bg-white group-hover:border-indigo-400'
+                        }`}>
+                            {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                        </div>
+                        <span className={`text-sm font-bold transition-colors ${
+                            isActive ? 'text-indigo-700' : 'text-slate-600 group-hover:text-indigo-500'
+                        }`}>
+                            Part {p}
+                        </span>
+                        {/* Hidden input to handle click logic easily without breaking state */}
+                        <input 
+                            type="radio" 
+                            name="part-filter" 
+                            className="hidden" 
+                            checked={isActive} 
+                            onChange={() => handlePartClick(p)} 
+                        />
+                    </label>
                 );
             })}
         </div>

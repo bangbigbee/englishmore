@@ -98,9 +98,9 @@ export default async function ListeningBank({ filter = 'mistakes', partFilter }:
                 question: {
                     lesson: {
                         topic: {
-                            type: 'LISTENING'
-                        },
-                        title: partFilter ? { contains: `Part ${partFilter}` } : undefined
+                            type: 'LISTENING',
+                            part: partFilter ? Number(partFilter) : undefined
+                        }
                     }
                 }
             },
@@ -127,9 +127,9 @@ export default async function ListeningBank({ filter = 'mistakes', partFilter }:
                 question: {
                     lesson: {
                         topic: {
-                            type: 'LISTENING'
-                        },
-                        title: partFilter ? { contains: `Part ${partFilter}` } : undefined
+                            type: 'LISTENING',
+                            part: partFilter ? Number(partFilter) : undefined
+                        }
                     }
                 }
             },

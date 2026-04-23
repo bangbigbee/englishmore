@@ -81,8 +81,8 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
         }
         if (selectedPart !== 'all') {
             result = result.filter(item => {
-                const title = item.question?.lesson?.title || '';
-                return title.toLowerCase().includes(`part ${selectedPart}`);
+                const part = item.question?.lesson?.topic?.part;
+                return part === Number(selectedPart);
             });
         }
         return result;
@@ -110,22 +110,32 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
         <div className="space-y-6">
             {/* Filter */}
             <div className="flex flex-col gap-4">
-                <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-bold text-slate-500 mr-2">Lọc theo Part:</span>
+                <div className="flex flex-wrap items-center gap-4 bg-white p-3 border border-slate-200 rounded-xl shadow-sm w-fit">
+                    <span className="text-sm font-bold text-slate-600 mr-2">Lọc theo Part:</span>
                     {[1, 2, 3, 4, 5, 6, 7].map(p => {
                         const isActive = selectedPart === String(p);
                         return (
-                            <button
-                                key={p}
-                                onClick={() => setSelectedPart(isActive ? 'all' : String(p))}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all border ${
+                            <label key={p} className="flex items-center gap-2 cursor-pointer group">
+                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
                                     isActive 
-                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
-                                    : 'bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-indigo-50'
-                                }`}
-                            >
-                                Part {p}
-                            </button>
+                                    ? 'border-indigo-600 bg-indigo-600' 
+                                    : 'border-slate-300 bg-white group-hover:border-indigo-400'
+                                }`}>
+                                    {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                                </div>
+                                <span className={`text-sm font-bold transition-colors ${
+                                    isActive ? 'text-indigo-700' : 'text-slate-600 group-hover:text-indigo-500'
+                                }`}>
+                                    Part {p}
+                                </span>
+                                <input 
+                                    type="radio" 
+                                    name="test-part-filter" 
+                                    className="hidden" 
+                                    checked={isActive} 
+                                    onChange={() => setSelectedPart(isActive ? 'all' : String(p))} 
+                                />
+                            </label>
                         );
                     })}
                 </div>
