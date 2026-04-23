@@ -175,7 +175,7 @@ export default async function ToeicProgressPage(props: any) {
 
 	return (
 		<main className="min-h-screen bg-slate-50/50">
-			<div className="max-w-7xl mx-auto pt-6 pb-12 px-4 sm:px-6 flex flex-col md:flex-row gap-6 lg:gap-8">
+			<div className="w-full mx-auto pt-6 pb-12 px-4 sm:px-6 xl:px-8 2xl:px-12 flex flex-col md:flex-row gap-6 lg:gap-8">
                 {/* Sidebar */}
                 <div className="w-full md:w-64 lg:w-72 shrink-0">
                     <Suspense fallback={<div className="h-64 w-full animate-pulse bg-white border border-slate-200 rounded-2xl mb-8 shadow-sm"></div>}>
