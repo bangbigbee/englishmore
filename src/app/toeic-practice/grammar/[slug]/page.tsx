@@ -167,6 +167,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     // Optimistic Update
     setBookmarkedQuestions(prev => ({ ...prev, [questionId]: !currentlyBookmarked }));
     
+    // Capture position before await since event.currentTarget becomes null after await
+    let btnRect: DOMRect | null = null;
+    if (event?.currentTarget) {
+        btnRect = event.currentTarget.getBoundingClientRect();
+    }
+    
     try {
         const res = await fetch('/api/toeic/grammar/bookmark', {
             method: 'POST',
@@ -178,9 +184,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             // Revert state
             setBookmarkedQuestions(prev => ({ ...prev, [questionId]: currentlyBookmarked }));
             setShowPricing(true);
-        } else if (res.ok && !currentlyBookmarked && (event?.currentTarget || bookmarkBtnRef.current) && notebookRef.current) {
+        } else if (res.ok && !currentlyBookmarked && btnRect && notebookRef.current) {
             // Trigger flying stars
-            const btnRect = (event?.currentTarget || bookmarkBtnRef.current!).getBoundingClientRect();
             const targetRect = notebookRef.current.getBoundingClientRect();
             
             const newStar = {
