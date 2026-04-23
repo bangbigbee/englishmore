@@ -143,7 +143,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     }
   }, [status]);
 
-  const toggleBookmark = async (questionId: string) => {
+  const toggleBookmark = async (questionId: string, event?: React.MouseEvent<HTMLButtonElement>) => {
     if (status !== 'authenticated') {
         const currentPath = window.location.pathname;
         router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu trữ câu hỏi khó lại nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false });
@@ -165,9 +165,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             // Revert state
             setBookmarkedQuestions(prev => ({ ...prev, [questionId]: currentlyBookmarked }));
             setShowPricing(true);
-        } else if (res.ok && !currentlyBookmarked && bookmarkBtnRef.current && notebookRef.current) {
+        } else if (res.ok && !currentlyBookmarked && (event?.currentTarget || bookmarkBtnRef.current) && notebookRef.current) {
             // Trigger flying stars
-            const btnRect = bookmarkBtnRef.current.getBoundingClientRect();
+            const btnRect = (event?.currentTarget || bookmarkBtnRef.current!).getBoundingClientRect();
             const targetRect = notebookRef.current.getBoundingClientRect();
             
             const newStar = {
@@ -755,28 +755,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest">{topic.subtitle || (topic.type === 'READING' ? 'TOEIC Reading' : topic.type === 'LISTENING' ? 'TOEIC Listening' : 'TOEIC Grammar')}</p>
             </div>
           </div>
-          
-          <div className="hidden md:flex items-center gap-4">
-            <Link 
-                ref={notebookRef}
-                href={topic.type === 'READING' ? '/toeic-progress?tab=reading' : topic.type === 'LISTENING' ? '/toeic-progress?tab=listening' : '/toeic-progress?tab=grammar'}
-                onClick={(e) => {
-                    const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
-                    const isDirectionPlaying = directionAudioRef.current && !directionAudioRef.current.paused && directionAudioRef.current.currentTime > 0;
-                    
-                    if (lessonStarted && (isAudioPlaying || isDirectionPlaying)) {
-                        if (!confirm("File nghe vẫn đang phát, bạn vẫn muốn chuyển sang Sổ Tay?")) {
-                            e.preventDefault();
-                            return;
-                        }
-                    }
-                }}
-                className="px-3 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors text-xs font-bold rounded-full border border-emerald-100 uppercase tracking-wider cursor-pointer"
-                title="Khám phá sổ tay học tập của bạn"
-            >
-              {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : topic.type === 'LISTENING' ? 'Sổ Tay Luyện Nghe' : 'Sổ Tay Ngữ Pháp'}
-            </Link>
-          </div>
         </div>
       </header>
 
@@ -955,6 +933,30 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                            </span>
                         </div>
                       )}
+                    </div>
+                    
+                    {/* Sổ Tay Link */}
+                    <div className="w-full pt-3 mt-1 border-t border-slate-100">
+                      <Link 
+                          ref={notebookRef}
+                          href={topic.type === 'READING' ? '/toeic-progress?tab=reading' : topic.type === 'LISTENING' ? '/toeic-progress?tab=listening' : '/toeic-progress?tab=grammar'}
+                          onClick={(e) => {
+                              const isAudioPlaying = audioRef.current && !audioRef.current.paused && audioRef.current.currentTime > 0;
+                              const isDirectionPlaying = directionAudioRef.current && !directionAudioRef.current.paused && directionAudioRef.current.currentTime > 0;
+                              
+                              if (lessonStarted && (isAudioPlaying || isDirectionPlaying)) {
+                                  if (!confirm("File nghe vẫn đang phát, bạn vẫn muốn chuyển sang Sổ Tay?")) {
+                                      e.preventDefault();
+                                      return;
+                                  }
+                              }
+                          }}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors text-[13px] font-bold rounded-xl border border-emerald-100 uppercase tracking-wider cursor-pointer"
+                          title="Khám phá sổ tay học tập của bạn"
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+                        {topic.type === 'READING' ? 'Sổ Tay Luyện Đọc' : topic.type === 'LISTENING' ? 'Sổ Tay Luyện Nghe' : 'Sổ Tay Ngữ Pháp'}
+                      </Link>
                     </div>
                   </div>
 
@@ -1702,7 +1704,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                 )
                                                               }
                                                               return (
-                                                                <button onClick={() => toggleBookmark(q.id)} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`} title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}>
+                                                                <button onClick={(e) => toggleBookmark(q.id, e)} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-amber-100 border-amber-300 text-amber-600' : 'bg-white border-slate-200 text-slate-400 hover:border-amber-400 hover:text-amber-500'}`} title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}>
                                                                   <svg className="w-4 h-4" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                                                                 </button>
                                                               )

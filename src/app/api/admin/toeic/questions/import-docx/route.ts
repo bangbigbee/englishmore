@@ -231,15 +231,21 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
         continue
       }
       
-      const partsMatch = vocabStr.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]?\s*(.+)$/)
-      if (partsMatch) {
-        const typeStr = partsMatch[2] ? `(${partsMatch[2].trim()}) ` : ''
-        current.vocabulary.push({
-          word: partsMatch[1].trim(),
-          meaning: `${typeStr}${partsMatch[3].trim()}`
-        })
-      } else {
-        current.vocabulary.push({ word: vocabStr, meaning: '' })
+      const items = vocabStr.split(';');
+      for (const item of items) {
+          const cleanItem = item.trim();
+          if (!cleanItem) continue;
+          
+          const partsMatch = cleanItem.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]?\s*(.+)$/)
+          if (partsMatch) {
+            const typeStr = partsMatch[2] ? `(${partsMatch[2].trim()}) ` : ''
+            current.vocabulary.push({
+              word: partsMatch[1].trim(),
+              meaning: `${typeStr}${partsMatch[3].trim()}`
+            })
+          } else {
+            current.vocabulary.push({ word: cleanItem, meaning: '' })
+          }
       }
       continue
     }
@@ -255,16 +261,20 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
 
     // Append to the current mode
     if (currentMode === 'vocabulary') {
-      // Parse multi-line vocabulary: "policy (n) : chính sách" or "policy: chính sách"
-      const partsMatch = line.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/)
-      if (partsMatch) {
-        const typeStr = partsMatch[2] ? `(${partsMatch[2].trim()}) ` : ''
-        current.vocabulary.push({
-          word: partsMatch[1].trim(),
-          meaning: `${typeStr}${partsMatch[3].trim()}`
-        })
-      } else {
-        current.vocabulary.push({ word: line.trim(), meaning: '' })
+      const items = line.split(';');
+      for (const item of items) {
+          const cleanItem = item.trim();
+          if (!cleanItem) continue;
+          const partsMatch = cleanItem.match(/^([^\(:\-]+?)\s*(?:\(([^)]+)\))?\s*[:\-]\s*(.+)$/)
+          if (partsMatch) {
+            const typeStr = partsMatch[2] ? `(${partsMatch[2].trim()}) ` : ''
+            current.vocabulary.push({
+              word: partsMatch[1].trim(),
+              meaning: `${typeStr}${partsMatch[3].trim()}`
+            })
+          } else {
+            current.vocabulary.push({ word: cleanItem, meaning: '' })
+          }
       }
     } else if (currentMode === 'tips') {
       current.tips += (current.tips ? '\n' : '') + line
@@ -390,7 +400,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
              finalTips = currentGroupData.tips;
 
              if (currentGroupData.vocabularyStr) {
-                 const lines = currentGroupData.vocabularyStr.split(/\n|<br[^>]*>/gi);
+                 const lines = currentGroupData.vocabularyStr.split(/\n|<br[^>]*>|;/gi);
                  for (const line of lines) {
                      const cleaned = line.replace(/<[^>]+>/g, ' ').trim();
                      if (!cleaned) continue;
@@ -412,7 +422,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           } else {
              const vocabRaw = cells.length > 4 ? $(cells[4]).text().trim() : '';
              if (vocabRaw) {
-                 const lines = vocabRaw.split(/\n|<br[^>]*>/gi);
+                 const lines = vocabRaw.split(/\n|<br[^>]*>|;/gi);
                  for (const line of lines) {
                      const cleaned = line.replace(/<[^>]+>/g, '').trim();
                      if (cleaned) {
