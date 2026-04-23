@@ -56,6 +56,19 @@ export async function POST(req: Request) {
       }
     }
 
+    // Always attempt to upsert unique visitor for today
+    const dateStr = new Date().toISOString().split('T')[0];
+    const visitorId = userId ? `usr_${userId}` : `gst_${gId}`;
+    try {
+      await prisma.dailyVisitor.upsert({
+        where: { domain_date_visitorId: { domain: safeDomain, date: dateStr, visitorId } },
+        update: {},
+        create: { domain: safeDomain, date: dateStr, visitorId }
+      });
+    } catch (upsertError) {
+      // Ignore unique constraint violations if concurrent
+    }
+
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error('Heartbeat error:', e);

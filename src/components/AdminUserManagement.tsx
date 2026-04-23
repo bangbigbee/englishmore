@@ -23,7 +23,10 @@ export default function AdminUserManagement() {
   const [search, setSearch] = useState('')
   const [onlineStats, setOnlineStats] = useState({ 
     online: 0, 
-    daily: 0,
+    dailyViews: 0,
+    dailyVisitors: 0,
+    weeklyVisitors: 0,
+    monthlyVisitors: 0,
     sectionCounts: {} as Record<string, number>,
     users: 0,
     guests: 0,
@@ -42,7 +45,10 @@ export default function AdminUserManagement() {
           const data = await res.json();
           setOnlineStats({
             online: data.online || 0,
-            daily: data.daily || 0,
+            dailyViews: data.dailyViews || 0,
+            dailyVisitors: data.dailyVisitors || 0,
+            weeklyVisitors: data.weeklyVisitors || 0,
+            monthlyVisitors: data.monthlyVisitors || 0,
             sectionCounts: data.sectionCounts || {},
             users: data.usersCount || 0,
             guests: data.guestsCount || 0,
@@ -273,14 +279,43 @@ export default function AdminUserManagement() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-center items-center text-center min-h-[200px]">
-          <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mb-4">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-center items-center text-center relative group min-h-[200px]">
+          <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mb-4 cursor-help">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
           </div>
-          <div>
-            <h3 className="text-4xl font-black text-slate-800 tracking-tight">{onlineStats.daily}</h3>
-            <p className="text-sm font-semibold text-slate-400 mt-2 uppercase tracking-wide">lượt truy cập trang</p>
+          
+          {/* Tooltip */}
+          <div className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-help group/tooltip">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div className="absolute opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none bg-slate-800 text-white text-xs rounded-lg p-3 w-64 right-0 top-full mt-2 shadow-xl z-50 text-left font-medium">
+              Chỉ số <strong className="text-blue-300">Lượt truy cập</strong> (Unique Visitors) được tính dựa trên số lượng người dùng độc nhất (theo ID Tài khoản hoặc Mã Thiết bị ẩn danh) truy cập vào hệ thống. Mỗi người dùng dù có mở bao nhiêu tab hay tải lại trang bao nhiêu lần trong cùng 1 ngày cũng chỉ tính là 1 lượt truy cập.
+            </div>
           </div>
+
+          <div className="w-full">
+            <div className="flex justify-between items-end border-b border-slate-100 pb-3 mb-3">
+              <div className="text-left">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hôm nay</p>
+                <h3 className="text-3xl font-black text-blue-600 tracking-tight">{onlineStats.dailyVisitors}</h3>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lượt tải trang</p>
+                <p className="text-sm font-bold text-slate-500">{onlineStats.dailyViews}</p>
+              </div>
+            </div>
+            
+            <div className="flex justify-between">
+              <div className="text-left">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tuần này (7 ngày)</p>
+                <p className="text-xl font-bold text-slate-700">{onlineStats.weeklyVisitors}</p>
+              </div>
+              <div className="text-right border-l border-slate-100 pl-4">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tháng này (30 ngày)</p>
+                <p className="text-xl font-bold text-slate-700">{onlineStats.monthlyVisitors}</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-xs font-semibold text-slate-400 mt-4 uppercase tracking-wide bg-slate-50 px-3 py-1 rounded-full">Người dùng độc nhất (Unique Visitors)</p>
         </div>
       </div>
 

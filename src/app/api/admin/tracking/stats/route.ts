@@ -55,12 +55,53 @@ export async function GET(req: Request) {
       currentDaily = pageViewData.views;
     }
 
+    // Calculate unique visitors
+    const today = new Date();
+    today.setUTCHours(0,0,0,0);
+    const dateTodayStr = today.toISOString().split('T')[0];
+    
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 6);
+    const date7DaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+    
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 29);
+    const date30DaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
+
+    const todayVisitors = await prisma.dailyVisitor.count({
+      where: { date: dateTodayStr, domain: { contains: 'toeicmore' } }
+    });
+
+    // For weekly/monthly we must count distinct visitorId over the date range
+    const weeklyVisitorsRes = await prisma.dailyVisitor.findMany({
+      where: { 
+        domain: { contains: 'toeicmore' },
+        date: { gte: date7DaysAgoStr }
+      },
+      select: { visitorId: true },
+      distinct: ['visitorId']
+    });
+    const weeklyVisitors = weeklyVisitorsRes.length;
+
+    const monthlyVisitorsRes = await prisma.dailyVisitor.findMany({
+      where: { 
+        domain: { contains: 'toeicmore' },
+        date: { gte: date30DaysAgoStr }
+      },
+      select: { visitorId: true },
+      distinct: ['visitorId']
+    });
+    const monthlyVisitors = monthlyVisitorsRes.length;
+
     return NextResponse.json({
       online: activeSessions.length,
       sectionCounts, // New object to pass back all section counts dynamically
       usersCount: usersOnline.length,
       guestsCount: guestsOnline.length,
-      daily: currentDaily,
+      dailyViews: currentDaily, // Keep for backward compatibility if needed
+      dailyVisitors: todayVisitors,
+      weeklyVisitors: weeklyVisitors,
+      monthlyVisitors: monthlyVisitors,
       usersDetails: usersOnline,
       guestsDetails: guestsOnline
     });

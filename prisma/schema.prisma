@@ -883,6 +883,17 @@ model DailyPageview {
   @@unique([domain, date])
 }
 
+model DailyVisitor {
+  id        String   @id @default(cuid())
+  domain    String
+  date      String   // YYYY-MM-DD
+  visitorId String   // Either userId or guestId
+  createdAt DateTime @default(now())
+
+  @@unique([domain, date, visitorId])
+  @@index([domain, date])
+}
+
 model ToeicStarRule {
   id          String   @id @default(cuid())
   activityKey String   @unique
