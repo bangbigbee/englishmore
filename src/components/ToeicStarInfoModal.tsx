@@ -24,25 +24,26 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 isolate">
+        <div className="fixed inset-0 z-[100] overflow-y-auto isolate">
           {/* Backdrop */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm cursor-pointer"
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm cursor-pointer"
             onClick={onClose}
           />
           
-          {/* Modal Container */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto transform rounded-2xl bg-white p-6 sm:p-8 shadow-2xl custom-scrollbar"
-          >
+          <div className="flex min-h-full items-center justify-center p-4 sm:p-6 pointer-events-none">
+            {/* Modal Container */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
+              className="relative w-full max-w-lg transform rounded-2xl bg-white p-6 sm:p-8 shadow-2xl pointer-events-auto"
+            >
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -129,7 +130,8 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
                 Đã hiểu, đóng lại
               </button>
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       )}
     </AnimatePresence>
