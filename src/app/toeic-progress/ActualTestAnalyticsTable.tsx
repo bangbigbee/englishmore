@@ -76,33 +76,7 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                 </div>
             </div>
 
-            {/* PROGRESS CHART (DOM CSS based) */}
-            {actualTestsOnly.length > 1 && (
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm overflow-hidden hidden md:block">
-                    <h3 className="text-lg font-bold text-slate-800 mb-4">Mức tăng trưởng điểm qua các bài Thi Thử</h3>
-                    <div className="h-40 w-full flex items-end justify-between gap-2 overflow-x-auto pb-4">
-                        {actualTestsOnly.map((r, i) => {
-                            const score = (r.scoreListening || 0) + (r.scoreReading || 0);
-                            const maxScore = 990;
-                            const heightPct = Math.max((score / maxScore) * 100, 5); // min 5%
-                            
-                            return (
-                                <div key={r.id + i} className="flex flex-col items-center flex-1 min-w-[40px] group relative">
-                                    {/* Tooltip */}
-                                    <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-xs px-2 py-1 flex flex-col items-center rounded pointer-events-none whitespace-nowrap z-10 shadow-lg">
-                                        <span className="font-bold">{score} / 990 pts</span>
-                                        <span className="text-[10px] text-slate-300">{new Date(r.createdAt).toLocaleDateString('vi', {day: '2-digit', month: '2-digit'})}</span>
-                                    </div>
-                                    <div className="text-[10px] sm:text-xs font-bold text-slate-400 mb-2">{score}</div>
-                                    <div className="w-full sm:w-10 bg-orange-100 rounded-t-md overflow-hidden relative" style={{ height: `${heightPct}%`, minHeight: '20px' }}>
-                                        <div className="absolute bottom-0 w-full bg-orange-500 rounded-t-sm transition-all duration-500" style={{ height: '100%' }}></div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
+
 
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
                 <div className="p-4 md:px-6 md:py-5 border-b border-slate-200 bg-slate-50/50 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
@@ -132,14 +106,14 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                     <table className="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
                         <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                             <tr>
-                                <th className="py-4 px-4 font-bold">Ngày Làm</th>
                                 <th className="py-4 px-4 font-bold">Tên Đề</th>
-                                <th className="py-4 px-4 font-bold text-center">Parts Đã Làm</th>
                                 <th className="py-4 px-4 font-bold text-center">Chế Độ</th>
-                                <th className="py-4 px-4 font-bold text-center">TG Dùng</th>
+                                <th className="py-4 px-4 font-bold text-center">Điểm Số</th>
                                 <th className="py-4 px-4 font-bold text-center">Số Câu</th>
-                                <th className="py-4 px-4 font-bold text-right">Tổng Điểm</th>
+                                <th className="py-4 px-4 font-bold text-center">Parts Đã Làm</th>
+                                <th className="py-4 px-4 font-bold text-center">TG Dùng</th>
                                 <th className="py-4 px-4 font-bold text-center w-24">Tuỳ Chọn</th>
+                                <th className="py-4 px-4 font-bold text-right">Ngày Làm</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -167,22 +141,20 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                             onClick={() => toggleRow(r.id)}
                                             className={`cursor-pointer hover:bg-slate-50 transition-colors group ${isExpanded ? 'bg-slate-50' : 'bg-white'}`}
                                         >
-                                            <td className="py-4 px-4 font-medium text-slate-600">
-                                                {new Date(r.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                                            </td>
                                             <td className="py-4 px-4 font-bold text-slate-800 truncate max-w-[200px]" title={r.title || r.testId}>
                                                 {r.title || r.testId}
-                                            </td>
-                                            <td className="py-4 px-4 text-center text-slate-500 text-xs font-bold">
-                                                {partsTakenStr}
                                             </td>
                                             <td className="py-4 px-4 text-center">
                                                 <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${r.mode === 'actual' ? 'bg-orange-100 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
                                                     {r.mode === 'actual' ? 'THI THỬ' : 'LUYỆN TẬP'}
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-4 text-center font-medium">
-                                                {Math.floor(r.duration / 60)}m {r.duration % 60}s
+                                            <td className="py-4 px-4 text-center font-black text-base">
+                                                {r.mode === 'actual' ? (
+                                                    <span className="text-orange-600">{scoreCombo} <span className="text-xs font-medium text-slate-400">pts</span></span>
+                                                ) : (
+                                                    <span className="text-slate-300">-</span>
+                                                )}
                                             </td>
                                             <td className="py-2 px-4 text-center font-medium">
                                                 <div className="flex flex-col items-center justify-center gap-0.5">
@@ -195,12 +167,11 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="py-4 px-4 text-right font-black text-base">
-                                                {r.mode === 'actual' ? (
-                                                    <span className="text-orange-600">{scoreCombo} <span className="text-xs font-medium text-slate-400">pts</span></span>
-                                                ) : (
-                                                    <span className="text-slate-300">-</span>
-                                                )}
+                                            <td className="py-4 px-4 text-center text-slate-500 text-xs font-bold">
+                                                {partsTakenStr}
+                                            </td>
+                                            <td className="py-4 px-4 text-center font-medium">
+                                                {Math.floor(r.duration / 60)}m {r.duration % 60}s
                                             </td>
                                             <td className="py-4 px-4 text-center">
                                                 <Link
@@ -211,6 +182,9 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                                     Review
                                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                                 </Link>
+                                            </td>
+                                            <td className="py-4 px-4 text-right font-medium text-slate-600">
+                                                {new Date(r.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                             </td>
                                         </tr>
                                         {isExpanded && (
