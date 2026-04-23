@@ -127,6 +127,7 @@ model User {
   upgradeOrders             UpgradeOrder[]
   ToeicSpeedChallengeRecord ToeicSpeedChallengeRecord[]
   toeicTestRecords          ToeicTestRecord[]
+  activeSessions            ActiveSession[]
 
   @@index([referrerId])
 }
@@ -847,4 +848,21 @@ model ToeicTestRecord {
 
   @@index([userId])
   @@index([testId])
+}
+
+model ActiveSession {
+  id          String   @id @default(cuid())
+  userId      String?
+  guestId     String?
+  section     String
+  currentPath String
+  ipAddress   String?
+  userAgent   String?
+  lastPingAt  DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([lastPingAt])
+  @@index([userId])
+  @@index([guestId])
 }

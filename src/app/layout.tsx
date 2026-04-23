@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import LoginModalController from "./LoginModalController";
 import GlobalUpgradePoller from "@/components/GlobalUpgradePoller";
 import ToeicMoreNotice from "@/components/ToeicMoreNotice";
+import ClientTracking from "@/components/ClientTracking";
 import { prisma } from "@/lib/prisma";
 
 const inter = Inter({
@@ -105,6 +106,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#fdfdfc]">
         <AuthProvider>
+          <ClientTracking />
           <TopNav isToeicDomain={isToeicDomain} />
           <MainWrapper>{children}</MainWrapper>
           <LoginModalController />

@@ -31,51 +31,38 @@ export default function AdminUserManagement() {
     actualTest: 0,
     speedChallenge: 0,
     users: 0,
-    guests: 0
+    guests: 0,
+    usersDetails: [],
+    guestsDetails: []
   })
   const [courseFilter, setCourseFilter] = useState('')
 
   useEffect(() => {
     fetchCourses()
     
-    const updateStats = () => {
-      const now = new Date();const hour = now.getHours();const minutes = now.getMinutes();const day = now.getDate();
-      const baseDaily = 120 + (day % 5) * 10;
-      const currentDaily = Math.floor(baseDaily * (hour * 60 + minutes) / (24 * 60)) + (hour > 8 ? 50 : 10);
-      let currentOnline = 5 + Math.floor(Math.sin((hour * 60 + minutes) / 100) * 10) + (day % 10);
-      currentOnline += (minutes % 5);
-      
-      const totalOnline = Math.abs(currentOnline);
-      const p1 = 0.25 + ((minutes % 3) * 0.05);
-      const p2 = 0.20 + ((hour % 3) * 0.05);
-      const pSpeed = 0.20 + ((minutes % 2) * 0.05);
-      const remainP = 1 - p1 - p2 - pSpeed;
-      const p3 = remainP > 0 ? remainP * 0.5 : 0;
-      const p4 = remainP > 0 ? remainP * 0.3 : 0;
-
-      const vocabCount = Math.floor(totalOnline * p1);
-      const listenCount = Math.floor(totalOnline * p2);
-      const speedCount = Math.floor(totalOnline * pSpeed);
-      const readCount = Math.floor(totalOnline * p3);
-      const grammarCount = Math.floor(totalOnline * p4);
-      const testCount = Math.max(0, totalOnline - vocabCount - listenCount - speedCount - readCount - grammarCount);
-
-      const guestRatio = 0.20 + ((minutes % 4) * 0.05);
-      const guestsCount = Math.floor(totalOnline * guestRatio);
-      const usersCount = Math.max(0, totalOnline - guestsCount);
-
-      setOnlineStats({ 
-        online: totalOnline, 
-        daily: currentDaily,
-        vocab: vocabCount,
-        listening: listenCount,
-        reading: readCount,
-        grammar: grammarCount,
-        actualTest: testCount,
-        speedChallenge: speedCount,
-        users: usersCount,
-        guests: guestsCount
-      });
+    const updateStats = async () => {
+      try {
+        const res = await fetch('/api/admin/tracking/stats');
+        if (res.ok) {
+          const data = await res.json();
+          setOnlineStats({
+            online: data.online || 0,
+            daily: data.daily || 0,
+            vocab: data.vocab || 0,
+            listening: data.listening || 0,
+            reading: data.reading || 0,
+            grammar: data.grammar || 0,
+            actualTest: data.actualTest || 0,
+            speedChallenge: data.speedChallenge || 0,
+            users: data.usersCount || 0,
+            guests: data.guestsCount || 0,
+            usersDetails: data.usersDetails || [],
+            guestsDetails: data.guestsDetails || []
+          });
+        }
+      } catch (e) {
+        console.error('Failed to fetch stats');
+      }
     };
     updateStats();
     const interval = setInterval(updateStats, 15000);
@@ -272,6 +259,40 @@ export default function AdminUserManagement() {
                    <div className="h-full bg-slate-200 transition-all duration-1000" style={{ width: `${(onlineStats.guests/Math.max(1, onlineStats.online))*100}%` }}></div>
                 </div>
              </div>
+           </div>
+
+          {/* Detailed Lists */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t border-slate-100 pt-6">
+            <div>
+              <h4 className="font-bold text-sm text-blue-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"></div>Thành viên đang học ({(onlineStats as any).users})</h4>
+              <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                {(onlineStats as any).usersDetails?.length === 0 && <p className="text-xs text-slate-400 italic">Không có thành viên nào online</p>}
+                {(onlineStats as any).usersDetails?.map((u: any, i: number) => (
+                  <div key={i} className="flex justify-between items-center p-2 rounded-lg border border-slate-100 bg-slate-50">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">{u.user?.name?.charAt(0) || '?'}</div>
+                      <div className="flex flex-col"><span className="text-xs font-bold text-slate-700 truncate w-24" title={u.user?.name || u.user?.email || 'No Name'}>{u.user?.name || u.user?.email?.split('@')[0] || 'No Name'}</span><span className="text-[10px] text-slate-500">{u.user?.tier}</span></div>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 truncate max-w-[100px]" title={u.section}>{u.section}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-slate-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div>Khách vãng lai ({(onlineStats as any).guests})</h4>
+              <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                {(onlineStats as any).guestsDetails?.length === 0 && <p className="text-xs text-slate-400 italic">Không có khách nào online</p>}
+                {(onlineStats as any).guestsDetails?.map((g: any, i: number) => (
+                  <div key={i} className="flex justify-between items-center p-2 rounded-lg border border-slate-100 bg-slate-50">
+                    <div className="flex flex-col w-32 shrink-0">
+                      <span className="text-[10px] font-mono text-slate-500 truncate" title={g.guestId}>{g.guestId}</span>
+                      <span className="text-[9px] text-slate-400 truncate" title={g.userAgent}>{g.userAgent?.split(' ')[0] || 'Unknown OS'}</span>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 truncate max-w-[100px]" title={g.section}>{g.section}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
