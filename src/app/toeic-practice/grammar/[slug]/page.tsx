@@ -1160,6 +1160,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 onClick={() => {
                                                     setLessonStarted(true);
                                                     setIsTestCompleted(true);
+                                                    setIsReviewing(true);
                                                 }} 
                                                 className="flex-1 font-bold px-4 py-3.5 rounded-xl transition-all shadow-md text-[13px] uppercase tracking-wider bg-[#0f766e] text-white hover:bg-[#0d645e] hover:shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
                                             >
@@ -2039,7 +2040,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         </main>
       </div>
 
-      {isTestCompleted && !isReviewing && currentLesson && (
+      {isTestCompleted && !isReviewing && lessonStarted && currentLesson && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
