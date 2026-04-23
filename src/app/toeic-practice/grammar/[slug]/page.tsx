@@ -875,8 +875,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-8 lg:p-12">
-          <div className="max-w-3xl mx-auto">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10 overflow-x-hidden">
+          <div className={`mx-auto transition-all duration-300 ${lessonStarted && !isPlayingDirections ? 'w-full max-w-[1800px] flex flex-col xl:flex-row gap-6 items-start' : 'max-w-3xl'}`}>
             <AnimatePresence mode="wait">
               {currentLesson ? (
                 <motion.div
@@ -885,9 +885,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
+                  className={`w-full flex flex-col ${lessonStarted && !isPlayingDirections ? 'xl:flex-row' : ''} gap-6 items-start`}
                 >
+                  {/* Left Column: Title + Time */}
+                  <div className={`flex flex-col gap-6 ${lessonStarted && !isPlayingDirections ? 'w-full xl:w-[280px] 2xl:w-[320px] shrink-0 xl:sticky xl:top-24' : 'w-full'}`}>
                   {/* Compact Lesson Header & Toggle */}
-                  <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                  <div className={`bg-white p-4 lg:p-5 rounded-2xl border border-slate-200 shadow-sm flex ${lessonStarted && !isPlayingDirections ? 'flex-col gap-4' : 'flex-col md:flex-row md:items-center justify-between gap-4'}`}>
                     <div className="flex flex-wrap items-center gap-3 w-full">
                       <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
                         <span>{currentLesson.title}</span>
@@ -921,8 +924,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           </button>
                         </div>
                       )}
+                      
+                      {/* Flex container for play button and timer to keep them together if in sidebar */}
                       {!isTestCompleted && timerStartTime !== null && (
-                        <div className="flex items-center gap-2 ml-2">
+                        <div className="flex items-center gap-2 mt-1">
                            {topic.type === 'LISTENING' && lessonStarted && (
                               <button
                                 onClick={() => {
@@ -951,7 +956,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         </div>
                       )}
                     </div>
-                    {/* Removed Xem meo lam dropdown button */}
                   </div>
 
                   <AnimatePresence>
@@ -1000,6 +1004,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       </motion.div>
                     )}
                   </AnimatePresence>
+                  </div> {/* End of Left Column */}
+
+                  {/* Main Area */}
+                  <div className={`flex-1 w-full min-w-0`}>
 
                   {/* Focused Paginated Quiz Section */}
                   {currentLesson.questions.length > 0 && (
@@ -1259,7 +1267,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       animate={{ opacity: 1, x: 0 }}
                                       exit={{ opacity: 0, x: -20 }}
                                       transition={{ duration: 0.2 }}
-                                      className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 relative overflow-hidden"
+                                      className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-5 md:p-8 relative overflow-hidden"
                                     >
                                       <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
                                         <motion.div 
@@ -1269,7 +1277,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         />
                                       </div>
                                       
-                                      <div className="flex flex-col gap-10">
+                                      <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
+                                        {/* Middle Column: Transcripts & Image */}
+                                        <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0">
                                         {(() => {
                                            const extractExplanationParts = (text: string) => {
                                                if (!text || !text.includes('[Transcript]')) {
@@ -1388,6 +1398,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                  })}
                                              </div>
                                          )}
+                                        </div>
+
+                                        {/* Right Column: Questions & Explanations */}
+                                        <div className="flex flex-col gap-8 flex-1 min-w-0">
 
                                          {currentQuestionsGroup.map((q, localIdx) => {
                                             const isVisible = (topic.type !== 'READING' || (topic.part !== 6 && topic.part !== 7)) || localIdx === (activeQuestionIndex - activeGroupStartIndex);
@@ -1850,6 +1864,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           })()}
                                         </div>
                                       )}
+                                      </div> {/* End of Right Column (Questions) */}
+                                      </div> {/* End of 2-column active view layout */}
 
                                       {/* Unified Navigation at Bottom of Group */}
                                       <div className="mt-10 flex flex-row items-center justify-between gap-3 w-full border-t border-slate-200 pt-6">
