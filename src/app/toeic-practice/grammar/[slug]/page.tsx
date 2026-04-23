@@ -113,7 +113,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           setSelectedLessonId(targetLesson.id)
           setActiveQuestionIndex(0)
           setShowLessonContent(data.lessons[0].questions.length === 0)
-          if (data.type === 'LISTENING') setListeningMode('actual');
+          if (data.type === 'LISTENING') setListeningMode('practice');
           setTimerStartTime(Date.now())
           setElapsedTime(0)
           setIsTestCompleted(false)
@@ -1092,28 +1092,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                             <h3 className="text-xl md:text-2xl font-black text-[#0f766e] mb-2 leading-tight">Sẵn sàng cho PART {topic.part}?</h3>
                             <p className="text-sm text-slate-500 mb-8 max-w-sm mx-auto">Audio sẽ tự động phát sau khi bạn bắt đầu. Thời gian làm bài sẽ được tính ngay lập tức.</p>
                             
-                            {topic.part && topic.part <= 4 && (
-                                  <div className="flex flex-col items-center mb-8 w-full gap-2">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#0f766e] opacity-80">Chọn chế độ làm bài</span>
-                                    <div className="flex items-center bg-slate-200/50 p-1 rounded-lg w-full max-w-[160px] mx-auto border border-slate-300/30 shadow-inner">
-                                      <button 
-                                        onClick={() => setListeningMode('practice')}
-                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'practice' ? 'bg-[#0f766e] text-white shadow-[0_2px_4px_rgba(15,118,110,0.4)] border border-[#0f766e]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
-                                      >
-                                        Luyện tập
-                                      </button>
-                                      <button 
-                                        onClick={() => setListeningMode('actual')}
-                                        className={`flex-1 py-1 rounded-md text-[11px] font-black transition-all duration-300 ${listeningMode === 'actual' ? 'bg-[#0f766e] text-white shadow-[0_2px_4px_rgba(15,118,110,0.4)] border border-[#0f766e]' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/5'}`}
-                                      >
-                                        Thi thử
-                                      </button>
-                                    </div>
-                                  </div>
-                            )}
-                            
                             <button 
-                              disabled={topic.part && topic.part <= 4 ? !listeningMode : false}
                               onClick={() => {
                                 setLessonStarted(true);
                                 setTimerStartTime(Date.now());
@@ -1122,7 +1101,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     setIsPlayingDirections(true);
                                     directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
                                 }
-                            }} className={`font-bold px-8 py-3.5 rounded-xl transition-all shadow-sm text-[14px] uppercase tracking-wider active:scale-95 flex items-center justify-center gap-2 ${topic.part && topic.part <= 4 ? (listeningMode ? 'bg-[#0f766e] text-white hover:bg-[#0d645e] hover:-translate-y-0.5' : 'bg-slate-100 text-slate-400 cursor-not-allowed') : 'bg-[#0f766e] text-white hover:bg-[#0d645e] hover:-translate-y-0.5'}`}>
+                            }} className="font-bold px-8 py-3.5 rounded-xl transition-all shadow-sm text-[14px] uppercase tracking-wider active:scale-95 flex items-center justify-center gap-2 bg-[#0f766e] text-white hover:bg-[#0d645e] hover:-translate-y-0.5">
                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                Bắt Đầu Ngay
                             </button>
