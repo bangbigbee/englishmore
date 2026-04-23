@@ -151,10 +151,10 @@ function parseQuestionsFromDocxText(text: string): ExtractedToeicQuestion[] {
       let questionText = rawText;
       let optA = '', optB = '', optC = '', optD = '';
       
-      const rgxA = /(?:^|\s)(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(B\)|B\.|B\))|$)/i;
-      const rgxB = /(?:^|\s)(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(C\)|C\.|C\))|$)/i;
-      const rgxC = /(?:^|\s)(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(D\)|D\.|D\))|$)/i;
-      const rgxD = /(?:^|\s)(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i;
+      const rgxA = /(?:^|\s|[.,;])(?:\(A\)|A\.|A\))\s*([\s\S]*?)(?=(?:^|\s|[.,;])(?:\(B\)|B\.|B\))|$)/i;
+      const rgxB = /(?:^|\s|[.,;])(?:\(B\)|B\.|B\))\s*([\s\S]*?)(?=(?:^|\s|[.,;])(?:\(C\)|C\.|C\))|$)/i;
+      const rgxC = /(?:^|\s|[.,;])(?:\(C\)|C\.|C\))\s*([\s\S]*?)(?=(?:^|\s|[.,;])(?:\(D\)|D\.|D\))|$)/i;
+      const rgxD = /(?:^|\s|[.,;])(?:\(D\)|D\.|D\))\s*([\s\S]*?)$/i;
 
       const matchA = rawText.match(rgxA);
       if (matchA) {
@@ -340,14 +340,20 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           
           if (!questionText && !$(cells[1]).text().trim() && !$(cells[2]).text().trim()) continue;
 
-          // Process options
-          const optsCleaned = $(cells[1]).text().trim().replace(/\s+/g, ' ');
+          // For 7-column tables: 0=STT, 1=Question, 2=Options, 3=Answer, 4=Translation, 5=Explanation, 6=Tips
+          // For 5-column tables: 0=STT, 1=Question+Options, 2=Translation, 3=Answer, 4=Explanation
+          const isSevenCols = cells.length >= 6;
+          
+          // Combine Question and Options columns if it's a 7-column table
+          const rawQuestionAndOptions = isSevenCols ? ($(cells[1]).text() + ' ' + $(cells[2]).text()) : $(cells[1]).text();
+          const optsCleaned = rawQuestionAndOptions.trim().replace(/\s+/g, ' ');
           
           // Flexible regex to grab (A) or A. or A) inside the question text column
-          const rgxA = /(?:^|\s)(?:\(A\)|A\.|A\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(B\)|B\.|B\))|$)/i;
-          const rgxB = /(?:^|\s)(?:\(B\)|B\.|B\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(C\)|C\.|C\))|$)/i;
-          const rgxC = /(?:^|\s)(?:\(C\)|C\.|C\))\s+([\s\S]*?)(?=(?:^|\s)(?:\(D\)|D\.|D\))|$)/i;
-          const rgxD = /(?:^|\s)(?:\(D\)|D\.|D\))\s+([\s\S]*?)$/i;
+          // Flexible regex to grab (A) or A. or A) inside the question text column
+          const rgxA = /(?:^|\s|[.,;])(?:\(A\)|A\.|A\))\s*([\s\S]*?)(?=(?:^|\s|[.,;])(?:\(B\)|B\.|B\))|$)/i;
+          const rgxB = /(?:^|\s|[.,;])(?:\(B\)|B\.|B\))\s*([\s\S]*?)(?=(?:^|\s|[.,;])(?:\(C\)|C\.|C\))|$)/i;
+          const rgxC = /(?:^|\s|[.,;])(?:\(C\)|C\.|C\))\s*([\s\S]*?)(?=(?:^|\s|[.,;])(?:\(D\)|D\.|D\))|$)/i;
+          const rgxD = /(?:^|\s|[.,;])(?:\(D\)|D\.|D\))\s*([\s\S]*?)$/i;
 
           const matchA = optsCleaned.match(rgxA);
           const matchB = optsCleaned.match(rgxB);
@@ -362,11 +368,12 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
           // Clean question text (remove options)
           let finalQuestionText = questionText;
           if (optionA) {
-             finalQuestionText = questionText.split(/(?:^|\s)(?:\(A\)|A\.|A\))/i)[0].trim();
+             finalQuestionText = questionText.split(/(?:^|\s|[.,;])(?:\(A\)|A\.|A\))/i)[0].trim();
           }
 
-          // Process translation
-          const transCleaned = $(cells[2]).text().trim().replace(/\s+/g, ' ');
+          // Process translation (Column 4 in 7-col, Column 2 in 5-col)
+          const transCellText = isSevenCols ? $(cells[4]).text() : $(cells[2]).text();
+          const transCleaned = transCellText.trim().replace(/\s+/g, ' ');
           
           const transA = transCleaned.match(rgxA);
           const transB = transCleaned.match(rgxB);
@@ -375,7 +382,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
 
           let translation = '';
           if (transA && transA[1]) {
-             const textBeforeA = transCleaned.split(/(?:^|\s)(?:\(A\)|A\.|A\))/i)[0].trim();
+             const textBeforeA = transCleaned.split(/(?:^|\s|[.,;])(?:\(A\)|A\.|A\))/i)[0].trim();
              if (textBeforeA) {
                  translation = textBeforeA + '\n';
              }
@@ -420,7 +427,7 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
                  }
              }
           } else {
-             const vocabRaw = cells.length > 4 ? $(cells[4]).text().trim() : '';
+             const vocabRaw = isSevenCols ? '' : (cells.length > 4 ? $(cells[4]).text().trim() : '');
              if (vocabRaw) {
                  const lines = vocabRaw.split(/\n|<br[^>]*>|;/gi);
                  for (const line of lines) {
@@ -430,8 +437,8 @@ function parseTableQuestionsFromHtml(html: string): ExtractedToeicQuestion[] {
                      }
                  }
              }
-             finalExplanation = cells.length > 5 ? $(cells[5]).text().trim() : '';
-             finalTips = cells.length > 6 ? $(cells[6]).text().trim() : '';
+             finalExplanation = isSevenCols ? $(cells[5]).text().trim() : (cells.length > 5 ? $(cells[5]).text().trim() : '');
+             finalTips = isSevenCols ? (cells.length > 6 ? $(cells[6]).text().trim() : '') : (cells.length > 6 ? $(cells[6]).text().trim() : '');
           }
 
           results.push({

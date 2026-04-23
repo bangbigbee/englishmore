@@ -2,6 +2,49 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 
+const parseTranslation = (text: string | null) => {
+    if (!text) return null;
+    let question = text;
+    let a = '', b = '', c = '', d = '';
+    
+    const aIndex = text.indexOf('(A)');
+    const bIndex = text.indexOf('(B)');
+    const cIndex = text.indexOf('(C)');
+    const dIndex = text.indexOf('(D)');
+    
+    if (aIndex !== -1) {
+        question = text.substring(0, aIndex).trim();
+        a = text.substring(aIndex + 3, bIndex !== -1 ? bIndex : text.length).trim();
+        if (bIndex !== -1) {
+            b = text.substring(bIndex + 3, cIndex !== -1 ? cIndex : text.length).trim();
+        }
+        if (cIndex !== -1) {
+            c = text.substring(cIndex + 3, dIndex !== -1 ? dIndex : text.length).trim();
+        }
+        if (dIndex !== -1) {
+            d = text.substring(dIndex + 3).trim();
+        }
+        return { question, a, b, c, d };
+    }
+    return { question: text };
+}
+
+const hideTranscript = (text: string | null) => {
+    if (!text) return null;
+    const idx = text.indexOf('[Transcript]');
+    if (idx !== -1) {
+        const nextIdx = text.indexOf('[Dịch nghĩa]', idx);
+        if (nextIdx !== -1) {
+            return text.substring(0, idx) + text.substring(nextIdx);
+        }
+        const nextIdx2 = text.indexOf('[Giải thích]', idx);
+        if (nextIdx2 !== -1) {
+            return text.substring(0, idx) + text.substring(nextIdx2);
+        }
+    }
+    return text;
+}
+
 export default function ActualTestBankList({ items, isMistakes }: { items: any[], isMistakes: boolean }) {
     const [selectedTest, setSelectedTest] = useState<string>('all');
 
@@ -74,6 +117,7 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
             <div className="space-y-4">
                 {filteredItems.map((item) => {
                     const q = item.question;
+                    const parsedTrans = parseTranslation(q.translation);
                     return (
                         <div key={item.id} className="block bg-white rounded-xl border border-slate-200 p-5 shadow-sm group relative">
                             <div className="absolute top-4 right-4 flex gap-2 z-10">
@@ -103,14 +147,19 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                                 {q.imageUrl && (
                                     <img src={q.imageUrl} alt="Context" className="w-[150px] object-cover rounded shadow-sm border border-slate-200" />
                                 )}
-                                {q.passage && (
+                                {q.passage && q.lesson?.topic?.type !== 'LISTENING' && (
                                     <div className="prose prose-sm prose-slate max-w-none bg-slate-50 p-3 rounded-lg border border-slate-100" dangerouslySetInnerHTML={{ __html: q.passage }} />
                                 )}
                                 {q.audioUrl && (
                                     <audio src={q.audioUrl} controls className="h-10 w-full max-w-sm" />
                                 )}
                                 {q.question && (
-                                    <p className="text-base font-bold text-slate-800 line-clamp-3 leading-snug" dangerouslySetInnerHTML={{ __html: q.question }} />
+                                    <div>
+                                        <p className="text-base font-bold text-slate-800 line-clamp-3 leading-snug" dangerouslySetInnerHTML={{ __html: q.question }} />
+                                        {parsedTrans?.question && (
+                                            <p className="text-[13px] italic text-blue-700/80 mt-1 line-clamp-2 leading-snug font-medium" dangerouslySetInnerHTML={{ __html: parsedTrans.question }} />
+                                        )}
+                                    </div>
                                 )}
                             </div>
 
@@ -126,12 +175,17 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                                     else if (isUserMistake) style = 'bg-rose-50 border-rose-200 text-rose-800 line-through';
 
                                     return (
-                                        <div key={opt} className={`p-2 rounded-lg border transition-colors ${style}`}>
-                                            <span className="font-black mr-2 opacity-60">{opt}</span>
-                                            {q.lesson.topic.part !== 1 && q.lesson.topic.part !== 2 ? (
-                                                <span dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
-                                            ) : (
-                                                <span>Option {opt}</span>
+                                        <div key={opt} className={`p-2.5 rounded-lg border flex flex-col gap-1.5 transition-colors ${style}`}>
+                                            <div>
+                                                <span className="font-black mr-2 opacity-60">{opt}</span>
+                                                {q.lesson.topic.part !== 1 && q.lesson.topic.part !== 2 ? (
+                                                    <span dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
+                                                ) : (
+                                                    <span>Option {opt}</span>
+                                                )}
+                                            </div>
+                                            {parsedTrans?.[opt.toLowerCase() as keyof typeof parsedTrans] && (
+                                                <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug" dangerouslySetInnerHTML={{ __html: parsedTrans[opt.toLowerCase() as keyof typeof parsedTrans] as string }} />
                                             )}
                                         </div>
                                     );
@@ -139,13 +193,10 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                             </div>
 
                             {/* Explanation */}
-                            {(q.translation || q.explanation) && (
+                            {(q.explanation) && (
                                 <div className="mt-5 bg-sky-50/50 p-4 rounded-lg border border-sky-100 shadow-sm">
-                                    {q.translation && (
-                                        <div className="text-sm italic text-blue-700 opacity-90 mb-2 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: q.translation }} />
-                                    )}
-                                    {q.explanation && (
-                                        <div className="text-[13px] font-medium text-slate-700 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: q.explanation }} />
+                                    {hideTranscript(q.explanation) && (
+                                        <div className="text-[13px] font-medium text-slate-700 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: hideTranscript(q.explanation) as string }} />
                                     )}
                                 </div>
                             )}

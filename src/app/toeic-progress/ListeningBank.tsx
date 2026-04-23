@@ -3,6 +3,49 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
+const parseTranslation = (text: string | null) => {
+    if (!text) return null;
+    let question = text;
+    let a = '', b = '', c = '', d = '';
+    
+    const aIndex = text.indexOf('(A)');
+    const bIndex = text.indexOf('(B)');
+    const cIndex = text.indexOf('(C)');
+    const dIndex = text.indexOf('(D)');
+    
+    if (aIndex !== -1) {
+        question = text.substring(0, aIndex).trim();
+        a = text.substring(aIndex + 3, bIndex !== -1 ? bIndex : text.length).trim();
+        if (bIndex !== -1) {
+            b = text.substring(bIndex + 3, cIndex !== -1 ? cIndex : text.length).trim();
+        }
+        if (cIndex !== -1) {
+            c = text.substring(cIndex + 3, dIndex !== -1 ? dIndex : text.length).trim();
+        }
+        if (dIndex !== -1) {
+            d = text.substring(dIndex + 3).trim();
+        }
+        return { question, a, b, c, d };
+    }
+    return { question: text };
+}
+
+const hideTranscript = (text: string | null) => {
+    if (!text) return null;
+    const idx = text.indexOf('[Transcript]');
+    if (idx !== -1) {
+        const nextIdx = text.indexOf('[Dịch nghĩa]', idx);
+        if (nextIdx !== -1) {
+            return text.substring(0, idx) + text.substring(nextIdx);
+        }
+        const nextIdx2 = text.indexOf('[Giải thích]', idx);
+        if (nextIdx2 !== -1) {
+            return text.substring(0, idx) + text.substring(nextIdx2);
+        }
+    }
+    return text;
+}
+
 export default async function ListeningBank({ filter = 'mistakes' }: { filter?: string }) {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
@@ -126,6 +169,7 @@ export default async function ListeningBank({ filter = 'mistakes' }: { filter?: 
 		<div className="space-y-4">
 			{items.map((item) => {
 				const q = item.question;
+                const parsedTrans = parseTranslation(q.translation);
 				return (
 					<Link 
 						key={q.id}
@@ -152,34 +196,42 @@ export default async function ListeningBank({ filter = 'mistakes' }: { filter?: 
 							</span>
 						</div>
 						
-                        <p className="text-lg font-black text-slate-800 mb-4 pr-8 line-clamp-2 leading-snug">
-							{q.question}
-						</p>
+                        <div className="mb-4 pr-8">
+                            <p className="text-lg font-black text-slate-800 line-clamp-2 leading-snug">
+                                {q.question}
+                            </p>
+                            {parsedTrans?.question && (
+                                <p className="text-[13px] italic text-blue-700/80 mt-1 line-clamp-2 leading-snug font-medium">
+                                    {parsedTrans.question}
+                                </p>
+                            )}
+                        </div>
 
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-sm font-medium">
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'A' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">A</span> {q.optionA}
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'A' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+								<div><span className="font-black mr-2 opacity-60">A</span> {q.optionA}</div>
+                                {parsedTrans?.a && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.a}</div>}
 							</div>
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'B' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">B</span> {q.optionB}
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'B' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+								<div><span className="font-black mr-2 opacity-60">B</span> {q.optionB}</div>
+                                {parsedTrans?.b && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.b}</div>}
 							</div>
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'C' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">C</span> {q.optionC}
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'C' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+								<div><span className="font-black mr-2 opacity-60">C</span> {q.optionC}</div>
+                                {parsedTrans?.c && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.c}</div>}
 							</div>
 							{q.optionD && (
-							<div className={`p-2 rounded-lg border ${q.correctOption === 'D' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
-								<span className="font-black mr-2 opacity-60">D</span> {q.optionD}
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'D' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+								<div><span className="font-black mr-2 opacity-60">D</span> {q.optionD}</div>
+                                {parsedTrans?.d && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.d}</div>}
 							</div>
 							)}
 						</div>
                         
-                        {(q.translation || q.explanation) && (
+                        {(q.explanation) && (
                             <div className="mt-4 pt-3 border-t border-slate-100/60">
-                                {q.translation && (
-                                    <div className="text-sm italic text-blue-700 opacity-90 mb-2">{q.translation}</div>
-                                )}
-                                {q.explanation && (
-                                    <div className="text-[13px] font-medium text-slate-600">{q.explanation}</div>
+                                {hideTranscript(q.explanation) && (
+                                    <div className="text-[13px] font-medium text-slate-600 whitespace-pre-wrap">{hideTranscript(q.explanation)}</div>
                                 )}
                             </div>
                         )}
