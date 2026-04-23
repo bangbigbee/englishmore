@@ -5,7 +5,7 @@ import Link from "next/link";
 import ActualTestBankList from "./ActualTestBankList";
 import ActualTestAnalyticsTable from "./ActualTestAnalyticsTable";
 
-export default async function ActualTestBank({ filter = 'mistakes' }: { filter?: string }) {
+export default async function ActualTestBank({ filter = 'mistakes', partFilter }: { filter?: string, partFilter?: string }) {
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) return null;
 

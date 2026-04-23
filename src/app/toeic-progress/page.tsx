@@ -167,6 +167,7 @@ export default async function ToeicProgressPage(props: any) {
 	const qbFilter = resolvedParams.filter || 'mistakes';
     const qFilterArray = resolvedParams.q;
     const qFilter = Array.isArray(qFilterArray) ? qFilterArray[0] : qFilterArray;
+	const partFilter = resolvedParams.part;
 	
 	const session = await getServerSession(authOptions);
 	if (!session?.user?.id) {
@@ -195,7 +196,7 @@ export default async function ToeicProgressPage(props: any) {
 						{activeTab === 'grammar-bank' && (
 							<div>
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div></div>}>
-									<GrammarBank filter={qbFilter} />
+									<GrammarBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>
 						)}
@@ -207,21 +208,21 @@ export default async function ToeicProgressPage(props: any) {
 						{activeTab === 'listening-bank' && (
 							<div>
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
-									<ListeningBank filter={qbFilter} />
+									<ListeningBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>
 						)}
 						{activeTab === 'reading-bank' && (
 							<div>
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div></div>}>
-									<ReadingBank filter={qbFilter} />
+									<ReadingBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>
 						)}
 						{activeTab === 'actual-test-bank' && (
 							<div>
 								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
-									<ActualTestBank filter={qbFilter} />
+									<ActualTestBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>
 						)}

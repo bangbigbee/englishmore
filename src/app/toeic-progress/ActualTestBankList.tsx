@@ -47,6 +47,7 @@ const hideTranscript = (text: string | null) => {
 
 export default function ActualTestBankList({ items, isMistakes }: { items: any[], isMistakes: boolean }) {
     const [selectedTest, setSelectedTest] = useState<string>('all');
+    const [selectedPart, setSelectedPart] = useState<string>('all');
 
     // Extract test names
     const testNamesMap = useMemo(() => {
@@ -74,9 +75,18 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
     const testOptions = Array.from(testNamesMap.entries());
 
     const filteredItems = useMemo(() => {
-        if (selectedTest === 'all') return items;
-        return items.filter(item => item._testId === selectedTest);
-    }, [items, selectedTest]);
+        let result = items;
+        if (selectedTest !== 'all') {
+            result = result.filter(item => item._testId === selectedTest);
+        }
+        if (selectedPart !== 'all') {
+            result = result.filter(item => {
+                const title = item.question?.lesson?.title || '';
+                return title.toLowerCase().includes(`part ${selectedPart}`);
+            });
+        }
+        return result;
+    }, [items, selectedTest, selectedPart]);
 
     if (items.length === 0) {
         return (
@@ -99,18 +109,40 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
     return (
         <div className="space-y-6">
             {/* Filter */}
-            <div className="bg-white border text-sm border-slate-200 rounded-xl p-3 flex md:flex-row flex-col max-w-sm gap-3 items-center shadow-sm">
-                <span className="font-bold text-slate-600 whitespace-nowrap">Lọc theo đề thi:</span>
-                <select 
-                    value={selectedTest} 
-                    onChange={(e) => setSelectedTest(e.target.value)}
-                    className="flex-1 w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-700 outline-none focus:border-indigo-500 transition-colors"
-                >
-                    <option value="all">Tất cả đề thi</option>
-                    {testOptions.map(([id, name]) => (
-                        <option key={id} value={id}>{name}</option>
-                    ))}
-                </select>
+            <div className="flex flex-col gap-4">
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-bold text-slate-500 mr-2">Lọc theo Part:</span>
+                    {[1, 2, 3, 4, 5, 6, 7].map(p => {
+                        const isActive = selectedPart === String(p);
+                        return (
+                            <button
+                                key={p}
+                                onClick={() => setSelectedPart(isActive ? 'all' : String(p))}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all border ${
+                                    isActive 
+                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
+                                    : 'bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-indigo-50'
+                                }`}
+                            >
+                                Part {p}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div className="bg-white border text-sm border-slate-200 rounded-xl p-3 flex md:flex-row flex-col max-w-sm gap-3 items-center shadow-sm">
+                    <span className="font-bold text-slate-600 whitespace-nowrap">Lọc theo đề thi:</span>
+                    <select 
+                        value={selectedTest} 
+                        onChange={(e) => setSelectedTest(e.target.value)}
+                        className="flex-1 w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-700 outline-none focus:border-indigo-500 transition-colors"
+                    >
+                        <option value="all">Tất cả đề thi</option>
+                        {testOptions.map(([id, name]) => (
+                            <option key={id} value={id}>{name}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {/* List */}
@@ -134,11 +166,11 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                             </div>
 
                             <div className="flex items-center gap-2 mb-4">
-                                <span className="text-[10px] font-black uppercase text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded border border-indigo-100">
+                                <span className="text-[10px] font-black uppercase text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded border border-indigo-200/50">
                                     {item._testName}
                                 </span>
-                                <span className="text-[10px] font-black uppercase text-slate-600 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
-                                    Part {q.lesson.topic.part}
+                                <span className="text-[10px] font-black uppercase text-slate-700 bg-slate-200 px-2.5 py-1 rounded border border-slate-300/50">
+                                    {q.lesson.title}
                                 </span>
                             </div>
 
