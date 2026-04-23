@@ -1448,7 +1448,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                            return (
                                               <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
                                                 {/* Middle Column: Transcripts & Image */}
-                                                {!(topic.type === 'GRAMMAR' || (topic.type === 'READING' && topic.part === 5)) && (
+                                                {!isGrammarLayout && (
                                                 <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0">
                                                  {hasGroupTranscript && (someResultShown || (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'practice')) && (
                                                     <div className="mb-2 flex flex-col items-center">
@@ -1519,16 +1519,19 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                  )}
 
 
-                                         {currentQuestionsGroup[0]?.imageUrl && (
+                                         {(() => {
+                                             const groupImage = currentQuestionsGroup.find(q => q.imageUrl)?.imageUrl;
+                                             return groupImage ? (
                                              <div className="w-full flex justify-center z-10 relative mb-2 border-b border-slate-100 pb-2">
                                                <img 
-                                                 src={currentQuestionsGroup[0].imageUrl} 
+                                                 src={groupImage} 
                                                  alt="Part" 
-                                                 onClick={() => setZoomedImageUrl(currentQuestionsGroup[0].imageUrl)}
+                                                 onClick={() => setZoomedImageUrl(groupImage)}
                                                  className="max-w-full md:max-w-2xl max-h-[350px] md:max-h-[450px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
                                                />
                                              </div>
-                                         )}
+                                             ) : null;
+                                         })()}
 
                                          {topic.type === 'READING' && (topic.part === 6 || topic.part === 7) && currentQuestionsGroup.length > 1 && (
                                              <div className="flex flex-wrap justify-center gap-1.5 mb-1 w-full px-2 mt-1">
