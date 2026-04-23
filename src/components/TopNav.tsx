@@ -392,6 +392,7 @@ function BookIcon({ className = "h-4 w-4" }: { className?: string }) {
 
 export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: boolean }) {
   const { data: session, status } = useSession()
+  const [enrolledCourseTitle, setEnrolledCourseTitle] = useState('')
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false)
   const [isStarModalOpen, setIsStarModalOpen] = useState(false)
