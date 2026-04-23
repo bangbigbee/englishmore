@@ -71,13 +71,10 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
 
             <div className="space-y-5">
               {/* Ý nghĩa */}
-              <div className="bg-[#14532d]/5 p-4 rounded-xl border border-[#14532d]/10">
-                <h3 className="font-bold text-[#14532d] flex items-center gap-2 mb-2 text-sm">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  Giới thiệu chung
-                </h3>
+              <div className="bg-[#14532d]/5 p-4 rounded-xl border border-[#14532d]/10 flex items-start gap-2">
+                <svg className="w-4 h-4 text-[#14532d] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
-                  <strong>Toeic Stars (⭐)</strong> là điểm thưởng rèn luyện độc quyền của hệ thống ToeicMore, dùng để ghi nhận nỗ lực học tập và sự đóng góp của bạn vào cộng đồng.
+                  <strong className="text-[#14532d]">Toeic Stars</strong> là điểm thưởng rèn luyện độc quyền của hệ thống ToeicMore, dùng để ghi nhận nỗ lực học tập và sự đóng góp của bạn vào cộng đồng.
                 </p>
               </div>
 
@@ -127,7 +124,7 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
                 onClick={onClose}
                 className="w-full rounded-xl bg-[#14532d] px-4 py-3 text-[13px] font-bold text-white transition-all hover:bg-[#166534] shadow-md hover:shadow-lg cursor-pointer outline-none focus:ring-2 focus:ring-[#14532d] focus:ring-offset-2"
               >
-                Đã hiểu, đóng lại
+                Đã hiểu
               </button>
             </div>
             </motion.div>
