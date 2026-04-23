@@ -66,6 +66,21 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies()
     const toeicRef = cookieStore.get('toeic_ref')?.value
 
+    let actualReferrerId = null
+    if (toeicRef) {
+      if (toeicRef.length >= 25) {
+        actualReferrerId = toeicRef
+      } else {
+        // Resolve short referral code (last characters of CUID)
+        const referrerUser = await prisma.user.findFirst({
+          where: { id: { endsWith: toeicRef } }
+        })
+        if (referrerUser) {
+          actualReferrerId = referrerUser.id
+        }
+      }
+    }
+
     const user = await prisma.user.create({
       data: {
         email: normalizedEmail,
@@ -73,7 +88,7 @@ export async function POST(request: NextRequest) {
         phone: normalizedPhone,
         password: passwordHash,
         emailVerified: new Date(),
-        toeicReferrerId: toeicRef || null
+        toeicReferrerId: actualReferrerId
       }
     })
 

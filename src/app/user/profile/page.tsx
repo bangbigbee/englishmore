@@ -373,7 +373,7 @@ export default function ProfilePage() {
                     <div className="relative mt-1.5 flex items-center">
                       <input
                         type="text"
-                        value={profile?.id || ''}
+                        value={profile?.id ? profile.id.slice(-10) : ''}
                         disabled
                         className="block w-full rounded-xl border-2 border-slate-100 pl-4 pr-12 py-2.5 bg-slate-50 text-slate-500 font-bold cursor-not-allowed text-[14px]"
                       />
@@ -381,7 +381,7 @@ export default function ProfilePage() {
                         type="button"
                         onClick={() => {
                           if (profile?.id) {
-                            navigator.clipboard.writeText(profile.id);
+                            navigator.clipboard.writeText(profile.id.slice(-10));
                             toast.success('Đã copy Mã giới thiệu');
                           }
                         }}
@@ -398,7 +398,7 @@ export default function ProfilePage() {
                     <div className="relative mt-1.5 flex items-center">
                       <input
                         type="text"
-                        value={profile?.id ? `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref=${profile.id}` : ''}
+                        value={profile?.id ? `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref=${profile.id.slice(-10)}` : ''}
                         disabled
                         className="block w-full rounded-xl border-2 border-slate-100 pl-4 pr-12 py-2.5 bg-slate-50 text-slate-500 font-bold cursor-not-allowed text-[13px]"
                       />
@@ -406,7 +406,7 @@ export default function ProfilePage() {
                         type="button"
                         onClick={() => {
                           if (profile?.id) {
-                            const link = `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref=${profile.id}`;
+                            const link = `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref=${profile.id.slice(-10)}`;
                             navigator.clipboard.writeText(link);
                             toast.success('Đã copy Link giới thiệu');
                           }

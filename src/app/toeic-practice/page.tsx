@@ -2573,7 +2573,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                         <div className="flex flex-col gap-3 max-w-sm mx-auto">
                                             <button 
                                                 onClick={() => {
-                                                    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&topic=GLOBAL&chal=1${session?.user?.id ? `&ref=${session.user.id}` : ''}`;
+                                                    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/toeic-practice?tab=vocabulary&topic=GLOBAL&chal=1${session?.user?.id ? `&ref=${session.user.id.slice(-10)}` : ''}`;
                                                     navigator.clipboard.writeText(url);
                                                     setCopySuccess(true);
                                                     setTimeout(() => setCopySuccess(false), 2000);
