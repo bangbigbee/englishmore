@@ -132,21 +132,20 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                     <table className="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
                         <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                             <tr>
-                                <th className="py-4 px-6 font-bold w-12"></th>
-                                <th className="py-4 px-6 font-bold">Ngày Làm</th>
-                                <th className="py-4 px-6 font-bold">Tên Đề</th>
-                                <th className="py-4 px-6 font-bold text-center">Parts Đã Làm</th>
-                                <th className="py-4 px-6 font-bold text-center">Chế Độ</th>
-                                <th className="py-4 px-6 font-bold text-center">TG Dùng</th>
-                                <th className="py-4 px-6 font-bold text-center">Số Câu</th>
-                                <th className="py-4 px-6 font-bold text-right">Tổng Điểm</th>
-                                <th className="py-4 px-6 font-bold text-center w-24">Tuỳ Chọn</th>
+                                <th className="py-4 px-4 font-bold">Ngày Làm</th>
+                                <th className="py-4 px-4 font-bold">Tên Đề</th>
+                                <th className="py-4 px-4 font-bold text-center">Parts Đã Làm</th>
+                                <th className="py-4 px-4 font-bold text-center">Chế Độ</th>
+                                <th className="py-4 px-4 font-bold text-center">TG Dùng</th>
+                                <th className="py-4 px-4 font-bold text-center">Số Câu</th>
+                                <th className="py-4 px-4 font-bold text-right">Tổng Điểm</th>
+                                <th className="py-4 px-4 font-bold text-center w-24">Tuỳ Chọn</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-slate-700">
                             {filteredRecords.length === 0 ? (
                                 <tr>
-                                    <td colSpan={9} className="py-8 text-center text-slate-400 font-medium">Không tìm thấy bản ghi nào khớp lọc.</td>
+                                    <td colSpan={8} className="py-8 text-center text-slate-400 font-medium">Không tìm thấy bản ghi nào khớp lọc.</td>
                                 </tr>
                             ) : filteredRecords.map((r) => {
                                 const isExpanded = expandedRows[r.id];
@@ -166,39 +165,44 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                     <React.Fragment key={r.id}>
                                         <tr 
                                             onClick={() => toggleRow(r.id)}
-                                            className={`cursor-pointer hover:bg-slate-50 transition-colors ${isExpanded ? 'bg-slate-50' : 'bg-white'}`}
+                                            className={`cursor-pointer hover:bg-slate-50 transition-colors group ${isExpanded ? 'bg-slate-50' : 'bg-white'}`}
                                         >
-                                            <td className="py-4 px-6 text-center text-slate-400">
-                                                <svg className={`w-4 h-4 transition-transform mx-auto ${isExpanded ? 'rotate-90 text-indigo-500' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
-                                            </td>
-                                            <td className="py-4 px-6 font-medium text-slate-600">
+                                            <td className="py-4 px-4 font-medium text-slate-600">
                                                 {new Date(r.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                             </td>
-                                            <td className="py-4 px-6 font-bold text-slate-800 truncate max-w-[200px]" title={r.title || r.testId}>
+                                            <td className="py-4 px-4 font-bold text-slate-800 truncate max-w-[200px]" title={r.title || r.testId}>
                                                 {r.title || r.testId}
                                             </td>
-                                            <td className="py-4 px-6 text-center text-slate-500 text-xs font-bold">
+                                            <td className="py-4 px-4 text-center text-slate-500 text-xs font-bold">
                                                 {partsTakenStr}
                                             </td>
-                                            <td className="py-4 px-6 text-center">
+                                            <td className="py-4 px-4 text-center">
                                                 <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${r.mode === 'actual' ? 'bg-orange-100 text-orange-700' : 'bg-purple-100 text-purple-700'}`}>
                                                     {r.mode === 'actual' ? 'THI THỬ' : 'LUYỆN TẬP'}
                                                 </span>
                                             </td>
-                                            <td className="py-4 px-6 text-center font-medium">
+                                            <td className="py-4 px-4 text-center font-medium">
                                                 {Math.floor(r.duration / 60)}m {r.duration % 60}s
                                             </td>
-                                            <td className="py-4 px-6 text-center font-medium">
-                                                <span className={r.correctAnswers > 0 ? "text-emerald-600" : ""}>{r.correctAnswers}</span><span className="text-slate-400">/{r.totalQuestions}</span>
+                                            <td className="py-2 px-4 text-center font-medium">
+                                                <div className="flex flex-col items-center justify-center gap-0.5">
+                                                    <div>
+                                                        <span className={r.correctAnswers > 0 ? "text-emerald-600" : ""}>{r.correctAnswers}</span><span className="text-slate-400">/{r.totalQuestions}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1 text-[10px] text-indigo-500 font-bold transition-opacity whitespace-nowrap">
+                                                        Xem chi tiết
+                                                        <svg className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" /></svg>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td className="py-4 px-6 text-right font-black text-base">
+                                            <td className="py-4 px-4 text-right font-black text-base">
                                                 {r.mode === 'actual' ? (
                                                     <span className="text-orange-600">{scoreCombo} <span className="text-xs font-medium text-slate-400">pts</span></span>
                                                 ) : (
                                                     <span className="text-slate-300">-</span>
                                                 )}
                                             </td>
-                                            <td className="py-4 px-6 text-center">
+                                            <td className="py-4 px-4 text-center">
                                                 <Link
                                                     href={`/toeic-practice/actual-test/${r.testId}/review/${r.id}`}
                                                     className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs transition-colors"
@@ -211,10 +215,9 @@ export default function ActualTestAnalyticsTable({ records }: { records: RecordS
                                         </tr>
                                         {isExpanded && (
                                             <tr className="bg-slate-50/50">
-                                                <td colSpan={9} className="py-5 px-6 border-b-2 border-slate-100">
+                                                <td colSpan={8} className="py-5 px-4 border-b-2 border-slate-100">
                                                     <div className="flex flex-col lg:flex-row gap-6 items-start">
                                                         <div className="flex-1 w-full bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                                                            <div className="font-bold text-slate-600 text-sm mb-4 border-b border-slate-100 pb-2">CHỈ SỐ PER PART</div>
                                                             {r.partStats ? (
                                                                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                                                                     {[1,2,3,4,5,6,7].map(part => {
