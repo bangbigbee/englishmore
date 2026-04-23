@@ -16,6 +16,7 @@ import AdminAboutToeicMore from './AdminAboutToeicMore'
 import AdminToeicVocabEditor from './AdminToeicVocabEditor'
 import AdminFooterContent from './AdminFooterContent'
 import AdminFloatingNoti from './AdminFloatingNoti'
+import AdminStarConfig from './AdminStarConfig'
 
 interface CourseItem {
   id: string
@@ -366,7 +367,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing' | 'masterConfig' | 'about_toeicmore' | 'footer' | 'floatingNoti'
+type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing' | 'masterConfig' | 'about_toeicmore' | 'footer' | 'floatingNoti' | 'starConfig'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -3761,6 +3762,7 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('masterConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'masterConfig' ? 'bg-[#14532d]/10 text-[#14532d]' : 'text-slate-600 hover:bg-slate-50'}`}>14. MASTER SETTINGS</button>
              <button onClick={() => setActiveSection('footer')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'footer' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>15. FOOTER</button>
              <button onClick={() => setActiveSection('floatingNoti')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'floatingNoti' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>16. FLOATING NOTI</button>
+             <button onClick={() => setActiveSection('starConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'starConfig' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>17. STAR CONFIG</button>
           </nav>
         </aside>
 
@@ -3785,6 +3787,10 @@ export default function AdminDashboard() {
 
           {activeSection === 'floatingNoti' && (
             <AdminFloatingNoti />
+          )}
+
+          {activeSection === 'starConfig' && (
+            <AdminStarConfig />
           )}
 
         {activeSection === 'gallery' && (

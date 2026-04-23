@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import UpgradeModal from "@/components/UpgradeModal";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 const playSound = (soundFileName: string) => {
 	try {
@@ -384,6 +385,26 @@ function ToeicPracticeContent() {
 			document.cookie = `toeic_ref=${ref}; path=/; max-age=2592000`;
 		}
 	}, [searchParams]);
+
+	useEffect(() => {
+		if (status === 'authenticated') {
+			fetch('/api/toeic/daily-login', { method: 'POST' })
+				.then(res => res.json())
+				.then(data => {
+					if (data.success && data.awardedStars > 0) {
+						setTimeout(() => {
+							playSound('amazing-reward-sound.mp3');
+							toast.success(data.awardReason || `Chúc mừng! Bạn nhận được ${data.awardedStars} ⭐.`, { 
+								position: 'top-center', 
+								duration: 7000, 
+								style: { background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' } 
+							});
+						}, 1000);
+					}
+				})
+				.catch(console.error);
+		}
+	}, [status]);
 
 	const openLoginModal = (destination?: string, allowGuest = true) => {
 		const params = new URLSearchParams(searchParams.toString());

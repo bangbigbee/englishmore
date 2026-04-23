@@ -878,3 +878,25 @@ model DailyPageview {
 
   @@unique([domain, date])
 }
+
+model ToeicStarRule {
+  id          String   @id @default(cuid())
+  activityKey String   @unique
+  label       String
+  points      Int      @default(0) // Default star reward
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ToeicStarLog {
+  id           String   @id @default(cuid())
+  userId       String
+  activityKey  String
+  points       Int
+  referenceKey String   @unique // To prevent duplicate rewards (e.g., 'daily_checkin:user123:2024-01-01')
+  createdAt    DateTime @default(now())
+  
+  @@index([userId])
+  @@index([activityKey])
+}

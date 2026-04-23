@@ -333,7 +333,14 @@ function TakeTestContent() {
                     setShowLoginModal(true);
                     setIsSubmitting(false);
                 } else {
-                    alert('Nộp bài thành công! Kết quả đã được lưu vào Lịch sử thi trong Sổ Tay Luyện Đề.');
+                    if (data.awardedStars > 0) {
+                        try {
+                            new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
+                        } catch (e) {}
+                        alert(data.starReason + '\n\nKết quả đã được lưu vào Lịch sử thi trong Sổ Tay Luyện Đề.');
+                    } else {
+                        alert('Nộp bài thành công! Kết quả đã được lưu vào Lịch sử thi trong Sổ Tay Luyện Đề.');
+                    }
                     router.push(`/toeic-progress?tab=actual-test-bank&filter=history`);
                 }
             } else {

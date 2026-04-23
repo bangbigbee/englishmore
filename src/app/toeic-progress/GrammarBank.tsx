@@ -173,10 +173,10 @@ export default async function GrammarBank({ filter = 'mistakes', partFilter }: {
                         )}
 						
                         <div className="flex items-center gap-2 mb-3">
-							<span className="text-xs font-black px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-md whitespace-nowrap border border-indigo-200/50">
+							<span className="text-xs font-black px-2.5 py-1 bg-indigo-600 text-white rounded-md whitespace-nowrap shadow-sm">
 								{q.lesson.topic.title}
 							</span>
-                            <span className="text-xs font-bold px-2.5 py-1 bg-slate-200 text-slate-700 rounded-md whitespace-nowrap border border-slate-300/50">
+                            <span className="text-xs font-bold px-2.5 py-1 bg-slate-700 text-white rounded-md whitespace-nowrap shadow-sm">
 								{q.lesson.title}
 							</span>
 						</div>

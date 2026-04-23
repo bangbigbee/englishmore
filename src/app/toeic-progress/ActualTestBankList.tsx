@@ -183,10 +183,10 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                             </div>
 
                             <div className="flex items-center gap-2 mb-4">
-                                <span className="text-[10px] font-black uppercase text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded border border-indigo-200/50">
+                                <span className="text-[10px] font-black uppercase text-white bg-indigo-600 px-2.5 py-1 rounded shadow-sm">
                                     {item._testName}
                                 </span>
-                                <span className="text-[10px] font-black uppercase text-slate-700 bg-slate-200 px-2.5 py-1 rounded border border-slate-300/50">
+                                <span className="text-[10px] font-black uppercase text-white bg-slate-700 px-2.5 py-1 rounded shadow-sm">
                                     {q.lesson.title}
                                 </span>
                             </div>

@@ -176,7 +176,27 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tes
             }
         });
 
-        return NextResponse.json({ success: true, recordId: record.id });
+        let awardedStars = 0;
+        let starReason = "";
+        
+        // Award stars for completing the test
+        if (user.role === 'member' || user.tier === 'PRO' || user.tier === 'ULTRA') {
+             const { awardToeicStars, TOEIC_STAR_KEYS } = await import('@/lib/toeicStars');
+             const dateStr = new Date().toISOString().split('T')[0];
+             
+             const result = await awardToeicStars({
+                 userId: user.id,
+                 activityKey: TOEIC_STAR_KEYS.actualTestComplete,
+                 referenceKey: `TOEIC_ACTUAL_TEST_${testId}_${user.id}_${dateStr}` // 1 per test per day
+             });
+             
+             if (result.awardedStars > 0) {
+                 awardedStars += result.awardedStars;
+                 starReason = `Chúc mừng bạn đã hoàn thành bài thi! Nhận ${result.awardedStars} ⭐.`;
+             }
+        }
+
+        return NextResponse.json({ success: true, recordId: record.id, awardedStars, starReason });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: String(error) }, { status: 500 });

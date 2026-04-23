@@ -84,43 +84,56 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    // 2. Check for Lesson Completion & Activity Points (Members only)
+    // 2. Check for Lesson Completion & Toeic Stars
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { role: true, tier: true }
     })
 
-    if (user?.role === 'member' || user?.tier === 'PRO' || user?.tier === 'ULTRA') {
+    if (user) {
       const question = await prisma.toeicQuestion.findUnique({
         where: { id: questionId },
         select: { lessonId: true }
       })
 
       if (question) {
-        let totalAwardedPoints = 0;
-        const { awardActivityPoints, ACTIVITY_POINT_KEYS } = await import('@/lib/activityPoints')
+        let totalAwardedStars = 0;
+        const { awardToeicStars, TOEIC_STAR_KEYS } = await import('@/lib/toeicStars')
 
         let awardReason = "";
+        const dateStr = new Date().toISOString().split('T')[0]
         
-        // 2.a Award for specific streaks
-        let streakKeyToAdd: (typeof ACTIVITY_POINT_KEYS)[keyof typeof ACTIVITY_POINT_KEYS] | null = null;
+        // Check for first correct question
+        if (isCorrect && currentStreak === 1) {
+          const firstQuestionResult = await awardToeicStars({
+            userId,
+            activityKey: TOEIC_STAR_KEYS.firstQuestion,
+            referenceKey: `TOEIC_FIRST_Q_${userId}_${questionId}_${dateStr}`
+          })
+          if (firstQuestionResult.awardedStars > 0) {
+            totalAwardedStars += firstQuestionResult.awardedStars;
+            awardReason = `Great! Bạn được tặng ${firstQuestionResult.awardedStars} ⭐ cho câu đúng đầu tiên.`;
+          }
+        }
+        
+        // Award for specific streaks
+        let streakKeyToAdd: (typeof TOEIC_STAR_KEYS)[keyof typeof TOEIC_STAR_KEYS] | null = null;
         if (isCorrect) {
-          if (currentStreak === 3) streakKeyToAdd = ACTIVITY_POINT_KEYS.toeicStreak3;
-          else if (currentStreak === 5) streakKeyToAdd = ACTIVITY_POINT_KEYS.toeicStreak5;
-          else if (currentStreak === 10) streakKeyToAdd = ACTIVITY_POINT_KEYS.toeicStreak10;
+          if (currentStreak === 3) streakKeyToAdd = TOEIC_STAR_KEYS.correctStreak3;
+          else if (currentStreak === 5) streakKeyToAdd = TOEIC_STAR_KEYS.correctStreak5;
+          else if (currentStreak === 10) streakKeyToAdd = TOEIC_STAR_KEYS.correctStreak10;
         }
 
-        const dateStr = new Date().toISOString().split('T')[0]
-
         if (streakKeyToAdd) {
-           const streakResult = await awardActivityPoints({
+           const streakResult = await awardToeicStars({
              userId,
              activityKey: streakKeyToAdd,
              referenceKey: `TOEIC_STREAK_${streakKeyToAdd}_${userId}_${questionId}_${dateStr}`
            })
-           if (streakResult.awardedAp > 0) {
-             totalAwardedPoints += streakResult.awardedAp;
-             awardReason = `Excellent! You've got ${streakResult.awardedAp} APs for ${currentStreak}-point streak.`;
+           if (streakResult.awardedStars > 0) {
+             totalAwardedStars += streakResult.awardedStars;
+             const prefix = awardReason ? awardReason + " " : "";
+             awardReason = prefix + `Xuất sắc! Nhận ${streakResult.awardedStars} ⭐ vì đúng ${currentStreak} câu liên tiếp.`;
            }
         }
 
@@ -131,20 +144,38 @@ export async function POST(request: NextRequest) {
         })
 
         if (userAnswersCount >= totalQuestions && totalQuestions > 0) {
-          const result = await awardActivityPoints({
+          // Check if all correct
+          const correctAnswersCount = await prisma.toeicAnswer.count({
+            where: { userId, question: { lessonId }, isCorrect: true }
+          })
+          
+          if (correctAnswersCount === totalQuestions) {
+            const perfectResult = await awardToeicStars({
+              userId,
+              activityKey: TOEIC_STAR_KEYS.allCorrect,
+              referenceKey: `TOEIC_ALL_CORRECT_${lessonId}_${userId}_${dateStr}`
+            })
+            if (perfectResult.awardedStars > 0) {
+              totalAwardedStars += perfectResult.awardedStars;
+              const prefix = awardReason ? awardReason + " " : "";
+              awardReason = prefix + `Perfect! Thưởng ${perfectResult.awardedStars} ⭐ vì đúng toàn bộ.`;
+            }
+          }
+          
+          const result = await awardToeicStars({
             userId,
-            activityKey: ACTIVITY_POINT_KEYS.toeicQuizComplete,
+            activityKey: TOEIC_STAR_KEYS.completePart, // Or a generic complete key
             referenceKey: `TOEIC_QUIZ_COMPLETE_${lessonId}_${userId}_${dateStr}`
           })
-          if (result.awardedAp > 0) {
-            totalAwardedPoints += result.awardedAp;
-            if (awardReason) awardReason += " ";
-            awardReason += `Congratulations! You've got ${result.awardedAp} APs for completing the quiz.`;
+          if (result.awardedStars > 0) {
+            totalAwardedStars += result.awardedStars;
+            const prefix = awardReason ? awardReason + " " : "";
+            awardReason = prefix + `Chúc mừng hoàn thành bài tập! Nhận ${result.awardedStars} ⭐.`;
           }
         }
         
-        if (totalAwardedPoints > 0) {
-           return NextResponse.json({ success: true, awardedPoints: totalAwardedPoints, awardReason })
+        if (totalAwardedStars > 0) {
+           return NextResponse.json({ success: true, awardedPoints: totalAwardedStars, awardReason })
         }
       }
     }

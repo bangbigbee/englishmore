@@ -564,9 +564,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           setTimeout(() => {
             new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
             if (data.awardReason) {
-              toast.success(data.awardReason, { position: 'top-right', duration: 7000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } });
+              toast.success(data.awardReason, { position: 'top-right', duration: 7000, style: { background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' } });
             } else {
-              toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} APs.`, { position: 'top-right', duration: 7000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } })
+              toast.success(`Chúc mừng! Bạn nhận được ${data.awardedPoints} ⭐.`, { position: 'top-right', duration: 7000, style: { background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' } })
             }
           }, 1000);
         }
@@ -600,9 +600,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         
         if (!hasAwardedToday) {
             if (isCorrect) {
-                if (newStreak === 3) { fakeAp = 2; fakeReason = "Excellent! You've got 2 APs for 3-point streak."; }
-                else if (newStreak === 5) { fakeAp = 3; fakeReason = "Excellent! You've got 3 APs for 5-point streak."; }
-                else if (newStreak === 10) { fakeAp = 5; fakeReason = "Excellent! You've got 5 APs for 10-point streak."; }
+                if (newStreak === 3) { fakeAp = 2; fakeReason = "Tuyệt vời! Bạn nhận 2 ⭐ cho chuỗi 3 câu đúng."; }
+                else if (newStreak === 5) { fakeAp = 3; fakeReason = "Xuất sắc! Bạn nhận 3 ⭐ cho chuỗi 5 câu đúng."; }
+                else if (newStreak === 10) { fakeAp = 5; fakeReason = "Đỉnh cao! Bạn nhận 5 ⭐ cho chuỗi 10 câu đúng."; }
             }
             
             const newShowResults = { ...showResults, [questionId]: true };
@@ -610,7 +610,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             if (currentLesson && answeredCount === currentLesson.questions.length && currentLesson.questions.length > 0) {
                 fakeAp += 15;
                 if (fakeReason) fakeReason += " ";
-                fakeReason += "Congratulations! You've got 15 APs for completing the quiz.";
+                fakeReason += "Chúc mừng! Bạn nhận 15 ⭐ vì đã hoàn thành bài tập.";
                 
                 // Mark as completed for today to prevent unlimited farming
                 localStorage.setItem(awardedKey, 'true');
@@ -624,7 +624,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                 setTimeout(() => {
                    new Audio('/audio/amazing-reward-sound.mp3').play().catch(() => {});
-                   toast.success(fakeReason, { position: 'top-right', duration: 7000, style: { background: '#f0fdf4', color: '#14532d', border: '1px solid #bbf7d0' } });
+                   toast.success(fakeReason, { position: 'top-right', duration: 7000, style: { background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' } });
                 }, 1000);
             }
         }

@@ -87,18 +87,18 @@ const cleanAIFiller = (text: string) => {
     if (!text) return text;
     return text.replace(/Dưới đây là.*?yêu cầu[:.]?\s*/gi, '')
                .replace(/Dưới đây là nội dung trích xuất.*?[:.]\s*/gi, '')
+               .replace(/Dưới đây là nội dung.*?[:.]\s*/gi, '')
                .trim();
 };
 
 const extractSpecificExplanation = (text: string, qNum: number) => {
     if (!text) return text;
     
-    let beforeExplanation = "";
-    let explanationPart = text;
+    let cleanedText = cleanAIFiller(text);
+    let explanationPart = cleanedText;
 
-    const giathichMatch = text.match(/(\[Giải thích(?: chi tiết)?\])([\s\S]*)/i);
-    if (giathichMatch && giathichMatch.index !== undefined) {
-        beforeExplanation = text.substring(0, giathichMatch.index + giathichMatch[1].length) + "\n\n";
+    const giathichMatch = cleanedText.match(/(\[Giải thích(?: chi tiết)?\])([\s\S]*)/i);
+    if (giathichMatch && giathichMatch[2]) {
         explanationPart = giathichMatch[2];
     }
 
@@ -107,10 +107,11 @@ const extractSpecificExplanation = (text: string, qNum: number) => {
 
     if (match) {
         let extracted = match[1].trim();
-        return beforeExplanation + `<strong>Câu ${qNum}:</strong> ` + extracted;
+        return `<strong>Câu ${qNum}:</strong> ` + extracted;
     }
 
-    return text;
+    // If specific question not found, just return the whole explanation part (it might be a single question explanation)
+    return explanationPart.trim() || cleanedText;
 };
 
 function ReviewTestContent() {

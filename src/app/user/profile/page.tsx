@@ -24,6 +24,7 @@ interface UserProfile {
   name: string | null
   email: string
   activityPoints: number
+  toeicStars?: number
   phone: string | null
   image: string | null
   bio: string | null
@@ -493,7 +494,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Quick Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* AP */}
             <div className="rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5 shadow-sm flex flex-col">
               <h2 className="text-xs font-black uppercase tracking-widest text-amber-700 mb-4 flex items-center gap-2">
@@ -506,7 +507,24 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-amber-800 font-bold text-sm">Điểm AP</span>
-                  <span className="text-amber-600/70 text-[11px] font-medium leading-tight mt-0.5">Dùng để xếp hạng<br/>và đổi quà</span>
+                  <span className="text-amber-600/70 text-[11px] font-medium leading-tight mt-0.5">EnglishMore</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Toeic Stars */}
+            <div className="rounded-xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-white p-5 shadow-sm flex flex-col">
+              <h2 className="text-xs font-black uppercase tracking-widest text-yellow-600 mb-4 flex items-center gap-2">
+                <span className="text-lg leading-none mb-0.5">⭐</span>
+                Toeic Stars
+              </h2>
+              <div className="flex-1 flex items-center gap-3">
+                <div className="text-4xl font-black text-yellow-500 tracking-tighter">
+                  {profile?.toeicStars ?? 0}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-yellow-700 font-bold text-sm">Điểm Sao</span>
+                  <span className="text-yellow-600/70 text-[11px] font-medium leading-tight mt-0.5">ToeicMore</span>
                 </div>
               </div>
             </div>
