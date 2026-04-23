@@ -183,25 +183,6 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                 </div>
             </div>
 
-			{/* Tag Chips */}
-			<div>
-				<div className="flex flex-nowrap overflow-x-auto gap-2 pb-3 custom-scrollbar">
-					{[
-						{ id: 'all', label: 'Tất cả từ', icon: '🌈', activeClass: 'bg-green-100 text-slate-800' },
-						{ id: 'bookmarked', label: '⭐ Đã lưu', icon: '⭐', activeClass: 'bg-[#ea980c] text-white' },
-						{ id: 'hard', label: '● Từ khó', icon: '●', activeClass: 'bg-rose-600 text-white' },
-						{ id: 'learned', label: '✓ Đã thuộc', icon: '✓', activeClass: 'bg-green-600 text-white' }
-					].map(tag => (
-						<button 
-							key={tag.id}
-							onClick={() => updateFilters(currentTopic, tag.id, searchQuery)}
-							className={`px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all shrink-0 whitespace-nowrap shadow-xs border flex items-center gap-1.5 ${currentTag === tag.id ? tag.activeClass + ' border-transparent shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
-						>
-							{tag.label}
-						</button>
-					))}
-				</div>
-			</div>
 		</div>
 	);
 }

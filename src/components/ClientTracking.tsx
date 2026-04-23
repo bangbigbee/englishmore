@@ -14,6 +14,11 @@ export default function ClientTracking() {
       localStorage.setItem('toeicmore_guest_id', guestId);
     }
 
+    const ref = searchParams.get('ref');
+    if (ref && typeof document !== 'undefined') {
+      document.cookie = `toeic_ref=${ref}; path=/; max-age=2592000`;
+    }
+
     const sendHeartbeat = (isPageLoad: boolean) => {
       let section = 'other';
       const searchStr = window.location.search;

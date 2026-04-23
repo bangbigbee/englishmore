@@ -344,7 +344,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-slate-700">Student ID</label>
+                  <label className="block text-sm font-bold text-slate-700">Student ID (Khóa học)</label>
                   <input
                     type="text"
                     value={profile?.studentId || 'Chưa cập nhật'}
@@ -365,6 +365,63 @@ export default function ProfilePage() {
                     placeholder="0912345678"
                     className="mt-1.5 block w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-[#14532d] focus:ring-0 outline-none transition-colors font-medium text-slate-800"
                   />
+                </div>
+
+                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700">Mã giới thiệu (ToeicMore ID)</label>
+                    <div className="relative mt-1.5 flex items-center">
+                      <input
+                        type="text"
+                        value={profile?.id || ''}
+                        disabled
+                        className="block w-full rounded-xl border-2 border-slate-100 pl-4 pr-12 py-2.5 bg-slate-50 text-slate-500 font-bold cursor-not-allowed text-[14px]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (profile?.id) {
+                            navigator.clipboard.writeText(profile.id);
+                            toast.success('Đã copy Mã giới thiệu');
+                          }
+                        }}
+                        className="absolute right-2 p-1.5 text-slate-400 hover:text-indigo-600 transition-colors bg-white rounded-lg border border-slate-200 shadow-sm"
+                        title="Copy Mã giới thiệu"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700">Link giới thiệu (ToeicMore)</label>
+                    <div className="relative mt-1.5 flex items-center">
+                      <input
+                        type="text"
+                        value={profile?.id ? `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref=${profile.id}` : ''}
+                        disabled
+                        className="block w-full rounded-xl border-2 border-slate-100 pl-4 pr-12 py-2.5 bg-slate-50 text-slate-500 font-bold cursor-not-allowed text-[13px]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (profile?.id) {
+                            const link = `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref=${profile.id}`;
+                            navigator.clipboard.writeText(link);
+                            toast.success('Đã copy Link giới thiệu');
+                          }
+                        }}
+                        className="absolute right-2 p-1.5 text-slate-400 hover:text-indigo-600 transition-colors bg-white rounded-lg border border-slate-200 shadow-sm"
+                        title="Copy Link giới thiệu"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="md:col-span-2 -mt-2">
+                  <p className="text-xs text-slate-500 font-medium">Bạn có thể gửi mã hoặc link chia sẻ này cho bạn bè. Khi bạn bè truy cập và tạo tài khoản, hệ thống sẽ ghi nhận lượt mời cho bạn.</p>
                 </div>
 
                 <div className="md:col-span-2">

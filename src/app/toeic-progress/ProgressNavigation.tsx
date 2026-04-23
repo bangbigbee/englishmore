@@ -13,11 +13,29 @@ const PROGRESS_TABS = [
 ];
 
 const BANK_TABS = [
-	{ id: 'vocabulary-bank', label: 'Sổ Tay Từ Vựng', icon: '📔' },
-	{ id: 'grammar-bank', label: 'Sổ Tay Ngữ Pháp', icon: '📝' },
-	{ id: 'listening-bank', label: 'Sổ Tay Luyện Nghe', icon: '🎧' },
-	{ id: 'reading-bank', label: 'Sổ Tay Luyện Đọc', icon: '📖' },
-	{ id: 'actual-test-bank', label: 'Sổ Tay Luyện Đề', icon: '🎓' },
+	{ id: 'vocabulary-bank', label: 'Sổ Tay Từ Vựng', icon: '📔', subMenus: [
+        { id: 'all', label: 'Tất cả từ', param: 'tag' },
+        { id: 'bookmarked', label: 'Đã lưu', param: 'tag' },
+        { id: 'hard', label: 'Từ khó', param: 'tag' },
+        { id: 'learned', label: 'Đã thuộc', param: 'tag' }
+    ] },
+	{ id: 'grammar-bank', label: 'Sổ Tay Ngữ Pháp', icon: '📝', subMenus: [
+        { id: 'mistakes', label: 'Câu làm sai', param: 'filter' },
+        { id: 'bookmarks', label: 'Câu đã lưu', param: 'filter' }
+    ] },
+	{ id: 'listening-bank', label: 'Sổ Tay Luyện Nghe', icon: '🎧', subMenus: [
+        { id: 'mistakes', label: 'Câu làm sai', param: 'filter' },
+        { id: 'bookmarks', label: 'Câu đã lưu', param: 'filter' }
+    ] },
+	{ id: 'reading-bank', label: 'Sổ Tay Luyện Đọc', icon: '📖', subMenus: [
+        { id: 'mistakes', label: 'Câu làm sai', param: 'filter' },
+        { id: 'bookmarks', label: 'Câu đã lưu', param: 'filter' }
+    ] },
+	{ id: 'actual-test-bank', label: 'Sổ Tay Luyện Đề', icon: '🎓', subMenus: [
+        { id: 'mistakes', label: 'Câu làm sai', param: 'filter' },
+        { id: 'bookmarks', label: 'Câu đã lưu', param: 'filter' },
+        { id: 'history', label: 'Lịch sử Luyện đề', param: 'filter' }
+    ] },
 ];
 
 export default function ProgressNavigation({ activeTab }: { activeTab: string }) {
@@ -28,6 +46,30 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
     const handleTabChange = (newTab: string) => {
         const params = new URLSearchParams(searchParams?.toString() || '');
         params.set('tab', newTab);
+        
+        // Remove existing sub-menu params when changing main tab
+        params.delete('filter');
+        params.delete('tag');
+        
+        router.push(`/toeic-progress?${params.toString()}`);
+    };
+
+    const handleSubMenuChange = (tabId: string, param: string, value: string) => {
+        const params = new URLSearchParams(searchParams?.toString() || '');
+        params.set('tab', tabId);
+        
+        if (param === 'filter') {
+            params.set('filter', value);
+            params.delete('tag');
+        } else if (param === 'tag') {
+            if (value === 'all') {
+                params.delete('tag');
+            } else {
+                params.set('tag', value);
+            }
+            params.delete('filter');
+        }
+        
         router.push(`/toeic-progress?${params.toString()}`);
     };
 
@@ -68,23 +110,55 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                             <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-3 mt-2">Sổ tay của tôi</h3>
                             <div className="flex flex-col gap-1">
                                 {BANK_TABS.map((t) => (
-                                    <button
-                                        key={t.id}
-                                        className={`flex items-center justify-start gap-3 px-3 py-2.5 rounded-xl font-bold transition-all text-left cursor-pointer group ${
-                                            activeTab === t.id 
-                                            ? 'bg-green-50 text-[#14532d] shadow-sm relative ring-1 ring-green-100' 
-                                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                                        }`}
-                                        onClick={() => handleTabChange(t.id)}
-                                    >
-                                        {activeTab === t.id && (
-                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-[#ea980c] rounded-r-full" />
+                                    <div key={t.id} className="flex flex-col">
+                                        <button
+                                            className={`flex items-center justify-start gap-3 px-3 py-2.5 rounded-xl font-bold transition-all text-left cursor-pointer group ${
+                                                activeTab === t.id 
+                                                ? 'bg-green-50 text-[#14532d] shadow-sm relative ring-1 ring-green-100' 
+                                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                                            }`}
+                                            onClick={() => handleTabChange(t.id)}
+                                        >
+                                            {activeTab === t.id && (
+                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-[#ea980c] rounded-r-full" />
+                                            )}
+                                            <span className={`w-[24px] h-[24px] shrink-0 rounded-lg flex items-center justify-center transition-transform duration-300 ${activeTab === t.id ? 'bg-white shadow-sm scale-110' : 'bg-slate-50 text-slate-400 group-hover:scale-110'}`}>
+                                                <span className="text-[12px]">{t.icon}</span>
+                                            </span>
+                                            <span className="flex-1 truncate text-[13px] leading-none pt-0.5">{t.label}</span>
+                                        </button>
+                                        
+                                        {activeTab === t.id && t.subMenus && (
+                                            <div className="flex flex-col gap-1 mt-1 pl-11 relative">
+                                                <div className="absolute left-6 top-0 bottom-3 w-px bg-slate-200"></div>
+                                                {t.subMenus.map(sub => {
+                                                    const isActive = sub.param === 'filter' 
+                                                        ? (searchParams?.get('filter') || 'mistakes') === sub.id 
+                                                        : (searchParams?.get('tag') || 'all') === sub.id;
+                                                    return (
+                                                        <button
+                                                            key={sub.id}
+                                                            onClick={() => handleSubMenuChange(t.id, sub.param, sub.id)}
+                                                            className={`flex items-center justify-start gap-2 px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all text-left cursor-pointer relative ${
+                                                                isActive
+                                                                ? 'text-[#14532d] bg-green-50/50'
+                                                                : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                                                            }`}
+                                                        >
+                                                            <div className={`absolute left-[-20px] top-1/2 -translate-y-1/2 w-3 h-px ${isActive ? 'bg-[#14532d]' : 'bg-slate-200'}`}></div>
+                                                            <div className={`w-1.5 h-1.5 rounded-full ${
+                                                                sub.id === 'mistakes' || sub.id === 'hard' ? 'bg-rose-500' :
+                                                                sub.id === 'bookmarks' || sub.id === 'bookmarked' ? 'bg-[#ea980c]' :
+                                                                sub.id === 'learned' ? 'bg-green-500' :
+                                                                sub.id === 'history' ? 'bg-indigo-500' : 'bg-slate-400'
+                                                            }`}></div>
+                                                            {sub.label}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
                                         )}
-                                        <span className={`w-[24px] h-[24px] shrink-0 rounded-lg flex items-center justify-center transition-transform duration-300 ${activeTab === t.id ? 'bg-white shadow-sm scale-110' : 'bg-slate-50 text-slate-400 group-hover:scale-110'}`}>
-                                            <span className="text-[12px]">{t.icon}</span>
-                                        </span>
-                                        <span className="flex-1 truncate text-[13px] leading-none pt-0.5">{t.label}</span>
-                                    </button>
+                                    </div>
                                 ))}
                             </div>
                         </div>
@@ -164,20 +238,57 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-2">SỔ TAY CỦA TÔI</h4>
                                 <div className="space-y-1">
                                     {BANK_TABS.map((t) => (
-                                        <button
-                                            key={t.id}
-                                            className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold transition-all text-left cursor-pointer ${activeTab === t.id ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
-                                            onClick={() => {
-                                                handleTabChange(t.id);
-                                                setIsMobileMenuOpen(false);
-                                            }}
-                                        >
-                                            <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${activeTab === t.id ? 'bg-white shadow-sm' : 'bg-slate-100/80 text-slate-400'}`}>
-                                                <div className="scale-[0.8]">{t.icon}</div>
-                                            </span>
-                                            <span className="flex-1 truncate text-[14px]">{t.label}</span>
-                                            {activeTab === t.id && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0" />}
-                                        </button>
+                                        <div key={t.id} className="flex flex-col gap-1">
+                                            <button
+                                                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold transition-all text-left cursor-pointer ${activeTab === t.id ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                                onClick={() => {
+                                                    handleTabChange(t.id);
+                                                    if (!t.subMenus) {
+                                                        setIsMobileMenuOpen(false);
+                                                    }
+                                                }}
+                                            >
+                                                <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${activeTab === t.id ? 'bg-white shadow-sm' : 'bg-slate-100/80 text-slate-400'}`}>
+                                                    <div className="scale-[0.8]">{t.icon}</div>
+                                                </span>
+                                                <span className="flex-1 truncate text-[14px]">{t.label}</span>
+                                                {activeTab === t.id && !t.subMenus && <span className="w-1.5 h-1.5 rounded-full bg-[#ea980c] shrink-0" />}
+                                            </button>
+                                            
+                                            {activeTab === t.id && t.subMenus && (
+                                                <div className="flex flex-col gap-1 pl-12 mt-1 relative">
+                                                    <div className="absolute left-[34px] top-0 bottom-4 w-px bg-slate-200"></div>
+                                                    {t.subMenus.map(sub => {
+                                                        const isActive = sub.param === 'filter' 
+                                                            ? (searchParams?.get('filter') || 'mistakes') === sub.id 
+                                                            : (searchParams?.get('tag') || 'all') === sub.id;
+                                                        return (
+                                                            <button
+                                                                key={sub.id}
+                                                                onClick={() => {
+                                                                    handleSubMenuChange(t.id, sub.param, sub.id);
+                                                                    setIsMobileMenuOpen(false);
+                                                                }}
+                                                                className={`flex items-center justify-start gap-2 px-3 py-2 rounded-xl text-[13px] font-semibold transition-all text-left cursor-pointer relative ${
+                                                                    isActive
+                                                                    ? 'text-[#14532d] bg-green-50/50 ring-1 ring-green-100'
+                                                                    : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                                                                }`}
+                                                            >
+                                                                <div className={`absolute left-[-14px] top-1/2 -translate-y-1/2 w-3 h-px ${isActive ? 'bg-[#14532d]' : 'bg-slate-200'}`}></div>
+                                                                <div className={`w-2 h-2 rounded-full ${
+                                                                    sub.id === 'mistakes' || sub.id === 'hard' ? 'bg-rose-500' :
+                                                                    sub.id === 'bookmarks' || sub.id === 'bookmarked' ? 'bg-[#ea980c]' :
+                                                                    sub.id === 'learned' ? 'bg-green-500' :
+                                                                    sub.id === 'history' ? 'bg-indigo-500' : 'bg-slate-400'
+                                                                }`}></div>
+                                                                {sub.label}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
                                     ))}
                                 </div>
                             </div>
