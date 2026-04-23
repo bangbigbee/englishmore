@@ -1438,7 +1438,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                            const groupParts = extractExplanationParts(currentQuestionsGroup[0]?.explanation || '');
                                            const hasGroupTranscript = (topic.part === 3 || topic.part === 4) && !!groupParts.eng;
                                            const someResultShown = currentQuestionsGroup.some(q => showResults[q.id]);
-                                           const isGrammarLayout = topic.type === 'GRAMMAR' || (topic.type === 'READING' && topic.part === 5);
+                                           const isGrammarLayout = topic.type === 'GRAMMAR' || (topic.type === 'READING' && topic.part === 5) || (topic.type === 'LISTENING' && topic.part === 2);
                                            
                                            return (
                                               <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
