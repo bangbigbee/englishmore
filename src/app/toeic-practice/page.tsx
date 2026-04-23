@@ -6,6 +6,8 @@ import UpgradeModal from "@/components/UpgradeModal";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import ToeicOnboardingModal from "@/components/ToeicOnboardingModal";
+import ToeicRoadmapTab from "./ToeicRoadmapTab";
 
 const playSound = (soundFileName: string) => {
 	try {
@@ -25,6 +27,15 @@ const TABS = [
 				<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
 			</svg>
 		) 
+	},
+	{
+		key: "roadmap",
+		label: "Lộ trình",
+		icon: (
+			<svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+				<path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+			</svg>
+		)
 	},
 	{ 
 		key: "grammar", 
@@ -366,6 +377,12 @@ function ToeicPracticeContent() {
 
 	const tabFromUrl = searchParams.get('tab') || 'home';
 	const [tab, setTab] = useState(tabFromUrl);
+	const [toeicLevel, setToeicLevel] = useState<string | null>(null);
+
+	useEffect(() => {
+		const level = localStorage.getItem('toeicLevel');
+		if (level) setToeicLevel(level);
+	}, []);
 
 	useEffect(() => {
 		const t = searchParams.get('tab');
@@ -430,9 +447,14 @@ function ToeicPracticeContent() {
 
 	return (
 		<div className="min-h-screen bg-slate-50/50">
+			<ToeicOnboardingModal onComplete={(level) => {
+				setToeicLevel(level);
+				if (tab === 'home') handleTabChange('roadmap');
+			}} />
 			<div className="max-w-6xl mx-auto pt-4 pb-8 px-4 sm:px-6">
 			<div className="mt-2 md:mt-4">
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
+				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
 					 if (!session) {
 						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
