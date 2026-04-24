@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { ROADMAP_TEMPLATES as DEFAULT_TEMPLATES } from '@/lib/roadmapGenerator'
+import { ROADMAP_TEMPLATES as DEFAULT_TEMPLATES } from '@/lib/roadmapTemplates'
 
 export default function AdminRoadmapConfig() {
   const [templatesJson, setTemplatesJson] = useState('')

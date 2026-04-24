@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { ROADMAP_TEMPLATES } from '@/lib/roadmapGenerator';
+import { ROADMAP_TEMPLATES } from '@/lib/roadmapTemplates';
 
 const prisma = new PrismaClient();
 
