@@ -107,25 +107,41 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
                     </p>
                     
                     {score && (
-                        <div className="mt-4 flex items-center gap-2">
-                            <span className="text-sm font-semibold text-slate-600 bg-white/60 px-3 py-1 rounded-full shadow-sm">
-                                Điểm thi đầu vào: <span className="font-black text-[#581c87] ml-1">{score}</span>
+                        <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
+                            <span className="text-sm font-semibold text-slate-600 bg-white/60 px-4 py-2 rounded-full shadow-sm border border-slate-200">
+                                Điểm thi đầu vào: <span className="font-black text-[#581c87] ml-1 text-lg">{score}</span>
                             </span>
+                            
                             <button 
-                                onClick={() => router.push('/toeic-practice/placement-test/result')}
-                                className="text-xs font-bold bg-[#581c87] text-white px-3 py-1.5 rounded-full hover:bg-[#6b21a8] transition-colors shadow-sm"
+                                onClick={() => router.push('/toeic-practice/roadmap')}
+                                className="relative overflow-hidden group bg-slate-900 text-white px-6 py-2.5 rounded-full font-bold shadow-[0_0_15px_rgba(88,28,135,0.5)] transition-all hover:scale-105 active:scale-95"
                             >
-                                Xem chi tiết bài làm
+                                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 opacity-80 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-500 blur-sm opacity-40 group-hover:opacity-60 transition-opacity" />
+                                <span className="relative flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    Mở Khóa Lộ Trình Độc Bản
+                                    <span className="text-amber-400 ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
+                                </span>
                             </button>
                         </div>
                     )}
 
                     <div className="mt-6 flex items-center gap-4">
                         <button 
+                            onClick={() => router.push('/toeic-practice/placement-test/result')}
+                            className="text-xs font-bold text-slate-500 hover:text-[#581c87] underline underline-offset-2 transition-colors cursor-pointer"
+                        >
+                            Xem chi tiết bài thi
+                        </button>
+                        <span className="text-slate-300">•</span>
+                        <button 
                             onClick={() => {
                                 window.dispatchEvent(new Event('openToeicOnboarding'));
                             }}
-                            className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-[#581c87] underline underline-offset-2 transition-colors cursor-pointer"
+                            className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-[#581c87] transition-colors cursor-pointer"
                         >
                             Đánh giá lại trình độ
                         </button>
