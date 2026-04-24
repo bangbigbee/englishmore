@@ -113,7 +113,7 @@ export default function AdminPlacementTest() {
             <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
                 <div>
                     <h2 className="text-xl font-black text-slate-800">Quản lý bài Test Năng Lực (Placement Test)</h2>
-                    <p className="text-sm text-slate-500">Thêm, sửa, xóa các câu hỏi cho bài test đầu vào. (Gợi ý: nên có 25 câu)</p>
+                    <p className="text-sm text-slate-500">Thêm, sửa, xóa các câu hỏi cho bài test đầu vào. (Gợi ý: nên có 10 câu cho bài test 3 phút)</p>
                 </div>
                 <button onClick={handleAddNew} className="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors">
                     + Thêm Câu Hỏi Mới
