@@ -23,6 +23,9 @@ export async function GET(req: NextRequest) {
             where: { setId: { in: activeSetIds } }
         });
 
+        const url = new URL(req.url);
+        const assessedLevel = url.searchParams.get('assessedLevel') || 'BEGINNER';
+
         // Separate into levels
         const beginnerQs = allQuestions.filter((q: any) => q.category.toLowerCase().includes('beginner'));
         const intermediateQs = allQuestions.filter((q: any) => q.category.toLowerCase().includes('intermediate'));
@@ -34,11 +37,28 @@ export async function GET(req: NextRequest) {
             return shuffled.slice(0, n);
         };
 
-        // If there are not enough questions of a level, it will just take all it has
+        let numBeginner = 6;
+        let numIntermediate = 2;
+        let numAdvanced = 2;
+
+        if (assessedLevel === 'BEGINNER') {
+            numBeginner = 6;
+            numIntermediate = 4;
+            numAdvanced = 0;
+        } else if (assessedLevel === 'INTERMEDIATE') {
+            numBeginner = 6;
+            numIntermediate = 2;
+            numAdvanced = 2;
+        } else if (assessedLevel === 'ADVANCED') {
+            numBeginner = 4;
+            numIntermediate = 4;
+            numAdvanced = 2;
+        }
+
         const selectedQuestions = [
-            ...pickRandom(beginnerQs, 6),
-            ...pickRandom(intermediateQs, 2),
-            ...pickRandom(advancedQs, 2)
+            ...pickRandom(beginnerQs, numBeginner),
+            ...pickRandom(intermediateQs, numIntermediate),
+            ...pickRandom(advancedQs, numAdvanced)
         ];
 
         // Shuffle the final selection to mix them up (optional, but good)

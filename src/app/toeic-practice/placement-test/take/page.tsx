@@ -28,7 +28,8 @@ export default function PlacementTestTakePage() {
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const res = await fetch('/api/toeic/placement-test');
+                const assessedLevel = localStorage.getItem('assessedLevel') || 'BEGINNER';
+                const res = await fetch(`/api/toeic/placement-test?assessedLevel=${assessedLevel}`);
                 const data = await res.json();
                 if (data.success && data.parts) {
                     const allQs: Question[] = [];

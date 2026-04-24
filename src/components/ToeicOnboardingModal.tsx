@@ -80,6 +80,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
 
   const handleTakeTest = () => {
     setIsOpen(false)
+    localStorage.setItem('assessedLevel', selectedLevel)
     window.location.href = '/toeic-practice/placement-test'
   }
 
