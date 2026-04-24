@@ -475,8 +475,34 @@ export function UpgradeContent() {
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
               <IconStar className="w-4 h-4" /> PRO Pass
             </div>
-            <h3 className="text-2xl font-black text-slate-900 mb-2">PRO</h3>
-            <p className="text-slate-500 text-sm h-12">Đặc quyền miễn phí dành cho tất cả các thành viên.</p>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-2xl font-black text-slate-900">PRO</h3>
+              {(() => {
+                const dateStr = ultraPhaseMap?.super_early_bird?.label;
+                if (!dateStr || ultraConfig?.activePhase !== 'super_early_bird') return null;
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                  const day = parseInt(parts[0], 10);
+                  const month = parseInt(parts[1], 10) - 1;
+                  const year = parseInt(parts[2], 10);
+                  const targetDate = new Date(year, month, day);
+                  if (!isNaN(targetDate.getTime())) {
+                    const diff = targetDate.getTime() - new Date().getTime();
+                    const days = Math.ceil(diff / (1000 * 3600 * 24));
+                    if (days > 0) {
+                      return (
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-600 rounded-full text-[11px] font-bold shadow-sm">
+                          <svg className="w-3.5 h-3.5 animate-[spin_3s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
+                          Còn {days} ngày
+                        </div>
+                      );
+                    }
+                  }
+                }
+                return null;
+              })()}
+            </div>
+            <p className="text-slate-500 text-sm h-12">Đặc quyền miễn phí dành cho tất cả thành viên tham gia trong giai đoạn Siêu Sớm.</p>
             <div className="text-3xl font-black text-slate-900 mt-4 mb-6">Miễn Phí<span className="text-base font-normal text-slate-400">/trọn đời</span></div>
           </div>
           

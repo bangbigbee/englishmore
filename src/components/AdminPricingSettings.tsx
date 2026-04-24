@@ -281,7 +281,7 @@ export default function PricingSettingsPage() {
                         />
                       </div>
                       <div className="col-span-2">
-                        <label className="block text-xs font-semibold text-slate-600 mb-1">Mốc Thời Gian (VD: Tháng 5)</label>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Hạn Chót (Deadline) (VD: 01/06/2026)</label>
                         <input 
                           type="text" 
                           value={ultraPricing.phases[phaseKey].label || ''} 
@@ -293,7 +293,7 @@ export default function PricingSettingsPage() {
                             }
                           })}
                           className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm"
-                          placeholder="e.g. Từ 1/5 - 31/5"
+                          placeholder="VD: 01/06/2026"
                         />
                       </div>
                     </div>
