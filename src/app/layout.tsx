@@ -9,6 +9,7 @@ import LoginModalController from "./LoginModalController";
 import GlobalUpgradePoller from "@/components/GlobalUpgradePoller";
 import ToeicMoreNotice from "@/components/ToeicMoreNotice";
 import ClientTracking from "@/components/ClientTracking";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 import { prisma } from "@/lib/prisma";
 
 const inter = Inter({
@@ -111,6 +112,7 @@ export default async function RootLayout({
           <MainWrapper>{children}</MainWrapper>
           <LoginModalController />
           <GlobalUpgradePoller />
+          <PwaInstallPrompt />
           {floatingNotiConfig.isActive && <ToeicMoreNotice config={floatingNotiConfig} />}
           <Toaster
             richColors
