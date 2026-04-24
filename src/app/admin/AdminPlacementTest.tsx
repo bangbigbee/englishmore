@@ -172,6 +172,44 @@ export default function AdminPlacementTest() {
         }
     };
 
+    const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsSubmitting(true);
+        const toastId = toast.loading('Đang tải âm thanh lên...');
+        
+        try {
+            // Get presigned URL
+            const presignedRes = await fetch('/api/admin/upload/presigned', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, contentType: file.type })
+            });
+            const presignedData = await presignedRes.json();
+            
+            if (!presignedData.success) throw new Error(presignedData.error);
+
+            // Upload directly to R2
+            const uploadRes = await fetch(presignedData.uploadUrl, {
+                method: 'PUT',
+                body: file,
+                headers: { 'Content-Type': file.type }
+            });
+
+            if (!uploadRes.ok) throw new Error('Failed to upload to storage');
+
+            // Update form data
+            setFormData({ ...formData, audioUrl: presignedData.publicUrl });
+            toast.success('Đã tải âm thanh lên thành công!', { id: toastId });
+        } catch (error) {
+            toast.error('Lỗi khi tải âm thanh lên', { id: toastId });
+        } finally {
+            setIsSubmitting(false);
+            if (e.target) e.target.value = '';
+        }
+    };
+
     const handleEdit = (q: any) => {
         setEditingId(q.id);
         setFormData(q);
@@ -366,7 +404,13 @@ export default function AdminPlacementTest() {
                                         <div className="md:col-span-2 grid grid-cols-2 gap-4">
                                             <div>
                                                 <label className="block text-sm font-semibold mb-1">Audio URL (Tuỳ chọn)</label>
-                                                <input type="text" value={formData.audioUrl || ''} onChange={e => setFormData({...formData, audioUrl: e.target.value})} className="w-full p-2 border rounded" placeholder="https://..." />
+                                                <div className="flex gap-2">
+                                                    <input type="text" value={formData.audioUrl || ''} onChange={e => setFormData({...formData, audioUrl: e.target.value})} className="flex-1 p-2 border rounded" placeholder="https://..." />
+                                                    <label className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded cursor-pointer font-bold text-xs flex items-center justify-center whitespace-nowrap">
+                                                        Tải lên
+                                                        <input type="file" accept="audio/*" className="hidden" onChange={handleAudioUpload} disabled={isSubmitting} />
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-semibold mb-1">Image URL (Tuỳ chọn)</label>
