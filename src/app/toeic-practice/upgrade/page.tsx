@@ -539,13 +539,20 @@ export function UpgradeContent() {
             </div>
             <h3 className="text-2xl font-black text-white mb-2">ULTRA</h3>
             <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
-            <div className="text-3xl font-black text-white mt-4 mb-6">
-              {effectiveTier === 'ULTRA' ? (
-                <span className="text-2xl text-purple-200">Đã Kích Hoạt <span className="text-base font-normal text-purple-100/50">trọn đời</span></span>
-              ) : (
-                <>{formatPrice(currentUltraPrice)} <span className="text-base font-normal text-purple-100/50">trọn đời</span></>
-              )}
-            </div>
+              <div className="text-4xl sm:text-5xl font-black text-white mb-8 tracking-tighter flex flex-col gap-1">
+                {effectiveTier === 'ULTRA' ? (
+                  <span className="text-2xl text-purple-200">Đã Kích Hoạt <span className="text-base font-normal text-purple-100/50">trọn đời</span></span>
+                ) : (
+                  <>
+                    <div>
+                      {formatPrice(currentUltraPrice)} <span className="text-base font-normal text-purple-100/50">trọn đời</span>
+                    </div>
+                    {effectiveTier === 'PRO' && (
+                      <div className="text-sm font-medium text-amber-300 mt-1">nâng cấp từ tài khoản PRO</div>
+                    )}
+                  </>
+                )}
+              </div>
           </div>
           
           <ul className="space-y-4 mb-8 flex-1 text-sm">
@@ -608,7 +615,8 @@ export function UpgradeContent() {
             
             {/* Steps */}
             {(['super_early_bird', 'early_bird', 'regular'] as const).map((phase, idx) => {
-                const activePhaseStrForDiagram = activeUltraPhaseStr;
+                const activePhaseMap = diagramTier === 'PRO' ? proPhaseMap : ultraPhaseMap;
+                const activePhaseStrForDiagram = diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr;
                 const isCurrent = activePhaseStrForDiagram === phase;
                 
                 const leftPos = idx === 0 ? '15%' : idx === 1 ? '40%' : '65%';
@@ -620,10 +628,10 @@ export function UpgradeContent() {
                     topTitle = "Hiện tại";
                 } else if (idx === 1) {
                     topTitle = "Hết ưu đãi Super Early Bird";
-                    topDate = ultraPhaseMap?.super_early_bird?.label || "31/05/2026";
+                    topDate = activePhaseMap?.super_early_bird?.label || "31/05/2026";
                 } else if (idx === 2) {
                     topTitle = "Hết ưu đãi Early Bird";
-                    topDate = ultraPhaseMap?.early_bird?.label || "31/08/2026";
+                    topDate = activePhaseMap?.early_bird?.label || "31/08/2026";
                 }
 
                 return (
@@ -648,17 +656,26 @@ export function UpgradeContent() {
             {/* Price labels placed at exactly aligned vertical offsets */}
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '15%', transform: 'translate(-50%, -50%)' }}>
                <div className="absolute top-full mt-[16px] text-[11px] sm:text-[12px] text-purple-700 font-medium whitespace-nowrap">
-                 {(ultraPhaseMap[activeUltraPhaseStr as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
+                 {(() => {
+                   const price = (diagramTier === 'PRO' ? proPhaseMap[activeProPhaseStr as keyof typeof proPhaseMap] : ultraPhaseMap[activeUltraPhaseStr as keyof typeof ultraPhaseMap])?.lifetimePrice || 0;
+                   return price === 0 ? 'Miễn phí' : price.toLocaleString('vi-VN') + 'đ';
+                 })()}
                </div>
             </div>
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '52.5%', transform: 'translate(-50%, -50%)' }}>
                <div className="absolute top-full mt-[16px] text-[11px] sm:text-[12px] text-purple-700 font-medium whitespace-nowrap">
-                 {(ultraPhaseMap?.early_bird?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
+                 {(() => {
+                   const price = (diagramTier === 'PRO' ? proPhaseMap : ultraPhaseMap)?.early_bird?.lifetimePrice || 0;
+                   return price === 0 ? 'Miễn phí' : price.toLocaleString('vi-VN') + 'đ';
+                 })()}
                </div>
             </div>
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '85%', transform: 'translate(-50%, -50%)' }}>
                <div className="absolute top-full mt-[16px] text-[11px] sm:text-[12px] text-purple-700 font-medium whitespace-nowrap">
-                 {(ultraPhaseMap?.regular?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
+                 {(() => {
+                   const price = (diagramTier === 'PRO' ? proPhaseMap : ultraPhaseMap)?.regular?.lifetimePrice || 0;
+                   return price === 0 ? 'Miễn phí' : price.toLocaleString('vi-VN') + 'đ';
+                 })()}
                </div>
             </div>
         </div>

@@ -205,9 +205,86 @@ export default function PricingSettingsPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
-          {/* PRO Settings Hidden (PRO is now free) */}
-
-          {/* ULTRA Settings */}
+          {/* PRO Settings */}
+          {proPricing && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
+              <div className="flex justify-between items-start mb-6">
+                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                  <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs tracking-widest font-black uppercase">PRO</span>
+                  Gói PRO
+                </h2>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Giai đoạn hiện tại</label>
+                  <select 
+                    value={proPricing.activePhase}
+                    onChange={e => setProPricing({...proPricing, activePhase: e.target.value as any})}
+                    className="border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-sm font-semibold"
+                  >
+                    <option value="super_early_bird">Super Early Bird</option>
+                    <option value="early_bird">Early Bird</option>
+                    <option value="regular">Regular</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {(['super_early_bird', 'early_bird', 'regular'] as const).map(phaseKey => (
+                  <div key={phaseKey} className={`p-4 rounded-lg border ${proPricing.activePhase === phaseKey ? 'border-amber-400 bg-amber-50' : 'border-slate-200'}`}>
+                    <h3 className="text-sm font-bold text-slate-700 mb-3 capitalize">{phaseKey.replace(/_/g, ' ')}</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Giá Tháng (VND)</label>
+                        <input 
+                          type="number" 
+                          value={proPricing.phases[phaseKey].monthlyPrice} 
+                          onChange={e => setProPricing({
+                            ...proPricing, 
+                            phases: {
+                              ...proPricing.phases,
+                              [phaseKey]: { ...proPricing.phases[phaseKey], monthlyPrice: Number(e.target.value) }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Giá Trọn Đời (VND)</label>
+                        <input 
+                          type="number" 
+                          value={proPricing.phases[phaseKey].lifetimePrice} 
+                          onChange={e => setProPricing({
+                            ...proPricing, 
+                            phases: {
+                              ...proPricing.phases,
+                              [phaseKey]: { ...proPricing.phases[phaseKey], lifetimePrice: Number(e.target.value) }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-sm"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Hạn Chót (Deadline) (VD: 01/06/2026)</label>
+                        <input 
+                          type="text" 
+                          value={proPricing.phases[phaseKey].label || ''} 
+                          onChange={e => setProPricing({
+                            ...proPricing, 
+                            phases: {
+                              ...proPricing.phases,
+                              [phaseKey]: { ...proPricing.phases[phaseKey], label: e.target.value }
+                            }
+                          })}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-sm"
+                          placeholder="VD: 01/06/2026"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {ultraPricing && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
