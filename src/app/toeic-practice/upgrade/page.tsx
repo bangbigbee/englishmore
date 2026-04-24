@@ -493,10 +493,7 @@ export function UpgradeContent() {
               <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
               <span className="text-slate-700">Mở khóa Giải thích Ngoại lệ & Ngữ pháp chi tiết</span>
             </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-              <span className="text-slate-700">Nhân đôi Activity Points (x2)</span>
-            </li>
+
             <li className="flex items-start gap-3">
               <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
               <span className="text-slate-700 border-b border-amber-200 border-dashed pb-0.5">Mở khoá Sổ Tay Ngữ Pháp & Luyện Đọc</span>
@@ -529,7 +526,7 @@ export function UpgradeContent() {
           onClick={() => setDiagramTier('ULTRA')}
           className={`w-[82vw] sm:w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-[#2b0c36] rounded-2xl p-6 border-2 flex flex-col relative text-white shadow-2xl transition-all cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'ULTRA' ? 'border-purple-400 shadow-purple-900/60 shadow-2xl opacity-100 ring-0' : 'border-purple-900 border-opacity-80 shadow-purple-900/30 shadow-lg opacity-90'}`}
         >
-          {(effectiveTier === 'PRO' || effectiveTier === 'ULTRA') && (
+          {effectiveTier === 'PRO' && (
             <div className="absolute top-0 right-6 transform -translate-y-1/2">
               <span className="bg-gradient-to-r from-purple-600 to-purple-800 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
                 Nâng Cấp
@@ -543,7 +540,11 @@ export function UpgradeContent() {
             <h3 className="text-2xl font-black text-white mb-2">ULTRA</h3>
             <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
             <div className="text-3xl font-black text-white mt-4 mb-6">
-              {formatPrice(currentUltraPrice)}<span className="text-base font-normal text-purple-100/50">/trọn đời</span>
+              {effectiveTier === 'ULTRA' ? (
+                <span className="text-2xl text-purple-200">Đã Kích Hoạt</span>
+              ) : (
+                <>{formatPrice(currentUltraPrice)}<span className="text-base font-normal text-purple-100/50">/trọn đời</span></>
+              )}
             </div>
           </div>
           
@@ -560,10 +561,7 @@ export function UpgradeContent() {
               <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
               <span className="text-purple-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
             </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-              <span className="text-purple-100/90">Nhân ba Activity Points (x3)</span>
-            </li>
+
             <li className="flex items-start gap-3">
               <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
               <span className="text-purple-100/90">Ưu tiên hỗ trợ từ Admin</span>
