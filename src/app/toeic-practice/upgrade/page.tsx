@@ -472,38 +472,12 @@ export function UpgradeContent() {
           className={`w-[82vw] sm:w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 flex flex-col relative transition-all shadow-lg cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'PRO' ? 'border-amber-400 shadow-amber-500/20 shadow-xl opacity-100 ring-0' : 'border-amber-200/50 shadow-amber-500/5 opacity-80'}`}
         >
           <div className="mb-6">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-amber-200">
               <IconStar className="w-4 h-4" /> PRO Pass
             </div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-2xl font-black text-slate-900">PRO</h3>
-              {(() => {
-                const dateStr = ultraPhaseMap?.super_early_bird?.label;
-                if (!dateStr || ultraConfig?.activePhase !== 'super_early_bird') return null;
-                const parts = dateStr.split('/');
-                if (parts.length === 3) {
-                  const day = parseInt(parts[0], 10);
-                  const month = parseInt(parts[1], 10) - 1;
-                  const year = parseInt(parts[2], 10);
-                  const targetDate = new Date(year, month, day);
-                  if (!isNaN(targetDate.getTime())) {
-                    const diff = targetDate.getTime() - new Date().getTime();
-                    const days = Math.ceil(diff / (1000 * 3600 * 24));
-                    if (days > 0) {
-                      return (
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-600 rounded-full text-[11px] font-bold shadow-sm">
-                          <svg className="w-3.5 h-3.5 animate-[spin_3s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>
-                          Còn {days} ngày
-                        </div>
-                      );
-                    }
-                  }
-                }
-                return null;
-              })()}
-            </div>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">PRO</h3>
             <p className="text-slate-500 text-sm h-12">Đặc quyền miễn phí dành cho tất cả thành viên tham gia trong giai đoạn Siêu Sớm.</p>
-            <div className="text-3xl font-black text-slate-900 mt-4 mb-6">Miễn Phí<span className="text-base font-normal text-slate-400">/trọn đời</span></div>
+            <div className="text-3xl font-black text-slate-900 mt-4 mb-6">Miễn Phí <span className="text-base font-normal text-slate-400">trọn đời</span></div>
           </div>
           
           <ul className="space-y-4 mb-8 flex-1 text-sm">
@@ -567,9 +541,9 @@ export function UpgradeContent() {
             <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
             <div className="text-3xl font-black text-white mt-4 mb-6">
               {effectiveTier === 'ULTRA' ? (
-                <span className="text-2xl text-purple-200">Đã Kích Hoạt</span>
+                <span className="text-2xl text-purple-200">Đã Kích Hoạt <span className="text-base font-normal text-purple-100/50">trọn đời</span></span>
               ) : (
-                <>{formatPrice(currentUltraPrice)}<span className="text-base font-normal text-purple-100/50">/trọn đời</span></>
+                <>{formatPrice(currentUltraPrice)} <span className="text-base font-normal text-purple-100/50">trọn đời</span></>
               )}
             </div>
           </div>
@@ -604,24 +578,23 @@ export function UpgradeContent() {
                 {checkingPending ? 'Đang tải...' : 'Bứt Phá Cùng ULTRA'}
               </button>
           )}
-          <p className="text-[10px] text-center text-slate-400 mt-3 font-medium invisible">
-            Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
+          <p className="text-[10px] text-center text-purple-300/50 mt-3 font-medium">
+            Thanh toán một lần. Sở hữu trọn đời.
           </p>
         </div>
       </div>
 
-      <div className="mb-10 w-full bg-[#581c87]/[0.02] border border-[#581c87]/10 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-visible mt-10">
-        <div className="text-center mb-16 relative z-10 mt-2">
-          <h2 className="text-xl sm:text-2xl font-black tracking-wide text-[#581c87]">
-            Lộ trình nâng cấp và đồng hành cùng Toeic<span className="text-[#ea980c]">More</span>
-          </h2>
-        </div>
+      <div className="mt-12 md:mt-20 pt-8 border-t border-slate-200">
+        <h3 className="text-center text-xl sm:text-2xl font-black text-slate-800 mb-2">Lộ trình nâng cấp và đồng hành cùng ToeicMore</h3>
+        <p className="text-center text-slate-500 text-sm mb-8 sm:mb-12 max-w-2xl mx-auto">
+            Nền tảng ToeicMore sẽ liên tục cập nhật và bổ sung nội dung mới mỗi tháng. Các bạn tham gia và ủng hộ dự án sớm sẽ luôn nhận được mức giá tốt nhất, kèm theo các đặc quyền vĩnh viễn.
+        </p>
 
         <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1 bg-[#581c87]/10 rounded-full mt-10 mb-16">
             {/* Active progress track */}
             <motion.div 
               initial={{ width: "0%" }}
-              animate={{ width: '15%' }}
+              animate={{ width: '25%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
               className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
             >
@@ -635,7 +608,7 @@ export function UpgradeContent() {
                 const activePhaseStrForDiagram = activeUltraPhaseStr;
                 const isCurrent = activePhaseStrForDiagram === phase;
                 
-                const leftPos = idx === 0 ? '15%' : idx === 1 ? '35%' : '70%';
+                const leftPos = idx === 0 ? '25%' : idx === 1 ? '45%' : '80%';
                 
                 let topText = "";
                 let bottomText: any = "";
@@ -643,18 +616,28 @@ export function UpgradeContent() {
                 if (idx === 0) {
                     topText = "Hiện tại";
                     const currentTierName = activePhaseStrForDiagram === 'super_early_bird' ? 'Super Early Bird' : activePhaseStrForDiagram === 'early_bird' ? 'Early Bird' : 'Giá Gốc';
-                    bottomText = <div className="text-[10px] sm:text-[11px] text-amber-700/90 font-medium normal-case w-48 sm:w-60 text-center leading-snug mt-1">Bạn đang đồng hành cùng ToeicMore từ rất sớm và được hưởng ưu đãi gói {currentTierName}.</div>;
+                    bottomText = <div className="text-[12px] sm:text-[13px] text-[#581c87] font-bold mt-1">{(ultraPhaseMap[activePhaseStrForDiagram as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ</div>;
                 } else if (idx === 1) {
                     topText = "Đến hạn Super Early Bird";
-                    bottomText = "31/05/2026";
+                    bottomText = (
+                      <>
+                        <span>{ultraPhaseMap?.super_early_bird?.label || "31/05/2026"}</span>
+                        <span className="text-[#581c87] font-bold mt-0.5">{ultraPhaseMap?.early_bird?.lifetimePrice?.toLocaleString('vi-VN')}đ</span>
+                      </>
+                    );
                 } else if (idx === 2) {
                     topText = "Đến hạn Early Bird";
-                    bottomText = "31/08/2026";
+                    bottomText = (
+                      <>
+                        <span>{ultraPhaseMap?.early_bird?.label || "31/08/2026"}</span>
+                        <span className="text-[#581c87] font-bold mt-0.5">{ultraPhaseMap?.regular?.lifetimePrice?.toLocaleString('vi-VN')}đ</span>
+                      </>
+                    );
                 }
 
                 return (
                     <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
-                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-[12px] font-black transition-all ${idx === 0 ? 'text-amber-600 scale-110 drop-shadow-sm uppercase' : 'text-slate-500 whitespace-nowrap'}`}>
+                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-[12px] font-black transition-all ${idx === 0 ? 'text-amber-600 drop-shadow-sm whitespace-nowrap' : 'text-slate-500 whitespace-nowrap'}`}>
                             {topText}
                         </div>
                         
@@ -667,7 +650,7 @@ export function UpgradeContent() {
                             <div className="w-0.5 h-4 sm:h-5 bg-slate-300 rounded-full"></div>
                         )}
                         
-                        <div className={`absolute top-full mt-3 flex flex-col items-center gap-1 ${
+                        <div className={`absolute top-full mt-3 flex flex-col items-center gap-0.5 ${
                             idx === 0 ? '' : 'text-[11px] sm:text-[12px] font-bold text-slate-500'
                         }`}>
                             {bottomText}
