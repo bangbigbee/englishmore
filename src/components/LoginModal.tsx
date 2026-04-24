@@ -117,9 +117,15 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
                   <span><span className="text-[#581c87]">English</span><span className="text-amber-500">More</span></span>
                 )}
               </h2>
-              <p className="mt-3 text-[15px] font-medium text-slate-600">
-                {subtitle || 'Cảm ơn Bạn đã đồng hành cùng ToeicMore từ rất sớm. Bạn sẽ được tặng tài khoản PRO ngay sau khi đăng nhập.'}
-              </p>
+              <div className="mt-3 text-[15px] font-medium text-slate-600 leading-relaxed">
+                {subtitle ? subtitle : (
+                  <>
+                    Cảm ơn Bạn đã đồng hành cùng ToeicMore từ rất sớm. Bạn sẽ được tặng tài khoản{' '}
+                    <span className="inline-block align-baseline bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#581c87] px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-widest mx-0.5 shadow-sm border border-amber-300">PRO</span>
+                    {' '}ngay sau khi đăng nhập.
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="mt-8 space-y-4">
