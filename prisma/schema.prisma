@@ -915,8 +915,20 @@ model ToeicStarLog {
   @@index([activityKey])
 }
 
+model ToeicPlacementSet {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  questions   ToeicPlacementQuestion[]
+}
+
 model ToeicPlacementQuestion {
   id            String   @id @default(cuid())
+  setId         String?
   order         Int
   part          Int      @default(5)
   question      String?  @db.Text
@@ -931,5 +943,8 @@ model ToeicPlacementQuestion {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  set           ToeicPlacementSet? @relation(fields: [setId], references: [id], onDelete: Cascade)
+
+  @@index([setId])
   @@index([order])
 }

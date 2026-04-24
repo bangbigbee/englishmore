@@ -5,8 +5,12 @@ const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
     try {
+        const { searchParams } = new URL(req.url);
+        const setId = searchParams.get('setId');
+        
         // @ts-ignore
         const questions = await prisma.toeicPlacementQuestion.findMany({
+            where: setId ? { setId } : {},
             orderBy: { order: 'asc' }
         });
         return NextResponse.json(questions);
@@ -21,6 +25,7 @@ export async function POST(req: NextRequest) {
         // @ts-ignore
         const question = await prisma.toeicPlacementQuestion.create({
             data: {
+                setId: body.setId,
                 order: body.order || 1,
                 part: body.part || 5,
                 question: body.question,

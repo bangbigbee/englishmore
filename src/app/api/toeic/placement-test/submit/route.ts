@@ -8,9 +8,19 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { answers } = body;
         
-        // Fetch all correct answers
+        // Fetch all correct answers from active set
+        const activeSet = await prisma.toeicPlacementSet.findFirst({
+            where: { isActive: true }
+        });
+
+        if (!activeSet) {
+            return NextResponse.json({ error: 'Không tìm thấy bộ đề' }, { status: 400 });
+        }
+
         // @ts-ignore
-        const questions = await prisma.toeicPlacementQuestion.findMany();
+        const questions = await prisma.toeicPlacementQuestion.findMany({
+            where: { setId: activeSet.id }
+        });
         
         let correctAnswersCount = 0;
         

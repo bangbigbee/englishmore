@@ -5,11 +5,21 @@ const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
     try {
+        // Get the active set
+        const activeSet = await prisma.toeicPlacementSet.findFirst({
+            where: { isActive: true }
+        });
+
+        if (!activeSet) {
+            return NextResponse.json({ success: false, parts: [] });
+        }
+
         // @ts-ignore
         const questions = await prisma.toeicPlacementQuestion.findMany({
+            where: { setId: activeSet.id },
             orderBy: { order: 'asc' }
         });
-        
+
         // Group by part to match the expected format for the frontend
         const groupedParts: Record<number, any> = {};
         questions.forEach((q: any) => {
