@@ -131,17 +131,10 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
 
                     <div className="mt-6 flex items-center gap-4">
                         <button 
-                            onClick={() => router.push('/toeic-practice/placement-test/result')}
-                            className="text-xs font-bold text-slate-500 hover:text-[#581c87] underline underline-offset-2 transition-colors cursor-pointer"
-                        >
-                            Xem chi tiết bài thi
-                        </button>
-                        <span className="text-slate-300">•</span>
-                        <button 
                             onClick={() => {
                                 window.dispatchEvent(new Event('openToeicOnboarding'));
                             }}
-                            className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-[#581c87] transition-colors cursor-pointer"
+                            className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-[#581c87] underline underline-offset-2 transition-colors cursor-pointer"
                         >
                             Đánh giá lại trình độ
                         </button>

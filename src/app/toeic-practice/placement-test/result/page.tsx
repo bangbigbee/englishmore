@@ -82,7 +82,7 @@ export default function PlacementTestResultPage() {
 
                     <div className="w-full flex flex-col gap-3">
                         <Link 
-                            href="/toeic-practice?tab=roadmap"
+                            href="/toeic-practice/roadmap"
                             className="w-full flex items-center justify-center gap-2 bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
                         >
                             <span>Khám phá Lộ trình của bạn</span>
