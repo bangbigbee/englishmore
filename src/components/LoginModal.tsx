@@ -118,7 +118,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
                 )}
               </h2>
               <p className="mt-3 text-[15px] font-medium text-slate-600">
-                {subtitle || 'Cảm ơn Bạn đã đồng hành cùng ToeicMore từ rất sớm. Vì vậy bạn sẽ được tặng ngay tài khoản PRO ngay sau khi đăng nhập.'}
+                {subtitle || 'Cảm ơn Bạn đã đồng hành cùng ToeicMore từ rất sớm. Bạn sẽ được tặng tài khoản PRO ngay sau khi đăng nhập.'}
               </p>
             </div>
 
