@@ -39,9 +39,58 @@ export default function AdminSingleImageUpload({ section, label }: AdminSingleIm
       toast.error('File quá lớn (Tối đa 10MB)')
       return
     }
+    
     setUploading(true)
+
+    // Compress image
+    const compressedFile = await new Promise<File>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Max dimensions
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+          
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const newName = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+              resolve(new File([blob], newName, { type: 'image/webp', lastModified: Date.now() }));
+            } else {
+              resolve(file); // fallback
+            }
+          }, 'image/webp', 0.85); // 85% quality WebP
+        };
+        img.onerror = () => resolve(file); // fallback
+      };
+      reader.onerror = () => resolve(file); // fallback
+    });
+
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('file', compressedFile)
     formData.append('section', section)
 
     try {
@@ -49,8 +98,18 @@ export default function AdminSingleImageUpload({ section, label }: AdminSingleIm
         method: 'POST',
         body: formData
       })
+      
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        console.error('Upload failed with status:', res.status, text);
+        toast.error(`Lỗi server: ${res.status} ${text.substring(0, 50)}`);
+        setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
       const data = await res.json()
-      if (res.ok && data.success) {
+      if (data.success) {
         toast.success(`Đã tải lên ảnh thành công`)
         const itemsRes = await fetch('/api/admin/gallery')
         const items = await itemsRes.json()
@@ -62,8 +121,9 @@ export default function AdminSingleImageUpload({ section, label }: AdminSingleIm
       } else {
         toast.error(data.error || 'Có lỗi xảy ra')
       }
-    } catch (err) {
-      toast.error('Lỗi kết nối')
+    } catch (err: any) {
+      console.error('Fetch error:', err);
+      toast.error(`Lỗi mạng/kết nối: ${err?.message || 'Không xác định'}`)
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
