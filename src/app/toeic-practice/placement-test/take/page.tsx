@@ -14,6 +14,7 @@ interface Question {
     optionC: string;
     optionD: string;
     imageUrl?: string;
+    audioUrl?: string;
     passage?: string;
 }
 
@@ -167,6 +168,11 @@ export default function PlacementTestTakePage() {
                                                     <img src={q.imageUrl} alt="Question visual" className="max-h-64 rounded-xl border border-slate-200 object-contain mx-auto" />
                                                 </div>
                                             )}
+                                            {q.audioUrl && (
+                                                <div className="mb-4">
+                                                    <audio src={q.audioUrl} controls className="w-full max-w-sm border border-slate-200 rounded-full shadow-sm" controlsList="nodownload" />
+                                                </div>
+                                            )}
                                             <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-snug">
                                                 {q.question || "Chọn đáp án đúng nhất điền vào chỗ trống:"}
                                             </h3>
@@ -176,7 +182,9 @@ export default function PlacementTestTakePage() {
                                 <div className="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {['A', 'B', 'C', 'D'].map((opt) => {
                                         const optionText = q[`option${opt}` as keyof Question];
-                                        if (!optionText) return null; // In case Part 2 only has A, B, C
+                                        // Hide D if empty, but always show A, B, C even if empty (for listening questions)
+                                        if (opt === 'D' && !optionText) return null;
+                                        if (opt !== 'D' && optionText === undefined) return null;
                                         const isSelected = answers[q.id] === opt;
                                         return (
                                             <button
