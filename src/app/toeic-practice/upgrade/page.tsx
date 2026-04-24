@@ -115,7 +115,7 @@ export function UpgradeContent() {
   const ultraUpgradePrice = billingCycle === 'monthly' ? currentUltra.monthlyPrice : (currentUltra.upgradeLifetimePrice || currentUltra.lifetimePrice);
   const ultraDuration = billingCycle === 'monthly' ? 1 : 120;
 
-  const currentUltraPrice = ultraUpgradePrice;
+  const currentUltraPrice = effectiveTier === 'PRO' ? ultraUpgradePrice : ultraPrice;
 
   const formatPrice = (price: number) => {
     if (price === 0) return 'Miễn phí'
