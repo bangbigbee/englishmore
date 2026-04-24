@@ -50,6 +50,10 @@ export async function POST(req: NextRequest) {
                     toeicPlacementScore: scoreString
                 }
             });
+
+            // Generate roadmap for this user automatically
+            const { generateRoadmapForUser } = await import('@/lib/roadmapGenerator');
+            await generateRoadmapForUser(session.user.id, level, scoreString);
         }
 
         return NextResponse.json({

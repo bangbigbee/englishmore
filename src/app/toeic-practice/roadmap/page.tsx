@@ -5,57 +5,89 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// Giả lập dữ liệu
-const ROADMAP_DATA = {
-  currentScore: 350,
-  targetScore: 650,
-  skills: [
-    { name: "Grammar", score: 40, max: 100, color: "from-blue-500 to-cyan-400" },
-    { name: "Vocabulary", score: 65, max: 100, color: "from-purple-500 to-pink-500" },
-    { name: "Listening", score: 30, max: 100, color: "from-green-400 to-emerald-600" },
-    { name: "Reading", score: 45, max: 100, color: "from-orange-400 to-red-500" },
-  ],
-  phases: [
-    {
-      id: 1,
-      title: "Chặng 1: Xây Nền Móng",
-      objective: "Nắm vững 12 thì & 300 từ vựng cốt lõi",
-      expectedScoreUp: 50,
-      isUnlocked: true,
-      tasks: [
-        { day: 1, title: "Khởi động: Thì Hiện tại đơn & Tiếp diễn", type: "GRAMMAR", stars: 10, done: true },
-        { day: 1, title: "Học 20 từ vựng chủ đề Office", type: "VOCAB", stars: 15, done: false },
-        { day: 2, title: "Luyện Nghe Part 1: Tranh Tả Người", type: "LISTENING", stars: 20, done: false },
-      ]
-    },
-    {
-      id: 2,
-      title: "Chặng 2: Vượt Chướng Ngại Vật",
-      objective: "Chinh phục Part 2 & Đọc hiểu Part 5",
-      expectedScoreUp: 100,
-      isUnlocked: false,
-      tasks: []
-    },
-    {
-      id: 3,
-      title: "Chặng 3: Bứt Phá Giới Hạn",
-      objective: "Kỹ năng làm bài Part 3, 4, 7 nâng cao",
-      expectedScoreUp: 150,
-      isUnlocked: false,
-      tasks: []
-    }
-  ]
-};
-
 export default function RoadmapPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [roadmapData, setRoadmapData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Fetch actual roadmap data
+    const fetchRoadmap = async () => {
+      try {
+        const res = await fetch('/api/toeic/roadmap');
+        const data = await res.json();
+        if (data.success && data.roadmap) {
+          // Transform data slightly to match our UI expectations
+          const transformed = {
+            currentScore: data.roadmap.currentScore,
+            targetScore: data.roadmap.targetScore,
+            skills: [
+              { name: "Grammar & Vocab", score: Math.min(100, Math.round((data.roadmap.currentScore / data.roadmap.targetScore) * 100) + 10), color: "from-blue-500 to-cyan-400" },
+              { name: "Listening", score: Math.min(100, Math.round((data.roadmap.currentScore / data.roadmap.targetScore) * 100) - 5), color: "from-purple-500 to-pink-500" },
+              { name: "Reading", score: Math.min(100, Math.round((data.roadmap.currentScore / data.roadmap.targetScore) * 100)), color: "from-orange-400 to-red-500" },
+            ],
+            phases: data.roadmap.phases.map((p: any, index: number) => ({
+              id: p.id,
+              title: p.title,
+              objective: p.objectiveOutput,
+              expectedScoreUp: p.expectedScoreUp,
+              // Giả lập trạng thái khóa/mở: Tuần 1 luôn mở, các tuần sau phụ thuộc vào isUltraUnlocked
+              isUnlocked: index === 0 || data.roadmap.isUltraUnlocked,
+              tasks: p.dailyTasks.map((t: any) => ({
+                day: t.dayNumber,
+                title: t.title,
+                type: t.taskType,
+                stars: t.rewardStars,
+                done: t.status === "COMPLETED",
+                path: t.referencePath
+              }))
+            }))
+          };
+          setRoadmapData(transformed);
+        } else {
+          // Fallback if no roadmap generated yet
+          toast("Chưa có lộ trình, hãy làm bài đánh giá năng lực trước nhé!");
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchRoadmap();
   }, []);
 
   if (!mounted) return null;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4 shadow-[0_0_15px_#a855f7]"></div>
+          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">Đang đồng bộ Bản Đồ Sao...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (!roadmapData) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex items-center justify-center p-6">
+        <div className="text-center bg-white/5 border border-white/10 p-12 rounded-3xl backdrop-blur-xl max-w-lg">
+          <div className="text-6xl mb-6">🗺️</div>
+          <h2 className="text-3xl font-bold text-white mb-4">Chưa có Lộ Trình</h2>
+          <p className="text-slate-400 mb-8">Bạn cần hoàn thành bài Đánh giá năng lực trước để chúng tôi có thể thiết kế Lộ trình độc bản dành riêng cho bạn.</p>
+          <button onClick={() => router.push('/toeic-practice')} className="px-8 py-3 bg-purple-600 hover:bg-purple-500 rounded-full font-bold shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all">
+            Quay lại trang chủ
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-slate-100 font-sans overflow-x-hidden relative selection:bg-purple-500/30">
@@ -102,7 +134,7 @@ export default function RoadmapPage() {
             <div className="flex items-end gap-6 mb-8">
               <div>
                 <p className="text-slate-500 text-sm mb-1 uppercase tracking-wider font-semibold">Hiện tại</p>
-                <p className="text-5xl font-black text-slate-300">{ROADMAP_DATA.currentScore}</p>
+                <p className="text-5xl font-black text-slate-300">{roadmapData.currentScore}</p>
               </div>
               <div className="pb-2 text-purple-400">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -111,16 +143,16 @@ export default function RoadmapPage() {
               </div>
               <div>
                 <p className="text-purple-400/80 text-sm mb-1 uppercase tracking-wider font-semibold">Mục tiêu</p>
-                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{ROADMAP_DATA.targetScore}</p>
+                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{roadmapData.targetScore}</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-transparent border-l-4 border-emerald-500">
-                <p className="text-emerald-100 text-sm"><strong className="text-emerald-400">💡 Điểm Sáng:</strong> Bạn có vốn Từ Vựng khá tốt. Hãy tiếp tục phát huy!</p>
+                <p className="text-emerald-100 text-sm"><strong className="text-emerald-400">💡 Điểm Sáng:</strong> Bạn có nền tảng đọc hiểu khá ổn. Giữ vững phong độ!</p>
               </div>
               <div className="p-4 rounded-2xl bg-gradient-to-r from-red-500/10 to-transparent border-l-4 border-red-500">
-                <p className="text-red-100 text-sm"><strong className="text-red-400">⚠️ Điểm Cần Cải Thiện:</strong> Kỹ năng Nghe Part 1 & 2 đang kéo điểm bạn xuống. Cần ưu tiên ngay.</p>
+                <p className="text-red-100 text-sm"><strong className="text-red-400">⚠️ Cần Cải Thiện:</strong> Cần đầu tư thêm vào Kỹ năng Nghe Hiểu (Đang ở mức thấp).</p>
               </div>
             </div>
           </div>
@@ -135,7 +167,7 @@ export default function RoadmapPage() {
             </h3>
             
             <div className="space-y-6">
-              {ROADMAP_DATA.skills.map((skill, index) => (
+              {roadmapData.skills.map((skill: any, index: number) => (
                 <div key={index}>
                   <div className="flex justify-between text-sm mb-2">
                     <span className="font-medium text-slate-300">{skill.name}</span>
@@ -161,7 +193,7 @@ export default function RoadmapPage() {
           {/* Vertical Glowing Line */}
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-purple-500 via-blue-500 to-transparent opacity-30 transform md:-translate-x-1/2" />
           
-          {ROADMAP_DATA.phases.map((phase, index) => (
+          {roadmapData.phases.map((phase: any, index: number) => (
             <motion.div 
               key={phase.id}
               initial={{ opacity: 0, y: 50 }}
