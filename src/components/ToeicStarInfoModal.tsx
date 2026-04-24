@@ -98,11 +98,11 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars, user
                       {userId && (
                         <div className="mt-2 flex items-center justify-between gap-2 bg-amber-50 rounded-md p-2 border border-amber-100 min-w-0">
                           <span className="text-[12px] text-amber-800 flex-1 truncate">
-                            Link giới thiệu của tôi: <strong className="select-all">{typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/signup?ref={userId}</strong>
+                            Link giới thiệu của tôi: <strong className="select-all">{typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref={userId.slice(-10)}</strong>
                           </span>
                           <button
                             onClick={() => {
-                              const link = `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/signup?ref=${userId}`;
+                              const link = `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/?ref=${userId.slice(-10)}`;
                               navigator.clipboard.writeText(link);
                               toast.success('Đã copy link giới thiệu!');
                             }}
