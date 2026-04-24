@@ -107,34 +107,34 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
                     </p>
                     
                     {score && (
-                        <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
-                            <span className="text-sm font-semibold text-slate-600 bg-white/60 px-4 py-2 rounded-full shadow-sm border border-slate-200">
-                                Điểm thi đầu vào: <span className="font-black text-[#581c87] ml-1 text-lg">{score}</span>
+                        <div className="mt-6 flex flex-wrap items-center gap-4">
+                            <span className="text-sm font-semibold text-slate-700 bg-white/80 px-5 py-2.5 rounded-2xl shadow-sm border border-slate-200/60 flex items-center">
+                                Điểm thi đầu vào: <span className="font-black text-[#581c87] ml-2 text-lg">{score}</span>
                             </span>
                             
                             <button 
                                 onClick={() => router.push('/toeic-practice/roadmap')}
-                                className="relative overflow-hidden group bg-slate-900 text-white px-6 py-2.5 rounded-full font-bold shadow-[0_0_15px_rgba(88,28,135,0.5)] transition-all hover:scale-105 active:scale-95"
+                                className="relative overflow-hidden group bg-slate-900 text-white px-6 py-2.5 rounded-2xl font-bold shadow-[0_0_15px_rgba(88,28,135,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 opacity-80 group-hover:opacity-100 transition-opacity" />
                                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-500 blur-sm opacity-40 group-hover:opacity-60 transition-opacity" />
                                 <span className="relative flex items-center gap-2">
                                     <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                                     </svg>
-                                    Mở Khóa Lộ Trình Độc Bản
+                                    Lộ Trình Của Tôi
                                     <span className="text-amber-400 ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
                                 </span>
                             </button>
                         </div>
                     )}
 
-                    <div className="mt-6 flex items-center gap-4">
+                    <div className="mt-5">
                         <button 
                             onClick={() => {
                                 window.dispatchEvent(new Event('openToeicOnboarding'));
                             }}
-                            className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-[#581c87] underline underline-offset-2 transition-colors cursor-pointer"
+                            className="text-[11px] font-bold uppercase tracking-widest text-slate-400 hover:text-[#581c87] underline underline-offset-4 transition-colors cursor-pointer"
                         >
                             Đánh giá lại trình độ
                         </button>

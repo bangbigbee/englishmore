@@ -116,8 +116,9 @@ export default function RoadmapPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <div className="inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 text-purple-300 text-sm font-semibold tracking-widest uppercase mb-4 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-            Cá Nhân Hóa Trí Tuệ Nhân Tạo
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-bold tracking-widest uppercase mb-6 mx-auto">
+            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+            Thiết kế riêng dành cho bạn
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
             Lộ Trình <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Độc Bản</span> Của Bạn
@@ -233,12 +234,18 @@ export default function RoadmapPage() {
                           </svg>
                         </div>
                       </div>
-                      <h4 className="text-xl font-bold text-white mb-2">Đăng nhập để xem tiếp</h4>
-                      <p className="text-sm text-slate-300 mb-6 max-w-[250px]">Lưu lại Lộ trình Độc bản của bạn vĩnh viễn và bắt đầu hành trình chinh phục TOEIC.</p>
+                      <h4 className="text-xl font-bold text-white mb-2">
+                        {isGuest ? 'Đăng nhập để xem tiếp' : 'Nâng cấp tài khoản'}
+                      </h4>
+                      <p className="text-sm text-slate-300 mb-6 max-w-[250px]">
+                        {isGuest 
+                          ? 'Lưu lại Lộ trình Độc bản của bạn vĩnh viễn và bắt đầu hành trình chinh phục TOEIC.' 
+                          : 'Nâng cấp tài khoản ULTRA để mở khóa lộ trình cá nhân hóa từ chuyên gia.'}
+                      </p>
                       <button 
-                        onClick={() => router.push('/login')}
+                        onClick={() => isGuest ? router.push('/login') : router.push('/toeic-practice/upgrade')}
                         className="px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-sm hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:-translate-y-0.5 cursor-pointer">
-                        Đăng nhập / Đăng ký
+                        {isGuest ? 'Đăng nhập / Đăng ký' : 'Nâng cấp để mở khóa'}
                       </button>
                     </div>
                   )}
