@@ -471,7 +471,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   return (
     <>
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-[#581c87]/10 px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 transition-all">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 relative">
+      <div className="mx-auto flex w-full items-center justify-between gap-2 sm:gap-4 relative">
         <div className="flex flex-1 items-center min-w-0 pr-4">
           <Link href="/" className="lg:static absolute left-1/2 -translate-x-1/2 lg:transform-none flex shrink-0 items-center gap-2 leading-none sm:gap-3 z-10">
             <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[1.8rem]">
