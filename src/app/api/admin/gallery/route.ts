@@ -67,17 +67,22 @@ export async function POST(request: NextRequest) {
 
     const savedImages = []
     
-    const rawEndpoint = process.env.R2_ENDPOINT || '';
-    const endpoint = rawEndpoint.includes('http') ? new URL(rawEndpoint).origin : rawEndpoint;
+    const hasR2 = !!process.env.R2_ACCESS_KEY_ID && !!process.env.R2_SECRET_ACCESS_KEY;
+    
+    let s3Client: S3Client | null = null;
+    if (hasR2) {
+      const rawEndpoint = process.env.R2_ENDPOINT || '';
+      const endpoint = rawEndpoint.includes('http') ? new URL(rawEndpoint).origin : rawEndpoint;
 
-    const s3Client = new S3Client({
-      region: 'auto',
-      endpoint: endpoint,
-      credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-      },
-    })
+      s3Client = new S3Client({
+        region: 'auto',
+        endpoint: endpoint,
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        },
+      })
+    }
 
     for (const file of files) {
       const ext = ALLOWED_TYPES[file.type]
@@ -88,28 +93,44 @@ export async function POST(request: NextRequest) {
       const bytes = await file.arrayBuffer()
       const buffer = Buffer.from(bytes)
 
-      const saved = await prisma.landingGalleryImage.create({
-        data: {
-          originalName: file.name || `image.${ext}`,
-          mimeType: file.type || 'application/octet-stream',
-          data: Buffer.alloc(0), // Save zero bytes on DB
-          section: section || 'course',
-          courseId: courseId || null,
-        },
-        select: { id: true }
-      })
-      
-      try {
-        await s3Client.send(new PutObjectCommand({
-            Bucket: process.env.R2_BUCKET_NAME,
-            Key: `landing-gallery/${saved.id}`,
-            Body: buffer,
-            ContentType: file.type || 'application/octet-stream'
-        }))
+      if (hasR2 && s3Client) {
+        // R2 approach
+        const saved = await prisma.landingGalleryImage.create({
+          data: {
+            originalName: file.name || `image.${ext}`,
+            mimeType: file.type || 'application/octet-stream',
+            data: Buffer.alloc(0), // Save zero bytes on DB
+            section: section || 'course',
+            courseId: courseId || null,
+          },
+          select: { id: true }
+        })
+        
+        try {
+          await s3Client.send(new PutObjectCommand({
+              Bucket: process.env.R2_BUCKET_NAME,
+              Key: `landing-gallery/${saved.id}`,
+              Body: buffer,
+              ContentType: file.type || 'application/octet-stream'
+          }))
+          savedImages.push(saved)
+        } catch (uploadError) {
+          console.error('R2 upload failed', uploadError)
+          await prisma.landingGalleryImage.delete({ where: { id: saved.id } })
+        }
+      } else {
+        // Fallback to DB
+        const saved = await prisma.landingGalleryImage.create({
+          data: {
+            originalName: file.name || `image.${ext}`,
+            mimeType: file.type || 'application/octet-stream',
+            data: buffer, // Save full buffer on DB
+            section: section || 'course',
+            courseId: courseId || null,
+          },
+          select: { id: true }
+        })
         savedImages.push(saved)
-      } catch (uploadError) {
-        console.error('R2 upload failed', uploadError)
-        await prisma.landingGalleryImage.delete({ where: { id: saved.id } })
       }
     }
 
