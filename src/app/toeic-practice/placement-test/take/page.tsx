@@ -149,7 +149,11 @@ export default function PlacementTestTakePage() {
                                             <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm shrink-0">
                                                 {idx + 1}
                                             </div>
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{q.category}</span>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">
+                                                {q.category?.toLowerCase().includes('beginner') ? 'Mức: Dễ' : 
+                                                 q.category?.toLowerCase().includes('intermediate') ? 'Mức: Vừa' : 
+                                                 q.category?.toLowerCase().includes('advanced') ? 'Mức: Khó' : q.category}
+                                            </span>
                                         </div>
                                         <div className="flex-1">
                                             {q.passage && (
