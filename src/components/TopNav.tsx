@@ -151,7 +151,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                    <BookIcon className="w-[18px] h-[18px] mt-[-2px]" />
                 </span>
                 <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] relative z-10 ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                   Sổ tay của tôi
+                   Sổ tay
                 </span>
                 <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-[#4c1d95]/10 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
               </Link>
@@ -165,7 +165,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                    </svg>
                 </span>
                 <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                   Tiến độ Luyện Đề
+                   Tiến độ
                 </span>
               </Link>
             </div>
@@ -302,7 +302,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                             <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-purple-500' : 'bg-slate-50 text-purple-500/60'}`}>
                                 <BookIcon className="w-5 h-5 scale-[0.9]" />
                             </span>
-                            <span className="flex-1 truncate text-[14px]">Sổ tay của tôi</span>
+                            <span className="flex-1 truncate text-[14px]">Sổ tay</span>
                         </Link>
     
                         <Link 
@@ -315,7 +315,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </span>
-                            <span className="flex-1 truncate text-[14px]">Tiến độ Luyện Đề</span>
+                            <span className="flex-1 truncate text-[14px]">Tiến độ</span>
                         </Link>
                         
                         <div className="w-[calc(100%-2rem)] mx-auto h-[1px] bg-purple-600/10 my-3" />
