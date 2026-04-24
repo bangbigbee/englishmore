@@ -111,6 +111,7 @@ model User {
   toeicReferralStatus       String                      @default("PENDING") // PENDING, ACTIVE, REVIEW
   registrationIp            String?
   toeicLevel                String?                     // BEGINNER, INTERMEDIATE, ADVANCED
+  toeicPlacementScore       String?                     // e.g., "8/10"
   toeicTarget               Int?
   toeicReferrer             User?                       @relation("ToeicUserReferrals", fields: [toeicReferrerId], references: [id])
   toeicReferredUsers        User[]                      @relation("ToeicUserReferrals")

@@ -382,10 +382,13 @@ function ToeicPracticeContent() {
 	const tabFromUrl = searchParams.get('tab') || 'home';
 	const [tab, setTab] = useState(tabFromUrl);
 	const [toeicLevel, setToeicLevel] = useState<string | null>(null);
+	const [toeicScore, setToeicScore] = useState<string | null>(null);
 
 	useEffect(() => {
 		const level = localStorage.getItem('toeicLevel');
 		if (level) setToeicLevel(level);
+		const score = localStorage.getItem('toeicPlacementScore');
+		if (score) setToeicScore(score);
 	}, []);
 
 	useEffect(() => {
@@ -409,6 +412,19 @@ function ToeicPracticeContent() {
 
 	useEffect(() => {
 		if (status === 'authenticated') {
+			// Sync guest level/score if needed
+			const guestLevel = localStorage.getItem('toeicLevel');
+			const guestScore = localStorage.getItem('toeicPlacementScore');
+			
+			// We can fire-and-forget sync to backend
+			if (guestLevel || guestScore) {
+				fetch('/api/user/toeic-onboarding', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ level: guestLevel, score: guestScore })
+				}).catch(console.error);
+			}
+
 			fetch('/api/toeic/daily-login', { method: 'POST' })
 				.then(res => res.json())
 				.then(data => {
@@ -442,12 +458,15 @@ function ToeicPracticeContent() {
 
 	const handleTabChange = (newTab: string) => {
 		setTab(newTab);
-		const params = new URLSearchParams(searchParams.toString());
+		const params = newSearchParams(searchParams);
 		params.set('tab', newTab);
 		params.delete('topic'); // clear topic when switching tabs
 		router.push(`${pathname}?${params.toString()}`);
 		window.scrollTo({ top: 0, behavior: 'instant' });
 	};
+
+	// Fallback helper for search params
+	const newSearchParams = (sp: any) => new URLSearchParams(sp.toString());
 
 	return (
 		<div className="min-h-screen bg-slate-50/50">
@@ -462,7 +481,7 @@ function ToeicPracticeContent() {
 			<div className="max-w-6xl mx-auto pt-4 pb-8 px-4 sm:px-6">
 			<div className="mt-2 md:mt-4">
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
-				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
+				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} score={toeicScore} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
 					 if (!session) {
 						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);

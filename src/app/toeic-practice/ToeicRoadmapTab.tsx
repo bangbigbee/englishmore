@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: { level: string | null, onPracticeClick: (path: string) => void, onTabClick: (tab: string) => void }) {
+export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabClick }: { level: string | null, score: string | null, onPracticeClick: (path: string) => void, onTabClick: (tab: string) => void }) {
     const router = useRouter();
     // If we don't have a level yet, show a placeholder asking them to set it.
     if (!level) {
@@ -105,6 +105,21 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
                     <p className="text-[15px] font-medium text-slate-700">
                         {currentRoadmap.subtitle}
                     </p>
+                    
+                    {score && (
+                        <div className="mt-4 flex items-center gap-2">
+                            <span className="text-sm font-semibold text-slate-600 bg-white/60 px-3 py-1 rounded-full shadow-sm">
+                                Điểm thi đầu vào: <span className="font-black text-[#581c87] ml-1">{score}</span>
+                            </span>
+                            <button 
+                                onClick={() => router.push('/toeic-practice/placement-test/result')}
+                                className="text-xs font-bold bg-[#581c87] text-white px-3 py-1.5 rounded-full hover:bg-[#6b21a8] transition-colors shadow-sm"
+                            >
+                                Xem chi tiết bài làm
+                            </button>
+                        </div>
+                    )}
+
                     <div className="mt-6 flex items-center gap-4">
                         <button 
                             onClick={() => {
@@ -112,7 +127,7 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
                             }}
                             className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-[#581c87] underline underline-offset-2 transition-colors cursor-pointer"
                         >
-                            Đổi lộ trình
+                            Đánh giá lại trình độ
                         </button>
                     </div>
                 </div>

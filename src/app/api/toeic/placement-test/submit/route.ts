@@ -35,6 +35,23 @@ export async function POST(req: NextRequest) {
             level = 'INTERMEDIATE';
         }
 
+        const scoreString = `${correctAnswersCount}/${total}`;
+
+        // Save to User if logged in
+        const { getServerSession } = await import('next-auth');
+        const { authOptions } = await import('@/lib/auth');
+        const session = await getServerSession(authOptions);
+        
+        if (session && session.user && session.user.id) {
+            await prisma.user.update({
+                where: { id: session.user.id },
+                data: {
+                    toeicLevel: level,
+                    toeicPlacementScore: scoreString
+                }
+            });
+        }
+
         return NextResponse.json({
             success: true,
             totalCorrect: correctAnswersCount,

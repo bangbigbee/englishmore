@@ -11,18 +11,29 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { toeicLevel, toeicTarget } = body
+    const { toeicLevel, toeicTarget, level, score } = body
 
-    if (!toeicLevel) {
+    const finalLevel = toeicLevel || level;
+
+    if (!finalLevel) {
       return NextResponse.json({ error: 'Missing level' }, { status: 400 })
+    }
+
+    const updateData: any = {
+      toeicLevel: finalLevel
+    };
+
+    if (toeicTarget) {
+      updateData.toeicTarget = parseInt(toeicTarget);
+    }
+    
+    if (score) {
+      updateData.toeicPlacementScore = score;
     }
 
     await prisma.user.update({
       where: { email: session.user.email },
-      data: {
-        toeicLevel,
-        toeicTarget: toeicTarget ? parseInt(toeicTarget) : null
-      }
+      data: updateData
     })
 
     return NextResponse.json({ success: true })
