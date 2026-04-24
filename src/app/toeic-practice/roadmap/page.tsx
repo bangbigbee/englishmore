@@ -37,8 +37,8 @@ export default function RoadmapPage() {
               title: p.title,
               objective: p.objectiveOutput,
               expectedScoreUp: p.expectedScoreUp,
-              // Giả lập trạng thái khóa/mở: Tuần 1 luôn mở, các tuần sau phụ thuộc vào isUltraUnlocked
-              isUnlocked: index === 0 || data.roadmap.isUltraUnlocked,
+              // Giả lập trạng thái khóa/mở: Tuần 1 và 2 luôn mở, các tuần sau phụ thuộc vào isUltraUnlocked
+              isUnlocked: index < 2 || data.roadmap.isUltraUnlocked,
               tasks: p.dailyTasks.map((t: any) => ({
                 day: t.dayNumber,
                 title: t.title,
@@ -234,7 +234,9 @@ export default function RoadmapPage() {
                       </div>
                       <h4 className="text-xl font-bold text-white mb-2">ULTRA Exclusive</h4>
                       <p className="text-sm text-slate-300 mb-6 max-w-[250px]">Nâng cấp ULTRA để mở khóa lộ trình cá nhân hóa từ chuyên gia.</p>
-                      <button className="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all hover:-translate-y-0.5">
+                      <button 
+                        onClick={() => window.dispatchEvent(new Event('openUpgradeModal'))}
+                        className="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all hover:-translate-y-0.5 cursor-pointer">
                         Nâng cấp ngay
                       </button>
                     </div>

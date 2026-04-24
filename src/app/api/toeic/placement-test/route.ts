@@ -31,28 +31,32 @@ export async function GET(req: NextRequest) {
         const intermediateQs = allQuestions.filter((q: any) => q.category.toLowerCase().includes('intermediate'));
         const advancedQs = allQuestions.filter((q: any) => q.category.toLowerCase().includes('advanced'));
 
-        // Helper to shuffle and pick N
+        // Helper to shuffle and pick N using Fisher-Yates for better distribution
         const pickRandom = (arr: any[], n: number) => {
-            const shuffled = [...arr].sort(() => 0.5 - Math.random());
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
             return shuffled.slice(0, n);
         };
 
         let numBeginner = 6;
-        let numIntermediate = 2;
-        let numAdvanced = 2;
+        let numIntermediate = 5;
+        let numAdvanced = 4;
 
         if (assessedLevel === 'BEGINNER') {
-            numBeginner = 6;
-            numIntermediate = 4;
-            numAdvanced = 0;
+            numBeginner = 8;
+            numIntermediate = 5;
+            numAdvanced = 2;
         } else if (assessedLevel === 'INTERMEDIATE') {
             numBeginner = 6;
-            numIntermediate = 2;
-            numAdvanced = 2;
+            numIntermediate = 5;
+            numAdvanced = 4;
         } else if (assessedLevel === 'ADVANCED') {
             numBeginner = 4;
-            numIntermediate = 4;
-            numAdvanced = 2;
+            numIntermediate = 5;
+            numAdvanced = 6;
         }
 
         const selectedQuestions = [
@@ -61,13 +65,11 @@ export async function GET(req: NextRequest) {
             ...pickRandom(advancedQs, numAdvanced)
         ];
 
-        // Shuffle the final selection to mix them up (optional, but good)
-        // Re-assign order 1 to 10
-        const finalQuestions = selectedQuestions
-            // .sort(() => 0.5 - Math.random()) // Uncomment to shuffle mixed levels
+        // Shuffle the final selection to mix them up
+        const finalQuestions = pickRandom(selectedQuestions, selectedQuestions.length)
             .map((q: any, idx: number) => {
                 const { correctOption, createdAt, updatedAt, ...cleanQ } = q;
-                cleanQ.order = idx + 1; // force order 1 to 10
+                cleanQ.order = idx + 1; // force order 1 to 15
                 return cleanQ;
             });
 
