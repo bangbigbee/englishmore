@@ -39,6 +39,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [showRightArrow, setShowRightArrow] = useState(false)
+  const [showLeftArrow, setShowLeftArrow] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,6 +47,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
         const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
         // Add 5px buffer
         setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 5)
+        setShowLeftArrow(scrollLeft > 5)
       }
     }
     
@@ -66,6 +68,12 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   const scrollRight = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: 150, behavior: 'smooth' })
+    }
+  }
+
+  const scrollLeftNav = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -150, behavior: 'smooth' })
     }
   }
 
@@ -217,8 +225,21 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
             })
           )}
         </div>
+        {showLeftArrow && (
+          <div className="absolute left-0 top-0 bottom-0 flex items-center bg-gradient-to-r from-white via-white/80 to-transparent pl-1 pr-6 z-10 pointer-events-none">
+            <button 
+              onClick={scrollLeftNav}
+              className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 shadow-sm flex items-center justify-center text-[#581c87] hover:bg-slate-200 transition-colors pointer-events-auto cursor-pointer focus:outline-none"
+              title="Cuộn sang trái"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </div>
+        )}
         {showRightArrow && (
-          <div className="absolute right-0 top-0 bottom-0 flex items-center bg-gradient-to-l from-white via-white to-transparent pr-1 pl-4 z-10 pointer-events-none">
+          <div className="absolute right-0 top-0 bottom-0 flex items-center bg-gradient-to-l from-white via-white/80 to-transparent pr-1 pl-6 z-10 pointer-events-none">
             <button 
               onClick={scrollRight}
               className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 shadow-sm flex items-center justify-center text-[#581c87] hover:bg-slate-200 transition-colors pointer-events-auto cursor-pointer focus:outline-none"
