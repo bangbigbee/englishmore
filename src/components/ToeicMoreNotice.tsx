@@ -90,10 +90,10 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
       {/* Floating Action Button */}
       <button
         onClick={handleClick}
-        className={`pointer-events-auto shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-linear-to-tr from-amber-50 to-purple-50 border border-purple-100/50 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all focus:outline-none ${isOpen ? 'ring-2 ring-purple-300 ring-offset-2' : ''} ${isWiggling && !isOpen ? 'animate-bounce' : ''}`}
+        className={`pointer-events-auto shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-linear-to-tr from-amber-50 to-purple-50 border border-purple-100/50 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all focus:outline-none ${isOpen ? 'ring-2 ring-purple-300 ring-offset-2' : ''} ${isWiggling && !isOpen ? 'animate-bounce' : ''}`}
         title="Thông báo ToeicMore"
       >
-        <img src="/toeicmoreicon.svg?v=2" alt="ToeicMore Notice" className="w-6 h-6 sm:w-7 sm:h-7 object-contain drop-shadow-sm" />
+        <img src="/toeicmoreicon.svg?v=2" alt="ToeicMore Notice" className="w-full h-full object-cover drop-shadow-sm" />
       </button>
 
     </div>
