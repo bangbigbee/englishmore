@@ -31,10 +31,16 @@ export async function POST(req: NextRequest) {
       updateData.toeicPlacementScore = score;
     }
 
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: updateData
     })
+
+    // Sync roadmap to database
+    if (finalLevel) {
+      const { generateRoadmapForUser } = await import('@/lib/roadmapGenerator');
+      await generateRoadmapForUser(updatedUser.id, finalLevel, score || '');
+    }
 
     return NextResponse.json({ success: true })
 

@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const roadmap = await prisma.userRoadmap.findUnique({
+        let roadmap = await prisma.userRoadmap.findUnique({
             where: { userId: session.user.id },
             include: {
                 phases: {
@@ -61,7 +61,27 @@ export async function GET(req: NextRequest) {
         });
 
         if (!roadmap) {
-            return NextResponse.json({ success: false, message: "No roadmap found" });
+            // Check if user has toeicLevel
+            const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+            if (user?.toeicLevel) {
+                const { generateRoadmapForUser } = await import('@/lib/roadmapGenerator');
+                await generateRoadmapForUser(session.user.id, user.toeicLevel, user.toeicPlacementScore || '');
+                
+                // Fetch the newly generated roadmap
+                roadmap = await prisma.userRoadmap.findUnique({
+                    where: { userId: session.user.id },
+                    include: {
+                        phases: {
+                            include: { dailyTasks: { orderBy: { dayNumber: 'asc' } } },
+                            orderBy: { weekNumber: 'asc' }
+                        }
+                    }
+                });
+            }
+
+            if (!roadmap) {
+                return NextResponse.json({ success: false, message: "No roadmap found" });
+            }
         }
 
         return NextResponse.json({
