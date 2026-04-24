@@ -55,6 +55,17 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     createUser: async (message) => {
+      // 1. Upgrade to PRO automatically for early bird
+      try {
+        await prisma.user.update({
+          where: { id: message.user.id },
+          data: { tier: 'PRO' }
+        })
+      } catch (error) {
+        console.error("Error setting PRO tier on createUser:", error)
+      }
+
+      // 2. Handle referrals
       try {
         const { cookies } = await import('next/headers')
         const cookieStore = await cookies()
@@ -66,7 +77,7 @@ export const authOptions: NextAuthOptions = {
           })
         }
       } catch (error) {
-        // Suppress errors about cookies() outside of request context, though it should be safe here
+        // Suppress errors about cookies() outside of request context
       }
     }
   },
