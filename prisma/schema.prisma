@@ -912,6 +912,24 @@ model ToeicStarLog {
   referenceKey String   @unique // To prevent duplicate rewards (e.g., 'daily_checkin:user123:2024-01-01')
   createdAt    DateTime @default(now())
   
-  @@index([userId])
   @@index([activityKey])
+}
+
+model ToeicPlacementQuestion {
+  id            String   @id @default(cuid())
+  order         Int
+  part          Int      @default(5)
+  question      String?  @db.Text
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String?
+  correctOption String
+  audioUrl      String?
+  imageUrl      String?
+  passage       String?  @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([order])
 }

@@ -377,7 +377,7 @@ function ToeicPracticeContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
-	const { data: session } = useSession();
+	const { data: session, status } = useSession();
 
 	const tabFromUrl = searchParams.get('tab') || 'home';
 	const [tab, setTab] = useState(tabFromUrl);
