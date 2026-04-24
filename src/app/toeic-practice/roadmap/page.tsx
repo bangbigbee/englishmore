@@ -11,6 +11,7 @@ export default function RoadmapPage() {
   const [mounted, setMounted] = useState(false);
   const [roadmapData, setRoadmapData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -18,7 +19,8 @@ export default function RoadmapPage() {
     // Fetch actual roadmap data
     const fetchRoadmap = async () => {
       try {
-        const res = await fetch('/api/toeic/roadmap');
+        const storedLevel = localStorage.getItem('toeicLevel') || 'BEGINNER';
+        const res = await fetch(`/api/toeic/roadmap?level=${storedLevel}`);
         const data = await res.json();
         if (data.success && data.roadmap) {
           // Transform data slightly to match our UI expectations
@@ -48,6 +50,9 @@ export default function RoadmapPage() {
             }))
           };
           setRoadmapData(transformed);
+          if (data.isGuest) {
+            setIsGuest(true);
+          }
         } else {
           // Fallback if no roadmap generated yet
           toast("Chưa có lộ trình, hãy làm bài đánh giá năng lực trước nhé!");
@@ -95,6 +100,12 @@ export default function RoadmapPage() {
       {/* Background Ambient Glows */}
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
+
+      {isGuest && (
+        <div className="relative z-50 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 px-4 text-center font-bold text-sm shadow-lg">
+          🚀 Bạn đang xem bản xem trước lộ trình! Hãy <Link href="/login" className="underline decoration-2 underline-offset-2 hover:text-black transition-colors">Đăng nhập / Đăng ký</Link> để lưu lộ trình này vĩnh viễn nhé.
+        </div>
+      )}
 
       <main className="max-w-5xl mx-auto px-6 py-12 relative z-10">
         

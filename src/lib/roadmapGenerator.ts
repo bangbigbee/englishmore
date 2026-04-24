@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const ROADMAP_TEMPLATES: any = {
+export const ROADMAP_TEMPLATES: any = {
     'BEGINNER': {
         targetScore: 450,
         estimatedWeeks: 8,

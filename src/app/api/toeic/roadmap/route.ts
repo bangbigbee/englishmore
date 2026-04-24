@@ -2,13 +2,43 @@ import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { ROADMAP_TEMPLATES } from '@/lib/roadmapGenerator';
 
 const prisma = new PrismaClient();
 
 export async function GET(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
+        
+        const url = new URL(req.url);
+        const levelQuery = url.searchParams.get('level');
+
         if (!session || !session.user || !session.user.id) {
+            if (levelQuery && ROADMAP_TEMPLATES[levelQuery]) {
+                const template = ROADMAP_TEMPLATES[levelQuery];
+                // Return a mock roadmap structure for guests
+                const mockRoadmap = {
+                    currentScore: levelQuery === 'BEGINNER' ? 350 : levelQuery === 'INTERMEDIATE' ? 550 : 750,
+                    targetScore: template.targetScore,
+                    isUltraUnlocked: false,
+                    phases: template.phases.map((p: any, i: number) => ({
+                        id: `mock-phase-${i}`,
+                        title: p.title,
+                        objectiveOutput: p.objectiveOutput,
+                        expectedScoreUp: p.expectedScoreUp,
+                        dailyTasks: p.tasks.map((t: any, j: number) => ({
+                            id: `mock-task-${j}`,
+                            dayNumber: t.dayNumber,
+                            title: t.title,
+                            taskType: t.taskType,
+                            rewardStars: t.rewardStars,
+                            status: "PENDING",
+                            referencePath: t.referencePath
+                        }))
+                    }))
+                };
+                return NextResponse.json({ success: true, roadmap: mockRoadmap, isGuest: true });
+            }
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
