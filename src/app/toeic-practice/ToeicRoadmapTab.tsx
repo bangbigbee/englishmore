@@ -50,7 +50,7 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
             tasks: [
                 { title: 'Học 10 từ vựng chủ đề Office', type: 'Từ vựng', actionText: 'Học ngay', tab: 'vocabulary' },
                 { title: 'Ngữ pháp: Thì hiện tại đơn', type: 'Ngữ pháp', actionText: 'Luyện tập', path: '/toeic-practice/grammar/thi-hien-tai-don' },
-                { title: 'Thi Đánh Giá Chặng & Vá Lỗi AI', type: 'Diagnostic', actionText: 'Mở khóa phân tích', isPremium: true, path: '/toeic-practice/upgrade' }
+                { title: 'Luyện nghe Part 1 (Hình ảnh)', type: 'Nghe hiểu', actionText: 'Bắt đầu', tab: 'actual-test' }
             ]
         },
         'INTERMEDIATE': {
@@ -66,7 +66,7 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
             tasks: [
                 { title: 'Từ vựng: Marketing & Sales', type: 'Từ vựng', actionText: 'Học ngay', tab: 'vocabulary' },
                 { title: 'Ngữ pháp: Câu Điều Kiện', type: 'Ngữ pháp', actionText: 'Luyện tập', path: '/toeic-practice/grammar/cau-dieu-kien' },
-                { title: 'Phân tích lỗi sai thường gặp Part 3', type: 'Deep Dive', actionText: 'Xem video giải thích', isPremium: true, path: '/toeic-practice/upgrade' }
+                { title: 'Luyện đọc Part 5 & 6', type: 'Đọc hiểu', actionText: 'Luyện tập', tab: 'actual-test' }
             ]
         },
         'ADVANCED': {
@@ -83,7 +83,7 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
             tasks: [
                 { title: 'Giải Full Test ETS 2024', type: 'Luyện Đề', actionText: 'Thi Thử', tab: 'actual-test' },
                 { title: 'Speed Challenge Từ Vựng', type: 'Thử thách', actionText: 'Đua Top', tab: 'home' },
-                { title: 'Vá lỗ hổng dạng câu Suy luận khó', type: 'Diagnostic', actionText: 'Bài tập AI thiết kế', isPremium: true, path: '/toeic-practice/upgrade' }
+                { title: 'Luyện nghe Part 3 & 4', type: 'Nghe hiểu', actionText: 'Luyện tập', tab: 'actual-test' }
             ]
         }
     };
@@ -163,25 +163,17 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
             </div>
             
             {/* Upsell / Value Proposition Footer */}
-            <div className="bg-gradient-to-r from-[#581c87]/5 to-purple-100/30 rounded-2xl p-6 border border-[#581c87]/10 flex flex-col sm:flex-row items-center gap-6 mt-8">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm shrink-0 border border-purple-100 text-purple-500">
-                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            <div className="mt-8 text-center">
+                <button 
+                    onClick={() => router.push('/toeic-practice/upgrade')}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#581c87] hover:text-purple-800 transition-colors cursor-pointer group"
+                >
+                    <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                </div>
-                <div className="flex-1 text-center sm:text-left">
-                    <h4 className="text-base font-black text-[#581c87] mb-1.5">Học không giới hạn với ToeicMore PRO</h4>
-                    <p className="text-sm font-medium text-slate-600 leading-relaxed mb-4">
-                        Lộ trình bài tập cơ bản là hoàn toàn miễn phí trọn đời! Tuy nhiên, nếu bạn muốn tiết kiệm thời gian, mở khóa <strong className="text-purple-700">Giải thích chi tiết (Explanation)</strong> cho từng câu sai, và xem <strong className="text-purple-700">Phân tích điểm yếu AI</strong>, hãy nâng cấp tài khoản nhé.
-                    </p>
-                    <button 
-                        onClick={() => router.push('/toeic-practice/upgrade')}
-                        className="inline-flex items-center gap-2 text-[13px] font-bold text-[#581c87] hover:text-[#6b21a8] transition-colors group cursor-pointer"
-                    >
-                        Xem đặc quyền PRO/ULTRA 
-                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                    </button>
-                </div>
+                    Nâng cấp ULTRA để tiết kiệm thời gian học, mở khóa tính năng giải thích chi tiết và nâng cao.
+                    <span className="group-hover:translate-x-1 transition-transform ml-0.5">&rarr;</span>
+                </button>
             </div>
         </div>
     );
