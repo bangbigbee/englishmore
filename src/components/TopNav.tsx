@@ -621,7 +621,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
               {isToeicDomain && (
                  <button 
                     onClick={() => setIsStarModalOpen(true)}
-                    className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-[6px] border border-amber-200 cursor-pointer shadow-sm select-none hover:bg-amber-100 transition-colors" 
+                    className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80" 
                     title="Tìm hiểu về Toeic Stars"
                  >
                     <span className="text-[14px] mt-[-2px] drop-shadow-sm">⭐</span>
@@ -631,24 +631,24 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                  </button>
               )}
               {session.user?.tier === 'PRO' && (
-                <span 
-                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-[#FDB931]/50"
-                  title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói PRO'}
+                <Link 
+                  href="/user/profile"
+                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-pointer border border-[#FDB931]/50 hover:opacity-90 transition-opacity"
                 >
                   <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                   PRO
                   <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                </span>
+                </Link>
               )}
               {session.user?.tier === 'ULTRA' && (
-                <span 
-                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-default border border-purple-600/30"
-                  title={session.user.tierExpiresAt ? `Hết hạn: ${new Date(session.user.tierExpiresAt).toLocaleDateString('vi-VN')}` : 'Gói ULTRA'}
+                <Link 
+                  href="/user/profile"
+                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-purple-700 to-purple-950 text-white font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-pointer border border-purple-600/30 hover:opacity-90 transition-opacity"
                 >
                   <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                   ULTRA
                   <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                </span>
+                </Link>
               )}
             </div>
           )}
@@ -661,6 +661,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         isOpen={isStarModalOpen} 
         onClose={() => setIsStarModalOpen(false)} 
         currentStars={(session?.user as any)?.toeicStars || 0}
+        userId={session?.user?.id}
       />
     </>
   )

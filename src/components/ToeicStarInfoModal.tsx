@@ -2,14 +2,16 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 
 interface ToeicStarInfoModalProps {
   isOpen: boolean
   onClose: () => void
   currentStars: number
+  userId?: string
 }
 
-export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: ToeicStarInfoModalProps) {
+export default function ToeicStarInfoModal({ isOpen, onClose, currentStars, userId }: ToeicStarInfoModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -91,7 +93,29 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
                   </li>
                   <li className="flex items-start gap-2">
                     <svg className="w-3.5 h-3.5 text-amber-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                    <span><strong>Giới thiệu bạn bè:</strong> Mời bạn bè tham gia làm bài thi thử để nhận <strong className="text-amber-600">100 ⭐ / lượt</strong>. Bạn của bạn cũng nhận 50 ⭐.</span>
+                    <div className="flex-1">
+                      <span><strong>Giới thiệu bạn bè:</strong> Mời bạn bè tham gia làm bài thi thử để nhận <strong className="text-amber-600">100 ⭐ / lượt</strong>. Bạn của bạn cũng nhận 50 ⭐.</span>
+                      {userId && (
+                        <div className="mt-2 flex items-center justify-between gap-2 bg-amber-50 rounded-md p-2 border border-amber-100">
+                          <span className="text-[12px] text-amber-800 flex-1 truncate">
+                            Link giới thiệu của tôi: <strong className="select-all">{typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/signup?ref={userId}</strong>
+                          </span>
+                          <button
+                            onClick={() => {
+                              const link = `${typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/signup?ref=${userId}`;
+                              navigator.clipboard.writeText(link);
+                              toast.success('Đã copy link giới thiệu!');
+                            }}
+                            className="p-1.5 text-amber-600 hover:bg-amber-200 rounded transition-colors cursor-pointer"
+                            title="Copy link"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </li>
                 </ul>
               </div>
