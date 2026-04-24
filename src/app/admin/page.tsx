@@ -3801,6 +3801,7 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('footer')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'footer' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>15. FOOTER</button>
              <button onClick={() => setActiveSection('floatingNoti')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'floatingNoti' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>16. FLOATING NOTI</button>
              <button onClick={() => setActiveSection('starConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'starConfig' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>17. STAR CONFIG</button>
+             <button onClick={() => setActiveSection('placementTest')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'placementTest' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>18. PLACEMENT TEST</button>
           </nav>
         </aside>
 
@@ -3829,6 +3830,10 @@ export default function AdminDashboard() {
 
           {activeSection === 'starConfig' && (
             <AdminStarConfig />
+          )}
+
+          {activeSection === 'placementTest' && (
+            <AdminPlacementTest />
           )}
 
         {activeSection === 'gallery' && (
