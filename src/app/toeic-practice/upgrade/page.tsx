@@ -590,13 +590,18 @@ export function UpgradeContent() {
             Nền tảng ToeicMore sẽ liên tục cập nhật và bổ sung nội dung mới mỗi tháng. Các bạn tham gia và ủng hộ dự án sớm sẽ luôn nhận được mức giá tốt nhất, kèm theo các đặc quyền vĩnh viễn.
         </p>
 
-        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1 bg-[#581c87]/10 rounded-full mt-10 mb-16">
+        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1 bg-[#581c87]/10 mt-10 mb-16">
+            {/* Arrow at the end */}
+            <svg className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#581c87]/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+
             {/* Active progress track */}
             <motion.div 
               initial={{ width: "0%" }}
               animate={{ width: '25%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
+              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
             >
               <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white border-2 border-amber-500 rounded-full absolute -right-[7px] sm:-right-[8px] flex items-center justify-center shadow-[0_0_10px_rgba(234,152,12,0.8)] z-20">
                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
@@ -615,24 +620,13 @@ export function UpgradeContent() {
                 
                 if (idx === 0) {
                     topText = "Hiện tại";
-                    const currentTierName = activePhaseStrForDiagram === 'super_early_bird' ? 'Super Early Bird' : activePhaseStrForDiagram === 'early_bird' ? 'Early Bird' : 'Giá Gốc';
                     bottomText = <div className="text-[12px] sm:text-[13px] text-[#581c87] font-bold mt-1">{(ultraPhaseMap[activePhaseStrForDiagram as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ</div>;
                 } else if (idx === 1) {
                     topText = "Đến hạn Super Early Bird";
-                    bottomText = (
-                      <>
-                        <span>{ultraPhaseMap?.super_early_bird?.label || "31/05/2026"}</span>
-                        <span className="text-[#581c87] font-bold mt-0.5">{ultraPhaseMap?.early_bird?.lifetimePrice?.toLocaleString('vi-VN')}đ</span>
-                      </>
-                    );
+                    bottomText = <span>{ultraPhaseMap?.super_early_bird?.label || "31/05/2026"}</span>;
                 } else if (idx === 2) {
                     topText = "Đến hạn Early Bird";
-                    bottomText = (
-                      <>
-                        <span>{ultraPhaseMap?.early_bird?.label || "31/08/2026"}</span>
-                        <span className="text-[#581c87] font-bold mt-0.5">{ultraPhaseMap?.regular?.lifetimePrice?.toLocaleString('vi-VN')}đ</span>
-                      </>
-                    );
+                    bottomText = <span>{ultraPhaseMap?.early_bird?.label || "31/08/2026"}</span>;
                 }
 
                 return (
@@ -658,6 +652,18 @@ export function UpgradeContent() {
                     </div>
                 )
             })}
+
+            {/* Additional price labels placed between points */}
+            <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '62.5%', transform: 'translate(-50%, -50%)' }}>
+               <div className="absolute top-full mt-[18px] text-[12px] sm:text-[13px] text-[#581c87] font-bold whitespace-nowrap">
+                 {(ultraPhaseMap?.early_bird?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
+               </div>
+            </div>
+            <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '95%', transform: 'translate(-50%, -50%)' }}>
+               <div className="absolute top-full mt-[18px] text-[12px] sm:text-[13px] text-[#581c87] font-bold whitespace-nowrap">
+                 {(ultraPhaseMap?.regular?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
+               </div>
+            </div>
         </div>
       </div>
 
