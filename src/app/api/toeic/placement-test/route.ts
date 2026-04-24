@@ -26,47 +26,97 @@ export async function GET(req: NextRequest) {
         const url = new URL(req.url);
         const assessedLevel = url.searchParams.get('assessedLevel') || 'BEGINNER';
 
-        // Separate into levels
-        const beginnerQs = allQuestions.filter((q: any) => q.category.toLowerCase().includes('beginner'));
-        const intermediateQs = allQuestions.filter((q: any) => q.category.toLowerCase().includes('intermediate'));
-        const advancedQs = allQuestions.filter((q: any) => q.category.toLowerCase().includes('advanced'));
+        // Load config from DB
+        const systemSetting = await prisma.systemSetting.findUnique({ where: { key: 'PLACEMENT_TEST_CONFIG' } });
+        let config = systemSetting ? systemSetting.value as any : null;
+        if (!config) {
+             config = {
+                difficulty: {
+                    BEGINNER: { beginner: 8, intermediate: 5, advanced: 2 },
+                    INTERMEDIATE: { beginner: 6, intermediate: 5, advanced: 4 },
+                    ADVANCED: { beginner: 4, intermediate: 5, advanced: 6 }
+                },
+                skill: { listening: 5, reading: 7, image: 3 }
+             };
+        }
 
-        // Helper to shuffle and pick N using Fisher-Yates for better distribution
-        const pickRandom = (arr: any[], n: number) => {
+        const levelConfig = config.difficulty[assessedLevel] || config.difficulty.BEGINNER;
+
+        let neededDiff: Record<string, number> = { 
+            beginner: levelConfig.beginner, 
+            intermediate: levelConfig.intermediate, 
+            advanced: levelConfig.advanced 
+        };
+        let neededSkill: Record<string, number> = { 
+            listening: config.skill.listening, 
+            reading: config.skill.reading, 
+            image: config.skill.image 
+        };
+
+        const pickRandom = (arr: any[]) => {
             const shuffled = [...arr];
             for (let i = shuffled.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
-            return shuffled.slice(0, n);
+            return shuffled;
         };
 
-        let numBeginner = 6;
-        let numIntermediate = 5;
-        let numAdvanced = 4;
+        const shuffledQuestions = pickRandom(allQuestions);
+        let selectedQuestions: any[] = [];
 
-        if (assessedLevel === 'BEGINNER') {
-            numBeginner = 8;
-            numIntermediate = 5;
-            numAdvanced = 2;
-        } else if (assessedLevel === 'INTERMEDIATE') {
-            numBeginner = 6;
-            numIntermediate = 5;
-            numAdvanced = 4;
-        } else if (assessedLevel === 'ADVANCED') {
-            numBeginner = 4;
-            numIntermediate = 5;
-            numAdvanced = 6;
+        // Pass 1: Try to satisfy BOTH difficulty and skill
+        for (let q of shuffledQuestions) {
+            let diff = q.category.toLowerCase().includes('beginner') ? 'beginner' : q.category.toLowerCase().includes('intermediate') ? 'intermediate' : 'advanced';
+            let skill = q.audioUrl ? 'listening' : (q.imageUrl ? 'image' : 'reading');
+            
+            if (neededDiff[diff] > 0 && neededSkill[skill] > 0) {
+                selectedQuestions.push(q);
+                neededDiff[diff]--;
+                neededSkill[skill]--;
+            }
+            if (selectedQuestions.length === 15) break;
         }
 
-        const selectedQuestions = [
-            ...pickRandom(beginnerQs, numBeginner),
-            ...pickRandom(intermediateQs, numIntermediate),
-            ...pickRandom(advancedQs, numAdvanced)
-        ];
+        // Pass 2: If we haven't reached 15, relax Skill constraint, try to satisfy Difficulty
+        if (selectedQuestions.length < 15) {
+            for (let q of shuffledQuestions) {
+                if (selectedQuestions.some((sq: any) => sq.id === q.id)) continue;
+                let diff = q.category.toLowerCase().includes('beginner') ? 'beginner' : q.category.toLowerCase().includes('intermediate') ? 'intermediate' : 'advanced';
+                
+                if (neededDiff[diff] > 0) {
+                    selectedQuestions.push(q);
+                    neededDiff[diff]--;
+                }
+                if (selectedQuestions.length === 15) break;
+            }
+        }
+
+        // Pass 3: If STILL not 15, relax Difficulty constraint, try to satisfy Skill
+        if (selectedQuestions.length < 15) {
+            for (let q of shuffledQuestions) {
+                if (selectedQuestions.some((sq: any) => sq.id === q.id)) continue;
+                let skill = q.audioUrl ? 'listening' : (q.imageUrl ? 'image' : 'reading');
+                
+                if (neededSkill[skill] > 0) {
+                    selectedQuestions.push(q);
+                    neededSkill[skill]--;
+                }
+                if (selectedQuestions.length === 15) break;
+            }
+        }
+
+        // Pass 4: If STILL not 15, just grab anything left
+        if (selectedQuestions.length < 15) {
+            for (let q of shuffledQuestions) {
+                if (selectedQuestions.some((sq: any) => sq.id === q.id)) continue;
+                selectedQuestions.push(q);
+                if (selectedQuestions.length === 15) break;
+            }
+        }
 
         // Shuffle the final selection to mix them up
-        const finalQuestions = pickRandom(selectedQuestions, selectedQuestions.length)
+        const finalQuestions = pickRandom(selectedQuestions)
             .map((q: any, idx: number) => {
                 const { correctOption, createdAt, updatedAt, ...cleanQ } = q;
                 cleanQ.order = idx + 1; // force order 1 to 15

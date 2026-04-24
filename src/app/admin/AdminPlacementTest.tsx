@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import AdminPlacementTestConfig from './AdminPlacementTestConfig';
 
 export default function AdminPlacementTest() {
     const [sets, setSets] = useState<any[]>([]);
@@ -292,9 +293,11 @@ export default function AdminPlacementTest() {
     if (loading) return <div className="p-8 text-center text-slate-500 font-bold">Đang tải...</div>;
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar Sets */}
-            <div className="w-full lg:w-1/3 bg-white rounded-xl shadow border border-slate-200 overflow-hidden flex flex-col">
+        <div className="flex flex-col gap-6">
+            <AdminPlacementTestConfig />
+            <div className="flex flex-col lg:flex-row gap-6">
+                {/* Sidebar Sets */}
+                <div className="w-full lg:w-1/3 bg-white rounded-xl shadow border border-slate-200 overflow-hidden flex flex-col">
                 <div className="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <h2 className="font-black text-slate-800">Kho Bộ Đề</h2>
                     <button onClick={handleCreateSet} className="text-purple-600 font-bold text-sm hover:text-purple-700 bg-purple-50 px-3 py-1 rounded">
@@ -499,6 +502,7 @@ export default function AdminPlacementTest() {
                         </div>
                     </>
                 )}
+            </div>
             </div>
         </div>
     );
