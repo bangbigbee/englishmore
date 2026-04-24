@@ -20,21 +20,22 @@ export async function GET(req: NextRequest) {
             orderBy: { order: 'asc' }
         });
 
-        // Group by part to match the expected format for the frontend
-        const groupedParts: Record<number, any> = {};
+        // Group by category to match the expected format for the frontend
+        const groupedCategories: Record<string, any> = {};
         questions.forEach((q: any) => {
-            if (!groupedParts[q.part]) {
-                groupedParts[q.part] = {
-                    part: q.part,
+            const cat = q.category || 'Grammar';
+            if (!groupedCategories[cat]) {
+                groupedCategories[cat] = {
+                    category: cat,
                     questions: []
                 };
             }
             // Add a clean copy without correctOption for the frontend to take test
             const { correctOption, createdAt, updatedAt, ...cleanQ } = q;
-            groupedParts[q.part].questions.push(cleanQ);
+            groupedCategories[cat].questions.push(cleanQ);
         });
         
-        const parts = Object.values(groupedParts).sort((a: any, b: any) => a.part - b.part);
+        const parts = Object.values(groupedCategories);
 
         return NextResponse.json({
             success: true,

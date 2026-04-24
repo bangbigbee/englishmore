@@ -930,7 +930,7 @@ model ToeicPlacementQuestion {
   id            String   @id @default(cuid())
   setId         String?
   order         Int
-  part          Int      @default(5)
+  category      String   @default("Grammar")
   question      String?  @db.Text
   optionA       String
   optionB       String

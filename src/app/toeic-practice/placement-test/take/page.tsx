@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 interface Question {
     id: string;
     order: number;
-    part: number;
+    category: string;
     question: string;
     optionA: string;
     optionB: string;
@@ -145,8 +145,11 @@ export default function PlacementTestTakePage() {
                             <div key={q.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                                 <div className="p-5 sm:p-6 border-b border-slate-100 bg-slate-50/50">
                                     <div className="flex items-start gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">
-                                            {idx + 1}
+                                        <div className="flex flex-col gap-1 items-center justify-start mt-0.5">
+                                            <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm shrink-0">
+                                                {idx + 1}
+                                            </div>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{q.category}</span>
                                         </div>
                                         <div className="flex-1">
                                             {q.passage && (

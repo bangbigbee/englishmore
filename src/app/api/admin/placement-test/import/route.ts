@@ -5,7 +5,7 @@ import mammoth from 'mammoth';
 const prisma = new PrismaClient();
 
 // Proposed Format:
-// [Part 5]
+// [Grammar]
 // Câu 1: The ______ of the new policy will take effect next month.
 // A) implement
 // B) implementation
@@ -35,14 +35,14 @@ export async function POST(req: NextRequest) {
         const lines = text.split('\n').map(l => l.trim()).filter(l => l);
 
         const questions: any[] = [];
-        let currentPart = 5;
+        let currentCategory = 'Grammar';
         let currentQ: any = null;
         let order = 1;
 
         for (const line of lines) {
-            if (line.match(/^\[Part\s*(\d+)\]/i)) {
-                const match = line.match(/^\[Part\s*(\d+)\]/i);
-                if (match) currentPart = parseInt(match[1]);
+            if (line.match(/^\[(.*)\]/i)) {
+                const match = line.match(/^\[(.*)\]/i);
+                if (match) currentCategory = match[1].trim();
                 continue;
             }
 
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
                 currentQ = {
                     setId,
                     order: order++,
-                    part: currentPart,
+                    category: currentCategory,
                     question: qMatch[2] || "Điền vào chỗ trống",
                     optionA: '',
                     optionB: '',
@@ -95,12 +95,7 @@ export async function POST(req: NextRequest) {
 
             // If we are here and currentQ has passage but not options yet, it might be a multi-line passage
             if (currentQ && !currentQ.optionA && !currentQ.question.includes('?')) {
-                // heuristic: append to passage if part 6/7
-                if (currentPart >= 6) {
-                    currentQ.passage += line + '\n';
-                } else {
-                    currentQ.question += ' ' + line;
-                }
+                currentQ.question += ' ' + line;
             }
         }
 

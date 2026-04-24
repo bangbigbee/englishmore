@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
             data: {
                 setId: body.setId,
                 order: body.order || 1,
-                part: body.part || 5,
+                category: body.category || 'Grammar',
                 question: body.question,
                 optionA: body.optionA,
                 optionB: body.optionB,

@@ -153,7 +153,7 @@ export default function AdminPlacementTest() {
         setFormData({
             setId: selectedSet.id,
             order: questions.length + 1,
-            part: 5,
+            category: 'Grammar',
             question: '',
             optionA: '',
             optionB: '',
@@ -177,7 +177,7 @@ export default function AdminPlacementTest() {
             if (method === 'PUT') payload.id = editingId;
             
             payload.order = parseInt(payload.order) || 0;
-            payload.part = parseInt(payload.part) || 5;
+            // No parseInt for category as it is a string
 
             const res = await fetch(url, {
                 method,
@@ -301,8 +301,8 @@ export default function AdminPlacementTest() {
                                             <input type="number" value={formData.order || ''} onChange={e => setFormData({...formData, order: e.target.value})} className="w-full p-2 border rounded" required />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-semibold mb-1">Part (1-7)</label>
-                                            <input type="number" value={formData.part || ''} onChange={e => setFormData({...formData, part: e.target.value})} className="w-full p-2 border rounded" required />
+                                            <label className="block text-sm font-semibold mb-1">Thể loại (Category)</label>
+                                            <input type="text" value={formData.category || ''} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full p-2 border rounded" placeholder="Grammar, Vocabulary..." required />
                                         </div>
                                         
                                         <div className="md:col-span-2">
@@ -366,7 +366,7 @@ export default function AdminPlacementTest() {
                                     <thead>
                                         <tr className="bg-slate-100 text-slate-600 text-sm">
                                             <th className="p-3 border-b font-bold">Câu</th>
-                                            <th className="p-3 border-b font-bold">Part</th>
+                                            <th className="p-3 border-b font-bold">Category</th>
                                             <th className="p-3 border-b font-bold">Preview</th>
                                             <th className="p-3 border-b font-bold">Đáp án</th>
                                             <th className="p-3 border-b font-bold text-right">Thao tác</th>
@@ -376,7 +376,7 @@ export default function AdminPlacementTest() {
                                         {questions.map((q, idx) => (
                                             <tr key={q.id} className="border-b hover:bg-slate-50 transition-colors">
                                                 <td className="p-3 font-bold text-slate-800">{q.order}</td>
-                                                <td className="p-3"><span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">Part {q.part}</span></td>
+                                                <td className="p-3"><span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">{q.category}</span></td>
                                                 <td className="p-3 text-sm text-slate-600">
                                                     <div className="line-clamp-1 max-w-xs">{q.question || q.passage || (q.audioUrl ? '🎵 Audio' : '📷 Image')}</div>
                                                 </td>
