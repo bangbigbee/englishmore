@@ -134,6 +134,44 @@ export default function AdminPlacementTest() {
         }
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsSubmitting(true);
+        const toastId = toast.loading('Đang tải ảnh lên...');
+        
+        try {
+            // Get presigned URL
+            const presignedRes = await fetch('/api/admin/upload/presigned', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, contentType: file.type })
+            });
+            const presignedData = await presignedRes.json();
+            
+            if (!presignedData.success) throw new Error(presignedData.error);
+
+            // Upload directly to R2
+            const uploadRes = await fetch(presignedData.uploadUrl, {
+                method: 'PUT',
+                body: file,
+                headers: { 'Content-Type': file.type }
+            });
+
+            if (!uploadRes.ok) throw new Error('Failed to upload to storage');
+
+            // Update form data
+            setFormData({ ...formData, imageUrl: presignedData.publicUrl });
+            toast.success('Đã tải ảnh lên thành công!', { id: toastId });
+        } catch (error) {
+            toast.error('Lỗi khi tải ảnh lên', { id: toastId });
+        } finally {
+            setIsSubmitting(false);
+            if (e.target) e.target.value = '';
+        }
+    };
+
     const handleEdit = (q: any) => {
         setEditingId(q.id);
         setFormData(q);
@@ -275,6 +313,26 @@ export default function AdminPlacementTest() {
                                     <p className="text-sm text-slate-500">Quản lý câu hỏi (Gợi ý: 10 câu cho test 3 phút)</p>
                                 </div>
                                 <div className="flex items-center gap-3">
+                                    <button 
+                                        onClick={async () => {
+                                            if (!confirm('Bạn có chắc chắn muốn xóa tất cả câu hỏi trong bộ đề này? Hành động này không thể hoàn tác!')) return;
+                                            try {
+                                                const res = await fetch(`/api/admin/placement-test?setId=${selectedSet.id}`, { method: 'DELETE' });
+                                                if (res.ok) {
+                                                    toast.success('Đã xóa tất cả câu hỏi');
+                                                    fetchQuestions(selectedSet.id);
+                                                    fetchSets();
+                                                } else {
+                                                    toast.error('Lỗi khi xóa');
+                                                }
+                                            } catch (error) {
+                                                toast.error('Lỗi kết nối');
+                                            }
+                                        }}
+                                        className="px-3 py-2 bg-rose-100 text-rose-600 font-bold rounded-lg hover:bg-rose-200 transition-colors text-sm"
+                                    >
+                                        Xóa trắng
+                                    </button>
                                     <label className="px-4 py-2 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-900 transition-colors cursor-pointer flex items-center gap-2 text-sm">
                                         {isUploading ? 'Đang Import...' : 'Import DOCX'}
                                         <input type="file" accept=".docx" className="hidden" onChange={handleDocxUpload} disabled={isUploading} />
@@ -312,7 +370,13 @@ export default function AdminPlacementTest() {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-semibold mb-1">Image URL (Tuỳ chọn)</label>
-                                                <input type="text" value={formData.imageUrl || ''} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="w-full p-2 border rounded" placeholder="https://..." />
+                                                <div className="flex gap-2">
+                                                    <input type="text" value={formData.imageUrl || ''} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="flex-1 p-2 border rounded" placeholder="https://..." />
+                                                    <label className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded cursor-pointer font-bold text-xs flex items-center justify-center whitespace-nowrap">
+                                                        Tải lên
+                                                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={isSubmitting} />
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
 

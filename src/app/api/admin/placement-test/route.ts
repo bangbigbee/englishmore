@@ -64,6 +64,14 @@ export async function DELETE(req: NextRequest) {
     try {
         const url = new URL(req.url);
         const id = url.searchParams.get('id');
+        const setId = url.searchParams.get('setId');
+        
+        if (setId) {
+            // @ts-ignore
+            await prisma.toeicPlacementQuestion.deleteMany({ where: { setId } });
+            return NextResponse.json({ success: true });
+        }
+        
         if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
         // @ts-ignore
         await prisma.toeicPlacementQuestion.delete({ where: { id } });
