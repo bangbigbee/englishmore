@@ -135,23 +135,24 @@ export default async function AboutPage() {
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
 						{/* Item 1 */}
 						<div className="group bg-[#f4faef] hover:bg-[#eaf5e1] rounded-[24px] overflow-hidden transition-colors border-2 border-white shadow-sm hover:shadow-md flex flex-col">
-                            {/* Top part with gradient bg and image */}
-                            <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#f3e8ff]/50 p-6 sm:p-7 gap-6 justify-between items-start">
-                                <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid1Title}</h3>
-                                </div>
-                                {grid1Img && (
-                                    <div className="w-full sm:w-[140px] shrink-0 aspect-[4/3] rounded-xl overflow-hidden shadow-sm border border-black/5 bg-white">
-                                        <img src={grid1Img} alt="" className="w-full h-full object-cover" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
-							<div className="p-6 sm:p-7 pt-4">
-                                <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
+							<div className="p-6 sm:p-7 pb-4 flex items-center gap-4">
+								<div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+								</div>
+								<h3 className="text-xl font-bold text-slate-800 leading-tight">{grid1Title}</h3>
+							</div>
+							
+							{grid1Img && (
+								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid1Img, '_blank')}>
+									<img src={grid1Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
+										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+									</div>
+								</div>
+							)}
+							
+							<div className="p-6 sm:p-7 pt-5 flex-1">
+                                <p className="text-slate-600 leading-relaxed text-[14.5px] whitespace-pre-wrap">
                                     {grid1Desc}
                                 </p>
                             </div>
@@ -159,23 +160,24 @@ export default async function AboutPage() {
 
 						{/* Item 2 */}
 						<div className="group bg-[#f4faef] hover:bg-[#eaf5e1] rounded-[24px] overflow-hidden transition-colors border-2 border-white shadow-sm hover:shadow-md flex flex-col">
-                            {/* Top part */}
-                            <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#e4f9e4] p-6 sm:p-7 gap-6 justify-between items-start">
-                                <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid2Title}</h3>
-                                </div>
-                                {grid2Img && (
-                                    <div className="w-full sm:w-[140px] shrink-0 aspect-[4/3] rounded-xl overflow-hidden shadow-sm border border-black/5 bg-white">
-                                        <img src={grid2Img} alt="" className="w-full h-full object-cover" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
-							<div className="p-6 sm:p-7 pt-4">
-                                <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
+							<div className="p-6 sm:p-7 pb-4 flex items-center gap-4">
+								<div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
+								</div>
+								<h3 className="text-xl font-bold text-slate-800 leading-tight">{grid2Title}</h3>
+							</div>
+							
+							{grid2Img && (
+								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid2Img, '_blank')}>
+									<img src={grid2Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
+										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+									</div>
+								</div>
+							)}
+							
+							<div className="p-6 sm:p-7 pt-5 flex-1">
+                                <p className="text-slate-600 leading-relaxed text-[14.5px] whitespace-pre-wrap">
                                     {grid2Desc}
                                 </p>
                             </div>
@@ -183,23 +185,24 @@ export default async function AboutPage() {
 
 						{/* Item 3 */}
 						<div className="group bg-[#f4faef] hover:bg-[#eaf5e1] rounded-[24px] overflow-hidden transition-colors border-2 border-white shadow-sm hover:shadow-md flex flex-col">
-                            {/* Top part */}
-                            <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#e4f9e4] p-6 sm:p-7 gap-6 justify-between items-start">
-                                <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid3Title}</h3>
-                                </div>
-                                {grid3Img && (
-                                    <div className="w-full sm:w-[140px] shrink-0 aspect-[4/3] rounded-xl overflow-hidden shadow-sm border border-black/5 bg-white">
-                                        <img src={grid3Img} alt="" className="w-full h-full object-cover" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
-							<div className="p-6 sm:p-7 pt-4">
-                                <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
+							<div className="p-6 sm:p-7 pb-4 flex items-center gap-4">
+								<div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+								</div>
+								<h3 className="text-xl font-bold text-slate-800 leading-tight">{grid3Title}</h3>
+							</div>
+							
+							{grid3Img && (
+								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid3Img, '_blank')}>
+									<img src={grid3Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
+										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+									</div>
+								</div>
+							)}
+							
+							<div className="p-6 sm:p-7 pt-5 flex-1">
+                                <p className="text-slate-600 leading-relaxed text-[14.5px] whitespace-pre-wrap">
                                     {grid3Desc}
                                 </p>
                             </div>
@@ -207,23 +210,24 @@ export default async function AboutPage() {
 
 						{/* Item 4 */}
 						<div className="group bg-[#f4faef] hover:bg-[#eaf5e1] rounded-[24px] overflow-hidden transition-colors border-2 border-white shadow-sm hover:shadow-md flex flex-col">
-                            {/* Top part */}
-                            <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#e4f9e4] p-6 sm:p-7 gap-6 justify-between items-start">
-                                <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid4Title}</h3>
-                                </div>
-                                {grid4Img && (
-                                    <div className="w-full sm:w-[140px] shrink-0 aspect-[4/3] rounded-xl overflow-hidden shadow-sm border border-black/5 bg-white">
-                                        <img src={grid4Img} alt="" className="w-full h-full object-cover" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
-							<div className="p-6 sm:p-7 pt-4">
-                                <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
+							<div className="p-6 sm:p-7 pb-4 flex items-center gap-4">
+								<div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+								</div>
+								<h3 className="text-xl font-bold text-slate-800 leading-tight">{grid4Title}</h3>
+							</div>
+							
+							{grid4Img && (
+								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid4Img, '_blank')}>
+									<img src={grid4Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
+										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+									</div>
+								</div>
+							)}
+							
+							<div className="p-6 sm:p-7 pt-5 flex-1">
+                                <p className="text-slate-600 leading-relaxed text-[14.5px] whitespace-pre-wrap">
                                     {grid4Desc}
                                 </p>
                             </div>
