@@ -285,9 +285,9 @@ export default function RoadmapPage() {
                       <div className="space-y-3 mt-6 text-left">
                         <div className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Nhiệm Vụ Tuần Này</div>
                         {phase.tasks.map((task: any, tIndex: number) => (
-                          <div key={tIndex} className="group relative bg-black/40 border border-white/5 p-4 rounded-xl flex gap-4 items-start hover:border-purple-500/30 transition-colors cursor-pointer">
+                          <Link href={task.path || '#'} key={tIndex} className="group relative bg-black/40 border border-white/5 p-4 rounded-xl flex gap-4 items-center hover:border-purple-500/30 transition-colors cursor-pointer block">
                             {/* Checkbox Gamification */}
-                            <div className="mt-0.5 relative flex-shrink-0">
+                            <div className="relative flex-shrink-0">
                               <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors
                                 ${task.done ? 'bg-purple-500 border-purple-500' : 'border-slate-600 group-hover:border-purple-400'}`}>
                                 {task.done && (
@@ -299,7 +299,7 @@ export default function RoadmapPage() {
                             </div>
                             
                             <div className="flex-1">
-                              <p className={`font-medium ${task.done ? 'text-slate-500 line-through' : 'text-slate-200'}`}>
+                              <p className={`font-medium ${task.done ? 'text-slate-500 line-through' : 'text-slate-200'} group-hover:text-purple-300 transition-colors`}>
                                 {task.title}
                               </p>
                               <div className="flex items-center gap-2 mt-1.5">
@@ -311,7 +311,14 @@ export default function RoadmapPage() {
                                 </span>
                               </div>
                             </div>
-                          </div>
+
+                            {/* Arrow Icon to indicate link */}
+                            <div className="flex-shrink-0 text-slate-500 group-hover:text-purple-400 transition-colors transform group-hover:translate-x-1">
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </Link>
                         ))}
                       </div>
                     )}
