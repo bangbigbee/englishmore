@@ -115,7 +115,7 @@ export function UpgradeContent() {
   const ultraUpgradePrice = billingCycle === 'monthly' ? currentUltra.monthlyPrice : (currentUltra.upgradeLifetimePrice || currentUltra.lifetimePrice);
   const ultraDuration = billingCycle === 'monthly' ? 1 : 120;
 
-  const currentUltraPrice = effectiveTier === 'PRO' ? ultraUpgradePrice : ultraPrice
+  const currentUltraPrice = ultraUpgradePrice;
 
   const formatPrice = (price: number) => {
     if (price === 0) return 'Miễn phí'
@@ -463,49 +463,8 @@ export function UpgradeContent() {
 
       <div 
         ref={scrollContainerRef}
-        className="flex lg:grid lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto overflow-y-visible pb-6 pt-2 items-stretch snap-x snap-mandatory px-4 md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex lg:grid lg:grid-cols-2 lg:max-w-4xl lg:mx-auto gap-4 sm:gap-6 overflow-x-auto overflow-y-visible pb-6 pt-2 items-stretch snap-x snap-mandatory px-4 md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {/* FREE Tier */}
-        <div className="w-[82vw] sm:w-[320px] lg:w-auto lg:max-w-none flex-none snap-center bg-purple-50/50 rounded-2xl p-6 border-2 border-purple-100/50 flex flex-col relative focus:outline-none">
-          <div className="mb-6">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
-              Mặc định
-            </div>
-            <h3 className="text-2xl font-black text-slate-800 mb-2">BASIC</h3>
-            <p className="text-slate-500 text-sm h-12">Điểm bắt đầu hoàn hảo để làm quen với nền tảng.</p>
-            <div className="text-3xl font-black text-slate-900 mt-4 mb-6">0đ<span className="text-base font-normal text-slate-500">/mãi mãi</span></div>
-          </div>
-          
-          <ul className="space-y-4 mb-8 flex-1 text-sm">
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-              <span className="text-slate-600">Truy cập bộ tài liệu cơ bản</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-              <span className="text-slate-600">Luyện đề TOEIC với các tính năng cơ bản</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-              <span className="text-slate-600">Xem điểm tổng và đáp án đúng sai</span>
-            </li>
-            <li className="flex items-start gap-3 opacity-40">
-              <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-              <span className="text-slate-500 line-through">Xem đầy đủ giải thích chi tiết mẹo TOEIC</span>
-            </li>
-            <li className="flex items-start gap-3 opacity-40">
-              <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-              <span className="text-slate-500 line-through">Đề thi Độc quyền mức độ Khó</span>
-            </li>
-          </ul>
-          {effectiveTier === 'FREE' && (
-            <div className="w-full bg-purple-100/50 text-purple-800 font-bold rounded-xl py-3.5 text-center mt-auto text-sm border border-purple-200/50">Gói Hiện Tại</div>
-          )}
-          <p className="text-[10px] text-center text-slate-400 mt-3 font-medium invisible">
-            Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
-          </p>
-        </div>
-
         {/* PRO Tier */}
         <div 
           onMouseEnter={() => setDiagramTier('PRO')}
@@ -517,10 +476,8 @@ export function UpgradeContent() {
               <IconStar className="w-4 h-4" /> PRO Pass
             </div>
             <h3 className="text-2xl font-black text-slate-900 mb-2">PRO</h3>
-            <p className="text-slate-500 text-sm h-12">Dành cho người thật sự muốn nâng cao điểm số hiệu quả.</p>
-            <div className="text-3xl font-black text-slate-900 mt-4 mb-6">
-              {formatPrice(proPrice)}<span className="text-base font-normal text-slate-400">/{formatDuration(proDuration)}</span>
-            </div>
+            <p className="text-slate-500 text-sm h-12">Đặc quyền miễn phí dành cho tất cả các thành viên.</p>
+            <div className="text-3xl font-black text-slate-900 mt-4 mb-6">Miễn Phí<span className="text-base font-normal text-slate-400">/trọn đời</span></div>
           </div>
           
           <ul className="space-y-4 mb-8 flex-1 text-sm">
@@ -549,18 +506,17 @@ export function UpgradeContent() {
               <span className="text-slate-500 line-through">Chữa Speaking/Writing 1-1 AI</span>
             </li>
           </ul>
-          {effectiveTier === 'PRO' ? (
-              <div className="py-3 text-center text-amber-600 text-xs font-bold uppercase tracking-widest border-t border-amber-200/60 mt-auto">Gói Hiện Tại</div>
-          ) : effectiveTier === 'ULTRA' ? (
-              <div className="w-full bg-slate-100 text-slate-400 font-bold rounded-xl py-3.5 text-center mt-auto cursor-not-allowed text-sm border border-slate-200">Đã Bao Gồm</div>
-          ) : (
+          {effectiveTier === 'FREE' ? (
               <button 
-                onClick={() => handleUpgrade('PRO')}
-                disabled={checkingPending}
-                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95 mt-auto disabled:opacity-75 disabled:cursor-wait"
+                onClick={() => setShowLoginModal(true)}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95 mt-auto"
               >
-                {checkingPending ? 'Đang tải...' : 'Nâng Cấp PRO Ngay'}
+                Tạo Tài Khoản & Nhận Ngay
               </button>
+          ) : effectiveTier === 'PRO' ? (
+              <div className="py-3 text-center text-amber-600 text-xs font-bold uppercase tracking-widest border-t border-amber-200/60 mt-auto">Gói Hiện Tại Của Bạn</div>
+          ) : (
+              <div className="w-full bg-slate-100 text-slate-400 font-bold rounded-xl py-3.5 text-center mt-auto cursor-not-allowed text-sm border border-slate-200">Đã Bao Gồm</div>
           )}
           <p className="text-[10px] text-center text-slate-400 mt-3 font-medium">
             Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
@@ -587,47 +543,7 @@ export function UpgradeContent() {
             <h3 className="text-2xl font-black text-white mb-2">ULTRA</h3>
             <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
             <div className="text-3xl font-black text-white mt-4 mb-6">
-              {effectiveTier === 'PRO' ? (
-                <div className="flex flex-col items-start gap-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-xl line-through text-purple-300/60 font-medium">{formatPrice(ultraPrice)}</span>
-                    <span>{formatPrice(ultraUpgradePrice)}</span>
-                  </div>
-                  <div className="text-[10px] text-amber-300 mt-0.5 uppercase tracking-wider font-bold bg-amber-900/40 inline-flex px-2 py-0.5 rounded border border-amber-500/30">Đặc quyền nâng cấp cho PRO</div>
-                </div>
-              ) : (
-                <>
-                  {formatPrice(ultraPrice)}<span className="text-base font-normal text-purple-100/50">/{formatDuration(ultraDuration)}</span>
-                </>
-              )}
-            </div>
-          </div>
-          
-          <ul className="space-y-4 mb-8 flex-1 text-sm">
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-              <span className="text-purple-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-              <span className="text-purple-100/90 font-semibold text-amber-200">Truy cập toàn bộ kho tài liệu độc quyền</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-              <span className="text-purple-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-              <span className="text-purple-100/90">Nhân ba Activity Points (x3)</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-              <span className="text-purple-100/90">Ưu tiên hỗ trợ từ Admin</span>
-            </li>
-          </ul>
-          {effectiveTier === 'ULTRA' ? (
-              <div className="py-3 text-center text-purple-300 text-xs font-bold uppercase tracking-widest border-t border-purple-950/60 mt-auto">Gói Hiện Tại</div>
-          ) : (
+              {formatPrice(currentUltraPrice)}<span className="text-base font-normal text-purple-100/50">/trọn đời</span> : (
               <button 
                 onClick={() => handleUpgrade('ULTRA')}
                 disabled={checkingPending}
@@ -642,24 +558,7 @@ export function UpgradeContent() {
         </div>
       </div>
 
-      <div className="mb-10 w-full bg-[#581c87]/[0.02] border border-[#581c87]/10 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-visible mt-10">
-        <div className="text-center mb-16 relative z-10 mt-2">
-          <h2 className="text-xl sm:text-2xl font-black tracking-wide text-[#581c87]">
-            Lộ trình nâng cấp và đồng hành cùng Toeic<span className="text-[#ea980c]">More</span>
-          </h2>
-        </div>
-
-        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1 bg-[#581c87]/10 rounded-full mt-10 mb-16">
-            {/* Active progress track */}
-            <motion.div 
-              initial={{ width: "0%" }}
-              animate={{ width: (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'super_early_bird' ? '15%' : (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'early_bird' ? '50%' : '85%' }}
-              transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
-            >
-              <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white border-2 border-amber-500 rounded-full absolute -right-[7px] sm:-right-[8px] flex items-center justify-center shadow-[0_0_10px_rgba(234,152,12,0.8)] z-20">
-                 <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
-              </div>
+      
             </motion.div>
             
             {/* Steps */}

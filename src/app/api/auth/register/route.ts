@@ -113,6 +113,7 @@ export async function POST(request: NextRequest) {
         phone: normalizedPhone,
         password: passwordHash,
         emailVerified: new Date(),
+        tier: 'PRO',
         toeicReferrerId: actualReferrerId,
         registrationIp: ip,
         toeicReferralStatus: actualReferrerId ? 'PENDING' : 'PENDING'
