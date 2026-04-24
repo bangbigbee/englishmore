@@ -32,6 +32,10 @@ export async function POST(req: NextRequest) {
 
         // Clean up text
         text = text.replace(/\r/g, '');
+        // Force newlines before options and answers if they were written on the same line
+        text = text.replace(/(?:\s+)?([A-D][\)\.])\s+/g, '\n$1 ');
+        text = text.replace(/(?:\s+)?(Đáp án[:\.])/ig, '\n$1');
+        
         const lines = text.split('\n').map(l => l.trim()).filter(l => l);
 
         const questions: any[] = [];
