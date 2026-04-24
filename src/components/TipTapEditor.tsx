@@ -6,6 +6,8 @@ import StarterKit from '@tiptap/starter-kit'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { TextAlign } from '@tiptap/extension-text-align'
+import Image from '@tiptap/extension-image'
+import { toast } from 'sonner'
 
 interface TipTapEditorProps {
   content: string
@@ -13,8 +15,56 @@ interface TipTapEditorProps {
 }
 
 const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | null, isFullscreen: boolean, toggleFullscreen: () => void }) => {
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+
   if (!editor) {
     return null
+  }
+
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size > 5MB!')
+      return
+    }
+
+    try {
+      setUploadingImage(true)
+      const toastId = toast.loading('Đang upload ảnh...')
+      const presignedRes = await fetch('/api/admin/upload/presigned', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, contentType: file.type })
+      })
+      const presignedData = await presignedRes.json()
+      if (!presignedRes.ok) throw new Error(presignedData.error || 'Presigned failed')
+
+      const uploadRes = await fetch(presignedData.uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type },
+          body: file
+      })
+      
+      if (!uploadRes.ok) throw new Error('Upload to R2 failed')
+
+      editor.chain().focus().setImage({ src: presignedData.publicUrl }).run()
+      toast.success('Chèn ảnh thành công!', { id: toastId })
+    } catch (err: any) {
+      toast.error(err.message || 'Lỗi upload ảnh', { id: 'editor-media-upload' })
+    } finally {
+      setUploadingImage(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const promptImageUrl = () => {
+    const url = window.prompt('Nhập đường dẫn ảnh (URL):')
+    if (url) {
+      editor.chain().focus().setImage({ src: url }).run()
+    }
   }
 
   return (
@@ -141,6 +191,36 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
         Clear Color
       </button>
 
+      <div className="w-px h-6 bg-gray-300 mx-1"></div>
+
+      {/* Image Upload */}
+      <input 
+        type="file" 
+        accept="image/*" 
+        className="hidden" 
+        ref={fileInputRef} 
+        onChange={handleUploadImage} 
+      />
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploadingImage}
+        className="px-2 py-1 rounded text-gray-600 hover:bg-gray-200 disabled:opacity-50 flex items-center gap-1 font-medium"
+        title="Tải ảnh lên"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        {uploadingImage ? '...' : 'Tải ảnh'}
+      </button>
+      <button
+        type="button"
+        onClick={promptImageUrl}
+        className="px-2 py-1 rounded text-gray-600 hover:bg-gray-200 flex items-center gap-1 font-medium"
+        title="Chèn ảnh từ URL"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        Link ảnh
+      </button>
+
       <div className="flex-1"></div>
       
       <button
@@ -172,6 +252,12 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
       StarterKit,
       TextStyle,
       Color,
+      Image.configure({
+        inline: false,
+        HTMLAttributes: {
+          class: 'rounded-xl border border-slate-200 max-w-full my-4 shadow-sm'
+        }
+      }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
