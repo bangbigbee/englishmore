@@ -543,7 +543,35 @@ export function UpgradeContent() {
             <h3 className="text-2xl font-black text-white mb-2">ULTRA</h3>
             <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
             <div className="text-3xl font-black text-white mt-4 mb-6">
-              {formatPrice(currentUltraPrice)}<span className="text-base font-normal text-purple-100/50">/trọn đời</span> : (
+              {formatPrice(currentUltraPrice)}<span className="text-base font-normal text-purple-100/50">/trọn đời</span>
+            </div>
+          </div>
+          
+          <ul className="space-y-4 mb-8 flex-1 text-sm">
+            <li className="flex items-start gap-3">
+              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+              <span className="text-purple-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+              <span className="text-purple-100/90 font-semibold text-amber-200">Truy cập toàn bộ kho tài liệu độc quyền</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+              <span className="text-purple-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+              <span className="text-purple-100/90">Nhân ba Activity Points (x3)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+              <span className="text-purple-100/90">Ưu tiên hỗ trợ từ Admin</span>
+            </li>
+          </ul>
+          {effectiveTier === 'ULTRA' ? (
+              <div className="py-3 text-center text-purple-300 text-xs font-bold uppercase tracking-widest border-t border-purple-950/60 mt-auto">Gói Hiện Tại</div>
+          ) : (
               <button 
                 onClick={() => handleUpgrade('ULTRA')}
                 disabled={checkingPending}
@@ -555,49 +583,6 @@ export function UpgradeContent() {
           <p className="text-[10px] text-center text-slate-400 mt-3 font-medium invisible">
             Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
           </p>
-        </div>
-      </div>
-
-      
-            </motion.div>
-            
-            {/* Steps */}
-            {(['super_early_bird', 'early_bird', 'regular'] as const).map((phase, idx) => {
-                const phaseConfigMap = diagramTier === 'PRO' ? proPhaseMap : ultraPhaseMap;
-                const activePhaseStrForDiagram = diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr;
-
-                const isCurrent = activePhaseStrForDiagram === phase;
-                const isPast = (activePhaseStrForDiagram === 'early_bird' && idx === 0) || (activePhaseStrForDiagram === 'regular' && idx < 2);
-                const pricePhase = phaseConfigMap[phase] || phaseConfigMap.regular;
-                const priceDisplay = billingCycle === 'monthly' ? formatPrice(pricePhase.monthlyPrice) : formatPrice(pricePhase.lifetimePrice);
-                
-                const leftPos = idx === 0 ? '15%' : idx === 1 ? '50%' : '85%';
-                
-                return (
-                    <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
-                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-[#581c87]/60 line-through decoration-[#581c87]/30' : 'text-slate-400'}`}>
-                            {priceDisplay}
-                        </div>
-                        
-                        <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 ${
-                            isPast ? 'border-[#581c87] bg-[#581c87]' : 
-                            'border-[#581c87]/20'
-                        } ${isCurrent ? 'opacity-0' : ''}`}>
-                        </div>
-                        
-                        <div className={`absolute top-full mt-3 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold whitespace-nowrap transition-colors flex flex-col items-center gap-1 ${
-                            isCurrent ? 'text-amber-700' : 
-                            isPast ? 'text-[#581c87]/80' : 
-                            'text-slate-400'
-                        }`}>
-                            <span>{phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}</span>
-                            <span className={`px-2 py-0.5 rounded-full ${isCurrent ? 'bg-amber-100/70 text-amber-900 border border-amber-200' : isPast ? 'text-[#581c87]/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
-                                {pricePhase.label || '...'}
-                            </span>
-                        </div>
-                    </div>
-                )
-            })}
         </div>
       </div>
 
