@@ -73,7 +73,7 @@ const renderTextWithLinks = (text: string, linkClassName: string) => {
 export default function LinkifiedText({
   text,
   preserveLineBreaks = true,
-  linkClassName = 'font-medium text-sky-700 underline underline-offset-2 break-all hover:text-sky-800'
+  linkClassName = 'font-medium text-purple-700 underline underline-offset-2 break-all hover:text-purple-800'
 }: LinkifiedTextProps) {
   if (!preserveLineBreaks) {
     return <>{renderTextWithLinks(text, linkClassName)}</>

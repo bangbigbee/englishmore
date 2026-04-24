@@ -71,10 +71,10 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
 
             <div className="space-y-5">
               {/* Ý nghĩa */}
-              <div className="bg-[#14532d]/5 p-4 rounded-xl border border-[#14532d]/10 flex items-start gap-2">
-                <svg className="w-4 h-4 text-[#14532d] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div className="bg-[#581c87]/5 p-4 rounded-xl border border-[#581c87]/10 flex items-start gap-2">
+                <svg className="w-4 h-4 text-[#581c87] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <p className="text-[13px] text-slate-700 leading-relaxed font-medium">
-                  <strong className="text-[#14532d]">Toeic Stars</strong> là điểm thưởng rèn luyện độc quyền của hệ thống ToeicMore, dùng để ghi nhận nỗ lực học tập và sự đóng góp của bạn vào cộng đồng.
+                  <strong className="text-[#581c87]">Toeic Stars</strong> là điểm thưởng rèn luyện độc quyền của hệ thống ToeicMore, dùng để ghi nhận nỗ lực học tập và sự đóng góp của bạn vào cộng đồng.
                 </p>
               </div>
 
@@ -86,11 +86,11 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
                 </h3>
                 <ul className="space-y-2 text-[13px] text-slate-600 font-medium ml-1">
                   <li className="flex items-start gap-2">
-                    <svg className="w-3.5 h-3.5 text-[#14532d] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    <svg className="w-3.5 h-3.5 text-[#581c87] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     <span><strong>Học tập mỗi ngày:</strong> Đăng nhập, duy trì chuỗi học, làm bài thi thử.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <svg className="w-3.5 h-3.5 text-[#14532d] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    <svg className="w-3.5 h-3.5 text-[#581c87] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     <span><strong>Thành tích xuất sắc:</strong> Lọt Top bảng xếp hạng tuần.</span>
                   </li>
                   <li className="flex items-start gap-2">
@@ -103,7 +103,7 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
               {/* Công dụng */}
               <div>
                 <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-3 text-sm">
-                  <svg className="w-4 h-4 text-[#14532d]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <svg className="w-4 h-4 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   Đặc quyền của Sao
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -111,9 +111,9 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
                     <p className="text-[13px] font-bold text-amber-900 mb-1">Nâng cấp tài khoản</p>
                     <p className="text-[11px] text-amber-700 font-medium">Sử dụng sao để quy đổi lấy các đặc quyền VIP (PRO / ULTRA) miễn phí.</p>
                   </div>
-                  <div className="bg-[#14532d]/5 p-3 rounded-lg border border-[#14532d]/10">
-                    <p className="text-[13px] font-bold text-[#14532d] mb-1">Mở khóa nội dung</p>
-                    <p className="text-[11px] text-[#14532d]/80 font-medium">Truy cập các bộ đề thi độc quyền và bí kíp nâng điểm chuyên sâu.</p>
+                  <div className="bg-[#581c87]/5 p-3 rounded-lg border border-[#581c87]/10">
+                    <p className="text-[13px] font-bold text-[#581c87] mb-1">Mở khóa nội dung</p>
+                    <p className="text-[11px] text-[#581c87]/80 font-medium">Truy cập các bộ đề thi độc quyền và bí kíp nâng điểm chuyên sâu.</p>
                   </div>
                 </div>
               </div>
@@ -122,7 +122,7 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
             <div className="mt-8">
               <button
                 onClick={onClose}
-                className="w-full rounded-xl bg-[#14532d] px-4 py-3 text-[13px] font-bold text-white transition-all hover:bg-[#166534] shadow-md hover:shadow-lg cursor-pointer outline-none focus:ring-2 focus:ring-[#14532d] focus:ring-offset-2"
+                className="w-full rounded-xl bg-[#581c87] px-4 py-3 text-[13px] font-bold text-white transition-all hover:bg-[#6b21a8] shadow-md hover:shadow-lg cursor-pointer outline-none focus:ring-2 focus:ring-[#581c87] focus:ring-offset-2"
               >
                 Đã hiểu
               </button>

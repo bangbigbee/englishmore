@@ -201,18 +201,18 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
     return (
       <div className="flex flex-col items-center p-0">
         <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-5 flex flex-col items-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-purple-500 to-purple-500"></div>
             
-            <div className="flex items-center gap-2 mb-4 text-emerald-600 font-medium text-sm">
+            <div className="flex items-center gap-2 mb-4 text-purple-600 font-medium text-sm">
                 <IconShieldCheck className="w-4 h-4" />
                 <span>Thanh toán an toàn & bảo mật 100%</span>
             </div>
 
             <div className="p-2.5 bg-white rounded-2xl shadow-xl border border-slate-100 mb-2 relative">
-                <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-indigo-500 rounded-tl-lg"></div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-indigo-500 rounded-tr-lg"></div>
-                <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-indigo-500 rounded-bl-lg"></div>
-                <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-indigo-500 rounded-br-lg"></div>
+                <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-purple-500 rounded-tl-lg"></div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-purple-500 rounded-tr-lg"></div>
+                <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-purple-500 rounded-bl-lg"></div>
+                <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-purple-500 rounded-br-lg"></div>
                 <img src={qrUrl} alt="VietQR" className="w-40 h-40 sm:w-48 sm:h-48 object-contain rounded-xl relative z-10" />
             </div>
             <p className="text-xs text-slate-500 mt-3 font-medium flex items-center gap-1.5">
@@ -230,13 +230,13 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-slate-500">Số tài khoản</span>
             <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tracking-wide text-indigo-600">{BANK_ACCOUNT}</span>
+                <span className="text-sm font-bold tracking-wide text-purple-600">{BANK_ACCOUNT}</span>
                 <button 
                   onClick={() => handleCopy(BANK_ACCOUNT, 'account')}
-                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-indigo-600"
+                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-purple-600"
                   title="Copy"
                 >
-                  {copyState === 'account' ? <IconCheck className="w-4 h-4 text-emerald-500" /> : <IconCopy className="w-4 h-4" />}
+                  {copyState === 'account' ? <IconCheck className="w-4 h-4 text-purple-500" /> : <IconCopy className="w-4 h-4" />}
                 </button>
             </div>
           </div>
@@ -252,10 +252,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 <span className="text-base font-black text-amber-500">{amount.toLocaleString()} VNĐ</span>
                 <button 
                   onClick={() => handleCopy(amount.toString(), 'amount')}
-                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-indigo-600"
+                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-purple-600"
                   title="Copy"
                 >
-                  {copyState === 'amount' ? <IconCheck className="w-4 h-4 text-emerald-500" /> : <IconCopy className="w-4 h-4" />}
+                  {copyState === 'amount' ? <IconCheck className="w-4 h-4 text-purple-500" /> : <IconCopy className="w-4 h-4" />}
                 </button>
             </div>
           </div>
@@ -269,14 +269,14 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   className="p-1.5 hover:bg-amber-100 rounded-md transition-colors text-amber-600 hover:text-amber-800 shrink-0 bg-white shadow-sm border border-amber-200"
                   title="Copy"
                 >
-                  {copyState === 'info' ? <IconCheck className="w-4 h-4 text-emerald-600" /> : <IconCopy className="w-4 h-4" />}
+                  {copyState === 'info' ? <IconCheck className="w-4 h-4 text-purple-600" /> : <IconCopy className="w-4 h-4" />}
                 </button>
             </div>
           </div>
         </div>
         
-        <div className="mt-4 flex items-center justify-center gap-1.5 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full border border-indigo-100">
-            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+        <div className="mt-4 flex items-center justify-center gap-1.5 bg-purple-50 text-purple-700 px-4 py-2 rounded-full border border-purple-100">
+            <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
             <span className="text-[10px] font-bold uppercase tracking-wider">Hệ thống tự động duyệt trong 1-2 giờ</span>
         </div>
       </div>
@@ -328,8 +328,8 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <IconZap className="w-5 h-5" /> ULTRA MASTERY
                 </div>
               ) : (
-                <div className="w-16 h-16 bg-[#14532d]/10 rounded-full flex items-center justify-center">
-                  <IconCheck className="w-8 h-8 text-[#14532d]" />
+                <div className="w-16 h-16 bg-[#581c87]/10 rounded-full flex items-center justify-center">
+                  <IconCheck className="w-8 h-8 text-[#581c87]" />
                 </div>
               )
             ) : (
@@ -352,7 +352,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 onClose()
               }
             }}
-            className="w-full font-bold rounded-xl py-3 transition-colors bg-[#14532d] hover:bg-[#166534] text-white shadow-lg shadow-[#14532d]/20 mt-2"
+            className="w-full font-bold rounded-xl py-3 transition-colors bg-[#581c87] hover:bg-[#6b21a8] text-white shadow-lg shadow-[#581c87]/20 mt-2"
           >
             Đã hiểu
           </button>
@@ -374,7 +374,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           <div className="overflow-y-auto custom-scrollbar p-6 md:p-10">
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                Nâng Tầm Tiếng Anh Cùng <span className="text-[#14532d]">Toeic</span><span className="text-[#ea980c]">More</span>
+                Nâng Tầm Tiếng Anh Cùng <span className="text-[#581c87]">Toeic</span><span className="text-[#ea980c]">More</span>
               </h2>
               <p className="text-slate-500 text-sm md:text-base mb-8">
                 Lựa chọn gói Premium phù hợp để mở khóa toàn bộ kho tàng bài tập độc quyền, giải thích cực kỳ chi tiết và tính năng chấm chữa AI thông minh.
@@ -385,10 +385,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
 
             <div 
               ref={scrollContainerRef}
-              className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto overflow-y-visible pb-6 pt-4 -mt-4 items-stretch green-scrollbar snap-x snap-mandatory px-6 -mx-6 md:mx-0 md:px-0 md:overflow-visible"
+              className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto overflow-y-visible pb-6 pt-4 -mt-4 items-stretch purple-scrollbar snap-x snap-mandatory px-6 -mx-6 md:mx-0 md:px-0 md:overflow-visible"
             >
               {/* FREE Tier */}
-              <div className="flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-emerald-50/50 rounded-2xl p-6 border-2 border-emerald-100/50 flex flex-col relative focus:outline-none">
+              <div className="flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-purple-50/50 rounded-2xl p-6 border-2 border-purple-100/50 flex flex-col relative focus:outline-none">
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     Mặc định
@@ -400,15 +400,15 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 
                 <ul className="space-y-4 mb-8 flex-1 text-sm">
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
                     <span className="text-slate-600">Truy cập bộ tài liệu cơ bản</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
                     <span className="text-slate-600">Luyện đề TOEIC với các tính năng cơ bản</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
                     <span className="text-slate-600">Xem điểm tổng và đáp án đúng sai</span>
                   </li>
                   <li className="flex items-start gap-3 opacity-40">
@@ -421,7 +421,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   </li>
                 </ul>
                 {effectiveTier === 'FREE' && (
-                  <div className="w-full bg-emerald-100/50 text-emerald-800 font-bold rounded-xl py-3.5 text-center mt-auto text-sm border border-emerald-200/50">Gói Hiện Tại</div>
+                  <div className="w-full bg-purple-100/50 text-purple-800 font-bold rounded-xl py-3.5 text-center mt-auto text-sm border border-purple-200/50">Gói Hiện Tại</div>
                 )}
                 <p className="text-[10px] text-center text-slate-400 mt-3 font-medium invisible">
                   Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
@@ -564,21 +564,21 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               </div>
             </div>
 
-      <div className="mt-12 mb-2 w-full bg-[#14532d]/[0.02] border border-[#14532d]/10 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-visible">
+      <div className="mt-12 mb-2 w-full bg-[#581c87]/[0.02] border border-[#581c87]/10 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-visible">
         
         <div className="text-center mb-16 relative z-10 mt-2">
-          <h2 className="text-xl sm:text-2xl font-black tracking-wide text-[#14532d]">
+          <h2 className="text-xl sm:text-2xl font-black tracking-wide text-[#581c87]">
             Lộ trình nâng cấp và đồng hành cùng Toeic<span className="text-[#ea980c]">More</span>
           </h2>
         </div>
 
-        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] mx-auto h-1 bg-[#14532d]/10 rounded-full mt-10 mb-16">
+        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] mx-auto h-1 bg-[#581c87]/10 rounded-full mt-10 mb-16">
             {/* Active progress track */}
             <motion.div 
               initial={{ width: "0%" }}
               animate={{ width: (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'super_early_bird' ? '15%' : (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'early_bird' ? '50%' : '85%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#14532d] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
+              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
             >
               {/* Glowing dot at the end of the track */}
               <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white border-2 border-amber-500 rounded-full absolute -right-[7px] sm:-right-[8px] flex items-center justify-center shadow-[0_0_10px_rgba(234,152,12,0.8)] z-20">
@@ -601,25 +601,25 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 return (
                     <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
                         {/* Price Label */}
-                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-[#14532d]/60 line-through decoration-[#14532d]/30' : 'text-slate-400'}`}>
+                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-[#581c87]/60 line-through decoration-[#581c87]/30' : 'text-slate-400'}`}>
                             {priceDisplay}
                         </div>
                         
                         {/* Node Circle */}
                         <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 ${
-                            isPast ? 'border-[#14532d] bg-[#14532d]' : 
-                            'border-[#14532d]/20'
+                            isPast ? 'border-[#581c87] bg-[#581c87]' : 
+                            'border-[#581c87]/20'
                         } ${isCurrent ? 'opacity-0' : ''}`}>
                         </div>
                         
                         {/* Name Label */}
                         <div className={`absolute top-full mt-3 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold whitespace-nowrap transition-colors flex flex-col items-center gap-1 ${
                             isCurrent ? 'text-amber-700' : 
-                            isPast ? 'text-[#14532d]/80' : 
+                            isPast ? 'text-[#581c87]/80' : 
                             'text-slate-400'
                         }`}>
                             <span>{phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}</span>
-                            <span className={`px-2 py-0.5 rounded-full ${isCurrent ? 'bg-amber-100/70 text-amber-900 border border-amber-200' : isPast ? 'text-[#14532d]/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
+                            <span className={`px-2 py-0.5 rounded-full ${isCurrent ? 'bg-amber-100/70 text-amber-900 border border-amber-200' : isPast ? 'text-[#581c87]/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
                                 {pricePhase.label || '...'}
                             </span>
                         </div>

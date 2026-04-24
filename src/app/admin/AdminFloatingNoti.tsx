@@ -63,7 +63,7 @@ export default function AdminFloatingNoti() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="bg-[#14532d] hover:bg-[#14532d]/90 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm disabled:opacity-50"
+          className="bg-[#581c87] hover:bg-[#581c87]/90 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm disabled:opacity-50"
         >
           {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
         </button>
@@ -103,7 +103,7 @@ export default function AdminFloatingNoti() {
           <label className="block text-sm font-bold text-slate-700 mb-2">Tiêu đề (Title)</label>
           <input
             type="text"
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-[14px] text-slate-800 outline-none focus:border-[#14532d]"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-[14px] text-slate-800 outline-none focus:border-[#581c87]"
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="VD: Thông báo nhỏ"
@@ -113,7 +113,7 @@ export default function AdminFloatingNoti() {
         <div>
           <label className="block text-sm font-bold text-slate-700 mb-2">Lời nhắn (Message)</label>
           <textarea
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-[14px] text-slate-800 outline-none focus:border-[#14532d] min-h-[120px]"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-[14px] text-slate-800 outline-none focus:border-[#581c87] min-h-[120px]"
             value={message}
             onChange={e => setMessage(e.target.value)}
             placeholder="Nội dung sẽ chạy animation gõ chữ..."

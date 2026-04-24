@@ -132,7 +132,7 @@ export default function AdminSingleImageUpload({ section, label }: AdminSingleIm
         <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full bg-[#14532d]/10 hover:bg-[#14532d]/20 text-[#14532d] font-bold text-sm py-2.5 rounded-lg transition-colors disabled:opacity-50"
+            className="w-full bg-[#581c87]/10 hover:bg-[#581c87]/20 text-[#581c87] font-bold text-sm py-2.5 rounded-lg transition-colors disabled:opacity-50"
         >
             {uploading ? 'Đang tải...' : (image ? 'Thay ảnh khác' : 'Tải lên từ máy')}
         </button>

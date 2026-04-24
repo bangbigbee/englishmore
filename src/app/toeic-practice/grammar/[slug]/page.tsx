@@ -700,7 +700,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-[#14532d] border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-[#581c87] border-t-transparent rounded-full animate-spin" />
           <p className="text-gray-600 font-medium">Đang tải bài học...</p>
         </div>
       </div>
@@ -712,7 +712,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Oops! Không tìm thấy bài học này.</h1>
-          <Link href="/toeic-practice" className="text-[#14532d] hover:underline">Quay lại trang chính</Link>
+          <Link href="/toeic-practice" className="text-[#581c87] hover:underline">Quay lại trang chính</Link>
         </div>
       </div>
     )
@@ -827,12 +827,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 }}
                 className={`w-full text-left p-3 rounded-xl transition-all duration-200 group flex items-center gap-3 cursor-pointer ${
                   selectedLessonId === lesson.id
-                    ? 'bg-[#14532d]/10 text-[#14532d] shadow-sm ring-1 ring-[#14532d]/20'
+                    ? 'bg-[#581c87]/10 text-[#581c87] shadow-sm ring-1 ring-[#581c87]/20'
                     : 'hover:bg-slate-100 text-slate-700 hover:translate-x-1'
                 }`}
               >
                 <div className="min-w-0 flex-1">
-                  <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-[#14532d]' : 'text-slate-800'}`}>
+                  <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-[#581c87]' : 'text-slate-800'}`}>
                     <span className="truncate">{lesson.title}</span>
                     {lesson.accessTier === 'PRO' && (
                       <svg className="w-[18px] h-[18px] text-amber-500 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -841,7 +841,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       <svg className="w-[18px] h-[18px] text-purple-700 shrink-0 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     )}
                   </div>
-                  <div className={`text-[11px] mt-0.5 font-medium ${selectedLessonId === lesson.id ? 'text-[#14532d]/70' : 'text-slate-500'}`}>
+                  <div className={`text-[11px] mt-0.5 font-medium ${selectedLessonId === lesson.id ? 'text-[#581c87]/70' : 'text-slate-500'}`}>
                     {lesson.questions.length} câu hỏi
                   </div>
                 </div>
@@ -858,8 +858,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         className={`shrink-0 flex items-center gap-1.5 transition-all cursor-pointer relative group/restart ${selectedLessonId === lesson.id ? 'opacity-100' : 'md:opacity-0 md:group-hover:opacity-100'}`}
                         title="Làm Lại Bài"
                     >
-                       <span className="text-xs font-bold px-2 py-1 rounded shadow-sm border bg-white text-[#14532d] border-emerald-50 opacity-0 group-hover/restart:opacity-100 transition-opacity hidden sm:block whitespace-nowrap">Làm Lại Bài</span>
-                       <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all border-[#14532d] text-[#14532d] hover:bg-[#14532d]/10 bg-white/80">
+                       <span className="text-xs font-bold px-2 py-1 rounded shadow-sm border bg-white text-[#581c87] border-purple-50 opacity-0 group-hover/restart:opacity-100 transition-opacity hidden sm:block whitespace-nowrap">Làm Lại Bài</span>
+                       <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all border-[#581c87] text-[#581c87] hover:bg-[#581c87]/10 bg-white/80">
                            <svg className="w-4 h-4 transition-transform group-hover/restart:-rotate-180 duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                        </div>
                     </div>
@@ -902,7 +902,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           <button 
                             title="Nghe tốc độ chậm (0.85x)"
                             onClick={() => (listeningMode !== 'actual' || isTestCompleted) && setPlaybackSpeed(0.85)}
-                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.85 ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${(listeningMode === 'actual' && !isTestCompleted) ? 'cursor-not-allowed' : ''}`}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-md transition-all ${playbackSpeed === 0.85 ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'} ${(listeningMode === 'actual' && !isTestCompleted) ? 'cursor-not-allowed' : ''}`}
                           >
                             Nghe chậm
                           </button>
@@ -941,7 +941,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         else audioRef.current.pause();
                                       }
                                     }}
-                                    className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${(listeningMode === 'actual' && !isTestCompleted) ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#14532d] border border-slate-200 hover:bg-emerald-50 hover:border-emerald-200 cursor-pointer'}`}
+                                    className={`w-8 h-8 flex items-center justify-center rounded-full transition-all shrink-0 ${(listeningMode === 'actual' && !isTestCompleted) ? 'bg-slate-100 text-slate-400 border border-slate-200 opacity-60 cursor-not-allowed' : 'bg-slate-100 text-[#581c87] border border-slate-200 hover:bg-purple-50 hover:border-purple-200 cursor-pointer'}`}
                                     title={(listeningMode === 'actual' && !isTestCompleted) ? "Không thể điều khiển ở chế độ Thi thử" : "Play/Pause Audio"}
                                   >
                                     {isAudioNodePlaying ? (
@@ -951,7 +951,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     )}
                                   </button>
                                )}
-                               <span className="tabular-nums text-emerald-700 font-mono font-bold bg-emerald-50 px-2 py-1 rounded border border-emerald-100 text-sm">
+                               <span className="tabular-nums text-purple-700 font-mono font-bold bg-purple-50 px-2 py-1 rounded border border-purple-100 text-sm">
                                  {Math.floor(elapsedTime / 60).toString().padStart(2, '0')}:{(elapsedTime % 60).toString().padStart(2, '0')}
                                </span>
                              </div>
@@ -963,7 +963,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   {/* Backward 3s */}
                                   <button 
                                       onClick={() => { if (audioRef.current) audioRef.current.currentTime -= 3; }} 
-                                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-[#14532d] hover:bg-emerald-50 border border-slate-200"
+                                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-[#581c87] hover:bg-purple-50 border border-slate-200"
                                       title="Tua lui 3 giây"
                                   >
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 19 2 12 11 5 11 19"/><polygon points="22 19 13 12 22 5 22 19"/></svg>
@@ -977,7 +977,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         else audioRef.current.pause();
                                       }
                                     }}
-                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 hover:bg-emerald-200 transition-colors"
+                                    className="w-10 h-10 flex items-center justify-center rounded-full bg-purple-100 text-purple-800 border border-purple-200 hover:bg-purple-200 transition-colors"
                                     title="Play/Pause Audio"
                                   >
                                     {isAudioNodePlaying ? (
@@ -990,7 +990,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   {/* Forward 3s */}
                                   <button 
                                       onClick={() => { if (audioRef.current) audioRef.current.currentTime += 3; }} 
-                                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-[#14532d] hover:bg-emerald-50 border border-slate-200"
+                                      className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:text-[#581c87] hover:bg-purple-50 border border-slate-200"
                                       title="Tua tới 3 giây"
                                   >
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/></svg>
@@ -1014,9 +1014,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                <span className="font-bold text-slate-800">{Object.keys(userAnswers).filter(k => currentLesson.questions.some(q => q.id === k)).length} / {currentLesson.questions.length}</span>
                             </div>
                             {(topic.type === 'GRAMMAR' || topic.type === 'READING' || (topic.type === 'LISTENING' && listeningMode === 'practice')) && (
-                               <div className="flex justify-between items-center text-sm bg-emerald-50/50 px-3 py-2 rounded-lg border border-emerald-100/50">
+                               <div className="flex justify-between items-center text-sm bg-purple-50/50 px-3 py-2 rounded-lg border border-purple-100/50">
                                   <span className="text-slate-600 font-medium">Số câu đúng:</span>
-                                  <span className="font-bold text-emerald-600">{Object.keys(userAnswers).filter(k => {
+                                  <span className="font-bold text-purple-600">{Object.keys(userAnswers).filter(k => {
                                      const q = currentLesson.questions.find(q => q.id === k);
                                      return q && userAnswers[k] === q.correctOption;
                                   }).length}</span>
@@ -1066,10 +1066,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                            const isLocked = theoryTierLevel > userTierLevel;
                            return (
                              <div className="relative">
-                               <div className={`bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50 ${isLocked ? 'blur-sm pointer-events-none opacity-40 select-none' : ''}`}>
+                               <div className={`bg-purple-50/50 p-6 rounded-2xl border border-purple-100/50 ${isLocked ? 'blur-sm pointer-events-none opacity-40 select-none' : ''}`}>
                                  <div className="prose prose-slate max-w-none prose-headings:font-black prose-p:text-slate-600 prose-p:leading-relaxed prose-li:text-slate-600">
                                    <div 
-                                     className="whitespace-pre-wrap text-slate-700 leading-relaxed text-sm md:text-base prose prose-sm md:prose-base max-w-none prose-headings:font-bold prose-headings:text-slate-800 prose-p:my-2 prose-a:text-[#14532d] prose-ul:list-disc prose-ol:list-decimal prose-ul:ml-5 prose-ol:ml-5 prose-li:my-1 prose-li:marker:text-gray-800 marker:font-bold"
+                                     className="whitespace-pre-wrap text-slate-700 leading-relaxed text-sm md:text-base prose prose-sm md:prose-base max-w-none prose-headings:font-bold prose-headings:text-slate-800 prose-p:my-2 prose-a:text-[#581c87] prose-ul:list-disc prose-ol:list-decimal prose-ul:ml-5 prose-ol:ml-5 prose-li:my-1 prose-li:marker:text-gray-800 marker:font-bold"
                                      dangerouslySetInnerHTML={{ __html: currentLesson.content || 'Nội dung đang được cập nhật...' }}
                                    />
                                  </div>
@@ -1238,7 +1238,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 </div>
                                                 <div className="flex justify-between items-center text-sm">
                                                     <span className="text-slate-500 font-bold">Số câu đúng:</span>
-                                                    <span className="font-black text-green-600 bg-green-100/50 px-2.5 py-0.5 rounded-lg border border-green-200/50">{correctCount}</span>
+                                                    <span className="font-black text-purple-600 bg-purple-100/50 px-2.5 py-0.5 rounded-lg border border-purple-200/50">{correctCount}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1287,7 +1287,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                         <>
                           {isPlayingDirections ? (
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
-                                  <h3 className="text-xl md:text-2xl font-black text-[#14532d] mb-2 mt-2">Bạn đang nghe directions của Phần {topic.part} bài thi</h3>
+                                  <h3 className="text-xl md:text-2xl font-black text-[#581c87] mb-2 mt-2">Bạn đang nghe directions của Phần {topic.part} bài thi</h3>
                                   {topic.part === 2 ? (
                                     <p className="mb-12 mt-4 max-w-3xl mx-auto px-4 py-3 bg-red-50 rounded-xl border border-red-200 text-center">
                                       <span className="text-xs md:text-sm font-medium text-red-700 block">Nội dung câu hỏi từ Câu 7 đến Câu 31 trong phần này sẽ KHÔNG được in sẵn.</span>
@@ -1304,7 +1304,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                           const actualIdx = previewPage * 9 + idx;
                                           return (
                                             <div key={q.id} className="relative flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all group">
-                                                <div className="absolute top-2 left-2 bg-[#14532d] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
+                                                <div className="absolute top-2 left-2 bg-[#581c87] text-white text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm z-10 flex items-center gap-1 leading-none">
                                                     <span>Câu {(() => {
                                                         if (topic.type === 'LISTENING') {
                                                             if (topic.part === 2) return actualIdx + 7;
@@ -1463,7 +1463,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                  }
                                                                  setShowGroupTranscriptEng(prev => ({ ...prev, [activeGroupStartIndex]: !prev[activeGroupStartIndex] }));
                                                              }}
-                                                             className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptEng[activeGroupStartIndex] ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600'}`}
+                                                             className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptEng[activeGroupStartIndex] ? 'bg-purple-600 border-purple-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-purple-600'}`}
                                                           >
                                                              Thoại tiếng Anh
                                                              {currentLesson.theoryAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-amber-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
@@ -1501,7 +1501,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                  <div className="bg-slate-50/80 p-5 md:p-6 rounded-2xl border border-slate-200 shadow-inner grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                                                                     {showGroupTranscriptEng[activeGroupStartIndex] && (
                                                                         <div className="flex flex-col">
-                                                                           <div className="text-xs font-black uppercase text-blue-600 mb-2 border-b border-blue-100 pb-2">Tiếng Anh</div>
+                                                                           <div className="text-xs font-black uppercase text-purple-600 mb-2 border-b border-purple-100 pb-2">Tiếng Anh</div>
                                                                            <div className="text-sm text-slate-700 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: groupParts.eng.replace(/\n/g, '<br/>') }} />
                                                                         </div>
                                                                     )}
@@ -1681,7 +1681,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                   
                                                   if (isShowingResult) {
                                                     if (opt.label === q.correctOption) {
-                                                      buttonClass += "border-slate-100 bg-white text-emerald-600"
+                                                      buttonClass += "border-slate-100 bg-white text-purple-600"
                                                     } else if (opt.label === selectedOption) {
                                                       buttonClass += "border-slate-100 bg-white text-rose-600"
                                                     } else {
@@ -1689,7 +1689,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     }
                                                   } else {
                                                     if (selectedOption === opt.label) {
-                                                      buttonClass += "border-slate-400 bg-slate-50 text-[#14532d]"
+                                                      buttonClass += "border-slate-400 bg-slate-50 text-[#581c87]"
                                                     } else {
                                                       buttonClass += "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                                                     }
@@ -1706,14 +1706,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                         <div className="flex items-center gap-2 mt-0.5 relative shrink-0">
                                                             <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                                                                isShowingResult 
-                                                                ? (opt.label === q.correctOption ? 'border-emerald-600' : opt.label === selectedOption ? 'border-rose-600' : 'border-slate-300')
-                                                                : (selectedOption === opt.label ? 'border-[#14532d]' : 'border-slate-300')
+                                                                ? (opt.label === q.correctOption ? 'border-purple-600' : opt.label === selectedOption ? 'border-rose-600' : 'border-slate-300')
+                                                                : (selectedOption === opt.label ? 'border-[#581c87]' : 'border-slate-300')
                                                              }`}>
                                                                 {(selectedOption === opt.label || (isShowingResult && opt.label === q.correctOption)) && (
-                                                                    <div className={`w-1.5 h-1.5 rounded-full ${isShowingResult ? (opt.label === q.correctOption ? 'bg-emerald-600' : 'bg-rose-600') : 'bg-[#14532d]'}`} />
+                                                                    <div className={`w-1.5 h-1.5 rounded-full ${isShowingResult ? (opt.label === q.correctOption ? 'bg-purple-600' : 'bg-rose-600') : 'bg-[#581c87]'}`} />
                                                                 )}
                                                             </div>
-                                                            <span className={`shrink-0 font-medium text-[15px] md:text-base ${isShowingResult ? (opt.label === q.correctOption ? 'text-emerald-700' : opt.label === selectedOption ? 'text-rose-700' : 'text-slate-400') : (selectedOption === opt.label ? 'text-[#14532d] font-bold' : 'text-slate-500')}`}>
+                                                            <span className={`shrink-0 font-medium text-[15px] md:text-base ${isShowingResult ? (opt.label === q.correctOption ? 'text-purple-700' : opt.label === selectedOption ? 'text-rose-700' : 'text-slate-400') : (selectedOption === opt.label ? 'text-[#581c87] font-bold' : 'text-slate-500')}`}>
                                                               {opt.label}.
                                                             </span>
                                                         </div>
@@ -1740,12 +1740,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               {/* Post-Question Explanation & Tools */}
                                               <div className={`${isGrammarLayout ? '' : 'mt-4'} flex flex-col gap-3 w-full`}>
                                                 {isShowingResult && (
-                                                    <div className={`flex flex-col gap-3 w-full p-2.5 px-3 md:px-4 rounded-2xl shadow-sm transition-all border ${isCorrect ? 'bg-emerald-50/70 border-emerald-200' : 'bg-rose-50/70 border-rose-200'}`}>
+                                                    <div className={`flex flex-col gap-3 w-full p-2.5 px-3 md:px-4 rounded-2xl shadow-sm transition-all border ${isCorrect ? 'bg-purple-50/70 border-purple-200' : 'bg-rose-50/70 border-rose-200'}`}>
                                                       <div className="flex flex-row items-center justify-between gap-3 w-full">
-                                                          <div className={`flex items-center gap-1.5 md:gap-2 transition-all ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
+                                                          <div className={`flex items-center gap-1.5 md:gap-2 transition-all ${isCorrect ? 'text-purple-700' : 'text-rose-700'}`}>
                                                             <div className={`w-5 h-5 rounded-full flex items-center justify-center bg-white shadow-sm shrink-0 border border-current opacity-90`}>
                                                                 {isCorrect ? (
-                                                                  <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
+                                                                  <svg className="w-3.5 h-3.5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
                                                                 ) : (
                                                                   <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
                                                                 )}
@@ -1757,7 +1757,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                             {explanationText && (
                                                                 <button
                                                                     onClick={() => setShowExplanation(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
-                                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm ${showExplanation[q.id] ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm ${showExplanation[q.id] ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
                                                                 >
                                                                     Giải thích
                                                                 </button>
@@ -1806,7 +1806,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                                                                   <div className="pt-3 pb-1 border-t border-slate-200/50 mt-1">
                                                                     {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
-                                                                        <button onClick={(e) => { e.preventDefault(); const currentPath = window.location.pathname; router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); }} className="text-sm font-bold italic text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full">
+                                                                        <button onClick={(e) => { e.preventDefault(); const currentPath = window.location.pathname; router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); }} className="text-sm font-bold italic text-purple-600 hover:text-purple-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full">
                                                                           {explanationText}
                                                                         </button>
                                                                     ) : (() => {
@@ -2031,7 +2031,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               window.scrollTo({ top: 300, behavior: 'smooth' });
                                           }}
                                           disabled={activeGroupStartIndex === 0}
-                                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#581c87] hover:text-[#581c87] hover:bg-purple-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                           aria-label="Trước đó"
                                         >
                                           <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
@@ -2058,7 +2058,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               window.scrollTo({ top: 300, behavior: 'smooth' });
                                           }}
                                           disabled={activeGroupStartIndex + questionsPerView >= currentLesson.questions.length}
-                                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#14532d] hover:text-[#14532d] hover:bg-emerald-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
+                                          className="h-10 w-10 md:w-12 md:h-12 rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-[#581c87] hover:text-[#581c87] hover:bg-purple-50 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:hover:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none"
                                           aria-label="Tiếp theo"
                                         >
                                           <svg className="w-5 h-5 md:w-6 md:h-6 stroke-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
@@ -2095,13 +2095,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
                         let btnStyle = ''
                         if (isActive) {
-                           btnStyle = 'bg-[#14532d] border-[#14532d] text-white shadow-md scale-110 z-10'
+                           btnStyle = 'bg-[#581c87] border-[#581c87] text-white shadow-md scale-110 z-10'
                         } else if (isShowingResultQt) {
-                           btnStyle = isCorrectQt ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-red-50 border-red-500 text-red-700'
+                           btnStyle = isCorrectQt ? 'bg-purple-50 border-purple-500 text-purple-700' : 'bg-red-50 border-red-500 text-red-700'
                         } else if (userAnswers[qt.id]) {
-                           btnStyle = 'bg-emerald-50 border-emerald-200 text-[#14532d]'
+                           btnStyle = 'bg-purple-50 border-purple-200 text-[#581c87]'
                         } else {
-                           btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#14532d]/30 hover:text-[#14532d]'
+                           btnStyle = 'bg-white border-slate-200 text-slate-400 hover:border-[#581c87]/30 hover:text-[#581c87]'
                         }
                         
                         return (
@@ -2160,17 +2160,17 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
             >
                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-emerald-50">
+            <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-purple-50">
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
             </div>
             <h3 className="text-2xl font-black text-slate-800 mb-2">Hoàn thành bài thi!</h3>
             <p className="text-slate-600 mb-6 leading-relaxed">
               {elapsedTime > 0 ? (
-                <>Chúc mừng bạn đã hoàn thành bài thi trong <strong className="text-emerald-700">{Math.floor(elapsedTime / 60)} phút {elapsedTime % 60} giây</strong>.<br/></>
+                <>Chúc mừng bạn đã hoàn thành bài thi trong <strong className="text-purple-700">{Math.floor(elapsedTime / 60)} phút {elapsedTime % 60} giây</strong>.<br/></>
               ) : (
                 <>Bạn đã gửi toàn bộ bài thi.<br/></>
               )}
-              Bạn đã đúng <strong className="text-emerald-700 text-xl">{currentLesson.questions.filter(q => userAnswers[q.id] === q.correctOption).length}</strong> / <strong>{currentLesson.questions.length}</strong> câu.
+              Bạn đã đúng <strong className="text-purple-700 text-xl">{currentLesson.questions.filter(q => userAnswers[q.id] === q.correctOption).length}</strong> / <strong>{currentLesson.questions.length}</strong> câu.
             </p>
             <div className="flex flex-col gap-3">
               {topic && topic.lessons.findIndex(l => l.id === selectedLessonId) < topic.lessons.length - 1 ? (
@@ -2186,7 +2186,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     setIsReviewing(false)
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
-                  className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#14532d]/20"
+                  className="w-full py-3.5 bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-[#581c87]/20"
                 >
                   Bài Tiếp Theo &rarr;
                 </button>
@@ -2202,7 +2202,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   }
                   
                   return (
-                    <Link href={returnUrl} className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 inline-block cursor-pointer shadow-md shadow-[#14532d]/20">
+                    <Link href={returnUrl} className="w-full py-3.5 bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 inline-block cursor-pointer shadow-md shadow-[#581c87]/20">
                       Về danh sách chủ đề
                     </Link>
                   )
@@ -2213,7 +2213,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   handleRestartLesson();
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="w-full py-3 text-[#14532d] hover:bg-emerald-50 font-bold rounded-xl transition-colors cursor-pointer mt-1"
+                className="w-full py-3 text-[#581c87] hover:bg-purple-50 font-bold rounded-xl transition-colors cursor-pointer mt-1"
               >
                 Làm Lại
               </button>
@@ -2263,8 +2263,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
              animate={{ opacity: 1, scale: 1, y: 0 }}
              className="relative bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center"
            >
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shrink-0">
-                  <svg className="w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
+              <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 shrink-0">
+                  <svg className="w-10 h-10 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
               </div>
               <h3 className="text-2xl font-black text-slate-800 mb-2">Hoàn thành bài nghe</h3>
               <p className="text-slate-500 mb-8 font-medium">Bạn đã nghe xong tất cả câu hỏi. Vui lòng chọn hành động tiếp theo.</p>
@@ -2272,7 +2272,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               <div className="flex flex-col gap-3">
                  <button 
                     onClick={submitActualExam}
-                    className="w-full py-3.5 bg-[#14532d] hover:bg-[#166534] text-white font-bold rounded-xl transition-all shadow-md active:scale-95"
+                    className="w-full py-3.5 bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold rounded-xl transition-all shadow-md active:scale-95"
                  >
                     Nộp Bài & Xem Đáp Án
                  </button>

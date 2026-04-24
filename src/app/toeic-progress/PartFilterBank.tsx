@@ -48,8 +48,8 @@ export default function PartFilterBank({ type, activePart }: { type: 'reading' |
                     <label key={p} className="flex items-center gap-2 cursor-pointer group">
                         <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
                             isActive 
-                            ? 'border-indigo-600 bg-indigo-600' 
-                            : 'border-slate-300 bg-white group-hover:border-indigo-400'
+                            ? 'border-purple-600 bg-purple-600' 
+                            : 'border-slate-300 bg-white group-hover:border-purple-400'
                         }`}>
                             {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                         </div>

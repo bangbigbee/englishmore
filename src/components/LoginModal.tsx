@@ -103,7 +103,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
             </button>
 
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-[#14532d]">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-[#581c87]">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
                   <path d="m9 12 2 2 4-4" />
@@ -112,9 +112,9 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               
               <h2 className="text-xl font-bold tracking-tight text-slate-900" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
                 Chào mừng bạn đến với {isToeicDomain ? (
-                  <span><span className="text-[#14532d]">Toeic</span><span className="text-amber-500">More</span></span>
+                  <span><span className="text-[#581c87]">Toeic</span><span className="text-amber-500">More</span></span>
                 ) : (
-                  <span><span className="text-[#14532d]">English</span><span className="text-amber-500">More</span></span>
+                  <span><span className="text-[#581c87]">English</span><span className="text-amber-500">More</span></span>
                 )}
               </h2>
               <p className="mt-3 text-[15px] font-bold text-slate-700">
@@ -167,7 +167,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               )}
 
               {isZaloInAppBrowser && (
-                <div className="rounded-lg bg-blue-50 p-3 text-xs leading-relaxed text-blue-800 border border-blue-200">
+                <div className="rounded-lg bg-purple-50 p-3 text-xs leading-relaxed text-purple-800 border border-purple-200">
                   <p className="font-bold mb-1">⚠️ Cảnh báo trình duyệt:</p>
                   Bạn đang mở trong ứng dụng Zalo. Vui lòng nhấn vào dấu ba chấm <strong>(...)</strong> và chọn <strong>"Mở bằng trình duyệt"</strong> (Safari hoặc Chrome) để có thể đăng nhập bằng Google.
                 </div>

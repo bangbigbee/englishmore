@@ -65,7 +65,7 @@ export default function TeacherVideosOverlay() {
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
-      <div className="absolute inset-0 bg-[#14532d]/30 mix-blend-overlay" />
+      <div className="absolute inset-0 bg-[#581c87]/30 mix-blend-overlay" />
       {activeVideos.map(active => (
         <FloatingVideo key={active.id} active={active} onComplete={handleVideoComplete} />
       ))}
@@ -115,7 +115,7 @@ function FloatingVideo({ active, onComplete }: { active: ActiveVideo, onComplete
       <video 
         ref={videoRef}
         src={`/api/gallery/${active.vid.id}`}
-        className="w-full h-full object-cover rounded-xl shadow-2xl border-2 border-white/30 bg-[#14532d]/50"
+        className="w-full h-full object-cover rounded-xl shadow-2xl border-2 border-white/30 bg-[#581c87]/50"
         style={{ transform: `${active.rotate} ${active.scale}` }}
         autoPlay
         muted

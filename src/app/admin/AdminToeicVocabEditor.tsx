@@ -164,7 +164,7 @@ export default function AdminToeicVocabEditor({ topic, onClose }: AdminToeicVoca
                       </div>
                       <div className="flex justify-end gap-2 pt-2">
                         <button onClick={cancelEdit} className="px-4 py-2 text-sm rounded bg-slate-100 text-slate-600 font-semibold hover:bg-slate-200">Hủy</button>
-                        <button onClick={handleUpdate} disabled={saving} className="px-4 py-2 text-sm rounded bg-[#14532d] text-white font-semibold hover:bg-[#166534] disabled:opacity-50">
+                        <button onClick={handleUpdate} disabled={saving} className="px-4 py-2 text-sm rounded bg-[#581c87] text-white font-semibold hover:bg-[#6b21a8] disabled:opacity-50">
                           {saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}
                         </button>
                       </div>

@@ -152,7 +152,7 @@ function LockedFeatureButton({
         className={[
           'brand-cta w-full justify-center cursor-not-allowed opacity-55 grayscale-[0.15]',
           variant === 'outline' ? 'brand-cta-outline' : 'brand-cta-filled',
-          'group-focus-visible:ring-2 group-focus-visible:ring-[#14532d]/30 group-focus-visible:ring-offset-2'
+          'group-focus-visible:ring-2 group-focus-visible:ring-[#581c87]/30 group-focus-visible:ring-offset-2'
         ].join(' ')}
         aria-hidden="true"
       >
@@ -174,10 +174,10 @@ function LockedFeatureButton({
         )}
       </div>
 
-      <div className="pointer-events-none invisible absolute left-1/2 top-full z-20 mt-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 rounded-lg border border-[#14532d]/15 bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 opacity-0 shadow-xl transition duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+      <div className="pointer-events-none invisible absolute left-1/2 top-full z-20 mt-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 rounded-lg border border-[#581c87]/15 bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 opacity-0 shadow-xl transition duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
         <Link
           href="/courses"
-          className="pointer-events-auto font-semibold text-[#14532d] underline decoration-[#14532d]/45 underline-offset-2 transition hover:text-[#0f3f22]"
+          className="pointer-events-auto font-semibold text-[#581c87] underline decoration-[#581c87]/45 underline-offset-2 transition hover:text-[#0f3f22]"
         >
           Đăng ký
         </Link>{' '}
@@ -246,9 +246,9 @@ function HomeContent() {
         name: 'Super Early Bird',
         discount: sebDiscount,
         label: 'Ưu đãi lớn nhất',
-        color: 'from-emerald-500 to-teal-600',
-        textColor: 'text-emerald-700',
-        bgColor: 'bg-emerald-50',
+        color: 'from-purple-500 to-purple-600',
+        textColor: 'text-purple-700',
+        bgColor: 'bg-purple-50',
         daysLeft: diffDays
       }
     } else if (diffDays >= ebDays) {
@@ -256,9 +256,9 @@ function HomeContent() {
         name: 'Early Bird',
         discount: ebDiscount,
         label: 'Tiết kiệm ngay',
-        color: 'from-blue-500 to-indigo-600',
-        textColor: 'text-blue-700',
-        bgColor: 'bg-blue-50',
+        color: 'from-purple-500 to-purple-600',
+        textColor: 'text-purple-700',
+        bgColor: 'bg-purple-50',
         daysLeft: diffDays
       }
     } else {
@@ -886,7 +886,7 @@ function HomeContent() {
       return 'border-amber-200 bg-amber-50/95 text-amber-950 shadow-amber-100'
     }
 
-    return 'border-[#14532d]/20 bg-[#14532d]/5 text-[#14532d] shadow-[#14532d]/10'
+    return 'border-[#581c87]/20 bg-[#581c87]/5 text-[#581c87] shadow-[#581c87]/10'
   }
 
   const getActivityDotStyle = (item: DailyGreetingConversationItem) => {
@@ -894,7 +894,7 @@ function HomeContent() {
       return 'bg-amber-500 ring-amber-200'
     }
 
-    return 'bg-[#14532d] ring-[#14532d]/20'
+    return 'bg-[#581c87] ring-[#581c87]/20'
   }
 
   const availableTopics = useMemo(() => {
@@ -1641,12 +1641,12 @@ function HomeContent() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-3 sm:px-6 sm:pt-4 lg:px-8">
         {showRegistrationProcessingTicker && (
-          <Link href="/courses" className="block mb-3 overflow-hidden rounded-lg border border-blue-300 bg-blue-50 shadow-sm transition hover:bg-blue-100/70">
+          <Link href="/courses" className="block mb-3 overflow-hidden rounded-lg border border-purple-300 bg-purple-50 shadow-sm transition hover:bg-purple-100/70">
             <div className="homework-alert-wrap">
               <div className="homework-alert-track">
-                <span className="text-sm font-bold text-blue-700">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-blue-700">Please wait a moment while we process your registration.</span>
-                <span className="text-sm font-bold text-blue-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-purple-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-purple-700">Please wait a moment while we process your registration.</span>
+                <span className="text-sm font-bold text-purple-700">Please wait a moment while we process your registration.</span>
               </div>
             </div>
           </Link>
@@ -1656,11 +1656,11 @@ function HomeContent() {
           <section className="mb-3 bg-white shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5">
               <h2 className="text-base font-semibold text-slate-800">Course Progress</h2>
-              <span className="text-sm font-bold text-[#14532d]">{courseProgressPercent}%</span>
+              <span className="text-sm font-bold text-[#581c87]">{courseProgressPercent}%</span>
             </div>
             <div className="h-1 w-full overflow-hidden bg-slate-200">
               <div
-                className="h-full rounded-full bg-[#14532d] transition-all duration-500"
+                className="h-full rounded-full bg-[#581c87] transition-all duration-500"
                 style={{
                   width: `${courseProgressPercent}%`
                 }}
@@ -1670,15 +1670,15 @@ function HomeContent() {
         )}
 
         {canUseDailyActivity && (
-          <section className="mb-8 rounded-md border border-[#14532d]/25 bg-linear-to-br from-[#14532d]/8 via-white to-blue-50 px-4 py-4 sm:px-5 sm:py-5">
+          <section className="mb-8 rounded-md border border-[#581c87]/25 bg-linear-to-br from-[#581c87]/8 via-white to-purple-50 px-4 py-4 sm:px-5 sm:py-5">
             {isAdminDailyActivity && (
-              <div className="mb-4 rounded-md border border-[#14532d]/20 bg-white/90 px-4 py-3">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-[#14532d]">Course for Daily Activity</label>
+              <div className="mb-4 rounded-md border border-[#581c87]/20 bg-white/90 px-4 py-3">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-[#581c87]">Course for Daily Activity</label>
                 <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
                   <select
                     value={selectedAdminDailyActivityCourseId}
                     onChange={(event) => setSelectedAdminDailyActivityCourseId(event.target.value)}
-                    className="w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d] sm:max-w-sm"
+                    className="w-full rounded-lg border border-[#581c87]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#581c87] sm:max-w-sm"
                   >
                     <option value="">Choose a course</option>
                     {availableCourses.map((course) => (
@@ -1692,13 +1692,13 @@ function HomeContent() {
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.25fr_1fr] xl:gap-5">
               <div className="space-y-4">
-                <article className="checkin-message rounded-lg border border-[#14532d]/25 bg-white px-4 py-4 shadow-sm">
+                <article className="checkin-message rounded-lg border border-[#581c87]/25 bg-white px-4 py-4 shadow-sm">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-bold text-[#14532d] sm:text-base">How do you feel today?</p>
+                    <p className="text-sm font-bold text-[#581c87] sm:text-base">How do you feel today?</p>
                   </div>
 
                   {hasGreetingToday ? (
-                    <div className="mt-3 rounded-md border border-[#14532d]/20 bg-[#14532d]/5 px-3 py-2.5">
+                    <div className="mt-3 rounded-md border border-[#581c87]/20 bg-[#581c87]/5 px-3 py-2.5">
                       {!isEditingCheckin && (
                         <div className="flex justify-end mb-2">
                           <button
@@ -1708,7 +1708,7 @@ function HomeContent() {
                               setEditCheckinStatus('')
                               setIsEditingCheckin(true)
                             }}
-                            className="text-xs font-medium text-slate-500 hover:text-[#14532d] transition"
+                            className="text-xs font-medium text-slate-500 hover:text-[#581c87] transition"
                           >
                             ✏️ Edit
                           </button>
@@ -1725,7 +1725,7 @@ function HomeContent() {
                             value={editCheckinMessage}
                             onChange={(event) => setEditCheckinMessage(event.target.value)}
                             placeholder="Update your check-in..."
-                            className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                            className="min-h-24 w-full rounded-lg border border-[#581c87]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#581c87]"
                             maxLength={500}
                           />
                           <p className="mt-1 text-xs text-slate-500">{editCheckinMessage.trim().length}/500</p>
@@ -1733,7 +1733,7 @@ function HomeContent() {
                             <button
                               type="button"
                               onClick={handleSaveEditCheckin}
-                              className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534]"
+                              className="rounded-md bg-[#581c87] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#6b21a8]"
                             >
                               Save check-in
                             </button>
@@ -1749,7 +1749,7 @@ function HomeContent() {
                               Cancel
                             </button>
                           </div>
-                          {editCheckinStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{editCheckinStatus}</p>}
+                          {editCheckinStatus && <p className="mt-2 text-sm font-medium text-[#581c87]">{editCheckinStatus}</p>}
                         </div>
                       ) : null}
                     </div>
@@ -1762,7 +1762,7 @@ function HomeContent() {
                             type="button"
                             onClick={() => void handleQuickGreetingSubmit(message)}
                             disabled={isSavingGreeting}
-                            className="rounded-full border border-[#14532d]/35 bg-[#14532d]/5 px-2.5 py-1 text-xs font-semibold text-[#14532d] transition hover:bg-[#14532d]/10 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="rounded-full border border-[#581c87]/35 bg-[#581c87]/5 px-2.5 py-1 text-xs font-semibold text-[#581c87] transition hover:bg-[#581c87]/10 disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {message}
                           </button>
@@ -1794,7 +1794,7 @@ function HomeContent() {
                                 setGreetingMessage(event.target.value)
                               }}
                               placeholder="Share your energy level, wins, or challenge for today..."
-                              className="min-h-24 w-full rounded-lg border border-[#14532d]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#14532d]"
+                              className="min-h-24 w-full rounded-lg border border-[#581c87]/25 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#581c87]"
                               maxLength={500}
                             />
                             <p className="mt-1 text-xs text-slate-500">{greetingMessage.trim().length}/500</p>
@@ -1805,14 +1805,14 @@ function HomeContent() {
                               type="button"
                               onClick={() => void handleSubmitGreeting()}
                               disabled={isSavingGreeting}
-                              className="rounded-md bg-[#14532d] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-70"
+                              className="rounded-md bg-[#581c87] px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-[#6b21a8] disabled:cursor-not-allowed disabled:opacity-70"
                             >
                               {isSavingGreeting ? 'Saving...' : 'Check in now'}
                             </button>
                           </div>
                         </>
                       )}
-                      {greetingStatus && <p className="mt-2 text-sm font-medium text-[#14532d]">{greetingStatus}</p>}
+                      {greetingStatus && <p className="mt-2 text-sm font-medium text-[#581c87]">{greetingStatus}</p>}
                       {greetingError && <p className="mt-2 text-sm font-medium text-red-600">{greetingError}</p>}
                     </>
                   )}
@@ -1949,7 +1949,7 @@ function HomeContent() {
                 </article>
               </div>
 
-              <div className="rounded-lg border border-[#14532d]/15 bg-linear-to-br from-white via-[#14532d]/3 to-blue-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(20,83,45,0.08)]">
+              <div className="rounded-lg border border-[#581c87]/15 bg-linear-to-br from-white via-[#581c87]/3 to-purple-50 p-3 sm:p-4 shadow-[0_10px_30px_rgba(88, 28, 135,0.08)]">
                 <div className="mb-3">
                   <h3 className="text-sm font-bold text-slate-900 sm:text-base">Live Feed</h3>
                 </div>
@@ -1999,7 +1999,7 @@ function HomeContent() {
             </div>
 
             {session?.user?.role === 'member' && (
-              <div className="mt-5 border-t border-[#14532d]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-5 border-t border-[#581c87]/20 pt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Link
                   href="/my-homework"
                   className="brand-cta brand-cta-filled w-full justify-center relative"
@@ -2086,9 +2086,9 @@ function HomeContent() {
           <>
             <section>
               <h1 className="sr-only">EnglishMore</h1>
-              <div className="rounded-lg border border-[#14532d]/20 bg-white p-6 shadow-lg sm:p-8">
+              <div className="rounded-lg border border-[#581c87]/20 bg-white p-6 shadow-lg sm:p-8">
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <h2 className="text-2xl font-bold text-[#14532d]">Vocabulary</h2>
+                  <h2 className="text-2xl font-bold text-[#581c87]">Vocabulary</h2>
                   {availableTopics.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {availableTopics.map(topic => (
@@ -2102,7 +2102,7 @@ function HomeContent() {
                           }}
                           className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                             selectedVocabularyTopic === topic
-                              ? 'bg-[#14532d] text-white'
+                              ? 'bg-[#581c87] text-white'
                               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                           }`}
                         >
@@ -2137,7 +2137,7 @@ function HomeContent() {
                         <button
                           type="button"
                           onClick={() => speakVocabularyWord()}
-                          className="inline-flex items-center justify-center rounded-full bg-white shadow-xs p-2.5 text-[#14532d] transition hover:bg-green-50"
+                          className="inline-flex items-center justify-center rounded-full bg-white shadow-xs p-2.5 text-[#581c87] transition hover:bg-purple-50"
                           aria-label="Speak vocabulary"
                           title="Listen to pronunciation"
                         >
@@ -2149,7 +2149,7 @@ function HomeContent() {
                           type="button"
                           onClick={handleTryVocabulary}
                           disabled={!speechSupported || isPronunciationListening}
-                          className="inline-flex items-center gap-1.5 rounded-full bg-[#14532d] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-[#581c87] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#6b21a8] disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current shrink-0">
                             <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.5 14.53 16 12 16s-4.52-1.5-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.063.54-.92 1.14.72 3.44 3.82 5.96 7.81 5.96s7.09-2.52 7.81-5.96c.14-.6-.31-1.14-.92-1.14z" />
@@ -2178,7 +2178,7 @@ function HomeContent() {
                         onClick={() => setIsVocabularyFlipped(!isVocabularyFlipped)}
                       >
                         {/* Front Face */}
-                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-[#14532d] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
+                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-[#581c87] via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
                           <span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-white/50 bg-white/10 px-3 py-1 rounded-full pointer-events-none">
                             Tap to flip
                           </span>
@@ -2193,16 +2193,16 @@ function HomeContent() {
                         </div>
 
                         {/* Back Face */}
-                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-[#14532d]/20 p-5 sm:p-8 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(20,83,45,0.02)] overflow-y-auto overflow-x-hidden">
-                          <span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-[#14532d]/50 bg-[#14532d]/5 px-3 py-1 rounded-full pointer-events-none">
+                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-[#581c87]/20 p-5 sm:p-8 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(88, 28, 135,0.02)] overflow-y-auto overflow-x-hidden">
+                          <span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-[#581c87]/50 bg-[#581c87]/5 px-3 py-1 rounded-full pointer-events-none">
                             Tap to flip
                           </span>
 
                           <div className="flex-1 flex flex-col items-center justify-center text-center w-full">
-                            <p className="text-2xl sm:text-3xl font-bold text-[#14532d]">{currentVocabularyItem.word}</p>
+                            <p className="text-2xl sm:text-3xl font-bold text-[#581c87]">{currentVocabularyItem.word}</p>
                             <p className="mt-1 text-lg sm:text-xl font-medium text-slate-500">{formatPhoneticForDisplay(currentVocabularyItem.phonetic)}</p>
                             
-                            <div className="mt-4 sm:mt-5 mb-4 sm:mb-5 w-12 h-1 bg-[#14532d]/20 rounded-full mx-auto shrink-0" />
+                            <div className="mt-4 sm:mt-5 mb-4 sm:mb-5 w-12 h-1 bg-[#581c87]/20 rounded-full mx-auto shrink-0" />
                             
                             <p className="text-xl sm:text-2xl font-bold text-slate-800">{currentVocabularyItem.meaning}</p>
                             {currentVocabularyItem.englishDefinition && (
@@ -2211,9 +2211,9 @@ function HomeContent() {
                             
                             {currentVocabularyItem.example && (
                               <div className="mt-5 sm:mt-6 w-full rounded-xl bg-slate-50 p-4 border border-slate-200 flex-shrink-0 relative overflow-hidden">
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#14532d]/40"></div>
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#581c87]/40"></div>
                                 <p className="text-sm sm:text-base italic text-slate-700 font-medium text-left px-2">
-                                  <span className="font-bold text-[#14532d] not-italic mr-2">EX:</span>
+                                  <span className="font-bold text-[#581c87] not-italic mr-2">EX:</span>
                                   {currentVocabularyItem.example}
                                 </p>
                               </div>
@@ -2224,7 +2224,7 @@ function HomeContent() {
                               <div className="mt-5 w-full flex-shrink-0 text-left space-y-3 border-t border-slate-100 pt-5">
                                 {(currentVocabularyItem.synonyms || currentVocabularyItem.antonyms) && (
                                   <div className="text-sm space-y-1.5 px-2">
-                                    {currentVocabularyItem.synonyms && <p><span className="font-semibold text-[#14532d] inline-flex items-center gap-1"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg> Synonyms:</span> <span className="text-slate-600 font-medium ml-1">{currentVocabularyItem.synonyms}</span></p>}
+                                    {currentVocabularyItem.synonyms && <p><span className="font-semibold text-[#581c87] inline-flex items-center gap-1"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg> Synonyms:</span> <span className="text-slate-600 font-medium ml-1">{currentVocabularyItem.synonyms}</span></p>}
                                     {currentVocabularyItem.antonyms && <p><span className="font-semibold text-rose-600 inline-flex items-center gap-1"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg> Antonyms:</span> <span className="text-slate-600 font-medium ml-1">{currentVocabularyItem.antonyms}</span></p>}
                                   </div>
                                 )}
@@ -2246,7 +2246,7 @@ function HomeContent() {
                                       <div className={`space-y-4 text-sm ${!isUltra ? 'opacity-30 pointer-events-none select-none blur-[2px]' : ''}`}>
                                         {currentVocabularyItem.collocations && (
                                           <div>
-                                            <p className="font-bold text-[#14532d] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
+                                            <p className="font-bold text-[#581c87] flex items-center gap-1.5 mb-1 text-xs uppercase tracking-wider">
                                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                                               Collocations
                                             </p>
@@ -2276,12 +2276,12 @@ function HomeContent() {
 
                     {/* Practice Status */}
                     {(pronunciationStatus || pronunciationScore !== null) && (
-                      <div className="rounded-xl bg-green-50/50 border border-[#14532d]/20 p-4 transition-all animate-in fade-in slide-in-from-top-2">
+                      <div className="rounded-xl bg-purple-50/50 border border-[#581c87]/20 p-4 transition-all animate-in fade-in slide-in-from-top-2">
                         {pronunciationStatus && (
-                          <p className="text-sm font-semibold text-[#14532d] mb-1">{pronunciationStatus}</p>
+                          <p className="text-sm font-semibold text-[#581c87] mb-1">{pronunciationStatus}</p>
                         )}
                         {pronunciationScore !== null && (
-                          <div className="mt-2 space-y-1.5 bg-white/60 rounded-lg p-3 border border-[#14532d]/10">
+                          <div className="mt-2 space-y-1.5 bg-white/60 rounded-lg p-3 border border-[#581c87]/10">
                             {pronunciationTranscript && (
                               <p className="text-sm text-slate-700">
                                 <span className="text-slate-500 font-medium text-xs uppercase mr-2">We heard:</span>
@@ -2289,13 +2289,13 @@ function HomeContent() {
                               </p>
                             )}
                             {pronunciationFeedback && (
-                              <p className="text-sm font-bold text-[#14532d] pt-1">{pronunciationFeedback}</p>
+                              <p className="text-sm font-bold text-[#581c87] pt-1">{pronunciationFeedback}</p>
                             )}
-                            <div className="flex items-center gap-3 pt-2 border-t border-[#14532d]/10 mt-2">
+                            <div className="flex items-center gap-3 pt-2 border-t border-[#581c87]/10 mt-2">
                               <span className="text-xs font-semibold text-slate-500">Score:</span>
                               <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
                                 <div 
-                                  className={`h-full rounded-full transition-all duration-1000 ${pronunciationScore >= 80 ? 'bg-green-500' : pronunciationScore >= 50 ? 'bg-amber-400' : 'bg-red-400'}`}
+                                  className={`h-full rounded-full transition-all duration-1000 ${pronunciationScore >= 80 ? 'bg-purple-500' : pronunciationScore >= 50 ? 'bg-amber-400' : 'bg-red-400'}`}
                                   style={{ width: `${pronunciationScore}%` }} 
                                 />
                               </div>
@@ -2341,9 +2341,9 @@ function HomeContent() {
                 <h1 className="sr-only">EnglishMore</h1>
                 <p className="max-w-xl text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
                   <span className="text-amber-500">Speak</span>{' '}
-                  <span className="text-green-900">your mind and more</span>
+                  <span className="text-purple-900">your mind and more</span>
                 </p>
-                <p className="mt-3 max-w-xl text-base sm:text-lg font-medium text-[#14532d]">
+                <p className="mt-3 max-w-xl text-base sm:text-lg font-medium text-[#581c87]">
                   Bạn muốn nói tốt tiếng Anh và học nhiều kĩ năng giao tiếp khác?
                 </p>
                 {/* Hai button Tư Vấn và Đăng Ký */}
@@ -2413,7 +2413,7 @@ function HomeContent() {
                 </div>
                 {/* Câu hỏi TOEIC và button Luyện TOEIC */}
                 <div className="mt-6">
-                  <p className="max-w-xl text-base sm:text-lg font-medium text-[#14532d] mb-4">
+                  <p className="max-w-xl text-base sm:text-lg font-medium text-[#581c87] mb-4">
                     Hoặc lấy chứng chỉ TOEIC với ToeicMore?
                   </p>
                   <Link
@@ -2439,7 +2439,7 @@ function HomeContent() {
                   href="https://www.facebook.com/bangbigbee"
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-4 inline-block text-sm font-semibold text-[#14532d] hover:underline"
+                  className="mt-4 inline-block text-sm font-semibold text-[#581c87] hover:underline"
                 >
                   Lead Teacher: Nguyen Tri Bang - 10 years of teaching experience.
                 </a>
@@ -2480,20 +2480,20 @@ function HomeContent() {
                 return (
                   <div 
                     key={`course-${course.id}`} 
-                    className="group relative flex h-[260px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                    className="group relative flex h-[260px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#581c87]/40 hover:shadow-md"
                   >
                     <div className={`absolute -right-12 top-6 w-48 rotate-45 px-4 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-white shadow-sm bg-linear-to-r ${tier.color}`}>
                       {tier.name}
                     </div>
 
-                    <p className="pr-10 text-lg font-extrabold leading-tight text-[#14532d]">{course.title}</p>
+                    <p className="pr-10 text-lg font-extrabold leading-tight text-[#581c87]">{course.title}</p>
                     
                     <p className="mt-1 text-[12px] leading-snug text-slate-600 line-clamp-2">
                       {course.shortDescription || course.description || 'Khóa học tiếng Anh chuyên sâu cùng EnglishMore.'}
                     </p>
                     
                     <div className="mt-auto space-y-2">
-                      <div className="border-t border-[#14532d]/10 pt-2">
+                      <div className="border-t border-[#581c87]/10 pt-2">
                         <div className="flex items-baseline gap-2">
                           <span className="text-[14px] font-normal text-slate-900">{formatVND(discountedPrice)}</span>
                           {tier.discount > 0 && (
@@ -2502,7 +2502,7 @@ function HomeContent() {
                         </div>
                         <div className="mt-1 space-y-0.5">
                           <p className="text-[11px] text-slate-500">Hạn: <span className="font-semibold text-slate-700">{registrationDeadlineText}</span></p>
-                          <p className={`text-[11px] font-bold ${isFull ? 'text-red-600' : 'text-[#14532d]'}`}>
+                          <p className={`text-[11px] font-bold ${isFull ? 'text-red-600' : 'text-[#581c87]'}`}>
                             ● {availabilityText}
                           </p>
                         </div>
@@ -2512,7 +2512,7 @@ function HomeContent() {
                     <div className="pt-2">
                       <Link
                         href={registerHref}
-                        className={`flex w-full items-center justify-center rounded-lg py-2 text-[13px] font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#14532d] text-white hover:bg-[#166534] hover:shadow-md'}`}
+                        className={`flex w-full items-center justify-center rounded-lg py-2 text-[13px] font-bold transition-all shadow-sm ${isFull ? 'bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none' : 'bg-[#581c87] text-white hover:bg-[#6b21a8] hover:shadow-md'}`}
                         aria-disabled={isFull}
                       >
                         Đăng Ký
@@ -2541,7 +2541,7 @@ function HomeContent() {
         {false && activeNews.length > 0 && (
           <section className="mt-12 px-1">
             <div className="mb-6">
-              <h3 className="text-xl font-bold tracking-tight text-[#14532d]">
+              <h3 className="text-xl font-bold tracking-tight text-[#581c87]">
                 Tin Tức
               </h3>
             </div>
@@ -2551,7 +2551,7 @@ function HomeContent() {
                 {activeNews.map((news) => (
                   <div 
                     key={`news-${news.id}`} 
-                    className="group relative flex h-[260px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#14532d]/40 hover:shadow-md"
+                    className="group relative flex h-[260px] w-[270px] shrink-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 pb-3 shadow-sm transition-all duration-300 snap-start hover:-translate-y-1 hover:border-[#581c87]/40 hover:shadow-md"
                   >
                     <p className="pr-10 text-lg font-extrabold leading-tight text-slate-800">{news.title}</p>
                     
@@ -2574,7 +2574,7 @@ function HomeContent() {
                         href={news.linkUrl || '#'}
                         target={news.linkUrl ? "_blank" : "_self"}
                         rel="noopener noreferrer"
-                        className="flex w-full items-center justify-center rounded-lg bg-[#14532d] py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md"
+                        className="flex w-full items-center justify-center rounded-lg bg-[#581c87] py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:bg-orange-500 hover:shadow-md"
                       >
                         Xem Thêm
                       </a>
@@ -2590,7 +2590,7 @@ function HomeContent() {
           <section className="mt-12 px-1 pb-12">
             <div className="mb-6 px-3">
               <h3 className="text-lg font-bold tracking-tight text-slate-800">
-                Chia sẻ của học viên về <span className="text-[#14532d]">English</span><span className="text-[#ea980c]">More</span>
+                Chia sẻ của học viên về <span className="text-[#581c87]">English</span><span className="text-[#ea980c]">More</span>
               </h3>
             </div>
 
@@ -2644,15 +2644,15 @@ function HomeContent() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-              className="relative rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-8 max-w-sm w-full text-center"
+              className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-8 max-w-sm w-full text-center"
             >
               <div className="text-5xl mb-4">🎉</div>
-              <h3 className="text-2xl font-bold text-[#14532d] mb-3">Congratulations!</h3>
+              <h3 className="text-2xl font-bold text-[#581c87] mb-3">Congratulations!</h3>
               <p className="text-gray-700 mb-2">
                 You have successfully enrolled in the course
               </p>
               {congratsEnrollment.title && (
-                <p className="text-lg font-semibold text-[#14532d] mb-4">
+                <p className="text-lg font-semibold text-[#581c87] mb-4">
                   &quot;{congratsEnrollment.title}&quot;
                 </p>
               )}
@@ -2667,7 +2667,7 @@ function HomeContent() {
                   }
                   setCongratsEnrollment(null)
                 }}
-                className="w-full px-4 py-3 bg-[#14532d] text-white rounded-lg font-semibold hover:bg-[#166534]"
+                className="w-full px-4 py-3 bg-[#581c87] text-white rounded-lg font-semibold hover:bg-[#6b21a8]"
               >
                 Start learning now
               </button>

@@ -173,7 +173,7 @@ export default async function GrammarBank({ filter = 'mistakes', partFilter }: {
                         )}
 						
                         <div className="flex items-center gap-2 mb-3">
-							<span className="text-xs font-black px-2.5 py-1 bg-indigo-600 text-white rounded-md whitespace-nowrap shadow-sm">
+							<span className="text-xs font-black px-2.5 py-1 bg-purple-600 text-white rounded-md whitespace-nowrap shadow-sm">
 								{q.lesson.topic.title}
 							</span>
                             <span className="text-xs font-bold px-2.5 py-1 bg-slate-700 text-white rounded-md whitespace-nowrap shadow-sm">
@@ -186,29 +186,29 @@ export default async function GrammarBank({ filter = 'mistakes', partFilter }: {
                                 {q.question}
                             </p>
                             {parsedTrans?.question && (
-                                <p className="text-[13px] italic text-blue-700/80 mt-1 line-clamp-2 leading-snug font-medium">
+                                <p className="text-[13px] italic text-purple-700/80 mt-1 line-clamp-2 leading-snug font-medium">
                                     {parsedTrans.question}
                                 </p>
                             )}
                         </div>
 
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-sm font-medium">
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'A' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'A' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">A</span> {q.optionA}</div>
-                                {parsedTrans?.a && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.a}</div>}
+                                {parsedTrans?.a && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.a}</div>}
 							</div>
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'B' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'B' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">B</span> {q.optionB}</div>
-                                {parsedTrans?.b && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.b}</div>}
+                                {parsedTrans?.b && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.b}</div>}
 							</div>
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'C' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'C' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">C</span> {q.optionC}</div>
-                                {parsedTrans?.c && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.c}</div>}
+                                {parsedTrans?.c && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.c}</div>}
 							</div>
 							{q.optionD && (
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'D' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'D' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">D</span> {q.optionD}</div>
-                                {parsedTrans?.d && <div className="text-[12px] italic text-blue-700/70 font-normal leading-snug">{parsedTrans.d}</div>}
+                                {parsedTrans?.d && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.d}</div>}
 							</div>
 							)}
 						</div>

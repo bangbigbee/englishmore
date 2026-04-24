@@ -20,7 +20,7 @@ export default function Image() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', fontSize: 130, fontWeight: 900, letterSpacing: '-0.05em' }}>
-          <span style={{ color: '#14532d' }}>English</span>
+          <span style={{ color: '#581c87' }}>English</span>
           <span style={{ color: '#ea980c' }}>More</span>
         </div>
         <div style={{ marginTop: 40, fontSize: 40, color: '#475569', fontWeight: 600 }}>

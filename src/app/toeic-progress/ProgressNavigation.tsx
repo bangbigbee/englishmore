@@ -80,14 +80,14 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                 <div className="mb-2 px-3">
                     {activeTab?.startsWith('reports') && (
                         <div className="animate-in fade-in slide-in-from-left-2 duration-300">
-                            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-3 mt-2">Tiến độ của tôi</h3>
+                            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-3 mt-2">Tiến độ luyện đề</h3>
                             <div className="flex flex-col gap-1">
                                 {PROGRESS_TABS.map((t) => (
                                     <button
                                         key={t.id}
                                         className={`flex items-center justify-start gap-3 px-3 py-2.5 rounded-xl font-bold transition-all text-left cursor-pointer group ${
                                             activeTab === t.id 
-                                            ? 'bg-green-50 text-[#14532d] shadow-sm relative ring-1 ring-green-100' 
+                                            ? 'bg-purple-50 text-[#581c87] shadow-sm relative ring-1 ring-purple-100' 
                                             : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
                                         }`}
                                         onClick={() => handleTabChange(t.id)}
@@ -114,7 +114,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                                         <button
                                             className={`flex items-center justify-start gap-3 px-3 py-2.5 rounded-xl font-bold transition-all text-left cursor-pointer group ${
                                                 activeTab === t.id 
-                                                ? 'bg-green-50 text-[#14532d] shadow-sm relative ring-1 ring-green-100' 
+                                                ? 'bg-purple-50 text-[#581c87] shadow-sm relative ring-1 ring-purple-100' 
                                                 : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
                                             }`}
                                             onClick={() => handleTabChange(t.id)}
@@ -141,16 +141,16 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                                                             onClick={() => handleSubMenuChange(t.id, sub.param, sub.id)}
                                                             className={`flex items-center justify-start gap-2 px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all text-left cursor-pointer relative ${
                                                                 isActive
-                                                                ? 'text-[#14532d] bg-green-50/50'
+                                                                ? 'text-[#581c87] bg-purple-50/50'
                                                                 : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
                                                             }`}
                                                         >
-                                                            <div className={`absolute left-[-20px] top-1/2 -translate-y-1/2 w-3 h-px ${isActive ? 'bg-[#14532d]' : 'bg-slate-200'}`}></div>
+                                                            <div className={`absolute left-[-20px] top-1/2 -translate-y-1/2 w-3 h-px ${isActive ? 'bg-[#581c87]' : 'bg-slate-200'}`}></div>
                                                             <div className={`w-1.5 h-1.5 rounded-full ${
                                                                 sub.id === 'mistakes' || sub.id === 'hard' ? 'bg-rose-500' :
                                                                 sub.id === 'bookmarks' || sub.id === 'bookmarked' ? 'bg-[#ea980c]' :
-                                                                sub.id === 'learned' ? 'bg-green-500' :
-                                                                sub.id === 'history' ? 'bg-indigo-500' : 'bg-slate-400'
+                                                                sub.id === 'learned' ? 'bg-purple-500' :
+                                                                sub.id === 'history' ? 'bg-purple-500' : 'bg-slate-400'
                                                             }`}></div>
                                                             {sub.label}
                                                         </button>
@@ -172,7 +172,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                 {/* Desktop "Quay lại luyện tập" */}
                 <Link href="/toeic-practice" className="flex items-center gap-3.5 px-3 py-2.5 rounded-xl font-bold transition-all text-left cursor-pointer text-slate-500 hover:bg-slate-50 hover:text-slate-800 group">
                     <span className="w-[28px] h-[28px] shrink-0 rounded-lg flex items-center justify-center transition-all duration-300 bg-slate-100 text-slate-400 group-hover:bg-slate-200 group-hover:-translate-x-1">
-                        <svg className="w-4 h-4 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                        <svg className="w-4 h-4 text-[#581c87]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                         </svg>
                     </span>
@@ -186,7 +186,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                     onClick={() => setIsMobileMenuOpen(true)}
                     className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-slate-700 font-bold active:scale-[0.98] transition-transform w-full"
                 >
-                    <svg className="w-5 h-5 text-[#14532d] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <svg className="w-5 h-5 text-[#581c87] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     <span className="truncate flex-1 text-left text-[15px]">
                         {([...PROGRESS_TABS, ...BANK_TABS].find(t => t.id === activeTab)?.label || 'Chọn mục')}
                     </span>
@@ -200,7 +200,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
 				<aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 					<div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
 						<div className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight text-left">
-							<span className="w-8 h-8 rounded-[10px] flex items-center justify-center font-bold text-lg bg-[#14532d] text-white">📈</span>
+							<span className="w-8 h-8 rounded-[10px] flex items-center justify-center font-bold text-lg bg-[#581c87] text-white">📈</span>
 							Tiến Độ & Sổ Tay
 						</div>
 						<button onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
@@ -211,12 +211,12 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
 					<nav className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                         {activeTab?.startsWith('reports') && (
                             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-2">TIẾN ĐỘ CỦA TÔI</h4>
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-2">TIẾN ĐỘ LUYỆN ĐỀ</h4>
                                 <div className="space-y-1">
                                     {PROGRESS_TABS.map((t) => (
                                         <button
                                             key={t.id}
-                                            className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold transition-all text-left cursor-pointer ${activeTab === t.id ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                            className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold transition-all text-left cursor-pointer ${activeTab === t.id ? 'bg-purple-50 text-purple-700 border border-purple-200 shadow-[0_4px_12px_rgba(88, 28, 135,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
                                             onClick={() => {
                                                 handleTabChange(t.id);
                                                 setIsMobileMenuOpen(false);
@@ -240,7 +240,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                                     {BANK_TABS.map((t) => (
                                         <div key={t.id} className="flex flex-col gap-1">
                                             <button
-                                                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold transition-all text-left cursor-pointer ${activeTab === t.id ? 'bg-green-50 text-green-700 border border-green-200 shadow-[0_4px_12px_rgba(20,83,45,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold transition-all text-left cursor-pointer ${activeTab === t.id ? 'bg-purple-50 text-purple-700 border border-purple-200 shadow-[0_4px_12px_rgba(88, 28, 135,0.05)] relative z-10' : 'text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
                                                 onClick={() => {
                                                     handleTabChange(t.id);
                                                     if (!t.subMenus) {
@@ -271,16 +271,16 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
                                                                 }}
                                                                 className={`flex items-center justify-start gap-2 px-3 py-2 rounded-xl text-[13px] font-semibold transition-all text-left cursor-pointer relative ${
                                                                     isActive
-                                                                    ? 'text-[#14532d] bg-green-50/50 ring-1 ring-green-100'
+                                                                    ? 'text-[#581c87] bg-purple-50/50 ring-1 ring-purple-100'
                                                                     : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
                                                                 }`}
                                                             >
-                                                                <div className={`absolute left-[-14px] top-1/2 -translate-y-1/2 w-3 h-px ${isActive ? 'bg-[#14532d]' : 'bg-slate-200'}`}></div>
+                                                                <div className={`absolute left-[-14px] top-1/2 -translate-y-1/2 w-3 h-px ${isActive ? 'bg-[#581c87]' : 'bg-slate-200'}`}></div>
                                                                 <div className={`w-2 h-2 rounded-full ${
                                                                     sub.id === 'mistakes' || sub.id === 'hard' ? 'bg-rose-500' :
                                                                     sub.id === 'bookmarks' || sub.id === 'bookmarked' ? 'bg-[#ea980c]' :
-                                                                    sub.id === 'learned' ? 'bg-green-500' :
-                                                                    sub.id === 'history' ? 'bg-indigo-500' : 'bg-slate-400'
+                                                                    sub.id === 'learned' ? 'bg-purple-500' :
+                                                                    sub.id === 'history' ? 'bg-purple-500' : 'bg-slate-400'
                                                                 }`}></div>
                                                                 {sub.label}
                                                             </button>
@@ -300,7 +300,7 @@ export default function ProgressNavigation({ activeTab }: { activeTab: string })
 
 						<Link href="/toeic-practice" className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl font-bold transition-all text-left cursor-pointer text-slate-600 border border-transparent hover:bg-slate-50 hover:text-slate-900">
 							<span className="w-[36px] h-[36px] shrink-0 rounded-[12px] flex items-center justify-center transition-colors bg-slate-100/80 text-slate-400">
-								<svg className="w-5 h-5 text-[#14532d]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+								<svg className="w-5 h-5 text-[#581c87]" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
 							</span>
 							<span className="flex-1 truncate text-[15px]">Quay lại ToeicMore</span>
 						</Link>

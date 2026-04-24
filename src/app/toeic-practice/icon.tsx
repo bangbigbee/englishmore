@@ -10,7 +10,7 @@ export default function Icon() {
       <div
         style={{
           fontSize: 24,
-          background: 'linear-gradient(to right bottom, #14532d, #ea980c)',
+          background: 'linear-gradient(to right bottom, #581c87, #ea980c)',
           width: '100%',
           height: '100%',
           display: 'flex',

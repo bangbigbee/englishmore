@@ -205,13 +205,13 @@ export default function AdminUserManagement() {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 relative">
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
+              <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 relative">
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-purple-500 rounded-full animate-ping"></span>
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-purple-500 rounded-full"></span>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
               </div>
               <div>
-                <h3 className="text-lg flex font-black items-center gap-1.5 text-slate-800"><span className="text-emerald-600 text-xl">{onlineStats.online}</span> Đang online học bài ở ToeicMore</h3>
+                <h3 className="text-lg flex font-black items-center gap-1.5 text-slate-800"><span className="text-purple-600 text-xl">{onlineStats.online}</span> Đang online học bài ở ToeicMore</h3>
                 <p className="text-sm font-medium text-slate-500">Phân bố người dùng theo nội dung</p>
               </div>
             </div>
@@ -234,11 +234,11 @@ export default function AdminUserManagement() {
           <div className="flex items-center gap-4 border-t border-slate-100 pt-5">
              <div className="flex-1 px-1">
                 <div className="flex items-center justify-between text-[11px] uppercase tracking-wider font-bold mb-2">
-                   <span className="text-blue-600 flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-500"></div>THÀNH VIÊN ({onlineStats.users})</span>
+                   <span className="text-purple-600 flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-purple-500"></div>THÀNH VIÊN ({onlineStats.users})</span>
                    <span className="text-slate-500 flex items-center gap-1.5">KHÁCH ({onlineStats.guests})<div className="w-2 h-2 rounded-full bg-slate-300"></div></span>
                 </div>
                 <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
-                   <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${(onlineStats.users/Math.max(1, onlineStats.online))*100}%` }}></div>
+                   <div className="h-full bg-purple-500 transition-all duration-1000" style={{ width: `${(onlineStats.users/Math.max(1, onlineStats.online))*100}%` }}></div>
                    <div className="h-full bg-slate-200 transition-all duration-1000" style={{ width: `${(onlineStats.guests/Math.max(1, onlineStats.online))*100}%` }}></div>
                 </div>
              </div>
@@ -247,13 +247,13 @@ export default function AdminUserManagement() {
           {/* Detailed Lists */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t border-slate-100 pt-6">
             <div>
-              <h4 className="font-bold text-sm text-blue-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"></div>Thành viên đang học ({(onlineStats as any).users})</h4>
+              <h4 className="font-bold text-sm text-purple-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-purple-500"></div>Thành viên đang học ({(onlineStats as any).users})</h4>
               <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
                 {(onlineStats as any).usersDetails?.length === 0 && <p className="text-xs text-slate-400 italic">Không có thành viên nào online</p>}
                 {(onlineStats as any).usersDetails?.map((u: any, i: number) => (
                   <div key={i} className="flex justify-between items-center p-2 rounded-lg border border-slate-100 bg-slate-50">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">{u.user?.name?.charAt(0) || '?'}</div>
+                      <div className="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold shrink-0">{u.user?.name?.charAt(0) || '?'}</div>
                       <div className="flex flex-col"><span className="text-xs font-bold text-slate-700 truncate w-24" title={u.user?.name || u.user?.email || 'No Name'}>{u.user?.name || u.user?.email?.split('@')[0] || 'No Name'}</span><span className="text-[10px] text-slate-500">{u.user?.tier}</span></div>
                     </div>
                     <span className="text-[10px] font-bold px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 truncate max-w-[100px]" title={u.section}>{u.section}</span>
@@ -280,7 +280,7 @@ export default function AdminUserManagement() {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-center items-center text-center relative group min-h-[200px]">
-          <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mb-4 cursor-help">
+          <div className="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 mb-4 cursor-help">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
           </div>
           
@@ -288,7 +288,7 @@ export default function AdminUserManagement() {
           <div className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-help group/tooltip">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <div className="absolute opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none bg-slate-800 text-white text-xs rounded-lg p-3 w-64 right-0 top-full mt-2 shadow-xl z-50 text-left font-medium">
-              Chỉ số <strong className="text-blue-300">Lượt truy cập</strong> (Unique Visitors) được tính dựa trên số lượng người dùng độc nhất (theo ID Tài khoản hoặc Mã Thiết bị ẩn danh) truy cập vào hệ thống. Mỗi người dùng dù có mở bao nhiêu tab hay tải lại trang bao nhiêu lần trong cùng 1 ngày cũng chỉ tính là 1 lượt truy cập.
+              Chỉ số <strong className="text-purple-300">Lượt truy cập</strong> (Unique Visitors) được tính dựa trên số lượng người dùng độc nhất (theo ID Tài khoản hoặc Mã Thiết bị ẩn danh) truy cập vào hệ thống. Mỗi người dùng dù có mở bao nhiêu tab hay tải lại trang bao nhiêu lần trong cùng 1 ngày cũng chỉ tính là 1 lượt truy cập.
             </div>
           </div>
 
@@ -296,7 +296,7 @@ export default function AdminUserManagement() {
             <div className="flex justify-between items-end border-b border-slate-100 pb-3 mb-3">
               <div className="text-left">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hôm nay</p>
-                <h3 className="text-3xl font-black text-blue-600 tracking-tight">{onlineStats.dailyVisitors}</h3>
+                <h3 className="text-3xl font-black text-purple-600 tracking-tight">{onlineStats.dailyVisitors}</h3>
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lượt tải trang</p>
@@ -326,7 +326,7 @@ export default function AdminUserManagement() {
           <select
             value={courseFilter}
             onChange={(e) => setCourseFilter(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+            className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#581c87]"
           >
             <option value="">All Courses</option>
             {courses.map(c => (
@@ -342,7 +342,7 @@ export default function AdminUserManagement() {
             <input
               type="text"
               placeholder="Search name, phone, email..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#14532d]"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#581c87]"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -396,7 +396,7 @@ export default function AdminUserManagement() {
                     {user.enrollments.length > 0 ? (
                       <div className="flex flex-wrap gap-1.5">
                         {user.enrollments.map((enr, i) => (
-                          <span key={i} className="inline-block bg-[#14532d]/10 text-[#14532d] px-2 py-0.5 rounded text-[11px] font-medium whitespace-nowrap">
+                          <span key={i} className="inline-block bg-[#581c87]/10 text-[#581c87] px-2 py-0.5 rounded text-[11px] font-medium whitespace-nowrap">
                             {enr.course.title}
                           </span>
                         ))}

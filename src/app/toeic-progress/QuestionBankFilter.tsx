@@ -55,7 +55,7 @@ export default function QuestionBankFilter({ showHistory = false }: { showHistor
                 {showHistory && (
                     <button 
                         onClick={() => setFilter('history')}
-                        className={`flex items-center gap-1.5 px-4 py-2 text-sm font-bold rounded-lg transition-all duration-300 shrink-0 whitespace-nowrap ${filter === 'history' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                        className={`flex items-center gap-1.5 px-4 py-2 text-sm font-bold rounded-lg transition-all duration-300 shrink-0 whitespace-nowrap ${filter === 'history' ? 'bg-white text-purple-600 shadow-sm ring-1 ring-slate-900/5' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         Lịch sử thi
@@ -68,7 +68,7 @@ export default function QuestionBankFilter({ showHistory = false }: { showHistor
                 <span className="text-sm font-bold text-black mr-2 cursor-default">Lọc theo Part:</span>
                 {[1, 2, 3, 4, 5, 6, 7].map(partNum => (
                     <label key={partNum} className="flex items-center gap-2 cursor-pointer group">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${currentParts.includes(partNum) ? 'bg-[#14532d] border-[#14532d]' : 'border-slate-300 bg-white group-hover:border-[#14532d]/50'}`}>
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${currentParts.includes(partNum) ? 'bg-[#581c87] border-[#581c87]' : 'border-slate-300 bg-white group-hover:border-[#581c87]/50'}`}>
                             {currentParts.includes(partNum) && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
                         </div>
                         <span className="text-sm font-bold text-black">Part {partNum}</span>

@@ -107,7 +107,7 @@ export default function ActualTestLobbyPage() {
 
                 <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-200">
                     <div className="text-center mb-10">
-                        <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-700 font-bold text-sm mb-4">
+                        <div className="inline-block px-4 py-1.5 rounded-full bg-purple-50 text-purple-700 font-bold text-sm mb-4">
                             {testData.collection}
                         </div>
                         <h1 className="text-3xl md:text-5xl font-black text-slate-800 tracking-tight">{testData.title}</h1>

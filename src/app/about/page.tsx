@@ -60,9 +60,9 @@ export default async function AboutPage() {
 	return (
 		<div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col z-0">
 			{/* Decorative Background Elements */}
-			<div className="absolute top-0 inset-x-0 h-[450px] bg-gradient-to-b from-green-900 via-[#14532d] to-slate-50 z-[-1]" />
+			<div className="absolute top-0 inset-x-0 h-[450px] bg-gradient-to-b from-purple-900 via-[#581c87] to-slate-50 z-[-1]" />
 			<div className="absolute top-20 right-0 w-96 h-96 bg-amber-500/10 blur-[100px] rounded-full z-[-1]" />
-			<div className="absolute top-40 left-10 w-72 h-72 bg-emerald-500/15 blur-[100px] rounded-full z-[-1]" />
+			<div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/15 blur-[100px] rounded-full z-[-1]" />
 
 			<div className="flex-1 w-full max-w-5xl mx-auto pt-8 sm:pt-16 pb-20 relative z-10 px-4 sm:px-6 lg:px-8">
 				
@@ -84,7 +84,7 @@ export default async function AboutPage() {
                         <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-white tracking-tight mb-4 drop-shadow-md">
                             {title}
                         </h1>
-                        <p className="text-base sm:text-lg text-green-50 font-medium leading-relaxed max-w-xl mb-8 drop-shadow-sm">
+                        <p className="text-base sm:text-lg text-purple-50 font-medium leading-relaxed max-w-xl mb-8 drop-shadow-sm">
                             {description}
                         </p>
                         
@@ -123,12 +123,12 @@ export default async function AboutPage() {
                 </div>
 
 				{/* Main Card */}
-				<main className="bg-white rounded-[40px] shadow-[0_30px_60px_-15px_rgba(20,83,45,0.08)] border border-slate-100 p-8 sm:p-12 md:p-16 relative isolate animate-in slide-in-from-bottom-10 fade-in duration-700">
+				<main className="bg-white rounded-[40px] shadow-[0_30px_60px_-15px_rgba(88, 28, 135,0.08)] border border-slate-100 p-8 sm:p-12 md:p-16 relative isolate animate-in slide-in-from-bottom-10 fade-in duration-700">
 
 
 					{/* Experience Highlights */}
 					<h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8 flex items-center gap-3">
-						<span className="w-2 h-8 rounded-full bg-[#14532d] block shadow-sm" />
+						<span className="w-2 h-8 rounded-full bg-[#581c87] block shadow-sm" />
 						Hành Trình & Kinh Nghiệm
 					</h2>
 
@@ -136,9 +136,9 @@ export default async function AboutPage() {
 						{/* Item 1 */}
 						<div className="group bg-[#f4faef] hover:bg-[#eaf5e1] rounded-[24px] overflow-hidden transition-colors border-2 border-white shadow-sm hover:shadow-md flex flex-col">
                             {/* Top part with gradient bg and image */}
-                            <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#dcfce7]/50 p-6 sm:p-7 gap-6 justify-between items-start">
+                            <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#f3e8ff]/50 p-6 sm:p-7 gap-6 justify-between items-start">
                                 <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#14532d] mb-4 border-2 border-[#14532d]/20 group-hover:scale-110 transition-transform duration-500">
+                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid1Title}</h3>
@@ -149,7 +149,7 @@ export default async function AboutPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#14532d]/10 to-transparent my-1"></div>
+                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
 							<div className="p-6 sm:p-7 pt-4">
                                 <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
                                     {grid1Desc}
@@ -162,7 +162,7 @@ export default async function AboutPage() {
                             {/* Top part */}
                             <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#e4f9e4] p-6 sm:p-7 gap-6 justify-between items-start">
                                 <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#14532d] mb-4 border-2 border-[#14532d]/20 group-hover:scale-110 transition-transform duration-500">
+                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid2Title}</h3>
@@ -173,7 +173,7 @@ export default async function AboutPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#14532d]/10 to-transparent my-1"></div>
+                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
 							<div className="p-6 sm:p-7 pt-4">
                                 <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
                                     {grid2Desc}
@@ -186,7 +186,7 @@ export default async function AboutPage() {
                             {/* Top part */}
                             <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#e4f9e4] p-6 sm:p-7 gap-6 justify-between items-start">
                                 <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#14532d] mb-4 border-2 border-[#14532d]/20 group-hover:scale-110 transition-transform duration-500">
+                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid3Title}</h3>
@@ -197,7 +197,7 @@ export default async function AboutPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#14532d]/10 to-transparent my-1"></div>
+                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
 							<div className="p-6 sm:p-7 pt-4">
                                 <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
                                     {grid3Desc}
@@ -210,7 +210,7 @@ export default async function AboutPage() {
                             {/* Top part */}
                             <div className="flex flex-col sm:flex-row bg-gradient-to-r from-[#eaf5e1] to-[#e4f9e4] p-6 sm:p-7 gap-6 justify-between items-start">
                                 <div className="flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#14532d] mb-4 border-2 border-[#14532d]/20 group-hover:scale-110 transition-transform duration-500">
+                                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#581c87] mb-4 border-2 border-[#581c87]/20 group-hover:scale-110 transition-transform duration-500">
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     </div>
                                     <h3 className="text-xl font-bold text-slate-800 leading-tight">{grid4Title}</h3>
@@ -221,7 +221,7 @@ export default async function AboutPage() {
                                     </div>
                                 )}
                             </div>
-                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#14532d]/10 to-transparent my-1"></div>
+                            <div className="h-px w-full bg-gradient-to-r from-transparent via-[#581c87]/10 to-transparent my-1"></div>
 							<div className="p-6 sm:p-7 pt-4">
                                 <p className="text-slate-600 leading-relaxed text-[13.5px] whitespace-pre-wrap">
                                     {grid4Desc}

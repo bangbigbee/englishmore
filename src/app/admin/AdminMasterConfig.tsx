@@ -153,7 +153,7 @@ export default function AdminMasterConfig() {
         {/* TOEIC GRAMMAR */}
         <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
           <h3 className="font-bold text-lg text-slate-800 mb-6 flex items-center gap-2">
-            <span className="bg-emerald-100 text-emerald-800 w-8 h-8 rounded-lg flex items-center justify-center">1</span>
+            <span className="bg-purple-100 text-purple-800 w-8 h-8 rounded-lg flex items-center justify-center">1</span>
             Mặc định Quiz Grammar
           </h3>
           
@@ -161,7 +161,7 @@ export default function AdminMasterConfig() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền xem Lý thuyết</label>
               <select
-                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#14532d] focus:border-[#14532d]"
+                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#581c87] focus:border-[#581c87]"
                 value={config.grammar.theoryAccessTier}
                 onChange={(e) => setConfig({ ...config, grammar: { ...config.grammar, theoryAccessTier: e.target.value } })}
               >
@@ -173,7 +173,7 @@ export default function AdminMasterConfig() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền xem Giải thích</label>
               <select
-                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#14532d] focus:border-[#14532d]"
+                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#581c87] focus:border-[#581c87]"
                 value={config.grammar.explanationAccessTier}
                 onChange={(e) => setConfig({ ...config, grammar: { ...config.grammar, explanationAccessTier: e.target.value } })}
               >
@@ -185,7 +185,7 @@ export default function AdminMasterConfig() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền xem Dịch nghĩa</label>
               <select
-                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#14532d] focus:border-[#14532d]"
+                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#581c87] focus:border-[#581c87]"
                 value={config.grammar.translationAccessTier}
                 onChange={(e) => setConfig({ ...config, grammar: { ...config.grammar, translationAccessTier: e.target.value } })}
               >
@@ -197,7 +197,7 @@ export default function AdminMasterConfig() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền Sổ Tay Ngữ Pháp</label>
               <select
-                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#14532d] focus:border-[#14532d]"
+                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#581c87] focus:border-[#581c87]"
                 value={config.grammar.grammarBookmarkAccessTier}
                 onChange={(e) => setConfig({ ...config, grammar: { ...config.grammar, grammarBookmarkAccessTier: e.target.value } })}
               >
@@ -209,7 +209,7 @@ export default function AdminMasterConfig() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền Sổ Tay Luyện Đọc</label>
               <select
-                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#14532d] focus:border-[#14532d]"
+                className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#581c87] focus:border-[#581c87]"
                 value={config.grammar.readingBookmarkAccessTier}
                 onChange={(e) => setConfig({ ...config, grammar: { ...config.grammar, readingBookmarkAccessTier: e.target.value } })}
               >
@@ -224,7 +224,7 @@ export default function AdminMasterConfig() {
         {/* VOCABULARY */}
         <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
           <h3 className="font-bold text-lg text-slate-800 mb-6 flex items-center gap-2">
-            <span className="bg-emerald-100 text-emerald-800 w-8 h-8 rounded-lg flex items-center justify-center">2</span>
+            <span className="bg-purple-100 text-purple-800 w-8 h-8 rounded-lg flex items-center justify-center">2</span>
             Mặc định Từ vựng / Flashcard
           </h3>
           
@@ -234,7 +234,7 @@ export default function AdminMasterConfig() {
               const isUltra = config.vocabulary.ultraFields.includes(field.value)
 
               return (
-                <div key={field.value} className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg hover:border-emerald-200 transition-colors">
+                <div key={field.value} className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg hover:border-purple-200 transition-colors">
                   <span className="text-sm font-semibold text-slate-700">{field.label}</span>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2 cursor-pointer">

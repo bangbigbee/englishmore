@@ -28,7 +28,7 @@ export default function ReportsDashboard({ vocabularyHeatmap, vocabularyStats, q
                             onClick={() => setSubTab(tab.id)}
                             className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all shrink-0 whitespace-nowrap ${
                                 subTab === tab.id
-                                    ? 'bg-white text-[#14532d] shadow-sm xl:bg-[#14532d] xl:text-white'
+                                    ? 'bg-white text-[#581c87] shadow-sm xl:bg-[#581c87] xl:text-white'
                                     : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 xl:bg-slate-50 xl:hover:bg-slate-100'
                             }`}
                         >
@@ -69,16 +69,16 @@ function VocabularyReport({ stats, heatmap }: any) {
         <div className="mt-8 animate-in fade-in zoom-in-95 duration-300">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 				<div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-center relative overflow-hidden shadow-sm">
-					<div className="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full blur-2xl"></div>
+					<div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-50 rounded-full blur-2xl"></div>
 					<h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2 relative">Đã thuộc (Learned)</h3>
 					<div className="flex items-baseline gap-2 relative">
 						<span className="text-4xl font-black text-slate-800">{learnedCount}</span>
 						<span className="text-slate-400 font-medium text-sm">/ {totalWords} từ</span>
 					</div>
 					<div className="mt-4 w-full bg-slate-100 rounded-full h-2">
-						<div className="bg-green-500 h-2 rounded-full" style={{ width: `${Math.min(100, completionRate)}%` }} />
+						<div className="bg-purple-500 h-2 rounded-full" style={{ width: `${Math.min(100, completionRate)}%` }} />
 					</div>
-					<p className="text-xs font-bold text-green-600 mt-2">Hoàn thành {completionRate}% mục tiêu</p>
+					<p className="text-xs font-bold text-purple-600 mt-2">Hoàn thành {completionRate}% mục tiêu</p>
 				</div>
 
 				<div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-center relative overflow-hidden shadow-sm">
@@ -118,10 +118,10 @@ function VocabularyReport({ stats, heatmap }: any) {
 				<div className="flex justify-between items-end gap-1.5 sm:gap-2">
 					{heatmap.map((d: any, i: number) => {
 						let colorClass = "bg-slate-100";
-						if (d.count > 0) colorClass = "bg-green-200";
-						if (d.count >= 10) colorClass = "bg-green-400";
-						if (d.count >= 30) colorClass = "bg-green-600";
-						if (d.count >= 50) colorClass = "bg-green-800";
+						if (d.count > 0) colorClass = "bg-purple-200";
+						if (d.count >= 10) colorClass = "bg-purple-400";
+						if (d.count >= 30) colorClass = "bg-purple-600";
+						if (d.count >= 50) colorClass = "bg-purple-800";
 
 						const isToday = i === heatmap.length - 1; // last array item
 
@@ -132,7 +132,7 @@ function VocabularyReport({ stats, heatmap }: any) {
 								</div>
 								
 								<div 
-									className={`w-full max-w-[28px] aspect-square rounded-md ${colorClass} transition-transform hover:scale-110 cursor-pointer ${isToday ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
+									className={`w-full max-w-[28px] aspect-square rounded-md ${colorClass} transition-transform hover:scale-110 cursor-pointer ${isToday ? 'ring-2 ring-purple-500 ring-offset-2' : ''}`}
 									title={`${d.dateLabel}: Tâm đắc ${d.count} từ vựng`}
 								/>
 								
@@ -148,16 +148,16 @@ function VocabularyReport({ stats, heatmap }: any) {
 					<span>Nhẹ</span>
 					<div className="flex gap-1">
 						<div className="w-3 h-3 rounded-sm bg-slate-100"></div>
-						<div className="w-3 h-3 rounded-sm bg-green-200"></div>
-						<div className="w-3 h-3 rounded-sm bg-green-400"></div>
-						<div className="w-3 h-3 rounded-sm bg-green-600"></div>
-						<div className="w-3 h-3 rounded-sm bg-green-800"></div>
+						<div className="w-3 h-3 rounded-sm bg-purple-200"></div>
+						<div className="w-3 h-3 rounded-sm bg-purple-400"></div>
+						<div className="w-3 h-3 rounded-sm bg-purple-600"></div>
+						<div className="w-3 h-3 rounded-sm bg-purple-800"></div>
 					</div>
 					<span>Căng</span>
 				</div>
 			</div>
             
-            <div className="bg-indigo-50 text-indigo-800 rounded-2xl p-6 border border-indigo-100 flex gap-4 mt-6">
+            <div className="bg-purple-50 text-purple-800 rounded-2xl p-6 border border-purple-100 flex gap-4 mt-6">
 				<div className="text-3xl shrink-0">💡</div>
 				<div>
 					<h4 className="font-bold mb-1">Mẹo học Spaced Repetition</h4>
@@ -179,14 +179,14 @@ function QuizReport({ title, description, isFullTest, stats }: { title: string, 
         <div className="mt-8 animate-in fade-in zoom-in-95 duration-300">
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-center relative overflow-hidden shadow-sm">
-					<div className="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full blur-2xl"></div>
+					<div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-50 rounded-full blur-2xl"></div>
 					<h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2 relative">Câu trả lời đúng</h3>
 					<div className="flex items-baseline gap-2 relative">
 						<span className="text-4xl font-black text-slate-800">{stats?.correct || 0}</span>
 						<span className="text-slate-400 font-medium text-sm">câu</span>
 					</div>
 					<div className="mt-4 w-full bg-slate-100 rounded-full h-2">
-						<div className="bg-green-500 h-2 rounded-full" style={{ width: hasData ? `${Math.round((stats.correct / (stats.correct + stats.incorrect)) * 100)}%` : '0%' }} />
+						<div className="bg-purple-500 h-2 rounded-full" style={{ width: hasData ? `${Math.round((stats.correct / (stats.correct + stats.incorrect)) * 100)}%` : '0%' }} />
 					</div>
 				</div>
 
@@ -204,14 +204,14 @@ function QuizReport({ title, description, isFullTest, stats }: { title: string, 
 				</div>
 
 				<div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-center relative overflow-hidden shadow-sm">
-					<div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full blur-2xl"></div>
+					<div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-50 rounded-full blur-2xl"></div>
 					<h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2 relative">Thời gian làm bài</h3>
 					<div className="flex items-baseline gap-2 relative">
 						<span className="text-4xl font-black text-slate-800">{timeValue}</span>
 						<span className="text-slate-400 font-medium text-sm">{isFullTest ? 'phút' : 'giây'}</span>
 					</div>
 					<div className="mt-4 flex items-center gap-2">
-						<span className="flex items-center justify-center w-5 h-5 rounded-md bg-blue-100 text-blue-600 text-xs shadow-sm">⏱️</span>
+						<span className="flex items-center justify-center w-5 h-5 rounded-md bg-purple-100 text-purple-600 text-xs shadow-sm">⏱️</span>
 						<p className="text-xs font-bold text-slate-600">Tổng thời gian luyện tập</p>
 					</div>
 				</div>

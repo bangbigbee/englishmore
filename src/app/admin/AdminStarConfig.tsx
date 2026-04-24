@@ -142,12 +142,12 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
               onChange={e => setIsActive(e.target.checked)}
               className="rounded text-amber-600 focus:ring-amber-500 w-4 h-4"
             />
-            <span className={isActive ? 'text-green-600 font-medium' : 'text-slate-400'}>
+            <span className={isActive ? 'text-purple-600 font-medium' : 'text-slate-400'}>
               {isActive ? 'Bật' : 'Tắt'}
             </span>
           </label>
         ) : (
-          <span className={`inline-flex px-2 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${rule.isActive ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+          <span className={`inline-flex px-2 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${rule.isActive ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}`}>
             {rule.isActive ? 'Bật' : 'Tắt'}
           </span>
         )}
@@ -176,7 +176,7 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
         ) : (
           <button 
             onClick={() => setIsEditing(true)}
-            className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors"
+            className="text-purple-600 hover:text-purple-800 font-medium text-sm transition-colors"
           >
             Chỉnh sửa
           </button>

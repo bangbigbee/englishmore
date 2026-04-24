@@ -244,18 +244,18 @@ function CoursesContent() {
         name: 'Super Early Bird',
         discount: sebDiscount,
         label: 'Ưu đãi lớn nhất',
-        color: 'from-emerald-500 to-teal-600',
-        textColor: 'text-emerald-700',
-        bgColor: 'bg-emerald-50'
+        color: 'from-purple-500 to-purple-600',
+        textColor: 'text-purple-700',
+        bgColor: 'bg-purple-50'
       }
     } else if (diffDays >= ebDays) {
       return {
         name: 'Early Bird',
         discount: ebDiscount,
         label: 'Tiết kiệm ngay',
-        color: 'from-blue-500 to-indigo-600',
-        textColor: 'text-blue-700',
-        bgColor: 'bg-blue-50'
+        color: 'from-purple-500 to-purple-600',
+        textColor: 'text-purple-700',
+        bgColor: 'bg-purple-50'
       }
     } else {
       return {
@@ -339,7 +339,7 @@ function CoursesContent() {
     <div className="flex flex-col min-h-screen lg:h-[calc(100vh-84px)] lg:min-h-0 bg-gray-50 lg:overflow-hidden">
       <div className="bg-white shadow-xs border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#14532d]">Available Courses</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#581c87]">Available Courses</h1>
           <p className="mt-2 text-xs sm:text-sm text-slate-500">Chọn khóa học bạn muốn tham gia để xem chi tiết và đăng ký.</p>
         </div>
       </div>
@@ -367,11 +367,11 @@ function CoursesContent() {
                       onClick={() => setExpandedCourseId(course.id)}
                       className={`w-full text-left transition-all duration-300 rounded-xl border p-4 shadow-sm hover:shadow-md ${
                         isActive 
-                          ? 'border-[#14532d] bg-linear-to-br from-[#14532d]/10 to-white' 
-                          : 'border-slate-200 bg-white hover:border-[#14532d]/30'
+                          ? 'border-[#581c87] bg-linear-to-br from-[#581c87]/10 to-white' 
+                          : 'border-slate-200 bg-white hover:border-[#581c87]/30'
                       }`}
                     >
-                      <p className={`font-bold leading-tight ${isActive ? 'text-[#14532d]' : 'text-slate-800'}`}>
+                      <p className={`font-bold leading-tight ${isActive ? 'text-[#581c87]' : 'text-slate-800'}`}>
                         {course.title}
                       </p>
                       <div className="mt-2 flex items-center justify-between">
@@ -384,7 +384,7 @@ function CoursesContent() {
                           )
                         })()}
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          isFull ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'
+                          isFull ? 'bg-red-50 text-red-600' : 'bg-purple-50 text-purple-600'
                         }`}>
                           {isFull ? 'Đã đầy' : 'Còn chỗ'}
                         </span>
@@ -420,12 +420,12 @@ function CoursesContent() {
                       <div className="px-5 py-6 sm:px-8 sm:py-8 border-b border-slate-100">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>
-                            <h2 className="text-3xl font-extrabold text-[#14532d] leading-tight">{course.title}</h2>
+                            <h2 className="text-3xl font-extrabold text-[#581c87] leading-tight">{course.title}</h2>
                             <div className="mt-2 flex flex-wrap items-center gap-4 text-sm">
                               <p className="text-slate-600">
                                 <strong>Hạn đăng ký:</strong> {registrationDeadlineText}
                               </p>
-                              <p className={`font-bold ${isFull ? 'text-red-700' : 'text-emerald-700'}`}>
+                              <p className={`font-bold ${isFull ? 'text-red-700' : 'text-purple-700'}`}>
                                 ● {getAvailabilityText(course)}
                               </p>
                             </div>
@@ -462,27 +462,27 @@ function CoursesContent() {
                               isFull ||
                               (!getEnrollmentStatus(course.id) && hasExistingEnrollment)
                             }
-                            className="w-full sm:w-auto rounded-xl bg-[#14532d] px-10 py-4 text-base font-bold text-white shadow-lg transition hover:bg-[#166534] hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="w-full sm:w-auto rounded-xl bg-[#581c87] px-10 py-4 text-base font-bold text-white shadow-lg transition hover:bg-[#6b21a8] hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
                           >
                             {registering === course.id ? 'Đang đăng ký...' : 'Đăng Ký Ngay'}
                           </button>
                           
                           {isPendingPayment && (
-                            <p className="mt-4 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                            <p className="mt-4 text-sm font-semibold text-purple-700 bg-purple-50 border border-purple-200 p-4 rounded-lg">
                               Bạn đã đăng ký khóa học này. Vui lòng chờ admin xác nhận chuyển khoản.
                             </p>
                           )}
                         </div>
 
                         {enrollment && enrollment.status !== 'pending' && (
-                          <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                          <div className="mt-6 rounded-xl border border-purple-200 bg-purple-50 p-4 text-sm text-purple-800">
                             <p className="font-bold flex items-center gap-2">
                               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                               Trạng thái: Đã vào lớp
                             </p>
                             <button
                               onClick={() => openPaymentInfo(course)}
-                              className="mt-3 inline-block rounded-lg border border-[#14532d]/30 bg-white px-4 py-2 text-xs font-bold text-[#14532d] hover:bg-[#14532d]/10"
+                              className="mt-3 inline-block rounded-lg border border-[#581c87]/30 bg-white px-4 py-2 text-xs font-bold text-[#581c87] hover:bg-[#581c87]/10"
                             >
                               Xem thông tin chuyển khoản
                             </button>
@@ -505,7 +505,7 @@ function CoursesContent() {
                       <div className="px-5 pb-8 pt-4 sm:px-8 sm:pb-10 sm:pt-5 space-y-8">
                         <div>
                           <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-[#14532d] rounded-full"></span>
+                            <span className="w-1.5 h-6 bg-[#581c87] rounded-full"></span>
                             Thông tin chi tiết
                           </h3>
                           <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
@@ -516,7 +516,7 @@ function CoursesContent() {
                         {/* Current Offers Section */}
                         <div>
                           <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-emerald-700 rounded-full"></span>
+                            <span className="w-1.5 h-6 bg-purple-700 rounded-full"></span>
                             Ưu đãi hiện có
                           </h3>
                           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm overflow-hidden relative">
@@ -558,8 +558,8 @@ function CoursesContent() {
                                         key={phase.name} 
                                         className={`flex-1 rounded-2xl border-2 p-4 transition-all duration-300 ${
                                           phase.isActive 
-                                            ? phase.color === 'emerald' ? 'border-emerald-500 bg-emerald-50 ring-4 ring-emerald-500/10 scale-[1.02]' :
-                                              phase.color === 'blue' ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-500/10 scale-[1.02]' :
+                                            ? phase.color === 'emerald' ? 'border-purple-500 bg-purple-50 ring-4 ring-purple-500/10 scale-[1.02]' :
+                                              phase.color === 'blue' ? 'border-purple-500 bg-purple-50 ring-4 ring-purple-500/10 scale-[1.02]' :
                                               'border-slate-500 bg-slate-50 ring-4 ring-slate-500/10 scale-[1.02]'
                                             : 'border-slate-300 bg-white opacity-60 grayscale-[0.5]'
                                         }`}
@@ -568,8 +568,8 @@ function CoursesContent() {
                                           <div>
                                             <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 ${
                                               phase.isActive 
-                                                ? phase.color === 'emerald' ? 'bg-emerald-500 text-white' :
-                                                  phase.color === 'blue' ? 'bg-blue-500 text-white' :
+                                                ? phase.color === 'emerald' ? 'bg-purple-500 text-white' :
+                                                  phase.color === 'blue' ? 'bg-purple-500 text-white' :
                                                   'bg-slate-500 text-white'
                                                 : 'bg-slate-200 text-slate-500'
                                             }`}>
@@ -581,8 +581,8 @@ function CoursesContent() {
                                           </div>
                                           <p className={`mt-3 text-lg font-black ${
                                             phase.isActive 
-                                              ? phase.color === 'emerald' ? 'text-emerald-700' :
-                                                phase.color === 'blue' ? 'text-blue-700' :
+                                              ? phase.color === 'emerald' ? 'text-purple-700' :
+                                                phase.color === 'blue' ? 'text-purple-700' :
                                                 'text-slate-700'
                                               : 'text-slate-400'
                                           }`}>
@@ -594,12 +594,12 @@ function CoursesContent() {
                                   </div>
 
                                   {tier.name !== 'Regular' && (
-                                    <div className="rounded-xl bg-blue-50 border border-blue-100 p-3 flex items-center justify-between">
+                                    <div className="rounded-xl bg-purple-50 border border-purple-100 p-3 flex items-center justify-between">
                                       <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                                        <p className="text-sm font-bold text-blue-800">Giai đoạn hiện tại: {tier.name}</p>
+                                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
+                                        <p className="text-sm font-bold text-purple-800">Giai đoạn hiện tại: {tier.name}</p>
                                       </div>
-                                      <p className="text-sm font-black text-[#14532d]">
+                                      <p className="text-sm font-black text-[#581c87]">
                                         TIẾT KIỆM: {formatVnd(originalPrice - Math.round(originalPrice * (1 - tier.discount)))}
                                       </p>
                                     </div>
@@ -612,9 +612,9 @@ function CoursesContent() {
 
                         <div className="pt-6 border-t border-slate-100">
                           <p className="text-sm text-slate-600 leading-relaxed">
-                            Mọi thông tin thêm, vui lòng liên hệ <strong>Mr. Nguyễn Trí Bằng</strong> qua số điện thoại <a href="tel:0915091093" className="text-[#14532d] hover:underline font-semibold">0915091093</a>. 
+                            Mọi thông tin thêm, vui lòng liên hệ <strong>Mr. Nguyễn Trí Bằng</strong> qua số điện thoại <a href="tel:0915091093" className="text-[#581c87] hover:underline font-semibold">0915091093</a>. 
                             Hoặc nhắn tin về Facebook:
-                            <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="block mt-2 font-medium text-[#14532d] hover:underline">facebook.com/bangbigbee</a>
+                            <a href="https://www.facebook.com/bangbigbee" target="_blank" rel="noreferrer" className="block mt-2 font-medium text-[#581c87] hover:underline">facebook.com/bangbigbee</a>
                           </p>
                         </div>
                       </div>
@@ -634,10 +634,10 @@ function CoursesContent() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                className="rounded-lg border border-[#14532d]/40 bg-white shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+                className="rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
               >
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold text-[#14532d]">Payment Details</h3>
+                  <h3 className="text-xl font-bold text-[#581c87]">Payment Details</h3>
                   <button
                     onClick={() => {
                       setPaymentInstruction(null)
@@ -649,7 +649,7 @@ function CoursesContent() {
                   </button>
                 </div>
 
-                <p className="text-green-700 bg-green-50 border border-green-200 rounded p-3 text-sm mb-4">
+                <p className="text-purple-700 bg-purple-50 border border-purple-200 rounded p-3 text-sm mb-4">
                   Please use the exact transfer message below so the admin can confirm your payment.
                 </p>
 
@@ -681,12 +681,12 @@ function CoursesContent() {
                   </div>
                   <div className="py-2">
                     <p className="text-gray-600 mb-1">Transfer message:</p>
-                    <div className="rounded border-2 border-[#14532d] bg-green-50 p-3 text-center">
-                      <span className="font-mono text-sm font-normal tracking-wider text-[#14532d]">
-                        <LinkifiedText text={paymentInstruction.transferContent} preserveLineBreaks={false} linkClassName="break-all font-medium text-[#14532d] underline underline-offset-2 hover:text-[#166534]" />
+                    <div className="rounded border-2 border-[#581c87] bg-purple-50 p-3 text-center">
+                      <span className="font-mono text-sm font-normal tracking-wider text-[#581c87]">
+                        <LinkifiedText text={paymentInstruction.transferContent} preserveLineBreaks={false} linkClassName="break-all font-medium text-[#581c87] underline underline-offset-2 hover:text-[#6b21a8]" />
                       </span>
                     </div>
-                    <p className="text-sm text-[#14532d] font-semibold mt-1">Example: Nguyen Van A - 0934567890</p>
+                    <p className="text-sm text-[#581c87] font-semibold mt-1">Example: Nguyen Van A - 0934567890</p>
                   </div>
                 </div>
 
@@ -699,7 +699,7 @@ function CoursesContent() {
                     setPaymentInstruction(null)
                   }}
                   disabled={Boolean(pendingRegistrationDraft && registering === pendingRegistrationDraft.courseId)}
-                  className="mt-4 w-full px-4 py-2 bg-[#14532d] text-white rounded hover:bg-[#166534]"
+                  className="mt-4 w-full px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
                 >
                   {pendingRegistrationDraft
                     ? registering === pendingRegistrationDraft.courseId
@@ -732,11 +732,11 @@ function CoursesContent() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                className="relative w-full max-w-md rounded-lg border-2 border-[#14532d] bg-white p-6 shadow-[0_18px_48px_rgba(20,83,45,0.22)]"
+                className="relative w-full max-w-md rounded-lg border-2 border-[#581c87] bg-white p-6 shadow-[0_18px_48px_rgba(88, 28, 135,0.22)]"
               >
                 <div className="mb-4 flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-xl font-bold text-[#14532d]">Ai đã giới thiệu khóa học {pendingReferralCourse.title} này cho bạn?</h3>
+                    <h3 className="text-xl font-bold text-[#581c87]">Ai đã giới thiệu khóa học {pendingReferralCourse.title} này cho bạn?</h3>
                   </div>
                   <button
                     type="button"
@@ -744,7 +744,7 @@ function CoursesContent() {
                       setPendingReferralCourse(null)
                       setReferrerInput('')
                     }}
-                    className="text-2xl leading-none text-[#14532d]/30 hover:text-[#14532d]"
+                    className="text-2xl leading-none text-[#581c87]/30 hover:text-[#581c87]"
                   >
                     ×
                   </button>
@@ -756,7 +756,7 @@ function CoursesContent() {
                   value={referrerInput}
                   onChange={(event) => setReferrerInput(event.target.value)}
                   placeholder="Không bắt buộc"
-                  className="mt-2 block w-full rounded-lg border border-slate-200 px-4 py-2 outline-none focus:border-[#14532d] focus:ring-1 focus:ring-[#14532d]"
+                  className="mt-2 block w-full rounded-lg border border-slate-200 px-4 py-2 outline-none focus:border-[#581c87] focus:ring-1 focus:ring-[#581c87]"
                 />
                 <p className="mt-2 text-xs text-gray-500">Để trống nếu bạn không được ai giới thiệu.</p>
 
@@ -782,7 +782,7 @@ function CoursesContent() {
                       openPaymentPreviewForRegistration(course, referrerInput)
                     }}
                     disabled={registering === pendingReferralCourse.id}
-                    className="rounded bg-[#14532d] px-4 py-2 text-sm font-medium text-white hover:bg-[#166534] disabled:opacity-50"
+                    className="rounded bg-[#581c87] px-4 py-2 text-sm font-medium text-white hover:bg-[#6b21a8] disabled:opacity-50"
                   >
                     {registering === pendingReferralCourse.id ? 'Đang đăng ký...' : 'Tiếp tục'}
                   </button>
@@ -798,7 +798,7 @@ function CoursesContent() {
 
 export default function CoursesPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-white"><div className="h-8 w-8 animate-spin rounded-full border-4 border-[#14532d] border-t-transparent"></div></div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-white"><div className="h-8 w-8 animate-spin rounded-full border-4 border-[#581c87] border-t-transparent"></div></div>}>
       <CoursesContent />
     </Suspense>
   )

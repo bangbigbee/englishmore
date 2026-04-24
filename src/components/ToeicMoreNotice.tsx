@@ -63,7 +63,7 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
       <div
         className={`pointer-events-auto transform transition-all duration-500 ease-out origin-bottom-right ${
           isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-90 opacity-0 translate-y-4 pointer-events-none'
-        } max-w-[290px] sm:max-w-[320px] w-[calc(100vw-1.5rem)] bg-white/95 backdrop-blur-xl border border-[#14532d]/10 p-4 sm:p-5 rounded-[20px] sm:rounded-[24px] shadow-[0_20px_40px_-15px_rgba(20,83,45,0.15)] ring-1 ring-black/5 relative`}
+        } max-w-[290px] sm:max-w-[320px] w-[calc(100vw-1.5rem)] bg-white/95 backdrop-blur-xl border border-[#581c87]/10 p-4 sm:p-5 rounded-[20px] sm:rounded-[24px] shadow-[0_20px_40px_-15px_rgba(88, 28, 135,0.15)] ring-1 ring-black/5 relative`}
       >
         <button
           onClick={handleClose}
@@ -74,7 +74,7 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
           </svg>
         </button>
 
-        <h4 className="text-[13px] sm:text-sm font-bold text-[#14532d] mb-1.5 sm:mb-2 flex items-center gap-1.5">
+        <h4 className="text-[13px] sm:text-sm font-bold text-[#581c87] mb-1.5 sm:mb-2 flex items-center gap-1.5">
           {config?.title || 'Thông báo nhỏ'}
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -90,7 +90,7 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
       {/* Floating Action Button */}
       <button
         onClick={handleClick}
-        className={`pointer-events-auto shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-linear-to-tr from-amber-50 to-emerald-50 border border-emerald-100/50 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all focus:outline-none ${isOpen ? 'ring-2 ring-emerald-300 ring-offset-2' : ''} ${isWiggling && !isOpen ? 'animate-bounce' : ''}`}
+        className={`pointer-events-auto shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-linear-to-tr from-amber-50 to-purple-50 border border-purple-100/50 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all focus:outline-none ${isOpen ? 'ring-2 ring-purple-300 ring-offset-2' : ''} ${isWiggling && !isOpen ? 'animate-bounce' : ''}`}
         title="Thông báo ToeicMore"
       >
         <img src="/toeicmoreicon.svg" alt="ToeicMore Notice" className="w-6 h-6 sm:w-7 sm:h-7 object-contain drop-shadow-sm" />

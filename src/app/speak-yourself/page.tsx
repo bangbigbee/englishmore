@@ -369,23 +369,23 @@ export default function SpeakYourselfPage() {
       <div className="mx-auto max-w-5xl">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-[#14532d]">Speak Yourself</h1>
+            <h1 className="text-3xl font-bold text-[#581c87]">Speak Yourself</h1>
             <p className="mt-1 text-sm text-slate-600">Build your personal introduction script and pass with pronunciation accuracy of at least 80%.</p>
           </div>
           <div className="flex gap-2">
-            <Link href="/dashboard" className="inline-flex items-center rounded-md border border-blue-700 bg-white px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50">
+            <Link href="/dashboard" className="inline-flex items-center rounded-md border border-purple-700 bg-white px-4 py-2 text-sm font-semibold text-purple-700 transition hover:bg-purple-50">
               Go to exercises
             </Link>
-            <Link href="/" className="inline-flex items-center rounded-md border border-[#14532d]/35 bg-white px-4 py-2 text-sm font-semibold text-[#14532d] transition hover:bg-[#14532d]/10">
+            <Link href="/" className="inline-flex items-center rounded-md border border-[#581c87]/35 bg-white px-4 py-2 text-sm font-semibold text-[#581c87] transition hover:bg-[#581c87]/10">
               Back to home
             </Link>
           </div>
         </div>
 
-        <div className="rounded-xl border border-[#14532d]/25 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-[#581c87]/25 bg-white p-6 shadow-sm">
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-[#14532d]">Speaking Assessment</h2>
+              <h2 className="text-lg font-bold text-[#581c87]">Speaking Assessment</h2>
               <p className="mt-1 text-sm text-slate-600">Enter your profile, generate your script, then record and submit your speech.</p>
             </div>
             {!speechSupported && (
@@ -420,7 +420,7 @@ export default function SpeakYourselfPage() {
               type="button"
               onClick={() => { void generateSpeakScript() }}
               disabled={generatingScript}
-              className="rounded bg-[#14532d] px-4 py-2 text-sm font-semibold text-white hover:bg-[#166534] disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded bg-[#581c87] px-4 py-2 text-sm font-semibold text-white hover:bg-[#6b21a8] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {generatingScript ? 'Generating…' : 'Generate script'}
             </button>
@@ -428,7 +428,7 @@ export default function SpeakYourselfPage() {
               type="button"
               onClick={isRecordingSpeak ? stopSpeakRecording : startSpeakRecording}
               disabled={!speechSupported || !generatedSpeakScript}
-              className={`inline-flex items-center gap-2 rounded px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${isRecordingSpeak ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-700 hover:bg-blue-800'}`}
+              className={`inline-flex items-center gap-2 rounded px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 ${isRecordingSpeak ? 'bg-red-600 hover:bg-red-700' : 'bg-purple-700 hover:bg-purple-800'}`}
             >
               {isRecordingSpeak ? (
                 <>
@@ -451,8 +451,8 @@ export default function SpeakYourselfPage() {
           </div>
 
           {generatedSpeakScript && (
-            <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Your script — read this aloud</p>
+            <div className="mt-4 rounded-lg border border-purple-200 bg-purple-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-purple-700">Your script — read this aloud</p>
               <p className="mt-2 text-sm leading-relaxed text-slate-800">{generatedSpeakScript}</p>
             </div>
           )}
@@ -509,26 +509,26 @@ export default function SpeakYourselfPage() {
               else if (dp[ai - 1][bi] >= dp[ai][bi - 1]) { ai-- } else { bi-- }
             }
             return (
-              <div className={`mt-4 rounded-lg border p-4 ${speakResult === 'pass' ? 'border-emerald-300 bg-emerald-50' : 'border-amber-300 bg-amber-50'}`}>
+              <div className={`mt-4 rounded-lg border p-4 ${speakResult === 'pass' ? 'border-purple-300 bg-purple-50' : 'border-amber-300 bg-amber-50'}`}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <p className={`text-sm font-bold ${speakResult === 'pass' ? 'text-emerald-800' : 'text-amber-800'}`}>
+                  <p className={`text-sm font-bold ${speakResult === 'pass' ? 'text-purple-800' : 'text-amber-800'}`}>
                     {speakResult === 'pass' ? `Pass — ${speakAccuracy}% accuracy` : `${speakAccuracy}% accuracy — needs 80% to pass`}
                   </p>
                   <div className="flex h-3 w-40 overflow-hidden rounded-full bg-gray-200">
                     <div
-                      className={`h-full rounded-full transition-all ${speakResult === 'pass' ? 'bg-emerald-500' : speakAccuracy >= 60 ? 'bg-amber-500' : 'bg-red-500'}`}
+                      className={`h-full rounded-full transition-all ${speakResult === 'pass' ? 'bg-purple-500' : speakAccuracy >= 60 ? 'bg-amber-500' : 'bg-red-500'}`}
                       style={{ width: `${speakAccuracy}%` }}
                     />
                   </div>
                 </div>
-                <p className={`mt-1 text-xs ${speakResult === 'pass' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                <p className={`mt-1 text-xs ${speakResult === 'pass' ? 'text-purple-700' : 'text-amber-700'}`}>
                   {speakResult === 'pass' ? 'Great job! You can now continue to all exercises.' : 'Keep practising — try reading more slowly and clearly.'}
                 </p>
                 <div className="mt-3 overflow-hidden border-t border-current/10 pt-3">
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Word analysis — <span className="text-emerald-600">green = spoken correctly</span>, <span className="text-red-500">red = missed</span></p>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Word analysis — <span className="text-purple-600">green = spoken correctly</span>, <span className="text-red-500">red = missed</span></p>
                   <div className="flex flex-wrap gap-x-1 gap-y-1 text-sm leading-6">
                     {expected.map((word, idx) => (
-                      <span key={idx} className={`max-w-full wrap-break-word rounded px-0.5 ${matched.has(idx) ? 'text-emerald-700' : 'bg-red-100 text-red-600 line-through'}`}>
+                      <span key={idx} className={`max-w-full wrap-break-word rounded px-0.5 ${matched.has(idx) ? 'text-purple-700' : 'bg-red-100 text-red-600 line-through'}`}>
                         {word}
                       </span>
                     ))}

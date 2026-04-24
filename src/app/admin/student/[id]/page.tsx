@@ -165,9 +165,9 @@ export default function StudentDetailPage() {
           ) : (
             <div className="space-y-4">
               {/* Progress Summary */}
-              <div className="mb-6 p-4 bg-[#14532d]/10 rounded">
+              <div className="mb-6 p-4 bg-[#581c87]/10 rounded">
                 <p className="text-gray-500 text-sm mb-2">Total submitted assignments</p>
-                <p className="text-3xl font-bold text-[#14532d]">{student.assignments.length}</p>
+                <p className="text-3xl font-bold text-[#581c87]">{student.assignments.length}</p>
               </div>
 
               {/* Assignment List */}
@@ -205,7 +205,7 @@ export default function StudentDetailPage() {
                               href={`/uploads/${assignment.filePath}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[#14532d] hover:text-[#14532d] hover:underline"
+                              className="text-[#581c87] hover:text-[#581c87] hover:underline"
                             >
                               View file
                             </a>

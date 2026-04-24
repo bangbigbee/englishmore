@@ -221,7 +221,7 @@ export default function AdminGallery() {
           <select
             value={selectedCourseId}
             onChange={(e) => setSelectedCourseId(e.target.value)}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#14532d] focus:outline-none focus:ring-1 focus:ring-[#14532d]"
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#581c87] focus:outline-none focus:ring-1 focus:ring-[#581c87]"
           >
             <option value="teacher">🔥 -- Video Teacher Gallery --</option>
             <option value="">-- Hình ảnh chung (Không khóa học) --</option>
@@ -243,7 +243,7 @@ export default function AdminGallery() {
                 fileInputRef.current?.click()
             }}
             disabled={uploading}
-            className="whitespace-nowrap rounded-lg bg-[#14532d] px-4 py-2 font-semibold text-white hover:bg-[#166534] disabled:opacity-50"
+            className="whitespace-nowrap rounded-lg bg-[#581c87] px-4 py-2 font-semibold text-white hover:bg-[#6b21a8] disabled:opacity-50"
           >
             {uploading ? 'Uploading...' : 'Upload Files'}
           </button>
@@ -251,15 +251,15 @@ export default function AdminGallery() {
       </div>
 
       {selectedCourseId === '' && (
-        <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="rounded-lg border border-purple-100 bg-purple-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-semibold text-blue-900">Animation Style</h3>
-            <p className="text-xs text-blue-700">Chọn cách thức hiển thị ảnh động cho Hình ảnh chung trên trang chủ.</p>
+            <h3 className="font-semibold text-purple-900">Animation Style</h3>
+            <p className="text-xs text-purple-700">Chọn cách thức hiển thị ảnh động cho Hình ảnh chung trên trang chủ.</p>
           </div>
           <select
             value={generalAnimation}
             onChange={(e) => handleUpdateGeneralAnimation(e.target.value)}
-            className="rounded bg-white border border-blue-300 px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="rounded bg-white border border-purple-300 px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
           >
             <option value="vertical">Dọc (Vertical Scroll)</option>
             <option value="horizontal">Ngang (Horizontal Scroll)</option>
@@ -269,15 +269,15 @@ export default function AdminGallery() {
       )}
 
       {selectedCourseId && selectedCourseId !== 'teacher' && selectedCourseDetails && (
-        <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="rounded-lg border border-purple-100 bg-purple-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-semibold text-blue-900">Animation Style</h3>
-            <p className="text-xs text-blue-700">Chọn cách thức hiển thị ảnh động cho khóa học này trên trang chủ.</p>
+            <h3 className="font-semibold text-purple-900">Animation Style</h3>
+            <p className="text-xs text-purple-700">Chọn cách thức hiển thị ảnh động cho khóa học này trên trang chủ.</p>
           </div>
           <select
             value={selectedCourseDetails.galleryAnimation}
             onChange={(e) => handleUpdateCourseAnimation(selectedCourseId, e.target.value)}
-            className="rounded bg-white border border-blue-300 px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="rounded bg-white border border-purple-300 px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
           >
             <option value="vertical">Dọc (Vertical Scroll)</option>
             <option value="horizontal">Ngang (Horizontal Scroll)</option>
@@ -320,7 +320,7 @@ export default function AdminGallery() {
                     type="checkbox"
                     checked={image.isActive}
                     onChange={(e) => handleUpdate(image.id, { isActive: e.target.checked })}
-                    className="h-3 w-3 rounded border-gray-300 text-[#14532d] focus:ring-[#14532d]"
+                    className="h-3 w-3 rounded border-gray-300 text-[#581c87] focus:ring-[#581c87]"
                   />
                   Active
                 </label>
@@ -331,7 +331,7 @@ export default function AdminGallery() {
                     min="0"
                     value={image.displayOrder}
                     onChange={(e) => handleUpdate(image.id, { displayOrder: parseInt(e.target.value) || 0 })}
-                    className="w-12 rounded border border-gray-300 px-1 py-0.5 text-xs focus:border-[#14532d] focus:outline-none focus:ring-1 focus:ring-[#14532d]"
+                    className="w-12 rounded border border-gray-300 px-1 py-0.5 text-xs focus:border-[#581c87] focus:outline-none focus:ring-1 focus:ring-[#581c87]"
                   />
                 </div>
               </div>

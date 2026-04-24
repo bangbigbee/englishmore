@@ -289,10 +289,10 @@ export default function PricingSettingsPage() {
           {/* ULTRA Settings */}
           {ultraPricing && (
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+              <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
               <div className="flex justify-between items-start mb-6">
                 <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                  <span className="bg-gradient-to-r from-emerald-500 to-[#14532d] text-white px-2 py-0.5 rounded text-xs tracking-widest font-black uppercase">ULTRA</span>
+                  <span className="bg-gradient-to-r from-purple-500 to-[#581c87] text-white px-2 py-0.5 rounded text-xs tracking-widest font-black uppercase">ULTRA</span>
                   Gói ULTRA
                 </h2>
                 <div>
@@ -300,7 +300,7 @@ export default function PricingSettingsPage() {
                   <select 
                     value={ultraPricing.activePhase}
                     onChange={e => setUltraPricing({...ultraPricing, activePhase: e.target.value as any})}
-                    className="border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm font-semibold"
+                    className="border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm font-semibold"
                   >
                     <option value="super_early_bird">Super Early Bird</option>
                     <option value="early_bird">Early Bird</option>
@@ -311,7 +311,7 @@ export default function PricingSettingsPage() {
               
               <div className="space-y-4">
                 {(['super_early_bird', 'early_bird', 'regular'] as const).map(phaseKey => (
-                  <div key={phaseKey} className={`p-4 rounded-lg border ${ultraPricing.activePhase === phaseKey ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200'}`}>
+                  <div key={phaseKey} className={`p-4 rounded-lg border ${ultraPricing.activePhase === phaseKey ? 'border-purple-500 bg-purple-50' : 'border-slate-200'}`}>
                     <h3 className="text-sm font-bold text-slate-700 mb-3 capitalize">{phaseKey.replace(/_/g, ' ')}</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -326,7 +326,7 @@ export default function PricingSettingsPage() {
                               [phaseKey]: { ...ultraPricing.phases[phaseKey], monthlyPrice: Number(e.target.value) }
                             }
                           })}
-                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm"
                         />
                       </div>
                       <div>
@@ -341,7 +341,7 @@ export default function PricingSettingsPage() {
                               [phaseKey]: { ...ultraPricing.phases[phaseKey], lifetimePrice: Number(e.target.value) }
                             }
                           })}
-                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm"
                         />
                       </div>
                       <div className="col-span-2">
@@ -356,7 +356,7 @@ export default function PricingSettingsPage() {
                               [phaseKey]: { ...ultraPricing.phases[phaseKey], upgradeLifetimePrice: Number(e.target.value) }
                             }
                           })}
-                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm"
                         />
                       </div>
                       <div className="col-span-2">
@@ -371,7 +371,7 @@ export default function PricingSettingsPage() {
                               [phaseKey]: { ...ultraPricing.phases[phaseKey], label: e.target.value }
                             }
                           })}
-                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm"
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm"
                           placeholder="e.g. Từ 1/5 - 31/5"
                         />
                       </div>
@@ -386,7 +386,7 @@ export default function PricingSettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="bg-[#14532d] text-white font-semibold py-2 px-6 rounded-lg hover:bg-emerald-800 disabled:opacity-50 transition shadow-sm"
+            className="bg-[#581c87] text-white font-semibold py-2 px-6 rounded-lg hover:bg-purple-800 disabled:opacity-50 transition shadow-sm"
           >
             {saving ? 'Đang lưu...' : 'Thay Đổi Bảng Giá'}
           </button>
@@ -453,7 +453,7 @@ export default function PricingSettingsPage() {
                       </td>
                       <td className="px-6 py-4">
                         {o.status === 'pending' && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Chờ duyệt</span>}
-                        {o.status === 'completed' && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Đã kích hoạt</span>}
+                        {o.status === 'completed' && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">Đã kích hoạt</span>}
                         {o.status === 'rejected' && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">Từ chối</span>}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -469,7 +469,7 @@ export default function PricingSettingsPage() {
                             <button
                               onClick={() => handleAction(o.id, 'approve')}
                               disabled={rejectingId === o.id || approvingId === o.id}
-                              className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50"
+                              className="px-3 py-1.5 text-xs font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-50"
                             >
                               {approvingId === o.id ? '...' : 'Duyệt Gói'}
                             </button>

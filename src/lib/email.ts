@@ -17,9 +17,9 @@ export async function sendOtpEmail(to: string, otp: string) {
     subject: 'EnglishMore registration verification code',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px 24px; border: 1px solid #e5e7eb; border-radius: 8px;">
-        <h2 style="color: #14532d; margin-top: 0;">Verify your EnglishMore registration</h2>
+        <h2 style="color: #581c87; margin-top: 0;">Verify your EnglishMore registration</h2>
         <p style="color: #374151;">Your OTP code is:</p>
-        <div style="font-size: 36px; font-weight: bold; letter-spacing: 10px; color: #14532d; text-align: center; padding: 20px 0; background: #f0fdf4; border-radius: 8px; margin: 16px 0;">
+        <div style="font-size: 36px; font-weight: bold; letter-spacing: 10px; color: #581c87; text-align: center; padding: 20px 0; background: #faf5ff; border-radius: 8px; margin: 16px 0;">
           ${otp}
         </div>
         <p style="color: #374151;">This code will expire in <strong>10 minutes</strong>.</p>

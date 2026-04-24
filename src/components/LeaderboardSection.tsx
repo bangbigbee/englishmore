@@ -42,7 +42,7 @@ export default function LeaderboardSection() {
   return (
     <section className="mt-12 px-1">
       <div className="mb-6">
-        <h3 className="text-xl font-bold tracking-tight text-[#14532d]">
+        <h3 className="text-xl font-bold tracking-tight text-[#581c87]">
           Bảng Xếp Hạng Activity
         </h3>
         <p className="text-sm text-slate-500 mt-1">Hoạt động tích cực để leo top nhận thưởng nhé!</p>
@@ -51,7 +51,7 @@ export default function LeaderboardSection() {
       <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-[#f0fdf4] text-xs uppercase text-[#14532d]">
+            <thead className="bg-[#faf5ff] text-xs uppercase text-[#581c87]">
               <tr>
                 <th className="px-4 py-3 font-bold text-center w-16">Hạng</th>
                 <th className="px-4 py-3 font-bold">Học Viên</th>
@@ -63,7 +63,7 @@ export default function LeaderboardSection() {
               {users.map((user) => (
                 <tr 
                   key={user.id} 
-                  className={`transition-colors hover:bg-slate-50 ${user.isCurrentUser ? 'bg-orange-50/60 font-bold text-[#14532d]' : ''}`}
+                  className={`transition-colors hover:bg-slate-50 ${user.isCurrentUser ? 'bg-orange-50/60 font-bold text-[#581c87]' : ''}`}
                 >
                   <td className="px-4 py-3 text-center">
                     {user.rank <= 3 ? (

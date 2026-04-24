@@ -17,7 +17,7 @@ export default function FooterContentClient({ title, items, fallbackMessage }: {
         <div className="max-w-6xl mx-auto pt-6 pb-16 px-4 sm:px-6">
             <div className="flex items-center gap-3 mb-8">
                 <div className="w-1.5 h-8 bg-[#ea980c] rounded-full"></div>
-                <h1 className="text-2xl sm:text-3xl font-black text-[#14532d]">{title}</h1>
+                <h1 className="text-2xl sm:text-3xl font-black text-[#581c87]">{title}</h1>
             </div>
 
             {items.length === 0 ? (
@@ -43,7 +43,7 @@ export default function FooterContentClient({ title, items, fallbackMessage }: {
                                 </div>
                             )}
                             <div className="p-6 flex flex-col flex-1 relative">
-                                <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-[#14532d] transition-colors line-clamp-2">
+                                <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-[#581c87] transition-colors line-clamp-2">
                                     {item.title}
                                 </h3>
                                 <p className="text-sm text-slate-500 line-clamp-3 mb-4 flex-1">
@@ -51,7 +51,7 @@ export default function FooterContentClient({ title, items, fallbackMessage }: {
                                 </p>
                                 <div className="pt-4 border-t border-slate-100 mt-auto flex items-center justify-between">
                                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">Xem chi tiết</span>
-                                    <div className="w-8 h-8 rounded-full bg-[#14532d] flex items-center justify-center text-white scale-90 group-hover:scale-100 transition-transform">
+                                    <div className="w-8 h-8 rounded-full bg-[#581c87] flex items-center justify-center text-white scale-90 group-hover:scale-100 transition-transform">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
                                             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                                         </svg>
@@ -102,19 +102,19 @@ export default function FooterContentClient({ title, items, fallbackMessage }: {
                                 
                                 <div className="p-6 sm:p-8 bg-white">
                                     {!selectedItem.imageUrl && (
-                                        <h2 className="text-2xl sm:text-3xl font-black text-[#14532d] mb-6 leading-tight">
+                                        <h2 className="text-2xl sm:text-3xl font-black text-[#581c87] mb-6 leading-tight">
                                             {selectedItem.title}
                                         </h2>
                                     )}
                                     
-                                    <div className="bg-emerald-50 rounded-2xl p-5 mb-8 border border-emerald-100 shadow-inner">
-                                        <p className="text-emerald-800 leading-relaxed font-medium">
+                                    <div className="bg-purple-50 rounded-2xl p-5 mb-8 border border-purple-100 shadow-inner">
+                                        <p className="text-purple-800 leading-relaxed font-medium">
                                             {selectedItem.description}
                                         </p>
                                     </div>
 
                                     <div 
-                                        className="prose prose-slate prose-lg sm:prose-xl max-w-none prose-headings:text-[#14532d] prose-a:text-[#ea980c] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl"
+                                        className="prose prose-slate prose-lg sm:prose-xl max-w-none prose-headings:text-[#581c87] prose-a:text-[#ea980c] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl"
                                         dangerouslySetInnerHTML={{ __html: selectedItem.content }} 
                                     />
                                 </div>

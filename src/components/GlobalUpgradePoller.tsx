@@ -104,8 +104,8 @@ export default function GlobalUpgradePoller() {
                   <IconZap className="w-5 h-5" /> ULTRA MASTERY
                 </div>
               ) : (
-                <div className="w-16 h-16 bg-[#14532d]/10 rounded-full flex items-center justify-center">
-                  <IconCheck className="w-8 h-8 text-[#14532d]" />
+                <div className="w-16 h-16 bg-[#581c87]/10 rounded-full flex items-center justify-center">
+                  <IconCheck className="w-8 h-8 text-[#581c87]" />
                 </div>
               )}
             </div>
@@ -121,7 +121,7 @@ export default function GlobalUpgradePoller() {
                 // Optionally reload the page for everything to take effect deeply
                 window.location.reload()
               }}
-              className="w-full font-bold rounded-xl py-3 mt-2 transition-colors bg-[#14532d] hover:bg-[#166534] text-white shadow-lg shadow-[#14532d]/20"
+              className="w-full font-bold rounded-xl py-3 mt-2 transition-colors bg-[#581c87] hover:bg-[#6b21a8] text-white shadow-lg shadow-[#581c87]/20"
             >
               Bắt đầu Trải nghiệm
             </button>
