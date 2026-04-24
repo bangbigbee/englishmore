@@ -37,6 +37,37 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   const pathname = usePathname()
   const currentTab = searchParams.get('tab') || 'home'
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [showRightArrow, setShowRightArrow] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
+        // Add 5px buffer
+        setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 5)
+      }
+    }
+    
+    // Initial check after render
+    setTimeout(handleScroll, 100)
+    
+    const el = scrollContainerRef.current
+    if (el) {
+      el.addEventListener('scroll', handleScroll)
+      window.addEventListener('resize', handleScroll)
+    }
+    return () => {
+      if (el) el.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+    }
+  }, [session, isToeicDomain])
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 150, behavior: 'smooth' })
+    }
+  }
 
   const handleToeicTabClick = (key: string) => {
     if (pathname.startsWith('/toeic-practice') || pathname === '/') {
@@ -86,103 +117,119 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
   return (
     <>
       {/* Desktop Main Navigation Tabs */}
-      <div className="hidden lg:flex items-center gap-3 xl:gap-5 overflow-x-auto pt-1 w-full justify-start ml-2 mr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {session ? (
-          <div className="flex items-center gap-2 xl:gap-3 shrink-0">
-            <Link
-              href="/user/profile"
-              className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/user/profile' ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
-            >
-              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]`}>
-                 <ModernUserIcon className="w-[18px] h-[18px]" />
-              </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/user/profile' ? "opacity-100" : "opacity-80 group-hover:opacity-100"} max-w-[120px] truncate`} title={session.user?.name || "Cá Nhân"}>
-                 {session.user?.name?.split(' ').pop() || "Cá Nhân"}
-              </span>
-            </Link>
-            <Link
-              href="/toeic-progress?tab=vocabulary-bank"
-              className={`relative overflow-hidden flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
-            >
-              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-purple-500`}>
-                 <BookIcon className="w-[18px] h-[18px] mt-[-2px]" />
-              </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] relative z-10 ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                 Sổ tay của tôi
-              </span>
-              <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-[#4c1d95]/10 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-            </Link>
-            <Link
-              href="/toeic-progress?tab=reports-vocabulary"
-              className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
-            >
-              <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-purple-500`}>
-                 <svg className="w-[18px] h-[18px] mt-[-2px]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                 </svg>
-              </span>
-              <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                 Tiến độ Luyện Đề
-              </span>
-            </Link>
-          </div>
-        ) : (
-          <button
-            onClick={handleLoginClick}
-            className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] border-transparent hover:border-[#ea980c]/20"
-          >
-            <span className="transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]">
-               <ModernUserIcon className="w-[18px] h-[18px]" />
-            </span>
-            <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#ea980c] opacity-90 group-hover:opacity-100">
-               Đăng Nhập
-            </span>
-          </button>
-        )}
-        
-        <div className="w-[1px] h-5 bg-[#581c87]/20 mx-1 shrink-0"></div>
-        
-        {isToeicDomain ? (
-          <>
-          {TOEIC_TABS.map((t) => {
-            const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
-            return (
-              <button
-                key={t.key}
-                onClick={() => handleToeicTabClick(t.key)}
-                className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
-              >
-                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${TAB_COLORS[t.key]||'text-[#581c87]'}`}>
-                  <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
-                </span>
-                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#581c87] ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                  {t.label}
-                </span>
-              </button>
-            );
-          })}
-          </>
-        ) : (
-          ENGLISHMORE_TABS.map((t) => {
-            const isActive = pathname === t.href;
-            return (
+      <div className="relative hidden lg:flex flex-1 min-w-0 items-center">
+        <div 
+          ref={scrollContainerRef}
+          className="flex items-center gap-3 xl:gap-5 overflow-x-auto pt-1 w-full justify-start ml-2 mr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+        >
+          {session ? (
+            <div className="flex items-center gap-2 xl:gap-3 shrink-0">
               <Link
-                key={t.key}
-                href={t.href}
-                className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
+                href="/user/profile"
+                className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/user/profile' ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
               >
-                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${t.color}`}>
-                  <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
+                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]`}>
+                   <ModernUserIcon className="w-[18px] h-[18px]" />
                 </span>
-                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#581c87] ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                  {t.label}
+                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/user/profile' ? "opacity-100" : "opacity-80 group-hover:opacity-100"} max-w-[120px] truncate`} title={session.user?.name || "Cá Nhân"}>
+                   {session.user?.name?.split(' ').pop() || "Cá Nhân"}
                 </span>
               </Link>
-            )
-          })
+              <Link
+                href="/toeic-progress?tab=vocabulary-bank"
+                className={`relative overflow-hidden flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
+              >
+                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-purple-500`}>
+                   <BookIcon className="w-[18px] h-[18px] mt-[-2px]" />
+                </span>
+                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] relative z-10 ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+                   Sổ tay của tôi
+                </span>
+                <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-[#4c1d95]/10 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
+              </Link>
+              <Link
+                href="/toeic-progress?tab=reports-vocabulary"
+                className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
+              >
+                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-purple-500`}>
+                   <svg className="w-[18px] h-[18px] mt-[-2px]" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 10.5L12 7.5m0 0l3 3m-3-3v8.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                   </svg>
+                </span>
+                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/toeic-progress' && searchParams.get('tab')?.startsWith('reports') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+                   Tiến độ Luyện Đề
+                </span>
+              </Link>
+            </div>
+          ) : (
+            <button
+              onClick={handleLoginClick}
+              className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] border-transparent hover:border-[#ea980c]/20"
+            >
+              <span className="transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]">
+                 <ModernUserIcon className="w-[18px] h-[18px]" />
+              </span>
+              <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#ea980c] opacity-90 group-hover:opacity-100">
+                 Đăng Nhập
+              </span>
+            </button>
+          )}
+          
+          <div className="w-[1px] h-5 bg-[#581c87]/20 mx-1 shrink-0"></div>
+          
+          {isToeicDomain ? (
+            <>
+            {TOEIC_TABS.map((t) => {
+              const isActive = currentTab === t.key && (pathname.startsWith('/toeic-practice') || pathname === '/');
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => handleToeicTabClick(t.key)}
+                  className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
+                >
+                  <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${TAB_COLORS[t.key]||'text-[#581c87]'}`}>
+                    <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
+                  </span>
+                  <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#581c87] ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+                    {t.label}
+                  </span>
+                </button>
+              );
+            })}
+            </>
+          ) : (
+            ENGLISHMORE_TABS.map((t) => {
+              const isActive = pathname === t.href;
+              return (
+                <Link
+                  key={t.key}
+                  href={t.href}
+                  className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-[#581c87]" : "border-transparent hover:border-[#581c87]/20"}`}
+                >
+                  <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${t.color}`}>
+                    <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
+                  </span>
+                  <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#581c87] ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+                    {t.label}
+                  </span>
+                </Link>
+              )
+            })
+          )}
+        </div>
+        {showRightArrow && (
+          <div className="absolute right-0 top-0 bottom-0 flex items-center bg-gradient-to-l from-white via-white to-transparent pr-1 pl-4 z-10 pointer-events-none">
+            <button 
+              onClick={scrollRight}
+              className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 shadow-sm flex items-center justify-center text-[#581c87] hover:bg-slate-200 transition-colors pointer-events-auto cursor-pointer focus:outline-none"
+              title="Cuộn sang phải"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         )}
-
-
       </div>
 
       <div className="lg:hidden flex items-center relative order-first">
