@@ -599,7 +599,7 @@ export function UpgradeContent() {
             {/* Active progress track */}
             <motion.div 
               initial={{ width: "0%" }}
-              animate={{ width: '25%' }}
+              animate={{ width: '15%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
               className="absolute top-0 left-0 h-1.5 bg-gradient-to-r from-purple-600 to-amber-500 rounded-l-full shadow-[0_0_10px_rgba(245,158,11,0.6)] flex items-center justify-end" 
             >
@@ -613,19 +613,18 @@ export function UpgradeContent() {
                 const activePhaseStrForDiagram = activeUltraPhaseStr;
                 const isCurrent = activePhaseStrForDiagram === phase;
                 
-                const leftPos = idx === 0 ? '25%' : idx === 1 ? '45%' : '80%';
+                const leftPos = idx === 0 ? '15%' : idx === 1 ? '40%' : '65%';
                 
                 let topText = "";
-                let bottomText: any = "";
+                let bottomText: any = null;
                 
                 if (idx === 0) {
                     topText = "Hiện tại";
-                    bottomText = <div className="text-[12px] sm:text-[14px] text-purple-800 font-black mt-1.5 drop-shadow-sm">{(ultraPhaseMap[activePhaseStrForDiagram as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ</div>;
                 } else if (idx === 1) {
-                    topText = "Đến hạn Super Early Bird";
+                    topText = "Ưu đãi Super Early Bird";
                     bottomText = <span>{ultraPhaseMap?.super_early_bird?.label || "31/05/2026"}</span>;
                 } else if (idx === 2) {
-                    topText = "Đến hạn Early Bird";
+                    topText = "Ưu đãi Early Bird";
                     bottomText = <span>{ultraPhaseMap?.early_bird?.label || "31/08/2026"}</span>;
                 }
 
@@ -644,23 +643,28 @@ export function UpgradeContent() {
                             <div className="w-[3px] h-4 sm:h-5 bg-purple-300 rounded-full"></div>
                         )}
                         
-                        <div className={`absolute top-full mt-3 flex flex-col items-center gap-0.5 ${
-                            idx === 0 ? '' : 'text-[10px] sm:text-[12px] font-bold text-purple-600/80'
-                        }`}>
-                            {bottomText}
-                        </div>
+                        {bottomText && (
+                            <div className={`absolute top-full mt-3 flex flex-col items-center gap-0.5 text-[10px] sm:text-[12px] font-bold text-purple-600/80`}>
+                                {bottomText}
+                            </div>
+                        )}
                     </div>
                 )
             })}
 
-            {/* Additional price labels placed between points */}
-            <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '62.5%', transform: 'translate(-50%, -50%)' }}>
-               <div className="absolute top-full mt-[20px] text-[12px] sm:text-[14px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
+            {/* Price labels placed at exactly aligned vertical offsets */}
+            <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '15%', transform: 'translate(-50%, -50%)' }}>
+               <div className="absolute top-full mt-[20px] text-[13px] sm:text-[15px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
+                 {(ultraPhaseMap[activeUltraPhaseStr as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
+               </div>
+            </div>
+            <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '52.5%', transform: 'translate(-50%, -50%)' }}>
+               <div className="absolute top-full mt-[20px] text-[13px] sm:text-[15px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
                  {(ultraPhaseMap?.early_bird?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
                </div>
             </div>
-            <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '95%', transform: 'translate(-50%, -50%)' }}>
-               <div className="absolute top-full mt-[20px] text-[12px] sm:text-[14px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
+            <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '85%', transform: 'translate(-50%, -50%)' }}>
+               <div className="absolute top-full mt-[20px] text-[13px] sm:text-[15px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
                  {(ultraPhaseMap?.regular?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
                </div>
             </div>
