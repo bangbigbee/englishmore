@@ -34,12 +34,20 @@ export async function generateRoadmapForUser(userId: string, level: string, plac
             where: { userId }
         });
 
+        let targetScore = template.targetScore || 450;
+        if (currentPoints >= targetScore) {
+            if (currentPoints < 850) targetScore = 850;
+            else if (currentPoints < 900) targetScore = 900;
+            else if (currentPoints < 950) targetScore = 950;
+            else targetScore = 990;
+        }
+
         // Create new roadmap
         const roadmap = await prisma.userRoadmap.create({
             data: {
                 userId,
                 currentScore: currentPoints,
-                targetScore: template.targetScore,
+                targetScore: targetScore,
                 estimatedWeeks: template.estimatedWeeks,
                 isUltraUnlocked: false, // Default
             }

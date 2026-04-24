@@ -24,14 +24,23 @@ export default function RoadmapPage() {
         const data = await res.json();
         if (data.success && data.roadmap) {
           // Transform data slightly to match our UI expectations
+          const baseRatio = data.roadmap.targetScore ? (data.roadmap.currentScore / data.roadmap.targetScore) * 100 : 0;
+          
+          const skillsArr = [
+            { name: "Grammar & Vocab", score: Math.min(100, Math.max(0, Math.round(baseRatio) + 10)), color: "from-blue-500 to-cyan-400", desc: "Ngữ pháp và Từ vựng" },
+            { name: "Listening", score: Math.min(100, Math.max(0, Math.round(baseRatio) - 5)), color: "from-purple-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
+            { name: "Reading", score: Math.min(100, Math.max(0, Math.round(baseRatio))), color: "from-orange-400 to-red-500", desc: "Kỹ năng Đọc Hiểu" },
+          ];
+
+          const highestSkill = skillsArr.reduce((prev, current) => (prev.score > current.score) ? prev : current);
+          const lowestSkill = skillsArr.reduce((prev, current) => (prev.score < current.score) ? prev : current);
+
           const transformed = {
             currentScore: data.roadmap.currentScore,
             targetScore: data.roadmap.targetScore,
-            skills: [
-              { name: "Grammar & Vocab", score: Math.min(100, Math.round((data.roadmap.currentScore / data.roadmap.targetScore) * 100) + 10), color: "from-blue-500 to-cyan-400" },
-              { name: "Listening", score: Math.min(100, Math.round((data.roadmap.currentScore / data.roadmap.targetScore) * 100) - 5), color: "from-purple-500 to-pink-500" },
-              { name: "Reading", score: Math.min(100, Math.round((data.roadmap.currentScore / data.roadmap.targetScore) * 100)), color: "from-orange-400 to-red-500" },
-            ],
+            skills: skillsArr,
+            highestSkill,
+            lowestSkill,
             phases: data.roadmap.phases.map((p: any, index: number) => ({
               id: p.id,
               title: p.title,
@@ -163,10 +172,10 @@ export default function RoadmapPage() {
 
             <div className="space-y-4">
               <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-transparent border-l-4 border-emerald-500">
-                <p className="text-emerald-100 text-sm"><strong className="text-emerald-400">💡 Điểm Sáng:</strong> Bạn có nền tảng đọc hiểu khá ổn. Giữ vững phong độ!</p>
+                <p className="text-emerald-100 text-sm"><strong className="text-emerald-400">💡 Điểm Sáng:</strong> Bạn có nền tảng {roadmapData.highestSkill.desc.toLowerCase()} khá ổn. Giữ vững phong độ!</p>
               </div>
               <div className="p-4 rounded-2xl bg-gradient-to-r from-red-500/10 to-transparent border-l-4 border-red-500">
-                <p className="text-red-100 text-sm"><strong className="text-red-400">⚠️ Cần Cải Thiện:</strong> Cần đầu tư thêm vào Kỹ năng Nghe Hiểu (Đang ở mức thấp).</p>
+                <p className="text-red-100 text-sm"><strong className="text-red-400">⚠️ Cần Cải Thiện:</strong> Cần đầu tư thêm vào {roadmapData.lowestSkill.desc} (Đang ở mức thấp nhất).</p>
               </div>
             </div>
           </div>

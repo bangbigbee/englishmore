@@ -26,10 +26,20 @@ export async function GET(req: NextRequest) {
         if (!session || !session.user || !session.user.id) {
             if (levelQuery && roadmapTemplates[levelQuery]) {
                 const template = roadmapTemplates[levelQuery];
+                let currentScore = levelQuery === 'BEGINNER' ? 350 : levelQuery === 'INTERMEDIATE' ? 550 : 750;
+                let targetScore = template.targetScore || 450;
+                
+                if (currentScore >= targetScore) {
+                    if (currentScore < 850) targetScore = 850;
+                    else if (currentScore < 900) targetScore = 900;
+                    else if (currentScore < 950) targetScore = 950;
+                    else targetScore = 990;
+                }
+
                 // Return a mock roadmap structure for guests
                 const mockRoadmap = {
-                    currentScore: levelQuery === 'BEGINNER' ? 350 : levelQuery === 'INTERMEDIATE' ? 550 : 750,
-                    targetScore: template.targetScore,
+                    currentScore: currentScore,
+                    targetScore: targetScore,
                     isUltraUnlocked: false,
                     phases: template.phases.map((p: any, i: number) => ({
                         id: `mock-phase-${i}`,
