@@ -143,12 +143,12 @@ export default async function AboutPage() {
 							</div>
 							
 							{grid1Img && (
-								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid1Img, '_blank')}>
+								<a href={grid1Img} target="_blank" rel="noopener noreferrer" className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer group-hover:block">
 									<img src={grid1Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
 									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
 										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
 									</div>
-								</div>
+								</a>
 							)}
 							
 							<div className="p-6 sm:p-7 pt-5 flex-1">
@@ -168,12 +168,12 @@ export default async function AboutPage() {
 							</div>
 							
 							{grid2Img && (
-								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid2Img, '_blank')}>
+								<a href={grid2Img} target="_blank" rel="noopener noreferrer" className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer group-hover:block">
 									<img src={grid2Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
 									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
 										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
 									</div>
-								</div>
+								</a>
 							)}
 							
 							<div className="p-6 sm:p-7 pt-5 flex-1">
@@ -193,12 +193,12 @@ export default async function AboutPage() {
 							</div>
 							
 							{grid3Img && (
-								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid3Img, '_blank')}>
+								<a href={grid3Img} target="_blank" rel="noopener noreferrer" className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer group-hover:block">
 									<img src={grid3Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
 									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
 										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
 									</div>
-								</div>
+								</a>
 							)}
 							
 							<div className="p-6 sm:p-7 pt-5 flex-1">
@@ -218,12 +218,12 @@ export default async function AboutPage() {
 							</div>
 							
 							{grid4Img && (
-								<div className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer" onClick={() => window.open(grid4Img, '_blank')}>
+								<a href={grid4Img} target="_blank" rel="noopener noreferrer" className="w-full aspect-[16/9] border-y border-black/5 bg-white overflow-hidden relative cursor-pointer group-hover:block">
 									<img src={grid4Img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
 									<div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center pointer-events-none">
 										<svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-md transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
 									</div>
-								</div>
+								</a>
 							)}
 							
 							<div className="p-6 sm:p-7 pt-5 flex-1">
