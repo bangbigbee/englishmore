@@ -91,12 +91,12 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars, user
                     <svg className="w-3.5 h-3.5 text-[#581c87] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                     <span><strong>Thành tích xuất sắc:</strong> Lọt Top bảng xếp hạng tuần.</span>
                   </li>
-                  <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2 min-w-0">
                     <svg className="w-3.5 h-3.5 text-amber-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <span><strong>Giới thiệu bạn bè:</strong> Mời bạn bè tham gia làm bài thi thử để nhận <strong className="text-amber-600">100 ⭐ / lượt</strong>. Bạn của bạn cũng nhận 50 ⭐.</span>
                       {userId && (
-                        <div className="mt-2 flex items-center justify-between gap-2 bg-amber-50 rounded-md p-2 border border-amber-100">
+                        <div className="mt-2 flex items-center justify-between gap-2 bg-amber-50 rounded-md p-2 border border-amber-100 min-w-0">
                           <span className="text-[12px] text-amber-800 flex-1 truncate">
                             Link giới thiệu của tôi: <strong className="select-all">{typeof window !== 'undefined' ? window.location.origin : 'https://toeicmore.com'}/signup?ref={userId}</strong>
                           </span>
