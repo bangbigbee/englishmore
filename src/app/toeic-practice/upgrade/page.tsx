@@ -541,14 +541,14 @@ export function UpgradeContent() {
             <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
               <div className="text-4xl sm:text-5xl font-black text-white mb-8 tracking-tighter flex flex-col gap-1">
                 {effectiveTier === 'ULTRA' ? (
-                  <span className="text-2xl text-purple-200">Đã Kích Hoạt <span className="text-base font-normal text-purple-100/50">trọn đời</span></span>
+                  <span className="text-2xl text-purple-200 tracking-normal">Đã Kích Hoạt <span className="text-base font-normal text-purple-100/50 tracking-normal">trọn đời</span></span>
                 ) : (
                   <>
                     <div>
-                      {formatPrice(currentUltraPrice)} <span className="text-base font-normal text-purple-100/50">trọn đời</span>
+                      {formatPrice(currentUltraPrice)} <span className="text-base font-normal text-purple-100/50 tracking-normal ml-1">trọn đời</span>
                     </div>
                     {effectiveTier === 'PRO' && (
-                      <div className="text-sm font-medium text-amber-300 mt-1">nâng cấp từ tài khoản PRO</div>
+                      <div className="text-sm font-medium text-amber-300 mt-1 tracking-normal">nâng cấp từ tài khoản PRO</div>
                     )}
                   </>
                 )}
