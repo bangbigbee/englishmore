@@ -595,7 +595,7 @@ export function UpgradeContent() {
             {/* Active progress track */}
             <motion.div 
               initial={{ width: "0%" }}
-              animate={{ width: (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'super_early_bird' ? '15%' : (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'early_bird' ? '50%' : '85%' }}
+              animate={{ width: activeUltraPhaseStr === 'super_early_bird' ? '15%' : activeUltraPhaseStr === 'early_bird' ? '50%' : '85%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
               className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
             >
@@ -606,8 +606,8 @@ export function UpgradeContent() {
             
             {/* Steps */}
             {(['super_early_bird', 'early_bird', 'regular'] as const).map((phase, idx) => {
-                const phaseConfigMap = diagramTier === 'PRO' ? proPhaseMap : ultraPhaseMap;
-                const activePhaseStrForDiagram = diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr;
+                const phaseConfigMap = ultraPhaseMap;
+                const activePhaseStrForDiagram = activeUltraPhaseStr;
 
                 const isCurrent = activePhaseStrForDiagram === phase;
                 const isPast = (activePhaseStrForDiagram === 'early_bird' && idx === 0) || (activePhaseStrForDiagram === 'regular' && idx < 2);
@@ -616,10 +616,16 @@ export function UpgradeContent() {
                 
                 const leftPos = idx === 0 ? '15%' : idx === 1 ? '50%' : '85%';
                 
+                let topText = priceDisplay;
+                if (idx === 1) topText = "Hạn Super Early: 31/05";
+                if (idx === 2) topText = "Hạn Early Bird: 31/08";
+
                 return (
                     <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
                         <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-[#581c87]/60 line-through decoration-[#581c87]/30' : 'text-slate-400'}`}>
-                            {priceDisplay}
+                            {idx === 0 ? priceDisplay : (
+                              <span className="text-[10px] text-red-500/80 normal-case font-semibold bg-red-50 px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap">{topText}</span>
+                            )}
                         </div>
                         
                         <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 ${
@@ -634,10 +640,8 @@ export function UpgradeContent() {
                             'text-slate-400'
                         }`}>
                             <span>{phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}</span>
-                            {phase === 'super_early_bird' && <span className="text-[9px] text-red-500/80 normal-case -mt-0.5 font-semibold bg-red-50 px-1.5 rounded">Hết hạn: 31/05/2026</span>}
-                            {phase === 'early_bird' && <span className="text-[9px] text-red-500/80 normal-case -mt-0.5 font-semibold bg-red-50 px-1.5 rounded">Hết hạn: 31/08/2026</span>}
                             <span className={`px-2 py-0.5 rounded-full mt-1 ${isCurrent ? 'bg-amber-100/70 text-amber-900 border border-amber-200' : isPast ? 'text-[#581c87]/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
-                                {pricePhase.label || '...'}
+                                {idx === 0 ? (pricePhase.label || '...') : priceDisplay}
                             </span>
                         </div>
                     </div>
