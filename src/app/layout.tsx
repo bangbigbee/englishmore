@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
         siteName: "ToeicMore",
         images: [
           {
-            url: "/toeicmorelogo.svg",
+            url: "/toeicmorelogo.svg?v=2",
             width: 800,
             height: 600,
             alt: "ToeicMore Logo",
@@ -48,7 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
         type: "website",
       },
       icons: {
-        icon: '/toeicmoreicon.svg',
+        icon: '/toeicmoreicon.svg?v=2',
       },
       metadataBase: new URL('https://toeicmore.com'),
     };
