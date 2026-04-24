@@ -18,7 +18,7 @@ import AdminFooterContent from './AdminFooterContent'
 import AdminFloatingNoti from './AdminFloatingNoti'
 import AdminStarConfig from './AdminStarConfig'
 import AdminPlacementTest from './AdminPlacementTest'
-import AdminPlacementTest from './AdminPlacementTest'
+
 
 interface CourseItem {
   id: string
