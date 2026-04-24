@@ -119,14 +119,10 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-bl-full"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-tr-full"></div>
                 
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md border border-white/20">
-                  <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <circle cx="12" cy="12" r="6" />
-                    <circle cx="12" cy="12" r="2" />
-                  </svg>
+                <div className="flex items-center justify-center mb-6">
+                  <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-12 object-contain drop-shadow-lg" style={{ filter: 'brightness(0) invert(1)' }} />
                 </div>
-                <h2 className="text-2xl font-black mb-3">Chào mừng bạn!</h2>
+                <h2 className="text-2xl font-black mb-3 text-white">Để tôi thiết kế Lộ trình học tập cho bạn</h2>
                 <p className="text-white/80 text-sm font-medium leading-relaxed">
                   Để ToeicMore thiết kế lộ trình học hiệu quả nhất giúp bạn đạt mục tiêu, hãy cho chúng tôi biết trình độ hiện tại của bạn nhé!
                 </p>
@@ -145,7 +141,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                       className="flex flex-col h-full"
                     >
                       <div className="md:hidden text-center mb-6">
-                        <h2 className="text-xl font-black text-slate-800 mb-2">Chào mừng bạn đến với ToeicMore! 🎯</h2>
+                        <h2 className="text-xl font-black text-slate-800 mb-2">Để tôi thiết kế Lộ trình học tập cho bạn 🎯</h2>
                         <p className="text-slate-500 text-sm font-medium">Hãy chọn trình độ hiện tại để nhận lộ trình phù hợp nhất.</p>
                       </div>
                       
