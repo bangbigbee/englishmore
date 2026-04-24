@@ -77,7 +77,7 @@ export default function PwaInstallPrompt() {
                     <img src="/toeicmoreicon.svg?v=2" alt="App Icon" className="w-14 h-14 object-cover rounded-[14px] shadow-sm bg-slate-50 border border-slate-100" />
                     <div className="flex-1 text-left">
                         <h4 className="font-bold text-slate-800 text-[15px]">ToeicMore</h4>
-                        <p className="text-[12px] text-slate-500 mt-0.5">Cài đặt ứng dụng vào màn hình chính để truy cập nhanh hơn.</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5">Cài đặt ứng dụng vào màn hình chính để học tiếng Anh mỗi ngày.</p>
                     </div>
                 </div>
 
@@ -90,9 +90,10 @@ export default function PwaInstallPrompt() {
                     </button>
                     <button 
                         onClick={handleInstallClick}
-                        className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-bold text-[13px] text-white bg-[#581c87] hover:bg-[#4c1d95] active:bg-[#3b0764] shadow-md transition-colors"
+                        className="flex-1 flex sm:flex-none items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-[13px] text-white bg-[#581c87] hover:bg-[#4c1d95] active:bg-[#3b0764] shadow-md transition-colors"
                     >
-                        Cài đặt ngay
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Cài đặt
                     </button>
                 </div>
                 
