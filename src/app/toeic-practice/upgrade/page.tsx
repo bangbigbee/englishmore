@@ -595,7 +595,7 @@ export function UpgradeContent() {
             {/* Active progress track */}
             <motion.div 
               initial={{ width: "0%" }}
-              animate={{ width: activeUltraPhaseStr === 'super_early_bird' ? '15%' : activeUltraPhaseStr === 'early_bird' ? '50%' : '85%' }}
+              animate={{ width: '15%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
               className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
             >
@@ -606,43 +606,45 @@ export function UpgradeContent() {
             
             {/* Steps */}
             {(['super_early_bird', 'early_bird', 'regular'] as const).map((phase, idx) => {
-                const phaseConfigMap = ultraPhaseMap;
                 const activePhaseStrForDiagram = activeUltraPhaseStr;
-
                 const isCurrent = activePhaseStrForDiagram === phase;
-                const isPast = (activePhaseStrForDiagram === 'early_bird' && idx === 0) || (activePhaseStrForDiagram === 'regular' && idx < 2);
-                const pricePhase = phaseConfigMap[phase] || phaseConfigMap.regular;
-                const priceDisplay = billingCycle === 'monthly' ? formatPrice(pricePhase.monthlyPrice) : formatPrice(pricePhase.lifetimePrice);
                 
-                const leftPos = idx === 0 ? '15%' : idx === 1 ? '50%' : '85%';
+                const leftPos = idx === 0 ? '15%' : idx === 1 ? '35%' : '70%';
                 
-                let topText = priceDisplay;
-                if (idx === 1) topText = "Hạn Super Early: 31/05";
-                if (idx === 2) topText = "Hạn Early Bird: 31/08";
+                let topText = "";
+                let bottomText: any = "";
+                
+                if (idx === 0) {
+                    topText = "Hiện tại";
+                    const currentTierName = activePhaseStrForDiagram === 'super_early_bird' ? 'Super Early Bird' : activePhaseStrForDiagram === 'early_bird' ? 'Early Bird' : 'Giá Gốc';
+                    bottomText = <div className="text-[10px] sm:text-[11px] text-amber-700/90 font-medium normal-case w-48 sm:w-60 text-center leading-snug mt-1">Bạn đang đồng hành cùng ToeicMore từ rất sớm và được hưởng ưu đãi gói {currentTierName}.</div>;
+                } else if (idx === 1) {
+                    topText = "Đến hạn Super Early Bird";
+                    bottomText = "31/05/2026";
+                } else if (idx === 2) {
+                    topText = "Đến hạn Early Bird";
+                    bottomText = "31/08/2026";
+                }
 
                 return (
                     <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
-                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-[#581c87]/60 line-through decoration-[#581c87]/30' : 'text-slate-400'}`}>
-                            {idx === 0 ? priceDisplay : (
-                              <span className="text-[10px] text-red-500/80 normal-case font-semibold bg-red-50 px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap">{topText}</span>
-                            )}
+                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-[12px] font-black transition-all ${idx === 0 ? 'text-amber-600 scale-110 drop-shadow-sm uppercase' : 'text-slate-500 whitespace-nowrap'}`}>
+                            {topText}
                         </div>
                         
-                        <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 ${
-                            isPast ? 'border-[#581c87] bg-[#581c87]' : 
-                            'border-[#581c87]/20'
-                        } ${isCurrent ? 'opacity-0' : ''}`}>
-                        </div>
+                        {idx === 0 ? (
+                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 border-amber-400 ${
+                                isCurrent ? 'opacity-0' : ''
+                            }`}>
+                            </div>
+                        ) : (
+                            <div className="w-0.5 h-4 sm:h-5 bg-slate-300 rounded-full"></div>
+                        )}
                         
-                        <div className={`absolute top-full mt-3 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold whitespace-nowrap transition-colors flex flex-col items-center gap-1 ${
-                            isCurrent ? 'text-amber-700' : 
-                            isPast ? 'text-[#581c87]/80' : 
-                            'text-slate-400'
+                        <div className={`absolute top-full mt-3 flex flex-col items-center gap-1 ${
+                            idx === 0 ? '' : 'text-[11px] sm:text-[12px] font-bold text-slate-500'
                         }`}>
-                            <span>{phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}</span>
-                            <span className={`px-2 py-0.5 rounded-full mt-1 ${isCurrent ? 'bg-amber-100/70 text-amber-900 border border-amber-200' : isPast ? 'text-[#581c87]/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
-                                {idx === 0 ? (pricePhase.label || '...') : priceDisplay}
-                            </span>
+                            {bottomText}
                         </div>
                     </div>
                 )
