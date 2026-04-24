@@ -18,6 +18,7 @@ import AdminFooterContent from './AdminFooterContent'
 import AdminFloatingNoti from './AdminFloatingNoti'
 import AdminStarConfig from './AdminStarConfig'
 import AdminPlacementTest from './AdminPlacementTest'
+import AdminRoadmapConfig from './AdminRoadmapConfig'
 
 
 interface CourseItem {
@@ -369,7 +370,7 @@ const ACTIVITY_POINT_DESCRIPTION_MAP: Record<string, string> = {
 const getActivityPointDescription = (activityKey: string) =>
   ACTIVITY_POINT_DESCRIPTION_MAP[activityKey] || 'Custom AP rule configured by admin.'
 
-type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing' | 'masterConfig' | 'about_toeicmore' | 'footer' | 'floatingNoti' | 'starConfig' | 'placementTest'
+type AdminSection = 'users' | 'course' | 'homework' | 'exercise' | 'lectureNote' | 'dailyActivity' | 'activityPoints' | 'vocabulary' | 'speakYourself' | 'referral' | 'toeic' | 'news' | 'gallery' | 'pricing' | 'masterConfig' | 'about_toeicmore' | 'footer' | 'floatingNoti' | 'starConfig' | 'placementTest' | 'roadmap'
 
 const buildVocabularyFormState = (item?: AdminVocabularyItem | null) => ({
   courseId: item?.courseId || '',
@@ -3802,6 +3803,7 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('floatingNoti')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'floatingNoti' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>16. FLOATING NOTI</button>
              <button onClick={() => setActiveSection('starConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'starConfig' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>17. STAR CONFIG</button>
              <button onClick={() => setActiveSection('placementTest')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'placementTest' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>18. PLACEMENT TEST</button>
+             <button onClick={() => setActiveSection('roadmap')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'roadmap' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>19. ROADMAP CONFIG</button>
           </nav>
         </aside>
 
@@ -3834,6 +3836,9 @@ export default function AdminDashboard() {
 
           {activeSection === 'placementTest' && (
             <AdminPlacementTest />
+          )}
+          {activeSection === 'roadmap' && (
+            <AdminRoadmapConfig />
           )}
 
         {activeSection === 'gallery' && (

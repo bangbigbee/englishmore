@@ -184,7 +184,17 @@ export async function generateRoadmapForUser(userId: string, level: string, plac
             }
         }
 
-        const template = ROADMAP_TEMPLATES[level] || ROADMAP_TEMPLATES['BEGINNER'];
+        let roadmapTemplates = ROADMAP_TEMPLATES;
+        try {
+            const setting = await prisma.systemSetting.findUnique({ where: { key: 'toeic_roadmap_templates' } });
+            if (setting && setting.value) {
+                roadmapTemplates = setting.value as any;
+            }
+        } catch(e) {
+            console.error('Could not fetch custom roadmap templates', e);
+        }
+
+        const template = roadmapTemplates[level] || roadmapTemplates['BEGINNER'];
 
         // Delete existing roadmap if any
         await prisma.userRoadmap.deleteMany({

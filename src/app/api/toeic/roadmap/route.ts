@@ -13,9 +13,19 @@ export async function GET(req: NextRequest) {
         const url = new URL(req.url);
         const levelQuery = url.searchParams.get('level');
 
+        let roadmapTemplates = ROADMAP_TEMPLATES;
+        try {
+            const setting = await prisma.systemSetting.findUnique({ where: { key: 'toeic_roadmap_templates' } });
+            if (setting && setting.value) {
+                roadmapTemplates = setting.value as any;
+            }
+        } catch(e) {
+            console.error('Could not fetch custom roadmap templates', e);
+        }
+
         if (!session || !session.user || !session.user.id) {
-            if (levelQuery && ROADMAP_TEMPLATES[levelQuery]) {
-                const template = ROADMAP_TEMPLATES[levelQuery];
+            if (levelQuery && roadmapTemplates[levelQuery]) {
+                const template = roadmapTemplates[levelQuery];
                 // Return a mock roadmap structure for guests
                 const mockRoadmap = {
                     currentScore: levelQuery === 'BEGINNER' ? 350 : levelQuery === 'INTERMEDIATE' ? 550 : 750,
