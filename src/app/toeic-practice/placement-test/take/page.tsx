@@ -20,7 +20,7 @@ interface Question {
 
 export default function PlacementTestTakePage() {
     const router = useRouter();
-    const [timeLeft, setTimeLeft] = useState(3 * 60); // 3 minutes
+    const [timeLeft, setTimeLeft] = useState(5 * 60); // 5 minutes
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -210,6 +210,32 @@ export default function PlacementTestTakePage() {
                                 </div>
                             </div>
                         ))}
+
+                        {/* Explicit Submit Button at the bottom */}
+                        <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 flex flex-col items-center text-center mt-8">
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">Bạn đã hoàn thành bài thi?</h3>
+                            <p className="text-slate-500 text-sm mb-6 max-w-md">Hãy kiểm tra lại các đáp án trước khi nộp. Hệ thống sẽ ngay lập tức tính toán trình độ của bạn.</p>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isSubmitting}
+                                className="w-full max-w-xs bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        Đang chấm điểm...
+                                    </>
+                                ) : (
+                                    <>
+                                        NỘP BÀI NGAY
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+
                     </div>
                 )}
             </main>

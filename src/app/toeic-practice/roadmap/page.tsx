@@ -35,10 +35,11 @@ export default function RoadmapPage() {
             phases: data.roadmap.phases.map((p: any, index: number) => ({
               id: p.id,
               title: p.title,
+              weekNumber: p.weekNumber || index + 1,
               objective: p.objectiveOutput,
               expectedScoreUp: p.expectedScoreUp,
-              // Giả lập trạng thái khóa/mở: Tuần 1 và 2 luôn mở, các tuần sau phụ thuộc vào isUltraUnlocked
-              isUnlocked: index < 2 || data.roadmap.isUltraUnlocked,
+              // Giả lập trạng thái khóa/mở: Tuần 1, 2, 3 luôn mở, từ tuần 4 trở đi bị làm mờ
+              isUnlocked: index < 3 || data.roadmap.isUltraUnlocked,
               tasks: p.dailyTasks.map((t: any) => ({
                 day: t.dayNumber,
                 title: t.title,
@@ -225,27 +226,35 @@ export default function RoadmapPage() {
                   {/* Nếu bị khóa, áp dụng hiệu ứng Glassmorphism & Upsell */}
                   {!phase.isUnlocked && (
                     <div className="absolute inset-0 z-20 backdrop-blur-md bg-[#0a0a0f]/60 flex flex-col items-center justify-center p-6 text-center">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-300 p-[2px] mb-4 shadow-[0_0_30px_rgba(245,158,11,0.3)]">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-500 to-cyan-400 p-[2px] mb-4 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
                         <div className="w-full h-full bg-[#0a0a0f] rounded-xl flex items-center justify-center">
-                          <svg className="w-8 h-8 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-8 h-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                           </svg>
                         </div>
                       </div>
-                      <h4 className="text-xl font-bold text-white mb-2">ULTRA Exclusive</h4>
-                      <p className="text-sm text-slate-300 mb-6 max-w-[250px]">Nâng cấp ULTRA để mở khóa lộ trình cá nhân hóa từ chuyên gia.</p>
+                      <h4 className="text-xl font-bold text-white mb-2">Đăng nhập để xem tiếp</h4>
+                      <p className="text-sm text-slate-300 mb-6 max-w-[250px]">Lưu lại Lộ trình Độc bản của bạn vĩnh viễn và bắt đầu hành trình chinh phục TOEIC.</p>
                       <button 
-                        onClick={() => window.dispatchEvent(new Event('openUpgradeModal'))}
-                        className="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all hover:-translate-y-0.5 cursor-pointer">
-                        Nâng cấp ngay
+                        onClick={() => router.push('/login')}
+                        className="px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-sm hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:-translate-y-0.5 cursor-pointer">
+                        Đăng nhập / Đăng ký
                       </button>
                     </div>
                   )}
 
                   <div className={!phase.isUnlocked ? "opacity-30 blur-sm select-none" : ""}>
-                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-4 
-                      ${phase.isUnlocked ? 'bg-purple-500/20 text-purple-300' : 'bg-slate-800 text-slate-400'}`}>
-                      {phase.title}
+                    <div className="flex items-center gap-3 mb-4 flex-wrap">
+                      <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold 
+                        ${phase.isUnlocked ? 'bg-purple-500/20 text-purple-300' : 'bg-slate-800 text-slate-400'}`}>
+                        {phase.title}
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10">
+                        <svg className="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Thời gian: Tuần {phase.weekNumber}
+                      </div>
                     </div>
                     <h4 className="text-2xl font-bold text-slate-100 mb-2">{phase.objective}</h4>
                     <p className="text-emerald-400 font-semibold mb-6 text-sm flex items-center gap-2 justify-start md:justify-end">
