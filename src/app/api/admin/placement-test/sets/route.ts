@@ -46,14 +46,6 @@ export async function PUT(req: NextRequest) {
         const body = await req.json();
         const { id, title, description, isActive } = body;
 
-        if (isActive) {
-            // Deactivate all others
-            await prisma.toeicPlacementSet.updateMany({
-                where: { id: { not: id } },
-                data: { isActive: false }
-            });
-        }
-
         const set = await prisma.toeicPlacementSet.update({
             where: { id },
             data: { title, description, isActive }

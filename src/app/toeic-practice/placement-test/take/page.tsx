@@ -22,7 +22,7 @@ export default function PlacementTestTakePage() {
     const [timeLeft, setTimeLeft] = useState(3 * 60); // 3 minutes
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [questions, setQuestions] = useState<Question[]>([]);
-    const [answers, setAnswers] = useState<Record<number, string>>({});
+    const [answers, setAnswers] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -67,8 +67,8 @@ export default function PlacementTestTakePage() {
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    const handleAnswer = (order: number, option: string) => {
-        setAnswers(prev => ({ ...prev, [order]: option }));
+    const handleAnswer = (id: string, option: string) => {
+        setAnswers(prev => ({ ...prev, [id]: option }));
     };
 
     const handleSubmit = async () => {
@@ -77,7 +77,7 @@ export default function PlacementTestTakePage() {
             const res = await fetch('/api/toeic/placement-test/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ answers })
+                body: JSON.stringify({ answers, totalQuestions: questions.length })
             });
             const data = await res.json();
             
@@ -172,11 +172,11 @@ export default function PlacementTestTakePage() {
                                     {['A', 'B', 'C', 'D'].map((opt) => {
                                         const optionText = q[`option${opt}` as keyof Question];
                                         if (!optionText) return null; // In case Part 2 only has A, B, C
-                                        const isSelected = answers[q.order] === opt;
+                                        const isSelected = answers[q.id] === opt;
                                         return (
                                             <button
                                                 key={opt}
-                                                onClick={() => handleAnswer(q.order, opt)}
+                                                onClick={() => handleAnswer(q.id, opt)}
                                                 className={`flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all ${
                                                     isSelected 
                                                         ? 'border-amber-500 bg-amber-50 shadow-sm' 

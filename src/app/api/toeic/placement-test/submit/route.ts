@@ -6,31 +6,26 @@ const prisma = new PrismaClient();
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { answers } = body;
+        const { answers, totalQuestions } = body;
         
-        // Fetch all correct answers from active set
-        const activeSet = await prisma.toeicPlacementSet.findFirst({
-            where: { isActive: true }
-        });
-
-        if (!activeSet) {
-            return NextResponse.json({ error: 'Không tìm thấy bộ đề' }, { status: 400 });
-        }
-
+        // Extract question IDs from answers
+        const questionIds = Object.keys(answers);
+        
+        // Fetch all correct answers from the database for these specific questions
         // @ts-ignore
         const questions = await prisma.toeicPlacementQuestion.findMany({
-            where: { setId: activeSet.id }
+            where: { id: { in: questionIds } }
         });
         
         let correctAnswersCount = 0;
         
         questions.forEach((q: any) => {
-            if (answers[q.order] === q.correctOption) {
+            if (answers[q.id] === q.correctOption) {
                 correctAnswersCount++;
             }
         });
         
-        const total = questions.length;
+        const total = totalQuestions || 10;
         const percentage = total > 0 ? (correctAnswersCount / total) : 0;
         
         let level = 'BEGINNER';

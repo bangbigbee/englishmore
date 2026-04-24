@@ -75,17 +75,14 @@ export default function AdminPlacementTest() {
     };
 
     const handleToggleActiveSet = async (setId: string, currentActive: boolean) => {
-        if (currentActive) return; // Prevent turning off the only active one manually
-        if (!confirm('Kích hoạt bộ đề này sẽ tắt bộ đề cũ. Tiếp tục?')) return;
-        
         try {
             const res = await fetch('/api/admin/placement-test/sets', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: setId, isActive: true })
+                body: JSON.stringify({ id: setId, isActive: !currentActive })
             });
             if (res.ok) {
-                toast.success('Đã chuyển đổi bộ đề Active');
+                toast.success(currentActive ? 'Đã tắt bộ đề' : 'Đã kích hoạt bộ đề');
                 fetchSets();
             }
         } catch (error) {
@@ -242,14 +239,12 @@ export default function AdminPlacementTest() {
                             <p className="text-xs text-slate-500 mb-3">{s._count?.questions || 0} câu hỏi</p>
                             
                             <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-200/50">
-                                {!s.isActive && (
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); handleToggleActiveSet(s.id, s.isActive); }}
-                                        className="text-[11px] font-bold text-slate-500 hover:text-green-600 flex-1 text-left"
+                                        className={`text-[11px] font-bold flex-1 text-left ${s.isActive ? 'text-rose-500 hover:text-rose-700' : 'text-slate-500 hover:text-green-600'}`}
                                     >
-                                        Dùng bộ đề này
+                                        {s.isActive ? 'Tắt bộ đề' : 'Bật bộ đề'}
                                     </button>
-                                )}
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); handleDeleteSet(s.id); }}
                                     className="text-[11px] font-bold text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-opacity ml-auto"
