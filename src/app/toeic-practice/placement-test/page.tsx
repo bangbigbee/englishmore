@@ -30,13 +30,13 @@ export default function PlacementTestIntroPage() {
                     <div className="grid grid-cols-2 gap-4 w-full max-w-md mb-10">
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center">
                             <span className="text-2xl mb-1">⏱️</span>
-                            <span className="font-bold text-slate-800">15 Phút</span>
+                            <span className="font-bold text-slate-800">3 Phút</span>
                             <span className="text-[12px] text-slate-400 font-medium">Thời gian làm bài</span>
                         </div>
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center">
                             <span className="text-2xl mb-1">🎯</span>
-                            <span className="font-bold text-slate-800">25 Câu</span>
-                            <span className="text-[12px] text-slate-400 font-medium">Listening & Reading</span>
+                            <span className="font-bold text-slate-800">10 Câu</span>
+                            <span className="text-[12px] text-slate-400 font-medium">Ngữ pháp & Từ vựng</span>
                         </div>
                     </div>
 

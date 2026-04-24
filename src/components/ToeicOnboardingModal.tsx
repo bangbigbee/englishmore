@@ -251,7 +251,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                           onClick={handleTakeTest}
                           className="w-full bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
                         >
-                          Làm bài Test năng lực (15 phút)
+                          Làm bài Test năng lực (3 phút)
                         </button>
                         <button 
                           onClick={handleSkipTest}
