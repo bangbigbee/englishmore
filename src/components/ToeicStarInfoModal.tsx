@@ -57,10 +57,6 @@ export default function ToeicStarInfoModal({ isOpen, onClose, currentStars }: To
             </button>
 
             <div className="text-center mb-6">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-500 shadow-inner">
-                <span className="text-2xl drop-shadow-sm">⭐</span>
-              </div>
-              
               <h2 className="text-xl font-black tracking-tight text-slate-900" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
                 Toeic Stars là gì?
               </h2>
