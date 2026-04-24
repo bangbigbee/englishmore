@@ -590,9 +590,9 @@ export function UpgradeContent() {
             Nền tảng ToeicMore sẽ liên tục cập nhật và bổ sung nội dung mới mỗi tháng. Các bạn tham gia và ủng hộ dự án sớm sẽ luôn nhận được mức giá tốt nhất, kèm theo các đặc quyền vĩnh viễn.
         </p>
 
-        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1 bg-[#581c87]/10 mt-10 mb-16">
+        <div className="relative w-[90%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1.5 bg-purple-200 mt-14 mb-20 rounded-l-full">
             {/* Arrow at the end */}
-            <svg className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#581c87]/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <svg className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
 
@@ -601,10 +601,10 @@ export function UpgradeContent() {
               initial={{ width: "0%" }}
               animate={{ width: '25%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
+              className="absolute top-0 left-0 h-1.5 bg-gradient-to-r from-purple-600 to-amber-500 rounded-l-full shadow-[0_0_10px_rgba(245,158,11,0.6)] flex items-center justify-end" 
             >
-              <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white border-2 border-amber-500 rounded-full absolute -right-[7px] sm:-right-[8px] flex items-center justify-center shadow-[0_0_10px_rgba(234,152,12,0.8)] z-20">
-                 <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
+              <div className="w-4 h-4 sm:w-5 sm:h-5 bg-white border-[2.5px] border-amber-500 rounded-full absolute -right-[8px] sm:-right-[10px] flex items-center justify-center shadow-[0_0_12px_rgba(245,158,11,0.8)] z-20">
+                 <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-amber-500 rounded-full animate-pulse"></div>
               </div>
             </motion.div>
             
@@ -620,7 +620,7 @@ export function UpgradeContent() {
                 
                 if (idx === 0) {
                     topText = "Hiện tại";
-                    bottomText = <div className="text-[12px] sm:text-[13px] text-[#581c87] font-bold mt-1">{(ultraPhaseMap[activePhaseStrForDiagram as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ</div>;
+                    bottomText = <div className="text-[12px] sm:text-[14px] text-purple-800 font-black mt-1.5 drop-shadow-sm">{(ultraPhaseMap[activePhaseStrForDiagram as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ</div>;
                 } else if (idx === 1) {
                     topText = "Đến hạn Super Early Bird";
                     bottomText = <span>{ultraPhaseMap?.super_early_bird?.label || "31/05/2026"}</span>;
@@ -631,21 +631,21 @@ export function UpgradeContent() {
 
                 return (
                     <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
-                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-[12px] font-black transition-all ${idx === 0 ? 'text-amber-600 drop-shadow-sm whitespace-nowrap' : 'text-slate-500 whitespace-nowrap'}`}>
+                        <div className={`absolute bottom-full mb-3 text-[10px] sm:text-[12px] font-black transition-all text-center leading-tight w-16 sm:w-auto sm:whitespace-nowrap ${idx === 0 ? 'text-amber-600 drop-shadow-md text-[11px] sm:text-[13px]' : 'text-purple-600/90'}`}>
                             {topText}
                         </div>
                         
                         {idx === 0 ? (
-                            <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 border-amber-400 ${
+                            <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-[2.5px] bg-white transition-all duration-500 border-amber-400 ${
                                 isCurrent ? 'opacity-0' : ''
                             }`}>
                             </div>
                         ) : (
-                            <div className="w-0.5 h-4 sm:h-5 bg-slate-300 rounded-full"></div>
+                            <div className="w-[3px] h-4 sm:h-5 bg-purple-300 rounded-full"></div>
                         )}
                         
                         <div className={`absolute top-full mt-3 flex flex-col items-center gap-0.5 ${
-                            idx === 0 ? '' : 'text-[11px] sm:text-[12px] font-bold text-slate-500'
+                            idx === 0 ? '' : 'text-[10px] sm:text-[12px] font-bold text-purple-600/80'
                         }`}>
                             {bottomText}
                         </div>
@@ -655,12 +655,12 @@ export function UpgradeContent() {
 
             {/* Additional price labels placed between points */}
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '62.5%', transform: 'translate(-50%, -50%)' }}>
-               <div className="absolute top-full mt-[18px] text-[12px] sm:text-[13px] text-[#581c87] font-bold whitespace-nowrap">
+               <div className="absolute top-full mt-[20px] text-[12px] sm:text-[14px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
                  {(ultraPhaseMap?.early_bird?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
                </div>
             </div>
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '95%', transform: 'translate(-50%, -50%)' }}>
-               <div className="absolute top-full mt-[18px] text-[12px] sm:text-[13px] text-[#581c87] font-bold whitespace-nowrap">
+               <div className="absolute top-full mt-[20px] text-[12px] sm:text-[14px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
                  {(ultraPhaseMap?.regular?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
                </div>
             </div>
