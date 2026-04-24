@@ -590,11 +590,9 @@ export function UpgradeContent() {
             Nền tảng ToeicMore sẽ liên tục cập nhật và bổ sung nội dung mới mỗi tháng. Các bạn tham gia và ủng hộ dự án sớm sẽ luôn nhận được mức giá tốt nhất, kèm theo các đặc quyền vĩnh viễn.
         </p>
 
-        <div className="relative w-[90%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1.5 bg-purple-200 mt-14 mb-20 rounded-l-full">
-            {/* Arrow at the end */}
-            <svg className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
+        <div className="relative w-[90%] sm:w-[90%] lg:w-[80%] max-w-4xl mx-auto h-1.5 bg-gradient-to-r from-purple-200 via-purple-300 to-purple-400 mt-16 mb-16 rounded-l-full">
+            {/* Seamless CSS Arrow at the end */}
+            <div className="absolute -right-[8px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-[4px] border-y-transparent border-l-[8px] border-l-purple-400"></div>
 
             {/* Active progress track */}
             <motion.div 
@@ -615,23 +613,24 @@ export function UpgradeContent() {
                 
                 const leftPos = idx === 0 ? '15%' : idx === 1 ? '40%' : '65%';
                 
-                let topText = "";
-                let bottomText: any = null;
+                let topTitle = "";
+                let topDate = "";
                 
                 if (idx === 0) {
-                    topText = "Hiện tại";
+                    topTitle = "Hiện tại";
                 } else if (idx === 1) {
-                    topText = "Ưu đãi Super Early Bird";
-                    bottomText = <span>{ultraPhaseMap?.super_early_bird?.label || "31/05/2026"}</span>;
+                    topTitle = "Hết ưu đãi Super Early Bird";
+                    topDate = ultraPhaseMap?.super_early_bird?.label || "31/05/2026";
                 } else if (idx === 2) {
-                    topText = "Ưu đãi Early Bird";
-                    bottomText = <span>{ultraPhaseMap?.early_bird?.label || "31/08/2026"}</span>;
+                    topTitle = "Hết ưu đãi Early Bird";
+                    topDate = ultraPhaseMap?.early_bird?.label || "31/08/2026";
                 }
 
                 return (
                     <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
-                        <div className={`absolute bottom-full mb-3 text-[10px] sm:text-[12px] font-black transition-all text-center leading-tight w-16 sm:w-auto sm:whitespace-nowrap ${idx === 0 ? 'text-amber-600 drop-shadow-md text-[11px] sm:text-[13px]' : 'text-purple-600/90'}`}>
-                            {topText}
+                        <div className={`absolute bottom-full mb-3 flex flex-col items-center transition-all text-center leading-tight w-24 sm:w-auto sm:whitespace-nowrap ${idx === 0 ? 'text-amber-600 drop-shadow-md' : 'text-purple-700'}`}>
+                            <span className={`font-black ${idx === 0 ? 'text-[11px] sm:text-[13px]' : 'text-[10px] sm:text-[12px]'}`}>{topTitle}</span>
+                            {topDate && <span className="text-[9px] sm:text-[11px] font-semibold mt-0.5 opacity-80">{topDate}</span>}
                         </div>
                         
                         {idx === 0 ? (
@@ -640,13 +639,7 @@ export function UpgradeContent() {
                             }`}>
                             </div>
                         ) : (
-                            <div className="w-[3px] h-4 sm:h-5 bg-purple-300 rounded-full"></div>
-                        )}
-                        
-                        {bottomText && (
-                            <div className={`absolute top-full mt-3 flex flex-col items-center gap-0.5 text-[10px] sm:text-[12px] font-bold text-purple-600/80`}>
-                                {bottomText}
-                            </div>
+                            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-purple-700/80 rounded-full"></div>
                         )}
                     </div>
                 )
@@ -654,17 +647,17 @@ export function UpgradeContent() {
 
             {/* Price labels placed at exactly aligned vertical offsets */}
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '15%', transform: 'translate(-50%, -50%)' }}>
-               <div className="absolute top-full mt-[20px] text-[13px] sm:text-[15px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
+               <div className="absolute top-full mt-[16px] text-[11px] sm:text-[12px] text-purple-700 font-medium whitespace-nowrap">
                  {(ultraPhaseMap[activeUltraPhaseStr as keyof typeof ultraPhaseMap]?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
                </div>
             </div>
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '52.5%', transform: 'translate(-50%, -50%)' }}>
-               <div className="absolute top-full mt-[20px] text-[13px] sm:text-[15px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
+               <div className="absolute top-full mt-[16px] text-[11px] sm:text-[12px] text-purple-700 font-medium whitespace-nowrap">
                  {(ultraPhaseMap?.early_bird?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
                </div>
             </div>
             <div className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: '85%', transform: 'translate(-50%, -50%)' }}>
-               <div className="absolute top-full mt-[20px] text-[13px] sm:text-[15px] text-purple-800 font-black whitespace-nowrap drop-shadow-sm">
+               <div className="absolute top-full mt-[16px] text-[11px] sm:text-[12px] text-purple-700 font-medium whitespace-nowrap">
                  {(ultraPhaseMap?.regular?.lifetimePrice || 0).toLocaleString('vi-VN')}đ
                </div>
             </div>
