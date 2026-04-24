@@ -246,7 +246,7 @@ export default function RoadmapPage() {
                     {phase.isUnlocked && phase.tasks && (
                       <div className="space-y-3 mt-6 text-left">
                         <div className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Nhiệm Vụ Tuần Này</div>
-                        {phase.tasks.map((task, tIndex) => (
+                        {phase.tasks.map((task: any, tIndex: number) => (
                           <div key={tIndex} className="group relative bg-black/40 border border-white/5 p-4 rounded-xl flex gap-4 items-start hover:border-purple-500/30 transition-colors cursor-pointer">
                             {/* Checkbox Gamification */}
                             <div className="mt-0.5 relative flex-shrink-0">
