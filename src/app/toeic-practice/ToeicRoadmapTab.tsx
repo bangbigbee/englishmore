@@ -16,8 +16,7 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
                 </p>
                 <button 
                     onClick={() => {
-                        localStorage.removeItem('toeicLevel');
-                        window.location.reload();
+                        window.dispatchEvent(new Event('openToeicOnboarding'));
                     }}
                     className="bg-[#581c87] hover:bg-[#6b21a8] text-amber-400 px-6 py-3 rounded-xl font-bold transition-all shadow-md active:scale-95 cursor-pointer"
                 >
@@ -109,8 +108,7 @@ export default function ToeicRoadmapTab({ level, onPracticeClick, onTabClick }: 
                     <div className="mt-6 flex items-center gap-4">
                         <button 
                             onClick={() => {
-                                localStorage.removeItem('toeicLevel');
-                                window.location.reload();
+                                window.dispatchEvent(new Event('openToeicOnboarding'));
                             }}
                             className="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors cursor-pointer"
                         >

@@ -36,7 +36,17 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
       }
     }, 1500)
 
-    return () => clearTimeout(timer)
+    // Custom event to force open the modal from other components
+    const handleForceOpen = () => {
+      setIsOpen(true)
+      setStep(1)
+    }
+    window.addEventListener('openToeicOnboarding', handleForceOpen)
+
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('openToeicOnboarding', handleForceOpen)
+    }
   }, [session])
 
   const finalizeOnboarding = async (level: string) => {
