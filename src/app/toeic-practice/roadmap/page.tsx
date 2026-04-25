@@ -138,7 +138,7 @@ export default function RoadmapPage() {
         {/* NÚT ĐÓNG */}
         <button 
           onClick={() => router.push('/toeic-practice?tab=roadmap')} 
-          className="fixed top-20 right-4 md:right-8 w-10 h-10 bg-slate-800/80 backdrop-blur-md hover:bg-slate-700/80 rounded-full flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-lg z-[200] border border-white/10"
+          className="absolute top-2 right-4 md:right-6 w-10 h-10 bg-slate-800/80 backdrop-blur-md hover:bg-slate-700/80 rounded-full flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-lg z-[200] border border-white/10"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
@@ -206,7 +206,7 @@ export default function RoadmapPage() {
         >
           {/* Card Điểm số */}
           <div className="bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-3xl p-8 relative overflow-hidden group hover:border-purple-500/30 transition-colors">
-            <div className="absolute top-0 right-0 p-32 bg-purple-500/5 rounded-full blur-[80px] group-hover:bg-purple-500/10 transition-colors" />
+            <div className="absolute top-0 right-0 p-32 bg-purple-500/5 rounded-full blur-[80px] pointer-events-none group-hover:bg-purple-500/10 transition-colors" />
             <h3 className="text-xl font-semibold mb-6 flex items-center gap-3">
               <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
