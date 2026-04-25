@@ -29,22 +29,21 @@ export default function RoadmapPage() {
         const res = await fetch(`/api/toeic/roadmap?level=${storedLevel}`);
         const data = await res.json();
         if (data.success && data.roadmap) {
-          // Transform data slightly to match our UI expectations
-          const baseRatio = data.roadmap.targetScore ? (data.roadmap.currentScore / data.roadmap.targetScore) * 100 : 0;
+          let cScore = Math.round(data.roadmap.currentScore / 5) * 5;
+          let tScore = Math.round(data.roadmap.targetScore / 5) * 5;
+          if (cScore + 100 > tScore) tScore = Math.min(990, Math.round((cScore + 150) / 5) * 5);
+
+          const baseRatio = (cScore / 990) * 100;
           
           const skillsArr = [
-            { name: "Grammar & Vocab", score: Math.min(92, Math.max(0, Math.round(baseRatio) + 5)), color: "from-blue-500 to-cyan-400", desc: "Ngữ pháp và Từ vựng" },
-            { name: "Listening", score: Math.min(88, Math.max(0, Math.round(baseRatio) - 5)), color: "from-purple-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
-            { name: "Reading", score: Math.min(85, Math.max(0, Math.round(baseRatio))), color: "from-orange-400 to-red-500", desc: "Kỹ năng Đọc Hiểu" },
-            { name: "Pronunciation", score: Math.min(80, Math.max(0, Math.round(baseRatio) - 10)), color: "from-amber-400 to-orange-500", desc: "Kỹ năng Phát Âm" },
+            { name: "Grammar & Vocab", score: Math.min(95, Math.max(5, Math.round(baseRatio) + 12)), color: "from-blue-500 to-cyan-400", desc: "Ngữ pháp và Từ vựng" },
+            { name: "Listening", score: Math.min(95, Math.max(5, Math.round(baseRatio) - 5)), color: "from-purple-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
+            { name: "Reading", score: Math.min(95, Math.max(5, Math.round(baseRatio) + 3)), color: "from-orange-400 to-red-500", desc: "Kỹ năng Đọc Hiểu" },
+            { name: "Pronunciation", score: Math.min(95, Math.max(5, Math.round(baseRatio) - 10)), color: "from-amber-400 to-orange-500", desc: "Kỹ năng Phát Âm" },
           ];
 
           const highestSkill = skillsArr.reduce((prev, current) => (prev.score > current.score) ? prev : current);
           const lowestSkill = skillsArr.reduce((prev, current) => (prev.score < current.score) ? prev : current);
-
-          let cScore = Math.round(data.roadmap.currentScore / 5) * 5;
-          let tScore = Math.round(data.roadmap.targetScore / 5) * 5;
-          if (cScore + 100 > tScore) tScore = Math.min(990, Math.round((cScore + 150) / 5) * 5);
 
           const transformed = {
             currentScore: cScore,
@@ -297,7 +296,14 @@ export default function RoadmapPage() {
             <div className="space-y-4">
               <p className="text-sm font-bold text-slate-400 mb-2 uppercase tracking-wider">Phân tích từ 20 câu test đầu vào:</p>
               <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-transparent border-l-4 border-emerald-500">
-                <p className="text-emerald-100 text-sm"><strong className="text-emerald-400">💡 Điểm Sáng:</strong> Bạn có nền tảng {roadmapData.highestSkill.desc.toLowerCase()} khá ổn. Giữ vững phong độ!</p>
+                <p className="text-emerald-100 text-sm">
+                  <strong className="text-emerald-400">💡 Điểm Sáng:</strong>
+                  {roadmapData.currentScore < 450 
+                    ? ` Bạn có khả năng nắm bắt ${roadmapData.highestSkill.desc.toLowerCase()} nhanh hơn các kỹ năng khác, hãy phát huy nhé!` 
+                    : roadmapData.currentScore < 750 
+                    ? ` Bạn có nền tảng ${roadmapData.highestSkill.desc.toLowerCase()} khá ổn. Giữ vững phong độ!` 
+                    : ` Bạn sở hữu ${roadmapData.highestSkill.desc.toLowerCase()} rất xuất sắc! Hãy tiếp tục phát huy!`}
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-gradient-to-r from-red-500/10 to-transparent border-l-4 border-red-500">
                 <p className="text-red-100 text-sm"><strong className="text-red-400">⚠️ Cần Cải Thiện:</strong> Cần đầu tư thêm vào {roadmapData.lowestSkill.desc} (Đang ở mức thấp nhất).</p>
