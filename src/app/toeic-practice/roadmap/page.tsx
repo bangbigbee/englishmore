@@ -138,7 +138,7 @@ export default function RoadmapPage() {
         {/* NÚT ĐÓNG */}
         <button 
           onClick={() => router.push('/toeic-practice?tab=roadmap')} 
-          className="absolute top-6 right-6 w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors z-50 border border-white/10"
+          className="fixed top-20 right-4 md:right-8 w-10 h-10 bg-slate-800/80 backdrop-blur-md hover:bg-slate-700/80 rounded-full flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-lg z-[200] border border-white/10"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
@@ -174,7 +174,7 @@ export default function RoadmapPage() {
               onClick={() => setShowFreezeModal(true)}
               className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
             >
-              <span className="text-xl">❄️</span> Đổi Đóng Băng
+              <span className="text-xl">❄️</span> Đóng Băng
             </button>
           </div>
         </motion.div>
@@ -228,7 +228,7 @@ export default function RoadmapPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <p className="text-purple-400/80 text-sm uppercase tracking-wider font-semibold">Mục tiêu</p>
                   {!isEditingTarget ? (
-                    <button onClick={() => { setTargetScoreInput(roadmapData.targetScore.toString()); setIsEditingTarget(true); }} className="text-xs text-purple-400 hover:text-white underline underline-offset-2">Điều chỉnh</button>
+                    <button onClick={() => { setTargetScoreInput(roadmapData.targetScore.toString()); setIsEditingTarget(true); }} className="text-xs text-purple-400 hover:text-white transition-colors cursor-pointer">Điều chỉnh</button>
                   ) : (
                     <button onClick={async () => { 
                       const newTarget = parseInt(targetScoreInput);
@@ -256,13 +256,42 @@ export default function RoadmapPage() {
                 {!isEditingTarget ? (
                   <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{roadmapData.targetScore}</p>
                 ) : (
-                  <input type="number" autoFocus value={targetScoreInput} onChange={(e) => setTargetScoreInput(e.target.value)} className="w-24 bg-[#0a0a0f] border border-purple-500/50 rounded-lg text-3xl font-black text-purple-400 px-2 py-1 outline-none" />
+                  <input 
+                    type="number" 
+                    autoFocus 
+                    value={targetScoreInput} 
+                    onChange={(e) => setTargetScoreInput(e.target.value)} 
+                    onKeyDown={async (e) => {
+                      if(e.key === 'Enter') {
+                        const newTarget = parseInt(targetScoreInput);
+                        if(newTarget > roadmapData.currentScore && newTarget <= 990) {
+                          try {
+                            if(!isGuest) {
+                              await fetch('/api/toeic/roadmap', {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ targetScore: newTarget })
+                              });
+                            }
+                            setRoadmapData({...roadmapData, targetScore: newTarget}); 
+                            setIsEditingTarget(false); 
+                            toast.success("Đã cập nhật mục tiêu!");
+                          } catch(err) {
+                            toast.error("Lỗi khi lưu mục tiêu");
+                          }
+                        } else {
+                          toast.error("Mục tiêu phải lớn hơn điểm hiện tại và tối đa 990!");
+                        }
+                      }
+                    }}
+                    className="w-24 bg-[#0a0a0f] border border-purple-500/50 rounded-lg text-3xl font-black text-purple-400 px-2 py-1 outline-none" 
+                  />
                 )}
               </div>
             </div>
 
             <p className="text-xs text-slate-500 mb-8 italic">
-              *Điểm hiện tại chỉ là ước tính tương đối từ bài test ngắn. Để đo lường chính xác, bạn có thể <button onClick={() => toast.info('Tính năng Bài test chuyên sâu đang được phát triển!')} className="text-purple-400 hover:text-purple-300 underline underline-offset-2">làm bài test chuyên sâu</button>.
+              *Điểm hiện tại chỉ là ước tính tương đối từ bài test ngắn. Để đo lường chính xác, bạn có thể <button onClick={() => toast.info('Tính năng Bài test chuyên sâu đang được phát triển!')} className="text-purple-400 hover:text-purple-300 font-bold transition-colors cursor-pointer">làm bài test chuyên sâu</button>.
             </p>
 
             <div className="space-y-4">
@@ -280,7 +309,7 @@ export default function RoadmapPage() {
           <div className="bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-3xl p-8">
              <h3 className="text-xl font-semibold mb-6 flex items-center gap-3">
               <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
               </svg>
               Chi tiết Kỹ năng
             </h3>
