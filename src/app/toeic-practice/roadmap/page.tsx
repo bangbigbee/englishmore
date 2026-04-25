@@ -33,6 +33,7 @@ export default function RoadmapPage() {
             { name: "Grammar & Vocab", score: Math.min(100, Math.max(0, Math.round(baseRatio) + 10)), color: "from-blue-500 to-cyan-400", desc: "Ngữ pháp và Từ vựng" },
             { name: "Listening", score: Math.min(100, Math.max(0, Math.round(baseRatio) - 5)), color: "from-purple-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
             { name: "Reading", score: Math.min(100, Math.max(0, Math.round(baseRatio))), color: "from-orange-400 to-red-500", desc: "Kỹ năng Đọc Hiểu" },
+            { name: "Pronunciation", score: Math.min(100, Math.max(0, Math.round(baseRatio) - 10)), color: "from-amber-400 to-orange-500", desc: "Kỹ năng Phát Âm" },
           ];
 
           const highestSkill = skillsArr.reduce((prev, current) => (prev.score > current.score) ? prev : current);
@@ -172,7 +173,7 @@ export default function RoadmapPage() {
             Lộ Trình <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Độc Bản</span> Của Bạn
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Dựa trên bài đánh giá năng lực, chúng tôi đã thiết kế một bản đồ sao dành riêng cho bạn để đạt mục tiêu trong thời gian ngắn nhất.
+            Dựa trên bài đánh giá năng lực, chúng tôi đã thiết kế lộ trình kéo dài <strong className="text-purple-400">{roadmapData.phases.length} tuần</strong> dành riêng cho bạn để đạt mục tiêu trong thời gian ngắn nhất.
           </p>
         </motion.div>
 
@@ -278,9 +279,14 @@ export default function RoadmapPage() {
                   {!phase.isUnlocked && (
                     <div className="absolute inset-0 z-20 backdrop-blur-md bg-[#0a0a0f]/60 flex flex-col items-center justify-center p-6 text-center">
                       <div className="flex items-center justify-center gap-3">
-                        <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                        <div className="relative">
+                          <svg className="w-6 h-6 text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                          <div className="absolute -top-2 -right-3 text-[9px] font-black bg-gradient-to-r from-cyan-400 to-purple-500 text-white px-1.5 py-0.5 rounded shadow-sm transform rotate-6">
+                            ULTRA
+                          </div>
+                        </div>
                         <h4 className="text-lg font-bold text-slate-300">
                           Tính năng đang tạm khóa
                         </h4>
@@ -360,6 +366,14 @@ export default function RoadmapPage() {
               <div className="hidden md:block md:w-[45%]" />
             </motion.div>
           ))}
+        </div>
+
+        {/* CHỈ BÁO CÒN NHIỀU TUẦN NỮA */}
+        <div className="relative flex justify-center mt-8 mb-16">
+           <div className="absolute top-0 bottom-0 left-[27px] md:left-1/2 md:-ml-[1px] w-[2px] border-l-2 border-dashed border-purple-500/30" />
+           <div className="bg-[#0a0a0f] border border-purple-500/30 px-6 py-3 rounded-full text-purple-400 font-bold text-sm shadow-[0_0_15px_rgba(168,85,247,0.2)] z-10 flex items-center gap-2">
+              <span className="animate-bounce">↓</span> Vẫn còn lộ trình cho các tuần tiếp theo...
+           </div>
         </div>
       </main>
 
