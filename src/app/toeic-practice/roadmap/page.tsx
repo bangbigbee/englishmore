@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -12,6 +12,9 @@ export default function RoadmapPage() {
   const [roadmapData, setRoadmapData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isGuest, setIsGuest] = useState(false);
+  const [showContractModal, setShowContractModal] = useState(false);
+  const [contractName, setContractName] = useState("");
+  const [studyPace, setStudyPace] = useState(30);
 
   useEffect(() => {
     setMounted(true);
@@ -62,6 +65,11 @@ export default function RoadmapPage() {
           setRoadmapData(transformed);
           if (data.isGuest) {
             setIsGuest(true);
+          }
+          
+          const hasSigned = localStorage.getItem('toeicRoadmapContractSigned');
+          if (!hasSigned) {
+            setShowContractModal(true);
           }
         } else {
           // Fallback if no roadmap generated yet
@@ -119,6 +127,37 @@ export default function RoadmapPage() {
 
       <main className="max-w-5xl mx-auto px-6 py-12 relative z-10">
         
+        {/* STREAK & MOTIVATION BANNER */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 p-5 rounded-2xl bg-gradient-to-r from-orange-500/10 to-red-500/5 border border-orange-500/20 flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden group hover:border-orange-500/40 transition-colors"
+        >
+          <div className="absolute top-[-50%] right-[-10%] w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-orange-500/20 transition-colors" />
+          <div className="flex items-center gap-4 relative z-10 w-full md:w-auto">
+            <div className="w-14 h-14 shrink-0 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(249,115,22,0.4)] animate-pulse">
+              🔥
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg flex items-center gap-2 mb-1">
+                Chuỗi học: 3 ngày liên tiếp
+                <span className="text-[10px] uppercase tracking-widest bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full font-black border border-orange-500/30">
+                  ON FIRE
+                </span>
+              </h3>
+              <p className="text-sm text-slate-300">
+                Lộ trình đang đi đúng hướng! Duy trì chuỗi để nhận huy hiệu tuần này.
+              </p>
+            </div>
+          </div>
+          
+          <div className="relative z-10 shrink-0 w-full md:w-auto flex gap-3">
+            <button className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2">
+              <span className="text-xl">❄️</span> Mua Đóng Băng
+            </button>
+          </div>
+        </motion.div>
+
         {/* HEADER */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -226,7 +265,9 @@ export default function RoadmapPage() {
               className={`relative flex flex-col md:flex-row items-center justify-between mb-24 ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
             >
               {/* Timeline Node */}
-              <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-[#0a0a0f] border-4 border-purple-500 z-10 shadow-[0_0_15px_#a855f7]" />
+              <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 md:-translate-y-1/2 bg-[#0a0a0f] border-2 border-purple-500 text-purple-400 font-black text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-full z-10 shadow-[0_0_15px_#a855f7] whitespace-nowrap">
+                TUẦN {phase.weekNumber}
+              </div>
 
               {/* Content Side */}
               <div className={`w-full pl-16 md:pl-0 md:w-[45%] ${index % 2 !== 0 ? 'md:text-left' : 'md:text-right'}`}>
@@ -333,6 +374,92 @@ export default function RoadmapPage() {
           ))}
         </div>
       </main>
+
+      {/* COMMITMENT CONTRACT MODAL */}
+      <AnimatePresence>
+        {showContractModal && roadmapData && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-[#0a0a0f]/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-slate-900 border border-purple-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.2)] overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-cyan-400" />
+              
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-500/20">
+                  <span className="text-3xl">📜</span>
+                </div>
+                <h2 className="text-2xl font-black text-white mb-2">Bản Cam Kết Mục Tiêu</h2>
+                <p className="text-slate-400 text-sm">
+                  Hãy thiết lập cường độ học phù hợp với quỹ thời gian của bạn và ký cam kết để bắt đầu hành trình.
+                </p>
+              </div>
+
+              <div className="space-y-6 mb-8">
+                {/* Intensity Selection */}
+                <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-3">Thời gian rảnh mỗi ngày của bạn:</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[15, 30, 60].map(mins => (
+                      <button
+                        key={mins}
+                        onClick={() => setStudyPace(mins)}
+                        className={`py-3 px-2 rounded-xl border text-sm font-bold transition-all ${studyPace === mins ? 'bg-purple-500/20 border-purple-500 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}`}
+                      >
+                        {mins} phút
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Contract Text */}
+                <div className="p-5 rounded-2xl bg-black/40 border border-white/5 font-serif italic text-slate-300 text-sm leading-relaxed relative">
+                  <div className="absolute top-2 left-2 text-purple-500/20 text-4xl leading-none">"</div>
+                  <p className="relative z-10 text-center">
+                    Tôi cam kết sẽ dành ra ít nhất <strong className="text-purple-400 not-italic">{studyPace} phút</strong> mỗi ngày để học theo đúng lộ trình này.
+                    <br/><br/>
+                    Mục tiêu của tôi là đạt <strong className="text-cyan-400 not-italic">{roadmapData.targetScore} điểm TOEIC</strong>. Tôi sẽ không bỏ cuộc!
+                  </p>
+                  <div className="absolute bottom-2 right-2 text-purple-500/20 text-4xl leading-none rotate-180">"</div>
+                </div>
+
+                {/* Signature */}
+                <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-2">Chữ ký (Nhập tên của bạn):</label>
+                  <input 
+                    type="text" 
+                    value={contractName}
+                    onChange={(e) => setContractName(e.target.value)}
+                    placeholder="Nguyễn Văn A"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all font-medium"
+                  />
+                </div>
+              </div>
+
+              <button 
+                disabled={!contractName.trim()}
+                onClick={() => {
+                  localStorage.setItem('toeicRoadmapContractSigned', 'true');
+                  localStorage.setItem('toeicRoadmapPace', studyPace.toString());
+                  setShowContractModal(false);
+                  toast.success(`Cảm ơn ${contractName}! Chúc bạn sớm đạt ${roadmapData.targetScore} điểm.`, { duration: 5000 });
+                }}
+                className={`w-full py-4 rounded-2xl font-black text-lg transition-all ${contractName.trim() ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:scale-[1.02] active:scale-[0.98]' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+              >
+                TÔI XIN CAM KẾT
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

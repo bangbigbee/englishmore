@@ -374,6 +374,28 @@ export default function AdminPlacementTest() {
                                     >
                                         Xóa trắng
                                     </button>
+                                    <button 
+                                        onClick={() => {
+                                            alert("HƯỚNG DẪN FORMAT FILE DOCX:\n\n" +
+                                                "Sử dụng thẻ [Category] để phân loại Kỹ năng và Cấp độ. Ví dụ:\n" +
+                                                "[Listening - Basic]\n" +
+                                                "[Listening - Intermediate]\n" +
+                                                "[Reading - Advanced]\n\n" +
+                                                "Cấu trúc mỗi câu hỏi:\n" +
+                                                "Câu 1: Nội dung câu hỏi...\n" +
+                                                "A) Đáp án 1\n" +
+                                                "B) Đáp án 2\n" +
+                                                "C) Đáp án 3\n" +
+                                                "D) Đáp án 4\n" +
+                                                "Đáp án: B\n\n" +
+                                                "* Chú ý: Dấu ngoặc sau A, B, C, D có thể là ')' hoặc '.'\n" +
+                                                "* Các câu dưới thẻ [Category] sẽ tự động mang thuộc tính của Category đó cho đến khi gặp thẻ mới."
+                                            );
+                                        }}
+                                        className="px-3 py-2 text-purple-600 font-bold hover:bg-purple-100 rounded-lg transition-colors text-sm"
+                                    >
+                                        📄 Xem Format Mẫu
+                                    </button>
                                     <label className="px-4 py-2 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-900 transition-colors cursor-pointer flex items-center gap-2 text-sm">
                                         {isUploading ? 'Đang Import...' : 'Import DOCX'}
                                         <input type="file" accept=".docx" className="hidden" onChange={handleDocxUpload} disabled={isUploading} />

@@ -32,11 +32,11 @@ export async function GET(req: NextRequest) {
         if (!config) {
              config = {
                 difficulty: {
-                    BEGINNER: { beginner: 8, intermediate: 5, advanced: 2 },
-                    INTERMEDIATE: { beginner: 6, intermediate: 5, advanced: 4 },
-                    ADVANCED: { beginner: 4, intermediate: 5, advanced: 6 }
+                    BEGINNER: { beginner: 10, intermediate: 7, advanced: 3 }, // Total 20
+                    INTERMEDIATE: { beginner: 6, intermediate: 8, advanced: 6 }, // Total 20
+                    ADVANCED: { beginner: 3, intermediate: 7, advanced: 10 } // Total 20
                 },
-                skill: { listening: 5, reading: 7, image: 3 }
+                skill: { listening: 5, reading: 10, pronunciation: 2, vocabulary: 3 }
              };
         }
 
@@ -48,9 +48,10 @@ export async function GET(req: NextRequest) {
             advanced: levelConfig.advanced 
         };
         let neededSkill: Record<string, number> = { 
-            listening: config.skill.listening, 
-            reading: config.skill.reading, 
-            image: config.skill.image 
+            listening: config.skill?.listening || 5, 
+            reading: config.skill?.reading || 10,
+            pronunciation: config.skill?.pronunciation || 2,
+            vocabulary: config.skill?.vocabulary || 3
         };
 
         const pickRandom = (arr: any[]) => {
@@ -67,51 +68,64 @@ export async function GET(req: NextRequest) {
 
         // Pass 1: Try to satisfy BOTH difficulty and skill
         for (let q of shuffledQuestions) {
-            let diff = q.category.toLowerCase().includes('beginner') ? 'beginner' : q.category.toLowerCase().includes('intermediate') ? 'intermediate' : 'advanced';
-            let skill = q.audioUrl ? 'listening' : (q.imageUrl ? 'image' : 'reading');
+            let diff = 'intermediate';
+            if (q.category.toLowerCase().includes('beginner') || q.category.toLowerCase().includes('basic')) diff = 'beginner';
+            else if (q.category.toLowerCase().includes('advanced')) diff = 'advanced';
+
+            let skill = 'reading';
+            const catLower = q.category.toLowerCase();
+            if (catLower.includes('pronunciation')) skill = 'pronunciation';
+            else if (catLower.includes('vocab')) skill = 'vocabulary';
+            else if (catLower.includes('listen') || q.audioUrl) skill = 'listening';
             
             if (neededDiff[diff] > 0 && neededSkill[skill] > 0) {
                 selectedQuestions.push(q);
                 neededDiff[diff]--;
                 neededSkill[skill]--;
             }
-            if (selectedQuestions.length === 15) break;
+            if (selectedQuestions.length === 20) break;
         }
 
-        // Pass 2: If we haven't reached 15, relax Skill constraint, try to satisfy Difficulty
-        if (selectedQuestions.length < 15) {
+        // Pass 2: If we haven't reached 20, relax Skill constraint, try to satisfy Difficulty
+        if (selectedQuestions.length < 20) {
             for (let q of shuffledQuestions) {
                 if (selectedQuestions.some((sq: any) => sq.id === q.id)) continue;
-                let diff = q.category.toLowerCase().includes('beginner') ? 'beginner' : q.category.toLowerCase().includes('intermediate') ? 'intermediate' : 'advanced';
+                let diff = 'intermediate';
+                if (q.category.toLowerCase().includes('beginner') || q.category.toLowerCase().includes('basic')) diff = 'beginner';
+                else if (q.category.toLowerCase().includes('advanced')) diff = 'advanced';
                 
                 if (neededDiff[diff] > 0) {
                     selectedQuestions.push(q);
                     neededDiff[diff]--;
                 }
-                if (selectedQuestions.length === 15) break;
+                if (selectedQuestions.length === 20) break;
             }
         }
 
-        // Pass 3: If STILL not 15, relax Difficulty constraint, try to satisfy Skill
-        if (selectedQuestions.length < 15) {
+        // Pass 3: If STILL not 20, relax Difficulty constraint, try to satisfy Skill
+        if (selectedQuestions.length < 20) {
             for (let q of shuffledQuestions) {
                 if (selectedQuestions.some((sq: any) => sq.id === q.id)) continue;
-                let skill = q.audioUrl ? 'listening' : (q.imageUrl ? 'image' : 'reading');
+                let skill = 'reading';
+                const catLower = q.category.toLowerCase();
+                if (catLower.includes('pronunciation')) skill = 'pronunciation';
+                else if (catLower.includes('vocab')) skill = 'vocabulary';
+                else if (catLower.includes('listen') || q.audioUrl) skill = 'listening';
                 
                 if (neededSkill[skill] > 0) {
                     selectedQuestions.push(q);
                     neededSkill[skill]--;
                 }
-                if (selectedQuestions.length === 15) break;
+                if (selectedQuestions.length === 20) break;
             }
         }
 
-        // Pass 4: If STILL not 15, just grab anything left
-        if (selectedQuestions.length < 15) {
+        // Pass 4: If STILL not 20, just grab anything left
+        if (selectedQuestions.length < 20) {
             for (let q of shuffledQuestions) {
                 if (selectedQuestions.some((sq: any) => sq.id === q.id)) continue;
                 selectedQuestions.push(q);
-                if (selectedQuestions.length === 15) break;
+                if (selectedQuestions.length === 20) break;
             }
         }
 

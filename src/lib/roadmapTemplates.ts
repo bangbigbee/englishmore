@@ -11,6 +11,7 @@ export const ROADMAP_TEMPLATES: any = {
                 tasks: [
                     { dayNumber: 1, taskType: "GRAMMAR", title: "Khởi động: Thì Hiện tại đơn", referencePath: "/toeic-practice/grammar/thi-hien-tai-don", rewardStars: 10 },
                     { dayNumber: 1, taskType: "VOCAB", title: "Học 20 từ vựng chủ đề Office", referencePath: "/toeic-practice?tab=vocabulary&topic=Office", rewardStars: 15 },
+                    { dayNumber: 2, taskType: "PRONUNCIATION", title: "Nền tảng Nghe: Bảng phiên âm IPA", referencePath: "/toeic-practice/grammar/bang-phien-am-ipa", rewardStars: 10 },
                     { dayNumber: 2, taskType: "LISTENING", title: "Luyện Nghe Part 1: Tranh Tả Người", referencePath: "/toeic-practice/grammar/tranh-ta-nguoi", rewardStars: 20 },
                     { dayNumber: 3, taskType: "GRAMMAR", title: "Thì Quá khứ đơn & Tương lai đơn", referencePath: "/toeic-practice/grammar/thi-qua-khu-don-va-tuong-lai-don", rewardStars: 15 },
                     { dayNumber: 4, taskType: "VOCAB", title: "Học 20 từ vựng chủ đề Personnel", referencePath: "/toeic-practice?tab=vocabulary&topic=Personnel", rewardStars: 15 },
@@ -70,6 +71,7 @@ export const ROADMAP_TEMPLATES: any = {
                 tasks: [
                     { dayNumber: 1, taskType: "LISTENING", title: "Part 3: Luyện nghe suy luận", referencePath: "/toeic-practice/grammar/luyen-nghe-suy-luan-part-3", rewardStars: 20 },
                     { dayNumber: 1, taskType: "VOCAB", title: "Từ vựng Marketing & Sales", referencePath: "/toeic-practice?tab=vocabulary&topic=Marketing and Sales", rewardStars: 15 },
+                    { dayNumber: 2, taskType: "PRONUNCIATION", title: "Sửa lỗi phát âm: Nối âm & Trọng âm", referencePath: "/toeic-practice/grammar/noi-am-trong-am", rewardStars: 15 },
                     { dayNumber: 2, taskType: "GRAMMAR", title: "Mệnh đề quan hệ", referencePath: "/toeic-practice/grammar/menh-de-quan-he", rewardStars: 15 },
                     { dayNumber: 3, taskType: "READING", title: "Đọc hiểu Part 6: Điền từ vào đoạn văn", referencePath: "/toeic-practice/grammar/dien-tu-vao-doan-van-part-6", rewardStars: 20 },
                 ]
@@ -124,6 +126,7 @@ export const ROADMAP_TEMPLATES: any = {
                 tasks: [
                     { dayNumber: 1, taskType: "TEST", title: "Thi Thử ETS 2024 - Test 1", referencePath: "/toeic-practice/actual-test/ets-2024-test-1/take", rewardStars: 50 },
                     { dayNumber: 2, taskType: "REVIEW", title: "Phân tích lỗi sai Test 1", referencePath: "/toeic-practice/actual-test/ets-2024-test-1/take", rewardStars: 20 },
+                    { dayNumber: 3, taskType: "PRONUNCIATION", title: "Shadowing: Bắt chước ngữ điệu bản xứ", referencePath: "/toeic-practice/grammar/shadowing-ngu-dieu", rewardStars: 20 },
                     { dayNumber: 3, taskType: "VOCAB", title: "Học từ vựng nâng cao (Bẫy TOEIC)", referencePath: "/toeic-practice?tab=vocabulary&topic=Advanced Traps", rewardStars: 15 },
                 ]
             },

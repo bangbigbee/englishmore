@@ -1,5 +1,4 @@
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import { ROADMAP_TEMPLATES } from '@/lib/roadmapTemplates';
 
 export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabClick }: { level: string | null, score: string | null, onPracticeClick: (path: string) => void, onTabClick: (tab: string) => void }) {
     const router = useRouter();
@@ -26,6 +25,59 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
         );
     }
 
+    let currentPoints = 350;
+    if (score) {
+        const parts = score.split('/');
+        if (parts.length === 2) {
+            const percentage = parseInt(parts[0]) / parseInt(parts[1]);
+            currentPoints = Math.round(percentage * 990);
+            if (currentPoints < 10) currentPoints = 10;
+        }
+    }
+
+    const templateLevel = level || 'BEGINNER';
+    const template = ROADMAP_TEMPLATES[templateLevel] || ROADMAP_TEMPLATES['BEGINNER'];
+
+    let finalTargetScore = template.targetScore || 450;
+    if (currentPoints >= finalTargetScore) {
+        if (currentPoints < 850) finalTargetScore = 850;
+        else if (currentPoints < 900) finalTargetScore = 900;
+        else if (currentPoints < 950) finalTargetScore = 950;
+        else finalTargetScore = 990;
+    }
+
+    const mapTaskType = (type: string) => {
+        switch(type) {
+            case 'GRAMMAR': return 'Ngữ pháp';
+            case 'VOCAB': return 'Từ vựng';
+            case 'LISTENING': return 'Nghe hiểu';
+            case 'READING': return 'Đọc hiểu';
+            case 'TEST': return 'Luyện Đề';
+            case 'REVIEW': return 'Chữa đề';
+            case 'PRONUNCIATION': return 'Phát âm';
+            default: return 'Thử thách';
+        }
+    };
+
+    const mapActionText = (type: string) => {
+        switch(type) {
+            case 'GRAMMAR': return 'Luyện tập';
+            case 'VOCAB': return 'Học ngay';
+            case 'LISTENING': return 'Bắt đầu';
+            case 'READING': return 'Luyện tập';
+            case 'TEST': return 'Thi Thử';
+            case 'REVIEW': return 'Xem lại';
+            default: return 'Bắt đầu';
+        }
+    };
+
+    const dynamicTasks = (template.phases[0]?.tasks || []).slice(0, 3).map((t: any) => ({
+        title: t.title,
+        type: mapTaskType(t.taskType),
+        actionText: mapActionText(t.taskType),
+        path: t.referencePath
+    }));
+
     const roadmapData: Record<string, {
         title: string,
         subtitle: string,
@@ -35,7 +87,7 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
         tasks: { title: string, type: string, actionText: string, path?: string, tab?: string, isPremium?: boolean }[]
     }> = {
         'BEGINNER': {
-            title: 'Lộ trình Xóa Mù (Mất gốc)',
+            title: `Lộ trình Xóa Mù (Mục tiêu ${finalTargetScore}+)`,
             subtitle: 'Mục tiêu: Xây dựng nền tảng từ vựng và ngữ pháp cơ bản, làm quen Part 1 & 2.',
             icon: (
                 <svg className="w-[1em] h-[1em]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,14 +99,10 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
             ),
             color: 'text-[#581c87]',
             bg: 'bg-purple-50',
-            tasks: [
-                { title: 'Học 10 từ vựng chủ đề Office', type: 'Từ vựng', actionText: 'Học ngay', tab: 'vocabulary' },
-                { title: 'Ngữ pháp: Thì hiện tại đơn', type: 'Ngữ pháp', actionText: 'Luyện tập', path: '/toeic-practice/grammar/thi-hien-tai-don' },
-                { title: 'Luyện nghe Part 1 (Hình ảnh)', type: 'Nghe hiểu', actionText: 'Bắt đầu', tab: 'actual-test' }
-            ]
+            tasks: dynamicTasks
         },
         'INTERMEDIATE': {
-            title: 'Lộ trình Bứt Phá (Cơ bản)',
+            title: `Lộ trình Bứt Phá (Mục tiêu ${finalTargetScore}+)`,
             subtitle: 'Mục tiêu: Tăng tốc Part 3, 4, 7, mở rộng vốn từ vựng nâng cao.',
             icon: (
                 <svg className="w-[1em] h-[1em]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -63,14 +111,10 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
             ),
             color: 'text-[#581c87]',
             bg: 'bg-purple-50',
-            tasks: [
-                { title: 'Từ vựng: Marketing & Sales', type: 'Từ vựng', actionText: 'Học ngay', tab: 'vocabulary' },
-                { title: 'Ngữ pháp: Câu Điều Kiện', type: 'Ngữ pháp', actionText: 'Luyện tập', path: '/toeic-practice/grammar/cau-dieu-kien' },
-                { title: 'Luyện đọc Part 5 & 6', type: 'Đọc hiểu', actionText: 'Luyện tập', tab: 'actual-test' }
-            ]
+            tasks: dynamicTasks
         },
         'ADVANCED': {
-            title: 'Lộ trình Master (Mục tiêu 800+)',
+            title: `Lộ trình Master (Mục tiêu ${finalTargetScore}+)`,
             subtitle: 'Mục tiêu: Giải đề cường độ cao, tối ưu thời gian, vượt qua bẫy.',
             icon: (
                 <svg className="w-[1em] h-[1em]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -80,11 +124,7 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
             ),
             color: 'text-[#581c87]',
             bg: 'bg-purple-50',
-            tasks: [
-                { title: 'Giải Full Test ETS 2024', type: 'Luyện Đề', actionText: 'Thi Thử', tab: 'actual-test' },
-                { title: 'Speed Challenge Từ Vựng', type: 'Thử thách', actionText: 'Đua Top', tab: 'home' },
-                { title: 'Luyện nghe Part 3 & 4', type: 'Nghe hiểu', actionText: 'Luyện tập', tab: 'actual-test' }
-            ]
+            tasks: dynamicTasks
         }
     };
 

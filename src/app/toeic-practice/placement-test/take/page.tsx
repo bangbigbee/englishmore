@@ -151,10 +151,21 @@ export default function PlacementTestTakePage() {
                                             <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm shrink-0">
                                                 {idx + 1}
                                             </div>
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">
-                                                {q.category?.toLowerCase().includes('beginner') ? 'Mức: Dễ' : 
-                                                 q.category?.toLowerCase().includes('intermediate') ? 'Mức: Vừa' : 
-                                                 q.category?.toLowerCase().includes('advanced') ? 'Mức: Khó' : q.category}
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center max-w-[50px]">
+                                                {(() => {
+                                                    const cat = q.category?.toLowerCase() || '';
+                                                    let skill = '';
+                                                    if (cat.includes('listen')) skill = '🎧 ';
+                                                    else if (cat.includes('read') || cat.includes('grammar') || cat.includes('vocab')) skill = '📖 ';
+                                                    
+                                                    let level = cat;
+                                                    if (cat.includes('beginner') || cat.includes('basic')) level = 'Dễ';
+                                                    else if (cat.includes('intermediate')) level = 'Vừa';
+                                                    else if (cat.includes('advanced')) level = 'Khó';
+                                                    else level = q.category;
+                                                    
+                                                    return `${skill}${level}`;
+                                                })()}
                                             </span>
                                         </div>
                                         <div className="flex-1">

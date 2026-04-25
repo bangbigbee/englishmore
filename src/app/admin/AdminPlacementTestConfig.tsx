@@ -80,7 +80,7 @@ export default function AdminPlacementTestConfig() {
             >
                 <div className="flex items-center gap-2">
                     <span className="text-xl">⚙️</span>
-                    <h2 className="font-black text-slate-800">Cấu hình Thuật toán Sinh đề (15 câu)</h2>
+                    <h2 className="font-black text-slate-800">Cấu hình Thuật toán Sinh đề (20 câu)</h2>
                 </div>
                 <svg className={`w-5 h-5 text-slate-500 transform transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -103,22 +103,22 @@ export default function AdminPlacementTestConfig() {
                                         <div key={level} className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <div className="flex justify-between items-center mb-3">
                                                 <span className="font-bold text-sm text-slate-700">Level: <span className="text-purple-600">{level}</span></span>
-                                                <span className={`text-xs font-bold px-2 py-1 rounded ${total === 15 ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>
-                                                    Tổng: {total}/15
+                                                <span className={`text-xs font-bold px-2 py-1 rounded ${total === 20 ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>
+                                                    Tổng: {total}/20
                                                 </span>
                                             </div>
                                             <div className="grid grid-cols-3 gap-3">
                                                 <div>
                                                     <label className="block text-xs font-semibold text-slate-500 mb-1">Beginner (Dễ)</label>
-                                                    <input type="number" min="0" max="15" value={config.difficulty[level].beginner} onChange={e => updateDifficulty(level, 'beginner', parseInt(e.target.value) || 0)} className="w-full p-2 border rounded text-center font-bold" />
+                                                    <input type="number" min="0" max="20" value={config.difficulty[level].beginner} onChange={e => updateDifficulty(level, 'beginner', parseInt(e.target.value) || 0)} className="w-full p-2 border rounded text-center font-bold" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-xs font-semibold text-slate-500 mb-1">Inter. (Vừa)</label>
-                                                    <input type="number" min="0" max="15" value={config.difficulty[level].intermediate} onChange={e => updateDifficulty(level, 'intermediate', parseInt(e.target.value) || 0)} className="w-full p-2 border rounded text-center font-bold" />
+                                                    <input type="number" min="0" max="20" value={config.difficulty[level].intermediate} onChange={e => updateDifficulty(level, 'intermediate', parseInt(e.target.value) || 0)} className="w-full p-2 border rounded text-center font-bold" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-xs font-semibold text-slate-500 mb-1">Advanced (Khó)</label>
-                                                    <input type="number" min="0" max="15" value={config.difficulty[level].advanced} onChange={e => updateDifficulty(level, 'advanced', parseInt(e.target.value) || 0)} className="w-full p-2 border rounded text-center font-bold" />
+                                                    <input type="number" min="0" max="20" value={config.difficulty[level].advanced} onChange={e => updateDifficulty(level, 'advanced', parseInt(e.target.value) || 0)} className="w-full p-2 border rounded text-center font-bold" />
                                                 </div>
                                             </div>
                                         </div>
@@ -135,32 +135,36 @@ export default function AdminPlacementTestConfig() {
                             </h3>
                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                 <div className="flex justify-between items-center mb-4">
-                                    <span className="font-bold text-sm text-slate-700">Tỉ lệ Nghe / Đọc / Hình ảnh</span>
+                                    <span className="font-bold text-sm text-slate-700">Tỉ lệ Phân bổ</span>
                                     {(() => {
-                                        const totalSkill = config.skill.listening + config.skill.reading + config.skill.image;
+                                        const totalSkill = (config.skill.listening || 0) + (config.skill.reading || 0) + (config.skill.pronunciation || 0) + (config.skill.vocabulary || 0);
                                         return (
-                                            <span className={`text-xs font-bold px-2 py-1 rounded ${totalSkill === 15 ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>
-                                                Tổng: {totalSkill}/15
+                                            <span className={`text-xs font-bold px-2 py-1 rounded ${totalSkill === 20 ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>
+                                                Tổng: {totalSkill}/20
                                             </span>
                                         );
                                     })()}
                                 </div>
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <label className="text-sm font-semibold text-slate-600 w-1/2">🎵 Kỹ năng Nghe (Audio)</label>
-                                        <input type="number" min="0" max="15" value={config.skill.listening} onChange={e => updateSkill('listening', parseInt(e.target.value) || 0)} className="w-24 p-2 border rounded text-center font-bold" />
+                                        <label className="text-sm font-semibold text-slate-600 w-1/2">🎧 Kỹ năng Nghe hiểu</label>
+                                        <input type="number" min="0" max="20" value={config.skill.listening || 0} onChange={e => updateSkill('listening', parseInt(e.target.value) || 0)} className="w-24 p-2 border rounded text-center font-bold" />
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <label className="text-sm font-semibold text-slate-600 w-1/2">📖 Kỹ năng Đọc (Text)</label>
-                                        <input type="number" min="0" max="15" value={config.skill.reading} onChange={e => updateSkill('reading', parseInt(e.target.value) || 0)} className="w-24 p-2 border rounded text-center font-bold" />
+                                        <label className="text-sm font-semibold text-slate-600 w-1/2">📖 Kỹ năng Đọc hiểu</label>
+                                        <input type="number" min="0" max="20" value={config.skill.reading || 0} onChange={e => updateSkill('reading', parseInt(e.target.value) || 0)} className="w-24 p-2 border rounded text-center font-bold" />
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <label className="text-sm font-semibold text-slate-600 w-1/2">🖼️ Hình ảnh (Part 1/Biểu đồ)</label>
-                                        <input type="number" min="0" max="15" value={config.skill.image} onChange={e => updateSkill('image', parseInt(e.target.value) || 0)} className="w-24 p-2 border rounded text-center font-bold" />
+                                        <label className="text-sm font-semibold text-slate-600 w-1/2">🗣️ Phát âm (Pronunciation)</label>
+                                        <input type="number" min="0" max="20" value={config.skill.pronunciation || 0} onChange={e => updateSkill('pronunciation', parseInt(e.target.value) || 0)} className="w-24 p-2 border rounded text-center font-bold" />
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-semibold text-slate-600 w-1/2">📚 Từ vựng (Vocabulary)</label>
+                                        <input type="number" min="0" max="20" value={config.skill.vocabulary || 0} onChange={e => updateSkill('vocabulary', parseInt(e.target.value) || 0)} className="w-24 p-2 border rounded text-center font-bold" />
                                     </div>
                                 </div>
                                 <p className="text-xs text-slate-500 italic mt-6">
-                                    Lưu ý: Hệ thống sẽ cố gắng phân bổ câu hỏi ưu tiên theo <span className="font-bold text-slate-700">Độ khó</span> trước, sau đó bù lấp theo <span className="font-bold text-slate-700">Kỹ năng</span> để đảm bảo luôn ra đủ 15 câu (nếu ngân hàng câu hỏi có đủ dữ liệu).
+                                    Lưu ý: Hệ thống sẽ cố gắng phân bổ câu hỏi ưu tiên theo <span className="font-bold text-slate-700">Độ khó</span> trước, sau đó bù lấp theo <span className="font-bold text-slate-700">Kỹ năng</span> để đảm bảo luôn ra đủ 20 câu (nếu ngân hàng câu hỏi có đủ dữ liệu).
                                 </p>
                             </div>
 
