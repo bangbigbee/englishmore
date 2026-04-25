@@ -15,6 +15,7 @@ export default function RoadmapPage() {
   const [showContractModal, setShowContractModal] = useState(false);
   const [contractName, setContractName] = useState("");
   const [studyPace, setStudyPace] = useState(30);
+  const [showFreezeModal, setShowFreezeModal] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -153,7 +154,10 @@ export default function RoadmapPage() {
           </div>
           
           <div className="relative z-10 shrink-0 w-full md:w-auto flex gap-3">
-            <button className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2">
+            <button 
+              onClick={() => setShowFreezeModal(true)}
+              className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
+            >
               <span className="text-xl">❄️</span> Mua Đóng Băng
             </button>
           </div>
@@ -458,6 +462,57 @@ export default function RoadmapPage() {
               >
                 TÔI XIN CAM KẾT
               </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+      {/* FREEZE MODAL */}
+      <AnimatePresence>
+        {showFreezeModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowFreezeModal(false)}
+              className="absolute inset-0 bg-[#0a0a0f]/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm bg-slate-900 border border-cyan-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(34,211,238,0.2)] text-center"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500" />
+              
+              <div className="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-cyan-500/20 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                <span className="text-4xl animate-pulse">❄️</span>
+              </div>
+              
+              <h2 className="text-2xl font-black text-white mb-2">Đóng Băng Chuỗi Học</h2>
+              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                Tính năng này sẽ giúp bảo vệ chuỗi học của bạn trong <strong className="text-white">1 ngày</strong> nếu bạn bận không thể học.
+                <br/><br/>
+                <span className="text-amber-400 font-bold bg-amber-400/10 px-2 py-1 rounded">Giá: 200 ⭐ (Stars)</span>
+              </p>
+
+              <div className="space-y-3">
+                <button 
+                  onClick={() => {
+                    toast.info("Tính năng Mua Đóng Băng đang được phát triển ở phiên bản tiếp theo!");
+                    setShowFreezeModal(false);
+                  }}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
+                >
+                  Mua ngay (200 ⭐)
+                </button>
+                <button 
+                  onClick={() => setShowFreezeModal(false)}
+                  className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold transition-colors"
+                >
+                  Để sau
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
