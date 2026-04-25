@@ -16,6 +16,8 @@ export default function RoadmapPage() {
   const [contractName, setContractName] = useState("");
   const [studyPace, setStudyPace] = useState(30);
   const [showFreezeModal, setShowFreezeModal] = useState(false);
+  const [isEditingTarget, setIsEditingTarget] = useState(false);
+  const [targetScoreInput, setTargetScoreInput] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -31,10 +33,10 @@ export default function RoadmapPage() {
           const baseRatio = data.roadmap.targetScore ? (data.roadmap.currentScore / data.roadmap.targetScore) * 100 : 0;
           
           const skillsArr = [
-            { name: "Grammar & Vocab", score: Math.min(100, Math.max(0, Math.round(baseRatio) + 10)), color: "from-blue-500 to-cyan-400", desc: "Ngữ pháp và Từ vựng" },
-            { name: "Listening", score: Math.min(100, Math.max(0, Math.round(baseRatio) - 5)), color: "from-purple-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
-            { name: "Reading", score: Math.min(100, Math.max(0, Math.round(baseRatio))), color: "from-orange-400 to-red-500", desc: "Kỹ năng Đọc Hiểu" },
-            { name: "Pronunciation", score: Math.min(100, Math.max(0, Math.round(baseRatio) - 10)), color: "from-amber-400 to-orange-500", desc: "Kỹ năng Phát Âm" },
+            { name: "Grammar & Vocab", score: Math.min(92, Math.max(0, Math.round(baseRatio) + 5)), color: "from-blue-500 to-cyan-400", desc: "Ngữ pháp và Từ vựng" },
+            { name: "Listening", score: Math.min(88, Math.max(0, Math.round(baseRatio) - 5)), color: "from-purple-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
+            { name: "Reading", score: Math.min(85, Math.max(0, Math.round(baseRatio))), color: "from-orange-400 to-red-500", desc: "Kỹ năng Đọc Hiểu" },
+            { name: "Pronunciation", score: Math.min(80, Math.max(0, Math.round(baseRatio) - 10)), color: "from-amber-400 to-orange-500", desc: "Kỹ năng Phát Âm" },
           ];
 
           const highestSkill = skillsArr.reduce((prev, current) => (prev.score > current.score) ? prev : current);
@@ -158,7 +160,7 @@ export default function RoadmapPage() {
               onClick={() => setShowFreezeModal(true)}
               className="flex-1 md:flex-none px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
             >
-              <span className="text-xl">❄️</span> Mua Đóng Băng
+              <span className="text-xl">❄️</span> Đổi Đóng Băng
             </button>
           </div>
         </motion.div>
@@ -198,7 +200,7 @@ export default function RoadmapPage() {
               Dự phóng Mục Tiêu
             </h3>
             
-            <div className="flex items-end gap-6 mb-8">
+            <div className="flex items-end gap-6 mb-4">
               <div>
                 <p className="text-slate-500 text-sm mb-1 uppercase tracking-wider font-semibold">Hiện tại</p>
                 <p className="text-5xl font-black text-slate-300">{roadmapData.currentScore}</p>
@@ -209,12 +211,36 @@ export default function RoadmapPage() {
                 </svg>
               </div>
               <div>
-                <p className="text-purple-400/80 text-sm mb-1 uppercase tracking-wider font-semibold">Mục tiêu</p>
-                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{roadmapData.targetScore}</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-purple-400/80 text-sm uppercase tracking-wider font-semibold">Mục tiêu</p>
+                  {!isEditingTarget ? (
+                    <button onClick={() => { setTargetScoreInput(roadmapData.targetScore.toString()); setIsEditingTarget(true); }} className="text-xs text-purple-400 hover:text-white underline underline-offset-2">Điều chỉnh</button>
+                  ) : (
+                    <button onClick={() => { 
+                      if(parseInt(targetScoreInput) > roadmapData.currentScore && parseInt(targetScoreInput) <= 990) {
+                        setRoadmapData({...roadmapData, targetScore: parseInt(targetScoreInput)}); 
+                        setIsEditingTarget(false); 
+                        toast.success("Đã cập nhật mục tiêu!");
+                      } else {
+                        toast.error("Mục tiêu phải lớn hơn điểm hiện tại và tối đa 990!");
+                      }
+                    }} className="text-xs text-emerald-400 hover:text-emerald-300 font-bold">Lưu</button>
+                  )}
+                </div>
+                {!isEditingTarget ? (
+                  <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{roadmapData.targetScore}</p>
+                ) : (
+                  <input type="number" autoFocus value={targetScoreInput} onChange={(e) => setTargetScoreInput(e.target.value)} className="w-24 bg-[#0a0a0f] border border-purple-500/50 rounded-lg text-3xl font-black text-purple-400 px-2 py-1 outline-none" />
+                )}
               </div>
             </div>
 
+            <p className="text-xs text-slate-500 mb-8 italic">
+              *Điểm hiện tại chỉ là ước tính tương đối từ bài test ngắn. Để đo lường chính xác, bạn có thể <button onClick={() => toast.info('Tính năng Bài test chuyên sâu đang được phát triển!')} className="text-purple-400 hover:text-purple-300 underline underline-offset-2">làm bài test chuyên sâu</button>.
+            </p>
+
             <div className="space-y-4">
+              <p className="text-sm font-bold text-slate-400 mb-2 uppercase tracking-wider">Phân tích từ 20 câu test đầu vào:</p>
               <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-transparent border-l-4 border-emerald-500">
                 <p className="text-emerald-100 text-sm"><strong className="text-emerald-400">💡 Điểm Sáng:</strong> Bạn có nền tảng {roadmapData.highestSkill.desc.toLowerCase()} khá ổn. Giữ vững phong độ!</p>
               </div>
@@ -493,18 +519,18 @@ export default function RoadmapPage() {
               <p className="text-slate-400 text-sm mb-6 leading-relaxed">
                 Tính năng này sẽ giúp bảo vệ chuỗi học của bạn trong <strong className="text-white">1 ngày</strong> nếu bạn bận không thể học.
                 <br/><br/>
-                <span className="text-amber-400 font-bold bg-amber-400/10 px-2 py-1 rounded">Giá: 200 ⭐ (Stars)</span>
+                <span className="text-amber-400 font-bold bg-amber-400/10 px-2 py-1 rounded">Bạn cần: 200 ⭐ (Stars)</span>
               </p>
 
               <div className="space-y-3">
                 <button 
                   onClick={() => {
-                    toast.info("Tính năng Mua Đóng Băng đang được phát triển ở phiên bản tiếp theo!");
+                    toast.info("Tính năng Đổi Đóng Băng đang được phát triển ở phiên bản tiếp theo!");
                     setShowFreezeModal(false);
                   }}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
                 >
-                  Mua ngay (200 ⭐)
+                  Đổi ngay (200 ⭐)
                 </button>
                 <button 
                   onClick={() => setShowFreezeModal(false)}

@@ -29,11 +29,8 @@ export async function GET(req: NextRequest) {
                 let currentScore = levelQuery === 'BEGINNER' ? 350 : levelQuery === 'INTERMEDIATE' ? 550 : 750;
                 let targetScore = template.targetScore || 450;
                 
-                if (currentScore >= targetScore) {
-                    if (currentScore < 850) targetScore = 850;
-                    else if (currentScore < 900) targetScore = 900;
-                    else if (currentScore < 950) targetScore = 950;
-                    else targetScore = 990;
+                if (currentScore + 100 > targetScore) {
+                    targetScore = Math.min(990, Math.round((currentScore + 150) / 5) * 5);
                 }
 
                 // Return a mock roadmap structure for guests
