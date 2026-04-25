@@ -277,26 +277,14 @@ export default function RoadmapPage() {
                   {/* Nếu bị khóa, áp dụng hiệu ứng Glassmorphism & Upsell */}
                   {!phase.isUnlocked && (
                     <div className="absolute inset-0 z-20 backdrop-blur-md bg-[#0a0a0f]/60 flex flex-col items-center justify-center p-6 text-center">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-500 to-cyan-400 p-[2px] mb-4 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
-                        <div className="w-full h-full bg-[#0a0a0f] rounded-xl flex items-center justify-center">
-                          <svg className="w-8 h-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                        </div>
+                      <div className="flex items-center justify-center gap-3">
+                        <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <h4 className="text-lg font-bold text-slate-300">
+                          Tính năng đang tạm khóa
+                        </h4>
                       </div>
-                      <h4 className="text-xl font-bold text-white mb-2">
-                        {isGuest ? 'Đăng nhập để xem tiếp' : 'Nâng cấp tài khoản'}
-                      </h4>
-                      <p className="text-sm text-slate-300 mb-6 max-w-[250px]">
-                        {isGuest 
-                          ? 'Lưu lại Lộ trình Độc bản của bạn vĩnh viễn và bắt đầu hành trình chinh phục TOEIC.' 
-                          : 'Nâng cấp tài khoản ULTRA để mở khóa lộ trình cá nhân hóa từ chuyên gia.'}
-                      </p>
-                      <button 
-                        onClick={() => isGuest ? router.push('/login') : router.push('/toeic-practice/upgrade')}
-                        className="px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-sm hover:shadow-[0_0_20px_rgba(168,85,247,0.5)] transition-all hover:-translate-y-0.5 cursor-pointer">
-                        {isGuest ? 'Đăng nhập / Đăng ký' : 'Nâng cấp để mở khóa'}
-                      </button>
                     </div>
                   )}
 
