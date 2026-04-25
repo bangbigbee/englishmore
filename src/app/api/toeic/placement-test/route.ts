@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
             const catLower = q.category.toLowerCase();
             if (catLower.includes('pronunciation')) skill = 'pronunciation';
             else if (catLower.includes('vocab')) skill = 'vocabulary';
-            else if (catLower.includes('listen') || q.audioUrl) skill = 'listening';
+            else if (catLower.includes('listen') || catLower.includes('listern') || q.audioUrl) skill = 'listening';
             
             if (neededDiff[diff] > 0 && neededSkill[skill] > 0) {
                 selectedQuestions.push(q);
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
                 const catLower = q.category.toLowerCase();
                 if (catLower.includes('pronunciation')) skill = 'pronunciation';
                 else if (catLower.includes('vocab')) skill = 'vocabulary';
-                else if (catLower.includes('listen') || q.audioUrl) skill = 'listening';
+                else if (catLower.includes('listen') || catLower.includes('listern') || q.audioUrl) skill = 'listening';
                 
                 if (neededSkill[skill] > 0) {
                     selectedQuestions.push(q);

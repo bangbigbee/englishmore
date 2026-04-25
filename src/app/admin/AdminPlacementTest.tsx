@@ -378,9 +378,10 @@ export default function AdminPlacementTest() {
                                         onClick={() => {
                                             alert("HƯỚNG DẪN FORMAT FILE DOCX:\n\n" +
                                                 "Sử dụng thẻ [Category] để phân loại Kỹ năng và Cấp độ. Ví dụ:\n" +
-                                                "[Listening - Basic]\n" +
-                                                "[Listening - Intermediate]\n" +
-                                                "[Reading - Advanced]\n\n" +
+                                                "[Listening - Beginner] (Cho các câu nghe tiêu chuẩn)\n" +
+                                                "[Listening - Beginner - Pronunciation] (Âm vị học)\n" +
+                                                "[Reading - Intermediate - Grammar]\n" +
+                                                "[Reading - Advanced - Vocabulary]\n\n" +
                                                 "Cấu trúc mỗi câu hỏi:\n" +
                                                 "Câu 1: Nội dung câu hỏi...\n" +
                                                 "A) Đáp án 1\n" +
