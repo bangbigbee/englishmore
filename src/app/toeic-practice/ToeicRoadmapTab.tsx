@@ -1,4 +1,5 @@
 import { ROADMAP_TEMPLATES } from '@/lib/roadmapTemplates';
+import { useRouter } from 'next/navigation';
 
 export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabClick }: { level: string | null, score: string | null, onPracticeClick: (path: string) => void, onTabClick: (tab: string) => void }) {
     const router = useRouter();
