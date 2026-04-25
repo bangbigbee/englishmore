@@ -35,7 +35,7 @@ export default function PlacementTestIntroPage() {
                         </div>
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center">
                             <span className="text-2xl mb-1">🎯</span>
-                            <span className="font-bold text-slate-800">15 Câu</span>
+                            <span className="font-bold text-slate-800">20 Câu</span>
                             <span className="text-[12px] text-slate-400 font-medium">Đánh giá toàn diện</span>
                         </div>
                     </div>
