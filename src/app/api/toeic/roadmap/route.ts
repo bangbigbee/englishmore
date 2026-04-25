@@ -109,3 +109,28 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: String(error) }, { status: 500 });
     }
 }
+
+export async function PATCH(req: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user || !session.user.id) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const body = await req.json();
+        const { targetScore } = body;
+
+        if (typeof targetScore !== 'number' || targetScore <= 0 || targetScore > 990) {
+            return NextResponse.json({ error: "Invalid target score" }, { status: 400 });
+        }
+
+        const roadmap = await prisma.userRoadmap.update({
+            where: { userId: session.user.id },
+            data: { targetScore }
+        });
+
+        return NextResponse.json({ success: true, roadmap });
+    } catch (error) {
+        return NextResponse.json({ error: String(error) }, { status: 500 });
+    }
+}

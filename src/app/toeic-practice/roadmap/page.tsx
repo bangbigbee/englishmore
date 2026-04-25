@@ -42,9 +42,13 @@ export default function RoadmapPage() {
           const highestSkill = skillsArr.reduce((prev, current) => (prev.score > current.score) ? prev : current);
           const lowestSkill = skillsArr.reduce((prev, current) => (prev.score < current.score) ? prev : current);
 
+          let cScore = Math.round(data.roadmap.currentScore / 5) * 5;
+          let tScore = Math.round(data.roadmap.targetScore / 5) * 5;
+          if (cScore + 100 > tScore) tScore = Math.min(990, Math.round((cScore + 150) / 5) * 5);
+
           const transformed = {
-            currentScore: data.roadmap.currentScore,
-            targetScore: data.roadmap.targetScore,
+            currentScore: cScore,
+            targetScore: tScore,
             skills: skillsArr,
             highestSkill,
             lowestSkill,
@@ -131,6 +135,16 @@ export default function RoadmapPage() {
 
       <main className="max-w-5xl mx-auto px-6 py-12 relative z-10">
         
+        {/* NÚT ĐÓNG */}
+        <button 
+          onClick={() => router.push('/toeic-practice?tab=roadmap')} 
+          className="absolute top-6 right-6 w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors z-50 border border-white/10"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         {/* STREAK & MOTIVATION BANNER */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -216,11 +230,23 @@ export default function RoadmapPage() {
                   {!isEditingTarget ? (
                     <button onClick={() => { setTargetScoreInput(roadmapData.targetScore.toString()); setIsEditingTarget(true); }} className="text-xs text-purple-400 hover:text-white underline underline-offset-2">Điều chỉnh</button>
                   ) : (
-                    <button onClick={() => { 
-                      if(parseInt(targetScoreInput) > roadmapData.currentScore && parseInt(targetScoreInput) <= 990) {
-                        setRoadmapData({...roadmapData, targetScore: parseInt(targetScoreInput)}); 
-                        setIsEditingTarget(false); 
-                        toast.success("Đã cập nhật mục tiêu!");
+                    <button onClick={async () => { 
+                      const newTarget = parseInt(targetScoreInput);
+                      if(newTarget > roadmapData.currentScore && newTarget <= 990) {
+                        try {
+                          if(!isGuest) {
+                            await fetch('/api/toeic/roadmap', {
+                              method: 'PATCH',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ targetScore: newTarget })
+                            });
+                          }
+                          setRoadmapData({...roadmapData, targetScore: newTarget}); 
+                          setIsEditingTarget(false); 
+                          toast.success("Đã cập nhật mục tiêu!");
+                        } catch(e) {
+                          toast.error("Lỗi khi lưu mục tiêu");
+                        }
                       } else {
                         toast.error("Mục tiêu phải lớn hơn điểm hiện tại và tối đa 990!");
                       }
