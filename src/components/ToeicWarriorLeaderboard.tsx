@@ -67,11 +67,11 @@ export default function ToeicWarriorLeaderboard() {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-[#4c1d95] md:rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-purple-800 overflow-hidden">
+      <div className="bg-white md:rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
         {/* Desktop / Tablet View */}
         <div className="hidden md:block overflow-x-auto custom-scrollbar">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-slate-500 dark:text-purple-300 uppercase bg-slate-50/80 dark:bg-purple-900/50 border-b border-slate-100 dark:border-purple-800/50 font-semibold">
+            <thead className="text-xs text-slate-500 uppercase bg-slate-50/80 border-b border-slate-100 font-semibold">
               <tr>
                 <th scope="col" className="px-6 py-5 rounded-tl-3xl">Hạng</th>
                 <th scope="col" className="px-6 py-5">Chiến Binh</th>
@@ -83,14 +83,14 @@ export default function ToeicWarriorLeaderboard() {
                 <th scope="col" className="px-6 py-5 text-center rounded-tr-3xl">Từ Đã Thuộc</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-purple-800/50">
+            <tbody className="divide-y divide-slate-100">
               {warriors.map((w, idx) => (
                 <motion.tr 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   key={w.id} 
-                  className="group border-b border-slate-50 dark:border-purple-800/30 hover:bg-primary-50/30 dark:hover:bg-purple-800/50 transition-all duration-300"
+                  className="hover:bg-primary-50/30 transition-colors group"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm bg-slate-100 text-slate-600 group-hover:bg-white group-hover:shadow-sm transition-all">
@@ -108,7 +108,7 @@ export default function ToeicWarriorLeaderboard() {
                           </div>
                         )}
                       </div>
-                      <div className="font-bold text-slate-800 dark:text-white group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">{w.name}</div>
+                      <div className="font-bold text-slate-800">{w.name}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center whitespace-nowrap">
@@ -118,15 +118,15 @@ export default function ToeicWarriorLeaderboard() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center whitespace-nowrap">
-                    <span className="font-semibold text-slate-700 dark:text-purple-200 bg-slate-100 dark:bg-purple-800 px-2.5 py-1 rounded-md text-xs">{formatStudyTime(w.totalStudySeconds)}</span>
+                    <span className="font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md text-xs">{formatStudyTime(w.totalStudySeconds)}</span>
                   </td>
-                  <td className="px-6 py-4 text-center text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                  <td className="px-6 py-4 text-center text-slate-600 font-medium whitespace-nowrap">
                     {w.grammarAnswers > 0 ? w.grammarAnswers : '-'}
                   </td>
-                  <td className="px-6 py-4 text-center text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                  <td className="px-6 py-4 text-center text-slate-600 font-medium whitespace-nowrap">
                     {w.listeningAnswers > 0 ? w.listeningAnswers : '-'}
                   </td>
-                  <td className="px-6 py-4 text-center text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                  <td className="px-6 py-4 text-center text-slate-600 font-medium whitespace-nowrap">
                     {w.readingAnswers > 0 ? w.readingAnswers : '-'}
                   </td>
                   <td className="px-6 py-4 text-center whitespace-nowrap">
@@ -141,17 +141,17 @@ export default function ToeicWarriorLeaderboard() {
         </div>
 
         {/* Mobile View */}
-        <div className="md:hidden flex flex-col divide-y divide-slate-100 dark:divide-purple-800/50">
+        <div className="md:hidden flex flex-col divide-y divide-slate-100">
           {warriors.map((w, idx) => (
             <motion.div 
               key={w.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
-              className="p-5 hover:bg-primary-50/30 dark:hover:bg-purple-800/50 transition-colors"
+              className="p-5 hover:bg-primary-50/30 transition-colors"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center justify-center w-9 h-9 rounded-full font-bold text-sm bg-slate-100 dark:bg-purple-800 text-slate-600 dark:text-purple-200 shrink-0 shadow-sm border border-slate-200/50 dark:border-purple-700/50">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full font-bold text-sm bg-slate-100 text-slate-600 shrink-0 shadow-sm border border-slate-200/50">
                   {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
                 </div>
                 <div className="relative w-11 h-11 rounded-full overflow-hidden bg-slate-200 border-2 border-white shadow-sm ring-2 ring-transparent">
@@ -163,29 +163,29 @@ export default function ToeicWarriorLeaderboard() {
                     </div>
                   )}
                 </div>
-                <div className="font-bold text-slate-800 dark:text-white flex-1 truncate text-base">{w.name}</div>
-                <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 font-bold border border-amber-100/50 dark:border-amber-700/50 shrink-0">
+                <div className="font-bold text-slate-800 flex-1 truncate text-base">{w.name}</div>
+                <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-100/50 shrink-0">
                   <span className="text-sm">{w.toeicStars}</span>
                   <span className="text-xs">⭐</span>
                 </div>
               </div>
               
               <div className="grid grid-cols-2 gap-2 text-[13px]">
-                <div className="flex flex-col p-2.5 bg-slate-50/80 dark:bg-purple-800/40 rounded-xl border border-slate-100 dark:border-purple-700/50">
-                  <span className="text-slate-500 dark:text-purple-300 font-medium text-[11px] uppercase tracking-wider mb-1">Thời Gian</span>
-                  <span className="font-black text-slate-700 dark:text-white">{formatStudyTime(w.totalStudySeconds)}</span>
+                <div className="flex flex-col p-2.5 bg-slate-50/80 rounded-xl border border-slate-100">
+                  <span className="text-slate-500 font-medium text-[11px] uppercase tracking-wider mb-1">Thời Gian</span>
+                  <span className="font-black text-slate-700">{formatStudyTime(w.totalStudySeconds)}</span>
                 </div>
-                <div className="flex flex-col p-2.5 bg-primary-50/50 dark:bg-primary-900/40 rounded-xl border border-primary-100/50 dark:border-primary-800/50">
-                  <span className="text-primary-600 dark:text-primary-300 font-medium text-[11px] uppercase tracking-wider mb-1">Từ Vựng</span>
-                  <span className="font-black text-primary-700 dark:text-primary-200">{w.learnedVocab} từ</span>
+                <div className="flex flex-col p-2.5 bg-primary-50/50 rounded-xl border border-primary-100/50">
+                  <span className="text-primary-600 font-medium text-[11px] uppercase tracking-wider mb-1">Từ Vựng</span>
+                  <span className="font-black text-primary-700">{w.learnedVocab} từ</span>
                 </div>
-                <div className="flex flex-col p-2.5 bg-slate-50/80 dark:bg-purple-800/40 rounded-xl border border-slate-100 dark:border-purple-700/50">
-                  <span className="text-slate-500 dark:text-purple-300 font-medium text-[11px] uppercase tracking-wider mb-1">Ngữ Pháp</span>
-                  <span className="font-bold text-slate-700 dark:text-white">{w.grammarAnswers > 0 ? w.grammarAnswers : '-'}</span>
+                <div className="flex flex-col p-2.5 bg-slate-50/80 rounded-xl border border-slate-100">
+                  <span className="text-slate-500 font-medium text-[11px] uppercase tracking-wider mb-1">Ngữ Pháp</span>
+                  <span className="font-bold text-slate-700">{w.grammarAnswers > 0 ? w.grammarAnswers : '-'}</span>
                 </div>
-                <div className="flex flex-col p-2.5 bg-slate-50/80 dark:bg-purple-800/40 rounded-xl border border-slate-100 dark:border-purple-700/50">
-                  <span className="text-slate-500 dark:text-purple-300 font-medium text-[11px] uppercase tracking-wider mb-1">Nghe & Đọc</span>
-                  <span className="font-bold text-slate-700 dark:text-white">{(w.listeningAnswers + w.readingAnswers) > 0 ? (w.listeningAnswers + w.readingAnswers) : '-'}</span>
+                <div className="flex flex-col p-2.5 bg-slate-50/80 rounded-xl border border-slate-100">
+                  <span className="text-slate-500 font-medium text-[11px] uppercase tracking-wider mb-1">Nghe & Đọc</span>
+                  <span className="font-bold text-slate-700">{(w.listeningAnswers + w.readingAnswers) > 0 ? (w.listeningAnswers + w.readingAnswers) : '-'}</span>
                 </div>
               </div>
             </motion.div>
