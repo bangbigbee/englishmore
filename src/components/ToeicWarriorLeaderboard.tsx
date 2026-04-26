@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
+
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 
@@ -100,7 +100,7 @@ export default function ToeicWarriorLeaderboard() {
                     <div className="flex items-center gap-3">
                       <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-200 border-2 border-white shadow-sm ring-2 ring-transparent group-hover:ring-primary-100 transition-all">
                         {w.image ? (
-                          <Image src={w.image} alt={w.name} fill className="object-cover" sizes="40px" />
+                          <img src={w.image} alt={w.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold">
                             {w.name.charAt(0)}
