@@ -4,13 +4,13 @@ import { useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 
 export default function StudyTimeTracker() {
-  const { data: session } = useSession();
+  const { status } = useSession();
   const PING_INTERVAL = 60000; // 60 seconds
   const isIdleRef = useRef(false);
   const idleTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (status !== 'authenticated') return;
 
     const pingStudyTime = () => {
       // Don't ping if document is hidden or user is idle
@@ -43,7 +43,7 @@ export default function StudyTimeTracker() {
       events.forEach(e => window.removeEventListener(e, resetIdle));
       if (idleTimeoutRef.current) window.clearTimeout(idleTimeoutRef.current);
     };
-  }, [session]);
+  }, [status]);
 
   return null;
 }
