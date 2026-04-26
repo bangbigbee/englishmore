@@ -186,9 +186,9 @@ const translateDifficulty = (diff?: string) => {
 };
 
 const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: string }) => {
-	if (pkg === 'BASIC' || pkg === 'FREE') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-600 text-[10px] font-medium border border-primary-100 ${className}`}>Cơ bản</span>);
-	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-800 text-[10px] font-medium border border-primary-200 ${className}`}>Nâng cao</span>);
-	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-700 text-[10px] font-medium border border-primary-200 ${className}`}>Hỗn hợp</span>);
+	if (pkg === 'BASIC' || pkg === 'FREE') return (<span className={`inline-flex items-center px-2 py-[3px] bg-white dark:bg-primary-800 text-slate-600 dark:text-primary-100 text-[10px] font-medium border border-slate-200 dark:border-primary-700 ${className}`}>Cơ bản</span>);
+	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-secondary-50 dark:bg-primary-800 text-secondary-700 dark:text-secondary-300 text-[10px] font-medium border border-secondary-200 dark:border-primary-700 ${className}`}>Nâng cao</span>);
+	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-800 text-primary-700 dark:text-primary-300 text-[10px] font-medium border border-primary-200 dark:border-primary-700 ${className}`}>Hỗn hợp</span>);
 	return null;
 }
 
@@ -628,7 +628,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                     </span>
                 </button>
             </div>
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-secondary-200 overflow-hidden relative">
+            <div className="bg-white dark:bg-primary-900 rounded-3xl p-6 md:p-8 shadow-xl border border-secondary-200 dark:border-primary-800 overflow-hidden relative">
                 {/* Decorative background elements matching the gold/green theme */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-100 rounded-bl-full opacity-50 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-50 rounded-tr-full opacity-50 pointer-events-none"></div>
@@ -699,7 +699,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                     key={leader.id || idx}
                                     className={`flex items-center gap-3 border p-3 rounded-2xl ${idx === 0 ? 'bg-secondary-50/50 border-secondary-200 shadow-sm relative' : 'bg-slate-50 border-slate-100'}`}
                                 >
-                                    <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
+                                    <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white dark:bg-primary-800 rounded-full shadow-sm font-black text-slate-400 dark:text-primary-300">
                                         {idx === 0 ? <span className="text-2xl">🥇</span> : 
                                         idx === 1 ? <span className="text-2xl">🥈</span> : 
                                         idx === 2 ? <span className="text-2xl">🥉</span> : 
@@ -949,7 +949,7 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
 		<div className="perspective-[1000px] w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`}>
                 {/* Front side */}
-                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/50 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
+                <div className="absolute inset-0 w-full h-full bg-white dark:bg-primary-900 border border-slate-200 dark:border-primary-800/50 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
                     <div className="w-full flex items-center gap-4 pb-1">
                         <div className="w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center">
                             {icon}
@@ -961,10 +961,10 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
                     </p>
                 </div>
                 {/* Back side */}
-                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border-2 border-primary-900/20 dark:border-slate-700 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+                <div className="absolute inset-0 w-full h-full bg-white dark:bg-primary-900 border-2 border-primary-900/20 dark:border-primary-800 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
                     <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 dark:bg-slate-800 p-6 relative">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="text-primary-900 dark:text-primary-100 bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm border border-slate-100 dark:border-slate-600 flex-shrink-0">
+                            <div className="text-primary-900 dark:text-primary-100 bg-white dark:bg-primary-800 p-2.5 rounded-full shadow-sm border border-slate-100 dark:border-primary-700 flex-shrink-0">
                                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
                             </div>
                             <div className="flex gap-2 z-10 w-full justify-center">
@@ -2201,10 +2201,10 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                                            pkg === 'MIXED' ? 'text-primary-600' : 
                                                            'text-primary-900';
                                         
-                                        const activeBg = pkg === 'BASIC' ? 'bg-white shadow-sm ring-1 ring-primary-100' :
-                                                         pkg === 'ADVANCED' ? 'bg-white shadow-sm ring-1 ring-primary-200' :
-                                                         pkg === 'MIXED' ? 'bg-white shadow-sm ring-1 ring-primary-100' :
-                                                         'bg-white shadow-sm ring-1 ring-slate-200';
+                                        const activeBg = pkg === 'BASIC' ? 'bg-white dark:bg-primary-800 dark:text-white shadow-sm ring-1 ring-primary-100 dark:ring-primary-700' :
+                                                         pkg === 'ADVANCED' ? 'bg-white dark:bg-primary-800 dark:text-white shadow-sm ring-1 ring-primary-200 dark:ring-primary-600' :
+                                                         pkg === 'MIXED' ? 'bg-white dark:bg-primary-800 dark:text-white shadow-sm ring-1 ring-primary-100 dark:ring-primary-700' :
+                                                         'bg-white dark:bg-primary-800 dark:text-white shadow-sm ring-1 ring-slate-200 dark:ring-primary-700';
                                                          
                                         const inactiveBg = 'hover:bg-white/60 opacity-70 hover:opacity-100';
 
@@ -2554,10 +2554,10 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 					{/* Tags Action Bar */}
 					{currentItem && !challengeActive && !challengeResult.show && challengePreCtd === null && selectedTopic !== 'GLOBAL' && (
 						<div className="flex flex-wrap items-center justify-center gap-2 mt-4 animate-in fade-in slide-in-from-top-2">
-							<button onClick={() => toggleTag(currentItem.id, 'learned')} className={`px-3 py-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.learned ? 'bg-primary-100 text-primary-700 border-primary-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
+							<button onClick={() => toggleTag(currentItem.id, 'learned')} className={`px-4 py-2 rounded-full font-bold text-xs transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.learned ? 'bg-primary-900 text-white border-primary-900' : 'bg-white text-primary-900 border-primary-900'}`}>
 								{vocabTags[currentItem.id]?.learned ? '✓ Đã thuộc' : '○ Đánh dấu đã thuộc'}
 							</button>
-							<button onClick={() => toggleTag(currentItem.id, 'hard')} className={`px-3 py-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.hard ? 'bg-red-100 text-red-700 border-red-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
+							<button onClick={() => toggleTag(currentItem.id, 'hard')} className={`px-4 py-2 rounded-full font-bold text-xs transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.hard ? 'bg-primary-900 text-white border-primary-900' : 'bg-white text-primary-900 border-primary-900'}`}>
 								{vocabTags[currentItem.id]?.hard ? '🔥 Khó' : 'Thấy từ này khó?'}
 							</button>
 							<button 
