@@ -192,7 +192,6 @@ export default function ToeicWarriorLeaderboard() {
           ))}
         </div>
       </div>
-      </div>
     </div>
   )
 }
