@@ -3,10 +3,11 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const id = params.id;
+        const resolvedParams = await params;
+        const id = resolvedParams.id;
         
         // Documents are stored in SystemSetting under key 'footer_content'
         const setting = await prisma.systemSetting.findUnique({
