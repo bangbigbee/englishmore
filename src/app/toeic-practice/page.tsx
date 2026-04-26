@@ -1487,9 +1487,21 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 			pronunciationScoringTimeoutRef.current = window.setTimeout(() => {
 				setPronunciationScore(score);
 				setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentWord));
-				setPronunciationStatus(score >= 80 ? 'Rất tốt! Hãy tiếp tục phát huy.' : 'Hãy thử lại một lần nữa nhé.');
+				
 				if (score === 100) {
 					playPronunciationRewardChime();
+					if (!session) {
+						setPronunciationStatus('Chúc mừng bạn đã phát âm chuẩn 100%! Đăng nhập để nhận 1 Sao nhé.');
+					} else {
+						setPronunciationStatus('Chúc mừng bạn đã phát âm chuẩn 100%! Tặng bạn 1 Ngôi Sao.');
+						fetch('/api/vocabulary/pronunciation-reward', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ wordId: vocabItems[cardIndex]?.id || currentWord })
+						}).catch(() => {});
+					}
+				} else {
+					setPronunciationStatus(score >= 80 ? 'Rất tốt! Hãy tiếp tục phát huy.' : 'Hãy thử lại một lần nữa nhé.');
 				}
 			}, 500);
 		};
@@ -2276,25 +2288,31 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 									{/* Practice Status Overlay */}
 									{(pronunciationStatus || pronunciationScore !== null) && (
 										<div className="absolute bottom-16 left-0 right-0 px-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-											<div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-white/20 text-slate-800">
-												<p className="text-[11px] font-bold text-primary-900 mb-1">{pronunciationStatus}</p>
+											<div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-primary-900/10 text-slate-800">
+												{pronunciationStatus && (
+													<p className="text-[11px] sm:text-xs font-bold text-primary-900 mb-1">{pronunciationStatus}</p>
+												)}
 												{pronunciationScore !== null && (
-													<div className="space-y-1">
+													<div className="space-y-1.5 mt-1">
 														{pronunciationTranscript && (
-															<p className="text-[10px] text-slate-500 italic truncate italic">&quot;{pronunciationTranscript}&quot;</p>
+															<p className="text-[10px] text-slate-700 italic truncate italic">
+																<span className="text-slate-500 font-medium text-[9px] uppercase mr-1">Đã nghe:</span>
+																&quot;{pronunciationTranscript}&quot;
+															</p>
 														)}
-														<div className="flex items-center gap-2">
-															<div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+														{pronunciationFeedback && (
+															<p className="text-[9px] font-bold text-primary-900 leading-tight line-clamp-2">{pronunciationFeedback}</p>
+														)}
+														<div className="flex items-center gap-2 pt-1 border-t border-primary-900/10">
+															<span className="text-[9px] font-semibold text-slate-500">Score:</span>
+															<div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
 																<div 
-																	className={`h-full transition-all duration-700 ${pronunciationScore >= 80 ? 'bg-primary-500' : pronunciationScore >= 50 ? 'bg-secondary-500' : 'bg-rose-500'}`}
+																	className={`h-full rounded-full transition-all duration-1000 ${pronunciationScore >= 80 ? 'bg-primary-500' : pronunciationScore >= 50 ? 'bg-secondary-400' : 'bg-red-400'}`}
 																	style={{ width: `${pronunciationScore}%` }}
 																/>
 															</div>
-															<span className="text-[10px] font-black text-slate-700">{pronunciationScore}%</span>
+															<span className="text-[10px] font-black text-slate-700 min-w-6 text-right">{pronunciationScore}%</span>
 														</div>
-														{pronunciationFeedback && (
-															<p className="text-[9px] font-medium text-slate-600 leading-tight line-clamp-2">{pronunciationFeedback}</p>
-														)}
 													</div>
 												)}
 											</div>
