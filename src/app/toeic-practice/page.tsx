@@ -1314,6 +1314,8 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	const [pronunciationFeedback, setPronunciationFeedback] = useState('');
 	const [pronunciationTranscript, setPronunciationTranscript] = useState('');
 	const [pronunciationScore, setPronunciationScore] = useState<number | null>(null);
+	const [pronunciationStreak, setPronunciationStreak] = useState(0);
+	const [correctlyPronouncedIds, setCorrectlyPronouncedIds] = useState<string[]>([]);
 	const pronunciationScoringTimeoutRef = useRef<number | null>(null);
 	const pronunciationListeningTimeoutRef = useRef<number | null>(null);
 	const pronunciationFinalizeTimeoutRef = useRef<number | null>(null);
@@ -1490,17 +1492,46 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 				
 				if (score === 100) {
 					playPronunciationRewardChime();
-					if (!session) {
-						setPronunciationStatus('Chúc mừng bạn đã phát âm chuẩn 100%! Đăng nhập để nhận 1 Sao nhé.');
-					} else {
-						setPronunciationStatus('Chúc mừng bạn đã phát âm chuẩn 100%! Tặng bạn 1 Ngôi Sao.');
-						fetch('/api/vocabulary/pronunciation-reward', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ wordId: vocabItems[cardIndex]?.id || currentWord })
-						}).catch(() => {});
-					}
+					
+					const wordId = vocabItems[cardIndex]?.id || currentWord;
+					
+					setPronunciationStreak(prev => {
+						const newStreak = prev + 1;
+						setCorrectlyPronouncedIds(prevIds => {
+							const newIds = prevIds.includes(wordId) ? prevIds : [...prevIds, wordId];
+							
+							const isTopicComplete = newIds.length > 0 && newIds.length === vocabItems.length;
+							
+							if (!session) {
+								if (newStreak === 2) setPronunciationStatus('Hay lắm! 2 từ liên tiếp rồi, cố lên nào!');
+								else setPronunciationStatus('Chúc mừng bạn đã phát âm chuẩn 100%! Đăng nhập để nhận Sao nhé.');
+							} else {
+								let statusMsg = 'Chúc mừng bạn đã phát âm chuẩn 100%! (+1 ⭐)';
+								if (isTopicComplete) statusMsg = 'Tuyệt đỉnh! Hoàn thành xuất sắc toàn bộ chủ đề! (+50 ⭐)';
+								else if (newStreak === 10) statusMsg = 'Unstoppable! 10 từ đúng liên tiếp (+30 ⭐)';
+								else if (newStreak === 5) statusMsg = 'On fire! 5 từ đúng liên tiếp (+15 ⭐)';
+								else if (newStreak === 3) statusMsg = 'Hot streak! 3 từ đúng liên tiếp (+5 ⭐)';
+								else if (newStreak === 2) statusMsg = 'Hay lắm! 2 từ liên tiếp rồi, cố lên nào!';
+								
+								setPronunciationStatus(statusMsg);
+								
+								fetch('/api/toeic/vocabulary/pronunciation-reward', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ wordId, streak: newStreak, isTopicComplete })
+								}).then(res => res.json()).then(data => {
+									if (data.awardedStars > 0) {
+										updateSession?.();
+									}
+								}).catch(() => {});
+							}
+							
+							return newIds;
+						});
+						return newStreak;
+					});
 				} else {
+					setPronunciationStreak(0);
 					setPronunciationStatus(score >= 80 ? 'Rất tốt! Hãy tiếp tục phát huy.' : 'Hãy thử lại một lần nữa nhé.');
 				}
 			}, 500);
@@ -2060,6 +2091,12 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		router.push(`${pathname}?${params.toString()}`, { scroll: false });
 		setSelectedTopic(null);
 		setVocabItems([]);
+		setPronunciationStreak(0);
+		setCorrectlyPronouncedIds([]);
+		setPronunciationStatus('');
+		setPronunciationScore(null);
+		setPronunciationTranscript('');
+		setPronunciationFeedback('');
 	};
 
 	// ── Topic list ──────────────────────────────────────────

@@ -18,7 +18,13 @@ export const TOEIC_STAR_KEYS = {
   speedChallengeTop1: 'speed_challenge_top1',
   speedChallengeTop2: 'speed_challenge_top2',
   actualTestComplete: 'actual_test_complete',
-  actualTestNewRecord: 'actual_test_new_record'
+  actualTestNewRecord: 'actual_test_new_record',
+  // Pronunciation rules
+  pronunciationCorrect: 'pronunciation_correct',
+  pronunciationStreak3: 'pronunciation_streak_3',
+  pronunciationStreak5: 'pronunciation_streak_5',
+  pronunciationStreak10: 'pronunciation_streak_10',
+  pronunciationTopicComplete: 'pronunciation_topic_complete'
 } as const
 
 export type ToeicStarKey = (typeof TOEIC_STAR_KEYS)[keyof typeof TOEIC_STAR_KEYS]
@@ -42,6 +48,12 @@ const DEFAULT_STAR_RULES: Record<ToeicStarKey, { label: string; points: number }
   [TOEIC_STAR_KEYS.speedChallengeTop2]: { label: 'Đạt Top 2 Speed Challenge', points: 5 },
   [TOEIC_STAR_KEYS.actualTestComplete]: { label: 'Hoàn thành 1 bài Thi Thử (Actual Test)', points: 20 },
   [TOEIC_STAR_KEYS.actualTestNewRecord]: { label: 'Điểm Thi Thử vượt Kỷ lục Cá nhân', points: 30 },
+  // Pronunciation rules
+  [TOEIC_STAR_KEYS.pronunciationCorrect]: { label: 'Phát âm chuẩn 1 từ vựng', points: 1 },
+  [TOEIC_STAR_KEYS.pronunciationStreak3]: { label: 'Phát âm chuẩn 3 từ liên tiếp', points: 5 },
+  [TOEIC_STAR_KEYS.pronunciationStreak5]: { label: 'Phát âm chuẩn 5 từ liên tiếp', points: 15 },
+  [TOEIC_STAR_KEYS.pronunciationStreak10]: { label: 'Phát âm chuẩn 10 từ liên tiếp', points: 30 },
+  [TOEIC_STAR_KEYS.pronunciationTopicComplete]: { label: 'Hoàn thành xuất sắc toàn bộ chủ đề', points: 50 },
 }
 
 const prismaWithToeicStars = prisma as typeof prisma & {
