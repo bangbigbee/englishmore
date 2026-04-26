@@ -1305,7 +1305,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	const [challengeRound, setChallengeRound] = useState(0);
 	const [challengeOptions, setChallengeOptions] = useState<string[]>([]);
 	const [challengeScore, setChallengeScore] = useState(0);
-	const [challengeTimeLeft, setChallengeTimeLeft] = useState(3);
+	const [challengeTimeLeft, setChallengeTimeLeft] = useState(4);
 	const [challengeResult, setChallengeResult] = useState<{show: boolean, score: number, total: number, timeMs?: number}>({show: false, score: 0, total: 0, timeMs: 0});
 	const [challengeDifficulty, setChallengeDifficulty] = useState<'high' | 'extreme'>('extreme');
 	const [copySuccess, setCopySuccess] = useState(false);
@@ -1875,7 +1875,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		const wOpts = [...pool].sort(() => 0.5 - Math.random()).slice(0, 2).map(w => w.meaning);
 		const opts = [tWord.meaning, ...wOpts].sort(() => 0.5 - Math.random());
 		setChallengeOptions(opts);
-		setChallengeTimeLeft(challengeDifficulty === 'high' ? 5 : 3);
+		setChallengeTimeLeft(challengeDifficulty === 'high' ? 5 : 4);
 	};
 
 	const startChallenge = () => {
@@ -2154,7 +2154,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                         <div className="p-5 sm:p-6 text-center border-t border-primary-800/50 animate-in slide-in-from-top-2 duration-300">
                             <h3 className="text-lg sm:text-xl text-secondary-500 font-black mb-1.5 tracking-tight">Thử thách Bảng Vàng</h3>
                             <p className="text-primary-200/80 mb-5 font-medium text-sm sm:text-base max-w-lg mx-auto">
-                                Làm bài test tốc độ với <b className="text-secondary-500">30 từ vựng ngẫu nhiên</b>. Thời gian <b className="text-secondary-500">3 giây/từ</b>. Đăng nhập để ghi danh kết quả vào Bảng vàng.
+                                Làm bài test tốc độ với <b className="text-secondary-500">30 từ vựng ngẫu nhiên</b>. Thời gian <b className="text-secondary-500">4 giây/từ</b>. Đăng nhập để ghi danh kết quả vào Bảng vàng.
                             </p>
                             
                             {!session && (
@@ -2625,7 +2625,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                                 className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'extreme' ? 'bg-rose-50 border-rose-500 text-rose-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-rose-300 hover:text-rose-500'}`}
                                             >
                                                 <div className="mb-0.5">Áp lực cực cao</div>
-                                                <div className="text-[12px] opacity-80 font-medium">(3 giây / từ)</div>
+                                                <div className="text-[12px] opacity-80 font-medium">(4 giây / từ)</div>
                                             </button>
                                         </div>
                                     )}
