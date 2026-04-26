@@ -1491,9 +1491,9 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 				setPronunciationFeedback(buildPronunciationFeedback(score, candidate, currentWord));
 				
 				if (score === 100) {
-					playPronunciationRewardChime();
-					
 					const wordId = vocabItems[cardIndex]?.id || currentWord;
+					
+					setPronunciationStatus('Chúc mừng bạn đã phát âm rất tốt.');
 					
 					setPronunciationStreak(prev => {
 						const newStreak = prev + 1;
@@ -1503,24 +1503,25 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 							const isTopicComplete = newIds.length > 0 && newIds.length === vocabItems.length;
 							
 							if (!session) {
-								if (newStreak === 2) setPronunciationStatus('Hay lắm! 2 từ liên tiếp rồi, cố lên nào!');
-								else setPronunciationStatus('Chúc mừng bạn đã phát âm chuẩn 100%! Đăng nhập để nhận Sao nhé.');
+								if (newStreak === 2) {
+									toast.success('Hay lắm! 2 từ liên tiếp rồi, cố lên nào!');
+								} else {
+									playPronunciationRewardChime();
+									toast('Chúc mừng!', { description: 'Đăng nhập để nhận 1 Sao nhé.', icon: '⭐' });
+								}
 							} else {
-								let statusMsg = 'Chúc mừng bạn đã phát âm chuẩn 100%! (+1 ⭐)';
-								if (isTopicComplete) statusMsg = 'Tuyệt đỉnh! Hoàn thành xuất sắc toàn bộ chủ đề! (+50 ⭐)';
-								else if (newStreak === 10) statusMsg = 'Unstoppable! 10 từ đúng liên tiếp (+30 ⭐)';
-								else if (newStreak === 5) statusMsg = 'On fire! 5 từ đúng liên tiếp (+15 ⭐)';
-								else if (newStreak === 3) statusMsg = 'Hot streak! 3 từ đúng liên tiếp (+5 ⭐)';
-								else if (newStreak === 2) statusMsg = 'Hay lắm! 2 từ liên tiếp rồi, cố lên nào!';
-								
-								setPronunciationStatus(statusMsg);
-								
 								fetch('/api/toeic/vocabulary/pronunciation-reward', {
 									method: 'POST',
 									headers: { 'Content-Type': 'application/json' },
 									body: JSON.stringify({ wordId, streak: newStreak, isTopicComplete })
 								}).then(res => res.json()).then(data => {
-									if (data.awardedStars > 0) {
+									if (data.awardedStars > 0 || newStreak === 2) {
+										playPronunciationRewardChime();
+										if (data.awardReason) {
+											toast.success(data.awardReason, { icon: '⭐' });
+										} else if (newStreak === 2) {
+											toast.success('Hay lắm! 2 từ liên tiếp rồi, cố lên nào!');
+										}
 										updateSession?.();
 									}
 								}).catch(() => {});
