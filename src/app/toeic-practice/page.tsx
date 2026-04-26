@@ -2863,7 +2863,6 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
                     sortedCollections.map(([collectionName, lessons]: [string, any]) => (
                         <div key={collectionName}>
                             <h3 className="text-xl font-bold text-slate-300 mb-6 flex items-center gap-4">
-                                <div className="h-px bg-slate-200 flex-1"></div>
                                 <span className="text-primary-900 font-black bg-primary-50 px-4 py-1 rounded-full border border-primary-200 text-sm tracking-wide shadow-sm">
                                     {collectionName} - PART {selectedPart}
                                 </span>
@@ -3034,7 +3033,6 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
                     sortedCollections.map(([collectionName, lessons]: [string, any]) => (
                         <div key={collectionName}>
                             <h3 className="text-xl font-bold text-slate-300 mb-6 flex items-center gap-4">
-                                <div className="h-px bg-slate-200 flex-1"></div>
                                 <span className="text-primary-900 font-black bg-primary-50 px-4 py-1 rounded-full border border-primary-200 text-sm tracking-wide shadow-sm">
                                     {collectionName} - PART {selectedPart}
                                 </span>
