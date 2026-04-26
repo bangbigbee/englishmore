@@ -120,7 +120,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                 <div className="flex items-center justify-center mb-6">
                   <img src="/toeicmoreicon.svg" alt="ToeicMore Icon" className="w-16 h-16 object-contain drop-shadow-lg" style={{ filter: 'brightness(0) invert(1)' }} />
                 </div>
-                <h2 className="text-2xl font-black mb-3 text-white">Đang tạo Lộ Trình Học Tập ...</h2>
+                <h2 className="text-2xl font-black mb-3 text-white leading-tight">Đang tạo<br />Lộ Trình Học Tập</h2>
                 <p className="text-white/80 text-sm font-medium leading-relaxed">
                   Để ToeicMore thiết kế lộ trình học hiệu quả nhất giúp bạn đạt mục tiêu, hãy cho chúng tôi biết trình độ hiện tại của bạn nhé!
                 </p>
@@ -139,7 +139,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                       className="flex flex-col h-full"
                     >
                       <div className="md:hidden text-center mb-6">
-                        <h2 className="text-xl font-black text-slate-800 mb-2">Đang tạo Lộ Trình Học Tập ...</h2>
+                        <h2 className="text-xl font-black text-slate-800 mb-2 leading-tight">Đang tạo<br />Lộ Trình Học Tập</h2>
                         <p className="text-slate-500 text-sm font-medium">Hãy chọn trình độ hiện tại để nhận lộ trình phù hợp nhất.</p>
                       </div>
                       
