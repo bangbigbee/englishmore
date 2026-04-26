@@ -16,17 +16,22 @@ export default function FooterContentClient({ title, items, fallbackMessage }: {
     const [selectedItem, setSelectedItem] = useState<FooterContentItem | null>(null)
     const { data: session } = useSession()
 
-    const handleDownload = (e: React.MouseEvent, item: FooterContentItem) => {
+    const handleDownload = async (e: React.MouseEvent, item: FooterContentItem) => {
         e.stopPropagation()
         if (!session?.user) {
-            toast.error('Vui lòng đăng nhập để tải tài liệu!', { duration: 4000 })
-            window.dispatchEvent(new CustomEvent('openLoginModal', { 
-                detail: { destination: window.location.pathname, allowGuest: false } 
-            }))
+            const currentPath = window.location.pathname;
+            const subtitle = encodeURIComponent("Chỉ cần đăng nhập là bạn có thể tải tài liệu về ngay");
+            window.location.href = `?login=true&callbackUrl=${encodeURIComponent(currentPath)}&subtitle=${subtitle}`;
             return
         }
 
         if (item.fileUrl) {
+            try {
+                // Async track download count
+                await fetch(`/api/public/documents/${item.id}/download`, { method: 'POST' });
+            } catch (error) {
+                console.error("Tracking error", error);
+            }
             window.open(item.fileUrl, '_blank')
         } else {
             toast.error('Không tìm thấy file đính kèm.')

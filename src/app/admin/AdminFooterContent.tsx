@@ -13,6 +13,7 @@ export interface FooterContentItem {
   fileUrl?: string
   fileName?: string
   fileType?: string
+  downloadCount?: number
 }
 
 interface FooterContentData {
@@ -241,8 +242,11 @@ export default function AdminFooterContent() {
                       <p className="text-sm text-slate-500 line-clamp-3 flex-1 mb-4">{item.description}</p>
                       
                       <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-200 border-dashed">
-                          {activeTab === 'documents' && item.fileUrl && (
-                              <span className="flex-1 text-xs text-primary-600 font-bold truncate">📁 {item.fileName}</span>
+                          {activeTab === 'documents' && (
+                              <div className="flex-1 flex flex-col gap-1 overflow-hidden">
+                                {item.fileUrl && <span className="text-xs text-primary-600 font-bold truncate">📁 {item.fileName}</span>}
+                                <span className="text-[11px] text-slate-500 font-semibold truncate bg-slate-200/50 px-2 py-0.5 rounded w-max">Lượt tải: <span className="text-primary-700">{item.downloadCount || 0}</span></span>
+                              </div>
                           )}
                           <button 
                               onClick={() => { setEditingItem(item); setIsModalOpen(true) }}
