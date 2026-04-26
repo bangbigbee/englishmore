@@ -49,11 +49,11 @@ const DEFAULT_STAR_RULES: Record<ToeicStarKey, { label: string; points: number; 
   [TOEIC_STAR_KEYS.actualTestComplete]: { label: 'Hoàn thành 1 bài Thi Thử (Actual Test)', points: 20 },
   [TOEIC_STAR_KEYS.actualTestNewRecord]: { label: 'Điểm Thi Thử vượt Kỷ lục Cá nhân', points: 30 },
   // Pronunciation rules
-  [TOEIC_STAR_KEYS.pronunciationCorrect]: { label: 'Phát âm chuẩn 1 từ vựng', points: 1, toastMessage: 'Bạn phát âm tốt lắm. Phần thưởng của bạn là 1 Star.' },
-  [TOEIC_STAR_KEYS.pronunciationStreak3]: { label: 'Phát âm chuẩn 3 từ liên tiếp', points: 5, toastMessage: 'Hot streak! 3 từ đúng liên tiếp' },
-  [TOEIC_STAR_KEYS.pronunciationStreak5]: { label: 'Phát âm chuẩn 5 từ liên tiếp', points: 15, toastMessage: 'On fire! 5 từ đúng liên tiếp' },
-  [TOEIC_STAR_KEYS.pronunciationStreak10]: { label: 'Phát âm chuẩn 10 từ liên tiếp', points: 30, toastMessage: 'Unstoppable! 10 từ đúng liên tiếp' },
-  [TOEIC_STAR_KEYS.pronunciationTopicComplete]: { label: 'Hoàn thành xuất sắc toàn bộ chủ đề', points: 50, toastMessage: 'Tuyệt đỉnh! Hoàn thành xuất sắc toàn bộ chủ đề!' },
+  [TOEIC_STAR_KEYS.pronunciationCorrect]: { label: 'Phát âm chuẩn 1 từ vựng', points: 1, toastMessage: 'Bạn phát âm tốt lắm. Phần thưởng của bạn là {points} Star.' },
+  [TOEIC_STAR_KEYS.pronunciationStreak3]: { label: 'Phát âm chuẩn 3 từ liên tiếp', points: 5, toastMessage: 'Hot streak! 3 từ đúng liên tiếp (+{points} ⭐)' },
+  [TOEIC_STAR_KEYS.pronunciationStreak5]: { label: 'Phát âm chuẩn 5 từ liên tiếp', points: 15, toastMessage: 'On fire! 5 từ đúng liên tiếp (+{points} ⭐)' },
+  [TOEIC_STAR_KEYS.pronunciationStreak10]: { label: 'Phát âm chuẩn 10 từ liên tiếp', points: 30, toastMessage: 'Unstoppable! 10 từ đúng liên tiếp (+{points} ⭐)' },
+  [TOEIC_STAR_KEYS.pronunciationTopicComplete]: { label: 'Hoàn thành xuất sắc toàn bộ chủ đề', points: 50, toastMessage: 'Tuyệt đỉnh! Hoàn thành xuất sắc toàn bộ chủ đề! (+{points} ⭐)' },
 }
 
 const prismaWithToeicStars = prisma as typeof prisma & {
@@ -173,10 +173,19 @@ export const awardToeicStars = async ({
       select: { toeicStars: true }
     }) as { toeicStars: number }
 
+    let finalToastMessage = rule.toastMessage || rule.label
+    if (finalToastMessage.includes('{points}')) {
+      finalToastMessage = finalToastMessage.replace('{points}', finalPoints.toString())
+    } else if (rule.toastMessage) {
+      finalToastMessage = `${rule.toastMessage} (+${finalPoints} ⭐)`
+    } else {
+      finalToastMessage = `${rule.label} (+${finalPoints} ⭐)`
+    }
+
     return {
       awardedStars: finalPoints,
       totalStars: updatedUser.toeicStars,
-      reason: rule.toastMessage ? `${rule.toastMessage} (+${finalPoints} ⭐)` : rule.label
+      reason: finalToastMessage
     }
   })
 }

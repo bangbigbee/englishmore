@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         });
         if (baseResult.awardedStars > 0) {
             totalAwardedStars += baseResult.awardedStars;
-            reasons.push(baseResult.reason || `Bạn phát âm tốt lắm. Phần thưởng của bạn là ${baseResult.awardedStars} Star.`);
+            if (baseResult.reason) reasons.push(baseResult.reason);
         }
 
         // 2. Streak rules
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
             });
             if (streakResult.awardedStars > 0) {
                 totalAwardedStars += streakResult.awardedStars;
-                reasons.push(streakResult.reason || `Hot streak! 3 từ đúng liên tiếp (+${streakResult.awardedStars} ⭐)`);
+                if (streakResult.reason) reasons.push(streakResult.reason);
             }
         } else if (streak === 5) {
             const streakResult = await awardToeicStars({
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
             });
             if (streakResult.awardedStars > 0) {
                 totalAwardedStars += streakResult.awardedStars;
-                reasons.push(streakResult.reason || `On fire! 5 từ đúng liên tiếp (+${streakResult.awardedStars} ⭐)`);
+                if (streakResult.reason) reasons.push(streakResult.reason);
             }
         } else if (streak === 10) {
             const streakResult = await awardToeicStars({
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
             });
             if (streakResult.awardedStars > 0) {
                 totalAwardedStars += streakResult.awardedStars;
-                reasons.push(streakResult.reason || `Unstoppable! 10 từ đúng liên tiếp (+${streakResult.awardedStars} ⭐)`);
+                if (streakResult.reason) reasons.push(streakResult.reason);
             }
         }
 
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
             });
             if (topicResult.awardedStars > 0) {
                 totalAwardedStars += topicResult.awardedStars;
-                reasons.push(topicResult.reason || `Mastery! Hoàn thành xuất sắc chuyên mục (+${topicResult.awardedStars} ⭐)`);
+                if (topicResult.reason) reasons.push(topicResult.reason);
             }
         }
 
