@@ -1559,21 +1559,25 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 			}
 		};
 
-		recognition.onerror = () => {
+		recognition.onerror = (event: any) => {
 			stopRecognition();
-			setPronunciationStatus('Không thể nhận dạng giọng nói. Hãy thử lại nơi yên tĩnh hơn.');
+			if (event.error === 'no-speech') {
+				setPronunciationStatus('Chưa nghe thấy gì. Hãy nhấn lại và đọc to hơn nhé.');
+			} else {
+				setPronunciationStatus('Không thể nhận dạng giọng nói. Hãy thử lại nơi yên tĩnh hơn.');
+			}
 		};
 
 		recognition.onend = () => setIsPronunciationListening(false);
 		recognition.start();
 
-		// Timeout if no result within 7s
+		// Timeout if no result within 10s
 		pronunciationListeningTimeoutRef.current = window.setTimeout(() => {
 			if (isPronunciationListening) {
 				stopRecognition();
 				setPronunciationStatus('Hết thời gian chờ. Xin hãy thử lại.');
 			}
-		}, 7000);
+		}, 10000);
 	};
 
 	useEffect(() => {
@@ -2309,7 +2313,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 												disabled={isPronunciationListening}
 												className={`flex items-center justify-center gap-2 shadow-sm ring-1 ring-white/20 transition-all duration-300 overflow-hidden ${
 													isPronunciationListening 
-														? 'rounded-full bg-[#75967b] px-5 py-2.5 opacity-95 pointer-events-none'
+														? 'rounded-full bg-red-500 animate-pulse px-5 py-2.5 opacity-100 shadow-[0_0_15px_rgba(239,68,68,0.8)] pointer-events-none'
 														: 'rounded-full bg-white/10 p-3.5 hover:bg-white/25 hover:scale-110 active:scale-95'
 												}`}
 												title="Luyện tập phát âm"
