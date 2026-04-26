@@ -30,7 +30,7 @@ export default function ToeicWarriorLeaderboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/toeic/leaderboard/warriors')
+    fetch('/api/toeic/leaderboard/warriors', { cache: 'no-store' })
       .then(r => r.json())
       .then(res => {
         if (res.success) {
