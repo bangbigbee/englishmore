@@ -15,7 +15,6 @@ export default function ThemeToggle() {
 
   const cycleTheme = () => {
     if (theme === "light") setTheme("classic");
-    else if (theme === "classic") setTheme("dark");
     else setTheme("light");
   };
 
@@ -27,17 +26,13 @@ export default function ThemeToggle() {
       title={
         theme === "light"
           ? "Purple Theme"
-          : theme === "classic"
-          ? "Classic Theme (Green)"
-          : "Dark Theme"
+          : "Classic Theme (Green)"
       }
     >
       {theme === "light" ? (
         <span className="w-4 h-4 rounded-full bg-primary-900 block" /> // Purple circle
-      ) : theme === "classic" ? (
-        <span className="w-4 h-4 rounded-full bg-green-600 block" /> // Green circle
       ) : (
-        <span className="w-4 h-4 rounded-full bg-slate-800 block" /> // Dark circle
+        <span className="w-4 h-4 rounded-full bg-green-600 block" /> // Green circle
       )}
     </button>
   );
