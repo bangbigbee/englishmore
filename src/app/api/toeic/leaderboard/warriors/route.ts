@@ -8,7 +8,7 @@ export async function GET() {
       where: { 
         toeicStars: { gt: 0 },
         email: {
-          notIn: ['bangdtbk@gmail.com', 'bigbeecoltd@gmail.com', 'bangblockchain@gmail.com']
+          notIn: ['bangdtbk@gmail.com', 'bigbeecoltd@gmail.com']
         }
       },
       orderBy: { toeicStars: 'desc' },

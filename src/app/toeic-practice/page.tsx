@@ -1566,13 +1566,31 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 			stopRecognition();
 			if (event.error === 'no-speech') {
 				setPronunciationStatus('Chưa nghe thấy gì. Hãy nhấn lại và đọc to hơn nhé.');
+			} else if (event.error === 'not-allowed' || event.error === 'audio-capture') {
+				setPronunciationStatus('Chưa cấp quyền Micro! Vui lòng cấp quyền cho trình duyệt.');
+			} else if (event.error === 'network') {
+				setPronunciationStatus('Lỗi kết nối mạng. Không thể tải bộ nhận dạng giọng nói của Google.');
 			} else {
-				setPronunciationStatus('Không thể nhận dạng giọng nói. Hãy thử lại nơi yên tĩnh hơn.');
+				setPronunciationStatus(`Lỗi nhận dạng (${event.error}). Vui lòng dùng trình duyệt Chrome chuẩn!`);
 			}
 		};
 
-		recognition.onend = () => setIsPronunciationListening(false);
-		recognition.start();
+		recognition.onend = () => {
+			setIsPronunciationListening(false);
+		};
+		
+		recognition.onstart = () => {
+			setIsPronunciationListening(true);
+		};
+
+		try {
+			recognition.start();
+		} catch (e: any) {
+			console.error("SpeechRecognition start error:", e);
+			stopRecognition();
+			setPronunciationStatus(`Lỗi khởi động Micro: ${e.message || 'Không rõ nguyên nhân'}`);
+			return;
+		}
 
 		// Timeout if no result within 10s
 		pronunciationListeningTimeoutRef.current = window.setTimeout(() => {
