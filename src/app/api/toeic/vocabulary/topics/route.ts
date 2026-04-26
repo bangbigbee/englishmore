@@ -20,6 +20,7 @@ export async function GET() {
     })
 
     let learnedCounts: Record<string, number> = {};
+    let masteredTopics: string[] = [];
 
     if (session?.user?.id) {
       const userTags = await prisma.vocabularyTag.findMany({
@@ -37,6 +38,12 @@ export async function GET() {
           learnedCounts[topicName] = (learnedCounts[topicName] || 0) + 1;
         }
       });
+
+      const masteries = await prisma.toeicVocabularyTopicMastery.findMany({
+        where: { userId: session.user.id },
+        select: { topic: true }
+      });
+      masteredTopics = masteries.map(m => m.topic);
     }
 
     const groupedTopics = groups as { topic: string; _count: { id: number } }[];
@@ -50,7 +57,8 @@ export async function GET() {
       topic: g.topic,
       wordCount: g._count.id,
       learnedCount: learnedCounts[g.topic] || 0,
-      packageType: configMap.get(g.topic)?.packageType || 'ADVANCED'
+      packageType: configMap.get(g.topic)?.packageType || 'ADVANCED',
+      isMastered: masteredTopics.includes(g.topic)
     }))
 
     return NextResponse.json({ topics })
