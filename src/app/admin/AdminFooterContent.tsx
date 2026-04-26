@@ -10,6 +10,9 @@ export interface FooterContentItem {
   imageUrl: string
   content: string // HTML or detail text
   createdAt: number
+  fileUrl?: string
+  fileName?: string
+  fileType?: string
 }
 
 interface FooterContentData {
@@ -106,6 +109,46 @@ export default function AdminFooterContent() {
     }
   }
 
+  const [uploadingFile, setUploadingFile] = useState(false)
+
+  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // 50MB limit for documents/audio
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error('File size > 50MB!')
+      return
+    }
+
+    try {
+      setUploadingFile(true)
+      const toastId = toast.loading('Đang upload tài liệu...')
+      const presignedRes = await fetch('/api/admin/upload/presigned', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, contentType: file.type || 'application/octet-stream' })
+      })
+      const presignedData = await presignedRes.json()
+      if (!presignedRes.ok) throw new Error(presignedData.error || 'Presigned failed')
+
+      const uploadRes = await fetch(presignedData.uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type || 'application/octet-stream' },
+          body: file
+      })
+      
+      if (!uploadRes.ok) throw new Error('Upload to R2 failed')
+
+      setEditingItem(prev => prev ? { ...prev, fileUrl: presignedData.publicUrl, fileName: file.name, fileType: file.type } : null)
+      toast.success('Upload tài liệu thành công!', { id: toastId })
+    } catch (err: any) {
+      toast.error(err.message || 'Lỗi upload tài liệu', { id: 'doc-upload' })
+    } finally {
+      setUploadingFile(false)
+    }
+  }
+
   const openNewItem = () => {
     setEditingItem({
       id: Date.now().toString(),
@@ -198,9 +241,12 @@ export default function AdminFooterContent() {
                       <p className="text-sm text-slate-500 line-clamp-3 flex-1 mb-4">{item.description}</p>
                       
                       <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-200 border-dashed">
+                          {activeTab === 'documents' && item.fileUrl && (
+                              <span className="flex-1 text-xs text-primary-600 font-bold truncate">📁 {item.fileName}</span>
+                          )}
                           <button 
                               onClick={() => { setEditingItem(item); setIsModalOpen(true) }}
-                              className="flex-1 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-lg transition-colors"
+                              className={`${activeTab !== 'documents' || !item.fileUrl ? 'flex-1' : 'px-4'} py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-lg transition-colors`}
                           >
                               Sửa
                           </button>
@@ -285,6 +331,46 @@ export default function AdminFooterContent() {
                                   </div>
                               </div>
                           </div>
+
+                          {activeTab === 'documents' && (
+                              <div className="p-4 bg-primary-50 rounded-xl border border-primary-100">
+                                  <label className="block text-sm font-bold text-primary-900 mb-2">File Tài Liệu Đính Kèm</label>
+                                  <div className="flex items-center gap-4">
+                                      <input 
+                                          type="file" 
+                                          accept=".pdf,.doc,.docx,.ppt,.pptx,.mp3,.mp4,.png,.jpg,.jpeg,.zip,.rar"
+                                          onChange={handleUploadFile}
+                                          disabled={uploadingFile}
+                                          className="block flex-1 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-600 file:text-white hover:file:bg-primary-700"
+                                      />
+                                  </div>
+                                  {uploadingFile && <span className="text-sm text-primary-600 font-medium block mt-2">Đang upload tài liệu...</span>}
+                                  
+                                  {editingItem.fileUrl && (
+                                      <div className="mt-4 p-3 bg-white rounded-lg border border-primary-200 flex items-center justify-between">
+                                          <div className="flex items-center gap-2 overflow-hidden">
+                                              <span className="text-xl">📁</span>
+                                              <span className="text-sm font-bold text-slate-700 truncate">{editingItem.fileName || 'Tài liệu đã upload'}</span>
+                                          </div>
+                                          <button 
+                                              onClick={() => setEditingItem({ ...editingItem, fileUrl: '', fileName: '', fileType: '' })}
+                                              className="text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1 bg-red-50 rounded"
+                                          >
+                                              Xóa File
+                                          </button>
+                                      </div>
+                                  )}
+                                  <div className="mt-3">
+                                      <p className="text-xs text-slate-400 mb-1">Hoặc dán URL file có sẵn:</p>
+                                      <input 
+                                          className="w-full border-slate-300 rounded-lg px-3 py-2 text-sm bg-white"
+                                          value={editingItem.fileUrl || ''}
+                                          onChange={e => setEditingItem({ ...editingItem, fileUrl: e.target.value })}
+                                          placeholder="https://..."
+                                      />
+                                  </div>
+                              </div>
+                          )}
 
                           <div>
                               <label className="block text-sm font-bold text-slate-700 mb-2">Nội dung chi tiết</label>

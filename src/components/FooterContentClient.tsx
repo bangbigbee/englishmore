@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FooterContentItem } from '@/app/admin/AdminFooterContent'
+import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 const IconX = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -12,6 +14,24 @@ const IconX = ({ className }: { className?: string }) => (
 
 export default function FooterContentClient({ title, items, fallbackMessage }: { title: string, items: FooterContentItem[], fallbackMessage: string }) {
     const [selectedItem, setSelectedItem] = useState<FooterContentItem | null>(null)
+    const { data: session } = useSession()
+
+    const handleDownload = (e: React.MouseEvent, item: FooterContentItem) => {
+        e.stopPropagation()
+        if (!session?.user) {
+            toast.error('Vui lòng đăng nhập để tải tài liệu!', { duration: 4000 })
+            window.dispatchEvent(new CustomEvent('openLoginModal', { 
+                detail: { destination: window.location.pathname, allowGuest: false } 
+            }))
+            return
+        }
+
+        if (item.fileUrl) {
+            window.open(item.fileUrl, '_blank')
+        } else {
+            toast.error('Không tìm thấy file đính kèm.')
+        }
+    }
 
     return (
         <div className="max-w-6xl mx-auto pt-6 pb-16 px-4 sm:px-6">
@@ -51,10 +71,21 @@ export default function FooterContentClient({ title, items, fallbackMessage }: {
                                 </p>
                                 <div className="pt-4 border-t border-slate-100 mt-auto flex items-center justify-between">
                                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">Xem chi tiết</span>
-                                    <div className="w-8 h-8 rounded-full bg-primary-900 flex items-center justify-center text-white scale-90 group-hover:scale-100 transition-transform">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-                                            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                                        </svg>
+                                    <div className="flex items-center gap-2">
+                                        {item.fileUrl && (
+                                            <button 
+                                                onClick={(e) => handleDownload(e, item)}
+                                                className="w-8 h-8 rounded-full bg-secondary-50 flex items-center justify-center text-secondary-600 hover:bg-secondary-500 hover:text-white transition-colors"
+                                                title="Tải về"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                            </button>
+                                        )}
+                                        <div className="w-8 h-8 rounded-full bg-primary-900 flex items-center justify-center text-white scale-90 group-hover:scale-100 transition-transform">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                                            </svg>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -114,9 +145,25 @@ export default function FooterContentClient({ title, items, fallbackMessage }: {
                                     </div>
 
                                     <div 
-                                        className="prose prose-slate prose-lg sm:prose-xl max-w-none prose-headings:text-primary-900 prose-a:text-[#ea980c] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl"
+                                        className="prose prose-slate prose-lg sm:prose-xl max-w-none prose-headings:text-primary-900 prose-a:text-[#ea980c] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl mb-8"
                                         dangerouslySetInnerHTML={{ __html: selectedItem.content }} 
                                     />
+
+                                    {selectedItem.fileUrl && (
+                                        <div className="pt-6 border-t border-slate-100 flex items-center justify-between bg-slate-50 p-4 rounded-2xl border">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-slate-700">Tài liệu đính kèm</span>
+                                                <span className="text-xs text-slate-500 truncate max-w-[200px] sm:max-w-xs">{selectedItem.fileName || 'Tài liệu tải xuống'}</span>
+                                            </div>
+                                            <button 
+                                                onClick={(e) => handleDownload(e, selectedItem)}
+                                                className="shrink-0 flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                Tải Về Ngay
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>
