@@ -29,7 +29,7 @@ export const TOEIC_STAR_KEYS = {
 
 export type ToeicStarKey = (typeof TOEIC_STAR_KEYS)[keyof typeof TOEIC_STAR_KEYS]
 
-const DEFAULT_STAR_RULES: Record<ToeicStarKey, { label: string; points: number }> = {
+const DEFAULT_STAR_RULES: Record<ToeicStarKey, { label: string; points: number; toastMessage?: string }> = {
   [TOEIC_STAR_KEYS.dailyCheckin]: { label: 'Đăng nhập & học bài mỗi ngày', points: 5 },
   [TOEIC_STAR_KEYS.streak3]: { label: 'Chuỗi học tập 3 ngày liên tiếp', points: 10 },
   [TOEIC_STAR_KEYS.streak7]: { label: 'Chuỗi học tập 7 ngày liên tiếp', points: 30 },
@@ -49,11 +49,11 @@ const DEFAULT_STAR_RULES: Record<ToeicStarKey, { label: string; points: number }
   [TOEIC_STAR_KEYS.actualTestComplete]: { label: 'Hoàn thành 1 bài Thi Thử (Actual Test)', points: 20 },
   [TOEIC_STAR_KEYS.actualTestNewRecord]: { label: 'Điểm Thi Thử vượt Kỷ lục Cá nhân', points: 30 },
   // Pronunciation rules
-  [TOEIC_STAR_KEYS.pronunciationCorrect]: { label: 'Phát âm chuẩn 1 từ vựng', points: 1 },
-  [TOEIC_STAR_KEYS.pronunciationStreak3]: { label: 'Phát âm chuẩn 3 từ liên tiếp', points: 5 },
-  [TOEIC_STAR_KEYS.pronunciationStreak5]: { label: 'Phát âm chuẩn 5 từ liên tiếp', points: 15 },
-  [TOEIC_STAR_KEYS.pronunciationStreak10]: { label: 'Phát âm chuẩn 10 từ liên tiếp', points: 30 },
-  [TOEIC_STAR_KEYS.pronunciationTopicComplete]: { label: 'Hoàn thành xuất sắc toàn bộ chủ đề', points: 50 },
+  [TOEIC_STAR_KEYS.pronunciationCorrect]: { label: 'Phát âm chuẩn 1 từ vựng', points: 1, toastMessage: 'Bạn phát âm tốt lắm. Phần thưởng của bạn là 1 Star.' },
+  [TOEIC_STAR_KEYS.pronunciationStreak3]: { label: 'Phát âm chuẩn 3 từ liên tiếp', points: 5, toastMessage: 'Hot streak! 3 từ đúng liên tiếp' },
+  [TOEIC_STAR_KEYS.pronunciationStreak5]: { label: 'Phát âm chuẩn 5 từ liên tiếp', points: 15, toastMessage: 'On fire! 5 từ đúng liên tiếp' },
+  [TOEIC_STAR_KEYS.pronunciationStreak10]: { label: 'Phát âm chuẩn 10 từ liên tiếp', points: 30, toastMessage: 'Unstoppable! 10 từ đúng liên tiếp' },
+  [TOEIC_STAR_KEYS.pronunciationTopicComplete]: { label: 'Hoàn thành xuất sắc toàn bộ chủ đề', points: 50, toastMessage: 'Tuyệt đỉnh! Hoàn thành xuất sắc toàn bộ chủ đề!' },
 }
 
 const prismaWithToeicStars = prisma as typeof prisma & {
@@ -72,7 +72,7 @@ type ToeicStarUserClient = {
 }
 
 export const ensureDefaultToeicStarRules = async () => {
-  const entries = Object.entries(DEFAULT_STAR_RULES) as Array<[ToeicStarKey, { label: string; points: number }]>
+  const entries = Object.entries(DEFAULT_STAR_RULES) as Array<[ToeicStarKey, { label: string; points: number; toastMessage?: string }]>
 
   await Promise.all(
     entries.map(([activityKey, config]) =>
@@ -83,6 +83,7 @@ export const ensureDefaultToeicStarRules = async () => {
           activityKey,
           label: config.label,
           points: config.points,
+          toastMessage: config.toastMessage,
           isActive: true
         }
       })
@@ -117,10 +118,10 @@ export const awardToeicStars = async ({
 
     const ruleRaw = await txWithStars.toeicStarRule.findUnique({
       where: { activityKey },
-      select: { points: true, isActive: true, label: true }
+      select: { points: true, isActive: true, label: true, toastMessage: true }
     })
 
-    const rule = ruleRaw as { points: number; isActive: boolean; label: string } | null
+    const rule = ruleRaw as { points: number; isActive: boolean; label: string; toastMessage: string | null } | null
 
     const currentUser = await txWithUser.user.findUnique({
       where: { id: userId },
@@ -175,7 +176,7 @@ export const awardToeicStars = async ({
     return {
       awardedStars: finalPoints,
       totalStars: updatedUser.toeicStars,
-      reason: rule.label
+      reason: rule.toastMessage ? `${rule.toastMessage} (+${finalPoints} ⭐)` : rule.label
     }
   })
 }

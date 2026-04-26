@@ -900,6 +900,7 @@ model ToeicStarRule {
   id          String   @id @default(cuid())
   activityKey String   @unique
   label       String
+  toastMessage String? // Custom message for toast
   points      Int      @default(0) // Default star reward
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
