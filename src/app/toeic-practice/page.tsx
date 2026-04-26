@@ -1267,7 +1267,7 @@ const ProTag = () => (
 );
 
 function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeClick: (topic?: string, allowGuest?: boolean) => void, openLoginModal?: (destination?: string, allowGuest?: boolean) => void }) {
-	const { data: session } = useSession();
+	const { data: session, update } = useSession();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const router = useRouter();
@@ -1522,7 +1522,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 										} else if (newStreak === 2) {
 											toast.success('Hay lắm! 2 từ liên tiếp rồi, cố lên nào!');
 										}
-										updateSession?.();
+										update?.();
 									}
 								}).catch(() => {});
 							}
