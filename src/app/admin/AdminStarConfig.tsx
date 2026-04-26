@@ -109,10 +109,6 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
       toast.error('Số sao không hợp lệ')
       return
     }
-    if (!label.trim()) {
-      toast.error('Nội dung không được để trống')
-      return
-    }
     onSave(rule.id, parsed, isActive, toastMsg)
     setIsEditing(false)
   }

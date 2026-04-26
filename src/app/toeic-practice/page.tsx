@@ -2285,56 +2285,58 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 									<span className="absolute top-4 right-5 text-white/50 bg-white/10 p-1.5 rounded-full pointer-events-none">
 										<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
 									</span>
-									<p className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-sm text-center">
-										{currentItem.word}
-									</p>
-									{currentItem.phonetic && (
-										<p className="mt-4 text-lg text-white/60 font-medium">{currentItem.phonetic.replaceAll('.', '')}</p>
-									)}
+									<div className={`flex flex-col items-center transition-transform duration-500 ease-out w-full ${(pronunciationStatus || pronunciationScore !== null) ? '-translate-y-16 sm:-translate-y-12' : ''}`}>
+										<p className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight drop-shadow-sm text-center">
+											{currentItem.word}
+										</p>
+										{currentItem.phonetic && (
+											<p className="mt-4 text-lg text-white/60 font-medium">{currentItem.phonetic.replaceAll('.', '')}</p>
+										)}
 
-									{/* Voice Practice Controls */}
-									<div className="flex items-center gap-4 mt-8">
-										<button
-											type="button"
-											onClick={(e) => playPronunciation(e, currentItem.word)}
-											className="rounded-full bg-white/10 p-3.5 text-white shadow-sm ring-1 ring-white/20 transition-all hover:bg-white/25 hover:scale-110 active:scale-95"
-											title="Nghe phát âm"
-										>
-											<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-												<path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.49 9.49 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06zM18.584 5.106a.75.75 0 011.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 11-1.06-1.06 8.25 8.25 0 000-11.668.75.75 0 010-1.06z" />
-												<path d="M15.932 7.757a.75.75 0 011.061 0 6 6 0 010 8.486.75.75 0 01-1.06-1.061 4.5 4.5 0 000-6.364.75.75 0 010-1.06z" />
-											</svg>
-										</button>
-
-										{speechSupported && (
+										{/* Voice Practice Controls */}
+										<div className="flex items-center gap-4 mt-8">
 											<button
 												type="button"
-												onClick={(e) => { e.stopPropagation(); startVoicePractice(); }}
-												disabled={isPronunciationListening}
-												className={`flex items-center justify-center gap-2 shadow-sm ring-1 ring-white/20 transition-all duration-300 overflow-hidden ${
-													isPronunciationListening 
-														? 'rounded-full bg-red-500 animate-pulse px-5 py-2.5 opacity-100 shadow-[0_0_15px_rgba(239,68,68,0.8)] pointer-events-none'
-														: 'rounded-full bg-white/10 p-3.5 hover:bg-white/25 hover:scale-110 active:scale-95'
-												}`}
-												title="Luyện tập phát âm"
+												onClick={(e) => playPronunciation(e, currentItem.word)}
+												className="rounded-full bg-white/10 p-3.5 text-white shadow-sm ring-1 ring-white/20 transition-all hover:bg-white/25 hover:scale-110 active:scale-95"
+												title="Nghe phát âm"
 											>
-												{isPronunciationListening ? (
-													<svg className="w-5 h-5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path className="animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] origin-bottom duration-1000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 4a4.992 4.992 0 00-1.5 3.5m9.5-3.5A4.992 4.992 0 0117.5 7.5" />
-														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 14a3 3 0 003-3V7a3 3 0 00-6 0v4a3 3 0 003 3z" />
-														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 10v1a7 7 0 01-14 0v-1M12 18v4m-3 0h6" />
-													</svg>
-												) : (
-													<svg className="w-6 h-6 text-white shrink-0" fill="currentColor" viewBox="0 0 24 24">
-														<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
-														<path d="M19 10v1a7 7 0 0 1-14 0v-1H3v1a9 9 0 0 0 8 8.94V22h2v-2.06A9 9 0 0 0 21 11v-1h-2z" />
-													</svg>
-												)}
-												{isPronunciationListening && (
-													<span className="text-white font-bold text-sm tracking-wide whitespace-nowrap animate-pulse">Listening...</span>
-												)}
+												<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+													<path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.49 9.49 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06zM18.584 5.106a.75.75 0 011.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 11-1.06-1.06 8.25 8.25 0 000-11.668.75.75 0 010-1.06z" />
+													<path d="M15.932 7.757a.75.75 0 011.061 0 6 6 0 010 8.486.75.75 0 01-1.06-1.061 4.5 4.5 0 000-6.364.75.75 0 010-1.06z" />
+												</svg>
 											</button>
-										)}
+
+											{speechSupported && (
+												<button
+													type="button"
+													onClick={(e) => { e.stopPropagation(); startVoicePractice(); }}
+													disabled={isPronunciationListening}
+													className={`flex items-center justify-center gap-2 shadow-sm ring-1 ring-white/20 transition-all duration-300 overflow-hidden ${
+														isPronunciationListening 
+															? 'rounded-full bg-red-500 animate-pulse px-5 py-2.5 opacity-100 shadow-[0_0_15px_rgba(239,68,68,0.8)] pointer-events-none'
+															: 'rounded-full bg-white/10 p-3.5 hover:bg-white/25 hover:scale-110 active:scale-95'
+													}`}
+													title="Luyện tập phát âm"
+												>
+													{isPronunciationListening ? (
+														<svg className="w-5 h-5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<path className="animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] origin-bottom duration-1000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 4a4.992 4.992 0 00-1.5 3.5m9.5-3.5A4.992 4.992 0 0117.5 7.5" />
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 14a3 3 0 003-3V7a3 3 0 00-6 0v4a3 3 0 003 3z" />
+															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 10v1a7 7 0 01-14 0v-1M12 18v4m-3 0h6" />
+														</svg>
+													) : (
+														<svg className="w-6 h-6 text-white shrink-0" fill="currentColor" viewBox="0 0 24 24">
+															<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+															<path d="M19 10v1a7 7 0 0 1-14 0v-1H3v1a9 9 0 0 0 8 8.94V22h2v-2.06A9 9 0 0 0 21 11v-1h-2z" />
+														</svg>
+													)}
+													{isPronunciationListening && (
+														<span className="text-white font-bold text-sm tracking-wide whitespace-nowrap animate-pulse">Listening...</span>
+													)}
+												</button>
+											)}
+										</div>
 									</div>
 
 									{/* Practice Status Overlay */}
