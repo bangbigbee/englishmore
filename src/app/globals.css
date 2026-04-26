@@ -607,3 +607,9 @@ body {
 
 @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 .animate-shimmer { animation: shimmer 2.5s infinite; }
+
+/* Theme dependent logo switching */
+[data-theme="classic"] .theme-classic-show { display: block !important; }
+[data-theme="classic"] .theme-classic-hide { display: none !important; }
+:not([data-theme="classic"]) .theme-classic-show { display: none !important; }
+:not([data-theme="classic"]) .theme-classic-hide { display: block !important; }

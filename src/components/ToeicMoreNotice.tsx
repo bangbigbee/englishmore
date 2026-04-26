@@ -93,7 +93,8 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
         className={`pointer-events-auto shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-linear-to-tr from-secondary-50 to-primary-50 border border-primary-100/50 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all focus:outline-none ${isOpen ? 'ring-2 ring-primary-300 ring-offset-2' : ''} ${isWiggling && !isOpen ? 'animate-bounce' : ''}`}
         title="Thông báo ToeicMore"
       >
-        <img src="/toeicmoreicon.svg?v=2" alt="ToeicMore Notice" className="w-full h-full object-cover drop-shadow-sm" />
+        <img src="/toeicmoreicon.svg?v=2" alt="ToeicMore Notice" className="w-full h-full object-cover drop-shadow-sm theme-classic-hide" />
+        <img src="/toeicmoreiconGreen.svg?v=2" alt="ToeicMore Notice" className="w-full h-full object-cover drop-shadow-sm theme-classic-show" />
       </button>
 
     </div>
