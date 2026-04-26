@@ -1508,7 +1508,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 									toast.success('Bạn phát âm tốt lắm. Phần thưởng của bạn là 1 Star.', { icon: '⭐' });
 								} else if (newStreak === 2 || newStreak === 5) {
 									toast.success(newStreak === 2 ? 'Hay lắm! 2 từ liên tiếp rồi, đăng nhập để lưu tiến độ nhé!' : 'Bạn đang làm rất tốt! Đăng nhập để lưu tiến độ nhé!');
-									openLoginModal?.(`${pathname}?tab=vocabulary`);
+									openLoginModal?.(`${pathname}?${searchParams.toString()}`);
 								} else if (newStreak === 3) {
 									playPronunciationRewardChime();
 									toast.success('Hot streak! 3 từ đúng liên tiếp (+5 ⭐)', { icon: '⭐' });
