@@ -181,7 +181,7 @@ export default function AdminAboutToeicMore() {
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 flex justify-end">
-                    <button onClick={handleSave} className="bg-[#ea980c] hover:bg-amber-600 shadow-lg shadow-amber-500/20 text-white px-8 py-3 rounded-xl font-black transition-all">
+                    <button onClick={handleSave} className="bg-[#ea980c] hover:bg-secondary-600 shadow-lg shadow-secondary-500/20 text-white px-8 py-3 rounded-xl font-black transition-all">
                         Lưu Cấu Hình
                     </button>
                 </div>

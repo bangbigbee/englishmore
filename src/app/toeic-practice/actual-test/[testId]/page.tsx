@@ -107,7 +107,7 @@ export default function ActualTestLobbyPage() {
 
                 <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-200">
                     <div className="text-center mb-10">
-                        <div className="inline-block px-4 py-1.5 rounded-full bg-purple-50 text-purple-700 font-bold text-sm mb-4">
+                        <div className="inline-block px-4 py-1.5 rounded-full bg-primary-50 text-primary-700 font-bold text-sm mb-4">
                             {testData.collection}
                         </div>
                         <h1 className="text-3xl md:text-5xl font-black text-slate-800 tracking-tight">{testData.title}</h1>
@@ -118,13 +118,13 @@ export default function ActualTestLobbyPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <button
                                 onClick={() => setMode('practice')}
-                                className={`p-6 rounded-2xl border-2 text-left transition-all ${mode === 'practice' ? 'border-purple-500 bg-purple-50 ring-4 ring-purple-500/10' : 'border-slate-200 hover:border-purple-200'}`}
+                                className={`p-6 rounded-2xl border-2 text-left transition-all ${mode === 'practice' ? 'border-primary-500 bg-primary-50 ring-4 ring-primary-500/10' : 'border-slate-200 hover:border-primary-200'}`}
                             >
                                 <div className="flex items-center justify-between mb-2">
-                                    <h3 className={`text-xl font-bold ${mode === 'practice' ? 'text-purple-700' : 'text-slate-700'}`}>Luyện Tập</h3>
-                                    {mode === 'practice' && <svg className="w-6 h-6 text-purple-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
+                                    <h3 className={`text-xl font-bold ${mode === 'practice' ? 'text-primary-700' : 'text-slate-700'}`}>Luyện Tập</h3>
+                                    {mode === 'practice' && <svg className="w-6 h-6 text-primary-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
                                 </div>
-                                <p className={`text-sm ${mode === 'practice' ? 'text-purple-600/80' : 'text-slate-500'}`}>
+                                <p className={`text-sm ${mode === 'practice' ? 'text-primary-600/80' : 'text-slate-500'}`}>
                                     Chỉnh thời gian, tua audio và xem giải thích kèm song ngữ
                                 </p>
                             </button>
@@ -148,12 +148,12 @@ export default function ActualTestLobbyPage() {
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
                                 <div className="flex flex-col gap-4">
                                     <div className="flex flex-col gap-2.5">
-                                        <label className="flex items-center gap-2 cursor-pointer text-[13px] font-bold text-slate-600 hover:text-purple-600 transition-colors select-none self-start">
+                                        <label className="flex items-center gap-2 cursor-pointer text-[13px] font-bold text-slate-600 hover:text-primary-600 transition-colors select-none self-start">
                                             <input 
                                                 type="checkbox" 
                                                 checked={selectedParts.length === availableParts.length} 
                                                 onChange={() => selectedParts.length === availableParts.length ? setSelectedParts([]) : setSelectedParts([...availableParts])}
-                                                className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                                                className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
                                             />
                                             Tất cả
                                         </label>
@@ -162,7 +162,7 @@ export default function ActualTestLobbyPage() {
                                                 <button
                                                     key={partId}
                                                     onClick={() => togglePart(partId)}
-                                                    className={`px-2 py-1.5 rounded-md text-[12px] font-bold transition-all border ${selectedParts.includes(partId) ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-slate-600 border-slate-300 hover:border-purple-300'}`}
+                                                    className={`px-2 py-1.5 rounded-md text-[12px] font-bold transition-all border ${selectedParts.includes(partId) ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-600 border-slate-300 hover:border-primary-300'}`}
                                                 >
                                                     Part {partId}
                                                 </button>
@@ -180,7 +180,7 @@ export default function ActualTestLobbyPage() {
                                                 setIsTimeCustomized(true);
                                                 setCustomTimeMinutes(Number(e.target.value) || 1);
                                             }}
-                                            className="w-16 px-2 py-1 rounded-lg border border-slate-300 focus:outline-none focus:border-purple-500 font-bold text-sm text-center text-slate-700 bg-white" 
+                                            className="w-16 px-2 py-1 rounded-lg border border-slate-300 focus:outline-none focus:border-primary-500 font-bold text-sm text-center text-slate-700 bg-white" 
                                         />
                                     </div>
                                 </div>
@@ -190,7 +190,7 @@ export default function ActualTestLobbyPage() {
                         <div className="pt-6 text-center">
                             <button
                                 onClick={handleStart}
-                                className={`px-10 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95 shadow-xl ${mode === 'actual' ? 'bg-slate-800 hover:bg-black hover:shadow-slate-800/20' : 'bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 hover:shadow-purple-600/20'}`}
+                                className={`px-10 py-4 rounded-2xl font-black text-white text-lg transition-all active:scale-95 shadow-xl ${mode === 'actual' ? 'bg-slate-800 hover:bg-black hover:shadow-slate-800/20' : 'bg-gradient-to-r from-primary-600 to-fuchsia-600 hover:from-primary-700 hover:to-fuchsia-700 hover:shadow-primary-600/20'}`}
                             >
                                 {mode === 'actual' ? 'VÀO PHÒNG THI' : 'BẮT ĐẦU'}
                             </button>

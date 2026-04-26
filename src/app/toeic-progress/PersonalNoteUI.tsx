@@ -46,12 +46,12 @@ export default function PersonalNoteUI({ tagId, initialNote }: { tagId: string, 
     if (isEditing) {
         return (
             <div 
-                className="w-full text-left p-2 rounded-lg bg-purple-50 border border-purple-200 shadow-inner group/note relative"
+                className="w-full text-left p-2 rounded-lg bg-primary-50 border border-primary-200 shadow-inner group/note relative"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
             >
                 <div className="flex items-center gap-1.5 mb-1.5">
-                    <svg className="w-3 h-3 text-[#581c87]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                    <span className="text-[10px] font-bold text-[#581c87] uppercase tracking-wider">Viết ghi chú</span>
+                    <svg className="w-3 h-3 text-primary-900" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    <span className="text-[10px] font-bold text-primary-900 uppercase tracking-wider">Viết ghi chú</span>
                 </div>
                 <textarea
                     ref={textareaRef}
@@ -60,7 +60,7 @@ export default function PersonalNoteUI({ tagId, initialNote }: { tagId: string, 
                     placeholder="Mẹo nhớ từ, cách dùng đặc biệt..."
                     disabled={isSaving}
                     rows={2}
-                    className="w-full text-[12px] p-2 rounded-md border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent bg-white resize-none text-slate-700 disabled:opacity-50"
+                    className="w-full text-[12px] p-2 rounded-md border border-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent bg-white resize-none text-slate-700 disabled:opacity-50"
                 />
                 <div className="flex justify-end gap-2 mt-2">
                     <button 
@@ -73,7 +73,7 @@ export default function PersonalNoteUI({ tagId, initialNote }: { tagId: string, 
                     <button 
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="px-3 py-1 text-[11px] font-bold bg-[#581c87] text-white rounded cursor-pointer hover:bg-purple-800 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1 text-[11px] font-bold bg-primary-900 text-white rounded cursor-pointer hover:bg-primary-800 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isSaving && <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
                         Lưu
@@ -92,20 +92,20 @@ export default function PersonalNoteUI({ tagId, initialNote }: { tagId: string, 
             title="Sửa ghi chú"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsEditing(true); }}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsEditing(true); } }}
-            className={`w-full text-left p-2 rounded-lg transition-colors group/note relative ${hasNote ? 'bg-amber-50/70 border border-amber-100/70 hover:bg-amber-50' : 'bg-purple-50/50 border border-purple-100/50 hover:bg-purple-50'}`}
+            className={`w-full text-left p-2 rounded-lg transition-colors group/note relative ${hasNote ? 'bg-secondary-50/70 border border-secondary-100/70 hover:bg-secondary-50' : 'bg-primary-50/50 border border-primary-100/50 hover:bg-primary-50'}`}
         >
             <div className="flex items-center justify-between mb-1 opacity-80 group-hover/note:opacity-100 transition-opacity">
                 <div className="flex items-center gap-1.5">
-                    <svg className={`w-3 h-3 ${hasNote ? 'text-amber-600' : 'text-[#581c87]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${hasNote ? 'text-amber-700' : 'text-[#581c87]'}`}>Ghi chú cá nhân</span>
+                    <svg className={`w-3 h-3 ${hasNote ? 'text-secondary-600' : 'text-primary-900'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider ${hasNote ? 'text-secondary-700' : 'text-primary-900'}`}>Ghi chú cá nhân</span>
                 </div>
                 {hasNote && (
-                    <svg className="w-3.5 h-3.5 text-amber-500 hover:text-amber-700 transition-colors opacity-0 group-hover/note:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    <svg className="w-3.5 h-3.5 text-secondary-500 hover:text-secondary-700 transition-colors opacity-0 group-hover/note:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                 )}
             </div>
             
             {hasNote ? (
-                <div className="text-[12px] font-medium text-amber-900 whitespace-pre-wrap leading-relaxed line-clamp-3">
+                <div className="text-[12px] font-medium text-secondary-900 whitespace-pre-wrap leading-relaxed line-clamp-3">
                     {note}
                 </div>
             ) : (

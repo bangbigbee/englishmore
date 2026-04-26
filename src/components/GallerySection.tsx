@@ -65,7 +65,7 @@ export default function GallerySection() {
   return (
     <div className="flex flex-col gap-12 py-20 bg-gray-50 overflow-hidden relative">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 text-center">
-        <h2 className="text-3xl font-extrabold text-[#581c87] sm:text-4xl md:text-5xl tracking-tight">
+        <h2 className="text-3xl font-extrabold text-primary-900 sm:text-4xl md:text-5xl tracking-tight">
           Khoảnh Khắc
           <span className="text-[#ea980c]"> EnglishMore</span>
         </h2>
@@ -133,7 +133,7 @@ const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-893032
       <section className="relative w-full">
         {group.title && (
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
-            <h3 className="text-2xl font-bold text-[#581c87] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
+            <h3 className="text-2xl font-bold text-primary-900 uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
           </div>
         )}
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#f9fafb_0%,transparent_15%,transparent_85%,#f9fafb_100%)] pointer-events-none z-10" />
@@ -174,7 +174,7 @@ const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-893032
       <section className="relative w-full">
         {group.title && (
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
-            <h3 className="text-2xl font-bold text-[#581c87] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
+            <h3 className="text-2xl font-bold text-primary-900 uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full border border-gray-200">{group.title}</h3>
           </div>
         )}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f9fafb_0%,transparent_10%,transparent_90%,#f9fafb_100%)] pointer-events-none z-10" />
@@ -210,7 +210,7 @@ const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-893032
       <section className="relative w-full h-[600px] sm:h-[800px] overflow-hidden py-10">
         {group.title && (
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 mb-2 text-center">
-            <h3 className="text-2xl font-bold text-[#581c87] uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full shadow-sm">{group.title}</h3>
+            <h3 className="text-2xl font-bold text-primary-900 uppercase tracking-wide bg-gray-50 inline-block px-4 py-1 rounded-full shadow-sm">{group.title}</h3>
           </div>
         )}
         <div className="absolute inset-0 pointer-events-none z-10 shadow-[inset_0_0_60px_20px_rgba(249,250,251,1)]" />

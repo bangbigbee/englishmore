@@ -113,7 +113,7 @@ export default function PlacementTestTakePage() {
                         <span className="font-black text-slate-800 text-lg hidden sm:block">Đánh Giá Năng Lực Nhanh (5 Phút)</span>
                         <span className="font-black text-slate-800 text-lg sm:hidden">Test Năng Lực</span>
                         <div className="w-full bg-slate-100 h-1.5 rounded-full mt-1">
-                            <div className="bg-amber-500 h-1.5 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+                            <div className="bg-secondary-500 h-1.5 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
                         </div>
                     </div>
 
@@ -127,7 +127,7 @@ export default function PlacementTestTakePage() {
                         <button
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="bg-[#581c87] hover:bg-[#6b21a8] text-white px-4 py-1.5 sm:px-6 sm:py-2 rounded-xl text-sm sm:text-base font-bold transition-all shadow-md active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="bg-primary-900 hover:bg-primary-800 text-white px-4 py-1.5 sm:px-6 sm:py-2 rounded-xl text-sm sm:text-base font-bold transition-all shadow-md active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? 'Đang chấm...' : 'Nộp bài'}
                         </button>
@@ -148,7 +148,7 @@ export default function PlacementTestTakePage() {
                                 <div className="p-5 sm:p-6 border-b border-slate-100 bg-slate-50/50">
                                     <div className="flex items-start gap-3">
                                         <div className="flex flex-col gap-1 items-center justify-start mt-0.5">
-                                            <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm shrink-0">
+                                            <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm shrink-0">
                                                 {idx + 1}
                                             </div>
                                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center max-w-[50px]">
@@ -170,7 +170,7 @@ export default function PlacementTestTakePage() {
                                         </div>
                                         <div className="flex-1">
                                             {q.passage && (
-                                                <div className="mb-4 p-4 bg-amber-50/50 rounded-xl border border-amber-100 text-sm text-slate-700 leading-relaxed font-serif italic whitespace-pre-wrap">
+                                                <div className="mb-4 p-4 bg-secondary-50/50 rounded-xl border border-secondary-100 text-sm text-slate-700 leading-relaxed font-serif italic whitespace-pre-wrap">
                                                     {q.passage}
                                                 </div>
                                             )}
@@ -203,16 +203,16 @@ export default function PlacementTestTakePage() {
                                                 onClick={() => handleAnswer(q.id, opt)}
                                                 className={`flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all ${
                                                     isSelected 
-                                                        ? 'border-amber-500 bg-amber-50 shadow-sm' 
-                                                        : 'border-slate-100 hover:border-purple-200 hover:bg-purple-50/50'
+                                                        ? 'border-secondary-500 bg-secondary-50 shadow-sm' 
+                                                        : 'border-slate-100 hover:border-primary-200 hover:bg-primary-50/50'
                                                 }`}
                                             >
                                                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
-                                                    isSelected ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'
+                                                    isSelected ? 'bg-secondary-500 text-white' : 'bg-slate-100 text-slate-500'
                                                 }`}>
                                                     {opt}
                                                 </span>
-                                                <span className={`font-semibold text-sm ${isSelected ? 'text-amber-900' : 'text-slate-700'}`}>
+                                                <span className={`font-semibold text-sm ${isSelected ? 'text-secondary-900' : 'text-slate-700'}`}>
                                                     {String(optionText)}
                                                 </span>
                                             </button>
@@ -229,7 +229,7 @@ export default function PlacementTestTakePage() {
                             <button
                                 onClick={handleSubmit}
                                 disabled={isSubmitting}
-                                className="w-full max-w-xs bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+                                className="w-full max-w-xs bg-gradient-to-r from-secondary-500 to-orange-500 hover:from-secondary-600 hover:to-orange-600 text-white font-black py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
                             >
                                 {isSubmitting ? (
                                     <>

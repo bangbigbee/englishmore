@@ -18,14 +18,14 @@ export default function ToeicHomePage() {
     <div className="max-w-6xl mx-auto py-8 px-2 sm:px-6">
       {showPractice && <PracticeUnderConstruction />}
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-        <span className="text-purple-900">LUYỆN THI</span>{' '}
+        <span className="text-primary-900">LUYỆN THI</span>{' '}
         <span style={{ color: '#ea980c', fontWeight: 700 }}>TOEIC</span>
       </h1>
       <div className="flex gap-2 sm:gap-4 border-b mb-8 overflow-x-auto">
         {TABS.map((t) => (
           <button
             key={t.key}
-            className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none ${tab === t.key ? "border-purple-600 text-purple-700 bg-white" : "border-transparent text-gray-500 hover:text-purple-600"}`}
+            className={`px-4 py-2 sm:px-6 sm:py-3 font-semibold border-b-2 transition-colors duration-200 focus:outline-none ${tab === t.key ? "border-primary-600 text-primary-700 bg-white" : "border-transparent text-gray-500 hover:text-primary-600"}`}
             onClick={() => setTab(t.key)}
           >
             {t.label}
@@ -66,8 +66,8 @@ function ToeicGrammarTab({ setShowPractice }: { setShowPractice: (v: boolean) =>
   };
   return (
     <div>
-      <h2 className="text-lg font-bold mb-4 text-purple-900 flex items-center gap-2">
-        <span className="inline-block w-5 h-5 text-purple-500">📘</span>
+      <h2 className="text-lg font-bold mb-4 text-primary-900 flex items-center gap-2">
+        <span className="inline-block w-5 h-5 text-primary-500">📘</span>
         Các chủ đề ngữ pháp
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -76,11 +76,11 @@ function ToeicGrammarTab({ setShowPractice }: { setShowPractice: (v: boolean) =>
             <div>
               <div className="font-bold text-base text-gray-900 mb-1">{topic.title}</div>
               <div className="text-sm text-gray-500 mb-2">{topic.subtitle}</div>
-              <div className="text-purple-600 font-semibold text-sm mb-1">📝 {topic.count} câu hỏi</div>
+              <div className="text-primary-600 font-semibold text-sm mb-1">📝 {topic.count} câu hỏi</div>
               <div className="text-xs text-gray-400 mb-2">Chưa bắt đầu</div>
             </div>
             <div className="flex justify-end">
-              <button className="text-purple-600 font-semibold text-sm hover:underline" onClick={handlePracticeClick}>Luyện tập &rarr;</button>
+              <button className="text-primary-600 font-semibold text-sm hover:underline" onClick={handlePracticeClick}>Luyện tập &rarr;</button>
             </div>
           </div>
         ))}

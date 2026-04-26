@@ -55,7 +55,7 @@ export default function AdminStarConfig() {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="p-6 border-b border-slate-200">
           <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <span className="text-amber-500">⭐</span>
+            <span className="text-secondary-500">⭐</span>
             ToeicMore Star Config
           </h2>
           <p className="text-sm text-slate-500 mt-1">
@@ -125,10 +125,10 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
             min="0"
             value={points}
             onChange={e => setPoints(e.target.value)}
-            className="w-20 px-2 py-1 border border-slate-300 rounded focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none"
+            className="w-20 px-2 py-1 border border-slate-300 rounded focus:border-secondary-500 focus:ring-1 focus:ring-secondary-500 outline-none"
           />
         ) : (
-          <span className="font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">
+          <span className="font-bold text-secondary-600 bg-secondary-50 px-2 py-1 rounded">
             {rule.points} ⭐
           </span>
         )}
@@ -140,14 +140,14 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
               type="checkbox" 
               checked={isActive} 
               onChange={e => setIsActive(e.target.checked)}
-              className="rounded text-amber-600 focus:ring-amber-500 w-4 h-4"
+              className="rounded text-secondary-600 focus:ring-secondary-500 w-4 h-4"
             />
-            <span className={isActive ? 'text-purple-600 font-medium' : 'text-slate-400'}>
+            <span className={isActive ? 'text-primary-600 font-medium' : 'text-slate-400'}>
               {isActive ? 'Bật' : 'Tắt'}
             </span>
           </label>
         ) : (
-          <span className={`inline-flex px-2 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${rule.isActive ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-500'}`}>
+          <span className={`inline-flex px-2 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${rule.isActive ? 'bg-primary-100 text-primary-700' : 'bg-slate-100 text-slate-500'}`}>
             {rule.isActive ? 'Bật' : 'Tắt'}
           </span>
         )}
@@ -158,7 +158,7 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
             <button 
               onClick={handleSave}
               disabled={!hasChanges}
-              className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${hasChanges ? 'bg-amber-500 text-white hover:bg-amber-600' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+              className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${hasChanges ? 'bg-secondary-500 text-white hover:bg-secondary-600' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
             >
               Lưu
             </button>
@@ -176,7 +176,7 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
         ) : (
           <button 
             onClick={() => setIsEditing(true)}
-            className="text-purple-600 hover:text-purple-800 font-medium text-sm transition-colors"
+            className="text-primary-600 hover:text-primary-800 font-medium text-sm transition-colors"
           >
             Chỉnh sửa
           </button>

@@ -23,15 +23,13 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
           fetch('/api/user/profile')
             .then(res => res.json())
             .then(data => {
-              if (data.user && !data.user.toeicLevel) {
-                setIsOpen(true)
-              } else if (data.user && data.user.toeicLevel) {
+              if (data.user && data.user.toeicLevel) {
                 localStorage.setItem('toeicLevel', data.user.toeicLevel)
               }
             })
-            .catch(() => setIsOpen(true))
-        } else {
-          setIsOpen(true)
+            .catch(() => {
+              // Silently catch error, do not auto-open
+            })
         }
       }
     }, 1500)
@@ -115,7 +113,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
               style={{ transform: 'translateZ(0)' }}
             >
               {/* Left Side: Graphic / Welcome */}
-              <div className="md:w-2/5 bg-gradient-to-br from-[#7e22ce] to-[#3b0764] p-8 text-white flex flex-col justify-center items-center text-center relative overflow-hidden hidden md:flex">
+              <div className="md:w-2/5 bg-gradient-to-br from-primary-700 to-[#3b0764] p-8 text-white flex flex-col justify-center items-center text-center relative overflow-hidden hidden md:flex">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-bl-full"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-tr-full"></div>
                 
@@ -150,9 +148,9 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                       <div className="space-y-3 flex-1 overflow-y-auto pr-1 custom-scrollbar">
                         <button 
                           onClick={() => handleSelectLevel('BEGINNER')}
-                          className="w-full group bg-slate-50 border border-slate-200 hover:border-[#581c87]/40 hover:bg-[#581c87]/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
+                          className="w-full group bg-slate-50 border border-slate-200 hover:border-primary-900/40 hover:bg-primary-900/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-amber-200 group-hover:bg-amber-50 transition-colors text-amber-500">
+                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-secondary-200 group-hover:bg-secondary-50 transition-colors text-secondary-500">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M7 20h10" />
                                 <path d="M10 20c5.5-2.5.8-6.4 3-10" />
@@ -161,53 +159,53 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                             </svg>
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 group-hover:text-[#581c87] transition-colors">Học lại từ đầu (Con số 0)</h4>
+                            <h4 className="font-bold text-slate-800 group-hover:text-primary-900 transition-colors">Học lại từ đầu (Con số 0)</h4>
                             <p className="text-xs text-slate-500 font-medium mt-0.5">Mất gốc hoàn toàn, muốn học bài bản từ A-Z</p>
                           </div>
                         </button>
 
                         <button 
                           onClick={() => handleSelectLevel('INTERMEDIATE')}
-                          className="w-full group bg-slate-50 border border-slate-200 hover:border-[#581c87]/40 hover:bg-[#581c87]/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
+                          className="w-full group bg-slate-50 border border-slate-200 hover:border-primary-900/40 hover:bg-primary-900/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-amber-200 group-hover:bg-amber-50 transition-colors text-amber-500">
+                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-secondary-200 group-hover:bg-secondary-50 transition-colors text-secondary-500">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
                             </svg>
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 group-hover:text-[#581c87] transition-colors">Đã có nền tảng cơ bản</h4>
+                            <h4 className="font-bold text-slate-800 group-hover:text-primary-900 transition-colors">Đã có nền tảng cơ bản</h4>
                             <p className="text-xs text-slate-500 font-medium mt-0.5">Nghe hiểu sương sương, mục tiêu 600+</p>
                           </div>
                         </button>
 
                         <button 
                           onClick={() => handleSelectLevel('ADVANCED')}
-                          className="w-full group bg-slate-50 border border-slate-200 hover:border-[#581c87]/40 hover:bg-[#581c87]/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
+                          className="w-full group bg-slate-50 border border-slate-200 hover:border-primary-900/40 hover:bg-primary-900/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-amber-200 group-hover:bg-amber-50 transition-colors text-amber-500">
+                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-secondary-200 group-hover:bg-secondary-50 transition-colors text-secondary-500">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 group-hover:text-[#581c87] transition-colors">Khá vững kiến thức</h4>
+                            <h4 className="font-bold text-slate-800 group-hover:text-primary-900 transition-colors">Khá vững kiến thức</h4>
                             <p className="text-xs text-slate-500 font-medium mt-0.5">Cần học sâu mẹo & luyện tập cường độ cao (800+)</p>
                           </div>
                         </button>
 
                         <button 
                           onClick={() => handleSelectLevel('MOCK_TEST_ONLY')}
-                          className="w-full group bg-slate-50 border border-slate-200 hover:border-[#581c87]/40 hover:bg-[#581c87]/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
+                          className="w-full group bg-slate-50 border border-slate-200 hover:border-primary-900/40 hover:bg-primary-900/5 rounded-2xl p-4 flex items-center gap-4 transition-all duration-200 text-left cursor-pointer"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-amber-200 group-hover:bg-amber-50 transition-colors text-amber-500">
+                          <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-slate-100 group-hover:border-secondary-200 group-hover:bg-secondary-50 transition-colors text-secondary-500">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                             </svg>
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 group-hover:text-[#581c87] transition-colors">Tôi chỉ đến đây Luyện Đề</h4>
+                            <h4 className="font-bold text-slate-800 group-hover:text-primary-900 transition-colors">Tôi chỉ đến đây Luyện Đề</h4>
                             <p className="text-xs text-slate-500 font-medium mt-0.5">Bỏ qua lộ trình, vào thẳng danh sách đề thi</p>
                           </div>
                         </button>
@@ -233,7 +231,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                       transition={{ duration: 0.2 }}
                       className="flex flex-col h-full justify-center text-center py-4"
                     >
-                      <div className="w-16 h-16 bg-purple-50 text-[#581c87] rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <div className="w-16 h-16 bg-primary-50 text-primary-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                         </svg>
@@ -246,7 +244,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                       <div className="space-y-3 mt-auto">
                         <button 
                           onClick={handleTakeTest}
-                          className="w-full bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
+                          className="w-full bg-primary-900 hover:bg-primary-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
                         >
                           Làm bài Test năng lực (5 phút)
                         </button>
@@ -269,7 +267,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                       transition={{ duration: 0.2 }}
                       className="flex flex-col h-full justify-center text-center py-4"
                     >
-                      <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <div className="w-16 h-16 bg-secondary-50 text-secondary-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                         </svg>
@@ -282,7 +280,7 @@ export default function ToeicOnboardingModal({ onComplete }: ToeicOnboardingModa
                       <div className="space-y-3 mt-auto">
                         <button 
                           onClick={() => { window.location.href = `/login?callbackUrl=/toeic-practice` }}
-                          className="w-full bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
+                          className="w-full bg-primary-900 hover:bg-primary-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
                         >
                           Đăng nhập / Đăng ký
                         </button>

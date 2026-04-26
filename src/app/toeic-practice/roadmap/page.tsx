@@ -37,9 +37,9 @@ export default function RoadmapPage() {
           
           const skillsArr = [
             { name: "Grammar & Vocab", score: Math.min(95, Math.max(5, Math.round(baseRatio) + 12)), color: "from-blue-500 to-cyan-400", desc: "Ngữ pháp và Từ vựng" },
-            { name: "Listening", score: Math.min(95, Math.max(5, Math.round(baseRatio) - 5)), color: "from-purple-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
+            { name: "Listening", score: Math.min(95, Math.max(5, Math.round(baseRatio) - 5)), color: "from-primary-500 to-pink-500", desc: "Kỹ năng Nghe Hiểu" },
             { name: "Reading", score: Math.min(95, Math.max(5, Math.round(baseRatio) + 3)), color: "from-orange-400 to-red-500", desc: "Kỹ năng Đọc Hiểu" },
-            { name: "Pronunciation", score: Math.min(95, Math.max(5, Math.round(baseRatio) - 10)), color: "from-amber-400 to-orange-500", desc: "Kỹ năng Phát Âm" },
+            { name: "Pronunciation", score: Math.min(95, Math.max(5, Math.round(baseRatio) - 10)), color: "from-secondary-400 to-orange-500", desc: "Kỹ năng Phát Âm" },
           ];
 
           const highestSkill = skillsArr.reduce((prev, current) => (prev.score > current.score) ? prev : current);
@@ -98,8 +98,8 @@ export default function RoadmapPage() {
     return (
       <div className="min-h-screen bg-[#0a0a0f] text-slate-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4 shadow-[0_0_15px_#a855f7]"></div>
-          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">Đang đồng bộ Bản Đồ Sao...</h2>
+          <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4 shadow-[0_0_15px_var(--primary-500)]"></div>
+          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-cyan-400">Đang đồng bộ Bản Đồ Sao...</h2>
         </div>
       </div>
     );
@@ -112,7 +112,7 @@ export default function RoadmapPage() {
           <div className="text-6xl mb-6">🗺️</div>
           <h2 className="text-3xl font-bold text-white mb-4">Chưa có Lộ Trình</h2>
           <p className="text-slate-400 mb-8">Bạn cần hoàn thành bài Đánh giá năng lực trước để chúng tôi có thể thiết kế Lộ trình độc bản dành riêng cho bạn.</p>
-          <button onClick={() => router.push('/toeic-practice')} className="px-8 py-3 bg-purple-600 hover:bg-purple-500 rounded-full font-bold shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all">
+          <button onClick={() => router.push('/toeic-practice')} className="px-8 py-3 bg-primary-600 hover:bg-primary-500 rounded-full font-bold shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all">
             Quay lại trang chủ
           </button>
         </div>
@@ -121,13 +121,13 @@ export default function RoadmapPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-slate-100 font-sans overflow-x-hidden relative selection:bg-purple-500/30">
+    <div className="min-h-screen bg-[#0a0a0f] text-slate-100 font-sans overflow-x-hidden relative selection:bg-primary-500/30">
       {/* Background Ambient Glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
 
       {isGuest && (
-        <div className="relative z-50 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 px-4 text-center font-bold text-sm shadow-lg">
+        <div className="relative z-50 bg-gradient-to-r from-secondary-500 to-orange-500 text-white py-3 px-4 text-center font-bold text-sm shadow-lg">
           🚀 Bạn đang xem bản xem trước lộ trình! Hãy <Link href="/login" className="underline decoration-2 underline-offset-2 hover:text-black transition-colors">Đăng nhập / Đăng ký</Link> để lưu lộ trình này vĩnh viễn nhé.
         </div>
       )}
@@ -184,15 +184,15 @@ export default function RoadmapPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-bold tracking-widest uppercase mb-6 mx-auto">
-            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-bold tracking-widest uppercase mb-6 mx-auto">
+            <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
             Thiết kế riêng dành cho bạn
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
-            Lộ Trình <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Độc Bản</span> Của Bạn
+            Lộ Trình <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-cyan-400">Độc Bản</span> Của Bạn
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Dựa trên bài đánh giá năng lực, chúng tôi đã thiết kế lộ trình kéo dài <strong className="text-purple-400">{roadmapData.phases.length} tuần</strong> dành riêng cho bạn để đạt mục tiêu trong thời gian ngắn nhất.
+            Dựa trên bài đánh giá năng lực, chúng tôi đã thiết kế lộ trình kéo dài <strong className="text-primary-400">{roadmapData.phases.length} tuần</strong> dành riêng cho bạn để đạt mục tiêu trong thời gian ngắn nhất.
           </p>
         </motion.div>
 
@@ -204,10 +204,10 @@ export default function RoadmapPage() {
           className="grid md:grid-cols-2 gap-8 mb-24"
         >
           {/* Card Điểm số */}
-          <div className="bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-3xl p-8 relative overflow-hidden group hover:border-purple-500/30 transition-colors">
-            <div className="absolute top-0 right-0 p-32 bg-purple-500/5 rounded-full blur-[80px] pointer-events-none group-hover:bg-purple-500/10 transition-colors" />
+          <div className="bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-3xl p-8 relative overflow-hidden group hover:border-primary-500/30 transition-colors">
+            <div className="absolute top-0 right-0 p-32 bg-primary-500/5 rounded-full blur-[80px] pointer-events-none group-hover:bg-primary-500/10 transition-colors" />
             <h3 className="text-xl font-semibold mb-6 flex items-center gap-3">
-              <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-6 h-6 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
               Dự phóng Mục Tiêu
@@ -218,16 +218,16 @@ export default function RoadmapPage() {
                 <p className="text-slate-500 text-sm mb-1 uppercase tracking-wider font-semibold">Hiện tại</p>
                 <p className="text-5xl font-black text-slate-300">{roadmapData.currentScore}</p>
               </div>
-              <div className="pb-2 text-purple-400">
+              <div className="pb-2 text-primary-400">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="text-purple-400/80 text-sm uppercase tracking-wider font-semibold">Mục tiêu</p>
+                  <p className="text-primary-400/80 text-sm uppercase tracking-wider font-semibold">Mục tiêu</p>
                   {!isEditingTarget ? (
-                    <button onClick={() => { setTargetScoreInput(roadmapData.targetScore.toString()); setIsEditingTarget(true); }} className="text-xs text-purple-400 hover:text-white transition-colors cursor-pointer">Điều chỉnh</button>
+                    <button onClick={() => { setTargetScoreInput(roadmapData.targetScore.toString()); setIsEditingTarget(true); }} className="text-xs text-primary-400 hover:text-white transition-colors cursor-pointer">Điều chỉnh</button>
                   ) : (
                     <button onClick={async () => { 
                       const newTarget = parseInt(targetScoreInput);
@@ -253,7 +253,7 @@ export default function RoadmapPage() {
                   )}
                 </div>
                 {!isEditingTarget ? (
-                  <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{roadmapData.targetScore}</p>
+                  <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-blue-400">{roadmapData.targetScore}</p>
                 ) : (
                   <input 
                     type="number" 
@@ -283,14 +283,14 @@ export default function RoadmapPage() {
                         }
                       }
                     }}
-                    className="w-24 bg-[#0a0a0f] border border-purple-500/50 rounded-lg text-3xl font-black text-purple-400 px-2 py-1 outline-none" 
+                    className="w-24 bg-[#0a0a0f] border border-primary-500/50 rounded-lg text-3xl font-black text-primary-400 px-2 py-1 outline-none" 
                   />
                 )}
               </div>
             </div>
 
             <p className="text-xs text-slate-500 mb-8 italic">
-              *Điểm hiện tại chỉ là ước tính tương đối từ bài test ngắn. Để đo lường chính xác, bạn có thể <button onClick={() => toast.info('Tính năng Bài test chuyên sâu đang được phát triển!')} className="text-purple-400 hover:text-purple-300 font-bold transition-colors cursor-pointer">làm bài test chuyên sâu</button>.
+              *Điểm hiện tại chỉ là ước tính tương đối từ bài test ngắn. Để đo lường chính xác, bạn có thể <button onClick={() => toast.info('Tính năng Bài test chuyên sâu đang được phát triển!')} className="text-primary-400 hover:text-primary-300 font-bold transition-colors cursor-pointer">làm bài test chuyên sâu</button>.
             </p>
 
             <div className="space-y-4">
@@ -345,7 +345,7 @@ export default function RoadmapPage() {
         {/* ROADMAP TIMELINE */}
         <div className="relative">
           {/* Vertical Glowing Line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-purple-500 via-blue-500 to-transparent opacity-30 transform md:-translate-x-1/2" />
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary-500 via-blue-500 to-transparent opacity-30 transform md:-translate-x-1/2" />
           
           {roadmapData.phases.map((phase: any, index: number) => (
             <motion.div 
@@ -357,24 +357,24 @@ export default function RoadmapPage() {
               className={`relative flex flex-col md:flex-row items-center justify-between mb-24 ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
             >
               {/* Timeline Node */}
-              <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 md:-translate-y-1/2 bg-[#0a0a0f] border-2 border-purple-500 text-purple-400 font-black text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-full z-10 shadow-[0_0_15px_#a855f7] whitespace-nowrap">
+              <div className="absolute left-6 md:left-1/2 transform -translate-x-1/2 md:-translate-y-1/2 bg-[#0a0a0f] border-2 border-primary-500 text-primary-400 font-black text-[10px] md:text-xs px-2 md:px-3 py-1 rounded-full z-10 shadow-[0_0_15px_var(--primary-500)] whitespace-nowrap">
                 TUẦN {phase.weekNumber}
               </div>
 
               {/* Content Side */}
               <div className={`w-full pl-16 md:pl-0 md:w-[45%] ${index % 2 !== 0 ? 'md:text-left' : 'md:text-right'}`}>
                 <div className={`relative bg-white/[0.03] border border-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-8 hover:bg-white/[0.05] transition-all duration-300
-                    ${phase.isUnlocked ? 'ring-1 ring-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.15)]' : 'overflow-hidden'}`}
+                    ${phase.isUnlocked ? 'ring-1 ring-primary-500/50 shadow-[0_0_30px_rgba(168,85,247,0.15)]' : 'overflow-hidden'}`}
                 >
                   {/* Nếu bị khóa, áp dụng hiệu ứng Glassmorphism & Upsell */}
                   {!phase.isUnlocked && (
                     <div className="absolute inset-0 z-20 backdrop-blur-md bg-[#0a0a0f]/60 flex flex-col items-center justify-center p-6 text-center">
                       <div className="flex items-center justify-center gap-3">
                         <div className="relative">
-                          <svg className="w-6 h-6 text-purple-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-6 h-6 text-primary-500 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                           </svg>
-                          <div className="absolute -top-2 -right-3 text-[9px] font-black bg-gradient-to-r from-cyan-400 to-purple-500 text-white px-1.5 py-0.5 rounded shadow-sm transform rotate-6">
+                          <div className="absolute -top-2 -right-3 text-[9px] font-black bg-gradient-to-r from-cyan-400 to-primary-500 text-white px-1.5 py-0.5 rounded shadow-sm transform rotate-6">
                             ULTRA
                           </div>
                         </div>
@@ -388,11 +388,11 @@ export default function RoadmapPage() {
                   <div className={!phase.isUnlocked ? "opacity-30 blur-sm select-none" : ""}>
                     <div className="flex items-center gap-3 mb-4 flex-wrap">
                       <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold 
-                        ${phase.isUnlocked ? 'bg-purple-500/20 text-purple-300' : 'bg-slate-800 text-slate-400'}`}>
+                        ${phase.isUnlocked ? 'bg-primary-500/20 text-primary-300' : 'bg-slate-800 text-slate-400'}`}>
                         {phase.title}
                       </div>
                       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/5 text-slate-300 border border-white/10">
-                        <svg className="w-3.5 h-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-3.5 h-3.5 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         Thời gian: Tuần {phase.weekNumber}
@@ -411,11 +411,11 @@ export default function RoadmapPage() {
                       <div className="space-y-3 mt-6 text-left">
                         <div className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Nhiệm Vụ Tuần Này</div>
                         {phase.tasks.map((task: any, tIndex: number) => (
-                          <Link href={task.path || '#'} key={tIndex} className="group relative bg-black/40 border border-white/5 p-4 rounded-xl flex gap-4 items-center hover:border-purple-500/30 transition-colors cursor-pointer block">
+                          <Link href={task.path || '#'} key={tIndex} className="group relative bg-black/40 border border-white/5 p-4 rounded-xl flex gap-4 items-center hover:border-primary-500/30 transition-colors cursor-pointer block">
                             {/* Checkbox Gamification */}
                             <div className="relative flex-shrink-0">
                               <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors
-                                ${task.done ? 'bg-purple-500 border-purple-500' : 'border-slate-600 group-hover:border-purple-400'}`}>
+                                ${task.done ? 'bg-primary-500 border-primary-500' : 'border-slate-600 group-hover:border-primary-400'}`}>
                                 {task.done && (
                                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -425,21 +425,21 @@ export default function RoadmapPage() {
                             </div>
                             
                             <div className="flex-1">
-                              <p className={`font-medium ${task.done ? 'text-slate-500 line-through' : 'text-slate-200'} group-hover:text-purple-300 transition-colors`}>
+                              <p className={`font-medium ${task.done ? 'text-slate-500 line-through' : 'text-slate-200'} group-hover:text-primary-300 transition-colors`}>
                                 {task.title}
                               </p>
                               <div className="flex items-center gap-2 mt-1.5">
                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white/5 text-slate-400 uppercase">
                                   {task.type}
                                 </span>
-                                <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
+                                <span className="text-xs font-bold text-secondary-400 flex items-center gap-1">
                                   +{task.stars} ⭐
                                 </span>
                               </div>
                             </div>
 
                             {/* Arrow Icon to indicate link */}
-                            <div className="flex-shrink-0 text-slate-500 group-hover:text-purple-400 transition-colors transform group-hover:translate-x-1">
+                            <div className="flex-shrink-0 text-slate-500 group-hover:text-primary-400 transition-colors transform group-hover:translate-x-1">
                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                               </svg>
@@ -461,8 +461,8 @@ export default function RoadmapPage() {
 
         {/* CHỈ BÁO CÒN NHIỀU TUẦN NỮA */}
         <div className="relative flex justify-center mt-8 mb-16">
-           <div className="absolute top-0 bottom-0 left-[27px] md:left-1/2 md:-ml-[1px] w-[2px] border-l-2 border-dashed border-purple-500/30" />
-           <div className="bg-[#0a0a0f] border border-purple-500/30 px-6 py-3 rounded-full text-purple-400 font-bold text-sm shadow-[0_0_15px_rgba(168,85,247,0.2)] z-10 flex items-center gap-2">
+           <div className="absolute top-0 bottom-0 left-[27px] md:left-1/2 md:-ml-[1px] w-[2px] border-l-2 border-dashed border-primary-500/30" />
+           <div className="bg-[#0a0a0f] border border-primary-500/30 px-6 py-3 rounded-full text-primary-400 font-bold text-sm shadow-[0_0_15px_rgba(168,85,247,0.2)] z-10 flex items-center gap-2">
               <span className="animate-bounce">↓</span> Vẫn còn lộ trình cho các tuần tiếp theo...
            </div>
         </div>
@@ -482,12 +482,12 @@ export default function RoadmapPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg bg-slate-900 border border-purple-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.2)] overflow-hidden"
+              className="relative w-full max-w-lg bg-slate-900 border border-primary-500/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(168,85,247,0.2)] overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-cyan-400" />
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-cyan-400" />
               
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-500/20">
+                <div className="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary-500/20">
                   <span className="text-3xl">📜</span>
                 </div>
                 <h2 className="text-2xl font-black text-white mb-2">Bản Cam Kết Mục Tiêu</h2>
@@ -505,7 +505,7 @@ export default function RoadmapPage() {
                       <button
                         key={mins}
                         onClick={() => setStudyPace(mins)}
-                        className={`py-3 px-2 rounded-xl border text-sm font-bold transition-all ${studyPace === mins ? 'bg-purple-500/20 border-purple-500 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}`}
+                        className={`py-3 px-2 rounded-xl border text-sm font-bold transition-all ${studyPace === mins ? 'bg-primary-500/20 border-primary-500 text-primary-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}`}
                       >
                         {mins} phút
                       </button>
@@ -515,13 +515,13 @@ export default function RoadmapPage() {
 
                 {/* Contract Text */}
                 <div className="p-5 rounded-2xl bg-black/40 border border-white/5 font-serif italic text-slate-300 text-sm leading-relaxed relative">
-                  <div className="absolute top-2 left-2 text-purple-500/20 text-4xl leading-none">"</div>
+                  <div className="absolute top-2 left-2 text-primary-500/20 text-4xl leading-none">"</div>
                   <p className="relative z-10 text-center">
-                    Tôi cam kết sẽ dành ra ít nhất <strong className="text-purple-400 not-italic">{studyPace} phút</strong> mỗi ngày để học theo đúng lộ trình này.
+                    Tôi cam kết sẽ dành ra ít nhất <strong className="text-primary-400 not-italic">{studyPace} phút</strong> mỗi ngày để học theo đúng lộ trình này.
                     <br/><br/>
                     Mục tiêu của tôi là đạt <strong className="text-cyan-400 not-italic">{roadmapData.targetScore} điểm TOEIC</strong>. Tôi sẽ không bỏ cuộc!
                   </p>
-                  <div className="absolute bottom-2 right-2 text-purple-500/20 text-4xl leading-none rotate-180">"</div>
+                  <div className="absolute bottom-2 right-2 text-primary-500/20 text-4xl leading-none rotate-180">"</div>
                 </div>
 
                 {/* Signature */}
@@ -532,7 +532,7 @@ export default function RoadmapPage() {
                     value={contractName}
                     onChange={(e) => setContractName(e.target.value)}
                     placeholder="Nguyễn Văn A"
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all font-medium"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all font-medium"
                   />
                 </div>
               </div>
@@ -545,7 +545,7 @@ export default function RoadmapPage() {
                   setShowContractModal(false);
                   toast.success(`Cảm ơn ${contractName}! Chúc bạn sớm đạt ${roadmapData.targetScore} điểm.`, { duration: 5000 });
                 }}
-                className={`w-full py-4 rounded-2xl font-black text-lg transition-all ${contractName.trim() ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:scale-[1.02] active:scale-[0.98]' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
+                className={`w-full py-4 rounded-2xl font-black text-lg transition-all ${contractName.trim() ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:scale-[1.02] active:scale-[0.98]' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}`}
               >
                 TÔI XIN CAM KẾT
               </button>
@@ -580,7 +580,7 @@ export default function RoadmapPage() {
               <p className="text-slate-400 text-sm mb-6 leading-relaxed">
                 Tính năng này sẽ giúp bảo vệ chuỗi học của bạn trong <strong className="text-white">1 ngày</strong> nếu bạn bận không thể học.
                 <br/><br/>
-                <span className="text-amber-400 font-bold bg-amber-400/10 px-2 py-1 rounded">Bạn cần: 200 ⭐ (Stars)</span>
+                <span className="text-secondary-400 font-bold bg-secondary-400/10 px-2 py-1 rounded">Bạn cần: 200 ⭐ (Stars)</span>
               </p>
 
               <div className="space-y-3">

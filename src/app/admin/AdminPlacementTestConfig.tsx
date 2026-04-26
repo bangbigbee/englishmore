@@ -93,7 +93,7 @@ export default function AdminPlacementTestConfig() {
                         {/* Cấu hình phân bổ độ khó */}
                         <div>
                             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <span className="bg-purple-100 text-purple-700 p-1.5 rounded-lg">📊</span>
+                                <span className="bg-primary-100 text-primary-700 p-1.5 rounded-lg">📊</span>
                                 Phân bổ Độ khó theo Mục tiêu User
                             </h3>
                             <div className="space-y-6">
@@ -102,7 +102,7 @@ export default function AdminPlacementTestConfig() {
                                     return (
                                         <div key={level} className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <div className="flex justify-between items-center mb-3">
-                                                <span className="font-bold text-sm text-slate-700">Level: <span className="text-purple-600">{level}</span></span>
+                                                <span className="font-bold text-sm text-slate-700">Level: <span className="text-primary-600">{level}</span></span>
                                                 <span className={`text-xs font-bold px-2 py-1 rounded ${total === 20 ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>
                                                     Tổng: {total}/20
                                                 </span>
@@ -130,7 +130,7 @@ export default function AdminPlacementTestConfig() {
                         {/* Cấu hình phân bổ kỹ năng */}
                         <div>
                             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                <span className="bg-amber-100 text-amber-700 p-1.5 rounded-lg">🎯</span>
+                                <span className="bg-secondary-100 text-secondary-700 p-1.5 rounded-lg">🎯</span>
                                 Phân bổ Kỹ năng (Áp dụng chung)
                             </h3>
                             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -172,7 +172,7 @@ export default function AdminPlacementTestConfig() {
                                 <button
                                     onClick={handleSave}
                                     disabled={saving}
-                                    className="px-8 py-3 bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-2"
+                                    className="px-8 py-3 bg-primary-900 hover:bg-primary-800 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-2"
                                 >
                                     {saving ? 'Đang lưu...' : 'Lưu cấu hình'}
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

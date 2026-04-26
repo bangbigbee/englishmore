@@ -179,13 +179,13 @@ export default function MyHomeworkPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#ecfeff] via-white to-[#faf5ff]">
+    <div className="min-h-screen bg-linear-to-b from-[#ecfeff] via-white to-primary-50">
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">My Homework</h1>
             <p className="mt-2 text-sm sm:text-base text-slate-600">Track pending homework, submitted work, and updates to previous submissions.</p>
-            <p className="mt-1 text-sm font-semibold text-[#581c87]">Course: {summary?.courseTitle || 'No active course yet'}</p>
+            <p className="mt-1 text-sm font-semibold text-primary-900">Course: {summary?.courseTitle || 'No active course yet'}</p>
           </div>
           <Link href="/" className="brand-cta brand-cta-outline">
             <span>Back to home</span>
@@ -194,57 +194,57 @@ export default function MyHomeworkPage() {
         </div>
 
         <section className="mb-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-[#581c87]/45 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-[#581c87]">Pending Homework</p>
-            <p className="mt-2 text-3xl font-black text-[#581c87]">{pendingHomework.length}</p>
+          <div className="rounded-2xl border border-primary-900/45 bg-white p-4 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-primary-900">Pending Homework</p>
+            <p className="mt-2 text-3xl font-black text-primary-900">{pendingHomework.length}</p>
           </div>
-          <div className="rounded-2xl border border-purple-200 bg-purple-50 p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-purple-700">Submitted Homework</p>
-            <p className="mt-2 text-3xl font-black text-purple-800">{submittedHomework.length}</p>
+          <div className="rounded-2xl border border-primary-200 bg-primary-50 p-4 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-primary-700">Submitted Homework</p>
+            <p className="mt-2 text-3xl font-black text-primary-800">{submittedHomework.length}</p>
           </div>
         </section>
 
         {!summary?.hasActiveCourse ? (
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-slate-700">You do not have an active course for homework yet.</p>
-            <Link href="/courses" className="mt-4 inline-flex rounded bg-[#581c87] px-4 py-2 text-white hover:bg-[#6b21a8]">Browse courses</Link>
+            <Link href="/courses" className="mt-4 inline-flex rounded bg-primary-900 px-4 py-2 text-white hover:bg-primary-800">Browse courses</Link>
           </section>
         ) : (
           <div className="grid gap-6 xl:grid-cols-2">
-            <section className="rounded-2xl border border-[#581c87]/45 bg-white p-5 shadow-sm">
+            <section className="rounded-2xl border border-primary-900/45 bg-white p-5 shadow-sm">
               <div className="space-y-4">
                 {pendingHomework.length === 0 && (
-                  <p className="rounded-lg border border-purple-200 bg-purple-50 px-3 py-2 text-purple-800">You have submitted all required homework.</p>
+                  <p className="rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-primary-800">You have submitted all required homework.</p>
                 )}
 
                 {pendingHomework.map((item) => (
-                  <article key={item.id} className="rounded-xl border border-[#581c87]/35 bg-white p-4">
+                  <article key={item.id} className="rounded-xl border border-primary-900/35 bg-white p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
-                    <p className="mt-1 text-sm text-slate-500">Due: <span className="font-medium text-[#581c87]">{new Date(item.dueDate).toLocaleDateString('en-GB')}</span></p>
+                    <p className="mt-1 text-sm text-slate-500">Due: <span className="font-medium text-primary-900">{new Date(item.dueDate).toLocaleDateString('en-GB')}</span></p>
                     {item.description && (
                       <div className="mt-3">
                         {!expandedDetailByHomework[item.id] && (
-                          <p className="rounded-lg border border-[#581c87]/30 bg-white px-3 py-2 text-sm text-slate-700">
+                          <p className="rounded-lg border border-primary-900/30 bg-white px-3 py-2 text-sm text-slate-700">
                             <span>{getDescriptionPreview(item.description)}</span>
                             {' '}
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="font-semibold text-[#581c87] underline decoration-[#581c87]/55 underline-offset-2 hover:text-[#0f3f22]"
+                              className="font-semibold text-primary-900 underline decoration-primary-900/55 underline-offset-2 hover:text-[#0f3f22]"
                             >
                               See more
                             </button>
                           </p>
                         )}
                         {expandedDetailByHomework[item.id] && (
-                          <div className="mt-2 rounded-lg border border-[#581c87]/30 bg-white px-4 py-3">
+                          <div className="mt-2 rounded-lg border border-primary-900/30 bg-white px-4 py-3">
                             <p className="text-sm text-slate-700 leading-relaxed">
                               <LinkifiedText text={item.description} />
                             </p>
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="mt-2 text-xs font-semibold text-[#581c87] underline decoration-[#581c87]/55 underline-offset-2 hover:text-[#0f3f22]"
+                              className="mt-2 text-xs font-semibold text-primary-900 underline decoration-primary-900/55 underline-offset-2 hover:text-[#0f3f22]"
                             >
                               See less
                             </button>
@@ -258,7 +258,7 @@ export default function MyHomeworkPage() {
                           href={item.attachmentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-medium text-amber-800 hover:bg-amber-100 transition-colors"
+                          className="inline-flex items-center gap-2 rounded-lg border border-secondary-300 bg-white px-3 py-1.5 text-sm font-medium text-secondary-800 hover:bg-secondary-100 transition-colors"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
@@ -273,12 +273,12 @@ export default function MyHomeworkPage() {
                       onChange={(e) => setNotesByHomework((current) => ({ ...current, [item.id]: e.target.value }))}
                       rows={4}
                       placeholder="Write your homework message..."
-                      className="mt-1 w-full rounded-lg border border-[#581c87]/45 bg-white px-3 py-2 text-slate-900 outline-none focus:border-[#581c87]"
+                      className="mt-1 w-full rounded-lg border border-primary-900/45 bg-white px-3 py-2 text-slate-900 outline-none focus:border-primary-900"
                     />
                     <button
                       onClick={() => submitOrUpdateHomework(item.id, false)}
                       disabled={savingId === item.id}
-                      className="mt-3 rounded bg-[#581c87] px-4 py-2 text-sm font-bold text-white hover:bg-[#6b21a8] disabled:opacity-50"
+                      className="mt-3 rounded bg-primary-900 px-4 py-2 text-sm font-bold text-white hover:bg-primary-800 disabled:opacity-50"
                     >
                       {savingId === item.id ? 'Sending...' : 'Submit'}
                     </button>
@@ -287,40 +287,40 @@ export default function MyHomeworkPage() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-purple-200 bg-white p-5 shadow-sm">
+            <section className="rounded-2xl border border-primary-200 bg-white p-5 shadow-sm">
               <div className="space-y-4">
                 {submittedHomework.length === 0 && (
                   <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700">You have not submitted any homework yet.</p>
                 )}
 
                 {submittedHomework.map((item) => (
-                  <article key={item.id} className="rounded-xl border border-purple-200 bg-purple-50 p-4">
+                  <article key={item.id} className="rounded-xl border border-primary-200 bg-primary-50 p-4">
                     <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
-                    <p className="mt-1 text-sm text-slate-500">Submitted: <span className="font-medium text-purple-800">{item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</span></p>
+                    <p className="mt-1 text-sm text-slate-500">Submitted: <span className="font-medium text-primary-800">{item.submittedAt ? new Date(item.submittedAt).toLocaleString('en-GB') : 'N/A'}</span></p>
                     {item.description && (
                       <div className="mt-3">
                         {!expandedDetailByHomework[item.id] && (
-                          <p className="rounded-lg border border-purple-200 bg-white px-3 py-2 text-sm text-slate-700">
+                          <p className="rounded-lg border border-primary-200 bg-white px-3 py-2 text-sm text-slate-700">
                             <span>{getDescriptionPreview(item.description)}</span>
                             {' '}
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="font-semibold text-purple-800 underline decoration-purple-500 underline-offset-2 hover:text-purple-900"
+                              className="font-semibold text-primary-800 underline decoration-primary-500 underline-offset-2 hover:text-primary-900"
                             >
                               See more
                             </button>
                           </p>
                         )}
                         {expandedDetailByHomework[item.id] && (
-                          <div className="mt-2 rounded-lg border border-purple-200 bg-white px-4 py-3">
+                          <div className="mt-2 rounded-lg border border-primary-200 bg-white px-4 py-3">
                             <p className="text-sm text-slate-700 leading-relaxed">
                               <LinkifiedText text={item.description} />
                             </p>
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="mt-2 text-xs font-semibold text-purple-800 underline decoration-purple-500 underline-offset-2 hover:text-purple-900"
+                              className="mt-2 text-xs font-semibold text-primary-800 underline decoration-primary-500 underline-offset-2 hover:text-primary-900"
                             >
                               See less
                             </button>
@@ -334,7 +334,7 @@ export default function MyHomeworkPage() {
                           href={item.attachmentUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-lg border border-purple-300 bg-white px-3 py-1.5 text-sm font-medium text-purple-800 hover:bg-purple-100 transition-colors"
+                          className="inline-flex items-center gap-2 rounded-lg border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-800 hover:bg-primary-100 transition-colors"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
@@ -343,23 +343,23 @@ export default function MyHomeworkPage() {
                         </a>
                       </div>
                     )}
-                    <div className="mt-4 rounded-2xl border border-purple-200 bg-white/85 p-3 shadow-sm">
+                    <div className="mt-4 rounded-2xl border border-primary-200 bg-white/85 p-3 shadow-sm">
                       <div className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
                         {(item.messages || []).map((message) => (
                           <div key={message.id} className={`flex ${message.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
                             <div className={`flex max-w-[95%] items-end gap-2 ${message.senderRole === 'student' ? 'flex-row-reverse' : 'flex-row'}`}>
                               {message.senderRole === 'student' ? (
                                 session?.user?.image ? (
-                                  <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full border border-purple-300 bg-white">
+                                  <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full border border-primary-300 bg-white">
                                     <Image src={session.user.image} alt="Your avatar" fill className="object-cover" />
                                   </div>
                                 ) : (
-                                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-purple-300 bg-white text-[10px] font-bold text-purple-700">
+                                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-300 bg-white text-[10px] font-bold text-primary-700">
                                     {(session?.user?.name || session?.user?.email || 'Y').trim().charAt(0).toUpperCase()}
                                   </div>
                                 )
                               ) : (
-                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-purple-300 bg-white text-[10px] font-bold text-purple-700">
+                                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-300 bg-white text-[10px] font-bold text-primary-700">
                                   T
                                 </div>
                               )}
@@ -367,20 +367,20 @@ export default function MyHomeworkPage() {
                               <div
                                 className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
                                   message.senderRole === 'student'
-                                    ? 'rounded-br-md bg-purple-100 text-purple-950'
-                                    : 'rounded-bl-md border border-purple-200 bg-purple-50 text-purple-950'
+                                    ? 'rounded-br-md bg-primary-100 text-primary-950'
+                                    : 'rounded-bl-md border border-primary-200 bg-primary-50 text-primary-950'
                                 }`}
                               >
                                 <p
                                   className={`text-[11px] font-bold uppercase tracking-wide ${
-                                    message.senderRole === 'student' ? 'text-purple-700' : 'text-purple-700'
+                                    message.senderRole === 'student' ? 'text-primary-700' : 'text-primary-700'
                                   }`}
                                 >
                                   {message.senderRole === 'student' ? 'You' : 'Teacher'}
                                 </p>
                                 <p
                                   className={`mt-1 ${
-                                    message.senderRole === 'student' ? 'text-purple-900' : 'text-purple-900'
+                                    message.senderRole === 'student' ? 'text-primary-900' : 'text-primary-900'
                                   }`}
                                 >
                                   <LinkifiedText text={message.content} />
@@ -401,12 +401,12 @@ export default function MyHomeworkPage() {
                       onChange={(e) => setNotesByHomework((current) => ({ ...current, [item.id]: e.target.value }))}
                       rows={4}
                       placeholder="Write your next message..."
-                      className="mt-1 w-full rounded-lg border border-purple-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-purple-500"
+                      className="mt-1 w-full rounded-lg border border-primary-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-primary-500"
                     />
                     <button
                       onClick={() => submitOrUpdateHomework(item.id, true)}
                       disabled={savingId === item.id}
-                      className="mt-3 rounded bg-purple-700 px-4 py-2 text-sm font-bold text-white hover:bg-purple-800 disabled:opacity-50"
+                      className="mt-3 rounded bg-primary-700 px-4 py-2 text-sm font-bold text-white hover:bg-primary-800 disabled:opacity-50"
                     >
                       {savingId === item.id ? 'Sending...' : 'Send'}
                     </button>

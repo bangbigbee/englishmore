@@ -23,7 +23,7 @@ const TABS = [
 		key: "home", 
 		label: "Trang chủ", 
 		icon: (
-			<svg className="w-[18px] h-[18px] fill-[#581c87]" viewBox="0 0 24 24">
+			<svg className="w-[18px] h-[18px] fill-primary-900" viewBox="0 0 24 24">
 				<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
 			</svg>
 		) 
@@ -32,7 +32,7 @@ const TABS = [
 		key: "roadmap",
 		label: "Lộ trình",
 		icon: (
-			<svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+			<svg className="w-5 h-5 text-secondary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
 				<path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
 			</svg>
 		)
@@ -53,12 +53,12 @@ const TABS = [
 		label: "Vocabulary", 
 		icon: (
 			<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M4 19C4 19.8284 4.67157 20.5 5.5 20.5H18.5C19.3284 20.5 20 19.8284 20 19V17.5H4V19Z" fill="#a855f7"/>
-				<path d="M4 17.5V4C4 2.89543 4.89543 2 6 2H20V17.5H4Z" fill="#a855f7" fillOpacity="0.15" stroke="#a855f7" strokeWidth="2"/>
-				<path d="M7 6L8.5 10M10 6L8.5 10M7.5 8.5H9.5" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-				<path d="M13 6H17M13 8H17" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round"/>
-				<path d="M7 12H11M7 14H11" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round"/>
-				<path d="M14 12H18L14 16H18" stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M4 19C4 19.8284 4.67157 20.5 5.5 20.5H18.5C19.3284 20.5 20 19.8284 20 19V17.5H4V19Z" fill="var(--primary-500)"/>
+				<path d="M4 17.5V4C4 2.89543 4.89543 2 6 2H20V17.5H4Z" fill="var(--primary-500)" fillOpacity="0.15" stroke="var(--primary-500)" strokeWidth="2"/>
+				<path d="M7 6L8.5 10M10 6L8.5 10M7.5 8.5H9.5" stroke="var(--primary-500)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+				<path d="M13 6H17M13 8H17" stroke="var(--primary-500)" strokeWidth="1.5" strokeLinecap="round"/>
+				<path d="M7 12H11M7 14H11" stroke="var(--primary-500)" strokeWidth="1.5" strokeLinecap="round"/>
+				<path d="M14 12H18L14 16H18" stroke="var(--primary-500)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 			</svg>
 		)
 	},
@@ -80,9 +80,9 @@ const TABS = [
 		label: "Luyện Đọc", 
 		icon: (
 			<svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path d="M14 3V7C14 7.55228 14.4477 8 15 8H19" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"/>
-				<path d="M14 3L19 8V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14Z" fill="#F59E0B" fillOpacity="0.15" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"/>
-				<path d="M9 13H15M9 17H13" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round"/>
+				<path d="M14 3V7C14 7.55228 14.4477 8 15 8H19" stroke="var(--secondary-500)" strokeWidth="2" strokeLinecap="round"/>
+				<path d="M14 3L19 8V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14Z" fill="var(--secondary-500)" fillOpacity="0.15" stroke="var(--secondary-500)" strokeWidth="2" strokeLinecap="round"/>
+				<path d="M9 13H15M9 17H13" stroke="var(--secondary-500)" strokeWidth="2" strokeLinecap="round"/>
 			</svg>
 		)
 	},
@@ -185,9 +185,9 @@ const translateDifficulty = (diff?: string) => {
 };
 
 const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: string }) => {
-	if (pkg === 'BASIC' || pkg === 'FREE') return (<span className={`inline-flex items-center px-2 py-[3px] bg-purple-50 text-purple-600 text-[10px] font-medium border border-purple-100 ${className}`}>Cơ bản</span>);
-	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-purple-50 text-purple-800 text-[10px] font-medium border border-purple-200 ${className}`}>Nâng cao</span>);
-	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-purple-50 text-purple-700 text-[10px] font-medium border border-purple-200 ${className}`}>Hỗn hợp</span>);
+	if (pkg === 'BASIC' || pkg === 'FREE') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-600 text-[10px] font-medium border border-primary-100 ${className}`}>Cơ bản</span>);
+	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-800 text-[10px] font-medium border border-primary-200 ${className}`}>Nâng cao</span>);
+	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-700 text-[10px] font-medium border border-primary-200 ${className}`}>Hỗn hợp</span>);
 	return null;
 }
 
@@ -258,28 +258,28 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
     const isMixed = packageType === 'MIXED';
 
     const theme = {
-        iconBg: isBasic ? 'bg-purple-600' : isAdvanced ? 'bg-purple-800' : isMixed ? 'bg-purple-600' : 'bg-purple-700',
-        titleHover: isBasic ? 'group-hover:text-purple-600' : isAdvanced ? 'group-hover:text-[#581c87]' : isMixed ? 'group-hover:text-purple-700' : 'group-hover:text-purple-700',
-        title: isBasic ? 'text-purple-600' : isAdvanced ? 'text-[#581c87]' : isMixed ? 'text-purple-700' : 'text-[#581c87]',
-        backIconBg: isBasic ? 'bg-purple-500' : isAdvanced ? 'bg-purple-700' : isMixed ? 'bg-purple-500' : 'bg-[#f59e0b]',
-        subtitle: isBasic ? 'text-purple-500' : isAdvanced ? 'text-purple-700' : isMixed ? 'text-purple-600' : 'text-[#581c87]/70',
-        progressBg: isBasic ? 'bg-purple-100/60' : isAdvanced ? 'bg-purple-100/60' : isMixed ? 'bg-purple-100/60' : 'bg-slate-100',
-        progressFill: isBasic ? 'bg-purple-500' : isAdvanced ? 'bg-purple-600' : isMixed ? 'bg-purple-500' : (progress?.learned >= progress?.total ? 'bg-purple-500' : 'bg-linear-to-r from-[#ea980c] to-[#f59e0b]'),
-        progressText: isBasic ? 'text-purple-600' : isAdvanced ? 'text-purple-700' : isMixed ? 'text-purple-600' : (progress?.learned >= progress?.total ? 'text-purple-600' : 'text-[#ea980c]'),
+        iconBg: isBasic ? 'bg-primary-600' : isAdvanced ? 'bg-primary-800' : isMixed ? 'bg-primary-600' : 'bg-primary-700',
+        titleHover: isBasic ? 'group-hover:text-primary-600' : isAdvanced ? 'group-hover:text-primary-900 dark:group-hover:text-white' : isMixed ? 'group-hover:text-primary-700' : 'group-hover:text-primary-700 dark:group-hover:text-white',
+        title: isBasic ? 'text-primary-600 dark:text-primary-400' : isAdvanced ? 'text-primary-900 dark:text-white' : isMixed ? 'text-primary-700 dark:text-primary-300' : 'text-primary-900 dark:text-white',
+        backIconBg: isBasic ? 'bg-primary-500' : isAdvanced ? 'bg-primary-700' : isMixed ? 'bg-primary-500' : 'bg-secondary-500',
+        subtitle: isBasic ? 'text-primary-500 dark:text-primary-400' : isAdvanced ? 'text-primary-700 dark:text-primary-300' : isMixed ? 'text-primary-600 dark:text-primary-300' : 'text-primary-900/70 dark:text-slate-400',
+        progressBg: isBasic ? 'bg-primary-100/60 dark:bg-primary-900/40' : isAdvanced ? 'bg-primary-100/60 dark:bg-primary-900/40' : isMixed ? 'bg-primary-100/60 dark:bg-primary-900/40' : 'bg-slate-100 dark:bg-slate-800',
+        progressFill: isBasic ? 'bg-primary-500' : isAdvanced ? 'bg-primary-600' : isMixed ? 'bg-primary-500' : (progress?.learned >= progress?.total ? 'bg-primary-500' : 'bg-linear-to-r from-[#ea980c] to-secondary-500'),
+        progressText: isBasic ? 'text-primary-600 dark:text-primary-400' : isAdvanced ? 'text-primary-700 dark:text-primary-300' : isMixed ? 'text-primary-600 dark:text-primary-400' : (progress?.learned >= progress?.total ? 'text-primary-600 dark:text-primary-400' : 'text-[#ea980c]'),
     };
 
 	return (
 		<div
 			onClick={onClick}
-			className={`relative w-full group bg-white rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] flex flex-col justify-start ${minHeightClass} border border-slate-200 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88, 28, 135,0.12)]`}
+			className={`relative w-full group bg-white dark:bg-slate-900 rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] dark:shadow-none flex flex-col justify-start ${minHeightClass} border border-slate-200 dark:border-slate-800 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88,28,135,0.12)] dark:hover:border-slate-700`}
 		>
             {isTestTopic && displaySubtitle && (
-                <div className="absolute top-0 right-0 rounded-bl-[14px] px-3 py-1 bg-[#581c87]/5 text-[#581c87] text-[10px] sm:text-[11px] font-bold border-b border-l border-[#581c87]/10 shadow-sm z-20 pointer-events-none uppercase tracking-wide">
+                <div className="absolute top-0 right-0 rounded-bl-[14px] px-3 py-1 bg-primary-900/5 text-primary-900 text-[10px] sm:text-[11px] font-bold border-b border-l border-primary-900/10 shadow-sm z-20 pointer-events-none uppercase tracking-wide">
                     {displaySubtitle.replace('Thuộc bộ đề: ', '')}
                 </div>
             )}
             {packageType && !isTestTopic && (
-                <PackageBadge pkg={packageType} className="absolute top-0 right-0 rounded-bl-[14px] rounded-tr-xl border-b border-l border-amber-200/30 shadow-sm z-20 pointer-events-none" />
+                <PackageBadge pkg={packageType} className="absolute top-0 right-0 rounded-bl-[14px] rounded-tr-xl border-b border-l border-secondary-200/30 shadow-sm z-20 pointer-events-none" />
             )}
 			<div className="relative z-10 flex-1 mt-2 flex flex-col">
                 {isCompactType ? (
@@ -297,12 +297,12 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
                                             {(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
                                         </span>
                                     ))}
-                                    <h3 className={`font-bold ${isTestTopic ? 'text-[15px] sm:text-[16px] text-slate-800' : 'text-[14px] sm:text-[15px]'} transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
+                                    <h3 className={`font-bold ${isTestTopic ? 'text-[15px] sm:text-[16px] text-slate-800 dark:text-white' : 'text-[14px] sm:text-[15px]'} transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
                                         {type === 'vocabulary' ? displayTitle : title}
                                     </h3>
                                 </div>
                                 {disableFlip && displaySubtitle && !isTestTopic && (
-                                    <p className="text-[12px] text-slate-500 font-medium ml-[34px] line-clamp-1 group-hover:text-[#581c87] transition-colors">
+                                    <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium ml-[34px] line-clamp-1 group-hover:text-primary-900 dark:group-hover:text-primary-100 transition-colors">
                                         {displaySubtitle}
                                     </p>
                                 )}
@@ -310,7 +310,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 
                             {/* Back side (Vietnamese/Subtitle) */}
 							{displaySubtitle && !disableFlip && (
-								<div className="absolute inset-0 flex items-center gap-2.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black">
+								<div className="absolute inset-0 flex items-center gap-2.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black dark:text-white">
 									<span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] ${theme.backIconBg} text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
 										{displaySubtitle.charAt(0).toLowerCase()}
 									</span>
@@ -339,8 +339,8 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
                 )}
 
 				{badgeText && !progress && (
-					<div className={`mt-auto w-full flex items-center justify-between gap-3 text-[12px] font-medium text-[#581c87]/80 ${isCompactType ? 'pt-3 md:pt-4 border-t border-slate-100/60' : 'mt-2 pt-3 border-t border-slate-100/60'}`}>
-						<span className="flex items-center gap-1.5 font-bold text-slate-500">
+					<div className={`mt-auto w-full flex items-center justify-between gap-3 text-[12px] font-medium text-primary-900/80 dark:text-primary-100/80 ${isCompactType ? 'pt-3 md:pt-4 border-t border-slate-100/60 dark:border-slate-800' : 'mt-2 pt-3 border-t border-slate-100/60 dark:border-slate-800'}`}>
+						<span className="flex items-center gap-1.5 font-bold text-slate-500 dark:text-slate-400">
                             {isTestTopic ? (
                                 <svg className="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -350,7 +350,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
                         </span>
                         
                         {isTestTopic && (
-                            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">Practice &rarr;</span>
+                            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-primary-600 bg-primary-50 px-2 py-0.5 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">Practice &rarr;</span>
                         )}
 					</div>
 				)}
@@ -434,7 +434,7 @@ function ToeicPracticeContent() {
 							toast.success(data.awardReason || `Chúc mừng! Bạn nhận được ${data.awardedStars} ⭐.`, { 
 								position: 'top-center', 
 								duration: 7000, 
-								style: { background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d' } 
+								style: { background: 'var(--secondary-100)', color: 'var(--secondary-800)', border: '1px solid var(--secondary-300)' } 
 							});
 						}, 1000);
 					}
@@ -469,7 +469,7 @@ function ToeicPracticeContent() {
 	const newSearchParams = (sp: any) => new URLSearchParams(sp.toString());
 
 	return (
-		<div className="min-h-screen bg-slate-50/50">
+		<div className="min-h-screen bg-background">
 			<ToeicOnboardingModal onComplete={(level) => {
 				setToeicLevel(level);
 				if (level === 'MOCK_TEST_ONLY') {
@@ -528,10 +528,10 @@ function ToeicPracticeContent() {
                     {/* Brand Column */}
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2 mb-4">
-							<div className="w-8 h-8 rounded shrink-0 bg-[#581c87] flex items-center justify-center -rotate-6 shadow-sm">
+							<div className="w-8 h-8 rounded shrink-0 bg-primary-900 flex items-center justify-center -rotate-6 shadow-sm">
 								<span className="text-white font-black text-sm rotate-6">t</span>
 							</div>
-                            <span className="font-black text-xl text-[#581c87]">Toeic<span className="text-[#ea980c]">More</span></span>
+                            <span className="font-black text-xl text-primary-900">Toeic<span className="text-[#ea980c]">More</span></span>
                         </div>
                         <p className="text-[12px] text-slate-500 font-medium leading-relaxed max-w-[200px]">
                             Đồng hành cùng bạn chinh phục TOEIC nhanh và hiệu quả hơn.
@@ -540,58 +540,58 @@ function ToeicPracticeContent() {
 
                     {/* Column 1 for links */}
                     <div className="flex flex-col">
-                        <h4 className="font-bold text-[#581c87] mb-4 text-[14px]">Sản phẩm</h4>
+                        <h4 className="font-bold text-primary-900 mb-4 text-[14px]">Sản phẩm</h4>
                         <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
-                            <li><button onClick={() => handleTabChange('vocabulary')} className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Học từ vựng</button></li>
-                            <li><button onClick={() => handleTabChange('grammar')} className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Luyện ngữ pháp</button></li>
-                            <li><button onClick={() => handleTabChange('listening')} className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Luyện Listening</button></li>
-                            <li><button onClick={() => handleTabChange('reading')} className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Luyện Reading</button></li>
+                            <li><button onClick={() => handleTabChange('vocabulary')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Học từ vựng</button></li>
+                            <li><button onClick={() => handleTabChange('grammar')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Luyện ngữ pháp</button></li>
+                            <li><button onClick={() => handleTabChange('listening')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Luyện Listening</button></li>
+                            <li><button onClick={() => handleTabChange('reading')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Luyện Reading</button></li>
                         </ul>
                     </div>
 
                     {/* Column 2 for links */}
                     <div className="flex flex-col">
-                        <h4 className="font-bold text-[#581c87] mb-4 text-[14px]">Tài nguyên</h4>
+                        <h4 className="font-bold text-primary-900 mb-4 text-[14px]">Tài nguyên</h4>
                         <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
-                            <li><a href="#" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block">Sổ tay học tập</a></li>
-                            <li><Link href="/toeic-practice/documents" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Kho tài liệu</Link></li>
-                            <li><button onClick={() => handleTabChange('home')} className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Bảng xếp hạng</button></li>
+                            <li><a href="#" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block">Sổ tay học tập</a></li>
+                            <li><Link href="/toeic-practice/documents" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Kho tài liệu</Link></li>
+                            <li><button onClick={() => handleTabChange('home')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Bảng xếp hạng</button></li>
                         </ul>
                     </div>
 
                     {/* Column Default - Học tập trọn đời */}
                     <div className="flex flex-col">
-                        <h4 className="font-bold text-[#581c87] mb-4 text-[14px]">Học tập trọn đời</h4>
+                        <h4 className="font-bold text-primary-900 mb-4 text-[14px]">Học tập trọn đời</h4>
                         <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
-                            <li><button onClick={() => handleTabChange('roadmap')} className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Lộ trình học của tôi</button></li>
-                            <li><Link href="/toeic-practice/upgrade" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Nâng cấp tài khoản</Link></li>
+                            <li><button onClick={() => handleTabChange('roadmap')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Lộ trình học của tôi</button></li>
+                            <li><Link href="/toeic-practice/upgrade" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Nâng cấp tài khoản</Link></li>
                         </ul>
                     </div>
 
                     {/* Column 3 for links (Chia sẻ) */}
                     <div className="flex flex-col">
-                        <h4 className="font-bold text-[#581c87] mb-4 text-[14px]">Chia sẻ</h4>
+                        <h4 className="font-bold text-primary-900 mb-4 text-[14px]">Chia sẻ</h4>
                         <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
-                            <li><a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block">Luyện Speaking</a></li>
-                            <li><Link href="/toeic-practice/reviews" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Review đề TOEIC</Link></li>
-                            <li><Link href="/toeic-practice/experience" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">Kinh nghiệm Học & Thi</Link></li>
+                            <li><a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block">Luyện Speaking</a></li>
+                            <li><Link href="/toeic-practice/reviews" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Review đề TOEIC</Link></li>
+                            <li><Link href="/toeic-practice/experience" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Kinh nghiệm Học & Thi</Link></li>
                         </ul>
                     </div>
 
                     {/* Column 4 for links */}
                     <div className="flex flex-col">
-                        <h4 className="font-bold text-[#581c87] mb-4 text-[14px]">Hỗ trợ</h4>
+                        <h4 className="font-bold text-primary-900 mb-4 text-[14px]">Hỗ trợ</h4>
                         <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
-                            <li><Link href="/about" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block text-left">About ToeicMore</Link></li>
-                            <li><a href="#" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block">Liên hệ</a></li>
-                            <li><a href="https://www.facebook.com/ninhdaik" target="_blank" rel="noopener noreferrer" className="hover:text-[#581c87] hover:translate-x-1 transition-all duration-200 block">Cộng đồng</a></li>
+                            <li><Link href="/about" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">About ToeicMore</Link></li>
+                            <li><a href="#" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block">Liên hệ</a></li>
+                            <li><a href="https://www.facebook.com/ninhdaik" target="_blank" rel="noopener noreferrer" className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block">Cộng đồng</a></li>
                         </ul>
                     </div>
                 </div>
 
                 <div className="pt-6 border-t border-slate-200/60 flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] font-medium text-slate-500 opacity-80 mt-auto">
                     <p>&copy; {new Date().getFullYear()} ToeicMore. Bản quyền được bảo lưu.</p>
-				    <p>Powered by <a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline transition-colors text-[#581c87]">Tiếng Anh giao tiếp <span className="text-[#581c87]">English</span><span className="text-[#ea980c]">More</span></a></p>
+				    <p>Powered by <a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline transition-colors text-primary-900">Tiếng Anh giao tiếp <span className="text-primary-900">English</span><span className="text-[#ea980c]">More</span></a></p>
                 </div>
 			</footer>
 		</div>
@@ -615,32 +615,32 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
     return (
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
             <div className="flex flex-col items-center justify-center text-center gap-1 mb-8">
-                <h3 className="text-2xl font-black bg-gradient-to-r from-amber-500 to-purple-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
+                <h3 className="text-2xl font-black bg-gradient-to-r from-secondary-500 to-primary-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
                     Bảng xếp hạng Kiện Tướng Từ Vựng
                 </h3>
                 <button 
                     onClick={onPlayClick} 
                     className="text-[14px] font-bold cursor-pointer transition-colors active:scale-95 flex items-center justify-center gap-2 mt-2 group"
                 >
-                    <span className="bg-slate-100 text-[#581c87] px-4 py-1.5 rounded-xl font-black text-[13px] md:text-[14px] inline-flex items-center gap-1.5 shadow-sm border border-slate-200 group-hover:bg-slate-200 transition-colors tracking-tight">
-                        Speed Challenge <span className="drop-shadow-sm text-[16px] leading-none text-amber-500">⚡</span>
+                    <span className="bg-slate-100 text-primary-900 px-4 py-1.5 rounded-xl font-black text-[13px] md:text-[14px] inline-flex items-center gap-1.5 shadow-sm border border-slate-200 group-hover:bg-slate-200 transition-colors tracking-tight">
+                        Speed Challenge <span className="drop-shadow-sm text-[16px] leading-none text-secondary-500">⚡</span>
                     </span>
                 </button>
             </div>
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-amber-200 overflow-hidden relative">
+            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-secondary-200 overflow-hidden relative">
                 {/* Decorative background elements matching the gold/green theme */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50 pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-50 rounded-tr-full opacity-50 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-100 rounded-bl-full opacity-50 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-50 rounded-tr-full opacity-50 pointer-events-none"></div>
                 
                 {leaders.length === 0 ? (
                     <div className="relative z-10 flex flex-col items-center justify-center py-12 text-center">
-                        <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-4 border-4 border-amber-100/50">
+                        <div className="w-20 h-20 bg-secondary-50 rounded-full flex items-center justify-center mb-4 border-4 border-secondary-100/50">
                             <span className="text-4xl">🏆</span>
                         </div>
-                        <h4 className="text-lg font-bold text-[#581c87] mb-2">Chưa có kỷ lục nào được thiết lập</h4>
+                        <h4 className="text-lg font-bold text-primary-900 mb-2">Chưa có kỷ lục nào được thiết lập</h4>
                         <p className="text-slate-500 font-medium text-sm max-w-sm mb-6">Hãy là người đầu tiên tham gia Speed Challenge và ghi tên mình lên Bảng Vàng danh giá này nhé!</p>
                         {onPlayClick && (
-                            <button onClick={onPlayClick} className="bg-amber-400 hover:bg-amber-300 text-[#581c87] px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer">
+                            <button onClick={onPlayClick} className="bg-secondary-400 hover:bg-secondary-300 text-primary-900 px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer">
                                 <span className="text-xl">🔥</span>
                                 Chơi Ngay
                             </button>
@@ -651,7 +651,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                         <div className="overflow-x-auto relative z-10 hidden md:block">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="border-b-2 border-slate-100 text-[#581c87]/70 font-semibold">
+                                    <tr className="border-b-2 border-slate-100 text-primary-900/70 font-semibold">
                                         <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
                                         <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Họ tên</th>
                                         <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm số</th>
@@ -663,27 +663,27 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                     {leaders.map((leader, idx) => (
                                         <tr 
                                             key={leader.id || idx}
-                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-amber-50/30' : 'hover:bg-slate-50/50'}`}
+                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-secondary-50/30' : 'hover:bg-slate-50/50'}`}
                                         >
                                             <td className="py-4 px-4 text-center">
                                                 {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
                                                 idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
                                                 idx === 2 ? <span className="text-2xl drop-shadow-sm" title="Top 3">🥉</span> : 
-                                                <span className="font-semibold text-[#581c87]/60">#{idx + 1}</span>}
+                                                <span className="font-semibold text-primary-900/60">#{idx + 1}</span>}
                                             </td>
                                             <td className="py-4 px-4">
-                                                <div className={`text-[#581c87] ${idx < 3 ? 'font-bold text-[15px]' : 'font-medium'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
+                                                <div className={`text-primary-900 ${idx < 3 ? 'font-bold text-[15px]' : 'font-medium'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
                                             </td>
-                                            <td className="py-4 px-4 text-center text-[#581c87]">
+                                            <td className="py-4 px-4 text-center text-primary-900">
                                                 <span className="font-semibold">{leader.score}</span>
-                                                <span className="text-[#581c87]/40 text-xs mx-1">/</span>
-                                                <span className="font-medium text-[#581c87]/70 text-sm">{leader.total}</span>
+                                                <span className="text-primary-900/40 text-xs mx-1">/</span>
+                                                <span className="font-medium text-primary-900/70 text-sm">{leader.total}</span>
                                             </td>
                                             <td className="py-4 px-4 text-right">
-                                                <div className={`text-[#581c87] ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{(leader.timeMs / 1000).toFixed(2)}s</div>
+                                                <div className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{(leader.timeMs / 1000).toFixed(2)}s</div>
                                             </td>
                                             <td className="py-4 px-4 text-right">
-                                                <div className={`text-[#581c87] font-mono tracking-tighter ${idx < 3 ? 'font-bold text-[15px]' : 'font-semibold'}`}>{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
+                                                <div className={`text-primary-900 font-mono tracking-tighter ${idx < 3 ? 'font-bold text-[15px]' : 'font-semibold'}`}>{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
                                             </td>
                                         </tr>
                                     ))}
@@ -696,7 +696,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                             {leaders.map((leader, idx) => (
                                 <div 
                                     key={leader.id || idx}
-                                    className={`flex items-center gap-3 border p-3 rounded-2xl ${idx === 0 ? 'bg-amber-50/50 border-amber-200 shadow-sm relative' : 'bg-slate-50 border-slate-100'}`}
+                                    className={`flex items-center gap-3 border p-3 rounded-2xl ${idx === 0 ? 'bg-secondary-50/50 border-secondary-200 shadow-sm relative' : 'bg-slate-50 border-slate-100'}`}
                                 >
                                     <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
                                         {idx === 0 ? <span className="text-2xl">🥇</span> : 
@@ -705,13 +705,13 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                         `#${idx + 1}`}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`truncate text-[15px] mb-0.5 text-[#581c87] ${idx < 3 ? 'font-bold' : 'font-medium'}`}>
+                                        <div className={`truncate text-[15px] mb-0.5 text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>
                                             {leader.user?.name || leader.guestName || "Ẩn danh"}
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <div className="text-[13px] font-semibold text-[#581c87]">{leader.score}<span className="text-[10px] text-[#581c87]/60 font-medium ml-0.5">/{leader.total}</span></div>
-                                        <div className="text-[12px] text-[#581c87] mt-0.5">{(leader.timeMs / 1000).toFixed(2)}s ({((leader.timeMs / 1000) / Math.max(1, leader.total)).toFixed(2)}s/từ)</div>
+                                        <div className="text-[13px] font-semibold text-primary-900">{leader.score}<span className="text-[10px] text-primary-900/60 font-medium ml-0.5">/{leader.total}</span></div>
+                                        <div className="text-[12px] text-primary-900 mt-0.5">{(leader.timeMs / 1000).toFixed(2)}s ({((leader.timeMs / 1000) / Math.max(1, leader.total)).toFixed(2)}s/từ)</div>
                                     </div>
                                 </div>
                             ))}
@@ -725,28 +725,28 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
 
 function GrammarFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
-				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#581c87] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
-					<h3 className="text-xl font-bold text-[#581c87]">Ngữ pháp</h3>
+					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Ngữ pháp</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className={`text-slate-500 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
+					<p className={`text-slate-500 dark:text-slate-400 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 						Hệ thống bài học và luyện tập toàn diện.
 					</p>
 					<div className={`absolute inset-0 transition-opacity duration-300 pointer-events-none mt-7 ml-[2px] ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-						<div className="h-[2px] bg-amber-400 rounded-full animate-[drawLine_2.5s_infinite_ease-out]" style={{ width: '100%' }} />
+						<div className="h-[2px] bg-secondary-400 rounded-full animate-[drawLine_2.5s_infinite_ease-out]" style={{ width: '100%' }} />
 						
 						{/* Typed text above the line */}
-						<div className="absolute -top-[20px] left-0 text-[#581c87] font-semibold text-[11.5px] tracking-wide leading-none animate-[fadeInText_2.5s_infinite_ease-out] whitespace-nowrap">
+						<div className="absolute -top-[20px] left-0 text-primary-900 dark:text-primary-100 font-semibold text-[11.5px] tracking-wide leading-none animate-[fadeInText_2.5s_infinite_ease-out] whitespace-nowrap">
 							Lưu lại câu hay xem sau
 						</div>
 
 						{/* Cây viết */}
-						<svg className="w-5 h-5 text-[#581c87] absolute -top-4 -ml-1 animate-[moveWritingPen_2.5s_infinite_ease-out] origin-bottom-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<svg className="w-5 h-5 text-primary-900 dark:text-primary-100 absolute -top-4 -ml-1 animate-[moveWritingPen_2.5s_infinite_ease-out] origin-bottom-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
 						</svg>
 					</div>
@@ -755,7 +755,7 @@ function GrammarFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 
 			{/* Overlay Button on Hover */}
 			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-				<div className="bg-[#581c87] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
+				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
 			</div>
@@ -780,36 +780,36 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 	}, [isActive]);
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-[#581c87]/10 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-primary-900/10 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			{/* Front/Default view */}
 			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
-				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className="w-12 h-12 shrink-0 bg-slate-50 text-[#581c87] rounded-xl flex items-center justify-center">
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center">
 						{icon}
 					</div>
-					<h3 className="text-xl font-bold text-[#581c87]">Reading</h3>
+					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Reading</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className="text-slate-500 font-medium text-sm text-left w-full absolute inset-0">
+					<p className="text-slate-500 dark:text-slate-400 font-medium text-sm text-left w-full absolute inset-0">
 						Luyện Part 5, 6, 7 giải thích cặn kẽ chi tiết.
 					</p>
 				</div>
 			</div>
 
 			{/* Full Card Book Flip View */}
-			<div className={`absolute inset-0 z-20 pointer-events-none perspective-[1200px] flex ${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 bg-[#f8fafc]`}>
+			<div className={`absolute inset-0 z-20 pointer-events-none perspective-[1200px] flex ${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 bg-[#f8fafc] dark:bg-slate-900`}>
 				{/* Book Spine Center line */}
-				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-[#581c87]/10" />
+				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-primary-900/10 dark:border-slate-800" />
 
 				{/* Left half (static background under flipped page) */}
-				<div className="w-1/2 h-full bg-white flex flex-col items-center justify-center border-r-[1px] border-slate-100 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2" />
+				<div className="w-1/2 h-full bg-white dark:bg-slate-800/80 flex flex-col items-center justify-center border-r-[1px] border-slate-100 dark:border-slate-700 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2" />
 
 				{/* Right half (background of upcoming page side) */}
-				<div className="w-1/2 h-full bg-slate-50 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center pl-4 pr-2">
-					<div className="w-10 h-10 text-[#581c87]/30 mb-1">
+				<div className="w-1/2 h-full bg-slate-50 dark:bg-slate-800 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center pl-4 pr-2">
+					<div className="w-10 h-10 text-primary-900/30 dark:text-primary-100/30 mb-1">
 						{icon}
 					</div>
-					<span className="font-bold text-[#581c87]/40 text-[9px] uppercase tracking-wider text-center mt-1">Giải thích<br/>chi tiết</span>
+					<span className="font-bold text-primary-900/40 dark:text-primary-100/40 text-[9px] uppercase tracking-wider text-center mt-1">Giải thích<br/>chi tiết</span>
 				</div>
 
 				{/* Animated Pages Flipping */}
@@ -824,14 +824,14 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
                                 exit={{ opacity: 0, transition: {duration: 0} }}
                                 transition={{ duration: 0.8, ease: "easeInOut" }}
                                 style={{ transformOrigin: 'left center' }}
-                                className="absolute inset-0 bg-white border-l border-slate-100 shadow-[2px_0_10px_rgba(0,0,0,0.05)] [transform-style:preserve-3d]"
+                                className="absolute inset-0 bg-white dark:bg-slate-800 border-l border-slate-100 dark:border-slate-700 shadow-[2px_0_10px_rgba(0,0,0,0.05)] dark:shadow-[2px_0_10px_rgba(0,0,0,0.3)] [transform-style:preserve-3d]"
                             >
                                 {/* Front face (starts on the right edge) */}
-                                <div className="absolute inset-0 flex items-center justify-center p-3 [backface-visibility:hidden] bg-slate-50 border-r border-[#581c87]/10 rounded-r-[20px]">
+                                <div className="absolute inset-0 flex items-center justify-center p-3 [backface-visibility:hidden] bg-slate-50 dark:bg-slate-800 border-r border-primary-900/10 dark:border-slate-700 rounded-r-[20px]">
                                 </div>
                                 {/* Back face (when flipped to the left) */}
-                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
-                                    <span className="font-bold text-[#581c87] text-sm uppercase tracking-wider text-center drop-shadow-sm leading-tight">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white dark:bg-slate-800/90 shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
+                                    <span className="font-bold text-primary-900 dark:text-white text-sm uppercase tracking-wider text-center drop-shadow-sm leading-tight">
                                         {pages[activePage]}
                                     </span>
                                 </div>
@@ -842,7 +842,7 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 			</div>
 
 			<div className={`absolute top-4 right-4 transition-opacity z-50 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-				<div className="bg-[#581c87] text-amber-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
+				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
 			</div>
@@ -873,32 +873,32 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 	};
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 rounded-[20px] transition-all relative overflow-hidden bg-white ${isActive ? 'shadow-xl' : 'shadow-sm hover:shadow-md'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full">
-				<div className="w-full flex items-center gap-4 z-20 bg-white relative pb-1">
-					<div className={`w-12 h-12 shrink-0 bg-slate-50 text-[#581c87] rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
-					<h3 className="text-xl font-bold text-[#581c87]">Luyện đề</h3>
+					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Luyện đề</h3>
 				</div>
 				<div className="relative flex-1 mt-2">
-					<p className={`text-slate-500 font-medium text-sm text-left w-full transition-opacity duration-300 absolute inset-0 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
+					<p className={`text-slate-500 dark:text-slate-400 font-medium text-sm text-left w-full transition-opacity duration-300 absolute inset-0 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
 						Luyện đề thi thử bám sát cấu trúc đề thi thực.
 					</p>
 					<div className={`absolute inset-0 transition-opacity duration-300 flex items-center delay-100 ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-						<div className="flex items-center space-x-0 text-amber-500 font-mono font-bold text-sm bg-red-50/50 px-2 py-1.5 rounded-lg border border-red-100/50 shadow-inner">
-                            <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10V9a9 9 0 0118 0v1m-18 0v5a2 2 0 002 2h2V10H3zm18 0v5a2 2 0 01-2 2h-2V10h4z" /></svg>
-							<div className="flex items-center space-x-1.5 mx-1.5 px-1.5 border-x border-red-200/50">
+						<div className="flex items-center space-x-0 text-secondary-500 font-mono font-bold text-sm bg-red-50/50 dark:bg-red-500/10 px-2 py-1.5 rounded-lg border border-red-100/50 dark:border-red-500/20 shadow-inner dark:shadow-none">
+                            <svg className="w-4 h-4 text-secondary-500 dark:text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10V9a9 9 0 0118 0v1m-18 0v5a2 2 0 002 2h2V10H3zm18 0v5a2 2 0 01-2 2h-2V10h4z" /></svg>
+							<div className="flex items-center space-x-1.5 mx-1.5 px-1.5 border-x border-red-200/50 dark:border-red-500/20">
                                 <svg className="w-3.5 h-3.5 animate-pulse text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <span className="text-red-500 tracking-wider text-left min-w-[72px] sm:min-w-[76px] lg:min-w-[80px]">{formatTime(timeLeft)}</span>
                             </div>
-                            <svg className="w-4 h-4 text-[#581c87]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            <svg className="w-4 h-4 text-primary-900 dark:text-primary-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-				<div className="bg-[#581c87] text-amber-400 p-2 rounded-full shadow-md">
+				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md">
 					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
 			</div>
@@ -908,16 +908,16 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 
 function VocabFeatureCard({ onClick }: any) {
     return (
-		<div className="relative w-full max-w-[260px] sm:max-w-[280px] h-[90px] cursor-pointer shrink-0 rounded-[20px] shadow-sm hover:shadow-md transition-shadow group overflow-hidden bg-white border border-[#581c87]/20 flex items-center justify-between px-4 sm:px-5 focus:outline-none" onClick={onClick}>
+		<div className="relative w-full max-w-[260px] sm:max-w-[280px] h-[90px] cursor-pointer shrink-0 rounded-[20px] shadow-sm hover:shadow-md transition-shadow group overflow-hidden bg-white border border-primary-900/20 flex items-center justify-between px-4 sm:px-5 focus:outline-none" onClick={onClick}>
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none" />
             
             <div className="relative z-10 flex flex-col text-left">
-                <div className="text-[#581c87] font-bold text-[15px] sm:text-[17px] leading-none tracking-tight">vocabulary</div>
+                <div className="text-primary-900 font-bold text-[15px] sm:text-[17px] leading-none tracking-tight">vocabulary</div>
                 <div className="opacity-80 text-[11px] sm:text-xs text-slate-500 font-medium mt-1">/vəˈkæbjələri/</div>
             </div>
             
-            <button className="bg-amber-500 text-[#581c87] px-3.5 sm:px-4 py-2 flex items-center gap-1 shrink-0 rounded-full text-[13px] font-black shadow-md hover:scale-105 transition-transform focus:outline-none relative z-10 overflow-hidden whitespace-nowrap">
+            <button className="bg-secondary-500 text-primary-900 px-3.5 sm:px-4 py-2 flex items-center gap-1 shrink-0 rounded-full text-[13px] font-black shadow-md hover:scale-105 transition-transform focus:outline-none relative z-10 overflow-hidden whitespace-nowrap">
                 <span className="relative z-10">Học từ vựng</span>
                 <svg className="w-3.5 h-3.5 ml-0.5 relative z-10 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 {/* Button Shimmer */}
@@ -946,24 +946,24 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
 
     return (
 		<div className="perspective-[1000px] w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl' : 'shadow-sm hover:shadow-md'}`}>
+            <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`}>
                 {/* Front side */}
-                <div className="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
+                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/50 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
                     <div className="w-full flex items-center gap-4 pb-1">
-                        <div className="w-12 h-12 shrink-0 bg-slate-50 text-[#581c87] rounded-xl flex items-center justify-center">
+                        <div className="w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center">
                             {icon}
                         </div>
-                        <h3 className="text-xl font-bold text-[#581c87]">Listening</h3>
+                        <h3 className="text-xl font-bold text-primary-900 dark:text-white">Listening</h3>
                     </div>
-                    <p className="text-slate-500 font-medium text-sm text-left w-full mt-2">
+                    <p className="text-slate-500 dark:text-slate-400 font-medium text-sm text-left w-full mt-2">
                         Luyện nghe với audio sắc nét và transcript chi tiết.
                     </p>
                 </div>
                 {/* Back side */}
-                <div className="absolute inset-0 w-full h-full bg-white border-2 border-[#581c87]/20 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 p-6 relative">
+                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border-2 border-primary-900/20 dark:border-slate-700 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 dark:bg-slate-800 p-6 relative">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="text-[#581c87] bg-white p-2.5 rounded-full shadow-sm border border-slate-100 flex-shrink-0">
+                            <div className="text-primary-900 dark:text-primary-100 bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm border border-slate-100 dark:border-slate-600 flex-shrink-0">
                                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
                             </div>
                             <div className="flex gap-2 z-10 w-full justify-center">
@@ -972,8 +972,8 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
                                         key={letter} 
                                         className={`flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-black shadow-sm transition-all duration-300 ${
                                             selectedLetter === letter 
-                                            ? 'bg-[#581c87] text-white border-transparent scale-110 ring-2 ring-[#581c87]/30 ring-offset-1' 
-                                            : 'bg-white border border-slate-300 text-[#581c87]'
+                                            ? 'bg-primary-900 text-white border-transparent scale-110 ring-2 ring-primary-900/30 ring-offset-1' 
+                                            : 'bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-primary-900 dark:text-white'
                                         }`}
                                     >
                                         {letter}
@@ -981,7 +981,7 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
                                 ))}
                             </div>
                         </div>
-                        <button className="bg-[#581c87] text-white px-6 py-2 rounded-full text-sm font-black shadow-md hover:scale-105 transition-transform flex items-center gap-2 z-10 mt-1">
+                        <button className="bg-primary-900 text-white px-6 py-2 rounded-full text-sm font-black shadow-md hover:scale-105 transition-transform flex items-center gap-2 z-10 mt-1">
                             Luyện nghe <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </button>
                     </div>
@@ -1010,14 +1010,14 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Hero Section */}
 			<section className="flex flex-col items-center text-center mt-8 mb-24 max-w-5xl mx-auto px-4 sm:px-6">
 				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-[#581c87] block break-words">
-					Chinh phục <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#581c87] to-amber-500">TOEIC</span>
+					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-primary-900 block break-words">
+					Chinh phục <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-900 to-secondary-500">TOEIC</span>
 				</span>
 					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2">
-						<span className="text-amber-500">dễ dàng</span> <span className="text-[#581c87]">và hiệu quả hơn</span>
+						<span className="text-secondary-500">dễ dàng</span> <span className="text-primary-900">và hiệu quả hơn</span>
 					</span>
 				</h1>
-				<p className="mt-3 max-w-2xl text-base sm:text-lg font-medium text-[#581c87] leading-relaxed mx-auto opacity-90">
+				<p className="mt-3 max-w-2xl text-base sm:text-lg font-medium text-primary-900 leading-relaxed mx-auto opacity-90">
 					Học từ vựng siêu hiệu quả và nhớ lâu. Giải thích ngữ pháp và mẹo làm bài chi tiết. Giúp bạn nâng cao điểm số TOEIC và hơn thế nữa
 				</p>
 
@@ -1092,7 +1092,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							{ label: 'học viên đang học', value: stats.users },
 						].map((stat, idx) => (
 							<div key={idx} className="flex items-center shrink-0">
-								<span><strong className="text-[#581c87] text-[15px]">{stat.value.toLocaleString()}+</strong> <span className="ml-[2px]">{stat.label}</span></span>
+								<span><strong className="text-primary-900 text-[15px]">{stat.value.toLocaleString()}+</strong> <span className="ml-[2px]">{stat.label}</span></span>
 							</div>
 						))}
 					</div>
@@ -1122,10 +1122,10 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
                         <Link 
                             key={idx} 
                             href={item.href}
-                            className="bg-white/90 backdrop-blur-sm border border-[#581c87]/10 px-6 py-3.5 rounded-[16px] shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-[#581c87]/20 transition-all duration-300 flex items-center gap-3 group shrink-0 min-w-[200px]"
+                            className="bg-white/90 dark:bg-slate-900 backdrop-blur-sm border border-primary-900/10 dark:border-slate-700/80 px-6 py-3.5 rounded-[16px] shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-900/20 dark:hover:border-slate-600 transition-all duration-300 flex items-center gap-3 group shrink-0 min-w-[200px]"
                         >
-                            <span className="text-[#ea980c] group-hover:scale-110 transition-transform">{item.icon}</span>
-                            <span className="text-[13px] font-bold text-slate-700 group-hover:text-[#581c87] transition-colors">{item.title}</span>
+                            <span className="text-[#ea980c] dark:text-secondary-500 group-hover:scale-110 transition-transform">{item.icon}</span>
+                            <span className="text-[13px] font-bold text-slate-700 dark:text-white group-hover:text-primary-900 dark:group-hover:text-primary-100 transition-colors">{item.title}</span>
                         </Link>
                     ))}
                 </div>
@@ -1162,7 +1162,7 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 
 	return (
 		<div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <h2 className="text-xl sm:text-[22px] font-black text-[#581c87] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+            <h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
                 <span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
                 Các Chủ Đề Bài Học Ngữ Pháp
             </h2>
@@ -1253,14 +1253,14 @@ const buildPronunciationFeedback = (score: number, candidate: string, target: st
 };
 
 const UltraTag = () => (
-	<span className="inline-flex items-center gap-0.5 px-1.5 py-[2px] rounded border border-purple-600/50 bg-linear-to-r from-purple-900 via-purple-800 to-purple-900 text-[8px] font-black text-purple-100 shadow-[0_0_8px_rgba(88,28,135,0.5)]">
-		<svg className="w-2.5 h-2.5 fill-amber-400" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+	<span className="inline-flex items-center gap-0.5 px-1.5 py-[2px] rounded border border-primary-600/50 bg-linear-to-r from-primary-900 via-primary-800 to-primary-900 text-[8px] font-black text-primary-100 shadow-[0_0_8px_rgba(88,28,135,0.5)]">
+		<svg className="w-2.5 h-2.5 fill-secondary-400" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
 		ULTRA
 	</span>
 );
 
 const ProTag = () => (
-	<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-linear-to-r from-amber-500 via-amber-400 to-orange-500 text-[9px] font-black text-white shadow-[0_0_8px_rgba(245,158,11,0.3)] border border-amber-300/50">
+	<span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-linear-to-r from-secondary-500 via-secondary-400 to-orange-500 text-[9px] font-black text-white shadow-[0_0_8px_rgba(245,158,11,0.3)] border border-secondary-300/50">
 		<svg className="w-2.5 h-2.5 fill-white" viewBox="0 0 24 24"><path d="M12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72 3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.6l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08l4.15-2.5z"/></svg>
 		PRO
 	</span>
@@ -2016,13 +2016,13 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		>
 			{tier === 'ULTRA' ? (
 				<>
-					<svg className="w-3.5 h-3.5 fill-amber-300 drop-shadow-sm" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-					<span className="text-[11px] font-bold text-slate-400 group-hover:text-purple-700 transition-colors">{fieldLabelsVi[label] || label}</span>
+					<svg className="w-3.5 h-3.5 fill-secondary-300 drop-shadow-sm" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+					<span className="text-[11px] font-bold text-slate-400 group-hover:text-primary-700 transition-colors">{fieldLabelsVi[label] || label}</span>
 				</>
 			) : (
 				<>
-					<svg className="w-3.5 h-3.5 fill-amber-500 drop-shadow-sm" viewBox="0 0 24 24"><path d="M12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72 3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.6l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08l4.15-2.5z"/></svg>
-					<span className="text-[11px] font-bold text-slate-400 group-hover:text-amber-600 transition-colors">{fieldLabelsVi[label] || label}</span>
+					<svg className="w-3.5 h-3.5 fill-secondary-500 drop-shadow-sm" viewBox="0 0 24 24"><path d="M12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72 3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.6l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08l4.15-2.5z"/></svg>
+					<span className="text-[11px] font-bold text-slate-400 group-hover:text-secondary-600 transition-colors">{fieldLabelsVi[label] || label}</span>
 				</>
 			)}
 		</div>
@@ -2035,9 +2035,9 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 			title={`Nâng cấp ${tier} để xem`}
 		>
 			{tier === 'ULTRA' ? (
-				<svg className="w-3 h-3 text-purple-600 group-hover:text-purple-800 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+				<svg className="w-3 h-3 text-primary-600 group-hover:text-primary-800 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
 			) : (
-				<svg className="w-3 h-3 text-amber-500 group-hover:text-amber-600 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+				<svg className="w-3 h-3 text-secondary-500 group-hover:text-secondary-600 transition-colors" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
 			)}
 		</span>
 	);
@@ -2057,24 +2057,24 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 				<div className="mb-6 bg-gradient-to-br from-[#4a044e] to-[#2e1065] rounded-2xl overflow-hidden shadow-md border border-[#701a75]/40 transition-all duration-300">
                     <button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-4 sm:px-5 bg-transparent hover:bg-white/5 transition-colors cursor-pointer focus:outline-none group">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-amber-500/10 text-amber-500 rounded-lg flex items-center justify-center border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)] group-hover:scale-110 transition-transform">
+                            <div className="w-8 h-8 bg-secondary-500/10 text-secondary-500 rounded-lg flex items-center justify-center border border-secondary-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)] group-hover:scale-110 transition-transform">
                                 <span className="text-lg leading-none pt-[1px]">⚡</span>
                             </div>
-                            <h3 className="text-[15px] sm:text-base font-black text-amber-500 uppercase tracking-wider mt-[1px]">Speed Challenge</h3>
+                            <h3 className="text-[15px] sm:text-base font-black text-secondary-500 uppercase tracking-wider mt-[1px]">Speed Challenge</h3>
                         </div>
-                        <svg className={`w-5 h-5 text-amber-500/70 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
+                        <svg className={`w-5 h-5 text-secondary-500/70 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
                     </button>
 
                     {challengeExpanded && (
-                        <div className="p-5 sm:p-6 text-center border-t border-purple-800/50 animate-in slide-in-from-top-2 duration-300">
-                            <h3 className="text-lg sm:text-xl text-amber-500 font-black mb-1.5 tracking-tight">Thử thách Bảng Vàng</h3>
-                            <p className="text-purple-200/80 mb-5 font-medium text-sm sm:text-base max-w-lg mx-auto">
-                                Làm bài test tốc độ với <b className="text-amber-500">30 từ vựng ngẫu nhiên</b>. Thời gian <b className="text-amber-500">3 giây/từ</b>. Đăng nhập để ghi danh kết quả vào Bảng vàng.
+                        <div className="p-5 sm:p-6 text-center border-t border-primary-800/50 animate-in slide-in-from-top-2 duration-300">
+                            <h3 className="text-lg sm:text-xl text-secondary-500 font-black mb-1.5 tracking-tight">Thử thách Bảng Vàng</h3>
+                            <p className="text-primary-200/80 mb-5 font-medium text-sm sm:text-base max-w-lg mx-auto">
+                                Làm bài test tốc độ với <b className="text-secondary-500">30 từ vựng ngẫu nhiên</b>. Thời gian <b className="text-secondary-500">3 giây/từ</b>. Đăng nhập để ghi danh kết quả vào Bảng vàng.
                             </p>
                             
                             {!session && (
                                 <div className="max-w-sm mx-auto mb-5">
-                                    <input type="text" placeholder="Nhập tên của bạn (khách)" value={guestName} onChange={e => setGuestName(e.target.value)} maxLength={20} className="w-full text-center px-4 py-2.5 rounded-xl border border-purple-500/30 bg-purple-900/50 text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-amber-500/50 font-bold" />
+                                    <input type="text" placeholder="Nhập tên của bạn (khách)" value={guestName} onChange={e => setGuestName(e.target.value)} maxLength={20} className="w-full text-center px-4 py-2.5 rounded-xl border border-primary-500/30 bg-primary-900/50 text-white placeholder-primary-300/50 focus:outline-none focus:ring-2 focus:ring-secondary-500/50 font-bold" />
                                 </div>
                             )}
 
@@ -2084,7 +2084,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                     return;
                                 }
                                 handleStartGlobalSpeedChallenge();
-                            }} className="relative overflow-hidden bg-amber-500 hover:bg-amber-400 text-purple-950 font-black px-8 py-3 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.4)] transition-all cursor-pointer active:scale-95 group">
+                            }} className="relative overflow-hidden bg-secondary-500 hover:bg-secondary-400 text-primary-950 font-black px-8 py-3 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.4)] transition-all cursor-pointer active:scale-95 group">
                                 BẮT ĐẦU NGAY
                                 <div className="absolute inset-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-25deg] group-hover:animate-[metallic-shine-sweep_1.5s_ease-in-out_infinite] animate-[metallic-shine-sweep_3s_ease-in-out_infinite]"></div>
                             </button>
@@ -2093,7 +2093,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                 </div>
 
 				<div className="flex justify-between items-center mb-5 sm:mb-6 border-b border-slate-200 pb-3">
-					<h2 className="text-xl sm:text-[22px] font-black text-[#581c87] flex items-center gap-2.5 tracking-tight px-1">
+					<h2 className="text-xl sm:text-[22px] font-black text-primary-900 flex items-center gap-2.5 tracking-tight px-1">
 						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 						Các Chủ Đề Luyện Tập
 					</h2>
@@ -2111,14 +2111,14 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                 <div className="inline-flex flex-wrap gap-1.5 sm:gap-2 mb-6 p-1.5 bg-slate-100/80 rounded-[14px]">
                                     {(['ALL', 'BASIC', 'ADVANCED', 'MIXED']).map(pkg => {
                                         const isActive = activePackage === pkg;
-                                        const colorClass = pkg === 'BASIC' ? 'text-purple-600' : 
-                                                           pkg === 'ADVANCED' ? 'text-purple-800' : 
-                                                           pkg === 'MIXED' ? 'text-purple-600' : 
-                                                           'text-[#581c87]';
+                                        const colorClass = pkg === 'BASIC' ? 'text-primary-600' : 
+                                                           pkg === 'ADVANCED' ? 'text-primary-800' : 
+                                                           pkg === 'MIXED' ? 'text-primary-600' : 
+                                                           'text-primary-900';
                                         
-                                        const activeBg = pkg === 'BASIC' ? 'bg-white shadow-sm ring-1 ring-purple-100' :
-                                                         pkg === 'ADVANCED' ? 'bg-white shadow-sm ring-1 ring-purple-200' :
-                                                         pkg === 'MIXED' ? 'bg-white shadow-sm ring-1 ring-purple-100' :
+                                        const activeBg = pkg === 'BASIC' ? 'bg-white shadow-sm ring-1 ring-primary-100' :
+                                                         pkg === 'ADVANCED' ? 'bg-white shadow-sm ring-1 ring-primary-200' :
+                                                         pkg === 'MIXED' ? 'bg-white shadow-sm ring-1 ring-primary-100' :
                                                          'bg-white shadow-sm ring-1 ring-slate-200';
                                                          
                                         const inactiveBg = 'hover:bg-white/60 opacity-70 hover:opacity-100';
@@ -2182,7 +2182,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 				<div className="flex items-center gap-3">
 					<button
 						onClick={backToTopics}
-						className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-purple-700 transition-colors"
+						className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-primary-700 transition-colors"
 						title="Quay lại"
 					>
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
@@ -2214,7 +2214,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 								onClick={() => setIsFlipped(!isFlipped)}
 							>
 								{/* ── FRONT FACE ── */}
-								<div className="absolute inset-0 h-full w-full rounded-2xl overflow-hidden [backface-visibility:hidden] bg-gradient-to-br from-[#581c87] via-[#4c1d95] to-[#2e1065] p-6 text-white flex flex-col items-center justify-center">
+								<div className="absolute inset-0 h-full w-full rounded-2xl overflow-hidden [backface-visibility:hidden] bg-gradient-to-br from-primary-900 via-[#4c1d95] to-[#2e1065] p-6 text-white flex flex-col items-center justify-center">
 									<div className="absolute top-0 left-0 z-20 pointer-events-none flex leading-none">
 										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} className="rounded-br-[14px] rounded-tl-none border-b border-r border-white/20 text-white/90 bg-white/10 backdrop-blur-sm m-0" />
 									</div>
@@ -2277,7 +2277,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 									{(pronunciationStatus || pronunciationScore !== null) && (
 										<div className="absolute bottom-16 left-0 right-0 px-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
 											<div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-white/20 text-slate-800">
-												<p className="text-[11px] font-bold text-[#581c87] mb-1">{pronunciationStatus}</p>
+												<p className="text-[11px] font-bold text-primary-900 mb-1">{pronunciationStatus}</p>
 												{pronunciationScore !== null && (
 													<div className="space-y-1">
 														{pronunciationTranscript && (
@@ -2286,7 +2286,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 														<div className="flex items-center gap-2">
 															<div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
 																<div 
-																	className={`h-full transition-all duration-700 ${pronunciationScore >= 80 ? 'bg-purple-500' : pronunciationScore >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
+																	className={`h-full transition-all duration-700 ${pronunciationScore >= 80 ? 'bg-primary-500' : pronunciationScore >= 50 ? 'bg-secondary-500' : 'bg-rose-500'}`}
 																	style={{ width: `${pronunciationScore}%` }}
 																/>
 															</div>
@@ -2316,22 +2316,22 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 								</div>
 
 								{/* ── BACK FACE ── */}
-								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-[#581c87]/20 py-5 sm:py-7 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(88, 28, 135,0.02)] overflow-hidden">
+								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-primary-900/20 py-5 sm:py-7 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(88, 28, 135,0.02)] overflow-hidden">
 									
 									<div className="flex-1 overflow-y-auto px-5 sm:px-7 pb-20">
-										<span className="absolute top-4 right-5 text-[#581c87]/50 bg-[#581c87]/5 p-1.5 rounded-full pointer-events-none">
+										<span className="absolute top-4 right-5 text-primary-900/50 bg-primary-900/5 p-1.5 rounded-full pointer-events-none">
 											<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
 										</span>
 
 									{/* Basic info — always visible */}
 									<div className="flex-1 flex flex-col items-center justify-start text-center w-full pt-1">
-										<p className="text-2xl sm:text-3xl font-bold text-[#581c87] leading-none mb-1">{currentItem.word}</p>
+										<p className="text-2xl sm:text-3xl font-bold text-primary-900 leading-none mb-1">{currentItem.word}</p>
 										{currentItem.phonetic && (
 											isFieldLocked('phonetic') ? <LockedFieldView tier={isFieldLocked('phonetic')!} label="phonetic" /> :
 											<p className="text-[13px] text-slate-400">{currentItem.phonetic.replaceAll('.', '')}</p>
 										)}
 
-										<div className="mt-2.5 mb-2.5 w-10 h-0.5 bg-[#581c87]/20 rounded-full mx-auto shrink-0" />
+										<div className="mt-2.5 mb-2.5 w-10 h-0.5 bg-primary-900/20 rounded-full mx-auto shrink-0" />
 
 										{isFieldLocked('meaning') ? <LockedFieldView tier={isFieldLocked('meaning')!} label="meaning" /> : (
 											<p className="text-lg sm:text-xl font-bold text-slate-800 leading-tight">{currentItem.meaning}</p>
@@ -2345,7 +2345,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 										{currentItem.example && (
 											isFieldLocked('example') ? <LockedFieldView tier={isFieldLocked('example')!} label="example" /> :
 											<div className="mt-3.5 w-full rounded-xl bg-slate-50 p-3 border border-slate-200 flex-shrink-0 relative overflow-hidden text-center flex flex-col items-center">
-												<div className="absolute left-0 top-0 bottom-0 w-1 bg-[#581c87]/40" />
+												<div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-900/40" />
 												<p className="text-[13px] italic text-slate-700 font-medium tracking-tight">
 													<span className="font-bold text-slate-900 not-italic mr-1.5">Example:</span>
 													{currentItem.example}
@@ -2387,7 +2387,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 											<div className="mt-3.5 w-full flex-shrink-0 space-y-2 text-[13px] text-center border-t border-slate-100 pt-3 flex flex-col items-center">
 												{currentItem.synonyms && (
 													<div className="w-full text-left flex items-start gap-1">
-														<span className="font-bold text-[#581c87] flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
+														<span className="font-bold text-primary-900 flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
 															Synonyms:
 														</span>
@@ -2398,7 +2398,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 												)}
 												{currentItem.antonyms && (
 													<div className="w-full text-left flex items-start gap-1">
-														<span className="font-bold text-[#581c87] flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
+														<span className="font-bold text-primary-900 flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
 															Antonyms:
 														</span>
@@ -2409,7 +2409,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 												)}
 												{currentItem.collocations && (
 													<div className="w-full text-left flex items-start gap-1">
-														<span className="font-bold text-purple-700 flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
+														<span className="font-bold text-primary-700 flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
 															Collocations:
 														</span>
@@ -2419,8 +2419,8 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 													</div>
 												)}
 												{currentItem.toeicTrap && (
-													<div className="rounded-md bg-amber-50 border border-amber-200 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1 transition-colors">
-														<span className="font-bold text-amber-600 flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
+													<div className="rounded-md bg-secondary-50 border border-secondary-200 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1 transition-colors">
+														<span className="font-bold text-secondary-600 flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
 															TOEIC Tip:
 														</span>
@@ -2435,7 +2435,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 											<button
 												type="button"
 												onClick={(e) => { e.stopPropagation(); setShowUpgrade(true); }}
-												className="mt-6 text-[10px] font-bold text-purple-700 hover:text-purple-800 transition cursor-pointer flex items-center gap-1.5 justify-center pb-4"
+												className="mt-6 text-[10px] font-bold text-primary-700 hover:text-primary-800 transition cursor-pointer flex items-center gap-1.5 justify-center pb-4"
 											>
 												Nâng cấp <UltraTag /> để xem đầy đủ Collocations, Synonyms, Antonyms &amp; Bẫy TOEIC
 											</button>
@@ -2445,11 +2445,11 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 									{/* Back Face Nav */}
 									<div className="absolute inset-x-0 px-4 bottom-1 sm:bottom-3 flex items-center justify-between pointer-events-auto z-50 bg-gradient-to-t from-white via-white to-transparent pt-8 pb-1" onClick={e => e.stopPropagation()}>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center p-2 text-purple-600 transition hover:text-purple-800 disabled:opacity-30 disabled:cursor-not-allowed">
+										<button onClick={(e) => { e.stopPropagation(); moveCard('prev'); }} disabled={cardIndex === 0} className="group flex items-center justify-center p-2 text-primary-600 transition hover:text-primary-800 disabled:opacity-30 disabled:cursor-not-allowed">
 											<svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"/></svg>
 										</button>
 										<span className="text-[10px] sm:text-[11px] font-bold text-slate-300 tracking-widest">{cardIndex + 1} / {vocabItems.length}</span>
-										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center p-2 text-purple-600 transition hover:text-purple-800 disabled:opacity-30 disabled:cursor-not-allowed">
+										<button onClick={(e) => { e.stopPropagation(); moveCard('next'); }} disabled={cardIndex >= vocabItems.length - 1} className="group flex items-center justify-center p-2 text-primary-600 transition hover:text-primary-800 disabled:opacity-30 disabled:cursor-not-allowed">
 											<svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
 										</button>
 									</div>
@@ -2461,7 +2461,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 					{/* Tags Action Bar */}
 					{currentItem && !challengeActive && !challengeResult.show && challengePreCtd === null && selectedTopic !== 'GLOBAL' && (
 						<div className="flex flex-wrap items-center justify-center gap-2 mt-4 animate-in fade-in slide-in-from-top-2">
-							<button onClick={() => toggleTag(currentItem.id, 'learned')} className={`px-3 py-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.learned ? 'bg-purple-100 text-purple-700 border-purple-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
+							<button onClick={() => toggleTag(currentItem.id, 'learned')} className={`px-3 py-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.learned ? 'bg-primary-100 text-primary-700 border-primary-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
 								{vocabTags[currentItem.id]?.learned ? '✓ Đã thuộc' : '○ Đánh dấu đã thuộc'}
 							</button>
 							<button onClick={() => toggleTag(currentItem.id, 'hard')} className={`px-3 py-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.hard ? 'bg-red-100 text-red-700 border-red-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}>
@@ -2470,7 +2470,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 							<button 
 								ref={bookmarkBtnRef}
 								onClick={() => toggleTag(currentItem.id, 'bookmarked')} 
-								className={`px-3 py-1.5 flex items-center justify-center gap-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.bookmarked ? 'bg-amber-100 text-amber-600 border-amber-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`} 
+								className={`px-3 py-1.5 flex items-center justify-center gap-1.5 rounded-full font-medium text-[13px] transition-all duration-300 border shadow-sm hover:-translate-y-0.5 hover:shadow-md ${vocabTags[currentItem.id]?.bookmarked ? 'bg-secondary-100 text-secondary-600 border-secondary-300 hover:brightness-105' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`} 
 								title="Bookmark"
 							>
 								<svg className="w-3.5 h-3.5" fill={vocabTags[currentItem.id]?.bookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
@@ -2481,7 +2481,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 								<Link 
 									ref={vocabBankBtnRef}
 									href="/toeic-progress?tab=vocabulary-bank"
-									className="group px-4 py-2 rounded-full font-bold text-[13px] bg-purple-50 text-[#581c87] border border-purple-200 hover:bg-purple-100 hover:border-purple-300 transition-all flex items-center justify-center gap-2 shadow-xs"
+									className="group px-4 py-2 rounded-full font-bold text-[13px] bg-primary-50 text-primary-900 border border-primary-200 hover:bg-primary-100 hover:border-primary-300 transition-all flex items-center justify-center gap-2 shadow-xs"
 								>
 									<span className="flex items-center justify-center w-5 h-5 bg-white rounded-full text-[10px] shadow-xs group-hover:scale-110 transition-transform">📚</span>
 									Sổ từ vựng của tôi
@@ -2492,7 +2492,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 					{/* Pre Countdown UI */}
 					{challengePreCtd !== null && (
-						<div className="mt-8 bg-purple-600 rounded-3xl p-16 text-center shadow-xl flex flex-col items-center justify-center animate-in zoom-in-95 duration-300">
+						<div className="mt-8 bg-primary-600 rounded-3xl p-16 text-center shadow-xl flex flex-col items-center justify-center animate-in zoom-in-95 duration-300">
 							<span className="text-white text-xl font-bold mb-4 opacity-80 uppercase tracking-widest">Chuẩn bị...</span>
 							<h3 className="text-8xl font-black text-white drop-shadow-lg animate-pulse">{challengePreCtd}</h3>
 						</div>
@@ -2503,7 +2503,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 						<div id="speed-challenge-section" className="mt-8 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
 							<button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-5 hover:bg-slate-50 transition-colors cursor-pointer focus:outline-none">
 								<div className="flex items-center gap-2.5">
-									<div className="text-purple-600 flex items-center justify-center">
+									<div className="text-primary-600 flex items-center justify-center">
 										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
 									</div>
 									<h3 className="text-[14px] font-bold text-slate-700">{selectedTopic === 'GLOBAL' ? 'Speed Challenge' : 'Kiểm tra trí nhớ'}</h3>
@@ -2512,7 +2512,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 							</button>
 
 							{challengeExpanded && (
-								<div className="p-8 text-center border-t border-purple-50 animate-in slide-in-from-top-4 duration-300">
+								<div className="p-8 text-center border-t border-primary-50 animate-in slide-in-from-top-4 duration-300">
 									<h3 className="text-xl font-black text-slate-800 mb-2">Hãy chuẩn bị kỹ trước khi tham gia!</h3>
 									<p className="text-slate-500 mb-6 font-medium">
                                         {selectedTopic === 'GLOBAL' ? 'Thời gian hoàn thành sẽ được lưu vào Bảng Vàng nếu bạn không đăng xuất.' : 'Chọn tốc độ ghi nhớ phù hợp với khả năng của bạn trước khi bắt đầu.'}
@@ -2522,7 +2522,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                         <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
                                             <button 
                                                 onClick={() => setChallengeDifficulty('high')}
-                                                className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'high' ? 'bg-purple-50 border-purple-500 text-purple-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-purple-300 hover:text-purple-500'}`}
+                                                className={`flex-1 min-w-[160px] max-w-[200px] px-4 py-3 border-2 rounded-2xl font-bold transition-all ${challengeDifficulty === 'high' ? 'bg-primary-50 border-primary-500 text-primary-700 shadow-md scale-[1.02]' : 'bg-white border-slate-200 text-slate-500 hover:border-primary-300 hover:text-primary-500'}`}
                                             >
                                                 <div className="mb-0.5">Áp lực cao</div>
                                                 <div className="text-[12px] opacity-80 font-medium">(5 giây / từ)</div>
@@ -2544,13 +2544,13 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                                 value={guestName} 
                                                 onChange={e => setGuestName(e.target.value)} 
                                                 placeholder="Nhập tên của bạn để lên bảng vàng" 
-                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-medium text-center focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100 transition-all bg-white"
+                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-medium text-center focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all bg-white"
                                             />
                                         </div>
                                     )}
 
 									<div className="block mb-5">
-										<button type="button" onClick={handleStartChallenge} className="bg-purple-600 text-white font-bold text-lg px-8 py-3.5 rounded-full md:hover:bg-purple-700 md:hover:shadow-lg transition-all active:scale-95 active:bg-purple-800 cursor-pointer focus:outline-none touch-manipulation select-none">
+										<button type="button" onClick={handleStartChallenge} className="bg-primary-600 text-white font-bold text-lg px-8 py-3.5 rounded-full md:hover:bg-primary-700 md:hover:shadow-lg transition-all active:scale-95 active:bg-primary-800 cursor-pointer focus:outline-none touch-manipulation select-none">
 											Bắt Đầu Ngay
 										</button>
 									</div>
@@ -2565,7 +2565,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 					{/* Active Speed Challenge UI */}
 					{challengeActive && challengeWords[challengeRound] && challengePreCtd === null && (
-						<div className="mt-6 bg-white border-2 border-purple-500 rounded-3xl p-8 shadow-xl animate-in fade-in slide-in-from-bottom-6 duration-300">
+						<div className="mt-6 bg-white border-2 border-primary-500 rounded-3xl p-8 shadow-xl animate-in fade-in slide-in-from-bottom-6 duration-300">
 							<div className="flex justify-between items-center mb-6">
 								<span className="font-bold text-slate-500">Từ {challengeRound + 1} / {challengeWords.length}</span>
 							</div>
@@ -2588,7 +2588,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 							<div className="grid grid-cols-1 gap-3">
 								{challengeOptions.map((opt, i) => (
-									<button key={i} type="button" onClick={() => handleChallengeAnswer(opt)} className="bg-slate-50 border-2 border-slate-200 p-3 sm:p-4 rounded-xl text-base sm:text-lg font-bold text-slate-700 active:border-purple-400 active:bg-purple-50 active:text-purple-700 md:hover:border-purple-400 md:hover:bg-purple-50 md:hover:text-purple-700 transition-all text-left cursor-pointer break-words focus:outline-none select-none touch-manipulation">
+									<button key={i} type="button" onClick={() => handleChallengeAnswer(opt)} className="bg-slate-50 border-2 border-slate-200 p-3 sm:p-4 rounded-xl text-base sm:text-lg font-bold text-slate-700 active:border-primary-400 active:bg-primary-50 active:text-primary-700 md:hover:border-primary-400 md:hover:bg-primary-50 md:hover:text-primary-700 transition-all text-left cursor-pointer break-words focus:outline-none select-none touch-manipulation">
 										{opt}
 									</button>
 								))}
@@ -2598,15 +2598,15 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 					{/* Challenge Result */}
 					{challengeResult.show && (
-						<div className="mt-8 bg-purple-600 text-white rounded-3xl p-10 text-center shadow-xl animate-in zoom-in-95 duration-500">
+						<div className="mt-8 bg-primary-600 text-white rounded-3xl p-10 text-center shadow-xl animate-in zoom-in-95 duration-500">
 							<h3 className="text-3xl font-black mb-4 tracking-tight">🎉 Thử Thách Hoàn Tất!</h3>
-							<p className="text-purple-200 text-lg mb-8 font-medium">Bạn đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ.</p>
+							<p className="text-primary-200 text-lg mb-8 font-medium">Bạn đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ.</p>
 							
                             {selectedTopic === 'GLOBAL' ? (
                                 challengeResult.score / Math.max(1, challengeResult.total) >= 0.8 ? (
                                     <div className="mb-8 p-6 bg-white/10 rounded-2xl border border-white/20">
-                                        <h4 className="text-xl font-bold text-amber-300 mb-2">Bạn quá xuất sắc quá! Cố gắng giữ đỉnh bảng nhé!</h4>
-                                        <p className="text-purple-100 text-sm mb-5">Chia sẻ kết quả này để thách đấu cùng bạn bè nhé.</p>
+                                        <h4 className="text-xl font-bold text-secondary-300 mb-2">Bạn quá xuất sắc quá! Cố gắng giữ đỉnh bảng nhé!</h4>
+                                        <p className="text-primary-100 text-sm mb-5">Chia sẻ kết quả này để thách đấu cùng bạn bè nhé.</p>
                                         <div className="flex flex-col gap-3 max-w-sm mx-auto">
                                             <button 
                                                 onClick={() => {
@@ -2615,7 +2615,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                                     setCopySuccess(true);
                                                     setTimeout(() => setCopySuccess(false), 2000);
                                                 }} 
-                                                className="w-full bg-amber-400 hover:bg-amber-300 text-purple-900 px-4 py-3.5 rounded-xl text-base font-black transition-colors cursor-pointer shadow-lg active:scale-95"
+                                                className="w-full bg-secondary-400 hover:bg-secondary-300 text-primary-900 px-4 py-3.5 rounded-xl text-base font-black transition-colors cursor-pointer shadow-lg active:scale-95"
                                             >
                                                 {copySuccess ? 'Đã Copy Link' : 'Copy Link Thách Đấu'}
                                             </button>
@@ -2623,25 +2623,25 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                     </div>
                                 ) : (
                                     <div className="mb-8">
-                                        <h4 className="text-xl font-bold text-amber-300">Bạn đã rất nỗ lực rồi! Hãy thử lại để ghi danh nhé!</h4>
+                                        <h4 className="text-xl font-bold text-secondary-300">Bạn đã rất nỗ lực rồi! Hãy thử lại để ghi danh nhé!</h4>
                                     </div>
                                 )
                             ) : (
                                 <div className="mb-8">
-                                    <h4 className="text-xl font-bold text-amber-300">Bạn đã rất nỗ lực rồi! Chúc mừng bạn nhé!</h4>
+                                    <h4 className="text-xl font-bold text-secondary-300">Bạn đã rất nỗ lực rồi! Chúc mừng bạn nhé!</h4>
                                 </div>
                             )}
 
                             {selectedTopic === 'GLOBAL' && (!session || session.user?.role === 'guest') && (
-                                <div className="mb-8 p-6 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl border border-amber-400/30">
-                                    <h4 className="text-xl font-black text-amber-300 mb-2">Bạn có muốn lưu thành tích?</h4>
-                                    <p className="text-purple-50 text-sm mb-5 font-medium">Ghi danh điểm số của bạn lên Bảng Vàng để thách đấu cùng mọi người nha!</p>
+                                <div className="mb-8 p-6 bg-gradient-to-r from-secondary-500/20 to-orange-500/20 rounded-2xl border border-secondary-400/30">
+                                    <h4 className="text-xl font-black text-secondary-300 mb-2">Bạn có muốn lưu thành tích?</h4>
+                                    <p className="text-primary-50 text-sm mb-5 font-medium">Ghi danh điểm số của bạn lên Bảng Vàng để thách đấu cùng mọi người nha!</p>
                                     <button 
                                         onClick={() => {
                                             const dest = `${typeof window !== 'undefined' ? window.location.origin : ''}${pathname}?tab=vocabulary&topic=GLOBAL&savePending=1`;
                                             if (openLoginModal) openLoginModal(dest, false);
                                         }} 
-                                        className="bg-gradient-to-r from-amber-400 to-orange-400 text-slate-900 font-black px-8 py-3.5 rounded-xl shadow-lg hover:from-amber-300 hover:to-orange-300 transition-all w-full sm:w-auto cursor-pointer"
+                                        className="bg-gradient-to-r from-secondary-400 to-orange-400 text-slate-900 font-black px-8 py-3.5 rounded-xl shadow-lg hover:from-secondary-300 hover:to-orange-300 transition-all w-full sm:w-auto cursor-pointer"
                                     >
                                         Đăng nhập Ghi danh
                                     </button>
@@ -2649,10 +2649,10 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                             )}
 
 							<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-								<button onClick={selectedTopic === 'GLOBAL' ? handleStartGlobalSpeedChallenge : handleStartChallenge} className="bg-white text-purple-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
+								<button onClick={selectedTopic === 'GLOBAL' ? handleStartGlobalSpeedChallenge : handleStartChallenge} className="bg-white text-primary-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
 									Làm Lại
 								</button>
-								<button onClick={() => { setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 }); setChallengeExpanded(false); if (selectedTopic === 'GLOBAL') { backToTopics(); } }} className="bg-purple-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-purple-900 transition-all w-full sm:w-auto cursor-pointer">
+								<button onClick={() => { setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 }); setChallengeExpanded(false); if (selectedTopic === 'GLOBAL') { backToTopics(); } }} className="bg-primary-800 text-white font-bold px-8 py-3.5 rounded-full hover:bg-primary-900 transition-all w-full sm:w-auto cursor-pointer">
 									Quay Lại Học Từ
 								</button>
 							</div>
@@ -2667,7 +2667,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 }
 
 function getPartColors(partId: number) {
-    return { baseHex: '#581c87' };
+    return { baseHex: 'var(--primary-900)' };
 }
 
 function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
@@ -2751,7 +2751,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 
 	return (
 		<div>
-			<h2 className="text-xl sm:text-[22px] font-black text-[#581c87] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+			<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
 				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 				Các Phần Thi Listening
 			</h2>
@@ -2789,7 +2789,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
                         <div key={collectionName}>
                             <h3 className="text-xl font-bold text-slate-300 mb-6 flex items-center gap-4">
                                 <div className="h-px bg-slate-200 flex-1"></div>
-                                <span className="text-[#581c87] font-black bg-purple-50 px-4 py-1 rounded-full border border-purple-200 text-sm tracking-wide shadow-sm">
+                                <span className="text-primary-900 font-black bg-primary-50 px-4 py-1 rounded-full border border-primary-200 text-sm tracking-wide shadow-sm">
                                     {collectionName} - PART {selectedPart}
                                 </span>
                                 <div className="h-px bg-slate-200 flex-1"></div>
@@ -2804,10 +2804,10 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
                                         <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 group-hover:to-slate-100 transition-colors pointer-events-none"></div>
                                         <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                             <div className="flex items-center gap-3 mb-6">
-                                                <div className="w-10 h-10 rounded-lg bg-[#581c87]/10 group-hover:bg-[#581c87]/20 flex flex-shrink-0 items-center justify-center text-[#581c87] transition-colors shadow-sm">
+                                                <div className="w-10 h-10 rounded-lg bg-primary-900/10 group-hover:bg-primary-900/20 flex flex-shrink-0 items-center justify-center text-primary-900 transition-colors shadow-sm">
                                                     {getPartIcon(selectedPart)}
                                                 </div>
-                                                <h3 className="text-[17px] font-black text-[#581c87] transition-colors">{lesson.title}</h3>
+                                                <h3 className="text-[17px] font-black text-primary-900 transition-colors">{lesson.title}</h3>
                                             </div>
                                             <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-500">
                                                 <div className="flex items-center gap-1.5 text-slate-500 transition-colors">
@@ -2816,15 +2816,15 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
                                                 </div>
                                                 {lesson.progress ? (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
-                                                     <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center transition-colors duration-300 group-hover:bg-[#581c87] group-hover:text-white" title="Làm lại">
+                                                     <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
+                                                     <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center transition-colors duration-300 group-hover:bg-primary-900 group-hover:text-white" title="Làm lại">
                                                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                                      </div>
                                                    </div>
                                                 ) : (
                                                    <div className="flex items-center gap-2">
                                                      <span className="text-[11px] font-bold text-slate-400">Chưa làm</span>
-                                                     <div className="w-7 h-7 rounded-full bg-[#581c87] text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
+                                                     <div className="w-7 h-7 rounded-full bg-primary-900 text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
                                                          <svg className="w-3.5 h-3.5 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                                      </div>
                                                    </div>
@@ -2922,8 +2922,8 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 
 	return (
 		<div>
-			<h2 className="text-xl sm:text-[22px] font-black text-[#581c87] mb-6 flex items-center gap-2.5 tracking-tight px-1">
-				<span className="w-1.5 h-6 rounded-full bg-[#581c87] block shadow-sm"></span>
+			<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
+				<span className="w-1.5 h-6 rounded-full bg-primary-900 block shadow-sm"></span>
 				Các Phần Thi Reading
 			</h2>
 
@@ -2960,7 +2960,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
                         <div key={collectionName}>
                             <h3 className="text-xl font-bold text-slate-300 mb-6 flex items-center gap-4">
                                 <div className="h-px bg-slate-200 flex-1"></div>
-                                <span className="text-[#581c87] font-black bg-purple-50 px-4 py-1 rounded-full border border-purple-200 text-sm tracking-wide shadow-sm">
+                                <span className="text-primary-900 font-black bg-primary-50 px-4 py-1 rounded-full border border-primary-200 text-sm tracking-wide shadow-sm">
                                     {collectionName} - PART {selectedPart}
                                 </span>
                                 <div className="h-px bg-slate-200 flex-1"></div>
@@ -2975,27 +2975,27 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
                                         <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 group-hover:to-slate-100 transition-colors pointer-events-none"></div>
                                         <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                             <div className="flex items-center gap-3 mb-6">
-                                                <div className="w-10 h-10 rounded-lg bg-[#581c87]/10 group-hover:bg-[#581c87]/20 flex flex-shrink-0 items-center justify-center text-[#581c87] transition-colors shadow-sm">
+                                                <div className="w-10 h-10 rounded-lg bg-primary-900/10 group-hover:bg-primary-900/20 flex flex-shrink-0 items-center justify-center text-primary-900 transition-colors shadow-sm">
                                                     {getPartIcon(selectedPart)}
                                                 </div>
-                                                <h3 className="text-[17px] font-black text-[#581c87] transition-colors">{lesson.title}</h3>
+                                                <h3 className="text-[17px] font-black text-primary-900 transition-colors">{lesson.title}</h3>
                                             </div>
                                             <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-400">
-                                                <div className="flex items-center gap-1.5 text-[#581c87] transition-colors">
+                                                <div className="flex items-center gap-1.5 text-primary-900 transition-colors">
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                                                     {lesson._count?.questions || 0} Câu hỏi
                                                 </div>
                                                 {lesson.progress ? (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
-                                                     <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center transition-colors duration-300 group-hover:bg-[#581c87] group-hover:text-white" title="Làm lại">
+                                                     <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
+                                                     <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center transition-colors duration-300 group-hover:bg-primary-900 group-hover:text-white" title="Làm lại">
                                                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                                      </div>
                                                    </div>
                                                 ) : (
                                                    <div className="flex items-center gap-2">
                                                      <span className="text-[11px] font-bold text-slate-400">Chưa làm</span>
-                                                     <div className="w-7 h-7 rounded-full bg-[#581c87] text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
+                                                     <div className="w-7 h-7 rounded-full bg-primary-900 text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
                                                          <svg className="w-3.5 h-3.5 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                                      </div>
                                                    </div>
@@ -3043,7 +3043,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
 		<div className="flex flex-col gap-10">
 			{collections.map((col, cIdx) => (
 				<div key={cIdx}>
-					<h2 className="text-xl sm:text-[22px] font-black text-[#581c87] mb-6 flex items-center gap-2.5 tracking-tight px-1">
+					<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
 						<span className="w-1.5 h-6 rounded-full bg-[#8B5CF6] block shadow-sm"></span>
 						Bộ Đề {col.collection}
 					</h2>
@@ -3056,14 +3056,14 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                             return (
 							<div
 								key={test.id}
-								className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer hover:border-purple-200"
+								className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer hover:border-primary-200"
                                 onClick={() => router.push(`/toeic-practice/actual-test/${test.id}`)}
 							>
-                                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-purple-50/40 group-hover:to-purple-100/50 transition-colors pointer-events-none"></div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary-50/40 group-hover:to-primary-100/50 transition-colors pointer-events-none"></div>
                                 <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                     <div className="flex justify-between items-start mb-3">
                                         <h3 className="text-xl font-black text-[#4c1d95] transition-colors">{test.title}</h3>
-                                        <div className="w-7 h-7 rounded-lg bg-purple-100/50 group-hover:bg-purple-100 flex items-center justify-center text-purple-700 transition-colors flex-shrink-0 group-hover:shadow-sm">
+                                        <div className="w-7 h-7 rounded-lg bg-primary-100/50 group-hover:bg-primary-100 flex items-center justify-center text-primary-700 transition-colors flex-shrink-0 group-hover:shadow-sm">
                                             <svg className="w-3.5 h-3.5 translate-x-px group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                         </div>
                                     </div>
@@ -3076,7 +3076,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                                 return (
                                                     <div 
                                                         key={pNum} 
-                                                        className={`w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] transition-colors ${isActive ? 'bg-purple-50 text-purple-600 border border-purple-200 shadow-sm' : 'bg-slate-50 text-slate-300 border border-slate-100'}`}
+                                                        className={`w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] transition-colors ${isActive ? 'bg-primary-50 text-primary-600 border border-primary-200 shadow-sm' : 'bg-slate-50 text-slate-300 border border-slate-100'}`}
                                                     >
                                                         {pNum}
                                                     </div>
@@ -3088,7 +3088,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                     <div className="flex items-center gap-2.5 mt-auto pt-4 border-t border-slate-100">
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}`); }}
-                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-purple-200 bg-purple-50/50 text-purple-700 font-bold text-xs hover:bg-purple-100 hover:border-purple-300 transition-colors shadow-sm cursor-pointer"
+                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-primary-200 bg-primary-50/50 text-primary-700 font-bold text-xs hover:bg-primary-100 hover:border-primary-300 transition-colors shadow-sm cursor-pointer"
                                         >
                                             Luyện tập
                                         </button>

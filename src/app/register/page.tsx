@@ -18,7 +18,7 @@ export default function Register() {
             signIn('google', { callbackUrl: '/' })
           }}
           disabled={isZaloInAppBrowser}
-          className="w-full flex items-center justify-center gap-3 border-2 border-[#581c87] rounded-md p-3 hover:bg-slate-50 transition-colors mb-5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full flex items-center justify-center gap-3 border-2 border-primary-900 rounded-md p-3 hover:bg-slate-50 transition-colors mb-5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-5 h-5">
             <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z"/>
@@ -30,7 +30,7 @@ export default function Register() {
         </button>
 
         {isZaloInAppBrowser && (
-          <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-base text-amber-800">
+          <div className="mb-4 rounded-md border border-secondary-300 bg-secondary-50 px-4 py-3 text-base text-secondary-800">
             Google sign-in is blocked inside the Zalo browser (403 disallowed_useragent). Please open this link in Safari or Chrome and try again.
           </div>
         )}
@@ -41,7 +41,7 @@ export default function Register() {
 
         <p className="mt-4 text-center text-sm sm:text-base text-slate-500">
           Already have an account?{' '}
-          <Link href="/login" className="font-semibold text-[#581c87] hover:text-[#6b21a8]">
+          <Link href="/login" className="font-semibold text-primary-900 hover:text-primary-800">
             Sign in
           </Link>
         </p>

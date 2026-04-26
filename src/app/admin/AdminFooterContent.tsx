@@ -164,7 +164,7 @@ export default function AdminFooterContent() {
             <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeTab === tab ? 'bg-[#581c87] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeTab === tab ? 'bg-primary-900 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
             >
                 {getTabLabel(tab)} ({data[tab]?.length || 0})
             </button>
@@ -175,7 +175,7 @@ export default function AdminFooterContent() {
           <h3 className="text-lg font-bold text-slate-800">Danh sách {getTabLabel(activeTab)}</h3>
           <button 
               onClick={openNewItem}
-              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-xl text-sm font-bold shadow transition-colors"
+              className="bg-secondary-500 hover:bg-secondary-600 text-white px-5 py-2 rounded-xl text-sm font-bold shadow transition-colors"
           >
               + Thêm mới
           </button>
@@ -243,7 +243,7 @@ export default function AdminFooterContent() {
                           <div>
                               <label className="block text-sm font-bold text-slate-700 mb-2">Tiêu đề bài viết</label>
                               <input 
-                                  className="w-full border-slate-300 rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-[#581c87]"
+                                  className="w-full border-slate-300 rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-900"
                                   value={editingItem.title}
                                   onChange={e => setEditingItem({ ...editingItem, title: e.target.value })}
                                   placeholder="Nhập tiêu đề ấn tượng..."
@@ -253,7 +253,7 @@ export default function AdminFooterContent() {
                           <div>
                               <label className="block text-sm font-bold text-slate-700 mb-2">Mô tả ngắn</label>
                               <textarea 
-                                  className="w-full border-slate-300 rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-[#581c87] h-24 resize-none"
+                                  className="w-full border-slate-300 rounded-xl px-4 py-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-900 h-24 resize-none"
                                   value={editingItem.description}
                                   onChange={e => setEditingItem({ ...editingItem, description: e.target.value })}
                                   placeholder="Đoạn mô tả ngắn gọn giới thiệu nội dung (khoảng 2-3 câu)..."
@@ -272,9 +272,9 @@ export default function AdminFooterContent() {
                                           accept="image/*"
                                           onChange={handleUploadImage}
                                           disabled={uploadingImage}
-                                          className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 mb-3"
+                                          className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 mb-3"
                                       />
-                                      {uploadingImage && <span className="text-sm text-purple-600">Đang upload ảnh...</span>}
+                                      {uploadingImage && <span className="text-sm text-primary-600">Đang upload ảnh...</span>}
                                       <p className="text-xs text-slate-400">Hoặc dán URL ảnh có sẵn:</p>
                                       <input 
                                           className="w-full mt-1 border-slate-300 rounded-lg px-3 py-2 text-sm bg-slate-50"
@@ -308,7 +308,7 @@ export default function AdminFooterContent() {
                           <button 
                               onClick={saveItem}
                               disabled={saving}
-                              className="px-8 py-3 font-bold text-white bg-[#581c87] hover:bg-[#6b21a8] rounded-xl shadow shadow-[#581c87]/30"
+                              className="px-8 py-3 font-bold text-white bg-primary-900 hover:bg-primary-800 rounded-xl shadow shadow-primary-900/30"
                           >
                               {saving ? 'Đang lưu...' : 'Lưu lại'}
                           </button>

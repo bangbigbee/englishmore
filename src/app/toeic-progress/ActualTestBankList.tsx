@@ -127,8 +127,8 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                             <label key={p} className="flex items-center gap-2 cursor-pointer group">
                                 <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
                                     isActive 
-                                    ? 'border-purple-600 bg-purple-600' 
-                                    : 'border-slate-300 bg-white group-hover:border-purple-400'
+                                    ? 'border-primary-600 bg-primary-600' 
+                                    : 'border-slate-300 bg-white group-hover:border-primary-400'
                                 }`}>
                                     {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                                 </div>
@@ -152,7 +152,7 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                     <select 
                         value={selectedTest} 
                         onChange={(e) => setSelectedTest(e.target.value)}
-                        className="flex-1 w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-700 outline-none focus:border-purple-500 transition-colors"
+                        className="flex-1 w-full bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-700 outline-none focus:border-primary-500 transition-colors"
                     >
                         <option value="all">Tất cả đề thi</option>
                         {testOptions.map(([id, name]) => (
@@ -176,14 +176,14 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                                     </div>
                                 )}
                                 {!isMistakes && (
-                                    <div className="text-amber-500 bg-amber-50 p-1.5 rounded-lg border border-amber-200">
+                                    <div className="text-secondary-500 bg-secondary-50 p-1.5 rounded-lg border border-secondary-200">
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
                                     </div>
                                 )}
                             </div>
 
                             <div className="flex items-center gap-2 mb-4">
-                                <span className="text-[10px] font-black uppercase text-white bg-purple-600 px-2.5 py-1 rounded shadow-sm">
+                                <span className="text-[10px] font-black uppercase text-white bg-primary-600 px-2.5 py-1 rounded shadow-sm">
                                     {item._testName}
                                 </span>
                                 <span className="text-[10px] font-black uppercase text-white bg-slate-700 px-2.5 py-1 rounded shadow-sm">
@@ -206,7 +206,7 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                                     <div>
                                         <p className="text-base font-bold text-slate-800 line-clamp-3 leading-snug" dangerouslySetInnerHTML={{ __html: q.question }} />
                                         {parsedTrans?.question && (
-                                            <p className="text-[13px] italic text-purple-700/80 mt-1 line-clamp-2 leading-snug font-medium" dangerouslySetInnerHTML={{ __html: parsedTrans.question }} />
+                                            <p className="text-[13px] italic text-primary-700/80 mt-1 line-clamp-2 leading-snug font-medium" dangerouslySetInnerHTML={{ __html: parsedTrans.question }} />
                                         )}
                                     </div>
                                 )}
@@ -220,7 +220,7 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                                     const isUserMistake = isMistakes && item.selectedOption === opt && !isCorrect;
                                     
                                     let style = 'bg-slate-50 border-slate-100 text-slate-600'; // Default
-                                    if (isCorrect) style = 'bg-purple-50 border-purple-200 text-purple-800';
+                                    if (isCorrect) style = 'bg-primary-50 border-primary-200 text-primary-800';
                                     else if (isUserMistake) style = 'bg-rose-50 border-rose-200 text-rose-800 line-through';
 
                                     return (
@@ -234,7 +234,7 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
                                                 )}
                                             </div>
                                             {parsedTrans?.[opt.toLowerCase() as keyof typeof parsedTrans] && (
-                                                <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug" dangerouslySetInnerHTML={{ __html: parsedTrans[opt.toLowerCase() as keyof typeof parsedTrans] as string }} />
+                                                <div className="text-[12px] italic text-primary-700/70 font-normal leading-snug" dangerouslySetInnerHTML={{ __html: parsedTrans[opt.toLowerCase() as keyof typeof parsedTrans] as string }} />
                                             )}
                                         </div>
                                     );
@@ -243,7 +243,7 @@ export default function ActualTestBankList({ items, isMistakes }: { items: any[]
 
                             {/* Explanation */}
                             {(q.explanation) && (
-                                <div className="mt-5 bg-purple-50/50 p-4 rounded-lg border border-purple-100 shadow-sm">
+                                <div className="mt-5 bg-primary-50/50 p-4 rounded-lg border border-primary-100 shadow-sm">
                                     {hideTranscript(q.explanation) && (
                                         <div className="text-[13px] font-medium text-slate-700 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: hideTranscript(q.explanation) as string }} />
                                     )}

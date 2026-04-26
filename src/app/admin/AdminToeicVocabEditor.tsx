@@ -95,8 +95,8 @@ export default function AdminToeicVocabEditor({ topic, onClose }: AdminToeicVoca
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
           <div>
-            <h2 className="text-xl font-bold text-amber-900">Chỉnh sửa bộ từ vựng TOEIC</h2>
-            <p className="text-sm text-slate-600 font-medium">Chủ đề: <span className="text-amber-700">{topic}</span></p>
+            <h2 className="text-xl font-bold text-secondary-900">Chỉnh sửa bộ từ vựng TOEIC</h2>
+            <p className="text-sm text-slate-600 font-medium">Chủ đề: <span className="text-secondary-700">{topic}</span></p>
           </div>
           <button
             onClick={onClose}
@@ -121,39 +121,39 @@ export default function AdminToeicVocabEditor({ topic, onClose }: AdminToeicVoca
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">Word *</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.word} onChange={e => setFormData({ ...formData, word: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.word} onChange={e => setFormData({ ...formData, word: e.target.value })} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">Meaning *</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.meaning} onChange={e => setFormData({ ...formData, meaning: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.meaning} onChange={e => setFormData({ ...formData, meaning: e.target.value })} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">Phonetic</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.phonetic} onChange={e => setFormData({ ...formData, phonetic: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.phonetic} onChange={e => setFormData({ ...formData, phonetic: e.target.value })} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">English Definition</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.englishDefinition} onChange={e => setFormData({ ...formData, englishDefinition: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.englishDefinition} onChange={e => setFormData({ ...formData, englishDefinition: e.target.value })} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">Example</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.example} onChange={e => setFormData({ ...formData, example: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.example} onChange={e => setFormData({ ...formData, example: e.target.value })} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">Example (Vi)</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.exampleVi} onChange={e => setFormData({ ...formData, exampleVi: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.exampleVi} onChange={e => setFormData({ ...formData, exampleVi: e.target.value })} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">Synonyms</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.synonyms} onChange={e => setFormData({ ...formData, synonyms: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.synonyms} onChange={e => setFormData({ ...formData, synonyms: e.target.value })} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1">Antonyms</label>
-                          <input className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.antonyms} onChange={e => setFormData({ ...formData, antonyms: e.target.value })} />
+                          <input className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.antonyms} onChange={e => setFormData({ ...formData, antonyms: e.target.value })} />
                         </div>
                         <div className="md:col-span-2">
                           <label className="block text-xs font-bold text-slate-700 mb-1">Collocations</label>
-                          <textarea rows={2} className="w-full border rounded p-2 text-sm focus:border-amber-500 focus:ring-amber-500" value={formData.collocations} onChange={e => setFormData({ ...formData, collocations: e.target.value })} />
+                          <textarea rows={2} className="w-full border rounded p-2 text-sm focus:border-secondary-500 focus:ring-secondary-500" value={formData.collocations} onChange={e => setFormData({ ...formData, collocations: e.target.value })} />
                         </div>
                         <div className="md:col-span-2">
                           <label className="block text-xs font-bold text-slate-700 mb-1">TOEIC Trap / Tips (Hỗ trợ định dạng HTML)</label>
@@ -164,7 +164,7 @@ export default function AdminToeicVocabEditor({ topic, onClose }: AdminToeicVoca
                       </div>
                       <div className="flex justify-end gap-2 pt-2">
                         <button onClick={cancelEdit} className="px-4 py-2 text-sm rounded bg-slate-100 text-slate-600 font-semibold hover:bg-slate-200">Hủy</button>
-                        <button onClick={handleUpdate} disabled={saving} className="px-4 py-2 text-sm rounded bg-[#581c87] text-white font-semibold hover:bg-[#6b21a8] disabled:opacity-50">
+                        <button onClick={handleUpdate} disabled={saving} className="px-4 py-2 text-sm rounded bg-primary-900 text-white font-semibold hover:bg-primary-800 disabled:opacity-50">
                           {saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}
                         </button>
                       </div>
@@ -174,7 +174,7 @@ export default function AdminToeicVocabEditor({ topic, onClose }: AdminToeicVoca
                       <div className="flex-1 min-w-0 pr-4">
                         <div className="flex items-baseline gap-3 mb-1">
                           <h4 className="font-bold text-lg text-slate-800">{item.word}</h4>
-                          <span className="text-sm font-medium text-amber-700">{item.phonetic}</span>
+                          <span className="text-sm font-medium text-secondary-700">{item.phonetic}</span>
                         </div>
                         <p className="text-sm text-slate-700"><strong>Nghĩa:</strong> {item.meaning}</p>
                         {item.englishDefinition && <p className="text-sm text-slate-600 mt-1"><strong>EN:</strong> {item.englishDefinition}</p>}
@@ -184,11 +184,11 @@ export default function AdminToeicVocabEditor({ topic, onClose }: AdminToeicVoca
                           {item.synonyms && <span title={item.synonyms} className="truncate max-w-[150px]"><strong>Syn:</strong> {item.synonyms}</span>}
                           {item.antonyms && <span title={item.antonyms} className="truncate max-w-[150px]"><strong>Ant:</strong> {item.antonyms}</span>}
                           {item.collocations && <span title={item.collocations} className="truncate max-w-[200px]"><strong>Colloc:</strong> {item.collocations}</span>}
-                          {item.toeicTrap && <span className="text-amber-600 font-semibold italic">Có TOEIC Trap</span>}
+                          {item.toeicTrap && <span className="text-secondary-600 font-semibold italic">Có TOEIC Trap</span>}
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 shrink-0">
-                        <button onClick={() => startEdit(item)} className="px-3 py-1.5 bg-amber-100 text-amber-800 text-xs font-bold rounded hover:bg-amber-200 transition-colors">
+                        <button onClick={() => startEdit(item)} className="px-3 py-1.5 bg-secondary-100 text-secondary-800 text-xs font-bold rounded hover:bg-secondary-200 transition-colors">
                           Chỉnh sửa
                         </button>
                       </div>

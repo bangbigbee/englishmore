@@ -55,14 +55,14 @@ export default async function GrammarBank({ filter = 'mistakes', partFilter }: {
 	if (!hasAccess) {
 		return (
 			<div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
-				<div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-amber-100">
+				<div className="w-16 h-16 bg-secondary-50 text-secondary-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 border border-secondary-100">
 					<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
 				</div>
 				<h3 className="text-xl font-bold text-slate-800 mb-2">Tính năng dành cho {requiredTier}</h3>
 				<p className="text-slate-500 max-w-sm mx-auto mb-6">
 					Nâng cấp tài khoản {requiredTier} để mở khoá tính năng Sổ Tay độc quyền và lưu trữ không giới hạn các câu hỏi khó.
 				</p>
-				<Link href="/upgrade" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 font-bold rounded-xl shadow-md hover:from-amber-500 hover:to-amber-600 transition-all">
+				<Link href="/upgrade" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-secondary-400 to-secondary-500 text-secondary-950 font-bold rounded-xl shadow-md hover:from-secondary-500 hover:to-secondary-600 transition-all">
 					Nâng Cấp Ngay
 				</Link>
 			</div>
@@ -159,7 +159,7 @@ export default async function GrammarBank({ filter = 'mistakes', partFilter }: {
 					<Link 
 						key={q.id}
 						href={`/toeic-practice/grammar/${q.lesson.topic.slug}?lessonId=${q.lesson.id}&reviewId=${q.id}`}
-						className="block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-amber-200 transition-all group relative"
+						className="block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-secondary-200 transition-all group relative"
 					>
                         {isMistakes && item.selectedOption && (
                             <div className="absolute top-4 right-4 text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 opacity-90 text-[10px] font-bold">
@@ -167,13 +167,13 @@ export default async function GrammarBank({ filter = 'mistakes', partFilter }: {
                             </div>
                         )}
                         {!isMistakes && (
-                            <div className="absolute top-4 right-4 text-amber-500 bg-amber-50 p-1.5 rounded-lg border border-amber-200 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute top-4 right-4 text-secondary-500 bg-secondary-50 p-1.5 rounded-lg border border-secondary-200 opacity-80 group-hover:opacity-100 transition-opacity">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
                             </div>
                         )}
 						
                         <div className="flex items-center gap-2 mb-3">
-							<span className="text-xs font-black px-2.5 py-1 bg-purple-600 text-white rounded-md whitespace-nowrap shadow-sm">
+							<span className="text-xs font-black px-2.5 py-1 bg-primary-600 text-white rounded-md whitespace-nowrap shadow-sm">
 								{q.lesson.topic.title}
 							</span>
                             <span className="text-xs font-bold px-2.5 py-1 bg-slate-700 text-white rounded-md whitespace-nowrap shadow-sm">
@@ -186,29 +186,29 @@ export default async function GrammarBank({ filter = 'mistakes', partFilter }: {
                                 {q.question}
                             </p>
                             {parsedTrans?.question && (
-                                <p className="text-[13px] italic text-purple-700/80 mt-1 line-clamp-2 leading-snug font-medium">
+                                <p className="text-[13px] italic text-primary-700/80 mt-1 line-clamp-2 leading-snug font-medium">
                                     {parsedTrans.question}
                                 </p>
                             )}
                         </div>
 
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-sm font-medium">
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'A' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'A' ? 'bg-primary-50 border-primary-200 text-primary-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">A</span> {q.optionA}</div>
-                                {parsedTrans?.a && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.a}</div>}
+                                {parsedTrans?.a && <div className="text-[12px] italic text-primary-700/70 font-normal leading-snug">{parsedTrans.a}</div>}
 							</div>
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'B' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'B' ? 'bg-primary-50 border-primary-200 text-primary-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">B</span> {q.optionB}</div>
-                                {parsedTrans?.b && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.b}</div>}
+                                {parsedTrans?.b && <div className="text-[12px] italic text-primary-700/70 font-normal leading-snug">{parsedTrans.b}</div>}
 							</div>
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'C' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'C' ? 'bg-primary-50 border-primary-200 text-primary-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">C</span> {q.optionC}</div>
-                                {parsedTrans?.c && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.c}</div>}
+                                {parsedTrans?.c && <div className="text-[12px] italic text-primary-700/70 font-normal leading-snug">{parsedTrans.c}</div>}
 							</div>
 							{q.optionD && (
-							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'D' ? 'bg-purple-50 border-purple-200 text-purple-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
+							<div className={`p-2.5 rounded-lg border flex flex-col gap-1.5 ${q.correctOption === 'D' ? 'bg-primary-50 border-primary-200 text-primary-800' : 'bg-slate-50 border-slate-100 text-slate-600'}`}>
 								<div><span className="font-black mr-2 opacity-60">D</span> {q.optionD}</div>
-                                {parsedTrans?.d && <div className="text-[12px] italic text-purple-700/70 font-normal leading-snug">{parsedTrans.d}</div>}
+                                {parsedTrans?.d && <div className="text-[12px] italic text-primary-700/70 font-normal leading-snug">{parsedTrans.d}</div>}
 							</div>
 							)}
 						</div>

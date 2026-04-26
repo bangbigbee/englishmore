@@ -57,7 +57,19 @@ export async function GET(req: Request) {
             return avgMsA - avgMsB; // Nhanh hơn lên trên
         });
         
-        return NextResponse.json(records.slice(0, 10));
+        // Lọc lấy kết quả tốt nhất của mỗi cá nhân
+        const uniqueRecords = [];
+        const seenKeys = new Set();
+        
+        for (const record of records) {
+            const key = record.userId ? record.userId : record.guestName;
+            if (!seenKeys.has(key)) {
+                seenKeys.add(key);
+                uniqueRecords.push(record);
+            }
+        }
+        
+        return NextResponse.json(uniqueRecords.slice(0, 10));
     } catch (error) {
         console.error('Error fetching leaderboard:', error);
         return NextResponse.json({ error: 'Lỗi khi tải bảng xếp hạng' }, { status: 500 });

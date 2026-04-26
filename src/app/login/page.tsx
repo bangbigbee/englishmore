@@ -20,7 +20,7 @@ function LoginRedirect() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="animate-pulse flex flex-col items-center gap-4">
-        <div className="h-12 w-12 rounded-full border-4 border-[#581c87] border-t-transparent animate-spin" />
+        <div className="h-12 w-12 rounded-full border-4 border-primary-900 border-t-transparent animate-spin" />
         <p className="text-slate-500 font-medium">Redirecting to login...</p>
       </div>
     </div>

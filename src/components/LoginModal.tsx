@@ -103,7 +103,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
             </button>
 
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-[#581c87]">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary-50 text-primary-900">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
                   <path d="m9 12 2 2 4-4" />
@@ -112,16 +112,16 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               
               <h2 className="text-xl font-bold tracking-tight text-slate-900" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
                 Chào mừng bạn đến với {isToeicDomain ? (
-                  <span><span className="text-[#581c87]">Toeic</span><span className="text-amber-500">More</span></span>
+                  <span><span className="text-primary-900">Toeic</span><span className="text-secondary-500">More</span></span>
                 ) : (
-                  <span><span className="text-[#581c87]">English</span><span className="text-amber-500">More</span></span>
+                  <span><span className="text-primary-900">English</span><span className="text-secondary-500">More</span></span>
                 )}
               </h2>
               <div className="mt-3 text-[15px] font-medium text-slate-600 leading-relaxed">
                 {subtitle ? subtitle : (
                   <>
                     Cảm ơn Bạn đã đồng hành cùng ToeicMore từ rất sớm. Bạn sẽ được tặng tài khoản{' '}
-                    <span className="inline-block align-baseline bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#581c87] px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-widest mx-0.5 shadow-sm border border-amber-300">PRO</span>
+                    <span className="inline-block align-baseline bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-primary-900 px-1.5 py-0.5 rounded text-[11px] font-black uppercase tracking-widest mx-0.5 shadow-sm border border-secondary-300">PRO</span>
                     {' '}ngay sau khi đăng nhập.
                   </>
                 )}
@@ -135,7 +135,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
                 className={`group relative flex w-full items-center justify-center gap-3 rounded-xl px-4 py-3.5 text-sm font-bold border-2 transition-all duration-200 ${
                   googleLoading || isZaloInAppBrowser
                     ? 'border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed'
-                    : 'border-amber-500 bg-amber-500 text-white hover:bg-white hover:text-amber-600 shadow-md hover:shadow-lg cursor-pointer'
+                    : 'border-secondary-500 bg-secondary-500 text-white hover:bg-white hover:text-secondary-600 shadow-md hover:shadow-lg cursor-pointer'
                 }`}
               >
                 {googleLoading ? (
@@ -173,7 +173,7 @@ export default function LoginModal({ isOpen, onClose, callbackUrl = '/', allowGu
               )}
 
               {isZaloInAppBrowser && (
-                <div className="rounded-lg bg-purple-50 p-3 text-xs leading-relaxed text-purple-800 border border-purple-200">
+                <div className="rounded-lg bg-primary-50 p-3 text-xs leading-relaxed text-primary-800 border border-primary-200">
                   <p className="font-bold mb-1">⚠️ Cảnh báo trình duyệt:</p>
                   Bạn đang mở trong ứng dụng Zalo. Vui lòng nhấn vào dấu ba chấm <strong>(...)</strong> và chọn <strong>"Mở bằng trình duyệt"</strong> (Safari hoặc Chrome) để có thể đăng nhập bằng Google.
                 </div>

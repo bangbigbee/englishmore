@@ -77,6 +77,8 @@ export const viewport = {
   userScalable: false,
 };
 
+import { ThemeProvider } from "@/components/ThemeProvider";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -104,12 +106,19 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#fdfdfc]">
-        <AuthProvider>
-          <ClientTracking />
-          <TopNav isToeicDomain={isToeicDomain} />
-          <MainWrapper>{children}</MainWrapper>
+      <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="light"
+          enableSystem={false}
+          themes={["light", "classic", "dark"]}
+        >
+          <AuthProvider>
+            <ClientTracking />
+            <TopNav isToeicDomain={isToeicDomain} />
+            <MainWrapper>{children}</MainWrapper>
           <LoginModalController />
           <GlobalUpgradePoller />
           <PwaInstallPrompt />
@@ -127,6 +136,7 @@ export default async function RootLayout({
             }}
           />
         </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

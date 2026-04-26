@@ -73,7 +73,7 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 				<p className="text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">
 					Bạn chưa đánh dấu từ vựng nào trong quá trình luyện tập. Hãy quay lại phần luyện tập và chọn đánh dấu các từ vựng bạn muốn lưu lại nhé!
 				</p>
-				<Link href="/toeic-practice?tab=vocabulary" className="inline-flex items-center justify-center rounded-xl bg-[#581c87] px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-1 hover:bg-[#6b21a8] hover:shadow-xl">
+				<Link href="/toeic-practice?tab=vocabulary" className="inline-flex items-center justify-center rounded-xl bg-primary-900 px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:-translate-y-1 hover:bg-primary-800 hover:shadow-xl">
 					Trở lại luyện từ
 				</Link>
 			</div>
@@ -94,11 +94,11 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 				<Link 
 					key={tag.id} 
 					href={`/toeic-practice?tab=vocabulary&topic=${encodeURIComponent(tag.vocabulary.topic)}&wordId=${tag.vocabId}`}
-					className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-purple-300 transition-all cursor-pointer relative"
+					className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-primary-300 transition-all cursor-pointer relative"
 				>
 					<div className="p-4 flex-1 flex flex-col">
 						<div className="flex justify-between items-start mb-2">
-							<span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 uppercase tracking-wider line-clamp-1 max-w-[180px]" title={tag.vocabulary.topic}>
+							<span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-50 text-primary-700 uppercase tracking-wider line-clamp-1 max-w-[180px]" title={tag.vocabulary.topic}>
 								{tag.vocabulary.topic.split('-')[0].split('(')[0].trim()}
 							</span>
 							<div className="flex gap-1">
@@ -107,8 +107,8 @@ async function VocabularyBank({ topic, tagFilter, query }: { topic?: string, tag
 										<span className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_4px_rgba(244,63,94,0.3)]" />
 									</span>
 								)}
-								{tag.isBookmarked && <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-50 text-[#ea980c] border border-amber-100 text-[10px] shadow-sm" title="Câu đã lưu">⭐</span>}
-								{tag.isLearned && <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-50 text-purple-600 border border-purple-100 text-[10px] uppercase font-black shadow-sm" title="Đã thuộc">✓</span>}
+								{tag.isBookmarked && <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-secondary-50 text-[#ea980c] border border-secondary-100 text-[10px] shadow-sm" title="Câu đã lưu">⭐</span>}
+								{tag.isLearned && <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-50 text-primary-600 border border-primary-100 text-[10px] uppercase font-black shadow-sm" title="Đã thuộc">✓</span>}
 							</div>
 						</div>
 						<div className="flex items-baseline gap-2.5 mb-1.5 flex-wrap">
@@ -151,7 +151,7 @@ function ComingSoonPlaceholder({ title, icon }: { title: string, icon: string })
 			<p className="text-slate-500 max-w-sm mx-auto">
 				Chuyên mục này đang được xây dựng và sẽ sớm ra mắt trong bản cập nhật tới.
 			</p>
-			<Link href="/toeic-practice" className="mt-8 inline-block text-[#581c87] font-bold hover:text-[#6b21a8]">
+			<Link href="/toeic-practice" className="mt-8 inline-block text-primary-900 font-bold hover:text-primary-800">
 				← Quay lại trang luyện tập
 			</Link>
 		</div>
@@ -188,40 +188,40 @@ export default async function ToeicProgressPage(props: any) {
                 <div className="flex-1 min-w-0">
 						{activeTab === 'vocabulary-bank' && (
 							<div>
-								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div></div>}>
 									<VocabularyBank topic={topicFilter} tagFilter={tagFilter} query={qFilter} />
 								</Suspense>
 							</div>
 						)}
 						{activeTab === 'grammar-bank' && (
 							<div>
-								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div></div>}>
 									<GrammarBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>
 						)}
 						{activeTab?.startsWith('reports') && (
-							<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
+							<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div></div>}>
 								<ReportsWrapper defaultSubTab={activeTab.replace('reports-', '')} />
 							</Suspense>
 						)}
 						{activeTab === 'listening-bank' && (
 							<div>
-								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div></div>}>
 									<ListeningBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>
 						)}
 						{activeTab === 'reading-bank' && (
 							<div>
-								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div></div>}>
 									<ReadingBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>
 						)}
 						{activeTab === 'actual-test-bank' && (
 							<div>
-								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600"></div></div>}>
+								<Suspense fallback={<div className="flex h-32 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600"></div></div>}>
 									<ActualTestBank filter={qbFilter} partFilter={partFilter} />
 								</Suspense>
 							</div>

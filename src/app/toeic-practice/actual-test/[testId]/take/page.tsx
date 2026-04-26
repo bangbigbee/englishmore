@@ -35,7 +35,7 @@ const PartDirectionAudio = ({ src }: { src: string }) => {
             <button 
                 type="button"
                 onClick={togglePlay}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95"
+                className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-sm active:scale-95"
             >
                 {isPlaying ? (
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
@@ -383,12 +383,12 @@ function TakeTestContent() {
         <div className={`fixed inset-0 z-[9999] ${isActual ? 'bg-black text-white' : 'bg-slate-50 text-slate-800'}`}>
             {!isFullscreen && isActual ? (
                 <div className="min-h-screen flex flex-col items-center justify-center bg-black gap-6 px-4">
-                    <svg className="w-20 h-20 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <svg className="w-20 h-20 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                     <div className="text-center">
                         <h2 className="text-3xl font-black text-white mb-2">Chế độ thi thử yêu cầu toàn màn hình</h2>
                         <p className="text-slate-400">Bạn không được phép thoát màn hình trong suốt {timeParam} phút. (Tự động tính dựa trên số part)</p>
                     </div>
-                    <button onClick={enterFullscreen} className="px-10 py-4 bg-[#4c1d95] hover:bg-purple-900 border border-purple-800 text-amber-400 font-bold rounded-2xl text-xl animate-bounce shadow-[0_0_20px_rgba(76,29,149,0.5)]">
+                    <button onClick={enterFullscreen} className="px-10 py-4 bg-[#4c1d95] hover:bg-primary-900 border border-primary-800 text-secondary-400 font-bold rounded-2xl text-xl animate-bounce shadow-[0_0_20px_rgba(76,29,149,0.5)]">
                         Bắt Đầu Tính Giờ
                     </button>
                     <button onClick={() => router.push(`/toeic-practice/actual-test/${testId}`)} className="text-slate-500 hover:text-white underline">
@@ -401,7 +401,7 @@ function TakeTestContent() {
                     <div className={`flex flex-row items-center justify-between px-2 py-3 md:p-4 gap-1 md:gap-4 ${isActual ? 'bg-slate-900 border-b border-slate-800' : 'bg-white shadow-sm'}`}>
                         <div className="flex items-center gap-1.5 md:gap-4 flex-shrink-0">
                             <h1 className="font-black text-sm md:text-xl max-w-[60px] md:max-w-none truncate" title={testData.title}>{testData.title}</h1>
-                            <span className={`px-1.5 md:px-3 py-0.5 md:py-1 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap ${isActual ? 'bg-rose-500/20 text-rose-500' : 'bg-purple-100 text-purple-700'}`}>
+                            <span className={`px-1.5 md:px-3 py-0.5 md:py-1 rounded-full text-[9px] md:text-xs font-bold whitespace-nowrap ${isActual ? 'bg-rose-500/20 text-rose-500' : 'bg-primary-100 text-primary-700'}`}>
                                 {isActual ? 'THI THỬ' : 'LUYỆN TẬP'}
                             </span>
                         </div>
@@ -410,7 +410,7 @@ function TakeTestContent() {
                             {/* Answer Sheet Toggle for Mobile */}
                             <button 
                                 onClick={() => setIsSheetOpen(!isSheetOpen)} 
-                                className={`lg:hidden px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold flex items-center gap-1 md:gap-2 whitespace-nowrap flex-shrink-0 ${isActual ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700'}`}
+                                className={`lg:hidden px-2 py-1.5 md:px-4 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-bold flex items-center gap-1 md:gap-2 whitespace-nowrap flex-shrink-0 ${isActual ? 'bg-primary-600 text-white' : 'bg-primary-100 text-primary-700'}`}
                             >
                                 <svg className="w-3 h-3 md:w-5 md:h-5 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                 {isSheetOpen ? 'Đóng Phiếu' : 'Phiếu trả lời'}
@@ -435,16 +435,16 @@ function TakeTestContent() {
                         <>
                             <audio ref={globalAudioRef} onEnded={handleGlobalAudioEnded} src={playQueue[currentAudioIdx]?.src} className="hidden" />
                             {/* Mobile Indicator - Second line */}
-                            <div className="md:hidden flex items-center gap-2 px-3 py-1.5 bg-purple-900/50 border-b border-purple-500/30">
-                                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse"></div>
-                                <span className="text-xs font-medium text-purple-200 truncate">
+                            <div className="md:hidden flex items-center gap-2 px-3 py-1.5 bg-primary-900/50 border-b border-primary-500/30">
+                                <div className="w-1.5 h-1.5 bg-primary-400 rounded-full animate-pulse"></div>
+                                <span className="text-xs font-medium text-primary-200 truncate">
                                     Đang phát: <span className="font-bold text-white max-w-[200px] truncate">{playQueue[currentAudioIdx]?.title}</span>
                                 </span>
                             </div>
                             {/* Desktop Indicator - Absolute center */}
-                            <div className="hidden md:flex absolute top-4 right-1/2 translate-x-1/2 items-center gap-2 px-4 py-1.5 bg-purple-900/50 rounded-lg border border-purple-500/30 z-10 pointer-events-none">
-                                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                                <span className="text-sm font-medium text-purple-200">
+                            <div className="hidden md:flex absolute top-4 right-1/2 translate-x-1/2 items-center gap-2 px-4 py-1.5 bg-primary-900/50 rounded-lg border border-primary-500/30 z-10 pointer-events-none">
+                                <div className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></div>
+                                <span className="text-sm font-medium text-primary-200">
                                     Đang phát âm thanh: <span className="font-bold text-white">{playQueue[currentAudioIdx]?.title}</span>
                                 </span>
                             </div>
@@ -479,8 +479,8 @@ function TakeTestContent() {
 
                                 return (
                                 <div key={pIdx} className="mb-12">
-                                    <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
-                                        <h2 className="text-xl font-black text-purple-900 mb-2 md:mb-0">Part {partInfo.part}</h2>
+                                    <div className="bg-primary-50 border-l-4 border-primary-500 p-4 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+                                        <h2 className="text-xl font-black text-primary-900 mb-2 md:mb-0">Part {partInfo.part}</h2>
                                         {!isActual && partInfo.directionAudioUrl && (
                                             <div className="mt-4 md:mt-0">
                                                 <PartDirectionAudio src={partInfo.directionAudioUrl} />
@@ -494,10 +494,10 @@ function TakeTestContent() {
                                                 {!isActual && partInfo.part >= 5 && partInfo.part <= 7 && (
                                                     <button
                                                         onClick={() => toggleBookmark(q.id)}
-                                                        className={`absolute top-4 right-4 py-1.5 px-2.5 rounded-xl transition-all z-10 border flex items-center justify-center gap-1.5 ${bookmarkedIds[q.id] ? 'bg-amber-50 border-amber-300 text-amber-600 shadow-sm' : 'bg-white border-amber-200 text-amber-500 hover:bg-amber-50'}`}
+                                                        className={`absolute top-4 right-4 py-1.5 px-2.5 rounded-xl transition-all z-10 border flex items-center justify-center gap-1.5 ${bookmarkedIds[q.id] ? 'bg-secondary-50 border-secondary-300 text-secondary-600 shadow-sm' : 'bg-white border-secondary-200 text-secondary-500 hover:bg-secondary-50'}`}
                                                         title={bookmarkedIds[q.id] ? "Đã lưu vào Sổ tay" : "Lưu vào Sổ tay"}
                                                     >
-                                                        <svg className={`w-5 h-5 ${bookmarkedIds[q.id] ? 'fill-amber-500' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                                        <svg className={`w-5 h-5 ${bookmarkedIds[q.id] ? 'fill-secondary-500' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
                                                         <span className="hidden md:inline text-sm font-bold tracking-tight">{bookmarkedIds[q.id] ? "Đã lưu" : "Bookmark"}</span>
                                                     </button>
                                                 )}
@@ -553,15 +553,15 @@ function TakeTestContent() {
                                                                 if (!q[`option${opt}`]) return null;
                                                                 const isSelected = answers[startNumber + qIdx] === opt;
                                                                 return (
-                                                                    <div key={opt} onClick={() => setAnswers(prev => ({ ...prev, [startNumber + qIdx]: opt }))} className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all duration-200 group ${isSelected ? 'border-purple-500 bg-purple-50 shadow-sm ring-1 ring-purple-500/20' : 'border-slate-200 hover:border-purple-400 hover:bg-slate-50'}`}>
-                                                                        <div className={`w-6 h-6 flex-shrink-0 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSelected ? 'border-purple-500 bg-purple-500 text-white' : 'border-slate-300 text-slate-500 group-hover:border-purple-500 group-hover:text-purple-600'}`}>
+                                                                    <div key={opt} onClick={() => setAnswers(prev => ({ ...prev, [startNumber + qIdx]: opt }))} className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all duration-200 group ${isSelected ? 'border-primary-500 bg-primary-50 shadow-sm ring-1 ring-primary-500/20' : 'border-slate-200 hover:border-primary-400 hover:bg-slate-50'}`}>
+                                                                        <div className={`w-6 h-6 flex-shrink-0 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSelected ? 'border-primary-500 bg-primary-500 text-white' : 'border-slate-300 text-slate-500 group-hover:border-primary-500 group-hover:text-primary-600'}`}>
                                                                             {opt}
                                                                         </div>
                                                                         {partInfo.part !== 1 && partInfo.part !== 2 && (
-                                                                            <span className={`font-medium ${isSelected ? 'text-purple-800' : 'text-slate-700'}`} dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
+                                                                            <span className={`font-medium ${isSelected ? 'text-primary-800' : 'text-slate-700'}`} dangerouslySetInnerHTML={{ __html: q[`option${opt}`] }} />
                                                                         )}
                                                                         {(partInfo.part === 1 || partInfo.part === 2) && (
-                                                                            <span className={`font-medium ${isSelected ? 'text-purple-800' : 'text-slate-700'}`}>Option {opt}</span>
+                                                                            <span className={`font-medium ${isSelected ? 'text-primary-800' : 'text-slate-700'}`}>Option {opt}</span>
                                                                         )}
                                                                     </div>
                                                                 );
@@ -612,7 +612,7 @@ function TakeTestContent() {
                                                             <div 
                                                                 key={opt} 
                                                                 onClick={() => isEnabled && setAnswers(prev => ({ ...prev, [qNum]: opt }))}
-                                                                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] border cursor-pointer transition-all ${isSelected ? 'bg-purple-500 border-purple-500 text-white font-bold scale-110 shadow-sm' : (isActual ? 'border-slate-600 text-slate-500 hover:border-purple-400 hover:text-purple-400' : 'border-slate-300 text-slate-400 hover:border-purple-300 hover:bg-purple-50')}`}
+                                                                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] border cursor-pointer transition-all ${isSelected ? 'bg-primary-500 border-primary-500 text-white font-bold scale-110 shadow-sm' : (isActual ? 'border-slate-600 text-slate-500 hover:border-primary-400 hover:text-primary-400' : 'border-slate-300 text-slate-400 hover:border-primary-300 hover:bg-primary-50')}`}
                                                             >
                                                                 {opt}
                                                             </div>
@@ -646,7 +646,7 @@ function TakeTestContent() {
 
 export default function TakeTestPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4"><div className="w-8 h-8 md:w-12 md:h-12 border-4 border-slate-200 border-t-purple-500 rounded-full animate-spin"></div><div className="text-slate-500 font-medium">Đang thiết lập phòng thi...</div></div>}>
+        <Suspense fallback={<div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4"><div className="w-8 h-8 md:w-12 md:h-12 border-4 border-slate-200 border-t-primary-500 rounded-full animate-spin"></div><div className="text-slate-500 font-medium">Đang thiết lập phòng thi...</div></div>}>
             <TakeTestContent />
         </Suspense>
     );

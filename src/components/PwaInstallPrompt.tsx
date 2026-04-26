@@ -71,7 +71,7 @@ export default function PwaInstallPrompt() {
 
     return (
         <div className="fixed bottom-0 left-0 right-0 z-[1000] p-4 animate-in slide-in-from-bottom-full duration-500">
-            <div className="bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] border border-[#581c87]/10 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 items-center max-w-md mx-auto">
+            <div className="bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] border border-primary-900/10 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 items-center max-w-md mx-auto">
                 
                 <div className="flex items-center gap-4 w-full sm:w-auto">
                     <img src="/toeicmoreicon.svg?v=2" alt="App Icon" className="w-14 h-14 object-cover rounded-[14px] shadow-sm bg-slate-50 border border-slate-100" />
@@ -90,7 +90,7 @@ export default function PwaInstallPrompt() {
                     </button>
                     <button 
                         onClick={handleInstallClick}
-                        className="flex-1 flex sm:flex-none items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-[13px] text-white bg-[#581c87] hover:bg-[#4c1d95] active:bg-[#3b0764] shadow-md transition-colors"
+                        className="flex-1 flex sm:flex-none items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-[13px] text-white bg-primary-900 hover:bg-[#4c1d95] active:bg-[#3b0764] shadow-md transition-colors"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         Cài đặt

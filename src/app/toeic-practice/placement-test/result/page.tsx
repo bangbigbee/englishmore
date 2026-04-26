@@ -22,8 +22,8 @@ export default function PlacementTestResultPage() {
         'BEGINNER': {
             title: 'Lộ trình Xóa Mù (Mất gốc)',
             desc: 'Bạn cần xây dựng lại nền tảng từ vựng và ngữ pháp cơ bản nhất.',
-            color: 'text-purple-700',
-            bg: 'bg-purple-100',
+            color: 'text-primary-700',
+            bg: 'bg-primary-100',
         },
         'INTERMEDIATE': {
             title: 'Lộ trình Bứt Phá (Cơ bản)',
@@ -34,8 +34,8 @@ export default function PlacementTestResultPage() {
         'ADVANCED': {
             title: 'Lộ trình Master (800+)',
             desc: 'Năng lực xuất sắc! Bạn đã sẵn sàng để luyện giải đề cường độ cao và tối ưu thời gian.',
-            color: 'text-amber-700',
-            bg: 'bg-amber-100',
+            color: 'text-secondary-700',
+            bg: 'bg-secondary-100',
         }
     };
 
@@ -83,7 +83,7 @@ export default function PlacementTestResultPage() {
                     <div className="w-full flex flex-col gap-3">
                         <Link 
                             href="/toeic-practice/roadmap"
-                            className="w-full flex items-center justify-center gap-2 bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
+                            className="w-full flex items-center justify-center gap-2 bg-primary-900 hover:bg-primary-800 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
                         >
                             <span>Khám phá Lộ trình của bạn</span>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

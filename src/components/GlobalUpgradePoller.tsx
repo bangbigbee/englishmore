@@ -96,16 +96,16 @@ export default function GlobalUpgradePoller() {
           >
             <div className="mb-6 flex justify-center">
               {showSuccess.tier === 'PRO' ? (
-                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-secondary-100 text-secondary-700 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
                   <IconStar className="w-5 h-5" /> PRO PASS
                 </div>
               ) : showSuccess.tier === 'ULTRA' ? (
-                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-900/60 text-purple-300 rounded-full text-xs font-bold uppercase tracking-widest border border-purple-700/30 shadow-sm">
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-900/60 text-primary-300 rounded-full text-xs font-bold uppercase tracking-widest border border-primary-700/30 shadow-sm">
                   <IconZap className="w-5 h-5" /> ULTRA MASTERY
                 </div>
               ) : (
-                <div className="w-16 h-16 bg-[#581c87]/10 rounded-full flex items-center justify-center">
-                  <IconCheck className="w-8 h-8 text-[#581c87]" />
+                <div className="w-16 h-16 bg-primary-900/10 rounded-full flex items-center justify-center">
+                  <IconCheck className="w-8 h-8 text-primary-900" />
                 </div>
               )}
             </div>
@@ -121,7 +121,7 @@ export default function GlobalUpgradePoller() {
                 // Optionally reload the page for everything to take effect deeply
                 window.location.reload()
               }}
-              className="w-full font-bold rounded-xl py-3 mt-2 transition-colors bg-[#581c87] hover:bg-[#6b21a8] text-white shadow-lg shadow-[#581c87]/20"
+              className="w-full font-bold rounded-xl py-3 mt-2 transition-colors bg-primary-900 hover:bg-primary-800 text-white shadow-lg shadow-primary-900/20"
             >
               Bắt đầu Trải nghiệm
             </button>

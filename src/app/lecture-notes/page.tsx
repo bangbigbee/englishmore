@@ -101,13 +101,13 @@ export default function LectureNotesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#faf5ff] via-white to-[#ecfeff]">
+    <div className="min-h-screen bg-linear-to-b from-primary-50 via-white to-[#ecfeff]">
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
-              <span className="text-[#581c87]">Lecture</span>{' '}
-              <span className="text-amber-500">Slide</span>
+              <span className="text-primary-900">Lecture</span>{' '}
+              <span className="text-secondary-500">Slide</span>
             </h1>
             <p className="mt-2 text-sm sm:text-base text-slate-600">Lecture materials for each class session in your current course.</p>
           </div>
@@ -120,7 +120,7 @@ export default function LectureNotesPage() {
         {courses.length === 0 ? (
           <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
             <p className="text-slate-700">You do not have an active course yet, or no lecture notes have been uploaded.</p>
-            <Link href="/courses" className="mt-4 inline-flex rounded bg-[#581c87] px-4 py-2 font-semibold text-white hover:bg-[#6b21a8]">
+            <Link href="/courses" className="mt-4 inline-flex rounded bg-primary-900 px-4 py-2 font-semibold text-white hover:bg-primary-800">
               View courses
             </Link>
           </div>
@@ -136,17 +136,17 @@ export default function LectureNotesPage() {
                     return (
                       <article
                         key={sessionNumber}
-                        className={`rounded-2xl border p-4 transition ${hasLink ? 'border-purple-200 bg-purple-50/60 hover:shadow-md' : 'border-slate-200 bg-slate-50'}`}
+                        className={`rounded-2xl border p-4 transition ${hasLink ? 'border-primary-200 bg-primary-50/60 hover:shadow-md' : 'border-slate-200 bg-slate-50'}`}
                       >
                         <div className="mb-3 flex items-center justify-between">
                           <h3 className="text-base font-bold text-slate-900">Session {sessionNumber}</h3>
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${hasLink ? 'bg-purple-200 text-purple-900' : 'bg-slate-200 text-slate-600'}`}>
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${hasLink ? 'bg-primary-200 text-primary-900' : 'bg-slate-200 text-slate-600'}`}>
                             {hasLink ? 'Ready' : 'Not uploaded yet'}
                           </span>
                         </div>
 
                         {note?.description && (
-                          <p className="mb-3 text-sm text-slate-700 font-medium border-l-2 border-purple-400 pl-2">
+                          <p className="mb-3 text-sm text-slate-700 font-medium border-l-2 border-primary-400 pl-2">
                             {note.description}
                           </p>
                         )}
@@ -157,7 +157,7 @@ export default function LectureNotesPage() {
                               href={note?.driveLink || '#'}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex w-full items-center justify-center rounded-lg bg-[#581c87] px-3 py-2 text-sm font-bold text-white hover:bg-[#6b21a8]"
+                              className="inline-flex w-full items-center justify-center rounded-lg bg-primary-900 px-3 py-2 text-sm font-bold text-white hover:bg-primary-800"
                             >
                               Open Google Drive slide
                             </a>

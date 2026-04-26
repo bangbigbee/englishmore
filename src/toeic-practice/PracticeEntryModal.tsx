@@ -11,7 +11,7 @@ export default function PracticeEntryModal({ onClose }: { onClose: () => void })
         <h2 className="text-base font-bold mb-4 text-center">Đăng nhập lưu tiến độ học tập</h2>
         <div className="space-y-3">
           <button
-            className="w-full py-2 px-4 rounded bg-purple-900 text-white font-normal text-sm hover:bg-purple-800"
+            className="w-full py-2 px-4 rounded bg-primary-900 text-white font-normal text-sm hover:bg-primary-800"
             onClick={() => router.push("/login")}
           >
             Đăng nhập

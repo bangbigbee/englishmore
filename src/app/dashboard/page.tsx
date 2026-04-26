@@ -391,7 +391,7 @@ export default function Dashboard() {
         <div className="mb-6 flex flex-wrap items-center justify-end gap-3">
           <Link
             href="/"
-            className="inline-flex items-center rounded-md border border-[#581c87]/35 bg-white px-4 py-2 text-sm font-semibold text-[#581c87] transition hover:bg-[#581c87]/10"
+            className="inline-flex items-center rounded-md border border-primary-900/35 bg-white px-4 py-2 text-sm font-semibold text-primary-900 transition hover:bg-primary-900/10"
           >
             Back to home
           </Link>
@@ -408,7 +408,7 @@ export default function Dashboard() {
                   onClick={() => setActiveMemberTab('exercises')}
                   className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
                     activeMemberTab === 'exercises'
-                      ? '-translate-y-0.5 border border-[#581c87] bg-[#581c87] text-white shadow-md'
+                      ? '-translate-y-0.5 border border-primary-900 bg-primary-900 text-white shadow-md'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -419,7 +419,7 @@ export default function Dashboard() {
                   onClick={() => setActiveMemberTab('speak')}
                   className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
                     activeMemberTab === 'speak'
-                      ? '-translate-y-0.5 border border-[#581c87] bg-[#581c87] text-white shadow-md'
+                      ? '-translate-y-0.5 border border-primary-900 bg-primary-900 text-white shadow-md'
                       : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
                 >
@@ -428,10 +428,10 @@ export default function Dashboard() {
               </div>
 
               {activeMemberTab === 'speak' ? (
-                <div className="rounded-xl border border-[#581c87]/25 bg-[#581c87]/5 p-5">
+                <div className="rounded-xl border border-primary-900/25 bg-primary-900/5 p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <h3 className="inline-flex items-center gap-2 text-lg font-bold text-[#581c87]">
+                      <h3 className="inline-flex items-center gap-2 text-lg font-bold text-primary-900">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
                           <path d="M7 4a3 3 0 0 1 6 0v6a3 3 0 1 1-6 0V4Z" />
                           <path d="M5.5 9.643a.75.75 0 0 0-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-1.546A6.001 6.001 0 0 0 16 10v-.357a.75.75 0 0 0-1.5 0V10a4.5 4.5 0 0 1-9 0v-.357Z" />
@@ -442,7 +442,7 @@ export default function Dashboard() {
                     </div>
                     <Link
                       href="/speak-yourself"
-                      className="inline-flex items-center rounded-md bg-[#581c87] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#6b21a8]"
+                      className="inline-flex items-center rounded-md bg-primary-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-800"
                     >
                       Open Speak Yourself
                     </Link>
@@ -458,9 +458,9 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-6">
                   {sortedExercises.map((exercise) => (
-                    <div key={exercise.id} className="rounded-xl border border-[#581c87]/25 p-5">
+                    <div key={exercise.id} className="rounded-xl border border-primary-900/25 p-5">
                       {Boolean(startedExerciseAt[exercise.id]) && (
-                        <div className="mb-3 inline-flex rounded-full bg-purple-50 px-3 py-1 text-sm font-semibold text-purple-700">
+                        <div className="mb-3 inline-flex rounded-full bg-primary-50 px-3 py-1 text-sm font-semibold text-primary-700">
                           ⏱ Time spent: {formatDuration(getExerciseDurationSeconds(exercise.id))}
                         </div>
                       )}
@@ -468,8 +468,8 @@ export default function Dashboard() {
                       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-lg font-bold text-[#581c87]">{getExerciseTitle(exercise)}</h3>
-                            <span className="inline-flex rounded-full border border-[#581c87]/25 bg-[#581c87]/10 px-2.5 py-0.5 text-xs font-semibold text-[#581c87]">
+                            <h3 className="text-lg font-bold text-primary-900">{getExerciseTitle(exercise)}</h3>
+                            <span className="inline-flex rounded-full border border-primary-900/25 bg-primary-900/10 px-2.5 py-0.5 text-xs font-semibold text-primary-900">
                               {getExerciseTypeLabel(normalizeExerciseType(exercise.exerciseType))}
                             </span>
                           </div>
@@ -483,7 +483,7 @@ export default function Dashboard() {
                           </p>
                         </div>
                         {exercise.submission ? (
-                          <div className="rounded-lg bg-[#581c87]/10 px-4 py-3 text-sm text-[#581c87]">
+                          <div className="rounded-lg bg-primary-900/10 px-4 py-3 text-sm text-primary-900">
                             <p className="font-semibold">Latest score: {exercise.submission.score}/{exercise.submission.totalQuestions}</p>
                             {exercise.submission.durationSeconds !== null && (
                               <p>Time taken: {formatDuration(exercise.submission.durationSeconds)}</p>
@@ -491,14 +491,14 @@ export default function Dashboard() {
                             <p>Submitted at: {new Date(exercise.submission.submittedAt).toLocaleString('en-GB')}</p>
                           </div>
                         ) : (
-                          <span className="inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">Not submitted yet</span>
+                          <span className="inline-flex w-fit rounded-full bg-secondary-100 px-3 py-1 text-sm font-medium text-secondary-800">Not submitted yet</span>
                         )}
                       </div>
 
                       {!revealedExercises[exercise.id] ? (
-                        <div className="rounded-lg border border-purple-300 bg-purple-50 p-4">
+                        <div className="rounded-lg border border-primary-300 bg-primary-50 p-4">
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <p className="text-xs sm:text-sm text-purple-800 sm:pr-4">
+                            <p className="text-xs sm:text-sm text-primary-800 sm:pr-4">
                               {normalizeExerciseType(exercise.exerciseType) === 'multiple_choice'
                                 ? 'Nhấn bắt đầu để mở bài tập và bắt đầu tính giờ.'
                                 : 'Nhấn bắt đầu để mở bài nghe. Bộ đếm thời gian sẽ bắt đầu khi bạn nhấn ▶ phát audio.'}
@@ -512,7 +512,7 @@ export default function Dashboard() {
                                   revealExercise(exercise.id)
                                 }
                               }}
-                              className="inline-flex w-fit min-w-30 justify-center self-start rounded-lg bg-purple-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-purple-800 cursor-pointer disabled:opacity-50 sm:self-center"
+                              className="inline-flex w-fit min-w-30 justify-center self-start rounded-lg bg-primary-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-800 cursor-pointer disabled:opacity-50 sm:self-center"
                             >
                               {exercise.submission ? 'Retry' : 'Bắt đầu'}
                             </button>
@@ -521,8 +521,8 @@ export default function Dashboard() {
                       ) : (
                         <div className="space-y-4">
                           {(normalizeExerciseType(exercise.exerciseType) === 'question_response' || normalizeExerciseType(exercise.exerciseType) === 'conversation') && exercise.audioFileUrl && (
-                            <div className="rounded-xl border border-purple-200 bg-purple-50 p-4">
-                              <p className="mb-3 text-sm font-medium text-purple-900">
+                            <div className="rounded-xl border border-primary-200 bg-primary-50 p-4">
+                              <p className="mb-3 text-sm font-medium text-primary-900">
                                 {startedExerciseAt[exercise.id]
                                   ? 'Đang nghe — không thể tua hoặc dừng audio.'
                                   : 'Nhấn ▶ để nghe và bắt đầu tính giờ. Sau khi phát, không thể dừng hoặc tua lại.'}
@@ -568,12 +568,12 @@ export default function Dashboard() {
                           )}
 
                           {exercise.attachmentFileUrl && (
-                            <div className="rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 flex items-center justify-between gap-3">
-                              <p className="text-sm text-purple-800">Tài liệu từ vựng đính kèm</p>
+                            <div className="rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 flex items-center justify-between gap-3">
+                              <p className="text-sm text-primary-800">Tài liệu từ vựng đính kèm</p>
                               <a
                                 href={exercise.attachmentFileUrl}
                                 download
-                                className="inline-flex items-center gap-1 rounded bg-purple-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-purple-800"
+                                className="inline-flex items-center gap-1 rounded bg-primary-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-800"
                               >
                                 Tải về
                               </a>
@@ -605,8 +605,8 @@ export default function Dashboard() {
                                         onClick={() => updateExerciseAnswer(exercise.id, question.id, option.key)}
                                         className={`rounded-lg border px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm transition cursor-pointer ${
                                           isSelected
-                                            ? 'border-[#581c87] bg-[#581c87]/10 text-[#581c87]'
-                                            : 'border-gray-200 bg-white text-gray-700 hover:border-[#581c87]/40'
+                                            ? 'border-primary-900 bg-primary-900/10 text-primary-900'
+                                            : 'border-gray-200 bg-white text-gray-700 hover:border-primary-900/40'
                                         } disabled:opacity-50`}
                                       >
                                         <span className="mb-1 block font-semibold">{option.key}.</span>
@@ -628,7 +628,7 @@ export default function Dashboard() {
                             type="button"
                             onClick={() => openSubmitConfirmation(exercise)}
                             disabled={submittingExerciseId === exercise.id}
-                            className="w-full sm:w-auto self-start rounded-lg bg-[#581c87] px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-[#6b21a8] disabled:opacity-50 cursor-pointer"
+                            className="w-full sm:w-auto self-start rounded-lg bg-primary-900 px-4 py-2 sm:px-5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-primary-800 disabled:opacity-50 cursor-pointer"
                           >
                             {submittingExerciseId === exercise.id ? 'Submitting...' : exercise.submission ? 'Resubmit' : 'Submit'}
                           </button>
@@ -644,12 +644,12 @@ export default function Dashboard() {
           )}
 
           {session.user?.role === 'admin' && (
-            <div className="bg-[#581c87]/10 border border-[#581c87]/25 p-6 rounded shadow-md">
-              <h2 className="text-xl font-semibold mb-2 text-[#581c87]">Admin Access</h2>
+            <div className="bg-primary-900/10 border border-primary-900/25 p-6 rounded shadow-md">
+              <h2 className="text-xl font-semibold mb-2 text-primary-900">Admin Access</h2>
               <p className="text-gray-700 mb-4">You have administrator access. Open the management dashboard.</p>
               <Link
                 href="/admin"
-                className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] inline-block"
+                className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 inline-block"
               >
                 Open Admin Dashboard
               </Link>
@@ -674,11 +674,11 @@ export default function Dashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                className="relative w-full max-w-md rounded-lg border border-[#581c87]/40 bg-white p-6 shadow-lg"
+                className="relative w-full max-w-md rounded-lg border border-primary-900/40 bg-white p-6 shadow-lg"
               >
                 <h3 className="text-lg font-bold text-gray-900">Confirm Exercise Submission</h3>
                 <p className="mt-3 text-sm text-gray-700">
-                  You worked on {getExerciseTitle(submitConfirm.exercise)} for <span className="font-semibold text-[#581c87]">{formatDuration(submitConfirm.durationSeconds)}</span>.
+                  You worked on {getExerciseTitle(submitConfirm.exercise)} for <span className="font-semibold text-primary-900">{formatDuration(submitConfirm.durationSeconds)}</span>.
                   Do you want to submit this result?
                 </p>
                 <div className="mt-6 flex justify-end gap-3">
@@ -694,7 +694,7 @@ export default function Dashboard() {
                     type="button"
                     onClick={() => submitExercise(submitConfirm.exercise, submitConfirm.durationSeconds)}
                     disabled={submittingExerciseId === submitConfirm.exercise.id}
-                    className="rounded bg-[#581c87] px-4 py-2 text-white hover:bg-[#6b21a8] disabled:opacity-50"
+                    className="rounded bg-primary-900 px-4 py-2 text-white hover:bg-primary-800 disabled:opacity-50"
                   >
                     {submittingExerciseId === submitConfirm.exercise.id ? 'Sending...' : 'Send result'}
                   </button>
@@ -721,9 +721,9 @@ export default function Dashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                className="relative w-full max-w-md rounded-lg border border-amber-300 bg-white p-6 shadow-lg"
+                className="relative w-full max-w-md rounded-lg border border-secondary-300 bg-white p-6 shadow-lg"
               >
-                <h3 className="text-lg font-bold text-amber-800">Chưa nghe hết audio</h3>
+                <h3 className="text-lg font-bold text-secondary-800">Chưa nghe hết audio</h3>
                 <p className="mt-3 text-sm text-gray-700">
                   Bạn cần nghe hết file audio của <span className="font-semibold">{listenReminderExerciseTitle}</span> trước khi nhấn submit.
                 </p>
@@ -731,7 +731,7 @@ export default function Dashboard() {
                   <button
                     type="button"
                     onClick={() => setListenReminderExerciseTitle(null)}
-                    className="rounded bg-[#581c87] px-4 py-2 text-white hover:bg-[#6b21a8]"
+                    className="rounded bg-primary-900 px-4 py-2 text-white hover:bg-primary-800"
                   >
                     Tiếp tục nghe
                   </button>
@@ -760,7 +760,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                className="relative rounded border border-[#581c87]/40 bg-white shadow-xl p-6 max-w-md w-full"
+                className="relative rounded border border-primary-900/40 bg-white shadow-xl p-6 max-w-md w-full"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-2xl font-bold text-gray-900">Submit Assignment</h3>
@@ -777,7 +777,7 @@ export default function Dashboard() {
                 ) : (
                   <>
                     {homeworks.length === 0 ? (
-                      <p className="text-[#581c87] mb-4">Nice work. You have completed all of your homework.</p>
+                      <p className="text-primary-900 mb-4">Nice work. You have completed all of your homework.</p>
                     ) : (
                       <select
                         value={selectedHomeworkId}
@@ -804,7 +804,7 @@ export default function Dashboard() {
                       type="button"
                       onClick={submitHomework}
                       disabled={homeworks.length === 0}
-                      className="w-full bg-[#581c87] text-white p-2 rounded disabled:opacity-50"
+                      className="w-full bg-primary-900 text-white p-2 rounded disabled:opacity-50"
                     >
                       Submit
                     </button>

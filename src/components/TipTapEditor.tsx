@@ -73,7 +73,7 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
         disabled={!editor.can().chain().focus().toggleBold().run()}
-        className={`px-2 py-1 rounded font-bold ${editor.isActive('bold') ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded font-bold ${editor.isActive('bold') ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         B
       </button>
@@ -81,7 +81,7 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
         type="button"
         onClick={() => editor.chain().focus().toggleItalic().run()}
         disabled={!editor.can().chain().focus().toggleItalic().run()}
-        className={`px-2 py-1 rounded italic ${editor.isActive('italic') ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded italic ${editor.isActive('italic') ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         I
       </button>
@@ -89,7 +89,7 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
         type="button"
         onClick={() => editor.chain().focus().toggleStrike().run()}
         disabled={!editor.can().chain().focus().toggleStrike().run()}
-        className={`px-2 py-1 rounded line-through ${editor.isActive('strike') ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded line-through ${editor.isActive('strike') ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         S
       </button>
@@ -99,14 +99,14 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={`px-2 py-1 rounded font-bold ${editor.isActive('heading', { level: 2 }) ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded font-bold ${editor.isActive('heading', { level: 2 }) ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         H2
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={`px-2 py-1 rounded font-bold ${editor.isActive('heading', { level: 3 }) ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded font-bold ${editor.isActive('heading', { level: 3 }) ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         H3
       </button>
@@ -116,21 +116,21 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
       <button
         type="button"
         onClick={() => editor.chain().focus().setTextAlign('left').run()}
-        className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'left' }) ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'left' }) ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         Left
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().setTextAlign('center').run()}
-        className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'center' }) ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'center' }) ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         Center
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().setTextAlign('right').run()}
-        className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'right' }) ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'right' }) ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
       >
         Right
       </button>
@@ -140,7 +140,7 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={`px-2 py-1 rounded ${editor.isActive('bulletList') ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded ${editor.isActive('bulletList') ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
         title="Danh sách dấu chấm"
       >
         • List
@@ -148,7 +148,7 @@ const MenuBar = ({ editor, isFullscreen, toggleFullscreen }: { editor: Editor | 
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={`px-2 py-1 rounded ${editor.isActive('orderedList') ? 'bg-[#581c87] text-white' : 'hover:bg-gray-200'}`}
+        className={`px-2 py-1 rounded ${editor.isActive('orderedList') ? 'bg-primary-900 text-white' : 'hover:bg-gray-200'}`}
         title="Danh sách đánh số"
       >
         1. List

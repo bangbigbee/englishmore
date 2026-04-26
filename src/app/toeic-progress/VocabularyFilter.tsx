@@ -90,7 +90,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                             placeholder="Tìm từ vựng, tiếng Việt..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="block w-full pl-9 pr-3 py-2 sm:py-2.5 border border-slate-200 rounded-xl text-[13px] font-medium leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#581c87]/20 focus:border-[#581c87] sm:text-sm transition-all shadow-sm"
+                            className="block w-full pl-9 pr-3 py-2 sm:py-2.5 border border-slate-200 rounded-xl text-[13px] font-medium leading-5 bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-900/20 focus:border-primary-900 sm:text-sm transition-all shadow-sm"
                         />
                     </div>
 
@@ -99,10 +99,10 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                         <div className="relative">
                             <button 
                                 onClick={() => setIsTopicOpen(!isTopicOpen)}
-                                className="w-full flex items-center justify-between gap-2 px-3.5 py-2 sm:py-2.5 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-[#581c87]/30 hover:shadow-md transition-all group active:scale-[0.99]"
+                                className="w-full flex items-center justify-between gap-2 px-3.5 py-2 sm:py-2.5 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-primary-900/30 hover:shadow-md transition-all group active:scale-[0.99]"
                             >
                                 <div className="flex items-center gap-2 truncate">
-                                    <span className="w-5 h-5 rounded-[6px] bg-purple-50 text-[#581c87] flex items-center justify-center shrink-0">
+                                    <span className="w-5 h-5 rounded-[6px] bg-primary-50 text-primary-900 flex items-center justify-center shrink-0">
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                                     </span>
                                     <span className="text-[13px] font-bold text-slate-700 truncate w-full">{currentTopic === 'all' ? 'Tất cả chủ đề' : currentTopic}</span>
@@ -120,7 +120,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                                     >
                                         <button 
                                             onClick={() => { updateFilters('all', currentTag, searchQuery); setIsTopicOpen(false); }}
-                                            className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors border-l-4 ${currentTopic === 'all' ? 'bg-purple-50 border-[#ea980c] text-[#581c87]' : 'border-transparent text-slate-600 hover:bg-slate-50'}`}
+                                            className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors border-l-4 ${currentTopic === 'all' ? 'bg-primary-50 border-[#ea980c] text-primary-900' : 'border-transparent text-slate-600 hover:bg-slate-50'}`}
                                         >
                                             <span className="text-[13px] font-bold">Tất cả chủ đề</span>
                                         </button>
@@ -128,7 +128,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                                             <button 
                                                 key={t}
                                                 onClick={() => { updateFilters(t, currentTag, searchQuery); setIsTopicOpen(false); }}
-                                                className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors border-l-4 ${currentTopic === t ? 'bg-purple-50 border-[#ea980c] text-[#581c87]' : 'border-transparent text-slate-600 hover:bg-slate-50'}`}
+                                                className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors border-l-4 ${currentTopic === t ? 'bg-primary-50 border-[#ea980c] text-primary-900' : 'border-transparent text-slate-600 hover:bg-slate-50'}`}
                                             >
                                                 <span className="text-[13px] font-bold truncate">{t}</span>
                                             </button>
@@ -147,7 +147,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                         disabled={isResetting}
                         className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-600 rounded-xl transition-all font-bold text-[12px] sm:text-[13px] border border-slate-200/50 shadow-sm group whitespace-nowrap"
                     >
-                        <svg className={`w-4 h-4 text-[#581c87] transition-transform duration-500 ${isResetting ? 'animate-spin' : (isResetMenuOpen ? 'rotate-180' : 'group-hover:rotate-180')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        <svg className={`w-4 h-4 text-primary-900 transition-transform duration-500 ${isResetting ? 'animate-spin' : (isResetMenuOpen ? 'rotate-180' : 'group-hover:rotate-180')}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                         <span>{isResetting ? 'Đang xử lý...' : 'Làm mới lộ trình'}</span>
                     </button>
 
@@ -162,14 +162,14 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                                     className="absolute top-full right-0 mt-2 w-52 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 overflow-hidden py-2"
                                 >
                                     <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">Tùy chọn đặt lại</div>
-                                    <button onClick={() => handleReset('learned')} className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-purple-600 transition-colors flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-purple-500" /> Xóa "Đã thuộc"
+                                    <button onClick={() => handleReset('learned')} className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-primary-600 transition-colors flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-primary-500" /> Xóa "Đã thuộc"
                                     </button>
                                     <button onClick={() => handleReset('hard')} className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-rose-600 transition-colors flex items-center gap-2">
                                         <span className="w-2 h-2 rounded-full bg-rose-500" /> Xóa "Từ khó"
                                     </button>
-                                    <button onClick={() => handleReset('bookmarked')} className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-amber-500 transition-colors flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-amber-500" /> Xóa "Đã lưu"
+                                    <button onClick={() => handleReset('bookmarked')} className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-slate-600 hover:bg-slate-50 hover:text-secondary-500 transition-colors flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-secondary-500" /> Xóa "Đã lưu"
                                     </button>
                                     <div className="h-px bg-slate-100 my-1" />
                                     <button onClick={() => handleReset('all')} className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-rose-600 hover:bg-rose-50 transition-colors flex items-center gap-2">

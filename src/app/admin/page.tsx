@@ -410,24 +410,24 @@ const extractHomeworkOrder = (title: string) => {
 
 const HOMEWORK_SUBMISSION_GROUP_STYLES = [
   {
-    wrap: 'border-[#581c87]/25',
-    header: 'border-[#581c87]/20 bg-[#581c87]/5',
-    title: 'text-[#581c87]'
+    wrap: 'border-primary-900/25',
+    header: 'border-primary-900/20 bg-primary-900/5',
+    title: 'text-primary-900'
   },
   {
-    wrap: 'border-purple-300/70',
-    header: 'border-purple-200 bg-purple-50',
-    title: 'text-purple-800'
+    wrap: 'border-primary-300/70',
+    header: 'border-primary-200 bg-primary-50',
+    title: 'text-primary-800'
   },
   {
-    wrap: 'border-purple-300/70',
-    header: 'border-purple-200 bg-purple-50',
-    title: 'text-purple-800'
+    wrap: 'border-primary-300/70',
+    header: 'border-primary-200 bg-primary-50',
+    title: 'text-primary-800'
   },
   {
-    wrap: 'border-purple-300/70',
-    header: 'border-purple-200 bg-purple-50',
-    title: 'text-purple-800'
+    wrap: 'border-primary-300/70',
+    header: 'border-primary-200 bg-primary-50',
+    title: 'text-primary-800'
   }
 ] as const
 
@@ -3785,25 +3785,25 @@ export default function AdminDashboard() {
       <div className="w-full px-4 py-8 sm:px-6 lg:px-8 xl:px-12 flex flex-col md:flex-row gap-8 items-start">
         <aside className="w-full md:w-64 shrink-0 top-8 md:sticky z-10">
           <nav className="flex flex-col space-y-1 bg-white p-3 rounded-xl shadow-sm border border-slate-200">
-             <button onClick={() => setActiveSection('users')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'users' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>1. USERS</button>
-             <button onClick={() => setActiveSection('course')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'course' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>2. COURSE</button>
-             <button onClick={() => setActiveSection('homework')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'homework' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>3. HOMEWORK</button>
-             <button onClick={() => setActiveSection('exercise')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'exercise' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>4. EXERCISE</button>
-             <button onClick={() => setActiveSection('lectureNote')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'lectureNote' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>5. LECTURE</button>
-             <button onClick={() => setActiveSection('activityPoints')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'activityPoints' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>6. ACTIVITY POINTS</button>
-             <button onClick={() => setActiveSection('vocabulary')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'vocabulary' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>7. VOCABULARY</button>
-             <button onClick={() => setActiveSection('referral')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'referral' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>8. REFERRALS</button>
+             <button onClick={() => setActiveSection('users')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'users' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>1. USERS</button>
+             <button onClick={() => setActiveSection('course')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'course' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>2. COURSE</button>
+             <button onClick={() => setActiveSection('homework')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'homework' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>3. HOMEWORK</button>
+             <button onClick={() => setActiveSection('exercise')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'exercise' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>4. EXERCISE</button>
+             <button onClick={() => setActiveSection('lectureNote')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'lectureNote' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>5. LECTURE</button>
+             <button onClick={() => setActiveSection('activityPoints')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'activityPoints' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>6. ACTIVITY POINTS</button>
+             <button onClick={() => setActiveSection('vocabulary')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'vocabulary' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>7. VOCABULARY</button>
+             <button onClick={() => setActiveSection('referral')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'referral' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>8. REFERRALS</button>
              <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>9. TOEIC</button>
-             <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>10. NEWS</button>
-             <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>11. GALLERY</button>
-             <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>12. SUBSCRIPTION</button>
+             <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>10. NEWS</button>
+             <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>11. GALLERY</button>
+             <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>12. SUBSCRIPTION</button>
              <button onClick={() => setActiveSection('about_toeicmore')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'about_toeicmore' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>13. ABOUT TOEICMORE</button>
-             <button onClick={() => setActiveSection('masterConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'masterConfig' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>14. MASTER SETTINGS</button>
+             <button onClick={() => setActiveSection('masterConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'masterConfig' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>14. MASTER SETTINGS</button>
              <button onClick={() => setActiveSection('footer')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'footer' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>15. FOOTER</button>
              <button onClick={() => setActiveSection('floatingNoti')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'floatingNoti' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>16. FLOATING NOTI</button>
              <button onClick={() => setActiveSection('starConfig')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'starConfig' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>17. STAR CONFIG</button>
-             <button onClick={() => setActiveSection('placementTest')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'placementTest' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>18. PLACEMENT TEST</button>
-             <button onClick={() => setActiveSection('roadmap')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'roadmap' ? 'bg-[#581c87]/10 text-[#581c87]' : 'text-slate-600 hover:bg-slate-50'}`}>19. ROADMAP CONFIG</button>
+             <button onClick={() => setActiveSection('placementTest')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'placementTest' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>18. PLACEMENT TEST</button>
+             <button onClick={() => setActiveSection('roadmap')} className={`flex w-full text-left px-4 py-2.5 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'roadmap' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>19. ROADMAP CONFIG</button>
           </nav>
         </aside>
 
@@ -3851,8 +3851,8 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Daily Activity</h2>
           <p className="text-sm text-gray-600 mb-5">Track both daily check-ins and reflections in one place.</p>
 
-          <div className="mb-6 rounded-lg border border-[#581c87]/20 bg-[#581c87]/5 px-4 py-3">
-            <h3 className="text-lg font-bold text-[#581c87]">CHECK-IN</h3>
+          <div className="mb-6 rounded-lg border border-primary-900/20 bg-primary-900/5 px-4 py-3">
+            <h3 className="text-lg font-bold text-primary-900">CHECK-IN</h3>
             <p className="mt-1 text-sm text-gray-600">Monitor daily greeting responses to evaluate engagement and prepare medal rewards.</p>
           </div>
 
@@ -3860,7 +3860,7 @@ export default function AdminDashboard() {
             <select
               value={checkinCourseFilter || ''}
               onChange={(e) => setCheckinCourseFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">All active courses</option>
               {courses.map((course) => (
@@ -3868,17 +3868,17 @@ export default function AdminDashboard() {
               ))}
             </select>
 
-            <div className="rounded border border-[#581c87]/30 bg-[#581c87]/10 px-4 py-2 text-sm text-[#581c87]">
+            <div className="rounded border border-primary-900/30 bg-primary-900/10 px-4 py-2 text-sm text-primary-900">
               Total students: <span className="font-bold">{checkinSummary.totalStudents}</span>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="rounded border border-purple-300 bg-purple-50 px-4 py-2 text-sm text-purple-700">
+              <div className="rounded border border-primary-300 bg-primary-50 px-4 py-2 text-sm text-primary-700">
                 Check-ins today: <span className="font-bold">{checkinSummary.checkedInToday}</span>
               </div>
               <button
                 onClick={fetchCheckinData}
-                className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
+                className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800"
               >
                 {checkinLoading ? 'Loading...' : 'Refresh'}
               </button>
@@ -3905,11 +3905,11 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-700">{row.phone || 'Not updated yet'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{row.courseTitle}</td>
                     <td className="px-4 py-3 text-sm">
-                      <span className={`rounded px-2 py-1 text-xs font-semibold ${row.checkedInToday ? 'bg-purple-100 text-purple-700' : 'bg-amber-100 text-amber-700'}`}>
+                      <span className={`rounded px-2 py-1 text-xs font-semibold ${row.checkedInToday ? 'bg-primary-100 text-primary-700' : 'bg-secondary-100 text-secondary-700'}`}>
                         {row.checkedInToday ? 'Checked in' : 'Not checked in'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-[#581c87]">{row.checkinCount7d}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-primary-900">{row.checkinCount7d}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {row.latestUpdatedAt ? (
                         <>
@@ -3947,7 +3947,7 @@ export default function AdminDashboard() {
               <h2 className="text-2xl font-bold text-gray-900">Activity Points (AP)</h2>
               <p className="mt-1 text-sm text-gray-600">Configure AP for each activity and track member points.</p>
               {activityPointWarning && (
-                <p className="mt-2 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                <p className="mt-2 rounded border border-secondary-300 bg-secondary-50 px-3 py-2 text-sm text-secondary-800">
                   {activityPointWarning}
                 </p>
               )}
@@ -3955,21 +3955,21 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={fetchActivityPointData}
-              className="rounded bg-[#581c87] px-4 py-2 text-sm font-medium text-white hover:bg-[#6b21a8]"
+              className="rounded bg-primary-900 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800"
             >
               {activityPointLoading ? 'Loading...' : 'Refresh'}
             </button>
           </div>
 
-          <div className="mb-6 overflow-x-auto rounded-lg border border-[#581c87]/20">
+          <div className="mb-6 overflow-x-auto rounded-lg border border-primary-900/20">
             <table className="w-full border-collapse">
-              <thead className="bg-[#581c87]/8 border-b border-[#581c87]/20">
+              <thead className="bg-primary-900/8 border-b border-primary-900/20">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#581c87]">Activity</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#581c87]">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#581c87]">Points</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#581c87]">Active</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#581c87]">Action</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-primary-900">Activity</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-primary-900">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-primary-900">Points</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-primary-900">Active</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-primary-900">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -3990,7 +3990,7 @@ export default function AdminDashboard() {
                           )
                         }}
                         disabled={!isActivityPointDbReady}
-                        className="w-24 rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-[#581c87]"
+                        className="w-24 rounded border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-primary-900"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -4002,7 +4002,7 @@ export default function AdminDashboard() {
                             void updateActivityPointRule(rule, rule.points, event.target.checked)
                           }}
                           disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
-                          className="h-4 w-4 rounded border-gray-300 text-[#581c87] focus:ring-[#581c87]"
+                          className="h-4 w-4 rounded border-gray-300 text-primary-900 focus:ring-primary-900"
                         />
                         Active
                       </label>
@@ -4014,7 +4014,7 @@ export default function AdminDashboard() {
                           void updateActivityPointRule(rule, Math.max(0, rule.points), rule.isActive)
                         }}
                         disabled={savingActivityPointKey === rule.activityKey || !isActivityPointDbReady}
-                        className="rounded bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
+                        className="rounded bg-secondary-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-secondary-600 disabled:opacity-60"
                       >
                         {savingActivityPointKey === rule.activityKey ? 'Saving...' : 'Save AP'}
                       </button>
@@ -4035,7 +4035,7 @@ export default function AdminDashboard() {
             <select
               value={apCourseFilter || ''}
               onChange={(e) => setApCourseFilter(e.target.value)}
-              className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">Tất cả khóa học</option>
               {courses.map((course) => (
@@ -4058,7 +4058,7 @@ export default function AdminDashboard() {
                   <tr key={member.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900">{member.name || 'No name'}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{member.email}</td>
-                    <td className="px-4 py-3 text-sm font-bold text-amber-600">{member.activityPoints}</td>
+                    <td className="px-4 py-3 text-sm font-bold text-secondary-600">{member.activityPoints}</td>
                   </tr>
                 ))}
                 {!activityPointLoading && activityPointMembers.length === 0 && (
@@ -4080,7 +4080,7 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={fetchReferralData}
-              className="rounded bg-[#581c87] px-4 py-2 text-sm font-medium text-white hover:bg-[#6b21a8]"
+              className="rounded bg-primary-900 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800"
             >
               Refresh list
             </button>
@@ -4090,7 +4090,7 @@ export default function AdminDashboard() {
           <div className="flex gap-4 border-b border-gray-200 mb-6">
             <button
               onClick={() => setReferralSubtab('englishmore')}
-              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${referralSubtab === 'englishmore' ? 'border-[#581c87] text-[#581c87]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${referralSubtab === 'englishmore' ? 'border-primary-900 text-primary-900' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
             >
               EnglishMore Referrals
             </button>
@@ -4169,17 +4169,17 @@ export default function AdminDashboard() {
                   <p className="text-xs uppercase tracking-wide text-slate-500">Total referrals</p>
                   <p className="mt-2 text-3xl font-black text-slate-900">{referralSummary.totalReferrals}</p>
                 </div>
-                <div className="rounded-lg border border-slate-200 bg-purple-50 p-4">
-                  <p className="text-xs uppercase tracking-wide text-purple-500">Pending</p>
-                  <p className="mt-2 text-3xl font-black text-purple-900">{referralSummary.pending || 0}</p>
+                <div className="rounded-lg border border-slate-200 bg-primary-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-primary-500">Pending</p>
+                  <p className="mt-2 text-3xl font-black text-primary-900">{referralSummary.pending || 0}</p>
                 </div>
-                <div className="rounded-lg border border-slate-200 bg-purple-50 p-4">
-                  <p className="text-xs uppercase tracking-wide text-purple-500">Active</p>
-                  <p className="mt-2 text-3xl font-black text-purple-900">{referralSummary.active || 0}</p>
+                <div className="rounded-lg border border-slate-200 bg-primary-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-primary-500">Active</p>
+                  <p className="mt-2 text-3xl font-black text-primary-900">{referralSummary.active || 0}</p>
                 </div>
-                <div className="rounded-lg border border-slate-200 bg-amber-50 p-4">
-                  <p className="text-xs uppercase tracking-wide text-amber-500">Review Required</p>
-                  <p className="mt-2 text-3xl font-black text-amber-900">{referralSummary.review || 0}</p>
+                <div className="rounded-lg border border-slate-200 bg-secondary-50 p-4">
+                  <p className="text-xs uppercase tracking-wide text-secondary-500">Review Required</p>
+                  <p className="mt-2 text-3xl font-black text-secondary-900">{referralSummary.review || 0}</p>
                 </div>
               </div>
 
@@ -4210,9 +4210,9 @@ export default function AdminDashboard() {
                         <td className="px-4 py-3 text-sm text-gray-600">{new Date(row.createdAt).toLocaleDateString('en-GB')}</td>
                         <td className="px-4 py-3 text-sm">
                           <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                            row.toeicReferralStatus === 'ACTIVE' ? 'bg-purple-100 text-purple-800' :
-                            row.toeicReferralStatus === 'PENDING' ? 'bg-purple-100 text-purple-800' :
-                            row.toeicReferralStatus === 'REVIEW' ? 'bg-amber-100 text-amber-800' :
+                            row.toeicReferralStatus === 'ACTIVE' ? 'bg-primary-100 text-primary-800' :
+                            row.toeicReferralStatus === 'PENDING' ? 'bg-primary-100 text-primary-800' :
+                            row.toeicReferralStatus === 'REVIEW' ? 'bg-secondary-100 text-secondary-800' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {row.toeicReferralStatus}
@@ -4223,7 +4223,7 @@ export default function AdminDashboard() {
                             <>
                               <button
                                 onClick={() => handleToeicReferralAction(row.id, 'approve')}
-                                className="text-purple-600 hover:text-purple-900 font-medium"
+                                className="text-primary-600 hover:text-primary-900 font-medium"
                               >
                                 Approve
                               </button>
@@ -4277,7 +4277,7 @@ export default function AdminDashboard() {
                   setEditingToeicTopic(null)
                   setShowTopicModal(true)
                 }}
-                className="rounded bg-[#581c87] px-4 py-2 text-sm font-medium text-white hover:bg-[#6b21a8]"
+                className="rounded bg-primary-900 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800"
               >
                 + New Topic
               </button>
@@ -4288,19 +4288,19 @@ export default function AdminDashboard() {
           <div className="flex gap-4 border-b border-gray-200 mb-6">
             <button
               onClick={() => { setToeicPracticeSubtab('GRAMMAR'); fetchToeicTopics('GRAMMAR'); setSelectedToeicTopic(null) }}
-              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'GRAMMAR' ? 'border-[#581c87] text-[#581c87]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'GRAMMAR' ? 'border-primary-900 text-primary-900' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
             >
               Grammar
             </button>
             <button
               onClick={() => { setToeicPracticeSubtab('READING'); fetchToeicTopics('READING'); setSelectedToeicTopic(null) }}
-              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'READING' ? 'border-[#581c87] text-[#581c87]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'READING' ? 'border-primary-900 text-primary-900' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
             >
               Reading
             </button>
             <button
               onClick={() => { setToeicPracticeSubtab('LISTENING'); fetchToeicTopics('LISTENING'); setSelectedToeicTopic(null) }}
-              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'LISTENING' ? 'border-[#581c87] text-[#581c87]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              className={`pb-2 px-2 text-sm font-bold border-b-2 transition-colors ${toeicPracticeSubtab === 'LISTENING' ? 'border-primary-900 text-primary-900' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
             >
               Listening
             </button>
@@ -4325,7 +4325,7 @@ export default function AdminDashboard() {
                     }}
                     className={`p-3 rounded-lg border cursor-pointer transition-colors relative group ${
                       selectedToeicTopic?.id === topic.id
-                        ? 'bg-[#581c87]/10 border-[#581c87] ring-1 ring-[#581c87]'
+                        ? 'bg-primary-900/10 border-primary-900 ring-1 ring-primary-900'
                         : 'bg-white hover:bg-gray-100 border-gray-200'
                     }`}
                   >
@@ -4337,7 +4337,7 @@ export default function AdminDashboard() {
                           setEditingToeicTopic(topic)
                           setShowTopicModal(true)
                         }}
-                        className="p-1 text-purple-600 hover:bg-purple-50 rounded"
+                        className="p-1 text-primary-600 hover:bg-primary-50 rounded"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                       </button>
@@ -4353,7 +4353,7 @@ export default function AdminDashboard() {
                     <div className="text-xs text-gray-500 mt-1 truncate">{topic.subtitle || 'No subtitle'}</div>
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">/{topic.slug}</span>
-                      <span className="text-[10px] font-medium text-purple-700">{topic._count?.lessons || 0} lessons</span>
+                      <span className="text-[10px] font-medium text-primary-700">{topic._count?.lessons || 0} lessons</span>
                     </div>
                   </div>
                 ))}
@@ -4371,7 +4371,7 @@ export default function AdminDashboard() {
                       setEditingToeicLesson(null)
                       setShowLessonModal(true)
                     }}
-                    className="text-xs px-2 py-1 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
+                    className="text-xs px-2 py-1 bg-primary-900 text-white rounded hover:bg-primary-800"
                   >
                     + Add Lesson
                   </button>
@@ -4396,7 +4396,7 @@ export default function AdminDashboard() {
                       }}
                       className={`p-3 rounded-lg border cursor-pointer transition-colors relative group ${
                         selectedToeicLesson?.id === lesson.id
-                          ? 'bg-[#581c87]/10 border-[#581c87] ring-1 ring-[#581c87]'
+                          ? 'bg-primary-900/10 border-primary-900 ring-1 ring-primary-900'
                           : 'bg-white hover:bg-gray-100 border-gray-200'
                       }`}
                     >
@@ -4408,7 +4408,7 @@ export default function AdminDashboard() {
                             setEditingToeicLesson(lesson)
                             setShowLessonModal(true)
                           }}
-                          className="p-1 text-purple-600 hover:bg-purple-50 rounded"
+                          className="p-1 text-primary-600 hover:bg-primary-50 rounded"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </button>
@@ -4422,7 +4422,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex justify-between items-start pr-12">
                         <span className="text-[10px] font-bold text-gray-400 uppercase">Lesson {lesson.order}</span>
-                        <span className="text-[10px] px-1.5 py-0.5 bg-purple-50 text-purple-700 rounded border border-purple-100">
+                        <span className="text-[10px] px-1.5 py-0.5 bg-primary-50 text-primary-700 rounded border border-primary-100">
                           {lesson._count?.questions || 0} questions
                         </span>
                       </div>
@@ -4476,14 +4476,14 @@ export default function AdminDashboard() {
                       <button
                         onClick={() => toeicFileInputRef.current?.click()}
                         disabled={importingToeicDocx}
-                        className="text-xs px-2 py-1 bg-amber-600 text-white rounded hover:bg-amber-700 disabled:opacity-50"
+                        className="text-xs px-2 py-1 bg-secondary-600 text-white rounded hover:bg-secondary-700 disabled:opacity-50"
                       >
                         {importingToeicDocx ? 'Importing...' : 'Nhập Word'}
                       </button>
                       <button
                         onClick={() => toeicExcelInputRef.current?.click()}
                         disabled={importingToeicDocx}
-                        className="text-xs px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+                        className="text-xs px-2 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 disabled:opacity-50"
                       >
                         {importingToeicDocx ? 'Importing...' : 'Nhập Excel'}
                       </button>
@@ -4491,13 +4491,13 @@ export default function AdminDashboard() {
                       <div className="absolute right-0 bottom-full mb-2 w-64 p-3 bg-gray-900 text-white text-[10px] rounded-lg shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none">
                         <div className="font-bold border-b border-gray-700 pb-1 mb-1">Cấu trúc file .docx:</div>
                         <div className="space-y-1">
-                          <p><span className="text-amber-400">Câu 1:</span> [Nội dung câu hỏi]</p>
-                          <p><span className="text-amber-400">A.</span> [Lựa chọn A]</p>
-                          <p><span className="text-amber-400">C.</span> [Lựa chọn C]</p>
-                          <p><span className="text-amber-400">D.</span> [Lựa chọn D] (Tùy chọn)</p>
-                          <p><span className="text-amber-400">B.</span> [Lựa chọn B]</p>
-                          <p><span className="text-amber-400">Đáp án:</span> [A/B/C/D]</p>
-                          <p><span className="text-amber-400">Giải thích:</span> [Giải thích] (Tùy chọn)</p>
+                          <p><span className="text-secondary-400">Câu 1:</span> [Nội dung câu hỏi]</p>
+                          <p><span className="text-secondary-400">A.</span> [Lựa chọn A]</p>
+                          <p><span className="text-secondary-400">C.</span> [Lựa chọn C]</p>
+                          <p><span className="text-secondary-400">D.</span> [Lựa chọn D] (Tùy chọn)</p>
+                          <p><span className="text-secondary-400">B.</span> [Lựa chọn B]</p>
+                          <p><span className="text-secondary-400">Đáp án:</span> [A/B/C/D]</p>
+                          <p><span className="text-secondary-400">Giải thích:</span> [Giải thích] (Tùy chọn)</p>
                         </div>
                         <div className="absolute top-full right-4 transform translate-y-[-50%] rotate-45 w-2 h-2 bg-gray-900"></div>
                       </div>
@@ -4515,16 +4515,16 @@ export default function AdminDashboard() {
                       <button
                         onClick={() => bulkMediaInputRef.current?.click()}
                         disabled={uploadingBulkMedia}
-                        className="text-xs px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"
+                        className="text-xs px-2 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 disabled:opacity-50 flex items-center gap-1"
                       >
                         {uploadingBulkMedia ? 'Tải lên...' : 'Ghép File Nhanh'}
                       </button>
                       
                       {/* Hover Tips Media Tooltip */}
                       <div className="absolute right-0 bottom-full mb-2 w-56 p-3 bg-gray-900 text-white text-[10px] rounded-lg shadow-xl opacity-0 invisible group-hover/media-tooltip:opacity-100 group-hover/media-tooltip:visible transition-all z-50 pointer-events-none">
-                        <div className="font-bold text-purple-300 border-b border-gray-700 pb-1 mb-1">Quy tắc đặt tên File</div>
+                        <div className="font-bold text-primary-300 border-b border-gray-700 pb-1 mb-1">Quy tắc đặt tên File</div>
                         <div className="space-y-1 mt-1 font-medium">
-                          <p>Hệ thống sẽ dựa vào <span className="text-amber-400 uppercase tracking-widest font-bold">số ở đầu tên file</span> để tự động ghép vào câu hỏi.</p>
+                          <p>Hệ thống sẽ dựa vào <span className="text-secondary-400 uppercase tracking-widest font-bold">số ở đầu tên file</span> để tự động ghép vào câu hỏi.</p>
                           <div className="mt-2 text-slate-300">
                              Ví dụ cho Câu 1: <br/>
                              👉 1.png / cau-1.jpg<br/>
@@ -4559,7 +4559,7 @@ export default function AdminDashboard() {
                         setEditingToeicQuestion(null)
                         setShowQuestionModal(true)
                       }}
-                      className="text-xs px-2 py-1 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
+                      className="text-xs px-2 py-1 bg-primary-900 text-white rounded hover:bg-primary-800"
                     >
                       + Add Question
                     </button>
@@ -4601,7 +4601,7 @@ export default function AdminDashboard() {
                             setEditingToeicQuestion(q)
                             setShowQuestionModal(true)
                           }}
-                          className="p-1 text-purple-600 hover:bg-purple-50 rounded"
+                          className="p-1 text-primary-600 hover:bg-primary-50 rounded"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </button>
@@ -4628,16 +4628,16 @@ export default function AdminDashboard() {
                             return idx + 1;
                           })()}
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-100 font-bold">
+                        <span className="text-[10px] px-1.5 py-0.5 bg-secondary-50 text-secondary-700 rounded border border-secondary-100 font-bold">
                           Key: {q.correctOption}
                         </span>
                       </div>
                       <div className="text-sm font-semibold text-gray-900 pr-12">{q.question}</div>
                       <div className="mt-2 grid grid-cols-2 gap-1 text-[11px] text-gray-600">
-                        <div className={q.correctOption === 'A' ? 'font-bold text-purple-600' : ''}>A: {q.optionA}</div>
-                        <div className={q.correctOption === 'B' ? 'font-bold text-purple-600' : ''}>B: {q.optionB}</div>
-                        <div className={q.correctOption === 'C' ? 'font-bold text-purple-600' : ''}>C: {q.optionC}</div>
-                        {q.optionD && <div className={q.correctOption === 'D' ? 'font-bold text-purple-600' : ''}>D: {q.optionD}</div>}
+                        <div className={q.correctOption === 'A' ? 'font-bold text-primary-600' : ''}>A: {q.optionA}</div>
+                        <div className={q.correctOption === 'B' ? 'font-bold text-primary-600' : ''}>B: {q.optionB}</div>
+                        <div className={q.correctOption === 'C' ? 'font-bold text-primary-600' : ''}>C: {q.optionC}</div>
+                        {q.optionD && <div className={q.correctOption === 'D' ? 'font-bold text-primary-600' : ''}>D: {q.optionD}</div>}
                       </div>
                       {q.explanation && (
                         <div className="mt-2 pt-2 border-t text-[11px] text-gray-500 italic">
@@ -4645,8 +4645,8 @@ export default function AdminDashboard() {
                         </div>
                       )}
                       <div className="mt-2 flex gap-2">
-                        {q.tips && <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-100 text-amber-800 font-bold">💡 Mẹo TOEIC</span>}
-                        {q.vocabulary && <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-800 font-bold">📚 {Array.isArray(q.vocabulary) ? q.vocabulary.length : 1} Từ vựng</span>}
+                        {q.tips && <span className="px-1.5 py-0.5 rounded text-[10px] bg-secondary-100 text-secondary-800 font-bold">💡 Mẹo TOEIC</span>}
+                        {q.vocabulary && <span className="px-1.5 py-0.5 rounded text-[10px] bg-primary-100 text-primary-800 font-bold">📚 {Array.isArray(q.vocabulary) ? q.vocabulary.length : 1} Từ vựng</span>}
                       </div>
                     </div>
                   ))
@@ -4666,7 +4666,7 @@ export default function AdminDashboard() {
                 type="button"
                 onClick={() => void fetchToeicVocabTopics()}
                 disabled={toeicVocabTopicsLoading}
-                className="rounded-lg border border-amber-300 px-4 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-50"
+                className="rounded-lg border border-secondary-300 px-4 py-2 text-sm font-semibold text-secondary-700 hover:bg-secondary-50 disabled:opacity-50"
               >
                 {toeicVocabTopicsLoading ? 'Đang tải...' : '↻ Refresh'}
               </button>
@@ -4675,11 +4675,11 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-8">
 
               {/* ── TOP: Import form ── */}
-              <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-5 lg:p-6 shadow-sm">
+              <div className="rounded-xl border border-secondary-200 bg-secondary-50/40 p-5 lg:p-6 shadow-sm">
                 <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                   <div>
-                    <h4 className="text-[15px] font-bold text-amber-900">Import chủ đề mới</h4>
-                    <p className="mt-1 text-[12px] text-amber-800">Format: TOPIC | WORD | PHONETIC | POS | ENGLISH_DEFINITION | MEANING | EXAMPLE | DICH_NGHIA | COLLOCATIONS | SYNONYMS | ANTONYMS | TOEIC_TRAP</p>
+                    <h4 className="text-[15px] font-bold text-secondary-900">Import chủ đề mới</h4>
+                    <p className="mt-1 text-[12px] text-secondary-800">Format: TOPIC | WORD | PHONETIC | POS | ENGLISH_DEFINITION | MEANING | EXAMPLE | DICH_NGHIA | COLLOCATIONS | SYNONYMS | ANTONYMS | TOEIC_TRAP</p>
                   </div>
                   
                   <div className="flex flex-wrap items-center gap-3">
@@ -4688,9 +4688,9 @@ export default function AdminDashboard() {
                       value={toeicVocabImportDocsUrl}
                       onChange={(e) => setToeicVocabImportDocsUrl(e.target.value)}
                       placeholder="Dán link Google Docs..."
-                      className="w-[260px] rounded-md border border-amber-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-sm"
+                      className="w-[260px] rounded-md border border-secondary-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500 shadow-sm"
                     />
-                    <span className="text-sm font-medium text-amber-800/60">Hoặc</span>
+                    <span className="text-sm font-medium text-secondary-800/60">Hoặc</span>
                     <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 shadow-sm transition-colors">
                       {toeicVocabImportDocxFile ? 'Đã đính kèm DOCX' : 'Đính kèm DOCX'}
                       <input
@@ -4709,7 +4709,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => void importToeicVocabularyFromDocsOrFile()}
                       disabled={importingToeicVocabPreview}
-                      className="inline-flex items-center justify-center rounded-md bg-amber-600 px-5 py-2 text-sm font-bold text-white hover:bg-amber-700 disabled:opacity-50 shadow-sm transition-colors"
+                      className="inline-flex items-center justify-center rounded-md bg-secondary-600 px-5 py-2 text-sm font-bold text-white hover:bg-secondary-700 disabled:opacity-50 shadow-sm transition-colors"
                     >
                       {importingToeicVocabPreview ? 'Đang tải...' : 'Xem trước'}
                     </button>
@@ -4724,38 +4724,38 @@ export default function AdminDashboard() {
                   <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 shadow-sm">{toeicVocabError}</p>
                 )}
                 {toeicVocabSuccess && (
-                  <p className="mt-4 rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm font-semibold text-purple-700 shadow-sm">{toeicVocabSuccess}</p>
+                  <p className="mt-4 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-700 shadow-sm">{toeicVocabSuccess}</p>
                 )}
 
                 {/* Preview Table */}
                 {toeicVocabImportPreviewItems.length > 0 && (
-                  <div className="mt-6 rounded-xl border border-amber-300 bg-white p-4 shadow-sm">
+                  <div className="mt-6 rounded-xl border border-secondary-300 bg-white p-4 shadow-sm">
                     <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-[15px] font-bold text-amber-900 border-l-4 border-amber-500 pl-2">Xem trước dữ liệu</p>
-                      <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
+                      <p className="text-[15px] font-bold text-secondary-900 border-l-4 border-secondary-500 pl-2">Xem trước dữ liệu</p>
+                      <span className="rounded-full bg-secondary-100 px-3 py-1 text-xs font-bold text-secondary-800">
                         {toeicVocabImportPreviewItems.length} từ
                       </span>
                     </div>
 
-                    <div className="max-h-96 overflow-auto rounded-lg border border-amber-200 ring-1 ring-black ring-opacity-5">
+                    <div className="max-h-96 overflow-auto rounded-lg border border-secondary-200 ring-1 ring-black ring-opacity-5">
                       <table className="min-w-full border-collapse text-xs">
-                        <thead className="sticky top-0 bg-amber-100 border-b border-amber-200 z-10 shadow-sm">
+                        <thead className="sticky top-0 bg-secondary-100 border-b border-secondary-200 z-10 shadow-sm">
                           <tr>
                             {['Topic','Word','Phonetic','Meaning','English Def','Example','Dịch nghĩa','Collocations','Synonyms','Antonyms','TOEIC Trap',''].map((h) => (
-                              <th key={h} className="px-3 py-2.5 text-left font-semibold text-amber-900 uppercase whitespace-nowrap">{h}</th>
+                              <th key={h} className="px-3 py-2.5 text-left font-semibold text-secondary-900 uppercase whitespace-nowrap">{h}</th>
                             ))}
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-amber-100">
+                        <tbody className="divide-y divide-secondary-100">
                           {toeicVocabImportPreviewItems.map((item, index) => (
-                            <tr key={`toeic-prev-${index}`} className="align-top hover:bg-amber-50/50">
+                            <tr key={`toeic-prev-${index}`} className="align-top hover:bg-secondary-50/50">
                               {(['topic','word','phonetic','meaning','englishDefinition','example','exampleVi','collocations','synonyms','antonyms','toeicTrap'] as (keyof VocabularyImportDraftItem)[]).map((field) => (
                                 <td key={field} className="px-2 py-2">
                                   <input
                                     type="text"
                                     value={String(item[field] || '')}
                                     onChange={(e) => updateToeicVocabImportPreviewItem(index, field, e.target.value)}
-                                    className="w-28 rounded border border-amber-200 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-amber-400"
+                                    className="w-28 rounded border border-secondary-200 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-secondary-400"
                                   />
                                 </td>
                               ))}
@@ -4774,7 +4774,7 @@ export default function AdminDashboard() {
                       </table>
                     </div>
 
-                    <div className="mt-5 flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-amber-100">
+                    <div className="mt-5 flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-secondary-100">
                       <button
                         type="button"
                         onClick={() => setToeicVocabImportPreviewItems([])}
@@ -4786,7 +4786,7 @@ export default function AdminDashboard() {
                         type="button"
                         onClick={() => void confirmToeicVocabImportPreview()}
                         disabled={confirmingToeicVocabImport}
-                        className="rounded-lg bg-amber-600 px-6 py-2 text-sm font-bold text-white hover:bg-amber-700 disabled:opacity-50 shadow-sm transition-colors"
+                        className="rounded-lg bg-secondary-600 px-6 py-2 text-sm font-bold text-white hover:bg-secondary-700 disabled:opacity-50 shadow-sm transition-colors"
                       >
                         {confirmingToeicVocabImport ? 'Đang lưu...' : `Xác nhận & Lưu (${toeicVocabImportPreviewItems.length} từ)`}
                       </button>
@@ -4796,10 +4796,10 @@ export default function AdminDashboard() {
               </div>
 
               {/* ── BOTTOM: Topic list (Table format) ── */}
-              <div className="rounded-xl border border-amber-200 bg-white overflow-hidden shadow-sm flex flex-col">
-                <div className="flex items-center justify-between bg-amber-50 px-5 py-4 border-b border-amber-200">
-                  <span className="text-[15px] font-bold text-amber-900 border-l-4 border-amber-500 pl-2">Danh sách bộ từ vựng hiện tại</span>
-                  <span className="rounded-full bg-amber-200 px-3 py-1 text-xs font-bold text-amber-800">
+              <div className="rounded-xl border border-secondary-200 bg-white overflow-hidden shadow-sm flex flex-col">
+                <div className="flex items-center justify-between bg-secondary-50 px-5 py-4 border-b border-secondary-200">
+                  <span className="text-[15px] font-bold text-secondary-900 border-l-4 border-secondary-500 pl-2">Danh sách bộ từ vựng hiện tại</span>
+                  <span className="rounded-full bg-secondary-200 px-3 py-1 text-xs font-bold text-secondary-800">
                     {toeicVocabTopics.reduce((sum, t) => sum + t.wordCount, 0)} từ / {toeicVocabTopics.length} bộ
                   </span>
                 </div>
@@ -4813,17 +4813,17 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse text-sm">
-                      <thead className="bg-amber-50/40 text-amber-900">
+                      <thead className="bg-secondary-50/40 text-secondary-900">
                         <tr>
-                          <th className="px-6 py-3.5 text-left font-bold border-b border-amber-200 uppercase tracking-wider text-[11px]">Tên Bộ Từ Vựng (Chủ Đề)</th>
-                          <th className="px-6 py-3.5 text-left font-bold border-b border-amber-200 uppercase tracking-wider text-[11px] w-48">Gói (Package)</th>
-                          <th className="px-6 py-3.5 text-left font-bold border-b border-amber-200 uppercase tracking-wider text-[11px] w-36">Từ Vựng</th>
-                          <th className="px-6 py-3.5 text-right font-bold border-b border-amber-200 uppercase tracking-wider text-[11px] w-[350px]">Thao Tác</th>
+                          <th className="px-6 py-3.5 text-left font-bold border-b border-secondary-200 uppercase tracking-wider text-[11px]">Tên Bộ Từ Vựng (Chủ Đề)</th>
+                          <th className="px-6 py-3.5 text-left font-bold border-b border-secondary-200 uppercase tracking-wider text-[11px] w-48">Gói (Package)</th>
+                          <th className="px-6 py-3.5 text-left font-bold border-b border-secondary-200 uppercase tracking-wider text-[11px] w-36">Từ Vựng</th>
+                          <th className="px-6 py-3.5 text-right font-bold border-b border-secondary-200 uppercase tracking-wider text-[11px] w-[350px]">Thao Tác</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-amber-100">
+                      <tbody className="divide-y divide-secondary-100">
                         {toeicVocabTopics.map((t) => (
-                          <tr key={t.topic} className="hover:bg-amber-50/50 transition-colors group">
+                          <tr key={t.topic} className="hover:bg-secondary-50/50 transition-colors group">
                             <td className="px-6 py-4">
                               <span className="font-bold text-gray-900 text-[15px]">{t.topic}</span>
                             </td>
@@ -4831,7 +4831,7 @@ export default function AdminDashboard() {
                               <select 
                                 value={t.packageType || 'ADVANCED'}
                                 onChange={(e) => void updateTopicPackageType(t.topic, e.target.value)}
-                                className="border border-amber-200 rounded min-w-[140px] px-2 py-1.5 text-xs bg-white font-bold text-amber-900 focus:ring-amber-500 shadow-sm cursor-pointer outline-none hover:border-amber-400 transition-colors"
+                                className="border border-secondary-200 rounded min-w-[140px] px-2 py-1.5 text-xs bg-white font-bold text-secondary-900 focus:ring-secondary-500 shadow-sm cursor-pointer outline-none hover:border-secondary-400 transition-colors"
                               >
                                 <option value="BASIC">🌱 BASIC (Cơ bản)</option>
                                 <option value="ADVANCED">🔥 ADVANCED (Nâng cao)</option>
@@ -4839,7 +4839,7 @@ export default function AdminDashboard() {
                               </select>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="inline-flex items-center bg-amber-100/80 px-2.5 py-1 rounded-md text-xs font-bold text-amber-800 border border-amber-200/50 shadow-sm">
+                              <span className="inline-flex items-center bg-secondary-100/80 px-2.5 py-1 rounded-md text-xs font-bold text-secondary-800 border border-secondary-200/50 shadow-sm">
                                 {t.wordCount} từ
                               </span>
                             </td>
@@ -4848,25 +4848,25 @@ export default function AdminDashboard() {
                                 <button
                                   type="button"
                                   onClick={() => void renameToeicVocabTopic(t.topic)}
-                                  className="inline-flex items-center rounded border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-700 hover:bg-amber-50 transition-colors shadow-sm"
+                                  className="inline-flex items-center rounded border border-secondary-300 bg-white px-3 py-1.5 text-xs font-bold text-secondary-700 hover:bg-secondary-50 transition-colors shadow-sm"
                                 >
                                   Đổi tên
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setToeicVocabTopicEditing(t.topic)}
-                                  className="inline-flex items-center rounded border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-700 hover:bg-amber-50 transition-colors shadow-sm"
+                                  className="inline-flex items-center rounded border border-secondary-300 bg-white px-3 py-1.5 text-xs font-bold text-secondary-700 hover:bg-secondary-50 transition-colors shadow-sm"
                                 >
                                   Sửa từ vựng
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => void openTopicLocksConfig(t.topic)}
-                                  className="inline-flex items-center rounded border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-700 hover:bg-amber-50 transition-colors shadow-sm"
+                                  className="inline-flex items-center rounded border border-secondary-300 bg-white px-3 py-1.5 text-xs font-bold text-secondary-700 hover:bg-secondary-50 transition-colors shadow-sm"
                                 >
                                   Khóa
                                 </button>
-                                <div className="w-[1px] h-4 bg-amber-200 mx-1"></div>
+                                <div className="w-[1px] h-4 bg-secondary-200 mx-1"></div>
                                 <button
                                   type="button"
                                   onClick={() => void deleteToeicVocabTopic(t.topic)}
@@ -4907,7 +4907,7 @@ export default function AdminDashboard() {
                 <option key={course.id} value={course.id}>{course.title}</option>
               ))}
             </select>
-            <div className="rounded border border-[#581c87]/30 bg-[#581c87]/10 px-4 py-2 text-sm text-[#581c87]">
+            <div className="rounded border border-primary-900/30 bg-primary-900/10 px-4 py-2 text-sm text-primary-900">
               Total students: <span className="font-bold">{reflectSummary.totalStudents}</span>
             </div>
             <div className="flex items-center gap-3">
@@ -4969,9 +4969,9 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Student Vocabulary</h2>
           <p className="text-sm text-gray-600 mb-5">Prepare vocabulary by course to display on the homepage for students.</p>
 
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-[#581c87]/15 bg-[#581c87]/5 px-4 py-3">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded border border-primary-900/15 bg-primary-900/5 px-4 py-3">
             <div>
-              <p className="text-sm font-semibold text-[#581c87]">{editingVocabulary ? `Editing: ${editingVocabulary.word}` : 'Add a new vocabulary item'}</p>
+              <p className="text-sm font-semibold text-primary-900">{editingVocabulary ? `Editing: ${editingVocabulary.word}` : 'Add a new vocabulary item'}</p>
               <p className="text-xs text-gray-600">{editingVocabulary ? 'After editing, click update or cancel to return to add mode.' : 'Use this form to add new vocabulary for each course. Display order is auto-generated.'}</p>
             </div>
             {editingVocabulary && (
@@ -4989,7 +4989,7 @@ export default function AdminDashboard() {
             <select
               value={newVocabularyCourseId}
               onChange={(e) => setNewVocabularyCourseId(e.target.value)}
-              className="md:col-span-2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="md:col-span-2 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">Choose a course</option>
               {courses.map((course) => (
@@ -5001,40 +5001,40 @@ export default function AdminDashboard() {
               value={newVocabularyWord}
               onChange={(e) => setNewVocabularyWord(e.target.value)}
               placeholder="Word"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             <input
               type="text"
               value={newVocabularyPhonetic}
               onChange={(e) => setNewVocabularyPhonetic(e.target.value)}
               placeholder="Phonetic (optional)"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             <input
               type="text"
               value={newVocabularyEnglishDefinition}
               onChange={(e) => setNewVocabularyEnglishDefinition(e.target.value)}
               placeholder="English definition (optional)"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             <input
               type="text"
               value={newVocabularyMeaning}
               onChange={(e) => setNewVocabularyMeaning(e.target.value)}
               placeholder="Meaning"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             <input
               type="text"
               value={newVocabularyTopic}
               onChange={(e) => setNewVocabularyTopic(e.target.value)}
               placeholder="Topic (e.g. WarmUp)"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             <button
               onClick={editingVocabulary ? updateVocabulary : createVocabulary}
               disabled={savingVocabulary || Boolean(updatingVocabularyId)}
-              className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] disabled:opacity-50"
+              className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 disabled:opacity-50"
             >
               {savingVocabulary ? 'Saving...' : updatingVocabularyId ? 'Updating...' : editingVocabulary ? 'Update word' : 'Add word'}
             </button>
@@ -5045,11 +5045,11 @@ export default function AdminDashboard() {
             onChange={(e) => setNewVocabularyExample(e.target.value)}
             rows={2}
             placeholder="Usage example (optional)"
-            className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+            className="w-full mb-6 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
           />
 
-          <div className="mb-6 rounded border border-[#581c87]/25 bg-[#581c87]/5 px-4 py-4">
-            <p className="text-sm font-semibold text-[#581c87]">Import vocabulary from Google Docs or DOCX</p>
+          <div className="mb-6 rounded border border-primary-900/25 bg-primary-900/5 px-4 py-4">
+            <p className="text-sm font-semibold text-primary-900">Import vocabulary from Google Docs or DOCX</p>
             <p className="mt-1 text-xs text-gray-600">The imported words will be added to the course selected in the manual form above.</p>
             <p className="mt-1 text-xs text-gray-600">Format: TOPIC, WORD, PHONETIC, PART_OF_SPEECH, ENGLISH_DEFINITION, MEANING, EXAMPLE (WORD + MEANING required).</p>
 
@@ -5059,7 +5059,7 @@ export default function AdminDashboard() {
                 value={vocabularyImportDocsUrl}
                 onChange={(e) => setVocabularyImportDocsUrl(e.target.value)}
                 placeholder="Paste Google Docs link"
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
               />
 
               <label className="inline-flex cursor-pointer items-center justify-center rounded bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
@@ -5080,7 +5080,7 @@ export default function AdminDashboard() {
                 type="button"
                 onClick={importVocabularyFromDocsOrFile}
                 disabled={importingVocabularyFromFileOrDocs}
-                className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] disabled:opacity-50"
+                className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 disabled:opacity-50"
               >
                 {importingVocabularyFromFileOrDocs ? 'Loading preview...' : 'Preview import'}
               </button>
@@ -5091,37 +5091,37 @@ export default function AdminDashboard() {
             )}
 
             {vocabularyImportPreviewItems.length > 0 && (
-              <div className="mt-4 rounded border border-amber-300 bg-amber-50/60 p-3">
+              <div className="mt-4 rounded border border-secondary-300 bg-secondary-50/60 p-3">
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                  <p className="text-sm font-semibold text-amber-900">Review imported rows before saving</p>
-                  <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">
+                  <p className="text-sm font-semibold text-secondary-900">Review imported rows before saving</p>
+                  <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-secondary-800 ring-1 ring-secondary-200">
                     {vocabularyImportPreviewItems.length} rows
                   </span>
                 </div>
 
-                <div className="max-h-80 overflow-auto rounded border border-amber-200 bg-white">
+                <div className="max-h-80 overflow-auto rounded border border-secondary-200 bg-white">
                   <table className="w-full border-collapse">
-                    <thead className="sticky top-0 bg-amber-100/90 backdrop-blur border-b border-amber-200">
+                    <thead className="sticky top-0 bg-secondary-100/90 backdrop-blur border-b border-secondary-200">
                       <tr>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Word</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Phonetic</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">English definition</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Meaning</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Topic</th>
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Example</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-secondary-900 uppercase">Word</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-secondary-900 uppercase">Phonetic</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-secondary-900 uppercase">English definition</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-secondary-900 uppercase">Meaning</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-secondary-900 uppercase">Topic</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-secondary-900 uppercase">Example</th>
 
-                        <th className="px-3 py-2 text-left text-xs font-semibold text-amber-900 uppercase">Action</th>
+                        <th className="px-3 py-2 text-left text-xs font-semibold text-secondary-900 uppercase">Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {vocabularyImportPreviewItems.map((item, index) => (
-                        <tr key={`preview-${index}`} className="border-b border-amber-100 align-top">
+                        <tr key={`preview-${index}`} className="border-b border-secondary-100 align-top">
                           <td className="px-3 py-2">
                             <input
                               type="text"
                               value={item.word}
                               onChange={(event) => updateVocabularyImportPreviewItem(index, 'word', event.target.value)}
-                              className="w-36 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              className="w-36 rounded border border-secondary-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-400"
                               placeholder="Word"
                             />
                           </td>
@@ -5130,7 +5130,7 @@ export default function AdminDashboard() {
                               type="text"
                               value={item.phonetic}
                               onChange={(event) => updateVocabularyImportPreviewItem(index, 'phonetic', event.target.value)}
-                              className="w-36 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              className="w-36 rounded border border-secondary-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-400"
                               placeholder="Phonetic"
                             />
                           </td>
@@ -5139,7 +5139,7 @@ export default function AdminDashboard() {
                               type="text"
                               value={item.englishDefinition}
                               onChange={(event) => updateVocabularyImportPreviewItem(index, 'englishDefinition', event.target.value)}
-                              className="w-56 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              className="w-56 rounded border border-secondary-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-400"
                               placeholder="English definition"
                             />
                           </td>
@@ -5148,7 +5148,7 @@ export default function AdminDashboard() {
                               type="text"
                               value={item.meaning}
                               onChange={(event) => updateVocabularyImportPreviewItem(index, 'meaning', event.target.value)}
-                              className="w-48 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              className="w-48 rounded border border-secondary-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-400"
                               placeholder="Meaning"
                             />
                           </td>
@@ -5157,7 +5157,7 @@ export default function AdminDashboard() {
                               type="text"
                               value={item.topic}
                               onChange={(event) => updateVocabularyImportPreviewItem(index, 'topic', event.target.value)}
-                              className="w-36 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              className="w-36 rounded border border-secondary-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-400"
                               placeholder="Topic"
                             />
                           </td>
@@ -5166,7 +5166,7 @@ export default function AdminDashboard() {
                               type="text"
                               value={item.example}
                               onChange={(event) => updateVocabularyImportPreviewItem(index, 'example', event.target.value)}
-                              className="w-56 rounded border border-amber-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                              className="w-56 rounded border border-secondary-200 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-400"
                               placeholder="Example"
                             />
                           </td>
@@ -5198,7 +5198,7 @@ export default function AdminDashboard() {
                     type="button"
                     onClick={confirmVocabularyImportPreview}
                     disabled={confirmingVocabularyImport}
-                    className="rounded bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-50"
+                    className="rounded bg-secondary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-secondary-700 disabled:opacity-50"
                   >
                     {confirmingVocabularyImport ? 'Saving...' : 'Confirm and save'}
                   </button>
@@ -5207,14 +5207,14 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          <div className="mb-6 rounded border border-amber-200 bg-amber-50 px-4 py-4">
-            <p className="text-sm font-semibold text-amber-900">Import vocabulary between courses</p>
-            <p className="mt-1 text-xs text-amber-800">Copy all words from one course to another. Duplicate words (same word + meaning) will be skipped automatically.</p>
+          <div className="mb-6 rounded border border-secondary-200 bg-secondary-50 px-4 py-4">
+            <p className="text-sm font-semibold text-secondary-900">Import vocabulary between courses</p>
+            <p className="mt-1 text-xs text-secondary-800">Copy all words from one course to another. Duplicate words (same word + meaning) will be skipped automatically.</p>
             <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_auto]">
               <select
                 value={vocabularyImportSourceCourseId}
                 onChange={(e) => setVocabularyImportSourceCourseId(e.target.value)}
-                className="px-4 py-2 border border-amber-300 bg-white rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="px-4 py-2 border border-secondary-300 bg-white rounded focus:outline-none focus:ring-2 focus:ring-secondary-500"
               >
                 <option value="">Source course</option>
                 {courses.map((course) => (
@@ -5224,7 +5224,7 @@ export default function AdminDashboard() {
               <select
                 value={vocabularyImportTargetCourseId}
                 onChange={(e) => setVocabularyImportTargetCourseId(e.target.value)}
-                className="px-4 py-2 border border-amber-300 bg-white rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="px-4 py-2 border border-secondary-300 bg-white rounded focus:outline-none focus:ring-2 focus:ring-secondary-500"
               >
                 <option value="">Target course</option>
                 {courses.map((course) => (
@@ -5235,7 +5235,7 @@ export default function AdminDashboard() {
                 type="button"
                 onClick={importVocabularyBetweenCourses}
                 disabled={importingVocabulary}
-                className="px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 disabled:opacity-50"
+                className="px-4 py-2 bg-secondary-600 text-white rounded hover:bg-secondary-700 disabled:opacity-50"
               >
                 {importingVocabulary ? 'Importing...' : 'Import words'}
               </button>
@@ -5246,7 +5246,7 @@ export default function AdminDashboard() {
             <select
               value={vocabularyCourseFilter || ''}
               onChange={(e) => setVocabularyCourseFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">All courses</option>
               {courses.map((course) => (
@@ -5255,7 +5255,7 @@ export default function AdminDashboard() {
             </select>
             <button
               onClick={fetchVocabularyData}
-              className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
+              className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800"
             >
               Refresh list
             </button>
@@ -5280,7 +5280,7 @@ export default function AdminDashboard() {
                   <tr key={item.id} className="border-b hover:bg-gray-50 align-top">
                     <td className="px-4 py-3 text-sm text-gray-900">{item.course.title}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{item.displayOrder}</td>
-                    <td className="px-4 py-3 text-sm font-semibold text-[#581c87]">{item.word}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-primary-900">{item.word}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{item.phonetic || '-'}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">{item.englishDefinition || '-'}</td>
                     <td className="px-4 py-3 text-sm text-gray-900">{item.meaning}</td>
@@ -5288,7 +5288,7 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm">
                       <button
                         onClick={() => startEditVocabulary(item)}
-                        className="mr-3 text-[#581c87] hover:text-[#6b21a8] hover:underline"
+                        className="mr-3 text-primary-900 hover:text-primary-800 hover:underline"
                       >
                         Edit
                       </button>
@@ -5321,7 +5321,7 @@ export default function AdminDashboard() {
             <select
               value={newHomeworkCourseId}
               onChange={(e) => setNewHomeworkCourseId(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">Choose a course</option>
               {courses.map((course) => (
@@ -5333,7 +5333,7 @@ export default function AdminDashboard() {
               placeholder="Homework title"
               value={newHomeworkTitle}
               onChange={(e) => setNewHomeworkTitle(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             <input
               type="text"
@@ -5341,7 +5341,7 @@ export default function AdminDashboard() {
               onChange={(e) => setNewHomeworkDueDate(e.target.value)}
               placeholder="dd/mm/yyyy"
               inputMode="numeric"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
           </div>
 
@@ -5350,7 +5350,7 @@ export default function AdminDashboard() {
             value={newHomeworkDescription}
             onChange={(e) => setNewHomeworkDescription(e.target.value)}
             rows={3}
-            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+            className="w-full mb-3 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
           />
 
           <div className="mb-6">
@@ -5361,7 +5361,7 @@ export default function AdminDashboard() {
               type="file"
               accept="image/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
               onChange={(e) => setNewHomeworkAttachment(e.target.files?.[0] ?? null)}
-              className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#581c87]/10 file:text-[#581c87] file:font-medium hover:file:bg-[#581c87]/20"
+              className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-primary-900/10 file:text-primary-900 file:font-medium hover:file:bg-primary-900/20"
             />
             {newHomeworkAttachment && (
               <p className="mt-1 text-xs text-gray-500">Selected: {newHomeworkAttachment.name}</p>
@@ -5371,7 +5371,7 @@ export default function AdminDashboard() {
               <button
                 onClick={createHomework}
                 disabled={newHomeworkAttachmentUploading}
-                className="px-6 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] font-medium disabled:opacity-50"
+                className="px-6 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 font-medium disabled:opacity-50"
               >
                 {newHomeworkAttachmentUploading ? 'Uploading...' : 'Create homework'}
               </button>
@@ -5385,9 +5385,9 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-5">
               {groupedHomeworks.map((group) => (
-                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#581c87]/20">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#581c87]/20 bg-[#581c87]/5 px-4 py-3">
-                    <h3 className="text-base font-bold text-[#581c87]">{group.courseTitle}</h3>
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-primary-900/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary-900/20 bg-primary-900/5 px-4 py-3">
+                    <h3 className="text-base font-bold text-primary-900">{group.courseTitle}</h3>
                     <div className="flex items-center gap-2 text-xs font-semibold">
                       <span className="rounded-full bg-white px-2.5 py-1 text-slate-600 ring-1 ring-slate-200">
                         {group.items.length} homework
@@ -5423,7 +5423,7 @@ export default function AdminDashboard() {
                                   href={homework.attachmentUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-[#581c87] hover:underline"
+                                  className="inline-flex items-center gap-1 text-primary-900 hover:underline"
                                 >
                                   📎 Download
                                 </a>
@@ -5435,7 +5435,7 @@ export default function AdminDashboard() {
                             <td className="px-4 py-3 text-sm text-gray-900">{homework._count.submissions}</td>
                             <td className="px-4 py-3 text-sm">
                               <div className="flex items-center gap-3">
-                                <button onClick={() => openEditHomework(homework)} className="text-[#581c87] hover:underline">Edit</button>
+                                <button onClick={() => openEditHomework(homework)} className="text-primary-900 hover:underline">Edit</button>
                                 <button
                                   onClick={() => deleteHomework(homework)}
                                   disabled={deletingHomeworkId === homework.id}
@@ -5466,7 +5466,7 @@ export default function AdminDashboard() {
                 setHomeworkSubmissionCourseFilter(e.target.value)
                 setHomeworkSubmissionHomeworkFilter('')
               }}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">All courses</option>
               {courses.map((course) => (
@@ -5477,7 +5477,7 @@ export default function AdminDashboard() {
             <select
               value={homeworkSubmissionHomeworkFilter}
               onChange={(e) => setHomeworkSubmissionHomeworkFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">All homework</option>
               {homeworks
@@ -5489,7 +5489,7 @@ export default function AdminDashboard() {
 
             <button
               onClick={fetchHomeworkSubmissions}
-              className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
+              className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800"
             >
               Refresh submission list
             </button>
@@ -5520,7 +5520,7 @@ export default function AdminDashboard() {
                           {group.items.length} submissions
                         </span>
                         {pendingFeedbackCount > 0 && (
-                          <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-800">
+                          <span className="rounded-full bg-secondary-100 px-2.5 py-1 text-secondary-800">
                             {pendingFeedbackCount} waiting feedback
                           </span>
                         )}
@@ -5545,7 +5545,7 @@ export default function AdminDashboard() {
                             const isPendingTeacherFeedback = latestMessage?.senderRole === 'student'
 
                             return (
-                              <tr key={submission.id} className={`border-b hover:bg-gray-50 ${isPendingTeacherFeedback ? 'bg-amber-50/60 font-semibold' : ''}`}>
+                              <tr key={submission.id} className={`border-b hover:bg-gray-50 ${isPendingTeacherFeedback ? 'bg-secondary-50/60 font-semibold' : ''}`}>
                                 <td className="px-4 py-3 text-sm text-gray-900">
                                   <p className="font-semibold">{submission.user.name || submission.user.email}</p>
                                   <p className="text-xs text-gray-500">{submission.user.phone || 'Not updated yet'}</p>
@@ -5557,7 +5557,7 @@ export default function AdminDashboard() {
                                     <p className="max-w-xs truncate">
                                       <span className="font-semibold">{latestMessage.senderRole === 'teacher' ? 'Teacher: ' : 'Student: '}</span>
                                       <span>
-                                        <LinkifiedText text={latestMessage.content} preserveLineBreaks={false} linkClassName="font-medium text-purple-700 underline underline-offset-2 hover:text-purple-800" />
+                                        <LinkifiedText text={latestMessage.content} preserveLineBreaks={false} linkClassName="font-medium text-primary-700 underline underline-offset-2 hover:text-primary-800" />
                                       </span>
                                     </p>
                                   ) : (
@@ -5568,7 +5568,7 @@ export default function AdminDashboard() {
                                 <td className="px-4 py-3 text-sm">
                                   <button
                                     onClick={() => setHomeworkDetailSubmissionId(submission.id)}
-                                    className={`rounded px-3 py-1.5 text-xs font-semibold text-white transition-colors ${isPendingTeacherFeedback ? 'review-attention-button bg-amber-600 hover:bg-amber-700' : 'bg-[#581c87] hover:bg-[#6b21a8]'}`}
+                                    className={`rounded px-3 py-1.5 text-xs font-semibold text-white transition-colors ${isPendingTeacherFeedback ? 'review-attention-button bg-secondary-600 hover:bg-secondary-700' : 'bg-primary-900 hover:bg-primary-800'}`}
                                   >
                                     Review
                                   </button>
@@ -5591,7 +5591,7 @@ export default function AdminDashboard() {
 
             return (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-                <div className="w-full max-w-3xl rounded-2xl border border-[#581c87]/40 bg-white p-5 shadow-2xl">
+                <div className="w-full max-w-3xl rounded-2xl border border-primary-900/40 bg-white p-5 shadow-2xl">
                   <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
                     <div>
                       <h3 className="text-lg font-bold text-slate-900">{selectedSubmission.homework.title}</h3>
@@ -5616,20 +5616,20 @@ export default function AdminDashboard() {
                           <div
                             className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
                               message.senderRole === 'student'
-                                ? 'rounded-br-md bg-purple-100 text-purple-950'
-                                : 'rounded-bl-md border border-purple-200 bg-purple-50 text-purple-950'
+                                ? 'rounded-br-md bg-primary-100 text-primary-950'
+                                : 'rounded-bl-md border border-primary-200 bg-primary-50 text-primary-950'
                             }`}
                           >
                             <p
                               className={`text-[11px] font-bold uppercase tracking-wide ${
-                                message.senderRole === 'student' ? 'text-purple-700' : 'text-purple-700'
+                                message.senderRole === 'student' ? 'text-primary-700' : 'text-primary-700'
                               }`}
                             >
                               {message.senderRole === 'student' ? 'Student' : 'Teacher'}
                             </p>
                             <p
                               className={`mt-1 ${
-                                message.senderRole === 'student' ? 'text-purple-900' : 'text-purple-900'
+                                message.senderRole === 'student' ? 'text-primary-900' : 'text-primary-900'
                               }`}
                             >
                               <LinkifiedText text={message.content} />
@@ -5666,12 +5666,12 @@ export default function AdminDashboard() {
                       onChange={(e) => setHomeworkTeacherComments((current) => ({ ...current, [selectedSubmission.id]: e.target.value }))}
                       rows={3}
                       placeholder="Write your reply to the student..."
-                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-900"
                     />
                     <button
                       onClick={() => saveHomeworkTeacherComment(selectedSubmission.id)}
                       disabled={savingHomeworkCommentId === selectedSubmission.id}
-                      className="mt-3 block rounded bg-[#581c87] px-4 py-2 text-sm font-bold text-white hover:bg-[#6b21a8] disabled:opacity-50"
+                      className="mt-3 block rounded bg-primary-900 px-4 py-2 text-sm font-bold text-white hover:bg-primary-800 disabled:opacity-50"
                     >
                       {savingHomeworkCommentId === selectedSubmission.id ? 'Sending...' : 'Send reply'}
                     </button>
@@ -5685,7 +5685,7 @@ export default function AdminDashboard() {
         <div className={`bg-white rounded shadow p-6 mb-8 ${activeSection === 'exercise' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Exercises</h2>
 
-          <div className="mb-6 rounded border border-[#581c87]/20 bg-[#581c87]/5 px-4 py-3 text-sm text-[#581c87]">
+          <div className="mb-6 rounded border border-primary-900/20 bg-primary-900/5 px-4 py-3 text-sm text-primary-900">
             Total exercises created: <span className="font-semibold">{exercises.length}</span>
           </div>
 
@@ -5710,11 +5710,11 @@ export default function AdminDashboard() {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       <div className="flex flex-col gap-1">
                         <span>{getExerciseTypeLabel(exercise.exerciseType)}</span>
-                        {exercise.audioFileUrl && <span className="text-xs text-[#581c87]">Audio attached</span>}
+                        {exercise.audioFileUrl && <span className="text-xs text-primary-900">Audio attached</span>}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      <span className={`rounded px-2 py-1 text-xs font-semibold ${exercise.isDraft ? 'bg-amber-100 text-amber-800' : 'bg-[#581c87]/10 text-[#581c87]'}`}>
+                      <span className={`rounded px-2 py-1 text-xs font-semibold ${exercise.isDraft ? 'bg-secondary-100 text-secondary-800' : 'bg-primary-900/10 text-primary-900'}`}>
                         {exercise.isDraft ? 'Draft' : 'Published'}
                       </span>
                     </td>
@@ -5728,19 +5728,19 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => publishDraftExercise(exercise)}
                             disabled={savingExerciseId === exercise.id}
-                            className="text-purple-700 hover:underline disabled:opacity-50"
+                            className="text-primary-700 hover:underline disabled:opacity-50"
                           >
                             {savingExerciseId === exercise.id ? 'Publishing...' : 'Publish'}
                           </button>
                         )}
-                        <button onClick={() => openEditExercise(exercise)} className="text-[#581c87] hover:underline">Edit</button>
+                        <button onClick={() => openEditExercise(exercise)} className="text-primary-900 hover:underline">Edit</button>
                         <button
                           onClick={() => {
                             setQuickCopyExercise(exercise)
                             setQuickCopyTargetCourseId('')
                             setQuickCopyError('')
                           }}
-                          className="text-purple-600 hover:underline"
+                          className="text-primary-600 hover:underline"
                         >
                           Copy
                         </button>
@@ -5772,7 +5772,7 @@ export default function AdminDashboard() {
                 setExerciseError('')
                 setExerciseSuccess('')
               }}
-              className="px-6 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] font-medium"
+              className="px-6 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 font-medium"
             >
               {showExerciseBuilder ? 'Hide exercise form' : 'Create exercise'}
             </button>
@@ -5786,7 +5786,7 @@ export default function AdminDashboard() {
                 setImportTargetCourseId('')
                 setImportSelectedExerciseIds(new Set())
               }}
-              className="px-6 py-2 bg-white border border-[#581c87] text-[#581c87] rounded hover:bg-[#581c87]/5 font-medium"
+              className="px-6 py-2 bg-white border border-primary-900 text-primary-900 rounded hover:bg-primary-900/5 font-medium"
             >
               Import từ khóa học khác
             </button>
@@ -5812,7 +5812,7 @@ export default function AdminDashboard() {
                 <select
                   value={newExerciseCourseId}
                   onChange={(e) => setNewExerciseCourseId(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                  className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                 >
                   <option value="">Select course</option>
                   {courses.map((course) => (
@@ -5828,7 +5828,7 @@ export default function AdminDashboard() {
                   value={newExerciseTitle}
                   onChange={(e) => setNewExerciseTitle(e.target.value)}
                   placeholder="Example: Week 1 Pronunciation Drill"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                 />
               </div>
 
@@ -5838,7 +5838,7 @@ export default function AdminDashboard() {
                   <select
                     value={newExerciseType}
                     onChange={(e) => setNewExerciseType(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                    className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                   >
                     <option value="multiple_choice">Pronunciation</option>
                     <option value="question_response">Question-Response (Audio)</option>
@@ -5850,7 +5850,7 @@ export default function AdminDashboard() {
                   <label className="mb-2 block text-sm font-medium text-gray-700">Audio file</label>
                   <div className="rounded-xl border border-dashed border-gray-300 p-4">
                     <div className="flex flex-wrap items-center gap-3">
-                      <label className="inline-flex cursor-pointer items-center rounded bg-[#581c87] px-4 py-2 text-sm font-medium text-white hover:bg-[#6b21a8]">
+                      <label className="inline-flex cursor-pointer items-center rounded bg-primary-900 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800">
                         {newExerciseAudioUploading ? 'Uploading audio...' : 'Upload audio'}
                         <input
                           type="file"
@@ -5896,7 +5896,7 @@ export default function AdminDashboard() {
                   <label className="mb-2 block text-sm font-medium text-gray-700">Attachment file <span className="text-gray-400 font-normal">(PPT, DOCX, PDF — vocabulary handout)</span></label>
                   <div className="rounded-xl border border-dashed border-gray-300 p-4">
                     <div className="flex flex-wrap items-center gap-3">
-                      <label className="inline-flex cursor-pointer items-center rounded bg-purple-700 px-4 py-2 text-sm font-medium text-white hover:bg-purple-800">
+                      <label className="inline-flex cursor-pointer items-center rounded bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800">
                         {newExerciseAttachUploading ? 'Uploading...' : 'Upload file'}
                         <input
                           type="file"
@@ -5929,7 +5929,7 @@ export default function AdminDashboard() {
                       {newExerciseAttachFileUrl ? newExerciseAttachFileName || 'File uploaded' : 'Tùy chọn — học viên có thể tải về để xem từ vựng.'}
                     </p>
                     {newExerciseAttachFileUrl && (
-                      <a href={newExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-purple-700 hover:underline">
+                      <a href={newExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-primary-700 hover:underline">
                         {newExerciseAttachFileName || 'Download attachment'}
                       </a>
                     )}
@@ -5941,7 +5941,7 @@ export default function AdminDashboard() {
                 <div className="mb-6">
                   <label className="mb-2 block text-sm font-medium text-gray-700">Import conversation from slide</label>
                   <div className="flex flex-wrap items-center gap-2">
-                    <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800 disabled:opacity-50">
+                    <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-primary-700 text-white rounded hover:bg-primary-800 disabled:opacity-50">
                       {importingPptx ? 'Importing PPTX...' : 'Import Slide (PPTX)'}
                       <input
                         type="file"
@@ -5968,7 +5968,7 @@ export default function AdminDashboard() {
                   onChange={(e) => setNewExerciseDescription(e.target.value)}
                   rows={3}
                   placeholder="Example: Practice the /th/ sound and compare similar sounds"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                 />
               </div>
 
@@ -5981,17 +5981,17 @@ export default function AdminDashboard() {
                       value={newExerciseSourceFormUrl}
                       onChange={(e) => setNewExerciseSourceFormUrl(e.target.value)}
                       placeholder="Paste Google Docs link"
-                      className="w-80 max-w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="w-80 max-w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                     />
                     <button
                       type="button"
                       onClick={importFromGoogleDocs}
                       disabled={importingForm}
-                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+                      className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 disabled:opacity-50"
                     >
                       {importingForm ? 'Importing...' : 'Import from Google Docs'}
                     </button>
-                    <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] disabled:opacity-50">
+                    <label className="inline-flex cursor-pointer items-center px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 disabled:opacity-50">
                       {importingDocx ? 'Importing DOCX...' : 'Import DOCX'}
                       <input
                         type="file"
@@ -6020,35 +6020,35 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 {newExerciseQuestions.map((question, index) => (
                   <div key={`new-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
-                    <h3 className="font-bold text-[#581c87] mb-3">Question {index + 1}</h3>
+                    <h3 className="font-bold text-primary-900 mb-3">Question {index + 1}</h3>
                     <div className="space-y-3">
                       <textarea
                         value={question.question}
                         onChange={(e) => updateNewExerciseQuestion(index, 'question', e.target.value)}
                         rows={2}
                         placeholder={newExerciseType === 'question_response' ? 'Question text (optional)' : 'Enter the question'}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                       <input
                         type="text"
                         value={question.optionA}
                         onChange={(e) => updateNewExerciseQuestion(index, 'optionA', e.target.value)}
                         placeholder="Answer A"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                       <input
                         type="text"
                         value={question.optionB}
                         onChange={(e) => updateNewExerciseQuestion(index, 'optionB', e.target.value)}
                         placeholder="Answer B"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                       <input
                         type="text"
                         value={question.optionC}
                         onChange={(e) => updateNewExerciseQuestion(index, 'optionC', e.target.value)}
                         placeholder="Answer C"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                       {newExerciseType !== 'question_response' && (
                         <input
@@ -6056,13 +6056,13 @@ export default function AdminDashboard() {
                           value={question.optionD}
                           onChange={(e) => updateNewExerciseQuestion(index, 'optionD', e.target.value)}
                           placeholder={newExerciseType === 'conversation' ? 'Answer D (bắt buộc)' : 'Answer D (optional)'}
-                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                         />
                       )}
                       <select
                         value={question.correctOption}
                         onChange={(e) => updateNewExerciseQuestion(index, 'correctOption', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       >
                         <option value="A">Correct answer: A</option>
                         <option value="B">Correct answer: B</option>
@@ -6079,7 +6079,7 @@ export default function AdminDashboard() {
               <button
                 onClick={() => createExercise(true)}
                 disabled={savingExerciseDraft || publishingExercise}
-                className="mt-6 mr-3 px-6 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 font-medium disabled:opacity-50"
+                className="mt-6 mr-3 px-6 py-2 bg-secondary-600 text-white rounded hover:bg-secondary-700 font-medium disabled:opacity-50"
               >
                 {savingExerciseDraft ? 'Saving draft...' : 'Save draft'}
               </button>
@@ -6087,7 +6087,7 @@ export default function AdminDashboard() {
               <button
                 onClick={() => createExercise(false)}
                 disabled={savingExerciseDraft || publishingExercise}
-                className="mt-6 px-6 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] font-medium disabled:opacity-50"
+                className="mt-6 px-6 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 font-medium disabled:opacity-50"
               >
                 {publishingExercise ? 'Publishing...' : 'Publish exercise'}
               </button>
@@ -6105,9 +6105,9 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-4">
               {groupedSpeakYourselfResults.map((group) => (
-                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#581c87]/20">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#581c87]/20 bg-[#581c87]/5 px-4 py-3">
-                    <h4 className="text-sm font-bold text-[#581c87]">{group.courseTitle}</h4>
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-primary-900/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary-900/20 bg-primary-900/5 px-4 py-3">
+                    <h4 className="text-sm font-bold text-primary-900">{group.courseTitle}</h4>
                     <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
                       {group.items.length} attempts
                     </span>
@@ -6130,7 +6130,7 @@ export default function AdminDashboard() {
                             <td className="px-4 py-3 text-sm text-gray-900">{attempt.user.name || attempt.user.email}</td>
                             <td className="px-4 py-3 text-sm font-semibold text-gray-900">{attempt.accuracy}%</td>
                             <td className="px-4 py-3 text-sm">
-                              <span className={`rounded px-2 py-1 text-xs font-semibold ${attempt.passed ? 'bg-purple-100 text-purple-700' : 'bg-amber-100 text-amber-700'}`}>
+                              <span className={`rounded px-2 py-1 text-xs font-semibold ${attempt.passed ? 'bg-primary-100 text-primary-700' : 'bg-secondary-100 text-secondary-700'}`}>
                                 {attempt.passed ? 'Pass' : 'Retry'}
                               </span>
                             </td>
@@ -6159,9 +6159,9 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-5">
               {groupedExerciseResults.map((group) => (
-                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#581c87]/20">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#581c87]/20 bg-[#581c87]/5 px-4 py-3">
-                    <h3 className="text-base font-bold text-[#581c87]">{group.courseTitle}</h3>
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-primary-900/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary-900/20 bg-primary-900/5 px-4 py-3">
+                    <h3 className="text-base font-bold text-primary-900">{group.courseTitle}</h3>
                     <span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
                       {group.items.length} submissions
                     </span>
@@ -6184,11 +6184,11 @@ export default function AdminDashboard() {
                           <tr key={result.id} className="border-b hover:bg-gray-50">
                             <td className="px-4 py-3 text-sm text-gray-900">{result.user.name || result.user.email}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{result.exerciseTitle}</td>
-                            <td className="px-4 py-3 text-sm font-semibold text-[#581c87]">{result.score}/{result.totalQuestions}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-primary-900">{result.score}/{result.totalQuestions}</td>
                             <td className="px-4 py-3 text-sm text-gray-700">{formatDuration(result.durationSeconds)}</td>
                             <td className="px-4 py-3 text-sm text-gray-600">{new Date(result.submittedAt).toLocaleString('vi-VN')}</td>
                             <td className="px-4 py-3 text-sm">
-                              <button onClick={() => setSelectedExerciseResult(result)} className="text-[#581c87] hover:underline">View submission</button>
+                              <button onClick={() => setSelectedExerciseResult(result)} className="text-primary-900 hover:underline">View submission</button>
                             </td>
                           </tr>
                         ))}
@@ -6212,7 +6212,7 @@ export default function AdminDashboard() {
                 setLectureSuccess('')
                 setLectureError('')
               }}
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             >
               <option value="">Select course</option>
               {courses.map((course) => (
@@ -6227,7 +6227,7 @@ export default function AdminDashboard() {
               value={newLectureSession}
               onChange={(e) => setNewLectureSession(e.target.value)}
               placeholder="Session number (1-30)"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
 
             <input
@@ -6235,7 +6235,7 @@ export default function AdminDashboard() {
               value={newLectureDriveLink}
               onChange={(e) => setNewLectureDriveLink(e.target.value)}
               placeholder="Link Google Drive"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
 
             <input
@@ -6243,12 +6243,12 @@ export default function AdminDashboard() {
               value={newLectureDescription}
               onChange={(e) => setNewLectureDescription(e.target.value)}
               placeholder="Mô tả học liệu (nếu có)"
-              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
 
             <button
               onClick={createLectureNote}
-              className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
+              className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800"
             >
               Add note
             </button>
@@ -6276,7 +6276,7 @@ export default function AdminDashboard() {
                           max={30}
                           value={editLectureSession}
                           onChange={(e) => setEditLectureSession(e.target.value)}
-                          className="w-24 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                          className="w-24 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           placeholder="1-30"
                         />
                       ) : (
@@ -6289,7 +6289,7 @@ export default function AdminDashboard() {
                           type="text"
                           value={editLectureDescription}
                           onChange={(e) => setEditLectureDescription(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           placeholder="Mô tả"
                         />
                       ) : (
@@ -6304,11 +6304,11 @@ export default function AdminDashboard() {
                           type="url"
                           value={editLectureDriveLink}
                           onChange={(e) => setEditLectureDriveLink(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           placeholder="Dán link Google Drive"
                         />
                       ) : note.driveLink ? (
-                        <a href={note.driveLink} target="_blank" rel="noreferrer" className="text-[#581c87] hover:underline break-all">
+                        <a href={note.driveLink} target="_blank" rel="noreferrer" className="text-primary-900 hover:underline break-all">
                           {note.driveLink}
                         </a>
                       ) : (
@@ -6322,7 +6322,7 @@ export default function AdminDashboard() {
                           <button
                             onClick={updateLectureNote}
                             disabled={savingLectureId === note.id}
-                            className="px-3 py-1.5 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] disabled:opacity-50"
+                            className="px-3 py-1.5 bg-primary-900 text-white rounded hover:bg-primary-800 disabled:opacity-50"
                           >
                             Save
                           </button>
@@ -6346,7 +6346,7 @@ export default function AdminDashboard() {
                               setEditLectureDriveLink(note.driveLink || '')
                               setEditLectureDescription(note.description || '')
                             }}
-                            className="px-3 py-1.5 bg-purple-600 text-white rounded hover:bg-purple-700"
+                            className="px-3 py-1.5 bg-primary-600 text-white rounded hover:bg-primary-700"
                           >
                             Edit
                           </button>
@@ -6390,7 +6390,7 @@ export default function AdminDashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                className="relative rounded border border-[#581c87]/40 bg-white shadow-xl p-6 max-w-sm"
+                className="relative rounded border border-primary-900/40 bg-white shadow-xl p-6 max-w-sm"
               >
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm student deletion</h3>
                 <p className="text-gray-700 mb-6">
@@ -6420,7 +6420,7 @@ export default function AdminDashboard() {
         {/* Course Management Section */}
         <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Manage <span className="text-amber-600">Courses</span>
+            Manage <span className="text-secondary-600">Courses</span>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-4 items-start">
@@ -6430,7 +6430,7 @@ export default function AdminDashboard() {
                 type="text"
                 value={newCourseTitle}
                 onChange={(e) => setNewCourseTitle(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
               />
             </label>
             <label className="flex flex-col gap-2">
@@ -6439,7 +6439,7 @@ export default function AdminDashboard() {
                 value={newCourseShortDescription}
                 onChange={(e) => setNewCourseShortDescription(e.target.value)}
                 rows={2}
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
               />
             </label>
             <label className="flex flex-col gap-2">
@@ -6448,13 +6448,13 @@ export default function AdminDashboard() {
                 value={newCourseDescription}
                 onChange={(e) => setNewCourseDescription(e.target.value)}
                 rows={4}
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
               />
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setNewCourseDescription(COURSE_DESCRIPTION_TEMPLATE)}
-                  className="rounded border border-[#581c87]/30 bg-[#581c87]/5 px-3 py-1.5 text-xs font-medium text-[#581c87] hover:bg-[#581c87]/10"
+                  className="rounded border border-primary-900/30 bg-primary-900/5 px-3 py-1.5 text-xs font-medium text-primary-900 hover:bg-primary-900/10"
                 >
                   Chèn mẫu 9 mục
                 </button>
@@ -6474,7 +6474,7 @@ export default function AdminDashboard() {
                 value={newDeadline}
                 onChange={(e) => setNewDeadline(e.target.value)}
                 inputMode="numeric"
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
               />
             </label>
             <label className="flex flex-col gap-2">
@@ -6485,7 +6485,7 @@ export default function AdminDashboard() {
                 max={10}
                 value={newCourseMaxStudents}
                 onChange={(e) => setNewCourseMaxStudents(Math.min(10, Math.max(1, Number(e.target.value) || 1)))}
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
               />
               <span className="text-xs text-gray-500">Each course supports up to 10 students.</span>
             </label>
@@ -6497,7 +6497,7 @@ export default function AdminDashboard() {
                 step={1000}
                 value={newCoursePrice}
                 onChange={(e) => setNewCoursePrice(Math.max(0, Math.round(Number(e.target.value) || 0)))}
-                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                className="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
               />
               <span className="text-xs text-gray-500">Ví dụ: 4200000</span>
             </label>
@@ -6509,7 +6509,7 @@ export default function AdminDashboard() {
                 max={100}
                 value={newCourseSebDiscount}
                 onChange={(e) => setNewCourseSebDiscount(Number(e.target.value))}
-                className="px-4 py-2 border border-purple-200 bg-purple-50/30 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-4 py-2 border border-primary-200 bg-primary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </label>
             <label className="flex flex-col gap-2">
@@ -6519,7 +6519,7 @@ export default function AdminDashboard() {
                 min={0}
                 value={newCourseSebDays}
                 onChange={(e) => setNewCourseSebDays(Number(e.target.value))}
-                className="px-4 py-2 border border-purple-200 bg-purple-50/30 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-4 py-2 border border-primary-200 bg-primary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </label>
             <label className="flex flex-col gap-2">
@@ -6530,7 +6530,7 @@ export default function AdminDashboard() {
                 max={100}
                 value={newCourseEbDiscount}
                 onChange={(e) => setNewCourseEbDiscount(Number(e.target.value))}
-                className="px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="px-4 py-2 border border-secondary-200 bg-secondary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-secondary-500"
               />
             </label>
             <label className="flex flex-col gap-2">
@@ -6540,7 +6540,7 @@ export default function AdminDashboard() {
                 min={0}
                 value={newCourseEbDays}
                 onChange={(e) => setNewCourseEbDays(Number(e.target.value))}
-                className="px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="px-4 py-2 border border-secondary-200 bg-secondary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-secondary-500"
               />
             </label>
           </div>
@@ -6548,7 +6548,7 @@ export default function AdminDashboard() {
           <div className="mb-6 flex justify-end">
             <button
               onClick={publishCourse}
-              className="px-6 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] font-medium"
+              className="px-6 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 font-medium"
             >
               Publish course
             </button>
@@ -6579,7 +6579,7 @@ export default function AdminDashboard() {
                       <button
                         type="button"
                         onClick={() => setCourseDetailPreview({ title: course.title, description: course.description })}
-                        className="font-semibold text-[#581c87] hover:underline"
+                        className="font-semibold text-primary-900 hover:underline"
                       >
                         Detail
                       </button>
@@ -6597,7 +6597,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="h-2 w-full overflow-hidden rounded bg-gray-200">
                           <div
-                            className="h-full bg-amber-500 transition-all"
+                            className="h-full bg-secondary-500 transition-all"
                             style={{ width: `${(Math.min(30, Math.max(0, course.completedSessions)) / 30) * 100}%` }}
                           />
                         </div>
@@ -6605,7 +6605,7 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-medium ${
-                        course.isPublished ? 'bg-[#581c87]/10 text-[#581c87]' : 'bg-gray-200 text-gray-700'
+                        course.isPublished ? 'bg-primary-900/10 text-primary-900' : 'bg-gray-200 text-gray-700'
                       }`}>
                         {course.isPublished ? 'Public' : 'Unpublished'}
                       </span>
@@ -6621,7 +6621,7 @@ export default function AdminDashboard() {
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => openEditCourse(course)}
-                          className="text-[#581c87] hover:text-[#581c87] hover:underline"
+                          className="text-primary-900 hover:text-primary-900 hover:underline"
                         >
                           Edit
                         </button>
@@ -6644,7 +6644,7 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => republishCourse(course.id, course.title)}
                             disabled={savingCourseId === course.id}
-                            className="text-[#581c87] hover:text-[#6b21a8] hover:underline disabled:opacity-50"
+                            className="text-primary-900 hover:text-primary-800 hover:underline disabled:opacity-50"
                           >
                             {savingCourseId === course.id ? 'Processing...' : 'Publish'}
                           </button>
@@ -6682,7 +6682,7 @@ export default function AdminDashboard() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                className="relative w-full max-w-2xl rounded border border-[#581c87]/40 bg-white p-6 shadow-xl"
+                className="relative w-full max-w-2xl rounded border border-primary-900/40 bg-white p-6 shadow-xl"
               >
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <h3 className="text-xl font-bold text-gray-900">Course detail: {courseDetailPreview.title}</h3>
@@ -6704,7 +6704,7 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => setCourseDetailPreview(null)}
-                    className="rounded bg-[#581c87] px-4 py-2 text-white hover:bg-[#6b21a8]"
+                    className="rounded bg-primary-900 px-4 py-2 text-white hover:bg-primary-800"
                   >
                     Close
                   </button>
@@ -6729,7 +6729,7 @@ export default function AdminDashboard() {
                   initial={{ opacity: 0, scale: 0.95, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                  className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 md:p-8 max-w-2xl w-full"
+                  className="relative rounded-lg border border-primary-900/40 bg-white shadow-xl p-6 md:p-8 max-w-2xl w-full"
                 >
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-bold text-gray-900">Manage Feedback: {reviewCourse.title}</h3>
@@ -6744,9 +6744,9 @@ export default function AdminDashboard() {
                       accept="image/*"
                       onChange={handleReviewImageUpload}
                       disabled={uploadingReview}
-                      className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#581c87]/10 file:text-[#581c87] file:font-medium hover:file:bg-[#581c87]/20 disabled:opacity-50"
+                      className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-primary-900/10 file:text-primary-900 file:font-medium hover:file:bg-primary-900/20 disabled:opacity-50"
                     />
-                    {uploadingReview && <p className="mt-2 text-sm text-amber-600">Uploading images...</p>}
+                    {uploadingReview && <p className="mt-2 text-sm text-secondary-600">Uploading images...</p>}
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[50vh] overflow-y-auto pr-2">
@@ -6794,7 +6794,7 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                  className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 md:p-8 max-w-lg w-full"
+                  className="relative rounded-lg border border-primary-900/40 bg-white shadow-xl p-6 md:p-8 max-w-lg w-full"
                 >
                   <h3 className="text-xl font-bold text-gray-900 mb-6">Edit course details</h3>
 
@@ -6805,7 +6805,7 @@ export default function AdminDashboard() {
                         type="text"
                         value={editCourseTitle}
                         onChange={(e) => setEditCourseTitle(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                     </label>
 
@@ -6815,7 +6815,7 @@ export default function AdminDashboard() {
                         value={editCourseShortDescription}
                         onChange={(e) => setEditCourseShortDescription(e.target.value)}
                         rows={2}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                     </label>
 
@@ -6825,13 +6825,13 @@ export default function AdminDashboard() {
                         value={editCourseDescription}
                         onChange={(e) => setEditCourseDescription(e.target.value)}
                         rows={10}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87] mb-2"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900 mb-2"
                       />
                       <div className="flex flex-wrap items-center gap-2">
                         <button
                           type="button"
                           onClick={() => setEditCourseDescription(COURSE_DESCRIPTION_TEMPLATE)}
-                          className="rounded border border-[#581c87]/30 bg-[#581c87]/5 px-3 py-1.5 text-xs font-medium text-[#581c87] hover:bg-[#581c87]/10"
+                          className="rounded border border-primary-900/30 bg-primary-900/5 px-3 py-1.5 text-xs font-medium text-primary-900 hover:bg-primary-900/10"
                         >
                           Chèn mẫu 9 mục
                         </button>
@@ -6852,7 +6852,7 @@ export default function AdminDashboard() {
                         value={editCourseDeadline}
                         onChange={(e) => setEditCourseDeadline(e.target.value)}
                         placeholder="e.g. 30/05/2026"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                     </label>
 
@@ -6865,7 +6865,7 @@ export default function AdminDashboard() {
                           max={20}
                           value={editCourseMaxStudents}
                           onChange={(e) => setEditCourseMaxStudents(Math.min(20, Math.max(1, Number(e.target.value) || 1)))}
-                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                         />
                       </label>
                       <label className="block">
@@ -6876,7 +6876,7 @@ export default function AdminDashboard() {
                           max={30}
                           value={editCourseCompletedSessions}
                           onChange={(e) => setEditCourseCompletedSessions(Math.min(30, Math.max(0, Number(e.target.value) || 0)))}
-                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                         />
                       </label>
                     </div>
@@ -6889,51 +6889,51 @@ export default function AdminDashboard() {
                         step={1000}
                         value={editCoursePrice}
                         onChange={(e) => setEditCoursePrice(Math.max(0, Math.round(Number(e.target.value) || 0)))}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       />
                     </label>
 
                     <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-5">
                       <label className="block">
-                        <span className="mb-2 block text-sm font-medium text-purple-700">Super EB (%)</span>
+                        <span className="mb-2 block text-sm font-medium text-primary-700">Super EB (%)</span>
                         <input
                           type="number"
                           min={0}
                           max={100}
                           value={editCourseSebDiscount}
                           onChange={(e) => setEditCourseSebDiscount(Number(e.target.value))}
-                          className="w-full px-4 py-2 border border-purple-200 bg-purple-50/30 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full px-4 py-2 border border-primary-200 bg-primary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </label>
                       <label className="block">
-                        <span className="mb-2 block text-sm font-medium text-purple-700">SEB Days</span>
+                        <span className="mb-2 block text-sm font-medium text-primary-700">SEB Days</span>
                         <input
                           type="number"
                           min={0}
                           value={editCourseSebDays}
                           onChange={(e) => setEditCourseSebDays(Number(e.target.value))}
-                          className="w-full px-4 py-2 border border-purple-200 bg-purple-50/30 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full px-4 py-2 border border-primary-200 bg-primary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </label>
                       <label className="block">
-                        <span className="mb-2 block text-sm font-medium text-amber-700">Early Bird (%)</span>
+                        <span className="mb-2 block text-sm font-medium text-secondary-700">Early Bird (%)</span>
                         <input
                           type="number"
                           min={0}
                           max={100}
                           value={editCourseEbDiscount}
                           onChange={(e) => setEditCourseEbDiscount(Number(e.target.value))}
-                          className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          className="w-full px-4 py-2 border border-secondary-200 bg-secondary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-secondary-500"
                         />
                       </label>
                       <label className="block">
-                        <span className="mb-2 block text-sm font-medium text-amber-700">EB Days</span>
+                        <span className="mb-2 block text-sm font-medium text-secondary-700">EB Days</span>
                         <input
                           type="number"
                           min={0}
                           value={editCourseEbDays}
                           onChange={(e) => setEditCourseEbDays(Number(e.target.value))}
-                          className="w-full px-4 py-2 border border-amber-200 bg-amber-50/30 rounded focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          className="w-full px-4 py-2 border border-secondary-200 bg-secondary-50/30 rounded focus:outline-none focus:ring-2 focus:ring-secondary-500"
                         />
                       </label>
                     </div>
@@ -6950,7 +6950,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={saveEditedCourse}
                       disabled={savingCourseId === editingCourse.id}
-                      className="px-6 py-2 bg-[#581c87] text-white font-medium rounded hover:bg-[#6b21a8] shadow-md transition-colors disabled:opacity-50"
+                      className="px-6 py-2 bg-primary-900 text-white font-medium rounded hover:bg-primary-800 shadow-md transition-colors disabled:opacity-50"
                     >
                       {savingCourseId === editingCourse.id ? 'Saving...' : 'Save changes'}
                     </button>
@@ -6979,7 +6979,7 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                  className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 max-w-lg w-full"
+                  className="relative rounded-lg border border-primary-900/40 bg-white shadow-xl p-6 max-w-lg w-full"
                 >
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Edit homework</h3>
 
@@ -6987,7 +6987,7 @@ export default function AdminDashboard() {
                     <select
                       value={editHomeworkCourseId}
                       onChange={(e) => setEditHomeworkCourseId(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                     >
                       {courses.map((course) => (
                         <option key={course.id} value={course.id}>{course.title}</option>
@@ -6998,14 +6998,14 @@ export default function AdminDashboard() {
                       value={editHomeworkTitle}
                       onChange={(e) => setEditHomeworkTitle(e.target.value)}
                       placeholder="Homework title"
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                     />
                     <textarea
                       value={editHomeworkDescription}
                       onChange={(e) => setEditHomeworkDescription(e.target.value)}
                       rows={3}
                       placeholder="Homework description"
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                     />
                     <input
                       type="text"
@@ -7013,7 +7013,7 @@ export default function AdminDashboard() {
                       onChange={(e) => setEditHomeworkDueDate(e.target.value)}
                       placeholder="dd/mm/yyyy"
                       inputMode="numeric"
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                     />
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -7022,7 +7022,7 @@ export default function AdminDashboard() {
                       {editHomeworkAttachmentUrl && !editHomeworkAttachment && (
                         <div className="mb-2 flex items-center gap-2 text-sm text-gray-600">
                           <span>Current:</span>
-                          <a href={editHomeworkAttachmentUrl} target="_blank" rel="noopener noreferrer" className="text-[#581c87] hover:underline truncate max-w-50">
+                          <a href={editHomeworkAttachmentUrl} target="_blank" rel="noopener noreferrer" className="text-primary-900 hover:underline truncate max-w-50">
                             📎 {editHomeworkAttachmentUrl.split('/').pop()}
                           </a>
                           <button
@@ -7038,7 +7038,7 @@ export default function AdminDashboard() {
                         type="file"
                         accept="image/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
                         onChange={(e) => setEditHomeworkAttachment(e.target.files?.[0] ?? null)}
-                        className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-[#581c87]/10 file:text-[#581c87] file:font-medium hover:file:bg-[#581c87]/20"
+                        className="block w-full text-sm text-gray-600 file:mr-3 file:px-3 file:py-1.5 file:rounded file:border-0 file:bg-primary-900/10 file:text-primary-900 file:font-medium hover:file:bg-primary-900/20"
                       />
                       {editHomeworkAttachment && (
                         <p className="mt-1 text-xs text-gray-500">New file: {editHomeworkAttachment.name}</p>
@@ -7057,7 +7057,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={saveEditedHomework}
                       disabled={savingHomeworkId === editingHomework.id || editHomeworkAttachmentUploading}
-                      className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8] disabled:opacity-50"
+                      className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800 disabled:opacity-50"
                     >
                       {editHomeworkAttachmentUploading ? 'Uploading...' : savingHomeworkId === editingHomework.id ? 'Saving...' : 'Save changes'}
                     </button>
@@ -7086,7 +7086,7 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                  className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 md:p-8 max-w-4xl w-full"
+                  className="relative rounded-lg border border-primary-900/40 bg-white shadow-xl p-6 md:p-8 max-w-4xl w-full"
                 >
                   <h3 className="text-xl font-bold text-gray-900 mb-6">Edit exercise</h3>
 
@@ -7096,7 +7096,7 @@ export default function AdminDashboard() {
                       type="text"
                       value={editExerciseTitle}
                       onChange={(e) => setEditExerciseTitle(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                     />
                   </div>
 
@@ -7106,7 +7106,7 @@ export default function AdminDashboard() {
                       <select
                         value={editExerciseType}
                         onChange={(e) => setEditExerciseType(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                       >
                         <option value="multiple_choice">Pronunciation</option>
                         <option value="question_response">Question-Response (Audio)</option>
@@ -7118,7 +7118,7 @@ export default function AdminDashboard() {
                       <label className="mb-2 block text-sm font-medium text-gray-700">Audio file</label>
                       <div className="rounded-xl border border-dashed border-gray-300 p-4">
                         <div className="flex flex-wrap items-center gap-3">
-                          <label className="inline-flex cursor-pointer items-center rounded bg-[#581c87] px-4 py-2 text-sm font-medium text-white hover:bg-[#6b21a8]">
+                          <label className="inline-flex cursor-pointer items-center rounded bg-primary-900 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800">
                             {editExerciseAudioUploading ? 'Uploading audio...' : 'Replace audio'}
                             <input
                               type="file"
@@ -7164,7 +7164,7 @@ export default function AdminDashboard() {
                       <label className="mb-2 block text-sm font-medium text-gray-700">Attachment file <span className="text-gray-400 font-normal">(PPT, DOCX, PDF — vocabulary handout)</span></label>
                       <div className="rounded-xl border border-dashed border-gray-300 p-4">
                         <div className="flex flex-wrap items-center gap-3">
-                          <label className="inline-flex cursor-pointer items-center rounded bg-purple-700 px-4 py-2 text-sm font-medium text-white hover:bg-purple-800">
+                          <label className="inline-flex cursor-pointer items-center rounded bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800">
                             {editExerciseAttachUploading ? 'Uploading...' : (editExerciseAttachFileUrl ? 'Replace file' : 'Upload file')}
                             <input
                               type="file"
@@ -7197,7 +7197,7 @@ export default function AdminDashboard() {
                           {editExerciseAttachFileUrl ? editExerciseAttachFileName || 'File attached' : 'Tùy chọn — học viên có thể tải về để xem từ vựng.'}
                         </p>
                         {editExerciseAttachFileUrl && (
-                          <a href={editExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-purple-700 hover:underline">
+                          <a href={editExerciseAttachFileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-primary-700 hover:underline">
                             {editExerciseAttachFileName || 'Download attachment'}
                           </a>
                         )}
@@ -7211,7 +7211,7 @@ export default function AdminDashboard() {
                       value={editExerciseDescription}
                       onChange={(e) => setEditExerciseDescription(e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                     />
                   </div>
 
@@ -7224,31 +7224,31 @@ export default function AdminDashboard() {
                   <div className="space-y-4">
                     {editExerciseQuestions.map((question, index) => (
                       <div key={`edit-exercise-${index}`} className="rounded-xl border border-gray-200 p-4">
-                        <h4 className="font-bold text-[#581c87] mb-3">Question {index + 1}</h4>
+                        <h4 className="font-bold text-primary-900 mb-3">Question {index + 1}</h4>
                         <div className="space-y-3">
                           <textarea
                             value={question.question}
                             onChange={(e) => updateEditExerciseQuestion(index, 'question', e.target.value)}
                             rows={2}
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           />
                           <input
                             type="text"
                             value={question.optionA}
                             onChange={(e) => updateEditExerciseQuestion(index, 'optionA', e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           />
                           <input
                             type="text"
                             value={question.optionB}
                             onChange={(e) => updateEditExerciseQuestion(index, 'optionB', e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           />
                           <input
                             type="text"
                             value={question.optionC}
                             onChange={(e) => updateEditExerciseQuestion(index, 'optionC', e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           />
                           {editExerciseType !== 'question_response' && (
                             <input
@@ -7256,13 +7256,13 @@ export default function AdminDashboard() {
                               value={question.optionD}
                               onChange={(e) => updateEditExerciseQuestion(index, 'optionD', e.target.value)}
                               placeholder={editExerciseType === 'conversation' ? 'Answer D (bắt buộc)' : 'Answer D (optional)'}
-                              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                             />
                           )}
                           <select
                             value={question.correctOption}
                             onChange={(e) => updateEditExerciseQuestion(index, 'correctOption', e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
                           >
                             <option value="A">Correct answer: A</option>
                             <option value="B">Correct answer: B</option>
@@ -7288,7 +7288,7 @@ export default function AdminDashboard() {
                       <button
                         onClick={() => saveEditedExercise(true)}
                         disabled={savingExerciseId === editingExercise.id}
-                        className="px-6 py-2 bg-purple-700 text-white font-medium rounded hover:bg-purple-800 shadow-sm transition-colors disabled:opacity-50"
+                        className="px-6 py-2 bg-primary-700 text-white font-medium rounded hover:bg-primary-800 shadow-sm transition-colors disabled:opacity-50"
                       >
                         {savingExerciseId === editingExercise.id ? 'Publishing...' : 'Publish'}
                       </button>
@@ -7296,7 +7296,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={() => saveEditedExercise(false)}
                       disabled={savingExerciseId === editingExercise.id}
-                      className="px-6 py-2 bg-[#581c87] text-white font-medium rounded hover:bg-[#6b21a8] shadow-md transition-colors disabled:opacity-50"
+                      className="px-6 py-2 bg-primary-900 text-white font-medium rounded hover:bg-primary-800 shadow-md transition-colors disabled:opacity-50"
                     >
                       {savingExerciseId === editingExercise.id ? 'Saving...' : 'Save changes'}
                     </button>
@@ -7325,13 +7325,13 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                  className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 md:p-8 max-w-3xl w-full"
+                  className="relative rounded-lg border border-primary-900/40 bg-white shadow-xl p-6 md:p-8 max-w-3xl w-full"
                 >
                   <div className="mb-6 flex items-start justify-between gap-4">
                     <div>
                       <h3 className="text-xl font-bold text-gray-900">Exercise submission: {selectedExerciseResult.exerciseTitle}</h3>
                       <p className="text-sm text-gray-600">{selectedExerciseResult.user.name || selectedExerciseResult.user.email} · {selectedExerciseResult.courseTitle}</p>
-                      <p className="mt-1 text-sm font-semibold text-[#581c87]">Score: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
+                      <p className="mt-1 text-sm font-semibold text-primary-900">Score: {selectedExerciseResult.score}/{selectedExerciseResult.totalQuestions}</p>
                       <p className="mt-1 text-sm text-gray-600">Time spent: {formatDuration(selectedExerciseResult.durationSeconds)}</p>
                     </div>
                     <button
@@ -7347,7 +7347,7 @@ export default function AdminDashboard() {
                       <div key={answer.id} className="rounded-xl border border-gray-200 p-4">
                         <p className="font-semibold text-gray-900">{answer.question.order}. {answer.question.question}</p>
                         <div className="mt-3 grid gap-3 md:grid-cols-2">
-                          <div className={`rounded-lg px-4 py-3 text-sm ${answer.isCorrect ? 'bg-[#581c87]/10 text-[#581c87]' : 'bg-red-50 text-red-700'}`}>
+                          <div className={`rounded-lg px-4 py-3 text-sm ${answer.isCorrect ? 'bg-primary-900/10 text-primary-900' : 'bg-red-50 text-red-700'}`}>
                             Student selected: {answer.selectedOption}
                           </div>
                           <div className="rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-700">
@@ -7361,7 +7361,7 @@ export default function AdminDashboard() {
                   <div className="mt-10 flex justify-end pb-2">
                     <button
                       onClick={() => setSelectedExerciseResult(null)}
-                      className="px-6 py-2 bg-[#581c87] text-white font-medium rounded hover:bg-[#6b21a8] shadow-md transition-colors"
+                      className="px-6 py-2 bg-primary-900 text-white font-medium rounded hover:bg-primary-800 shadow-md transition-colors"
                     >
                       Close
                     </button>
@@ -7390,7 +7390,7 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                  className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 max-w-md w-full text-left"
+                  className="relative rounded-lg border border-primary-900/40 bg-white shadow-xl p-6 max-w-md w-full text-left"
                 >
                   <h3 className="text-lg font-bold text-gray-900 mb-3">Unpublish course</h3>
                   <p className="text-gray-700 mb-6">
@@ -7422,7 +7422,7 @@ export default function AdminDashboard() {
         {/* Enrollments Management Section */}
         <div className={`mt-12 bg-white rounded shadow p-6 ${activeSection === 'course' ? '' : 'hidden'}`}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            <span className="text-amber-600">Course</span> enrollments
+            <span className="text-secondary-600">Course</span> enrollments
           </h2>
 
           <div className="flex items-center gap-4 mb-5">
@@ -7431,11 +7431,11 @@ export default function AdminDashboard() {
               placeholder="Search by student, email, phone, course, status..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#581c87]"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             <button
               onClick={fetchEnrollments}
-              className="px-4 py-2 bg-[#581c87] text-white rounded hover:bg-[#6b21a8]"
+              className="px-4 py-2 bg-primary-900 text-white rounded hover:bg-primary-800"
             >
               Refresh
             </button>
@@ -7448,15 +7448,15 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-5">
               {groupedFilteredEnrollments.map((group) => (
-                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-[#581c87]/20">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#581c87]/20 bg-[#581c87]/5 px-4 py-3">
-                    <h3 className="text-base font-bold text-[#581c87]">{group.courseTitle}</h3>
+                <section key={group.courseTitle} className="overflow-hidden rounded-lg border border-primary-900/20">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary-900/20 bg-primary-900/5 px-4 py-3">
+                    <h3 className="text-base font-bold text-primary-900">{group.courseTitle}</h3>
                     <div className="flex items-center gap-2 text-xs font-semibold">
                       <span className="rounded-full bg-white px-2.5 py-1 text-slate-600 ring-1 ring-slate-200">
                         {group.items.length} students
                       </span>
                       {group.pendingCount > 0 && (
-                        <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-800">
+                        <span className="rounded-full bg-secondary-100 px-2.5 py-1 text-secondary-800">
                           {group.pendingCount} awaiting payment
                         </span>
                       )}
@@ -7483,7 +7483,7 @@ export default function AdminDashboard() {
                             <td className="px-4 py-3 text-sm text-gray-500">{enrollment.user.email}</td>
                             <td className="px-4 py-3 text-sm">
                               <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                enrollment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-[#581c87]/10 text-[#581c87]'
+                                enrollment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-primary-900/10 text-primary-900'
                               }`}>
                                 {enrollment.status === 'pending' ? 'Awaiting payment' : 'Payment received'}
                               </span>
@@ -7495,7 +7495,7 @@ export default function AdminDashboard() {
                               <div className="flex flex-wrap gap-2">
                                 <Link
                                   href={`/admin/student/${enrollment.user.id}`}
-                                  className="text-[#581c87] hover:text-[#581c87] hover:underline"
+                                  className="text-primary-900 hover:text-primary-900 hover:underline"
                                 >
                                   Details
                                 </Link>
@@ -7508,7 +7508,7 @@ export default function AdminDashboard() {
                                       courseTitle: enrollment.course.title
                                     })}
                                     disabled={updatingEnrollmentId === enrollment.id}
-                                    className="text-amber-700 hover:text-amber-900 hover:underline"
+                                    className="text-secondary-700 hover:text-secondary-900 hover:underline"
                                   >
                                     {updatingEnrollmentId === enrollment.id ? 'Updating...' : 'Confirm'}
                                   </button>
@@ -7546,14 +7546,14 @@ export default function AdminDashboard() {
                 setNewsForm({ title: '', description: '', imageUrl: '', linkUrl: '', isActive: true })
                 setShowNewsModal(true)
               }}
-              className="px-6 py-2 bg-[#581c87] text-white font-bold rounded hover:bg-[#6b21a8]"
+              className="px-6 py-2 bg-primary-900 text-white font-bold rounded hover:bg-primary-800"
             >
               Add News
             </button>
           </div>
 
           {newsError && <p className="mb-4 p-3 bg-red-100 text-red-700 rounded text-sm">{newsError}</p>}
-          {newsSuccess && <p className="mb-4 p-3 bg-purple-100 text-purple-700 rounded text-sm">{newsSuccess}</p>}
+          {newsSuccess && <p className="mb-4 p-3 bg-primary-100 text-primary-700 rounded text-sm">{newsSuccess}</p>}
 
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -7585,7 +7585,7 @@ export default function AdminDashboard() {
                         <p className="text-xs text-gray-500 line-clamp-1">{item.description}</p>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${item.isActive ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>
+                        <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${item.isActive ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-600'}`}>
                           {item.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
@@ -7603,7 +7603,7 @@ export default function AdminDashboard() {
                               })
                               setShowNewsModal(true)
                             }}
-                            className="text-purple-600 hover:text-purple-800 text-sm font-semibold"
+                            className="text-primary-600 hover:text-primary-800 text-sm font-semibold"
                           >
                             Edit
                           </button>
@@ -7650,7 +7650,7 @@ export default function AdminDashboard() {
                       type="text"
                       value={newsForm.title}
                       onChange={(e) => setNewsForm({ ...newsForm, title: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                     />
                   </div>
                   <div>
@@ -7659,7 +7659,7 @@ export default function AdminDashboard() {
                       rows={3}
                       value={newsForm.description}
                       onChange={(e) => setNewsForm({ ...newsForm, description: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                     />
                   </div>
                   <div>
@@ -7668,7 +7668,7 @@ export default function AdminDashboard() {
                       type="text"
                       value={newsForm.imageUrl}
                       onChange={(e) => setNewsForm({ ...newsForm, imageUrl: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                     />
                   </div>
                   <div>
@@ -7677,7 +7677,7 @@ export default function AdminDashboard() {
                       type="text"
                       value={newsForm.linkUrl}
                       onChange={(e) => setNewsForm({ ...newsForm, linkUrl: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -7686,7 +7686,7 @@ export default function AdminDashboard() {
                       id="newsActive"
                       checked={newsForm.isActive}
                       onChange={(e) => setNewsForm({ ...newsForm, isActive: e.target.checked })}
-                      className="rounded border-gray-300 text-[#581c87] focus:ring-[#581c87]"
+                      className="rounded border-gray-300 text-primary-900 focus:ring-primary-900"
                     />
                     <label htmlFor="newsActive" className="text-sm font-medium text-gray-700">Display this item publicly</label>
                   </div>
@@ -7701,7 +7701,7 @@ export default function AdminDashboard() {
                   <button
                     onClick={handleSaveNews}
                     disabled={savingNews}
-                    className="rounded-lg bg-[#581c87] px-6 py-2 font-bold text-white hover:bg-[#6b21a8] disabled:opacity-50"
+                    className="rounded-lg bg-primary-900 px-6 py-2 font-bold text-white hover:bg-primary-800 disabled:opacity-50"
                   >
                     {savingNews ? 'Saving...' : editingNews ? 'Update' : 'Create'}
                   </button>
@@ -7729,13 +7729,13 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300, duration: 0.2 }}
-                  className="relative rounded-lg border border-[#581c87]/40 bg-white shadow-xl p-6 max-w-md w-full text-left"
+                  className="relative rounded-lg border border-primary-900/40 bg-white shadow-xl p-6 max-w-md w-full text-left"
                 >
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm payment</h3>
                   <div className="space-y-2 mb-6 text-gray-800">
                     <p>Student: <strong>{confirmPayment.studentName}</strong></p>
                     <p>Course: <strong>{confirmPayment.courseTitle}</strong></p>
-                    <p className="pt-2 text-[#581c87] font-medium">Have you received the payment?</p>
+                    <p className="pt-2 text-primary-900 font-medium">Have you received the payment?</p>
                   </div>
 
                   <div className="flex justify-end gap-3">
@@ -7749,7 +7749,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={() => confirmBankTransfer(confirmPayment.id)}
                       disabled={updatingEnrollmentId === confirmPayment.id}
-                      className="px-5 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 shadow-sm transition-colors disabled:opacity-50"
+                      className="px-5 py-2 bg-secondary-500 text-white rounded-md hover:bg-secondary-600 shadow-sm transition-colors disabled:opacity-50"
                     >
                       {updatingEnrollmentId === confirmPayment.id ? 'Processing...' : 'Confirm Payment'}
                     </button>
@@ -7793,7 +7793,7 @@ export default function AdminDashboard() {
                   <div className="space-y-4 px-6 py-6">
                     <div>
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Exercise đang chọn</p>
-                      <div className="p-3 bg-[#581c87]/5 rounded-lg border border-[#581c87]/10">
+                      <div className="p-3 bg-primary-900/5 rounded-lg border border-primary-900/10">
                         <p className="font-bold text-gray-900 text-sm">{getExerciseTitle(quickCopyExercise)}</p>
                         <p className="text-xs text-gray-600 mt-1">{quickCopyExercise.course.title} · {getExerciseTypeLabel(quickCopyExercise.exerciseType)}</p>
                       </div>
@@ -7803,7 +7803,7 @@ export default function AdminDashboard() {
                       <select
                         value={quickCopyTargetCourseId}
                         onChange={(e) => { setQuickCopyTargetCourseId(e.target.value); setQuickCopyError('') }}
-                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#581c87] bg-white transition-all shadow-sm"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-900 bg-white transition-all shadow-sm"
                       >
                         <option value="">-- Chọn khóa học --</option>
                         {courses
@@ -7827,7 +7827,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => void quickCopyToTarget()}
                       disabled={quickCopyLoading || !quickCopyTargetCourseId}
-                      className="rounded-md bg-[#581c87] px-6 py-2 text-sm font-medium text-white hover:bg-[#6b21a8] shadow-md transition-all disabled:opacity-50"
+                      className="rounded-md bg-primary-900 px-6 py-2 text-sm font-medium text-white hover:bg-primary-800 shadow-md transition-all disabled:opacity-50"
                     >
                       {quickCopyLoading ? 'Đang copy...' : 'Copy Ngay'}
                     </button>
@@ -7880,7 +7880,7 @@ export default function AdminDashboard() {
                             setImportSelectedExerciseIds(new Set())
                             setImportFromCourseError('')
                           }}
-                          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#581c87] bg-white transition-all"
+                          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-900 bg-white transition-all"
                         >
                           <option value="">-- Chọn khóa học nguồn --</option>
                           {courses.map((c) => (
@@ -7897,7 +7897,7 @@ export default function AdminDashboard() {
                             setImportTargetCourseId(e.target.value)
                             setImportFromCourseError('')
                           }}
-                          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#581c87] bg-white transition-all outline-hidden"
+                          className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-900 bg-white transition-all outline-hidden"
                         >
                           <option value="">-- Chọn khóa học đích --</option>
                           {courses.map((c) => (
@@ -7921,7 +7921,7 @@ export default function AdminDashboard() {
                                 setImportSelectedExerciseIds(new Set(sourceExs.map(ex => ex.id)))
                               }
                             }}
-                            className="text-xs font-semibold text-[#581c87] hover:underline"
+                            className="text-xs font-semibold text-primary-900 hover:underline"
                           >
                             {importSelectedExerciseIds.size === exercises.filter(ex => ex.courseId === importSourceCourseId).length ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
                           </button>
@@ -7943,16 +7943,16 @@ export default function AdminDashboard() {
                                     setImportSelectedExerciseIds(next)
                                   }}
                                   className={`group flex items-center gap-3 p-3 rounded-xl border text-left transition-all hover:bg-white hover:shadow-md ${
-                                    isSelected ? 'border-[#581c87] bg-[#581c87]/5 ring-1 ring-[#581c87]/20' : 'border-gray-200 bg-white shadow-sm'
+                                    isSelected ? 'border-primary-900 bg-primary-900/5 ring-1 ring-primary-900/20' : 'border-gray-200 bg-white shadow-sm'
                                   }`}
                                 >
                                   <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${
-                                    isSelected ? 'bg-[#581c87] border-[#581c87]' : 'bg-white border-gray-300 group-hover:border-[#581c87]'
+                                    isSelected ? 'bg-primary-900 border-primary-900' : 'bg-white border-gray-300 group-hover:border-primary-900'
                                   }`}>
                                     {isSelected && <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                                   </div>
                                   <div className="min-w-0">
-                                    <p className={`text-sm font-bold truncate ${isSelected ? 'text-[#581c87]' : 'text-gray-900'}`}>{getExerciseTitle(ex)}</p>
+                                    <p className={`text-sm font-bold truncate ${isSelected ? 'text-primary-900' : 'text-gray-900'}`}>{getExerciseTitle(ex)}</p>
                                     <p className="text-[10px] text-gray-500 mt-0.5">{getExerciseTypeLabel(ex.exerciseType)} · {ex.questions.length} câu hỏi</p>
                                   </div>
                                 </button>
@@ -7985,7 +7985,7 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => void importFromCourse()}
                       disabled={importingFromCourse || !importSourceCourseId || !importTargetCourseId || importSelectedExerciseIds.size === 0}
-                      className="rounded-lg bg-[#581c87] px-8 py-2.5 text-sm font-bold text-white hover:bg-[#6b21a8] shadow-lg shadow-[#581c87]/20 transition-all disabled:opacity-50 disabled:shadow-none"
+                      className="rounded-lg bg-primary-900 px-8 py-2.5 text-sm font-bold text-white hover:bg-primary-800 shadow-lg shadow-primary-900/20 transition-all disabled:opacity-50 disabled:shadow-none"
                     >
                       {importingFromCourse ? 'Đang import...' : `Import ${importSelectedExerciseIds.size > 0 ? `(${importSelectedExerciseIds.size})` : ''}`}
                     </button>
@@ -8011,7 +8011,7 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative w-full max-w-lg rounded-xl border border-[#581c87]/40 bg-white p-6 shadow-2xl"
+                className="relative w-full max-w-lg rounded-xl border border-primary-900/40 bg-white p-6 shadow-2xl"
               >
                 <h3 className="text-xl font-bold text-gray-900 mb-6">
                   {editingToeicTopic ? 'Edit TOEIC Topic' : 'Create New TOEIC Topic'}
@@ -8024,7 +8024,7 @@ export default function AdminDashboard() {
                       placeholder="e.g., Pronouns & Nouns"
                       value={topicForm.title}
                       onChange={(e) => setTopicForm({ ...topicForm, title: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                     />
                   </div>
                   <div>
@@ -8034,7 +8034,7 @@ export default function AdminDashboard() {
                       placeholder="e.g., Essential grammar for Part 5 & 6"
                       value={topicForm.subtitle}
                       onChange={(e) => setTopicForm({ ...topicForm, subtitle: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                     />
                   </div>
                   <div>
@@ -8044,7 +8044,7 @@ export default function AdminDashboard() {
                       placeholder="e.g., pronouns-nouns"
                       value={topicForm.slug}
                       onChange={(e) => setTopicForm({ ...topicForm, slug: e.target.value })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                     />
                   </div>
                 </div>
@@ -8055,7 +8055,7 @@ export default function AdminDashboard() {
                     <select
                       value={topicForm.part || (topicForm.type === 'LISTENING' ? 1 : 5)}
                       onChange={(e) => setTopicForm({ ...topicForm, part: parseInt(e.target.value, 10) })}
-                      className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87] p-2 border"
+                      className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900 p-2 border"
                     >
                       {topicForm.type === 'READING' ? (
                         <>
@@ -8085,7 +8085,7 @@ export default function AdminDashboard() {
                   <button
                     onClick={createToeicTopic}
                     disabled={savingToeicTopic}
-                    className="rounded-lg bg-[#581c87] px-6 py-2 font-bold text-white hover:bg-[#6b21a8] disabled:opacity-50"
+                    className="rounded-lg bg-primary-900 px-6 py-2 font-bold text-white hover:bg-primary-800 disabled:opacity-50"
                   >
                     {savingToeicTopic ? 'Saving...' : editingToeicTopic ? 'Update Topic' : 'Create Topic'}
                   </button>
@@ -8121,7 +8121,7 @@ export default function AdminDashboard() {
                         placeholder="e.g., Personal Pronouns"
                         value={lessonForm.title}
                         onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
-                        className="w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-[#581c87] focus:ring-[#581c87] shadow-sm transition-shadow"
+                        className="w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-primary-900 focus:ring-primary-900 shadow-sm transition-shadow"
                       />
                     </div>
                     <div className="col-span-1">
@@ -8130,7 +8130,7 @@ export default function AdminDashboard() {
                         type="number"
                         value={lessonForm.order}
                         onChange={(e) => setLessonForm({ ...lessonForm, order: parseInt(e.target.value) || 0 })}
-                        className="w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-[#581c87] focus:ring-[#581c87] shadow-sm transition-shadow"
+                        className="w-full rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-primary-900 focus:ring-primary-900 shadow-sm transition-shadow"
                       />
                     </div>
                   </div>
@@ -8142,7 +8142,7 @@ export default function AdminDashboard() {
                          placeholder="e.g., https://pub-xxx.r2.dev/listening-direction.mp3"
                          value={lessonForm.directionAudioUrl || ''}
                          onChange={(e) => setLessonForm({ ...lessonForm, directionAudioUrl: e.target.value })}
-                         className="flex-1 rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-[#581c87] focus:ring-[#581c87] shadow-sm transition-shadow"
+                         className="flex-1 rounded-xl border-slate-300 px-4 py-2.5 text-sm focus:border-primary-900 focus:ring-primary-900 shadow-sm transition-shadow"
                        />
                        <label className="cursor-pointer shrink-0">
                           <input type="file" accept="audio/*" className="hidden" onChange={handleUploadDirectionAudio} />
@@ -8156,7 +8156,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5">
                     <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                       <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                       <svg className="w-5 h-5 text-primary-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
                        Phân quyền truy cập tài liệu
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -8165,7 +8165,7 @@ export default function AdminDashboard() {
                         <select
                           value={lessonForm.accessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, accessTier: e.target.value })}
-                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#581c87] focus:ring-[#581c87] bg-white shadow-sm"
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-primary-900 focus:ring-primary-900 bg-white shadow-sm"
                         >
                           <option value="FREE">FREE</option>
                           <option value="PRO">PRO</option>
@@ -8177,7 +8177,7 @@ export default function AdminDashboard() {
                         <select
                           value={lessonForm.theoryAccessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, theoryAccessTier: e.target.value })}
-                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#581c87] focus:ring-[#581c87] bg-white shadow-sm"
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-primary-900 focus:ring-primary-900 bg-white shadow-sm"
                         >
                           <option value="">Default</option>
                           <option value="FREE">FREE</option>
@@ -8188,7 +8188,7 @@ export default function AdminDashboard() {
                       <div className="col-span-1">
                         <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Exp Access</label>
                         <select
-                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#581c87] focus:ring-[#581c87] bg-white shadow-sm"
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-primary-900 focus:ring-primary-900 bg-white shadow-sm"
                           value={lessonForm.explanationAccessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, explanationAccessTier: e.target.value })}
                         >
@@ -8201,7 +8201,7 @@ export default function AdminDashboard() {
                       <div className="col-span-1">
                         <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Trans Access</label>
                         <select
-                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-[#581c87] focus:ring-[#581c87] bg-white shadow-sm"
+                          className="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:border-primary-900 focus:ring-primary-900 bg-white shadow-sm"
                           value={lessonForm.translationAccessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, translationAccessTier: e.target.value })}
                         >
@@ -8212,9 +8212,9 @@ export default function AdminDashboard() {
                         </select>
                       </div>
                       <div className="col-span-1">
-                        <label className="block text-[13px] font-semibold text-purple-700 mb-1.5">To Booklet</label>
+                        <label className="block text-[13px] font-semibold text-primary-700 mb-1.5">To Booklet</label>
                         <select
-                          className="w-full rounded-lg border-purple-200 px-3 py-2 text-sm focus:border-purple-500 focus:ring-purple-500 bg-purple-50/50 shadow-sm font-medium"
+                          className="w-full rounded-lg border-primary-200 px-3 py-2 text-sm focus:border-primary-500 focus:ring-primary-500 bg-primary-50/50 shadow-sm font-medium"
                           value={lessonForm.bookmarkAccessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, bookmarkAccessTier: e.target.value })}
                         >
@@ -8225,9 +8225,9 @@ export default function AdminDashboard() {
                         </select>
                       </div>
                       <div className="col-span-1">
-                        <label className="block text-[13px] font-semibold text-amber-700 mb-1.5">Tip Access</label>
+                        <label className="block text-[13px] font-semibold text-secondary-700 mb-1.5">Tip Access</label>
                         <select
-                          className="w-full rounded-lg border-amber-200 px-3 py-2 text-sm focus:border-amber-500 focus:ring-amber-500 bg-amber-50/50 shadow-sm font-medium"
+                          className="w-full rounded-lg border-secondary-200 px-3 py-2 text-sm focus:border-secondary-500 focus:ring-secondary-500 bg-secondary-50/50 shadow-sm font-medium"
                           value={lessonForm.tipsAccessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, tipsAccessTier: e.target.value })}
                         >
@@ -8238,9 +8238,9 @@ export default function AdminDashboard() {
                         </select>
                       </div>
                       <div className="col-span-1">
-                        <label className="block text-[13px] font-semibold text-purple-700 mb-1.5">Vocab Access</label>
+                        <label className="block text-[13px] font-semibold text-primary-700 mb-1.5">Vocab Access</label>
                         <select
-                          className="w-full rounded-lg border-purple-200 px-3 py-2 text-sm focus:border-purple-500 focus:ring-purple-500 bg-purple-50/50 shadow-sm font-medium"
+                          className="w-full rounded-lg border-primary-200 px-3 py-2 text-sm focus:border-primary-500 focus:ring-primary-500 bg-primary-50/50 shadow-sm font-medium"
                           value={lessonForm.vocabularyAccessTier}
                           onChange={(e) => setLessonForm({ ...lessonForm, vocabularyAccessTier: e.target.value })}
                         >
@@ -8270,7 +8270,7 @@ export default function AdminDashboard() {
                   <button
                     onClick={createToeicLesson}
                     disabled={savingToeicLesson}
-                    className="rounded-xl bg-[#581c87] px-8 py-2.5 text-sm font-bold text-white hover:bg-[#6b21a8] disabled:opacity-50 shadow-md transition-all active:scale-95"
+                    className="rounded-xl bg-primary-900 px-8 py-2.5 text-sm font-bold text-white hover:bg-primary-800 disabled:opacity-50 shadow-md transition-all active:scale-95"
                   >
                     {savingToeicLesson ? 'Saving...' : editingToeicLesson ? 'Update Lesson' : 'Save Lesson'}
                   </button>
@@ -8300,27 +8300,27 @@ export default function AdminDashboard() {
                 </h3>
                   <div className="space-y-4">
                     {/* Media Uploads */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-xl border border-dashed border-secondary-300 bg-secondary-50 p-4">
                       <div>
-                        <label className="block text-sm font-bold text-amber-900 mb-2">📸 Photograph (Part 1)</label>
+                        <label className="block text-sm font-bold text-secondary-900 mb-2">📸 Photograph (Part 1)</label>
                         {questionForm.imageUrl ? (
                           <div className="relative inline-block">
                             <img src={questionForm.imageUrl} alt="preview" className="h-20 w-auto rounded border" />
                             <button className="absolute -top-2 -right-2 text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs" onClick={() => setQuestionForm({...questionForm, imageUrl: ''})}>✕</button>
                           </div>
                         ) : (
-                          <input type="file" accept="image/*" onChange={(e) => handleUploadMedia(e, 'imageUrl')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200" />
+                          <input type="file" accept="image/*" onChange={(e) => handleUploadMedia(e, 'imageUrl')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-secondary-100 file:text-secondary-700 hover:file:bg-secondary-200" />
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-amber-900 mb-2">🎵 Audio File</label>
+                        <label className="block text-sm font-bold text-secondary-900 mb-2">🎵 Audio File</label>
                         {questionForm.audioUrl ? (
                           <div className="relative inline-block w-full">
                             <audio src={questionForm.audioUrl} controls className="h-10 w-full" />
                             <button className="absolute -top-2 -right-2 text-white bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs z-10" onClick={() => setQuestionForm({...questionForm, audioUrl: ''})}>✕</button>
                           </div>
                         ) : (
-                          <input type="file" accept="audio/*" onChange={(e) => handleUploadMedia(e, 'audioUrl')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200" />
+                          <input type="file" accept="audio/*" onChange={(e) => handleUploadMedia(e, 'audioUrl')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-secondary-100 file:text-secondary-700 hover:file:bg-secondary-200" />
                         )}
                       </div>
                     </div>
@@ -8331,54 +8331,54 @@ export default function AdminDashboard() {
                         placeholder="e.g. Please choose the correct pronoun for the blank: ___ is my teacher."
                         value={questionForm.question}
                         onChange={(e) => setQuestionForm({ ...questionForm, question: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87]"
+                        className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 text-purple-700">Option A</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-primary-700">Option A</label>
                         <input
                           type="text"
                           value={questionForm.optionA}
                           onChange={(e) => setQuestionForm({ ...questionForm, optionA: e.target.value })}
-                          className="w-full rounded-lg border-purple-200 focus:border-[#581c87] focus:ring-[#581c87]"
+                          className="w-full rounded-lg border-primary-200 focus:border-primary-900 focus:ring-primary-900"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 text-purple-700">Option B</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-primary-700">Option B</label>
                         <input
                           type="text"
                           value={questionForm.optionB}
                           onChange={(e) => setQuestionForm({ ...questionForm, optionB: e.target.value })}
-                          className="w-full rounded-lg border-purple-200 focus:border-[#581c87] focus:ring-[#581c87]"
+                          className="w-full rounded-lg border-primary-200 focus:border-primary-900 focus:ring-primary-900"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 text-purple-700">Option C</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-primary-700">Option C</label>
                         <input
                           type="text"
                           value={questionForm.optionC}
                           onChange={(e) => setQuestionForm({ ...questionForm, optionC: e.target.value })}
-                          className="w-full rounded-lg border-purple-200 focus:border-[#581c87] focus:ring-[#581c87]"
+                          className="w-full rounded-lg border-primary-200 focus:border-primary-900 focus:ring-primary-900"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 text-purple-700">Option D (optional)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 text-primary-700">Option D (optional)</label>
                         <input
                           type="text"
                           value={questionForm.optionD}
                           onChange={(e) => setQuestionForm({ ...questionForm, optionD: e.target.value })}
-                          className="w-full rounded-lg border-purple-200 focus:border-[#581c87] focus:ring-[#581c87]"
+                          className="w-full rounded-lg border-primary-200 focus:border-primary-900 focus:ring-primary-900"
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-amber-600">Correct Answer</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-secondary-600">Correct Answer</label>
                         <select
                           value={questionForm.correctOption}
                           onChange={(e) => setQuestionForm({ ...questionForm, correctOption: e.target.value })}
-                          className="w-full rounded-lg border-amber-300 focus:border-amber-500 focus:ring-amber-500 font-bold"
+                          className="w-full rounded-lg border-secondary-300 focus:border-secondary-500 focus:ring-secondary-500 font-bold"
                         >
                           <option value="A">Option A</option>
                           <option value="B">Option B</option>
@@ -8394,7 +8394,7 @@ export default function AdminDashboard() {
                         placeholder="Explain why the answer is correct..."
                         value={questionForm.explanation}
                         onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87] text-sm italic"
+                        className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900 text-sm italic"
                       />
                     </div>
                     <div>
@@ -8404,27 +8404,27 @@ export default function AdminDashboard() {
                         placeholder="Dịch nghĩa..."
                         value={questionForm.translation}
                         onChange={(e) => setQuestionForm({ ...questionForm, translation: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-[#581c87] focus:ring-[#581c87] text-sm"
+                        className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-amber-600">Mẹo (Tips/Traps)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-secondary-600">Mẹo (Tips/Traps)</label>
                       <textarea
                         rows={2}
                         placeholder="Mẹo làm bài nhanh..."
                         value={questionForm.tips}
                         onChange={(e) => setQuestionForm({ ...questionForm, tips: e.target.value })}
-                        className="w-full rounded-lg border-amber-300 focus:border-amber-500 focus:ring-amber-500 text-sm"
+                        className="w-full rounded-lg border-secondary-300 focus:border-secondary-500 focus:ring-secondary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-purple-600">Vocabulary (JSON array)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1 font-bold text-primary-600">Vocabulary (JSON array)</label>
                       <textarea
                         rows={4}
                         placeholder={'[\n  { "word": "policy", "meaning": "(n) chính sách" }\n]'}
                         value={questionForm.vocabulary}
                         onChange={(e) => setQuestionForm({ ...questionForm, vocabulary: e.target.value })}
-                        className="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500 font-mono text-xs"
+                        className="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500 font-mono text-xs"
                       />
                     </div>
                   </div>
@@ -8438,7 +8438,7 @@ export default function AdminDashboard() {
                   <button
                     onClick={createToeicQuestion}
                     disabled={savingToeicQuestion}
-                    className="rounded-xl bg-[#581c87] px-8 py-2.5 text-sm font-bold text-white hover:bg-[#6b21a8] disabled:opacity-50 shadow-md transition-all active:scale-95"
+                    className="rounded-xl bg-primary-900 px-8 py-2.5 text-sm font-bold text-white hover:bg-primary-800 disabled:opacity-50 shadow-md transition-all active:scale-95"
                   >
                     {savingToeicQuestion ? 'Saving...' : editingToeicQuestion ? 'Update Question' : 'Save Question'}
                   </button>
@@ -8457,11 +8457,11 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   {/* PRO */}
-                  <div className="rounded-lg border border-amber-200 p-4 bg-amber-50">
-                    <p className="mb-3 font-bold text-amber-700">Yêu cầu gói PRO</p>
+                  <div className="rounded-lg border border-secondary-200 p-4 bg-secondary-50">
+                    <p className="mb-3 font-bold text-secondary-700">Yêu cầu gói PRO</p>
                     {(['meaning','phonetic','englishDefinition','example','exampleVi','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => (
                       <label key={`pro-${f}`} className="flex items-center gap-2 mb-2 cursor-pointer">
-                        <input type="checkbox" className="rounded border-amber-300 text-amber-600 focus:ring-amber-500" checked={currentTopicLocks.proFields.includes(f)} onChange={(e) => {
+                        <input type="checkbox" className="rounded border-secondary-300 text-secondary-600 focus:ring-secondary-500" checked={currentTopicLocks.proFields.includes(f)} onChange={(e) => {
                           const checked = e.target.checked;
                           setCurrentTopicLocks(prev => ({
                             ...prev,
@@ -8469,26 +8469,26 @@ export default function AdminDashboard() {
                             ultraFields: checked ? prev.ultraFields.filter(x => x !== f) : prev.ultraFields
                           }))
                         }} />
-                        <span className="text-sm font-medium text-amber-800">{f}</span>
+                        <span className="text-sm font-medium text-secondary-800">{f}</span>
                       </label>
                     ))}
                   </div>
 
                   {/* ULTRA */}
-                  <div className="rounded-lg border border-purple-200 p-4 bg-purple-50">
-                    <p className="mb-3 font-bold text-purple-700">Yêu cầu gói ULTRA</p>
+                  <div className="rounded-lg border border-primary-200 p-4 bg-primary-50">
+                    <p className="mb-3 font-bold text-primary-700">Yêu cầu gói ULTRA</p>
                     {(['meaning','phonetic','englishDefinition','example','exampleVi','synonyms','antonyms','collocations','toeicTrap'] as string[]).map(f => {
                       const isProChecked = currentTopicLocks.proFields.includes(f);
                       return (
                       <label key={`ultra-${f}`} className={`flex items-center gap-2 mb-2 ${isProChecked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
-                        <input type="checkbox" className={`rounded border-purple-300 text-purple-600 focus:ring-purple-500 ${isProChecked ? 'cursor-not-allowed' : ''}`} checked={isProChecked || currentTopicLocks.ultraFields.includes(f)} disabled={isProChecked} onChange={(e) => {
+                        <input type="checkbox" className={`rounded border-primary-300 text-primary-600 focus:ring-primary-500 ${isProChecked ? 'cursor-not-allowed' : ''}`} checked={isProChecked || currentTopicLocks.ultraFields.includes(f)} disabled={isProChecked} onChange={(e) => {
                           const checked = e.target.checked;
                           setCurrentTopicLocks(prev => ({
                             ...prev,
                             ultraFields: checked ? [...prev.ultraFields, f] : prev.ultraFields.filter(x => x !== f)
                           }))
                         }} />
-                        <span className="text-sm font-medium text-purple-800">{f}</span>
+                        <span className="text-sm font-medium text-primary-800">{f}</span>
                       </label>
                     )})}
                   </div>
@@ -8507,7 +8507,7 @@ export default function AdminDashboard() {
                 <button
                   type="button"
                   onClick={() => void saveTopicLocksConfig()}
-                  className="rounded-lg bg-purple-600 px-5 py-2 font-bold text-white hover:bg-purple-700 disabled:opacity-50"
+                  className="rounded-lg bg-primary-600 px-5 py-2 font-bold text-white hover:bg-primary-700 disabled:opacity-50"
                   disabled={savingTopicLocks}
                 >
                   {savingTopicLocks ? 'Đang lưu...' : 'Lưu cấu hình'}

@@ -10,11 +10,11 @@ export default function PlacementTestIntroPage() {
         <div className="min-h-[calc(100vh-64px)] bg-slate-50 flex items-center justify-center p-4">
             <div className="max-w-2xl w-full bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden relative">
                 {/* Background Decoration */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-100 to-transparent rounded-bl-full opacity-50 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-amber-50 to-transparent rounded-tr-full opacity-50 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100 to-transparent rounded-bl-full opacity-50 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-secondary-50 to-transparent rounded-tr-full opacity-50 pointer-events-none" />
 
                 <div className="p-8 sm:p-12 relative z-10 flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <div className="w-20 h-20 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mb-6 shadow-inner">
                         <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                         </svg>
@@ -43,7 +43,7 @@ export default function PlacementTestIntroPage() {
                     <div className="w-full max-w-md flex flex-col gap-3">
                         <Link 
                             href="/toeic-practice/placement-test/take"
-                            className="w-full flex items-center justify-center gap-2 bg-[#581c87] hover:bg-[#6b21a8] text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
+                            className="w-full flex items-center justify-center gap-2 bg-primary-900 hover:bg-primary-800 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
                         >
                             <span>Bắt đầu làm bài ngay</span>
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

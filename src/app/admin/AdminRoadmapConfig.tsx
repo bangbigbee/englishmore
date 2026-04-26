@@ -111,7 +111,7 @@ export default function AdminRoadmapConfig() {
           <button 
             onClick={handleSave}
             disabled={saving}
-            className="px-6 py-2 text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-50 rounded-lg transition-colors shadow-sm"
+            className="px-6 py-2 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 rounded-lg transition-colors shadow-sm"
           >
             {saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}
           </button>

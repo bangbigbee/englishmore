@@ -201,18 +201,18 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
     return (
       <div className="flex flex-col items-center p-0">
         <div className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-5 flex flex-col items-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-purple-500 to-purple-500"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-primary-500 to-primary-500"></div>
             
-            <div className="flex items-center gap-2 mb-4 text-purple-600 font-medium text-sm">
+            <div className="flex items-center gap-2 mb-4 text-primary-600 font-medium text-sm">
                 <IconShieldCheck className="w-4 h-4" />
                 <span>Thanh toán an toàn & bảo mật 100%</span>
             </div>
 
             <div className="p-2.5 bg-white rounded-2xl shadow-xl border border-slate-100 mb-2 relative">
-                <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-purple-500 rounded-tl-lg"></div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-purple-500 rounded-tr-lg"></div>
-                <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-purple-500 rounded-bl-lg"></div>
-                <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-purple-500 rounded-br-lg"></div>
+                <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-primary-500 rounded-tl-lg"></div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-primary-500 rounded-tr-lg"></div>
+                <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-primary-500 rounded-bl-lg"></div>
+                <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-primary-500 rounded-br-lg"></div>
                 <img src={qrUrl} alt="VietQR" className="w-40 h-40 sm:w-48 sm:h-48 object-contain rounded-xl relative z-10" />
             </div>
             <p className="text-xs text-slate-500 mt-3 font-medium flex items-center gap-1.5">
@@ -230,13 +230,13 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-slate-500">Số tài khoản</span>
             <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tracking-wide text-purple-600">{BANK_ACCOUNT}</span>
+                <span className="text-sm font-bold tracking-wide text-primary-600">{BANK_ACCOUNT}</span>
                 <button 
                   onClick={() => handleCopy(BANK_ACCOUNT, 'account')}
-                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-purple-600"
+                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-primary-600"
                   title="Copy"
                 >
-                  {copyState === 'account' ? <IconCheck className="w-4 h-4 text-purple-500" /> : <IconCopy className="w-4 h-4" />}
+                  {copyState === 'account' ? <IconCheck className="w-4 h-4 text-primary-500" /> : <IconCopy className="w-4 h-4" />}
                 </button>
             </div>
           </div>
@@ -249,34 +249,34 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           <div className="flex items-center justify-between border-t border-dashed border-slate-200 pt-3">
             <span className="text-sm font-medium text-slate-500">Số tiền</span>
             <div className="flex items-center gap-2">
-                <span className="text-base font-black text-amber-500">{amount.toLocaleString()} VNĐ</span>
+                <span className="text-base font-black text-secondary-500">{amount.toLocaleString()} VNĐ</span>
                 <button 
                   onClick={() => handleCopy(amount.toString(), 'amount')}
-                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-purple-600"
+                  className="p-1.5 hover:bg-slate-100 rounded-md transition-colors text-slate-400 hover:text-primary-600"
                   title="Copy"
                 >
-                  {copyState === 'amount' ? <IconCheck className="w-4 h-4 text-purple-500" /> : <IconCopy className="w-4 h-4" />}
+                  {copyState === 'amount' ? <IconCheck className="w-4 h-4 text-primary-500" /> : <IconCopy className="w-4 h-4" />}
                 </button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between bg-amber-50/50 p-2.5 rounded-xl border border-amber-100/50">
+          <div className="flex items-center justify-between bg-secondary-50/50 p-2.5 rounded-xl border border-secondary-100/50">
             <span className="text-sm font-medium text-slate-600 flex-shrink-0">Nội dung <span className="text-red-500">*</span></span>
             <div className="flex items-center gap-2 ml-4 overflow-hidden">
-                <span className="text-xs font-mono font-bold text-amber-900 bg-amber-100 px-2.5 py-1 rounded truncate">{ADD_INFO}</span>
+                <span className="text-xs font-mono font-bold text-secondary-900 bg-secondary-100 px-2.5 py-1 rounded truncate">{ADD_INFO}</span>
                 <button 
                   onClick={() => handleCopy(ADD_INFO, 'info')}
-                  className="p-1.5 hover:bg-amber-100 rounded-md transition-colors text-amber-600 hover:text-amber-800 shrink-0 bg-white shadow-sm border border-amber-200"
+                  className="p-1.5 hover:bg-secondary-100 rounded-md transition-colors text-secondary-600 hover:text-secondary-800 shrink-0 bg-white shadow-sm border border-secondary-200"
                   title="Copy"
                 >
-                  {copyState === 'info' ? <IconCheck className="w-4 h-4 text-purple-600" /> : <IconCopy className="w-4 h-4" />}
+                  {copyState === 'info' ? <IconCheck className="w-4 h-4 text-primary-600" /> : <IconCopy className="w-4 h-4" />}
                 </button>
             </div>
           </div>
         </div>
         
-        <div className="mt-4 flex items-center justify-center gap-1.5 bg-purple-50 text-purple-700 px-4 py-2 rounded-full border border-purple-100">
-            <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
+        <div className="mt-4 flex items-center justify-center gap-1.5 bg-primary-50 text-primary-700 px-4 py-2 rounded-full border border-primary-100">
+            <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
             <span className="text-[10px] font-bold uppercase tracking-wider">Hệ thống tự động duyệt trong 1-2 giờ</span>
         </div>
       </div>
@@ -320,21 +320,21 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           <div className="mb-6 flex justify-center">
             {feedback.type === 'success' ? (
               feedback.tier === 'PRO' ? (
-                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-secondary-100 text-secondary-700 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
                   <IconStar className="w-5 h-5" /> PRO PASS
                 </div>
               ) : feedback.tier === 'ULTRA' ? (
-                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-900/60 text-purple-300 rounded-full text-xs font-bold uppercase tracking-widest border border-purple-700/30 shadow-sm">
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-900/60 text-primary-300 rounded-full text-xs font-bold uppercase tracking-widest border border-primary-700/30 shadow-sm">
                   <IconZap className="w-5 h-5" /> ULTRA MASTERY
                 </div>
               ) : (
-                <div className="w-16 h-16 bg-[#581c87]/10 rounded-full flex items-center justify-center">
-                  <IconCheck className="w-8 h-8 text-[#581c87]" />
+                <div className="w-16 h-16 bg-primary-900/10 rounded-full flex items-center justify-center">
+                  <IconCheck className="w-8 h-8 text-primary-900" />
                 </div>
               )
             ) : (
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center">
-                <IconX className="w-8 h-8 text-amber-600" />
+              <div className="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center">
+                <IconX className="w-8 h-8 text-secondary-600" />
               </div>
             )}
           </div>
@@ -352,7 +352,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 onClose()
               }
             }}
-            className="w-full font-bold rounded-xl py-3 transition-colors bg-[#581c87] hover:bg-[#6b21a8] text-white shadow-lg shadow-[#581c87]/20 mt-2"
+            className="w-full font-bold rounded-xl py-3 transition-colors bg-primary-900 hover:bg-primary-800 text-white shadow-lg shadow-primary-900/20 mt-2"
           >
             Đã hiểu
           </button>
@@ -374,7 +374,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           <div className="overflow-y-auto custom-scrollbar p-6 md:p-10">
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                Nâng Tầm Tiếng Anh Cùng <span className="text-[#581c87]">Toeic</span><span className="text-[#ea980c]">More</span>
+                Nâng Tầm Tiếng Anh Cùng <span className="text-primary-900">Toeic</span><span className="text-[#ea980c]">More</span>
               </h2>
               <p className="text-slate-500 text-sm md:text-base mb-8">
                 Lựa chọn gói Premium phù hợp để mở khóa toàn bộ kho tàng bài tập độc quyền, giải thích cực kỳ chi tiết và tính năng chấm chữa AI thông minh.
@@ -388,7 +388,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto overflow-y-visible pb-6 pt-4 -mt-4 items-stretch purple-scrollbar snap-x snap-mandatory px-6 -mx-6 md:mx-0 md:px-0 md:overflow-visible"
             >
               {/* FREE Tier */}
-              <div className="flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-purple-50/50 rounded-2xl p-6 border-2 border-purple-100/50 flex flex-col relative focus:outline-none">
+              <div className="flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-primary-50/50 rounded-2xl p-6 border-2 border-primary-100/50 flex flex-col relative focus:outline-none">
                 <div className="mb-6">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     Mặc định
@@ -400,15 +400,15 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 
                 <ul className="space-y-4 mb-8 flex-1 text-sm">
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-600">Truy cập bộ tài liệu cơ bản</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-600">Luyện đề TOEIC với các tính năng cơ bản</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-600">Xem điểm tổng và đáp án đúng sai</span>
                   </li>
                   <li className="flex items-start gap-3 opacity-40">
@@ -421,7 +421,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   </li>
                 </ul>
                 {effectiveTier === 'FREE' && (
-                  <div className="w-full bg-purple-100/50 text-purple-800 font-bold rounded-xl py-3.5 text-center mt-auto text-sm border border-purple-200/50">Gói Hiện Tại</div>
+                  <div className="w-full bg-primary-100/50 text-primary-800 font-bold rounded-xl py-3.5 text-center mt-auto text-sm border border-primary-200/50">Gói Hiện Tại</div>
                 )}
                 <p className="text-[10px] text-center text-slate-400 mt-3 font-medium invisible">
                   Miễn phí gói này nếu bạn đang Đăng ký một khóa học tại EnglishMore.
@@ -432,10 +432,10 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               <div 
                 onMouseEnter={() => setDiagramTier('PRO')}
                 onClick={() => setDiagramTier('PRO')}
-                className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-gradient-to-b from-amber-50 to-white rounded-2xl p-6 border-2 flex flex-col relative transition-all cursor-pointer hover:-translate-y-1 hover:shadow-xl focus:outline-none ${diagramTier === 'PRO' ? 'border-amber-400 shadow-amber-500/20 shadow-xl opacity-100 ring-0 z-10' : 'border-amber-200/50 shadow-amber-500/5 opacity-80'} ${effectiveTier === 'FREE' ? 'transform md:-translate-y-2' : ''}`}
+                className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-gradient-to-b from-secondary-50 to-white rounded-2xl p-6 border-2 flex flex-col relative transition-all cursor-pointer hover:-translate-y-1 hover:shadow-xl focus:outline-none ${diagramTier === 'PRO' ? 'border-secondary-400 shadow-secondary-500/20 shadow-xl opacity-100 ring-0 z-10' : 'border-secondary-200/50 shadow-secondary-500/5 opacity-80'} ${effectiveTier === 'FREE' ? 'transform md:-translate-y-2' : ''}`}
               >
                 <div className="mb-6">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
                     <IconStar className="w-4 h-4" /> PRO Pass
                   </div>
                   <h3 className="text-2xl font-black text-slate-900 mb-2">PRO</h3>
@@ -447,24 +447,24 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 
                 <ul className="space-y-4 mb-8 flex-1 text-sm">
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-800 font-semibold">Mọi tính năng của gói FREE</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700">Làm TOEIC <strong className="text-amber-600">Không Giới Hạn</strong></span>
+                    <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
+                    <span className="text-slate-700">Làm TOEIC <strong className="text-secondary-600">Không Giới Hạn</strong></span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-700">Mở khóa Giải thích Ngoại lệ & Ngữ pháp chi tiết</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-700">Nhân đôi Activity Points (x2)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700 border-b border-amber-200 border-dashed pb-0.5">Mở khoá Sổ Tay Ngữ Pháp & Luyện Đọc</span>
+                    <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
+                    <span className="text-slate-700 border-b border-secondary-200 border-dashed pb-0.5">Mở khoá Sổ Tay Ngữ Pháp & Luyện Đọc</span>
                   </li>
                   <li className="flex items-start gap-3 opacity-40">
                     <IconX className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
@@ -472,14 +472,14 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                   </li>
                 </ul>
                 {effectiveTier === 'PRO' ? (
-                   <div className="py-3 text-center text-amber-600 text-xs font-bold uppercase tracking-widest border-t border-amber-200/60 mt-auto">Gói Hiện Tại</div>
+                   <div className="py-3 text-center text-secondary-600 text-xs font-bold uppercase tracking-widest border-t border-secondary-200/60 mt-auto">Gói Hiện Tại</div>
                 ) : effectiveTier === 'ULTRA' ? (
                    <div className="w-full bg-slate-100 text-slate-400 font-bold rounded-xl py-3.5 text-center mt-auto cursor-not-allowed text-sm border border-slate-200">Đã Bao Gồm</div>
                 ) : (
                    <button 
                      onClick={() => handleUpgrade('PRO')}
                      disabled={checkingPending}
-                     className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95 mt-auto disabled:opacity-75 disabled:cursor-wait"
+                     className="w-full bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600 text-secondary-950 font-black rounded-xl py-3.5 transition-all shadow-md active:scale-95 mt-auto disabled:opacity-75 disabled:cursor-wait"
                    >
                      {checkingPending ? 'Đang tải...' : 'Nâng Cấp PRO Ngay'}
                    </button>
@@ -493,33 +493,33 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               <div 
                 onMouseEnter={() => setDiagramTier('ULTRA')}
                 onClick={() => setDiagramTier('ULTRA')}
-                className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-[#2b0c36] rounded-2xl p-6 border-2 flex flex-col relative text-white shadow-2xl transition-all cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'ULTRA' ? 'border-purple-400 shadow-purple-900/60 shadow-2xl opacity-100 ring-0 z-10' : 'border-purple-900 border-opacity-80 shadow-purple-900/30 opacity-90'} ${effectiveTier === 'PRO' || effectiveTier === 'ULTRA' ? 'transform md:-translate-y-2' : ''}`}
+                className={`flex-none w-[85vw] max-w-[320px] md:w-auto md:max-w-none snap-center bg-[#2b0c36] rounded-2xl p-6 border-2 flex flex-col relative text-white shadow-2xl transition-all cursor-pointer hover:-translate-y-1 focus:outline-none ${diagramTier === 'ULTRA' ? 'border-primary-400 shadow-primary-900/60 shadow-2xl opacity-100 ring-0 z-10' : 'border-primary-900 border-opacity-80 shadow-primary-900/30 opacity-90'} ${effectiveTier === 'PRO' || effectiveTier === 'ULTRA' ? 'transform md:-translate-y-2' : ''}`}
               >
                 {(effectiveTier === 'PRO' || effectiveTier === 'ULTRA') && (
                   <div className="absolute top-0 right-6 transform -translate-y-1/2">
-                    <span className="bg-gradient-to-r from-purple-600 to-purple-800 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
+                    <span className="bg-gradient-to-r from-primary-600 to-primary-800 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
                       Nâng Cấp
                     </span>
                   </div>
                 )}
                 <div className="mb-6">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-900/60 text-purple-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-purple-700/30">
-                    <IconZap className="w-4 h-4 text-purple-600" /> ULTRA Mastery
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-900/60 text-primary-300 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-primary-700/30">
+                    <IconZap className="w-4 h-4 text-primary-600" /> ULTRA Mastery
                   </div>
                   <h3 className="text-2xl font-black text-white mb-2">ULTRA</h3>
-                  <p className="text-purple-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
+                  <p className="text-primary-100/70 text-sm h-12">Kho tri thức độc quyền. Học thả ga mọi lúc.</p>
                   <div className="text-3xl font-black text-white mt-4 mb-6">
                     {effectiveTier === 'PRO' ? (
                       <div className="flex flex-col items-start gap-1">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-xl line-through text-purple-300/60 font-medium">{formatPrice(ultraPrice)}</span>
+                          <span className="text-xl line-through text-primary-300/60 font-medium">{formatPrice(ultraPrice)}</span>
                           <span>{formatPrice(ultraUpgradePrice)}</span>
                         </div>
-                        <div className="text-[10px] text-amber-300 mt-0.5 uppercase tracking-wider font-bold bg-amber-900/40 inline-flex px-2 py-0.5 rounded border border-amber-500/30">Đặc quyền nâng cấp cho PRO</div>
+                        <div className="text-[10px] text-secondary-300 mt-0.5 uppercase tracking-wider font-bold bg-secondary-900/40 inline-flex px-2 py-0.5 rounded border border-secondary-500/30">Đặc quyền nâng cấp cho PRO</div>
                       </div>
                     ) : (
                       <>
-                        {formatPrice(ultraPrice)}<span className="text-base font-normal text-purple-100/50">/{formatDuration(ultraDuration)}</span>
+                        {formatPrice(ultraPrice)}<span className="text-base font-normal text-primary-100/50">/{formatDuration(ultraDuration)}</span>
                       </>
                     )}
                   </div>
@@ -527,33 +527,33 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 
                 <ul className="space-y-4 mb-8 flex-1 text-sm">
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                    <span className="text-purple-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
+                    <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
+                    <span className="text-primary-50 font-semibold">Tất cả tính năng ưu việt của gói PRO</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                    <span className="text-purple-100/90 font-semibold text-amber-200">Truy cập toàn bộ kho tài liệu độc quyền</span>
+                    <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
+                    <span className="text-primary-100/90 font-semibold text-secondary-200">Truy cập toàn bộ kho tài liệu độc quyền</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                    <span className="text-purple-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
+                    <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
+                    <span className="text-primary-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                    <span className="text-purple-100/90">Nhân ba Activity Points (x3)</span>
+                    <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
+                    <span className="text-primary-100/90">Nhân ba Activity Points (x3)</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
-                    <span className="text-purple-100/90">Ưu tiên hỗ trợ từ Admin</span>
+                    <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
+                    <span className="text-primary-100/90">Ưu tiên hỗ trợ từ Admin</span>
                   </li>
                 </ul>
                 {effectiveTier === 'ULTRA' ? (
-                   <div className="py-3 text-center text-purple-300 text-xs font-bold uppercase tracking-widest border-t border-purple-950/60 mt-auto">Gói Hiện Tại</div>
+                   <div className="py-3 text-center text-primary-300 text-xs font-bold uppercase tracking-widest border-t border-primary-950/60 mt-auto">Gói Hiện Tại</div>
                 ) : (
                    <button 
                      onClick={() => handleUpgrade('ULTRA')}
                      disabled={checkingPending}
-                     className="w-full bg-gradient-to-r from-purple-700 to-purple-950 hover:from-purple-800 hover:to-purple-900 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-purple-900/50 active:scale-95 border border-purple-800/50 mt-auto disabled:opacity-75 disabled:cursor-wait"
+                     className="w-full bg-gradient-to-r from-primary-700 to-primary-950 hover:from-primary-800 hover:to-primary-900 text-white font-black rounded-xl py-3.5 transition-all shadow-md shadow-primary-900/50 active:scale-95 border border-primary-800/50 mt-auto disabled:opacity-75 disabled:cursor-wait"
                    >
                      {checkingPending ? 'Đang tải...' : 'Bứt Phá Cùng ULTRA'}
                    </button>
@@ -564,25 +564,25 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
               </div>
             </div>
 
-      <div className="mt-12 mb-2 w-full bg-[#581c87]/[0.02] border border-[#581c87]/10 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-visible">
+      <div className="mt-12 mb-2 w-full bg-primary-900/[0.02] border border-primary-900/10 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-visible">
         
         <div className="text-center mb-16 relative z-10 mt-2">
-          <h2 className="text-xl sm:text-2xl font-black tracking-wide text-[#581c87]">
+          <h2 className="text-xl sm:text-2xl font-black tracking-wide text-primary-900">
             Lộ trình nâng cấp và đồng hành cùng Toeic<span className="text-[#ea980c]">More</span>
           </h2>
         </div>
 
-        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] mx-auto h-1 bg-[#581c87]/10 rounded-full mt-10 mb-16">
+        <div className="relative w-[85%] sm:w-[90%] lg:w-[80%] mx-auto h-1 bg-primary-900/10 rounded-full mt-10 mb-16">
             {/* Active progress track */}
             <motion.div 
               initial={{ width: "0%" }}
               animate={{ width: (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'super_early_bird' ? '15%' : (diagramTier === 'PRO' ? activeProPhaseStr : activeUltraPhaseStr) === 'early_bird' ? '50%' : '85%' }}
               transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-[#581c87] to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
+              className="absolute top-0 left-0 h-1 bg-gradient-to-r from-primary-900 to-[#ea980c] rounded-full shadow-[0_0_8px_rgba(234,152,12,0.5)] flex items-center justify-end" 
             >
               {/* Glowing dot at the end of the track */}
-              <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white border-2 border-amber-500 rounded-full absolute -right-[7px] sm:-right-[8px] flex items-center justify-center shadow-[0_0_10px_rgba(234,152,12,0.8)] z-20">
-                 <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
+              <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white border-2 border-secondary-500 rounded-full absolute -right-[7px] sm:-right-[8px] flex items-center justify-center shadow-[0_0_10px_rgba(234,152,12,0.8)] z-20">
+                 <div className="w-1.5 h-1.5 bg-secondary-500 rounded-full animate-pulse"></div>
               </div>
             </motion.div>
             
@@ -601,25 +601,25 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                 return (
                     <div key={phase} className="absolute top-1/2 flex flex-col items-center z-10" style={{ left: leftPos, transform: 'translate(-50%, -50%)' }}>
                         {/* Price Label */}
-                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-amber-600 scale-110 drop-shadow-sm' : isPast ? 'text-[#581c87]/60 line-through decoration-[#581c87]/30' : 'text-slate-400'}`}>
+                        <div className={`absolute bottom-full mb-3 text-[11px] sm:text-xs font-black transition-all ${isCurrent ? 'text-secondary-600 scale-110 drop-shadow-sm' : isPast ? 'text-primary-900/60 line-through decoration-primary-900/30' : 'text-slate-400'}`}>
                             {priceDisplay}
                         </div>
                         
                         {/* Node Circle */}
                         <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 bg-white transition-all duration-500 ${
-                            isPast ? 'border-[#581c87] bg-[#581c87]' : 
-                            'border-[#581c87]/20'
+                            isPast ? 'border-primary-900 bg-primary-900' : 
+                            'border-primary-900/20'
                         } ${isCurrent ? 'opacity-0' : ''}`}>
                         </div>
                         
                         {/* Name Label */}
                         <div className={`absolute top-full mt-3 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold whitespace-nowrap transition-colors flex flex-col items-center gap-1 ${
-                            isCurrent ? 'text-amber-700' : 
-                            isPast ? 'text-[#581c87]/80' : 
+                            isCurrent ? 'text-secondary-700' : 
+                            isPast ? 'text-primary-900/80' : 
                             'text-slate-400'
                         }`}>
                             <span>{phase === 'super_early_bird' ? 'Super Early' : phase === 'early_bird' ? 'Early Bird' : 'Giá Gốc'}</span>
-                            <span className={`px-2 py-0.5 rounded-full ${isCurrent ? 'bg-amber-100/70 text-amber-900 border border-amber-200' : isPast ? 'text-[#581c87]/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
+                            <span className={`px-2 py-0.5 rounded-full ${isCurrent ? 'bg-secondary-100/70 text-secondary-900 border border-secondary-200' : isPast ? 'text-primary-900/70 font-medium normal-case' : 'text-slate-400 font-medium normal-case'}`}>
                                 {pricePhase.label || '...'}
                             </span>
                         </div>
@@ -646,7 +646,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
           
           <div className="text-center mb-6 pt-2">
             <h2 className="text-2xl font-black text-slate-800">
-              Chuyển khoản <span className={activeModal === 'PRO' ? 'text-amber-500' : 'text-purple-800'}>{activeModal}</span>
+              Chuyển khoản <span className={activeModal === 'PRO' ? 'text-secondary-500' : 'text-primary-800'}>{activeModal}</span>
             </h2>
             <p className="text-slate-500 text-sm mt-1.5 font-medium mb-2">
               Hoàn tất thanh toán để nhận ngay đặc quyền.

@@ -300,7 +300,7 @@ export default function AdminPlacementTest() {
                 <div className="w-full lg:w-1/3 bg-white rounded-xl shadow border border-slate-200 overflow-hidden flex flex-col">
                 <div className="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
                     <h2 className="font-black text-slate-800">Kho Bộ Đề</h2>
-                    <button onClick={handleCreateSet} className="text-purple-600 font-bold text-sm hover:text-purple-700 bg-purple-50 px-3 py-1 rounded">
+                    <button onClick={handleCreateSet} className="text-primary-600 font-bold text-sm hover:text-primary-700 bg-primary-50 px-3 py-1 rounded">
                         + Tạo Bộ Mới
                     </button>
                 </div>
@@ -308,7 +308,7 @@ export default function AdminPlacementTest() {
                     {sets.map(s => (
                         <div 
                             key={s.id} 
-                            className={`p-4 rounded-xl border-2 transition-all cursor-pointer relative group ${selectedSet?.id === s.id ? 'border-purple-500 bg-purple-50' : 'border-slate-100 hover:border-purple-200'}`}
+                            className={`p-4 rounded-xl border-2 transition-all cursor-pointer relative group ${selectedSet?.id === s.id ? 'border-primary-500 bg-primary-50' : 'border-slate-100 hover:border-primary-200'}`}
                             onClick={() => handleSelectSet(s)}
                         >
                             <div className="flex justify-between items-start mb-2">
@@ -393,7 +393,7 @@ export default function AdminPlacementTest() {
                                                 "* Các câu dưới thẻ [Category] sẽ tự động mang thuộc tính của Category đó cho đến khi gặp thẻ mới."
                                             );
                                         }}
-                                        className="px-3 py-2 text-purple-600 font-bold hover:bg-purple-100 rounded-lg transition-colors text-sm"
+                                        className="px-3 py-2 text-primary-600 font-bold hover:bg-primary-100 rounded-lg transition-colors text-sm"
                                     >
                                         📄 Xem Format Mẫu
                                     </button>
@@ -401,7 +401,7 @@ export default function AdminPlacementTest() {
                                         {isUploading ? 'Đang Import...' : 'Import DOCX'}
                                         <input type="file" accept=".docx" className="hidden" onChange={handleDocxUpload} disabled={isUploading} />
                                     </label>
-                                    <button onClick={handleAddNew} className="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                                    <button onClick={handleAddNew} className="px-4 py-2 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors text-sm">
                                         + Thêm Câu Hỏi
                                     </button>
                                 </div>
@@ -410,8 +410,8 @@ export default function AdminPlacementTest() {
 
                         <div className="p-6">
                             {editingId && (
-                                <div className="mb-8 p-6 bg-purple-50 rounded-xl border border-purple-200">
-                                    <h3 className="font-bold text-lg text-purple-900 mb-4">{editingId === 'new' ? 'Thêm Câu Hỏi' : 'Sửa Câu Hỏi'}</h3>
+                                <div className="mb-8 p-6 bg-primary-50 rounded-xl border border-primary-200">
+                                    <h3 className="font-bold text-lg text-primary-900 mb-4">{editingId === 'new' ? 'Thêm Câu Hỏi' : 'Sửa Câu Hỏi'}</h3>
                                     <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-semibold mb-1">Thứ tự (Câu số mấy)</label>
@@ -505,13 +505,13 @@ export default function AdminPlacementTest() {
                                         {questions.map((q, idx) => (
                                             <tr key={q.id} className="border-b hover:bg-slate-50 transition-colors">
                                                 <td className="p-3 font-bold text-slate-800">{q.order}</td>
-                                                <td className="p-3"><span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">{q.category}</span></td>
+                                                <td className="p-3"><span className="bg-primary-100 text-primary-700 px-2 py-1 rounded text-xs font-bold">{q.category}</span></td>
                                                 <td className="p-3 text-sm text-slate-600">
                                                     <div className="line-clamp-1 max-w-xs">{q.question || q.passage || (q.audioUrl ? '🎵 Audio' : '📷 Image')}</div>
                                                 </td>
                                                 <td className="p-3 font-bold text-green-600">{q.correctOption}</td>
                                                 <td className="p-3 text-right space-x-2">
-                                                    <button onClick={() => handleEdit(q)} className="px-3 py-1 bg-amber-100 text-amber-700 rounded text-xs font-bold hover:bg-amber-200">Sửa</button>
+                                                    <button onClick={() => handleEdit(q)} className="px-3 py-1 bg-secondary-100 text-secondary-700 rounded text-xs font-bold hover:bg-secondary-200">Sửa</button>
                                                     <button onClick={() => handleDelete(q.id)} className="px-3 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold hover:bg-rose-200">Xóa</button>
                                                 </td>
                                             </tr>
