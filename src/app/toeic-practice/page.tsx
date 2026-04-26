@@ -1503,11 +1503,21 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 							const isTopicComplete = newIds.length > 0 && newIds.length === vocabItems.length;
 							
 							if (!session) {
-								if (newStreak === 2) {
-									toast.success('Hay lắm! 2 từ liên tiếp rồi, cố lên nào!');
-								} else {
+								if (newStreak === 1) {
 									playPronunciationRewardChime();
-									toast('Chúc mừng!', { description: 'Đăng nhập để nhận 1 Sao nhé.', icon: '⭐' });
+									toast.success('Bạn phát âm tốt lắm. Phần thưởng của bạn là 1 Star.', { icon: '⭐' });
+								} else if (newStreak === 2 || newStreak === 5) {
+									toast.success(newStreak === 2 ? 'Hay lắm! 2 từ liên tiếp rồi, đăng nhập để lưu tiến độ nhé!' : 'Bạn đang làm rất tốt! Đăng nhập để lưu tiến độ nhé!');
+									openLoginModal?.(`${pathname}?tab=vocabulary`);
+								} else if (newStreak === 3) {
+									playPronunciationRewardChime();
+									toast.success('Hot streak! 3 từ đúng liên tiếp (+5 ⭐)', { icon: '⭐' });
+								} else if (newStreak === 10) {
+									playPronunciationRewardChime();
+									toast.success('Unstoppable! 10 từ đúng liên tiếp (+30 ⭐)', { icon: '⭐' });
+								} else if (isTopicComplete) {
+									playPronunciationRewardChime();
+									toast.success('Tuyệt đỉnh! Hoàn thành xuất sắc toàn bộ chủ đề! (+50 ⭐)', { icon: '⭐' });
 								}
 							} else {
 								fetch('/api/toeic/vocabulary/pronunciation-reward', {

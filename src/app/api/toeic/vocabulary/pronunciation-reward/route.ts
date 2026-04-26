@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         });
         if (baseResult.awardedStars > 0) {
             totalAwardedStars += baseResult.awardedStars;
-            reasons.push(`Phát âm chuẩn xác! (+${baseResult.awardedStars} ⭐)`);
+            reasons.push(`Bạn phát âm tốt lắm. Phần thưởng của bạn là ${baseResult.awardedStars} Star.`);
         }
 
         // 2. Streak rules
