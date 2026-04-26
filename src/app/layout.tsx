@@ -10,6 +10,7 @@ import GlobalUpgradePoller from "@/components/GlobalUpgradePoller";
 import ToeicMoreNotice from "@/components/ToeicMoreNotice";
 import ClientTracking from "@/components/ClientTracking";
 import PwaInstallPrompt from "@/components/PwaInstallPrompt";
+import StudyTimeTracker from "@/components/StudyTimeTracker";
 import { prisma } from "@/lib/prisma";
 
 const inter = Inter({
@@ -117,6 +118,7 @@ export default async function RootLayout({
         >
           <AuthProvider>
             <ClientTracking />
+            <StudyTimeTracker />
             <TopNav isToeicDomain={isToeicDomain} />
             <MainWrapper>{children}</MainWrapper>
           <LoginModalController />

@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from 'next-auth/react';
+import ToeicWarriorLeaderboard from '@/components/ToeicWarriorLeaderboard';
 import UpgradeModal from "@/components/UpgradeModal";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -1130,6 +1131,8 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
                     ))}
                 </div>
             </div>
+
+			<ToeicWarriorLeaderboard />
 		</div>
 	);
 }
