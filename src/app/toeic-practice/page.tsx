@@ -822,7 +822,7 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
                                 key={activePage}
                                 initial={{ rotateY: 0, zIndex: 10 }}
                                 animate={{ rotateY: -180, zIndex: 20 }}
-                                exit={{ opacity: 0, transition: {duration:0} }}
+                                exit={{ opacity: 0, transition: {duration: 0} }}
                                 transition={{ duration: 0.8, ease: "easeInOut" }}
                                 style={{ transformOrigin: 'left center' }}
                                 className="absolute inset-0 bg-white dark:bg-slate-800 border-l border-slate-100 dark:border-slate-700 shadow-[2px_0_10px_rgba(0,0,0,0.05)] dark:shadow-[2px_0_10px_rgba(0,0,0,0.3)] [transform-style:preserve-3d]"
@@ -1275,8 +1275,9 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	const pathname = usePathname();
 	const router = useRouter();
 
-	const [topics, setTopics] = useState<{ topic: string; wordCount: number, learnedCount?: number, packageType?: string, isMastered?: boolean }[]>([]);
+	const [topics, setTopics] = useState<{ topic: string; wordCount: number, learnedCount?: number, packageType?: string }[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [subTab, setSubTab] = useState<'practice' | 'progress'>('practice');
 	const [activePackage, setActivePackage] = useState<string>('ALL');
 
 	const initialTopic = searchParams.get('topic');
@@ -1296,8 +1297,8 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	const [speechSupported, setSpeechSupported] = useState(false);
 
 	const [vocabTags, setVocabTags] = useState<Record<string, { learned?: boolean, hard?: boolean, bookmarked?: boolean }>>({});
-	
-    const [challengeExpanded, setChallengeExpanded] = useState(false);
+	// Speed Challenge State
+	const [challengeExpanded, setChallengeExpanded] = useState(false);
 	const [challengePreCtd, setChallengePreCtd] = useState<number | null>(null);
 	const [challengeActive, setChallengeActive] = useState(false);
 	const [challengeWords, setChallengeWords] = useState<any[]>([]);
@@ -1305,13 +1306,11 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	const [challengeOptions, setChallengeOptions] = useState<string[]>([]);
 	const [challengeScore, setChallengeScore] = useState(0);
 	const [challengeTimeLeft, setChallengeTimeLeft] = useState(3);
-	const [challengeResult, setChallengeResult] = useState<{show: boolean, score: number, total: number, timeMs?: number, isMasteryFail?: boolean}>({show: false, score: 0, total: 0, timeMs: 0});
-	const [challengeDifficulty, setChallengeDifficulty] = useState<'normal' | 'high' | 'extreme'>('normal');
-    const [challengeMode, setChallengeMode] = useState<'normal' | 'mastery'>('normal');
+	const [challengeResult, setChallengeResult] = useState<{show: boolean, score: number, total: number, timeMs?: number}>({show: false, score: 0, total: 0, timeMs: 0});
+	const [challengeDifficulty, setChallengeDifficulty] = useState<'high' | 'extreme'>('extreme');
 	const [copySuccess, setCopySuccess] = useState(false);
     const [challengeStartTime, setChallengeStartTime] = useState(0);
     const [guestName, setGuestName] = useState("");
-    const [masteryPopup, setMasteryPopup] = useState<{show: boolean, topic: string | null}>({show: false, topic: null});
 
 	const [isPronunciationListening, setIsPronunciationListening] = useState(false);
 	const [pronunciationStatus, setPronunciationStatus] = useState('');
@@ -1329,7 +1328,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 	useEffect(() => {
 		if ((searchParams.get('playChallenge') === 'true' || searchParams.get('chal') === '1') && vocabItems.length >= 3) {
-			const diff = searchParams.get('diff') as any;
+			const diff = searchParams.get('diff');
 			if (diff === 'high' || diff === 'extreme') setChallengeDifficulty(diff);
             setChallengeExpanded(true);
             setTimeout(() => {
@@ -1806,24 +1805,10 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		}
 
 		// Optimistic UI update
-		setVocabTags(prev => {
-            const newTags = {
-                ...prev,
-                [wordId]: newTagData
-            };
-            
-            if (tag === 'learned' && newTagData.learned && vocabItems.length > 0 && selectedTopic !== 'GLOBAL') {
-                const currentTopicConfig = topics.find(t => t.topic === selectedTopic);
-                if (currentTopicConfig && !currentTopicConfig.isMastered) {
-                    const allLearned = vocabItems.every(w => newTags[w.id]?.learned);
-                    if (allLearned) {
-                        setMasteryPopup({ show: true, topic: selectedTopic });
-                    }
-                }
-            }
-            
-            return newTags;
-        });
+		setVocabTags(prev => ({
+			...prev,
+			[wordId]: newTagData
+		}));
 
 		// Backend sync
 		try {
@@ -1842,27 +1827,11 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		}
 	};
 
-	const setupChallengeRound = (roundIdx: number, currentScore: number, wList = challengeWords, mode = challengeMode) => {
+	const setupChallengeRound = (roundIdx: number, currentScore: number, wList = challengeWords) => {
 		if (roundIdx >= wList.length) {
 			setChallengeActive(false);
             const timeMs = challengeStartTime > 0 ? Date.now() - challengeStartTime : 0;
-			setChallengeResult({ show: true, score: currentScore, total: wList.length, timeMs, isMasteryFail: false });
-
-            if (mode === 'mastery') {
-                if (session?.user?.id) {
-                    fetch('/api/toeic/vocabulary/mastery-reward', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ topic: selectedTopic })
-                    }).then(res => res.json()).then(data => {
-                        if (data.success) {
-                            toast.success(`Chúc mừng! Bạn đã nhận thẻ ĐÃ THUỘC LÒNG cho chủ đề này và được tặng ${data.starsAwarded} Stars!`);
-                            setTopics(prev => prev.map(t => t.topic === selectedTopic ? { ...t, isMastered: true } : t));
-                        }
-                    });
-                }
-                return;
-            }
+			setChallengeResult({ show: true, score: currentScore, total: wList.length, timeMs });
             
             // Only autosubmit score for the exact GLOBAL speed challenge
             if (selectedTopic === 'GLOBAL') {
@@ -1906,9 +1875,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		const wOpts = [...pool].sort(() => 0.5 - Math.random()).slice(0, 2).map(w => w.meaning);
 		const opts = [tWord.meaning, ...wOpts].sort(() => 0.5 - Math.random());
 		setChallengeOptions(opts);
-		if (mode !== 'mastery') {
-            setChallengeTimeLeft(challengeDifficulty === 'high' ? 5 : challengeDifficulty === 'extreme' ? 3 : 10);
-        }
+		setChallengeTimeLeft(challengeDifficulty === 'high' ? 5 : 3);
 	};
 
 	const startChallenge = () => {
@@ -1919,25 +1886,9 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		setChallengeScore(0);
 		setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 });
         setChallengeStartTime(Date.now());
-        setChallengeMode('normal');
-		setupChallengeRound(0, 0, shuffled, 'normal');
+		setupChallengeRound(0, 0, shuffled);
 		setChallengeActive(true);
 	};
-
-    const handleStartMasteryChallenge = () => {
-        setMasteryPopup({ show: false, topic: null });
-        const shuffled = [...vocabItems].sort(() => 0.5 - Math.random());
-        setChallengeWords(shuffled);
-        setChallengeMode('mastery');
-        setChallengeTimeLeft(vocabItems.length * 5); // 5 seconds per word
-        setChallengePreCtd(3);
-        setChallengeActive(true);
-        setChallengeRound(0);
-        setChallengeScore(0);
-        setChallengeStartTime(0);
-        setChallengeResult({ show: false, score: 0, total: 0, timeMs: 0 });
-        setupChallengeRound(0, 0, shuffled, 'mastery');
-    };
 
 	const handleStartChallenge = () => {
 		let plays: number[] = [];
@@ -2078,12 +2029,6 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	useEffect(() => {
 		if (!challengeActive) return;
 		if (challengeTimeLeft <= 0) {
-            if (challengeMode === 'mastery') {
-                setChallengeActive(false);
-                const timeMs = challengeStartTime > 0 ? Date.now() - challengeStartTime : 0;
-                setChallengeResult({ show: true, score: challengeScore, total: challengeWords.length, timeMs, isMasteryFail: true });
-                return;
-            }
 			const nextRound = challengeRound + 1;
 			setChallengeRound(nextRound);
 			setupChallengeRound(nextRound, challengeScore);
@@ -2091,18 +2036,10 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 		}
 		const timer = setTimeout(() => setChallengeTimeLeft(pr => pr - 1), 1000);
 		return () => clearTimeout(timer);
-	}, [challengeTimeLeft, challengeActive, challengeRound, challengeScore, challengeMode]);
+	}, [challengeTimeLeft, challengeActive, challengeRound, challengeScore]);
 
 	const handleChallengeAnswer = (answer: string) => {
         const isCorrect = answer === challengeWords[challengeRound].meaning;
-        
-        if (challengeMode === 'mastery' && !isCorrect) {
-            setChallengeActive(false);
-            const timeMs = challengeStartTime > 0 ? Date.now() - challengeStartTime : 0;
-            setChallengeResult({ show: true, score: challengeScore, total: challengeWords.length, timeMs, isMasteryFail: true });
-            return;
-        }
-
         const nextScore = challengeScore + (isCorrect ? 1 : 0);
 		if (isCorrect) {
 			setChallengeScore(nextScore);
@@ -2283,30 +2220,17 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                     })}
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                    {topics.filter(t => activePackage === 'ALL' || t.packageType === activePackage).map((t) => {
-                                        const learnedPercent = t.wordCount > 0 ? Math.round(((t.learnedCount || 0) / t.wordCount) * 100) : 0;
-                                        return (
-                                            <div 
-                                                key={t.topic} 
-                                                onClick={() => openTopic(t.topic)}
-                                                className={`group relative bg-white rounded-2xl p-5 border-2 transition-all duration-300 cursor-pointer overflow-hidden ${t.isMastered ? 'border-amber-200 hover:border-amber-400 hover:shadow-md' : 'border-slate-100 hover:border-primary-300 hover:shadow-md'}`}
-                                            >
-                                                <div className="flex justify-between items-start mb-3">
-                                                    <div className="font-bold text-slate-800">{t.topic}</div>
-                                                    {t.packageType && <PackageBadge pkg={t.packageType} className="shadow-none rounded-md" />}
-                                                </div>
-                                                <div className="flex items-center justify-between text-xs font-bold mt-1">
-                                                    <span className={`${learnedPercent === 100 ? 'text-primary-600' : 'text-slate-500'} transition-colors`}>{t.learnedCount || 0} / {t.wordCount} từ</span>
-                                                    <span className={`${learnedPercent === 100 ? 'text-primary-600' : 'text-slate-400'}`}>{learnedPercent}%</span>
-                                                </div>
-                                                {t.isMastered && (
-                                                    <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm z-10">
-                                                        ĐÃ THUỘC LÒNG 👑
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )
-                                    })}
+                                    {topics.filter(t => activePackage === 'ALL' || t.packageType === activePackage).map((t) => (
+                                        <TopicCard
+                                            key={t.topic}
+                                            type="vocabulary"
+                                            title={t.topic}
+                                            badgeText={`${t.wordCount} từ`}
+                                            onClick={() => openTopic(t.topic)}
+                                            progress={{ learned: t.learnedCount || 0, total: t.wordCount }}
+                                            packageType={t.packageType}
+                                        />
+                                    ))}
                                 </div>
                             </>
 						)}
@@ -2317,42 +2241,11 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 	// ── Flashcard view ──────────────────────────────────────
 	const currentItem = vocabItems[cardIndex];
+	const lockedCount = totalWords - vocabItems.length;
 	const hasPremium = currentItem && (currentItem.collocations || currentItem.synonyms || currentItem.antonyms || currentItem.toeicTrap);
 
 	return (
 		<div className="relative">
-            {/* Mastery Popup */}
-            {masteryPopup.show && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-300">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50 pointer-events-none"></div>
-                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-50 rounded-tr-full opacity-50 pointer-events-none"></div>
-                        
-                        <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-amber-100/50 relative z-10 shadow-sm">
-                            <span className="text-4xl drop-shadow-sm">👑</span>
-                        </div>
-                        <h3 className="text-2xl font-black text-slate-800 mb-3 relative z-10">Khoan đã! Bạn thực sự đã thuộc hết?</h3>
-                        <p className="text-slate-600 font-medium mb-8 relative z-10 leading-relaxed">
-                            Bạn vừa đánh dấu thuộc 100% từ vựng của chủ đề này. Hãy tham gia bài kiểm tra <span className="font-bold text-primary-700">Trí Nhớ Siêu Phàm</span> ({vocabItems.length * 5} giây) để chứng minh năng lực. Phần thưởng: Thẻ <span className="font-bold text-amber-600">Đã Thuộc Lòng 👑</span> và +50 Stars.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-3 relative z-10">
-                            <button 
-                                onClick={() => setMasteryPopup({ show: false, topic: null })}
-                                className="flex-1 py-3.5 rounded-2xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
-                            >
-                                Để sau
-                            </button>
-                            <button 
-                                onClick={handleStartMasteryChallenge}
-                                className="flex-1 py-3.5 rounded-2xl font-black text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:shadow-lg hover:shadow-primary-500/25 transition-all hover:-translate-y-0.5"
-                            >
-                                Chấp nhận ngay
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
 			{/* Flying Stars Animation Overlay */}
 			<AnimatePresence>
 				{flyingStars.map(star => (
@@ -2500,6 +2393,8 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 											</div>
 										</div>
 									)}
+
+									{/* Topic text removed for better focus */}
 
 									{/* Front Face Nav */}
 									<div className="absolute inset-x-0 px-4 bottom-1 sm:bottom-3 flex items-center justify-between pointer-events-auto" onClick={e => e.stopPropagation()}>
@@ -2697,7 +2592,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 					)}
 
 					{/* Speed Challenge Intro Section */}
-					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && challengePreCtd === null && selectedTopic !== 'GLOBAL' && (
+					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && challengePreCtd === null && (
 						<div id="speed-challenge-section" className="mt-8 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
 							<button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-5 hover:bg-slate-50 transition-colors cursor-pointer focus:outline-none">
 								<div className="flex items-center gap-2.5">
@@ -2797,36 +2692,12 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 					{/* Challenge Result */}
 					{challengeResult.show && (
 						<div className="mt-8 bg-primary-600 text-white rounded-3xl p-10 text-center shadow-xl animate-in zoom-in-95 duration-500">
-							<div className="text-center space-y-4">
-								<div className="inline-block p-4 rounded-full bg-slate-50 mb-2">
-                                    {challengeResult.isMasteryFail ? (
-                                        <div className="text-5xl">🥺</div>
-                                    ) : (
-                                        <div className="text-5xl">
-                                            {challengeResult.score === challengeResult.total ? '🏆' : challengeResult.score > challengeResult.total / 2 ? '🌟' : '💪'}
-                                        </div>
-                                    )}
-								</div>
-								
-                                {challengeResult.isMasteryFail ? (
-                                    <>
-                                        <h3 className="text-3xl font-black text-rose-300">Thử thách Thất Bại</h3>
-                                        <p className="text-slate-100">Bạn đã trả lời sai hoặc hết thời gian. Cố gắng ôn tập lại và phục thù sau nhé!</p>
-                                    </>
-                                ) : (
-                                    <>
-                                        <h3 className="text-3xl font-black text-white">Hoàn Thành Thử Thách!</h3>
-                                        <p className="text-primary-200 text-lg font-medium">Bạn đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ.</p>
-                                        {challengeMode === 'mastery' && challengeResult.score === challengeResult.total && (
-                                            <p className="text-amber-300 font-bold text-lg mt-2">Tuyệt vời! Bạn đã nhận được thẻ ĐÃ THUỘC LÒNG 👑</p>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                            
-                            {selectedTopic === 'GLOBAL' && !challengeResult.isMasteryFail && (
+							<h3 className="text-3xl font-black mb-4 tracking-tight">🎉 Thử Thách Hoàn Tất!</h3>
+							<p className="text-primary-200 text-lg mb-8 font-medium">Bạn đúng <span className="text-white font-bold text-2xl mx-1">{challengeResult.score} / {challengeResult.total}</span> từ.</p>
+							
+                            {selectedTopic === 'GLOBAL' ? (
                                 challengeResult.score / Math.max(1, challengeResult.total) >= 0.8 ? (
-                                    <div className="mt-8 p-6 bg-white/10 rounded-2xl border border-white/20">
+                                    <div className="mb-8 p-6 bg-white/10 rounded-2xl border border-white/20">
                                         <h4 className="text-xl font-bold text-secondary-300 mb-2">Bạn quá xuất sắc quá! Cố gắng giữ đỉnh bảng nhé!</h4>
                                         <p className="text-primary-100 text-sm mb-5">Chia sẻ kết quả này để thách đấu cùng bạn bè nhé.</p>
                                         <div className="flex flex-col gap-3 max-w-sm mx-auto">
@@ -2844,14 +2715,18 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="mt-8">
+                                    <div className="mb-8">
                                         <h4 className="text-xl font-bold text-secondary-300">Bạn đã rất nỗ lực rồi! Hãy thử lại để ghi danh nhé!</h4>
                                     </div>
                                 )
+                            ) : (
+                                <div className="mb-8">
+                                    <h4 className="text-xl font-bold text-secondary-300">Bạn đã rất nỗ lực rồi! Chúc mừng bạn nhé!</h4>
+                                </div>
                             )}
 
                             {selectedTopic === 'GLOBAL' && (!session || session.user?.role === 'guest') && (
-                                <div className="mt-8 p-6 bg-gradient-to-r from-secondary-500/20 to-orange-500/20 rounded-2xl border border-secondary-400/30">
+                                <div className="mb-8 p-6 bg-gradient-to-r from-secondary-500/20 to-orange-500/20 rounded-2xl border border-secondary-400/30">
                                     <h4 className="text-xl font-black text-secondary-300 mb-2">Bạn có muốn lưu thành tích?</h4>
                                     <p className="text-primary-50 text-sm mb-5 font-medium">Ghi danh điểm số của bạn lên Bảng Vàng để thách đấu cùng mọi người nha!</p>
                                     <button 
@@ -2866,7 +2741,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                 </div>
                             )}
 
-							<div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+							<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 								<button onClick={selectedTopic === 'GLOBAL' ? handleStartGlobalSpeedChallenge : handleStartChallenge} className="bg-white text-primary-700 font-black px-8 py-3.5 rounded-full hover:shadow-lg transition-all w-full sm:w-auto cursor-pointer">
 									Làm Lại
 								</button>
