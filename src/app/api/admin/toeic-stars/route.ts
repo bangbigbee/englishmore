@@ -42,7 +42,7 @@ export async function PATCH(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    const { id, points, isActive } = await request.json()
+    const { id, points, isActive, label } = await request.json()
 
     if (!id || typeof points !== 'number') {
       return new NextResponse('Invalid data', { status: 400 })
@@ -52,7 +52,8 @@ export async function PATCH(request: Request) {
       where: { id },
       data: {
         points,
-        isActive: isActive !== undefined ? isActive : true
+        isActive: isActive !== undefined ? isActive : true,
+        ...(label !== undefined && { label })
       }
     })
 

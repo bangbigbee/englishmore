@@ -32,12 +32,12 @@ export default function AdminStarConfig() {
     }
   }
 
-  const handleUpdate = async (id: string, newPoints: number, newActive: boolean) => {
+  const handleUpdate = async (id: string, newPoints: number, newActive: boolean, newLabel: string) => {
     try {
       const res = await fetch('/api/admin/toeic-stars', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, points: newPoints, isActive: newActive })
+        body: JSON.stringify({ id, points: newPoints, isActive: newActive, label: newLabel })
       })
 
       if (!res.ok) throw new Error('Failed to update')
@@ -93,12 +93,13 @@ export default function AdminStarConfig() {
   )
 }
 
-function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: number, a: boolean) => void }) {
+function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: number, a: boolean, l: string) => void }) {
   const [points, setPoints] = useState(rule.points.toString())
   const [isActive, setIsActive] = useState(rule.isActive)
+  const [label, setLabel] = useState(rule.label)
   const [isEditing, setIsEditing] = useState(false)
 
-  const hasChanges = parseInt(points) !== rule.points || isActive !== rule.isActive
+  const hasChanges = parseInt(points) !== rule.points || isActive !== rule.isActive || label !== rule.label
 
   const handleSave = () => {
     const parsed = parseInt(points)
@@ -106,14 +107,28 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
       toast.error('Số sao không hợp lệ')
       return
     }
-    onSave(rule.id, parsed, isActive)
+    if (!label.trim()) {
+      toast.error('Nội dung không được để trống')
+      return
+    }
+    onSave(rule.id, parsed, isActive, label)
     setIsEditing(false)
   }
 
   return (
     <tr className="hover:bg-slate-50 transition-colors">
       <td className="px-6 py-4 font-bold text-slate-800">
-        {rule.label}
+        {isEditing ? (
+          <input 
+            type="text" 
+            value={label}
+            onChange={e => setLabel(e.target.value)}
+            className="w-full min-w-[250px] px-2 py-1 text-sm font-normal border border-slate-300 rounded focus:border-secondary-500 focus:ring-1 focus:ring-secondary-500 outline-none"
+            placeholder="Nội dung thông báo / Label"
+          />
+        ) : (
+          rule.label
+        )}
       </td>
       <td className="px-6 py-4 text-xs font-mono text-slate-400">
         {rule.activityKey}
@@ -166,6 +181,7 @@ function RuleRow({ rule, onSave }: { rule: StarRule, onSave: (id: string, p: num
               onClick={() => {
                 setPoints(rule.points.toString())
                 setIsActive(rule.isActive)
+                setLabel(rule.label)
                 setIsEditing(false)
               }}
               className="px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-md transition-colors"
