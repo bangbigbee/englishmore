@@ -5,9 +5,14 @@ import { Prisma } from '@prisma/client';
 export async function GET() {
   try {
     const topUsers = await prisma.user.findMany({
-      where: { toeicStars: { gt: 0 } },
+      where: { 
+        toeicStars: { gt: 0 },
+        email: {
+          notIn: ['bangdtbk@gmail.com', 'bigbeecoltd@gmail.com', 'bangblockchain@gmail.com']
+        }
+      },
       orderBy: { toeicStars: 'desc' },
-      take: 20,
+      take: 10,
       select: {
         id: true,
         name: true,

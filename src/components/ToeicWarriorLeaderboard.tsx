@@ -59,16 +59,11 @@ export default function ToeicWarriorLeaderboard() {
   return (
     <div className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6 relative">
       <div className="text-center mb-10">
-        <div className="inline-block mb-3 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-200">
-          <span className="text-sm font-bold text-amber-700 uppercase tracking-wider flex items-center gap-2">
-            🏆 Vinh Danh Tinh Anh
-          </span>
-        </div>
         <h2 className="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight mb-3">
-          Chiến Binh <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500">ToeicMore</span>
+          Bảng vinh danh Chiến Binh <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500">ToeicMore</span>
         </h2>
         <p className="text-slate-500 max-w-2xl mx-auto text-sm sm:text-base">
-          Những học viên kiên trì và bền bỉ nhất trên hành trình chinh phục TOEIC. Chăm chỉ mỗi ngày, kết quả sẽ đến tay!
+          Những học viên kiên trì và bền bỉ nhất trên hành trình chinh phục TOEIC.
         </p>
       </div>
 
