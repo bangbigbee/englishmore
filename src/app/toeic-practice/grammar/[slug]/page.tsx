@@ -96,6 +96,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isReviewing, setIsReviewing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [showPricing, setShowPricing] = useState(false)
+  const [isInfoSidebarOpen, setIsInfoSidebarOpen] = useState(false)
   const [flyingStars, setFlyingStars] = useState<{ id: number, x: number, y: number, startX: number, startY: number, endX: number, endY: number }[]>([])
   const notebookRef = useRef<HTMLAnchorElement>(null)
   const bookmarkBtnRef = useRef<HTMLButtonElement>(null)
@@ -883,9 +884,21 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   transition={{ duration: 0.3 }}
                   className="w-full flex flex-col gap-6"
                 >
-                  <div className={`w-full flex flex-col xl:flex-row gap-6 items-stretch`}>
+                  <div className={`w-full flex flex-col xl:flex-row gap-6 items-stretch relative`}>
+                  
+                  {!isInfoSidebarOpen && (
+                      <button onClick={() => setIsInfoSidebarOpen(true)} className="hidden xl:flex absolute -left-4 top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-10 transition-all hover:w-10">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                      </button>
+                  )}
+                  {isInfoSidebarOpen && (
+                      <button onClick={() => setIsInfoSidebarOpen(false)} className="hidden xl:flex absolute left-[260px] 2xl:left-[300px] top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-20 transition-all hover:w-10">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                      </button>
+                  )}
+
                   {/* Left Column: Title + Time */}
-                  <div className={`flex flex-col gap-6 w-full xl:w-[280px] 2xl:w-[320px] shrink-0`}>
+                  <div className={`flex flex-col gap-6 w-full xl:w-[280px] 2xl:w-[320px] shrink-0 ${isInfoSidebarOpen ? 'xl:flex' : 'xl:hidden'}`}>
                   {/* Compact Lesson Header & Toggle */}
                   <div className={`bg-white rounded-[2rem] border border-slate-200 shadow-sm flex h-full w-full`}>
                     <div className={`w-full p-4 lg:p-5 xl:sticky xl:top-24 flex flex-col gap-4`}>
@@ -1534,7 +1547,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                  src={groupImage} 
                                                  alt="Part" 
                                                  onClick={() => setZoomedImageUrl(groupImage)}
-                                                 className="max-w-full md:max-w-2xl max-h-[350px] md:max-h-[450px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
+                                                 className="max-w-full md:max-w-2xl max-h-[250px] md:max-h-[350px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
                                                />
                                              </div>
                                              ) : null;
@@ -1662,7 +1675,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 
                                               </div>
 
-                                              <div className={`grid grid-cols-1 ${topic.type === 'LISTENING' ? '' : 'md:grid-cols-2'} gap-2 md:gap-3`}>
+                                              <div className={`flex flex-col gap-2 md:gap-3`}>
                                                 {[
                                                   { label: 'A', value: q.optionA },
                                                   { label: 'B', value: q.optionB },
