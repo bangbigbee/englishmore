@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import UpgradeModal from '@/components/UpgradeModal'
+import ZoomableImage from '@/components/ZoomableImage'
 
 interface ToeicQuestion {
   id: string
@@ -84,7 +85,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [actualCheckTimeLeft, setActualCheckTimeLeft] = useState<number>(30);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
   const [isAudioNodePlaying, setIsAudioNodePlaying] = useState(false)
-  const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null)
+  const [sidebarState, setSidebarState] = useState(2) // 0: both hidden, 1: progress only, 2: both visible
   const audioRef = useRef<HTMLAudioElement>(null)
   const directionAudioRef = useRef<HTMLAudioElement>(null)
   const { data: session, status } = useSession()
@@ -96,7 +97,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isReviewing, setIsReviewing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [showPricing, setShowPricing] = useState(false)
-  const [sidebarState, setSidebarState] = useState(2) // 0: both hidden, 1: progress only, 2: both visible
   
   // Close info sidebar automatically when lesson starts
   useEffect(() => {
@@ -1333,8 +1333,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                         <img 
                                                            src={q.imageUrl} 
                                                            alt="Preview" 
-                                                           className="absolute inset-0 w-full h-full object-contain p-1 cursor-zoom-in group-hover/img:scale-105 transition-transform duration-300" 
-                                                           onClick={(e) => { e.stopPropagation(); setZoomedImageUrl(q.imageUrl); }}
+                                                           className="absolute inset-0 w-full h-full object-contain p-1 group-hover/img:scale-105 transition-transform duration-300" 
                                                         />
                                                     </div>
                                                 ) : (
@@ -1560,11 +1559,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                              const groupImage = currentQuestionsGroup.find(q => q.imageUrl)?.imageUrl;
                                              return groupImage ? (
                                              <div className="w-full flex justify-center z-10 relative mb-2 border-b border-slate-100 pb-2">
-                                               <img 
+                                               <ZoomableImage 
                                                  src={groupImage} 
                                                  alt="Part" 
-                                                 onClick={() => setZoomedImageUrl(groupImage)}
-                                                 className="max-w-[90%] md:max-w-[90%] max-h-[250px] md:max-h-[350px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
+                                                 className="max-w-[90%] md:max-w-[90%] max-h-[250px] md:max-h-[350px] w-auto object-contain border border-slate-200"
                                                />
                                              </div>
                                              ) : null;
@@ -2306,34 +2304,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         </div>
       )}
 
-      {/* Zoom Image Modal Overlay */}
-      <AnimatePresence>
-         {zoomedImageUrl && (
-            <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               exit={{ opacity: 0 }}
-               onClick={() => setZoomedImageUrl(null)}
-               className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-6 bg-slate-900/90 backdrop-blur-sm cursor-zoom-out overflow-y-auto"
-            >
-               <motion.img 
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.9, opacity: 0 }}
-                  src={zoomedImageUrl} 
-                  alt="Zoomed" 
-                  className="max-w-full max-h-none md:max-h-[95vh] object-contain rounded-xl shadow-2xl pointer-events-auto"
-                  onClick={(e) => e.stopPropagation()}
-               />
-               <button 
-                  onClick={() => setZoomedImageUrl(null)}
-                  className="fixed top-4 right-4 md:top-8 md:right-8 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 backdrop-blur-md transition-colors shadow-lg"
-               >
-                  <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-               </button>
-            </motion.div>
-         )}
-      </AnimatePresence>
 
       {/* Pricing Modal for PRO/ULTRA */}
       <UpgradeModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
