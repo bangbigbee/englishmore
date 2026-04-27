@@ -1904,7 +1904,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                       <span className="text-base md:text-lg">💡</span>
                                                       <span>Tip</span>
                                                     </div>
-                                                    <div className="text-slate-700 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">{q.tips.replace(/^Tip:\s*/i, '').replace(/^Mẹo TOEIC:\s*/i, '')}</div>
+                                                    <div className="text-slate-700 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">{q.tips.replace(/^(Tip|Mẹo|Mẹo TOEIC|Tip TOEIC)\s*:\s*/i, '')}</div>
                                                   </div>
                                                 )}
 
@@ -2012,7 +2012,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                           <span>Tip</span>
                                                         </div>
                                                         <div className="text-slate-700 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">
-                                                          {groupQ.tips.replace(/^Tip:\s*/i, '').replace(/^Mẹo TOEIC:\s*/i, '')}
+                                                          {groupQ.tips.replace(/^(Tip|Mẹo|Mẹo TOEIC|Tip TOEIC)\s*:\s*/i, '')}
                                                         </div>
                                                       </div>
                                                     )
