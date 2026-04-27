@@ -6,9 +6,7 @@ import { awardToeicStars, TOEIC_STAR_KEYS } from '@/lib/toeicStars';
 export async function POST(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session || !session.user || session.user.role === 'guest') {
-            return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-        }
+        const isGuest = !session || !session.user || session.user.role === 'guest';
 
         const body = await req.json();
         const { wordId, streak, isTopicComplete } = body;
@@ -19,8 +17,44 @@ export async function POST(req: NextRequest) {
 
         let totalAwardedStars = 0;
         let reasons: string[] = [];
+        
+        // Fetch rules to get the messages regardless of limits
+        const { prisma } = await import('@/lib/prisma');
+        const rules = await prisma.toeicStarRule.findMany({
+            where: {
+                activityKey: {
+                    in: [
+                        TOEIC_STAR_KEYS.pronunciationCorrect,
+                        TOEIC_STAR_KEYS.pronunciationStreak3,
+                        TOEIC_STAR_KEYS.pronunciationStreak5,
+                        TOEIC_STAR_KEYS.pronunciationStreak10,
+                        TOEIC_STAR_KEYS.pronunciationTopicComplete
+                    ]
+                }
+            }
+        });
+        
+        const getRuleMsg = (key: string) => {
+            const rule = rules.find(r => r.activityKey === key);
+            return rule?.toastMessage || rule?.label || 'Tuyệt vời!';
+        };
 
-        const userId = session.user.id;
+        if (isGuest) {
+            // For guests, we just return the messages without awarding stars in DB
+            if (streak === 1) reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationCorrect));
+            if (streak === 3) reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationStreak3));
+            if (streak === 5) reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationStreak5));
+            if (streak === 10) reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationStreak10));
+            if (isTopicComplete) reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationTopicComplete));
+            
+            return NextResponse.json({
+                success: true,
+                awardedStars: 0,
+                awardReason: reasons.join(' | ')
+            });
+        }
+
+        const userId = session!.user.id;
 
         // 1. Base rule: 1 correct pronunciation = 1 star
         const baseResult = await awardToeicStars({
@@ -31,6 +65,12 @@ export async function POST(req: NextRequest) {
         if (baseResult.awardedStars > 0) {
             totalAwardedStars += baseResult.awardedStars;
             if (baseResult.reason) reasons.push(baseResult.reason);
+        } else if (streak === 1 || streak === 2 || streak === 4 || streak > 5) {
+            // If no stars awarded (e.g. limit reached), still show the success message for correct pronunciation (unless it's a milestone streak)
+            // Actually, we should always show the base message if no streak message is shown.
+            if (![3, 5, 10].includes(streak) && !isTopicComplete) {
+                 reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationCorrect));
+            }
         }
 
         // 2. Streak rules
@@ -43,6 +83,8 @@ export async function POST(req: NextRequest) {
             if (streakResult.awardedStars > 0) {
                 totalAwardedStars += streakResult.awardedStars;
                 if (streakResult.reason) reasons.push(streakResult.reason);
+            } else {
+                reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationStreak3));
             }
         } else if (streak === 5) {
             const streakResult = await awardToeicStars({
@@ -53,6 +95,8 @@ export async function POST(req: NextRequest) {
             if (streakResult.awardedStars > 0) {
                 totalAwardedStars += streakResult.awardedStars;
                 if (streakResult.reason) reasons.push(streakResult.reason);
+            } else {
+                reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationStreak5));
             }
         } else if (streak === 10) {
             const streakResult = await awardToeicStars({
@@ -63,6 +107,8 @@ export async function POST(req: NextRequest) {
             if (streakResult.awardedStars > 0) {
                 totalAwardedStars += streakResult.awardedStars;
                 if (streakResult.reason) reasons.push(streakResult.reason);
+            } else {
+                reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationStreak10));
             }
         }
 
@@ -76,6 +122,8 @@ export async function POST(req: NextRequest) {
             if (topicResult.awardedStars > 0) {
                 totalAwardedStars += topicResult.awardedStars;
                 if (topicResult.reason) reasons.push(topicResult.reason);
+            } else {
+                reasons.push(getRuleMsg(TOEIC_STAR_KEYS.pronunciationTopicComplete));
             }
         }
 

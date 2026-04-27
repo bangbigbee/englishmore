@@ -15,6 +15,7 @@ interface StarRule {
 export default function AdminStarConfig() {
   const [rules, setRules] = useState<StarRule[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<string>('all')
 
   useEffect(() => {
     fetchRules()
@@ -49,7 +50,26 @@ export default function AdminStarConfig() {
     }
   }
 
+  const getCategory = (key: string) => {
+    if (key.includes('pronunciation') || key.includes('speed_challenge') || key === 'complete_vocab') return 'vocab';
+    if (key === 'complete_part') return 'reading_listening';
+    if (key === 'complete_grammar') return 'grammar';
+    if (key.includes('actual_test')) return 'practice';
+    return 'general';
+  }
+
+  const tabs = [
+    { id: 'all', label: 'Tất cả' },
+    { id: 'general', label: 'Chung' },
+    { id: 'vocab', label: 'Từ vựng' },
+    { id: 'grammar', label: 'Ngữ pháp' },
+    { id: 'reading_listening', label: 'Nghe & Đọc' },
+    { id: 'practice', label: 'Luyện đề' }
+  ];
+
   if (loading) return <div className="p-8 text-center text-slate-500 font-medium">Đang tải...</div>
+
+  const filteredRules = activeTab === 'all' ? rules : rules.filter(r => getCategory(r.activityKey) === activeTab);
 
   return (
     <div className="space-y-6">
@@ -62,6 +82,22 @@ export default function AdminStarConfig() {
           <p className="text-sm text-slate-500 mt-1">
             Cấu hình số điểm Star được thưởng cho học viên khi hoàn thành các hoạt động. (Lưu ý: Mặc định PRO/ULTRA sẽ được nhân hệ số 2x, 3x).
           </p>
+          
+          <div className="flex gap-2 mt-6 overflow-x-auto pb-2">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-secondary-500 text-white shadow-md shadow-secondary-500/20'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
         
         <div className="overflow-x-auto">
@@ -77,13 +113,13 @@ export default function AdminStarConfig() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {rules.map(rule => (
+              {filteredRules.map(rule => (
                 <RuleRow key={rule.id} rule={rule} onSave={handleUpdate} />
               ))}
-              {rules.length === 0 && (
+              {filteredRules.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500 italic">
-                    Chưa có cấu hình nào. Hãy truy cập website để trigger tạo tự động.
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500 italic">
+                    Chưa có cấu hình nào trong danh mục này.
                   </td>
                 </tr>
               )}
