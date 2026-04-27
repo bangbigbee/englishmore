@@ -12,8 +12,8 @@ Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu
 - [x] 5. Đại từ (Nhân xưng, Tân ngữ, Sở hữu, Phản thân)
 - [x] 6. Động từ dùng làm tân ngữ (V-ing, To V)
 - [x] 7. Động từ bán khiếm khuyết (need, dare)
-- [ ] 8. Câu hỏi (Yes/No, Wh-questions, Tag questions)
-- [ ] 9. Lối nói phụ họa (So/Too, Neither/Either)
-- [ ] 10. Mệnh lệnh thức
+- [x] 8. Câu hỏi (Yes/No, Wh-questions, Tag questions)
+- [x] 9. Lối nói phụ họa (So/Too, Neither/Either)
+- [x] 10. Mệnh lệnh thức
 
 *(Các phase tiếp theo sẽ được cập nhật thêm dựa trên file docx)*

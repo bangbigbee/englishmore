@@ -126,6 +126,7 @@ function ReviewTestContent() {
     const [loading, setLoading] = useState(true);
     const [answers, setAnswers] = useState<Record<number, string>>({});
     const [bookmarkedIds, setBookmarkedIds] = useState<Record<string, boolean>>({});
+    const [zoomState, setZoomState] = useState<Record<string, number>>({});
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const { data: session, status } = useSession();
 
@@ -295,9 +296,20 @@ function ReviewTestContent() {
                                                 
                                                 <div className="flex flex-col lg:flex-row gap-6 mt-6">
                                                     {/* Left Media */}
-                                                    {(q.imageUrl || q.passage) && (
-                                                        <div className="lg:w-1/2 min-w-0 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 overflow-x-auto custom-scrollbar">
-                                                            {q.imageUrl && <ZoomableImage src={q.imageUrl} alt="Tài liệu" />}
+                                                    {(q.imageUrl || q.passage) && (() => {
+                                                        const currentZoom = zoomState[q.id] || 0;
+                                                        const leftColWidthClass = currentZoom === 2 ? 'lg:w-[75%]' : currentZoom === 1 ? 'lg:w-[65%]' : 'lg:w-1/2';
+                                                        return (
+                                                        <div className={`${leftColWidthClass} min-w-0 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 overflow-x-auto custom-scrollbar transition-all duration-300`}>
+                                                            {q.imageUrl && (
+                                                                <ZoomableImage 
+                                                                    src={q.imageUrl} 
+                                                                    alt="Tài liệu" 
+                                                                    zoomLevelProp={currentZoom}
+                                                                    onZoomChange={(level) => setZoomState(prev => ({...prev, [q.id]: level}))}
+                                                                    controlledResize={true}
+                                                                />
+                                                            )}
                                                             {q.passage && <div className="prose prose-sm prose-slate max-w-none bg-white p-4 rounded-xl border border-slate-200 shadow-sm" dangerouslySetInnerHTML={{ __html: q.passage }} />}
                                                             {q.audioUrl && (
                                                                 <div className="mt-auto pt-4">
@@ -305,7 +317,8 @@ function ReviewTestContent() {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                    )}
+                                                        );
+                                                    })()}
 
                                                     {/* Right Q&A */}
                                                     <div className="flex-1 min-w-0 flex flex-col">

@@ -110,6 +110,7 @@ function TakeTestContent() {
     const [playQueue, setPlayQueue] = useState<any[]>([]);
     const [currentAudioIdx, setCurrentAudioIdx] = useState(0);
     const globalAudioRef = useRef<HTMLAudioElement>(null);
+    const [zoomState, setZoomState] = useState<Record<string, number>>({});
 
     const isActual = mode === 'actual';
 
@@ -505,10 +506,19 @@ function TakeTestContent() {
                                                 <div className="flex flex-col lg:flex-row gap-6">
                                                     
                                                     {/* Left Column: Media (Image, Passage) */}
-                                                    {(q.imageUrl || q.passage) && (
-                                                        <div className="lg:w-1/2 min-w-0 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 overflow-x-auto custom-scrollbar">
+                                                    {(q.imageUrl || q.passage) && (() => {
+                                                        const currentZoom = zoomState[q.id] || 0;
+                                                        const leftColWidthClass = currentZoom === 2 ? 'lg:w-[75%]' : currentZoom === 1 ? 'lg:w-[65%]' : 'lg:w-1/2';
+                                                        return (
+                                                        <div className={`${leftColWidthClass} min-w-0 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 overflow-x-auto custom-scrollbar transition-all duration-300`}>
                                                             {q.imageUrl && (
-                                                                <ZoomableImage src={q.imageUrl} alt="Question Context" />
+                                                                <ZoomableImage 
+                                                                    src={q.imageUrl} 
+                                                                    alt="Question Context" 
+                                                                    zoomLevelProp={currentZoom}
+                                                                    onZoomChange={(level) => setZoomState(prev => ({...prev, [q.id]: level}))}
+                                                                    controlledResize={true}
+                                                                />
                                                             )}
                                                             {q.passage && (
                                                                 <div className="prose prose-sm prose-slate max-w-none bg-slate-50 p-4 rounded-xl border border-slate-100" dangerouslySetInnerHTML={{ __html: q.passage }} />
@@ -519,7 +529,8 @@ function TakeTestContent() {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                    )}
+                                                        );
+                                                    })()}
 
                                                     {/* Right Column: Question & Options */}
                                                     <div className="flex-1 min-w-0 flex flex-col">
