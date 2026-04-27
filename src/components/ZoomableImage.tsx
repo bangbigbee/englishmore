@@ -29,7 +29,7 @@ export default function ZoomableImage({
 
     let widthStyle: React.CSSProperties = {};
     if (!controlledResize) {
-        if (currentZoom === 1) widthStyle = { width: '120%', maxWidth: '120%', maxHeight: 'none' };
+        if (currentZoom === 1) widthStyle = { width: '130%', maxWidth: '130%', maxHeight: 'none' };
         if (currentZoom === 2) widthStyle = { width: '150%', maxWidth: '150%', maxHeight: 'none' };
     }
 

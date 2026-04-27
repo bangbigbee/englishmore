@@ -1562,7 +1562,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                <ZoomableImage 
                                                  src={groupImage} 
                                                  alt="Part" 
-                                                 className="max-w-[90%] md:max-w-[90%] max-h-[250px] md:max-h-[350px] w-auto object-contain border border-slate-200"
+                                                 className="w-full object-contain border border-slate-200"
                                                />
                                              </div>
                                              ) : null;
