@@ -257,7 +257,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
       <div className="lg:hidden flex items-center relative order-first">
         <button
           onClick={() => setIsMenuOpen(true)}
-          className="flex items-center justify-center w-10 h-10 bg-primary-600 hover:bg-primary-700 border border-primary-500/20 rounded-xl shadow-md shadow-primary-900/20 active:scale-[0.98] transition-all cursor-pointer"
+          className="flex items-center justify-center w-10 h-10 bg-primary-900 hover:bg-primary-950 border border-primary-800/30 rounded-xl shadow-md shadow-primary-900/30 active:scale-[0.98] transition-all cursor-pointer"
         >
           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
