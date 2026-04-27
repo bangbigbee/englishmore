@@ -296,7 +296,7 @@ function ReviewTestContent() {
                                                 <div className="flex flex-col lg:flex-row gap-6 mt-6">
                                                     {/* Left Media */}
                                                     {(q.imageUrl || q.passage) && (
-                                                        <div className="lg:w-1/2 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6">
+                                                        <div className="lg:w-1/2 min-w-0 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 overflow-x-auto custom-scrollbar">
                                                             {q.imageUrl && <ZoomableImage src={q.imageUrl} alt="Tài liệu" />}
                                                             {q.passage && <div className="prose prose-sm prose-slate max-w-none bg-white p-4 rounded-xl border border-slate-200 shadow-sm" dangerouslySetInnerHTML={{ __html: q.passage }} />}
                                                             {q.audioUrl && (
@@ -308,7 +308,7 @@ function ReviewTestContent() {
                                                     )}
 
                                                     {/* Right Q&A */}
-                                                    <div className="flex-1 flex flex-col">
+                                                    <div className="flex-1 min-w-0 flex flex-col">
                                                         <div className="flex gap-4 mb-5">
                                                             <span className={`w-8 h-8 rounded-full flex flex-shrink-0 items-center justify-center font-bold text-white shadow-sm ${isQCorrect ? 'bg-primary-500' : isQWrong ? 'bg-rose-500' : 'bg-slate-300'}`}>
                                                                 {qNum}

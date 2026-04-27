@@ -24,7 +24,7 @@ export default function ZoomableImage({ src, alt, className = '' }: { src: strin
             alt={alt || "Tài liệu TOEIC"} 
             onClick={handleClick}
             style={zoomLevel > 0 ? widthStyle : undefined}
-            className={`rounded-xl shadow-sm hover:opacity-95 transition-all duration-300 ${zoomLevel > 0 ? 'cursor-zoom-out' : 'cursor-zoom-in'} ${zoomLevel === 0 ? className : ''}`}
+            className={`max-w-full h-auto rounded-xl shadow-sm hover:opacity-95 transition-all duration-300 ${zoomLevel > 0 ? 'cursor-zoom-out' : 'cursor-zoom-in'} ${zoomLevel === 0 ? className : ''}`}
         />
     );
 }

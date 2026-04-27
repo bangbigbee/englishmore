@@ -506,7 +506,7 @@ function TakeTestContent() {
                                                     
                                                     {/* Left Column: Media (Image, Passage) */}
                                                     {(q.imageUrl || q.passage) && (
-                                                        <div className="lg:w-1/2 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6">
+                                                        <div className="lg:w-1/2 min-w-0 flex flex-col gap-4 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 overflow-x-auto custom-scrollbar">
                                                             {q.imageUrl && (
                                                                 <ZoomableImage src={q.imageUrl} alt="Question Context" />
                                                             )}
@@ -522,7 +522,7 @@ function TakeTestContent() {
                                                     )}
 
                                                     {/* Right Column: Question & Options */}
-                                                    <div className="flex-1 flex flex-col">
+                                                    <div className="flex-1 min-w-0 flex flex-col">
                                                         <div className="flex gap-4 mb-5">
                                                             <span className="w-8 h-8 rounded-full bg-slate-100 flex flex-shrink-0 items-center justify-center font-bold text-slate-500 shadow-sm">
                                                                 {startNumber + qIdx}
