@@ -96,7 +96,16 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isReviewing, setIsReviewing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [showPricing, setShowPricing] = useState(false)
-  const [isInfoSidebarOpen, setIsInfoSidebarOpen] = useState(false)
+  const [isInfoSidebarOpen, setIsInfoSidebarOpen] = useState(true)
+  
+  // Close info sidebar automatically when lesson starts
+  useEffect(() => {
+      if (lessonStarted) {
+          setIsInfoSidebarOpen(false);
+      } else {
+          setIsInfoSidebarOpen(true);
+      }
+  }, [lessonStarted]);
   const [flyingStars, setFlyingStars] = useState<{ id: number, x: number, y: number, startX: number, startY: number, endX: number, endY: number }[]>([])
   const notebookRef = useRef<HTMLAnchorElement>(null)
   const bookmarkBtnRef = useRef<HTMLButtonElement>(null)
@@ -898,7 +907,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   )}
 
                   {/* Left Column: Title + Time */}
-                  <div className={`flex flex-col gap-6 w-full xl:w-[280px] 2xl:w-[320px] shrink-0 ${isInfoSidebarOpen ? 'xl:flex' : 'xl:hidden'}`}>
+                  <div className={`flex flex-col gap-6 w-full shrink-0 transition-all duration-500 overflow-hidden ${isInfoSidebarOpen ? 'xl:w-[280px] 2xl:w-[320px] xl:opacity-100' : 'xl:w-0 xl:opacity-0 xl:border-0 xl:px-0 xl:mx-0'}`}>
                   {/* Compact Lesson Header & Toggle */}
                   <div className={`bg-white rounded-[2rem] border border-slate-200 shadow-sm flex h-full w-full`}>
                     <div className={`w-full p-4 lg:p-5 xl:sticky xl:top-24 flex flex-col gap-4`}>
@@ -1469,7 +1478,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 w-full">
                                                 {/* Middle Column: Transcripts & Image */}
                                                 {!isGrammarLayout && (
-                                                <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0">
+                                                <div className="flex flex-col gap-6 xl:w-[45%] 2xl:w-[50%] shrink-0 min-w-0">
                                                  {hasGroupTranscript && (someResultShown || (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'practice')) && (
                                                     <div className="mb-2 flex flex-col items-center">
                                                        <div className="flex flex-wrap gap-3 items-center justify-center bg-slate-50 p-2 rounded-2xl border border-slate-100">
@@ -1547,7 +1556,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                  src={groupImage} 
                                                  alt="Part" 
                                                  onClick={() => setZoomedImageUrl(groupImage)}
-                                                 className="max-w-full md:max-w-2xl max-h-[250px] md:max-h-[350px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
+                                                 className="max-w-[80%] md:max-w-[80%] max-h-[250px] md:max-h-[350px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
                                                />
                                              </div>
                                              ) : null;
