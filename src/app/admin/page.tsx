@@ -4334,11 +4334,22 @@ export default function AdminDashboard() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
+                          window.open(`/api/admin/toeic/topics/${topic.id}/export`, '_blank')
+                        }}
+                        className="p-1 text-green-600 hover:bg-green-50 rounded"
+                        title="Export to DOCX"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
                           setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug, type: topic.type || toeicPracticeSubtab, part: topic.part || 5, level: topic.level || 'Cơ Bản' })
                           setEditingToeicTopic(topic)
                           setShowTopicModal(true)
                         }}
                         className="p-1 text-primary-600 hover:bg-primary-50 rounded"
+                        title="Edit Topic"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                       </button>
