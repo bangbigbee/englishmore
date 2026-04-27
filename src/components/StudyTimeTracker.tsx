@@ -2,9 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 export default function StudyTimeTracker() {
   const { status } = useSession();
+  const pathname = usePathname();
   const PING_INTERVAL = 60000; // 60 seconds
   const isIdleRef = useRef(false);
   const idleTimeoutRef = useRef<number | null>(null);
@@ -13,8 +15,12 @@ export default function StudyTimeTracker() {
     if (status !== 'authenticated') return;
 
     const pingStudyTime = () => {
-      // Don't ping if document is hidden or user is idle
-      if (document.hidden || isIdleRef.current) return;
+      // Don't ping if document is hidden
+      if (document.hidden) return;
+      
+      // Don't ping if user is idle, EXCEPT when taking a mock test (where users might listen to audio for a long time)
+      const isTakingTest = pathname?.includes('/actual-test/') && pathname?.includes('/take');
+      if (isIdleRef.current && !isTakingTest) return;
 
       fetch('/api/toeic/study-ping', {
         method: 'POST',
@@ -43,7 +49,7 @@ export default function StudyTimeTracker() {
       events.forEach(e => window.removeEventListener(e, resetIdle));
       if (idleTimeoutRef.current) window.clearTimeout(idleTimeoutRef.current);
     };
-  }, [status]);
+  }, [status, pathname]);
 
   return null;
 }
