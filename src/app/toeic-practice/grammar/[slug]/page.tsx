@@ -1900,10 +1900,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 {/* Tips Section */}
                                                 {isShowingResult && showTips[q.id] && q.tips && questionsPerView === 1 && (
                                                   <div className="w-full mt-4 p-4 md:p-5 rounded-2xl border bg-slate-50 border-slate-200">
-                                                    <div className="flex items-center gap-2 mb-2 text-slate-800 font-bold">
-                                                      <span className="text-base md:text-lg">💡</span>
-                                                      <span>Tip</span>
-                                                    </div>
                                                     <div className="text-slate-700 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">{q.tips.replace(/^(Tip|Mẹo|Mẹo TOEIC|Tip TOEIC)\s*:\s*/i, '')}</div>
                                                   </div>
                                                 )}
@@ -2007,10 +2003,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     
                                                     return (
                                                       <div className="w-full p-4 md:p-5 rounded-2xl border border-slate-200 bg-slate-50">
-                                                        <div className="flex items-center gap-2 mb-2 text-slate-800 font-bold">
-                                                          <span className="text-base md:text-lg">💡</span>
-                                                          <span>Tip</span>
-                                                        </div>
                                                         <div className="text-slate-700 text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">
                                                           {groupQ.tips.replace(/^(Tip|Mẹo|Mẹo TOEIC|Tip TOEIC)\s*:\s*/i, '')}
                                                         </div>

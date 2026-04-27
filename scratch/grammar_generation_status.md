@@ -1,15 +1,15 @@
 # Grammar Generation Progress Tracking
 
-Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu `[x]` khi đã hoàn thành insert vào Database với 3 levels (Cơ Bản, Trung Cấp, Nâng Cao).
+Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu `[x]` khi đã hoàn thành insert vào Database với cấu trúc chuẩn: 3 levels (Cơ Bản, Trung Cấp, Nâng Cao), mỗi level 2 lessons, mỗi lesson 10 câu.
 
-## Phase 1 (Đã hoàn thành)
+## Đã hoàn thành (Phase 1 thực tế)
 - [x] 1. Cấu trúc Chủ ngữ & Danh từ (Danh từ đếm được/không đếm được, Quán từ, Sở hữu cách...)
-- [x] 2. Các thì Hiện tại (Đơn, Tiếp diễn, Hoàn thành...)
-- [x] 3. Các thì Quá khứ & Tương lai (Đơn, Tiếp diễn, Hoàn thành...)
-- [x] 4. Sự hòa hợp giữa Chủ ngữ và Động từ (Subject-verb agreement)
-- [x] 5. Đại từ (Nhân xưng, Tân ngữ, Sở hữu, Phản thân)
+- [x] 2. Các thì Hiện tại (Đơn, Tiếp diễn, Hoàn thành, Hoàn thành tiếp diễn...)
 
-## Phase 2 (Chưa hoàn thành)
+## Chưa hoàn thành
+- [ ] 3. Các thì Quá khứ & Tương lai (Đơn, Tiếp diễn, Hoàn thành...)
+- [ ] 4. Sự hòa hợp giữa Chủ ngữ và Động từ (Subject-verb agreement)
+- [ ] 5. Đại từ (Nhân xưng, Tân ngữ, Sở hữu, Phản thân)
 - [ ] 6. Động từ dùng làm tân ngữ (V-ing, To V)
 - [ ] 7. Động từ bán khiếm khuyết (need, dare)
 - [ ] 8. Câu hỏi (Yes/No, Wh-questions, Tag questions)
