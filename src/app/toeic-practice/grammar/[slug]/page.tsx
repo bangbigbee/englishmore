@@ -130,7 +130,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
           }
 
           if (data.type === 'LISTENING') setListeningMode('practice');
-          setTimerStartTime(Date.now())
+          setTimerStartTime(null)
           setElapsedTime(0)
           setIsPlayingDirections(false)
         }
@@ -323,7 +323,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
       const answeredCount = Object.keys(showResults).filter(k => currentLesson.questions.some(q => q.id === k)).length
       if (answeredCount === currentLesson.questions.length) {
         setIsTestCompleted(true)
-      } else if (!timerStartTime) {
+      } else if (!timerStartTime && lessonStarted) {
         setTimerStartTime(Date.now())
       }
     }
@@ -680,7 +680,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
         setSelectedLessonId(lessonToRestart.id);
         setShowLessonContent(false);
     }
-    setTimerStartTime(Date.now());
+    setTimerStartTime(null);
     setElapsedTime(0);
     setActiveQuestionIndex(0);
     
@@ -817,7 +817,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   setActiveQuestionIndex(0)
                   setShowLessonContent(lesson.questions.length === 0)
                   if (topic.type === 'LISTENING') setListeningMode('actual');
-                  setTimerStartTime(Date.now())
+                  setTimerStartTime(null)
                   setElapsedTime(0)
                   setIsTestCompleted(false)
                   setLessonStarted(false)
@@ -1006,7 +1006,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       <div className="w-full pt-3 mt-1 border-t border-slate-100">
                          <div className="flex flex-col gap-2.5">
                             <h4 className="text-[13px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                                <svg className="w-4 h-4 text-[#0f766e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2.5"/><circle cx="12" cy="12" r="6" strokeWidth="2.5"/><circle cx="12" cy="12" r="2" strokeWidth="2.5"/></svg>
+                                <svg className="w-4 h-4 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2.5"/><circle cx="12" cy="12" r="6" strokeWidth="2.5"/><circle cx="12" cy="12" r="2" strokeWidth="2.5"/></svg>
                                 Tiến độ
                             </h4>
                             <div className="flex justify-between items-center text-sm bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
@@ -1042,7 +1042,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   }
                               }
                           }}
-                          className="w-full flex items-center justify-center gap-1.5 text-slate-500 hover:text-[#0f766e] transition-colors text-[13px] font-medium cursor-pointer"
+                          className="w-full flex items-center justify-center gap-1.5 text-slate-500 hover:text-primary-700 transition-colors text-[13px] font-medium cursor-pointer"
                           title="Khám phá sổ tay học tập của bạn"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
@@ -1180,10 +1180,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       
                       {!lessonStarted ? (
                         <div className="flex flex-col items-center justify-center p-8 md:p-12 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center min-h-[320px] max-w-2xl mx-auto">
-                            <div className="w-14 h-14 bg-[#0f766e]/10 rounded-2xl flex items-center justify-center mb-5 text-[#0f766e]">
+                            <div className="w-14 h-14 bg-primary-700/10 rounded-2xl flex items-center justify-center mb-5 text-primary-700">
                                 <svg className="w-6 h-6 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <h3 className="text-xl md:text-2xl font-black text-[#0f766e] mb-2 leading-tight">Sẵn sàng cho PART {topic.part}?</h3>
+                            <h3 className="text-xl md:text-2xl font-black text-primary-700 mb-2 leading-tight">Sẵn sàng cho PART {topic.part}?</h3>
                             <p className="text-sm text-slate-500 mb-8 max-w-sm mx-auto">
                                 {topic.type === 'LISTENING' ? "Audio sẽ tự động phát sau khi bạn bắt đầu. Thời gian làm bài sẽ được tính ngay lập tức." : "Thời gian làm bài sẽ được tính ngay lập tức sau khi bạn bắt đầu."}
                             </p>
@@ -1228,7 +1228,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     <div className="w-full max-w-sm mx-auto">
                                         <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-left">
                                             <h4 className="text-[15px] font-black text-slate-700 mb-4 flex items-center gap-2">
-                                                <svg className="w-5 h-5 text-[#0f766e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                                <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                                                 Tiến độ bài làm
                                             </h4>
                                             <div className="space-y-3">
@@ -1245,7 +1245,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         <div className="flex flex-col sm:flex-row gap-3">
                                             <button 
                                                 onClick={handleResetProgress}
-                                                className="flex-1 font-bold px-4 py-3.5 rounded-xl transition-all shadow-sm text-[13px] uppercase tracking-wider bg-white border-2 border-[#0f766e] text-[#0f766e] hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
+                                                className="flex-1 font-bold px-4 py-3.5 rounded-xl transition-all shadow-sm text-[13px] uppercase tracking-wider bg-white border-2 border-primary-700 text-primary-700 hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
                                             >
                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                                Làm Lại Bài
@@ -1256,7 +1256,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                     setIsTestCompleted(true);
                                                     setIsReviewing(true);
                                                 }} 
-                                                className="flex-1 font-bold px-4 py-3.5 rounded-xl transition-all shadow-md text-[13px] uppercase tracking-wider bg-[#0f766e] text-white hover:bg-[#0d645e] hover:shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
+                                                className="flex-1 font-bold px-4 py-3.5 rounded-xl transition-all shadow-md text-[13px] uppercase tracking-wider bg-primary-700 text-white hover:bg-primary-800 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
                                             >
                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                                Xem Lại
@@ -1275,7 +1275,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 setIsPlayingDirections(true);
                                                 directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
                                             }
-                                        }} className="font-bold px-10 py-4 rounded-xl transition-all shadow-md text-[14px] uppercase tracking-wider bg-[#0f766e] text-white hover:bg-[#0d645e] hover:shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+                                        }} className="font-bold px-10 py-4 rounded-xl transition-all shadow-md text-[14px] uppercase tracking-wider bg-primary-700 text-white hover:bg-primary-800 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                            Bắt Đầu Ngay
                                         </button>
@@ -2180,10 +2180,11 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                     setSelectedLessonId(nextLesson.id)
                     setActiveQuestionIndex(0)
                     setShowLessonContent(nextLesson.questions.length === 0)
-                    setTimerStartTime(Date.now())
+                    setTimerStartTime(null)
                     setElapsedTime(0)
                     setIsTestCompleted(false)
                     setIsReviewing(false)
+                    setLessonStarted(false)
                     window.scrollTo({ top: 0, behavior: 'smooth' })
                   }}
                   className="w-full py-3.5 bg-primary-900 hover:bg-primary-800 text-white font-bold rounded-xl transition-all hover:-translate-y-0.5 cursor-pointer shadow-md shadow-primary-900/20"

@@ -103,7 +103,7 @@ export default function AdminPlacementTestConfig() {
                                         <div key={level} className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                             <div className="flex justify-between items-center mb-3">
                                                 <span className="font-bold text-sm text-slate-700">Level: <span className="text-primary-600">{level}</span></span>
-                                                <span className={`text-xs font-bold px-2 py-1 rounded ${total === 20 ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>
+                                                <span className={`text-xs font-bold px-2 py-1 rounded ${total === 20 ? 'bg-primary-100 text-primary-700' : 'bg-rose-100 text-rose-700'}`}>
                                                     Tổng: {total}/20
                                                 </span>
                                             </div>
@@ -139,7 +139,7 @@ export default function AdminPlacementTestConfig() {
                                     {(() => {
                                         const totalSkill = (config.skill.listening || 0) + (config.skill.reading || 0) + (config.skill.pronunciation || 0) + (config.skill.vocabulary || 0);
                                         return (
-                                            <span className={`text-xs font-bold px-2 py-1 rounded ${totalSkill === 20 ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'}`}>
+                                            <span className={`text-xs font-bold px-2 py-1 rounded ${totalSkill === 20 ? 'bg-primary-100 text-primary-700' : 'bg-rose-100 text-rose-700'}`}>
                                                 Tổng: {totalSkill}/20
                                             </span>
                                         );

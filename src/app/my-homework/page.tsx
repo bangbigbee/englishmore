@@ -230,7 +230,7 @@ export default function MyHomeworkPage() {
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="font-semibold text-primary-900 underline decoration-primary-900/55 underline-offset-2 hover:text-[#0f3f22]"
+                              className="font-semibold text-primary-900 underline decoration-primary-900/55 underline-offset-2 hover:text-primary-800"
                             >
                               See more
                             </button>
@@ -244,7 +244,7 @@ export default function MyHomeworkPage() {
                             <button
                               type="button"
                               onClick={() => toggleHomeworkDetail(item.id)}
-                              className="mt-2 text-xs font-semibold text-primary-900 underline decoration-primary-900/55 underline-offset-2 hover:text-[#0f3f22]"
+                              className="mt-2 text-xs font-semibold text-primary-900 underline decoration-primary-900/55 underline-offset-2 hover:text-primary-800"
                             >
                               See less
                             </button>

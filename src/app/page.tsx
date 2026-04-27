@@ -177,7 +177,7 @@ function LockedFeatureButton({
       <div className="pointer-events-none invisible absolute left-1/2 top-full z-20 mt-2 w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 rounded-lg border border-primary-900/15 bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 opacity-0 shadow-xl transition duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
         <Link
           href="/courses"
-          className="pointer-events-auto font-semibold text-primary-900 underline decoration-primary-900/45 underline-offset-2 transition hover:text-[#0f3f22]"
+          className="pointer-events-auto font-semibold text-primary-900 underline decoration-primary-900/45 underline-offset-2 transition hover:text-primary-800"
         >
           Đăng ký
         </Link>{' '}
@@ -2178,7 +2178,7 @@ function HomeContent() {
                         onClick={() => setIsVocabularyFlipped(!isVocabularyFlipped)}
                       >
                         {/* Front Face */}
-                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-primary-900 via-[#115e3b] to-[#064e3b] p-6 text-white flex flex-col items-center justify-center">
+                        <div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] bg-linear-to-br from-primary-800 via-primary-900 to-primary-950 p-6 text-white flex flex-col items-center justify-center">
                           <span className="absolute top-4 right-5 text-xs font-semibold uppercase tracking-wider text-white/50 bg-white/10 px-3 py-1 rounded-full pointer-events-none">
                             Tap to flip
                           </span>

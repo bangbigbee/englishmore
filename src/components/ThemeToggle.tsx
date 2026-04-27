@@ -29,11 +29,7 @@ export default function ThemeToggle() {
           : "Classic Theme (Green)"
       }
     >
-      {theme === "light" ? (
-        <span className="w-4 h-4 rounded-full bg-primary-900 block" /> // Purple circle
-      ) : (
-        <span className="w-4 h-4 rounded-full bg-green-600 block" /> // Green circle
-      )}
+      <span className="w-4 h-4 rounded-full bg-primary-900 block transition-colors duration-300" />
     </button>
   );
 }

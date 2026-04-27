@@ -313,14 +313,14 @@ export default function AdminPlacementTest() {
                         >
                             <div className="flex justify-between items-start mb-2">
                                 <h3 className="font-bold text-slate-800">{s.title}</h3>
-                                {s.isActive && <span className="bg-green-100 text-green-700 text-[10px] font-black px-2 py-0.5 rounded-full">ACTIVE</span>}
+                                {s.isActive && <span className="bg-primary-100 text-primary-700 text-[10px] font-black px-2 py-0.5 rounded-full">ACTIVE</span>}
                             </div>
                             <p className="text-xs text-slate-500 mb-3">{s._count?.questions || 0} câu hỏi</p>
                             
                             <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-200/50">
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); handleToggleActiveSet(s.id, s.isActive); }}
-                                        className={`text-[11px] font-bold flex-1 text-left ${s.isActive ? 'text-rose-500 hover:text-rose-700' : 'text-slate-500 hover:text-green-600'}`}
+                                        className={`text-[11px] font-bold flex-1 text-left ${s.isActive ? 'text-rose-500 hover:text-rose-700' : 'text-slate-500 hover:text-primary-600'}`}
                                     >
                                         {s.isActive ? 'Tắt bộ đề' : 'Bật bộ đề'}
                                     </button>
@@ -473,8 +473,8 @@ export default function AdminPlacementTest() {
                                         </div>
 
                                         <div className="md:col-span-2">
-                                            <label className="block text-sm font-semibold mb-1 text-green-700">Đáp án đúng</label>
-                                            <select value={formData.correctOption || 'A'} onChange={e => setFormData({...formData, correctOption: e.target.value})} className="w-full p-2 border rounded font-bold text-green-700">
+                                            <label className="block text-sm font-semibold mb-1 text-primary-700">Đáp án đúng</label>
+                                            <select value={formData.correctOption || 'A'} onChange={e => setFormData({...formData, correctOption: e.target.value})} className="w-full p-2 border rounded font-bold text-primary-700">
                                                 <option value="A">A</option>
                                                 <option value="B">B</option>
                                                 <option value="C">C</option>
@@ -484,7 +484,7 @@ export default function AdminPlacementTest() {
 
                                         <div className="md:col-span-2 flex justify-end gap-3 mt-4">
                                             <button type="button" onClick={handleCancel} className="px-4 py-2 bg-slate-200 text-slate-700 rounded font-bold hover:bg-slate-300">Hủy</button>
-                                            <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-green-600 text-white rounded font-bold hover:bg-green-700 disabled:opacity-50">Lưu</button>
+                                            <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-primary-600 text-white rounded font-bold hover:bg-primary-700 disabled:opacity-50">Lưu</button>
                                         </div>
                                     </form>
                                 </div>
@@ -509,7 +509,7 @@ export default function AdminPlacementTest() {
                                                 <td className="p-3 text-sm text-slate-600">
                                                     <div className="line-clamp-1 max-w-xs">{q.question || q.passage || (q.audioUrl ? '🎵 Audio' : '📷 Image')}</div>
                                                 </td>
-                                                <td className="p-3 font-bold text-green-600">{q.correctOption}</td>
+                                                <td className="p-3 font-bold text-primary-600">{q.correctOption}</td>
                                                 <td className="p-3 text-right space-x-2">
                                                     <button onClick={() => handleEdit(q)} className="px-3 py-1 bg-secondary-100 text-secondary-700 rounded text-xs font-bold hover:bg-secondary-200">Sửa</button>
                                                     <button onClick={() => handleDelete(q.id)} className="px-3 py-1 bg-rose-100 text-rose-700 rounded text-xs font-bold hover:bg-rose-200">Xóa</button>

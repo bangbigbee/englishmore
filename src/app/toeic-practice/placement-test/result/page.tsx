@@ -49,14 +49,14 @@ export default function PlacementTestResultPage() {
                 className="max-w-2xl w-full bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden relative"
             >
                 {/* Background Decoration */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-green-100 to-transparent rounded-bl-full opacity-50 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100 to-transparent rounded-bl-full opacity-50 pointer-events-none" />
 
                 <div className="p-8 sm:p-12 relative z-10 flex flex-col items-center text-center">
                     <motion.div 
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                        className="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6 shadow-inner"
+                        className="w-24 h-24 bg-primary-100 text-primary-500 rounded-full flex items-center justify-center mb-6 shadow-inner"
                     >
                         <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

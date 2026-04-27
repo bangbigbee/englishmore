@@ -60,7 +60,7 @@ export default function ToeicWarriorLeaderboard() {
     <div className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6 relative">
       <div className="text-center mb-10">
         <h2 className="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight mb-3">
-          Bảng vinh danh Chiến Binh <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500">ToeicMore</span>
+          Bảng vinh danh Chiến Binh <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-primary-900">ToeicMore</span>
         </h2>
         <p className="text-slate-500 max-w-2xl mx-auto text-sm sm:text-base">
           Những học viên kiên trì và bền bỉ nhất trên hành trình chinh phục TOEIC.
