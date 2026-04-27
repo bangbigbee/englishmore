@@ -10,8 +10,8 @@ Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu
 - [x] 3. Các thì Quá khứ & Tương lai (Đơn, Tiếp diễn, Hoàn thành...)
 - [x] 4. Sự hòa hợp giữa Chủ ngữ và Động từ (Subject-verb agreement)
 - [x] 5. Đại từ (Nhân xưng, Tân ngữ, Sở hữu, Phản thân)
-- [ ] 6. Động từ dùng làm tân ngữ (V-ing, To V)
-- [ ] 7. Động từ bán khiếm khuyết (need, dare)
+- [x] 6. Động từ dùng làm tân ngữ (V-ing, To V)
+- [x] 7. Động từ bán khiếm khuyết (need, dare)
 - [ ] 8. Câu hỏi (Yes/No, Wh-questions, Tag questions)
 - [ ] 9. Lối nói phụ họa (So/Too, Neither/Either)
 - [ ] 10. Mệnh lệnh thức

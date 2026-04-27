@@ -1350,10 +1350,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                          }
                                          setIsPlayingDirections(false);
                                       }}
-                                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-8 py-3.5 rounded-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wider text-sm mx-auto shadow-sm"
+                                      className="bg-primary-50 border border-primary-100 hover:bg-primary-100 text-primary-700 font-extrabold px-8 py-3.5 rounded-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wider text-[15px] mx-auto shadow-sm"
                                   >
                                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
-                                     Skip Directions &rarr; Vào bài ngay
+                                     SKIP DIRECTIONS &rarr; VÀO BÀI NGAY
                                   </button>
                               </div>
                           ) : (
@@ -1407,16 +1407,29 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                     >
                                         {!lessonStarted && (
                                             <div className="absolute inset-0 z-50 bg-white/60 backdrop-blur-[6px] flex flex-col items-center justify-center p-4">
-                                                 <div className="text-center transform transition-all hover:scale-105 duration-300">
-                                                     <div className="w-20 h-20 bg-primary-700/10 rounded-3xl flex items-center justify-center mb-6 text-primary-700 mx-auto shadow-sm border border-primary-100">
-                                                         <svg className="w-10 h-10 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                 <div className="w-full max-w-lg flex flex-col gap-4">
+                                                     {/* Tip 1 */}
+                                                     <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-amber-100 shadow-sm p-4 flex flex-row items-center gap-4 transform transition-all hover:scale-[1.02] duration-300">
+                                                         <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 shrink-0 border border-amber-100/50">
+                                                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                                         </div>
+                                                         <p className="text-slate-600 font-medium text-[15px] leading-snug text-left">
+                                                             Nếu gặp câu khó, bấm vào <strong className="text-amber-600 font-bold">Giải thích</strong> để hiểu rõ hơn.
+                                                         </p>
                                                      </div>
-                                                     <h3 className="text-2xl font-black text-primary-700 mb-3 drop-shadow-sm">Sẵn sàng cho PART {topic.part}?</h3>
-                                                     <p className="text-slate-500 font-medium max-w-xs mx-auto">
-                                                         {topic.type === 'LISTENING' ? "Audio sẽ tự động phát. " : ""}
-                                                         Thời gian làm bài sẽ được tính ngay lập tức sau khi bạn bắt đầu.
-                                                     </p>
+
+                                                     {/* Tip 2 */}
+                                                     <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-primary-100 shadow-sm p-4 flex flex-row items-center gap-4 transform transition-all hover:scale-[1.02] duration-300">
+                                                         <div className="w-12 h-12 bg-primary-700/10 rounded-xl flex items-center justify-center text-primary-700 shrink-0 border border-primary-100/50">
+                                                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                                         </div>
+                                                         <p className="text-slate-600 font-medium text-[15px] leading-snug text-left">
+                                                             Nếu thấy câu hay và cần xem sau, bấm vào <strong className="text-primary-700 font-bold">Lưu lại</strong> để lưu vào Sổ tay học tập.
+                                                         </p>
+                                                     </div>
                                                  </div>
+                                                 
+
                                             </div>
                                         )}
                                       
@@ -1457,7 +1470,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                  }
                                                                  setShowGroupTranscriptEng(prev => ({ ...prev, [activeGroupStartIndex]: !prev[activeGroupStartIndex] }));
                                                              }}
-                                                             className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptEng[activeGroupStartIndex] ? 'bg-primary-600 border-primary-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-primary-600'}`}
+                                                             className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptEng[activeGroupStartIndex] ? 'bg-primary-700 border-primary-700 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-primary-700'}`}
                                                           >
                                                              Thoại tiếng Anh
                                                              {currentLesson.theoryAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-secondary-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
@@ -1475,7 +1488,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                     }
                                                                     setShowGroupTranscriptViet(prev => ({ ...prev, [activeGroupStartIndex]: !prev[activeGroupStartIndex] }));
                                                                 }}
-                                                                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptViet[activeGroupStartIndex] ? 'bg-orange-600 border-orange-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-orange-600'}`}
+                                                                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border ${showGroupTranscriptViet[activeGroupStartIndex] ? 'bg-primary-700 border-primary-700 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-primary-700'}`}
                                                              >
                                                                 Thoại tiếng Việt
                                                                 {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <svg className="w-3 h-3 text-secondary-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
@@ -1495,13 +1508,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                  <div className="bg-slate-50/80 p-5 md:p-6 rounded-2xl border border-slate-200 shadow-inner grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                                                                     {showGroupTranscriptEng[activeGroupStartIndex] && (
                                                                         <div className="flex flex-col">
-                                                                           <div className="text-xs font-black uppercase text-primary-600 mb-2 border-b border-primary-100 pb-2">Tiếng Anh</div>
+                                                                           <div className="text-xs font-black uppercase text-primary-700 mb-2 border-b border-primary-200 pb-2">Tiếng Anh</div>
                                                                            <div className="text-sm text-slate-700 leading-relaxed font-medium" dangerouslySetInnerHTML={{ __html: groupParts.eng.replace(/\n/g, '<br/>') }} />
                                                                         </div>
                                                                     )}
                                                                     {showGroupTranscriptViet[activeGroupStartIndex] && (
                                                                         <div className="flex flex-col">
-                                                                           <div className="text-xs font-black uppercase text-orange-600 mb-2 border-b border-orange-100 pb-2">Tiếng Việt</div>
+                                                                           <div className="text-xs font-black uppercase text-primary-700 mb-2 border-b border-primary-200 pb-2">Tiếng Việt</div>
                                                                            <div className="text-sm text-slate-700 leading-relaxed italic" dangerouslySetInnerHTML={{ __html: groupParts.viet.replace(/\n/g, '<br/>') }} />
                                                                         </div>
                                                                     )}
@@ -1617,18 +1630,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                             <div key={q.id} className={`flex flex-col ${isGrammarLayout ? 'md:flex-row gap-8' : ''} ${localIdx > 0 && (!topic.part || (topic.part !== 6 && topic.part !== 7)) ? 'pt-6 border-t border-dashed border-slate-200 mt-2' : ''}`}>
                                               <div className={`flex flex-col ${isGrammarLayout ? 'flex-1 min-w-0' : 'w-full'}`}>
                                               <div className="mb-4 flex flex-col items-center relative">
-                                                {/* Question Number Badge for all parts context */}
-                                                {(topic.part && topic.part >= 1 && topic.part <= 7) && (
-                                                    <div className="absolute top-0 left-0 text-4xl md:text-5xl font-black text-slate-100/80 -mt-2 -ml-1 sm:-ml-2 pointer-events-none z-0 select-none">
-                                                        Q{topic.part === 1 ? globalIdx + 1 :
-                                                           topic.part === 2 ? globalIdx + 7 :
-                                                           topic.part === 3 ? globalIdx + 32 :
-                                                           topic.part === 4 ? globalIdx + 71 :
-                                                           topic.part === 5 ? globalIdx + 101 :
-                                                           topic.part === 6 ? globalIdx + 131 :
-                                                           globalIdx + 147}
-                                                    </div>
-                                                )}
+
 
                                                 <div className="text-center mb-4 relative z-10 font-medium w-full mt-2">
                                                   <p className={`text-base md:text-[17px] font-semibold text-slate-800 leading-snug ${(topic.part === 3 || topic.part === 4 || topic.part === 6 || topic.part === 7) ? 'text-left pl-2' : ''}`}>
@@ -1765,7 +1767,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                         return;
                                                                     }
                                                                     setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
-                                                                }} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none relative ${showTranslation[q.id] ? 'bg-orange-100 border-orange-300 text-orange-600' : 'bg-white border-slate-200 text-slate-400 hover:border-orange-400 hover:text-orange-500'}`} title={showTranslation[q.id] ? 'Tắt dịch' : 'Dịch nghĩa'}>
+                                                                }} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none relative ${showTranslation[q.id] ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-slate-200 text-slate-400 hover:border-primary-400 hover:text-primary-700'}`} title={showTranslation[q.id] ? 'Tắt dịch' : 'Dịch nghĩa'}>
                                                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 17.438l4.498 0" /></svg>
                                                                   {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <div className="absolute -top-1 -right-1 filter drop-shadow-md text-secondary-500"><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>}
                                                                   {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <div className="absolute -top-1 -right-1 filter drop-shadow-md text-primary-600"><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>}
