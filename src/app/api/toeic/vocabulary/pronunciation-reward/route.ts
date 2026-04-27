@@ -36,7 +36,9 @@ export async function POST(req: NextRequest) {
         
         const getRuleMsg = (key: string) => {
             const rule = rules.find(r => r.activityKey === key);
-            return rule?.toastMessage || rule?.label || 'Tuyệt vời!';
+            const msg = rule?.toastMessage || rule?.label || 'Tuyệt vời!';
+            const pts = rule?.points || 0;
+            return pts > 0 ? `${msg} (+${pts} ⭐)` : msg;
         };
 
         if (isGuest) {
