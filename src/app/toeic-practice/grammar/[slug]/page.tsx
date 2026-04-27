@@ -778,7 +778,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
       <div className="w-full mx-auto px-0 sm:px-6 xl:px-8 2xl:px-12 flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
         {/* Sidebar */}
-        <aside className="w-full md:w-80 bg-white border-b md:border-b-0 md:border-r md:border-l md:border-slate-200 md:sticky md:top-16 md:h-[calc(100vh-64px)] md:overflow-y-auto">
+        <aside className={`w-full bg-white border-b md:border-b-0 md:sticky md:top-16 md:h-[calc(100vh-64px)] overflow-x-hidden transition-all duration-500 ease-in-out ${(lessonStarted && !isTestCompleted) ? 'md:w-0 md:opacity-0 md:border-none hidden md:block' : 'md:w-80 md:border-r md:border-l md:border-slate-200 md:overflow-y-auto opacity-100 block'}`}>
           <div 
             className="p-3 border-b border-slate-100 flex justify-end md:hidden cursor-pointer"
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
@@ -872,7 +872,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
         {/* Main Content */}
         <main className="flex-1 p-4 md:p-6 lg:p-8 xl:p-10 overflow-x-hidden">
-          <div className={`mx-auto transition-all duration-300 ${lessonStarted && !isPlayingDirections ? 'w-full max-w-[1800px] flex flex-col xl:flex-row gap-6 items-start' : 'max-w-3xl'}`}>
+          <div className={`mx-auto transition-all duration-300 w-full max-w-[1800px] flex flex-col xl:flex-row gap-6 items-start`}>
             <AnimatePresence mode="wait">
               {currentLesson ? (
                 <motion.div
@@ -883,12 +883,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   transition={{ duration: 0.3 }}
                   className="w-full flex flex-col gap-6"
                 >
-                  <div className={`w-full flex flex-col ${lessonStarted && !isPlayingDirections ? 'xl:flex-row' : ''} gap-6 items-stretch`}>
+                  <div className={`w-full flex flex-col xl:flex-row gap-6 items-stretch`}>
                   {/* Left Column: Title + Time */}
-                  <div className={`flex flex-col gap-6 ${lessonStarted && !isPlayingDirections ? 'w-full xl:w-[280px] 2xl:w-[320px] shrink-0' : 'w-full'}`}>
+                  <div className={`flex flex-col gap-6 w-full xl:w-[280px] 2xl:w-[320px] shrink-0`}>
                   {/* Compact Lesson Header & Toggle */}
                   <div className={`bg-white rounded-[2rem] border border-slate-200 shadow-sm flex h-full w-full`}>
-                    <div className={`w-full p-4 lg:p-5 xl:sticky xl:top-24 flex ${lessonStarted && !isPlayingDirections ? 'flex-col gap-4' : 'flex-col md:flex-row md:items-center justify-between gap-4'}`}>
+                    <div className={`w-full p-4 lg:p-5 xl:sticky xl:top-24 flex flex-col gap-4`}>
                       <div className="flex flex-wrap items-center gap-3 w-full">
                       <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
                         <span>{currentLesson.title}</span>
@@ -1001,30 +1001,117 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       )}
                     </div>
                     
-                    {/* Progress Stats during lesson */}
-                    {lessonStarted && (
+                    {/* Progress Stats & Start Controls */}
                       <div className="w-full pt-3 mt-1 border-t border-slate-100">
-                         <div className="flex flex-col gap-2.5">
-                            <h4 className="text-[13px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                                <svg className="w-4 h-4 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2.5"/><circle cx="12" cy="12" r="6" strokeWidth="2.5"/><circle cx="12" cy="12" r="2" strokeWidth="2.5"/></svg>
-                                Tiến độ
-                            </h4>
-                            <div className="flex justify-between items-center text-sm bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
-                               <span className="text-slate-600 font-medium">Đã làm:</span>
-                               <span className="font-bold text-slate-800">{Object.keys(userAnswers).filter(k => currentLesson.questions.some(q => q.id === k)).length} / {currentLesson.questions.length}</span>
-                            </div>
-                            {(topic.type === 'GRAMMAR' || topic.type === 'READING' || (topic.type === 'LISTENING' && listeningMode === 'practice')) && (
-                               <div className="flex justify-between items-center text-sm bg-primary-50/50 px-3 py-2 rounded-lg border border-primary-100/50">
-                                  <span className="text-slate-600 font-medium">Số câu đúng:</span>
-                                  <span className="font-bold text-primary-600">{Object.keys(userAnswers).filter(k => {
-                                     const q = currentLesson.questions.find(q => q.id === k);
-                                     return q && userAnswers[k] === q.correctOption;
-                                  }).length}</span>
-                               </div>
-                            )}
-                         </div>
+                         {(() => {
+                             const answeredCount = currentLesson.questions.filter(q => userAnswers[q.id] !== undefined).length;
+                             const totalCount = currentLesson.questions.length;
+                             const correctCount = currentLesson.questions.filter(q => userAnswers[q.id] === q.correctOption).length;
+                             
+                             const handleResetProgress = async () => {
+                                 if (status === 'authenticated') {
+                                     await fetch(`/api/toeic/progress?lessonId=${selectedLessonId}`, { method: 'DELETE' });
+                                 } else {
+                                     const stored = localStorage.getItem('toeic_guest_progress');
+                                     if (stored) {
+                                         const data = JSON.parse(stored);
+                                         delete data[selectedLessonId!];
+                                         localStorage.setItem('toeic_guest_progress', JSON.stringify(data));
+                                     }
+                                 }
+                                 const newAnswers = { ...userAnswers };
+                                 const newResults = { ...showResults };
+                                 currentLesson.questions.forEach(q => {
+                                     delete newAnswers[q.id];
+                                     delete newResults[q.id];
+                                 });
+                                 setUserAnswers(newAnswers);
+                                 setShowResults(newResults);
+                                 
+                                 setLessonStarted(true);
+                                 setTimerStartTime(Date.now());
+                                 setIsTestCompleted(false);
+                                 setActiveQuestionIndex(0);
+                                 
+                                 if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
+                                     setIsPlayingDirections(true);
+                                     directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
+                                 }
+                             };
+                             
+                             if (!lessonStarted) {
+                                 if (answeredCount > 0) {
+                                     return (
+                                        <div className="flex flex-col gap-4">
+                                           <div className="flex flex-col gap-2.5">
+                                                <h4 className="text-[13px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                                                    <svg className="w-4 h-4 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2.5"/><circle cx="12" cy="12" r="6" strokeWidth="2.5"/><circle cx="12" cy="12" r="2" strokeWidth="2.5"/></svg>
+                                                    Tiến độ
+                                                </h4>
+                                                <div className="flex justify-between items-center text-sm bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
+                                                   <span className="text-slate-600 font-medium">Đã làm:</span>
+                                                   <span className="font-bold text-slate-800">{answeredCount} / {totalCount}</span>
+                                                </div>
+                                                {(topic.type === 'GRAMMAR' || topic.type === 'READING' || (topic.type === 'LISTENING' && listeningMode === 'practice')) && (
+                                                   <div className="flex justify-between items-center text-sm bg-primary-50/50 px-3 py-2 rounded-lg border border-primary-100/50">
+                                                      <span className="text-slate-600 font-medium">Số câu đúng:</span>
+                                                      <span className="font-bold text-primary-600">{correctCount}</span>
+                                                   </div>
+                                                )}
+                                           </div>
+                                           <div className="flex flex-col gap-2 mt-2">
+                                              <button onClick={handleResetProgress} className="w-full font-bold px-4 py-3 rounded-xl transition-all shadow-sm text-[13px] uppercase tracking-wider bg-white border-2 border-primary-700 text-primary-700 hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+                                                  Làm Lại Bài
+                                              </button>
+                                              <button onClick={() => { setLessonStarted(true); setIsTestCompleted(true); setIsReviewing(true); }} className="w-full font-bold px-4 py-3 rounded-xl transition-all shadow-md text-[13px] uppercase tracking-wider bg-primary-700 text-white hover:bg-primary-800 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+                                                  Xem Lại
+                                              </button>
+                                           </div>
+                                        </div>
+                                     );
+                                 } else {
+                                     return (
+                                        <div className="flex flex-col gap-4 mt-2">
+                                           <p className="text-[13px] font-bold text-secondary-600 bg-secondary-50 px-4 py-2.5 rounded-xl border border-secondary-200 w-full text-center shadow-sm">Bạn chưa làm bài tập này</p>
+                                           <button 
+                                              onClick={() => {
+                                                  setLessonStarted(true);
+                                                  setTimerStartTime(Date.now());
+                                                  if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
+                                                      setIsPlayingDirections(true);
+                                                      directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
+                                                  }
+                                              }} 
+                                              className="w-full font-bold px-4 py-3.5 rounded-xl transition-all shadow-md text-[14px] uppercase tracking-wider bg-primary-700 text-white hover:bg-primary-800 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
+                                           >
+                                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                              Bắt Đầu Ngay
+                                           </button>
+                                        </div>
+                                     );
+                                 }
+                             } else {
+                                 return (
+                                     <div className="flex flex-col gap-2.5">
+                                        <h4 className="text-[13px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                                            <svg className="w-4 h-4 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" strokeWidth="2.5"/><circle cx="12" cy="12" r="6" strokeWidth="2.5"/><circle cx="12" cy="12" r="2" strokeWidth="2.5"/></svg>
+                                            Tiến độ
+                                        </h4>
+                                        <div className="flex justify-between items-center text-sm bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
+                                           <span className="text-slate-600 font-medium">Đã làm:</span>
+                                           <span className="font-bold text-slate-800">{answeredCount} / {totalCount}</span>
+                                        </div>
+                                        {(topic.type === 'GRAMMAR' || topic.type === 'READING' || (topic.type === 'LISTENING' && listeningMode === 'practice')) && (
+                                           <div className="flex justify-between items-center text-sm bg-primary-50/50 px-3 py-2 rounded-lg border border-primary-100/50">
+                                              <span className="text-slate-600 font-medium">Số câu đúng:</span>
+                                              <span className="font-bold text-primary-600">{correctCount}</span>
+                                           </div>
+                                        )}
+                                     </div>
+                                 );
+                             }
+                         })()}
                       </div>
-                    )}
 
                     {/* Sổ Tay Link */}
                     <div className="w-full pt-4 mt-auto">
@@ -1178,114 +1265,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                           className="hidden" 
                       />
                       
-                      {!lessonStarted ? (
-                        <div className="flex flex-col items-center justify-center p-8 md:p-12 bg-white rounded-3xl border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center min-h-[320px] max-w-2xl mx-auto">
-                            <div className="w-14 h-14 bg-primary-700/10 rounded-2xl flex items-center justify-center mb-5 text-primary-700">
-                                <svg className="w-6 h-6 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            </div>
-                            <h3 className="text-xl md:text-2xl font-black text-primary-700 mb-2 leading-tight">Sẵn sàng cho PART {topic.part}?</h3>
-                            <p className="text-sm text-slate-500 mb-8 max-w-sm mx-auto">
-                                {topic.type === 'LISTENING' ? "Audio sẽ tự động phát sau khi bạn bắt đầu. Thời gian làm bài sẽ được tính ngay lập tức." : "Thời gian làm bài sẽ được tính ngay lập tức sau khi bạn bắt đầu."}
-                            </p>
-                            
-                            {(() => {
-                                const answeredCount = currentLesson.questions.filter(q => userAnswers[q.id] !== undefined).length;
-                                const totalCount = currentLesson.questions.length;
-                                const correctCount = currentLesson.questions.filter(q => userAnswers[q.id] === q.correctOption).length;
-                                
-                                const handleResetProgress = async () => {
-                                    if (status === 'authenticated') {
-                                        await fetch(`/api/toeic/progress?lessonId=${selectedLessonId}`, { method: 'DELETE' });
-                                    } else {
-                                        const stored = localStorage.getItem('toeic_guest_progress');
-                                        if (stored) {
-                                            const data = JSON.parse(stored);
-                                            delete data[selectedLessonId!];
-                                            localStorage.setItem('toeic_guest_progress', JSON.stringify(data));
-                                        }
-                                    }
-                                    const newAnswers = { ...userAnswers };
-                                    const newResults = { ...showResults };
-                                    currentLesson.questions.forEach(q => {
-                                        delete newAnswers[q.id];
-                                        delete newResults[q.id];
-                                    });
-                                    setUserAnswers(newAnswers);
-                                    setShowResults(newResults);
-                                    
-                                    setLessonStarted(true);
-                                    setTimerStartTime(Date.now());
-                                    setIsTestCompleted(false);
-                                    setActiveQuestionIndex(0);
-                                    
-                                    if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
-                                        setIsPlayingDirections(true);
-                                        directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
-                                    }
-                                };
-                                
-                                return answeredCount > 0 ? (
-                                    <div className="w-full max-w-sm mx-auto">
-                                        <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mb-6 text-left">
-                                            <h4 className="text-[15px] font-black text-slate-700 mb-4 flex items-center gap-2">
-                                                <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                                Tiến độ bài làm
-                                            </h4>
-                                            <div className="space-y-3">
-                                                <div className="flex justify-between items-center text-sm">
-                                                    <span className="text-slate-500 font-bold">Số câu đã làm:</span>
-                                                    <span className="font-black text-slate-700">{answeredCount}/{totalCount}</span>
-                                                </div>
-                                                <div className="flex justify-between items-center text-sm">
-                                                    <span className="text-slate-500 font-bold">Số câu đúng:</span>
-                                                    <span className="font-black text-primary-600 bg-primary-100/50 px-2.5 py-0.5 rounded-lg border border-primary-200/50">{correctCount}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col sm:flex-row gap-3">
-                                            <button 
-                                                onClick={handleResetProgress}
-                                                className="flex-1 font-bold px-4 py-3.5 rounded-xl transition-all shadow-sm text-[13px] uppercase tracking-wider bg-white border-2 border-primary-700 text-primary-700 hover:bg-slate-50 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
-                                            >
-                                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                               Làm Lại Bài
-                                            </button>
-                                            <button 
-                                                onClick={() => {
-                                                    setLessonStarted(true);
-                                                    setIsTestCompleted(true);
-                                                    setIsReviewing(true);
-                                                }} 
-                                                className="flex-1 font-bold px-4 py-3.5 rounded-xl transition-all shadow-md text-[13px] uppercase tracking-wider bg-primary-700 text-white hover:bg-primary-800 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
-                                            >
-                                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                               Xem Lại
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <p className="text-[13px] font-bold text-secondary-600 bg-secondary-50 px-4 py-2.5 rounded-xl border border-secondary-200 mb-8 max-w-sm mx-auto shadow-sm">Bạn chưa làm bài tập này</p>
-                                        <button 
-                                          onClick={() => {
-                                            setLessonStarted(true);
-                                            setTimerStartTime(Date.now());
-                                            
-                                            if (topic.type === 'LISTENING' && currentLesson.directionAudioUrl && directionAudioRef.current) {
-                                                setIsPlayingDirections(true);
-                                                directionAudioRef.current.play().catch(e => console.error("Direction Audio autoplay blocked", e));
-                                            }
-                                        }} className="font-bold px-10 py-4 rounded-xl transition-all shadow-md text-[14px] uppercase tracking-wider bg-primary-700 text-white hover:bg-primary-800 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
-                                           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                           Bắt Đầu Ngay
-                                        </button>
-                                    </>
-                                );
-                            })()}
-                        </div>
-                      ) : (
-                        <>
-                          {isPlayingDirections ? (
+                      {isPlayingDirections ? (
                               <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-6 md:p-10 text-center animate-in fade-in zoom-in duration-300">
                                   <h3 className="text-xl md:text-2xl font-black text-primary-900 mb-2 mt-2">Bạn đang nghe directions của Phần {topic.part} bài thi</h3>
                                   {topic.part === 2 ? (
@@ -1423,8 +1403,22 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                       animate={{ opacity: 1, x: 0 }}
                                       exit={{ opacity: 0, x: -20 }}
                                       transition={{ duration: 0.2 }}
-                                      className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-5 md:p-8 relative overflow-hidden h-full flex flex-col"
+                                      className={`bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 p-5 md:p-8 relative overflow-hidden flex flex-col ${!lessonStarted ? 'h-[65vh] min-h-[450px] max-h-[700px]' : 'h-full'}`}
                                     >
+                                        {!lessonStarted && (
+                                            <div className="absolute inset-0 z-50 bg-white/60 backdrop-blur-[6px] flex flex-col items-center justify-center p-4">
+                                                 <div className="text-center transform transition-all hover:scale-105 duration-300">
+                                                     <div className="w-20 h-20 bg-primary-700/10 rounded-3xl flex items-center justify-center mb-6 text-primary-700 mx-auto shadow-sm border border-primary-100">
+                                                         <svg className="w-10 h-10 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                     </div>
+                                                     <h3 className="text-2xl font-black text-primary-700 mb-3 drop-shadow-sm">Sẵn sàng cho PART {topic.part}?</h3>
+                                                     <p className="text-slate-500 font-medium max-w-xs mx-auto">
+                                                         {topic.type === 'LISTENING' ? "Audio sẽ tự động phát. " : ""}
+                                                         Thời gian làm bài sẽ được tính ngay lập tức sau khi bạn bắt đầu.
+                                                     </p>
+                                                 </div>
+                                            </div>
+                                        )}
                                       
                                         {(() => {
                                            const extractExplanationParts = (text: string) => {
@@ -1666,7 +1660,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                 
                                               </div>
 
-                                              <div className={`grid grid-cols-1 ${topic.part === 3 || topic.part === 4 ? '' : 'md:grid-cols-2'} gap-2 md:gap-3`}>
+                                              <div className={`grid grid-cols-1 ${topic.type === 'LISTENING' ? '' : 'md:grid-cols-2'} gap-2 md:gap-3`}>
                                                 {[
                                                   { label: 'A', value: q.optionA },
                                                   { label: 'B', value: q.optionB },
@@ -2060,13 +2054,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   )
                                 })()}
                               </AnimatePresence>
-
-
-                          </>
-                        )}
-                        </>
-                      )}
-                    </section>
+                            </>
+                       )}
+                     </section>
                   )}
                   </div> {/* End of Main Area */}
                   </div> {/* End of Flex Row */}
