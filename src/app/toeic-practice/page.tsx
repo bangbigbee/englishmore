@@ -1163,30 +1163,44 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 		return <div className="py-12 text-center text-gray-500 italic">Đang tải các chủ đề...</div>;
 	}
 
+	const levels = [
+		{ id: 'Cơ Bản', title: 'Level 1: Ngữ Pháp Cơ Bản', color: 'bg-green-500' },
+		{ id: 'Trung Cấp', title: 'Level 2: Ngữ Pháp Trung Cấp', color: 'bg-blue-500' },
+		{ id: 'Nâng Cao', title: 'Level 3: Ngữ Pháp Nâng Cao', color: 'bg-purple-500' }
+	];
+
 	return (
-		<div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
-                <span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
-                Các Chủ Đề Bài Học Ngữ Pháp
-            </h2>
-			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-				{topics.length === 0 ? (
-					<div className="col-span-full py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-						Chưa có chủ đề nào được cập nhật.
-					</div>
-				) : (
-					topics.map((topic) => (
-						<TopicCard
-							key={topic.id}
-							type="grammar"
-							title={topic.title}
-							subtitle={topic.subtitle || 'Ngữ pháp TOEIC'}
-							badgeText={`${topic._count?.lessons || 0} Bài tập`}
-							onClick={() => onPracticeClick(topic.slug)}
-						/>
-					))
-				)}
-			</div>
+		<div className="animate-in fade-in slide-in-from-bottom-2 duration-500 space-y-12">
+			{topics.length === 0 ? (
+				<div className="py-16 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
+					Chưa có chủ đề nào được cập nhật.
+				</div>
+			) : (
+				levels.map(level => {
+					const levelTopics = topics.filter(t => (t.level || 'Cơ Bản') === level.id);
+					if (levelTopics.length === 0) return null;
+					return (
+						<div key={level.id} className="relative">
+							<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
+								<span className={`w-1.5 h-6 rounded-full ${level.id === 'Cơ Bản' ? 'bg-[#ea980c]' : level.id === 'Trung Cấp' ? 'bg-primary-500' : 'bg-secondary-500'} block shadow-sm`}></span>
+								{level.title}
+							</h2>
+							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+								{levelTopics.map((topic) => (
+									<TopicCard
+										key={topic.id}
+										type="grammar"
+										title={topic.title}
+										subtitle={topic.subtitle || 'Ngữ pháp TOEIC'}
+										badgeText={`${topic._count?.lessons || 0} Bài tập`}
+										onClick={() => onPracticeClick(topic.slug)}
+									/>
+								))}
+							</div>
+						</div>
+					);
+				})
+			)}
 		</div>
 	);
 }

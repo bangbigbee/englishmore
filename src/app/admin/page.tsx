@@ -311,6 +311,7 @@ interface AdminToeicTopic {
   title: string
   subtitle: string | null
   slug: string
+  level?: string
   _count?: { lessons: number }
 }
 
@@ -818,7 +819,7 @@ export default function AdminDashboard() {
 
 
   const [showTopicModal, setShowTopicModal] = useState(false)
-  const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR', part: 5 as number | null })
+  const [topicForm, setTopicForm] = useState({ title: '', subtitle: '', slug: '', type: 'GRAMMAR', part: 5 as number | null, level: 'Cơ Bản' })
   const [toeicPracticeSubtab, setToeicPracticeSubtab] = useState<'GRAMMAR' | 'READING' | 'LISTENING'>('GRAMMAR')
   const [editingToeicTopic, setEditingToeicTopic] = useState<AdminToeicTopic | null>(null)
   const [showLessonModal, setShowLessonModal] = useState(false)
@@ -1869,7 +1870,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error('Failed to save topic')
       toast.success(editingToeicTopic ? 'Topic updated successfully' : 'Topic created successfully')
       setShowTopicModal(false)
-      setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: toeicPracticeSubtab === 'LISTENING' ? 1 : 5 })
+      setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: toeicPracticeSubtab === 'LISTENING' ? 1 : 5, level: 'Cơ Bản' })
       setEditingToeicTopic(null)
       fetchToeicTopics()
     } catch (err) {
@@ -4273,7 +4274,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => {
-                  setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: toeicPracticeSubtab === 'LISTENING' ? 1 : 5 })
+                  setTopicForm({ title: '', subtitle: '', slug: '', type: toeicPracticeSubtab, part: toeicPracticeSubtab === 'LISTENING' ? 1 : 5, level: 'Cơ Bản' })
                   setEditingToeicTopic(null)
                   setShowTopicModal(true)
                 }}
@@ -4333,7 +4334,7 @@ export default function AdminDashboard() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug, type: topic.type || toeicPracticeSubtab, part: topic.part || 5 })
+                          setTopicForm({ title: topic.title, subtitle: topic.subtitle || '', slug: topic.slug, type: topic.type || toeicPracticeSubtab, part: topic.part || 5, level: topic.level || 'Cơ Bản' })
                           setEditingToeicTopic(topic)
                           setShowTopicModal(true)
                         }}
@@ -8074,6 +8075,19 @@ export default function AdminDashboard() {
                     </select>
                   </div>
                 )}
+
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
+                  <select
+                    value={topicForm.level || 'Cơ Bản'}
+                    onChange={(e) => setTopicForm({ ...topicForm, level: e.target.value })}
+                    className="w-full rounded-lg border-gray-300 focus:border-primary-900 focus:ring-primary-900 p-2 border"
+                  >
+                    <option value="Cơ Bản">Cơ Bản</option>
+                    <option value="Trung Cấp">Trung Cấp</option>
+                    <option value="Nâng Cao">Nâng Cao</option>
+                  </select>
+                </div>
 
                 <div className="mt-8 flex justify-end gap-3">
                   <button
