@@ -897,7 +897,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   
                   {lessonStarted && sidebarState === 0 && (
                       <button onClick={() => setSidebarState(2)} className="group hidden xl:flex absolute -left-6 xl:-left-10 top-10 w-8 h-16 bg-primary-50 border border-primary-200 shadow-lg shadow-primary-500/20 rounded-r-2xl items-center justify-center text-primary-600 hover:text-white hover:bg-primary-600 z-10 transition-all duration-300 hover:w-10">
-                          <div className="absolute inset-0 rounded-r-2xl border-2 border-primary-400 opacity-50 animate-ping group-hover:hidden"></div>
                           <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                           <span className="absolute left-full ml-3 px-3 py-1.5 bg-slate-800 text-white text-[12px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none drop-shadow-md z-50">Mở rộng</span>
                       </button>
@@ -905,13 +904,13 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   {lessonStarted && sidebarState === 1 && (
                       <button onClick={() => setSidebarState(0)} className="group hidden xl:flex absolute left-[260px] 2xl:left-[300px] top-10 w-8 h-16 bg-primary-50 border border-primary-200 shadow-lg shadow-primary-500/20 rounded-r-2xl items-center justify-center text-primary-600 hover:text-white hover:bg-primary-600 z-20 transition-all duration-300 hover:w-10">
                           <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                          <span className="absolute left-full ml-3 px-3 py-1.5 bg-slate-800 text-white text-[12px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none drop-shadow-md z-50">Ẩn bớt (Tiến độ)</span>
+                          <span className="absolute left-full ml-3 px-3 py-1.5 bg-slate-800 text-white text-[12px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none drop-shadow-md z-50">Ẩn bớt</span>
                       </button>
                   )}
                   {lessonStarted && sidebarState === 2 && (
                       <button onClick={() => setSidebarState(1)} className="group hidden xl:flex absolute left-[260px] 2xl:left-[300px] top-10 w-8 h-16 bg-primary-50 border border-primary-200 shadow-lg shadow-primary-500/20 rounded-r-2xl items-center justify-center text-primary-600 hover:text-white hover:bg-primary-600 z-20 transition-all duration-300 hover:w-10">
                           <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                          <span className="absolute left-full ml-3 px-3 py-1.5 bg-slate-800 text-white text-[12px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none drop-shadow-md z-50">Ẩn bớt (Danh sách)</span>
+                          <span className="absolute left-full ml-3 px-3 py-1.5 bg-slate-800 text-white text-[12px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none drop-shadow-md z-50">Ẩn bớt</span>
                       </button>
                   )}
 
