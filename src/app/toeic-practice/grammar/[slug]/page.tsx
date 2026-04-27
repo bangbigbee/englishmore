@@ -96,14 +96,14 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [isReviewing, setIsReviewing] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [showPricing, setShowPricing] = useState(false)
-  const [isInfoSidebarOpen, setIsInfoSidebarOpen] = useState(true)
+  const [sidebarState, setSidebarState] = useState(2) // 0: both hidden, 1: progress only, 2: both visible
   
   // Close info sidebar automatically when lesson starts
   useEffect(() => {
       if (lessonStarted) {
-          setIsInfoSidebarOpen(false);
+          setSidebarState(0);
       } else {
-          setIsInfoSidebarOpen(true);
+          setSidebarState(2);
       }
   }, [lessonStarted]);
   const [flyingStars, setFlyingStars] = useState<{ id: number, x: number, y: number, startX: number, startY: number, endX: number, endY: number }[]>([])
@@ -788,7 +788,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
       <div className="w-full mx-auto px-0 sm:px-6 xl:px-8 2xl:px-12 flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
         {/* Sidebar */}
-        <aside className={`w-full bg-white border-b md:border-b-0 md:sticky md:top-16 md:h-[calc(100vh-64px)] overflow-x-hidden transition-all duration-500 ease-in-out ${!isInfoSidebarOpen ? 'md:w-0 md:opacity-0 md:border-none hidden md:block' : 'md:w-80 md:border-r md:border-l md:border-slate-200 md:overflow-y-auto opacity-100 block'}`}>
+        <aside className={`w-full bg-white border-b md:border-b-0 md:sticky md:top-16 md:h-[calc(100vh-64px)] overflow-x-hidden transition-all duration-500 ease-in-out ${sidebarState !== 2 ? 'md:w-0 md:opacity-0 md:border-none hidden md:block' : 'md:w-80 md:border-r md:border-l md:border-slate-200 md:overflow-y-auto opacity-100 block'}`}>
           <div 
             className="p-3 border-b border-slate-100 flex justify-end md:hidden cursor-pointer"
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
@@ -895,19 +895,24 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 >
                   <div className={`w-full flex flex-col xl:flex-row gap-6 items-stretch relative`}>
                   
-                  {lessonStarted && !isInfoSidebarOpen && (
-                      <button onClick={() => setIsInfoSidebarOpen(true)} className="hidden xl:flex absolute -left-6 xl:-left-10 top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-10 transition-all hover:w-10">
+                  {lessonStarted && sidebarState === 0 && (
+                      <button onClick={() => setSidebarState(2)} className="hidden xl:flex absolute -left-6 xl:-left-10 top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-10 transition-all hover:w-10">
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                       </button>
                   )}
-                  {lessonStarted && isInfoSidebarOpen && (
-                      <button onClick={() => setIsInfoSidebarOpen(false)} className="hidden xl:flex absolute left-[260px] 2xl:left-[300px] top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-20 transition-all hover:w-10">
+                  {lessonStarted && sidebarState === 1 && (
+                      <button onClick={() => setSidebarState(0)} className="hidden xl:flex absolute left-[260px] 2xl:left-[300px] top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-20 transition-all hover:w-10">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                      </button>
+                  )}
+                  {lessonStarted && sidebarState === 2 && (
+                      <button onClick={() => setSidebarState(1)} className="hidden xl:flex absolute left-[260px] 2xl:left-[300px] top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-20 transition-all hover:w-10">
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                       </button>
                   )}
 
                   {/* Left Column: Title + Time */}
-                  <div className={`flex flex-col gap-6 w-full shrink-0 transition-all duration-500 overflow-hidden ${isInfoSidebarOpen ? 'xl:w-[280px] 2xl:w-[320px] xl:opacity-100' : 'xl:w-0 xl:opacity-0 xl:border-0 xl:px-0 xl:mx-0'}`}>
+                  <div className={`flex flex-col gap-6 w-full shrink-0 transition-all duration-500 overflow-hidden ${sidebarState !== 0 ? 'xl:w-[280px] 2xl:w-[320px] xl:opacity-100' : 'xl:w-0 xl:opacity-0 xl:border-0 xl:px-0 xl:mx-0'}`}>
                   {/* Compact Lesson Header & Toggle */}
                   <div className={`bg-white rounded-[2rem] border border-slate-200 shadow-sm flex h-full w-full`}>
                     <div className={`w-full p-4 lg:p-5 xl:sticky xl:top-24 flex flex-col gap-4`}>
