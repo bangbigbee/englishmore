@@ -15,5 +15,7 @@ Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu
 - [x] 8. Câu hỏi (Yes/No, Wh-questions, Tag questions)
 - [x] 9. Lối nói phụ họa (So/Too, Neither/Either)
 - [x] 10. Mệnh lệnh thức
+- [x] 11. Động từ khiếm khuyết (Modal Verbs)
+- [x] 12. Câu điều kiện và Câu giả định (Conditionals & Subjunctive)
 
 *(Các phase tiếp theo sẽ được cập nhật thêm dựa trên file docx)*
