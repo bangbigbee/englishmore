@@ -788,7 +788,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
 
       <div className="w-full mx-auto px-0 sm:px-6 xl:px-8 2xl:px-12 flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
         {/* Sidebar */}
-        <aside className={`w-full bg-white border-b md:border-b-0 md:sticky md:top-16 md:h-[calc(100vh-64px)] overflow-x-hidden transition-all duration-500 ease-in-out ${(lessonStarted && !isTestCompleted) ? 'md:w-0 md:opacity-0 md:border-none hidden md:block' : 'md:w-80 md:border-r md:border-l md:border-slate-200 md:overflow-y-auto opacity-100 block'}`}>
+        <aside className={`w-full bg-white border-b md:border-b-0 md:sticky md:top-16 md:h-[calc(100vh-64px)] overflow-x-hidden transition-all duration-500 ease-in-out ${!isInfoSidebarOpen ? 'md:w-0 md:opacity-0 md:border-none hidden md:block' : 'md:w-80 md:border-r md:border-l md:border-slate-200 md:overflow-y-auto opacity-100 block'}`}>
           <div 
             className="p-3 border-b border-slate-100 flex justify-end md:hidden cursor-pointer"
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
@@ -895,12 +895,12 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                 >
                   <div className={`w-full flex flex-col xl:flex-row gap-6 items-stretch relative`}>
                   
-                  {!isInfoSidebarOpen && (
-                      <button onClick={() => setIsInfoSidebarOpen(true)} className="hidden xl:flex absolute -left-4 top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-10 transition-all hover:w-10">
+                  {lessonStarted && !isInfoSidebarOpen && (
+                      <button onClick={() => setIsInfoSidebarOpen(true)} className="hidden xl:flex absolute -left-6 xl:-left-10 top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-10 transition-all hover:w-10">
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                       </button>
                   )}
-                  {isInfoSidebarOpen && (
+                  {lessonStarted && isInfoSidebarOpen && (
                       <button onClick={() => setIsInfoSidebarOpen(false)} className="hidden xl:flex absolute left-[260px] 2xl:left-[300px] top-10 w-8 h-16 bg-white border border-slate-200 shadow-md rounded-r-xl items-center justify-center text-slate-400 hover:text-primary-700 z-20 transition-all hover:w-10">
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                       </button>
@@ -1556,7 +1556,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                  src={groupImage} 
                                                  alt="Part" 
                                                  onClick={() => setZoomedImageUrl(groupImage)}
-                                                 className="max-w-[80%] md:max-w-[80%] max-h-[250px] md:max-h-[350px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
+                                                 className="max-w-[90%] md:max-w-[90%] max-h-[250px] md:max-h-[350px] w-auto cursor-zoom-in object-contain rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300"
                                                />
                                              </div>
                                              ) : null;
