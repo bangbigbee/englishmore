@@ -137,34 +137,39 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     window.speechSynthesis.cancel()
     
     if (contentType === 'QNA' && currentSentence.qna) {
-      const uQ = new SpeechSynthesisUtterance(currentSentence.qna.q)
-      if (voiceQ) uQ.voice = voiceQ
-      uQ.rate = speed
-      uQ.pitch = 1
+      setIsPlaying(true)
       
-      const uA = new SpeechSynthesisUtterance(currentSentence.qna.a)
-      if (voiceA) uA.voice = voiceA
-      uA.rate = speed
-      uA.pitch = 1
+      // Using Google Translate TTS for more natural human-like voices on local testing
+      const qUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-us&client=tw-ob&q=${encodeURIComponent(currentSentence.qna.q)}`
+      const aUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-gb&client=tw-ob&q=${encodeURIComponent(currentSentence.qna.a)}`
       
-      uQ.onstart = () => setIsPlaying(true)
+      const qAudio = new Audio(qUrl)
+      const aAudio = new Audio(aUrl)
       
-      // Delay response slightly
-      uQ.onend = () => {
+      // Note: playbackRate may distort slightly but works for simple speed changes
+      qAudio.playbackRate = speed
+      aAudio.playbackRate = speed
+      
+      qAudio.onended = () => {
         setTimeout(() => {
           if (document.visibilityState === 'visible') {
-             window.speechSynthesis.speak(uA)
+            aAudio.play().catch(() => setIsPlaying(false))
           } else {
-             setIsPlaying(false)
+            setIsPlaying(false)
           }
-        }, 300)
+        }, 400) // slight delay before answer
       }
-      uA.onend = () => setIsPlaying(false)
       
-      uQ.onerror = () => setIsPlaying(false)
-      uA.onerror = () => setIsPlaying(false)
+      aAudio.onended = () => setIsPlaying(false)
+      qAudio.onerror = () => setIsPlaying(false)
+      aAudio.onerror = () => setIsPlaying(false)
       
-      window.speechSynthesis.speak(uQ)
+      qAudio.play().catch(err => {
+        console.error('Audio play failed:', err)
+        // Fallback if blocked
+        setIsPlaying(false)
+        toast.error('Không thể phát âm thanh TTS.')
+      })
     } else {
       const utterance = new SpeechSynthesisUtterance(currentSentence.text)
       if (voice) utterance.voice = voice

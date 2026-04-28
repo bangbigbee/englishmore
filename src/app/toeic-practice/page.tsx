@@ -2932,7 +2932,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 					</div>
 					<button 
 						onClick={() => setIsInteractiveModalOpen(true)}
-						className="w-full bg-[#0B1120] hover:bg-[#111827] border border-slate-800/60 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-[#0B1120]/50 active:scale-95 flex items-center justify-center gap-2 relative z-10"
+						className="w-full bg-blue-950 hover:bg-blue-900 border border-blue-800/60 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-blue-950/50 active:scale-95 flex items-center justify-center gap-2 relative z-10"
 					>
 						Vào phòng tập ngay <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
 					</button>
