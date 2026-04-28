@@ -2221,18 +2221,11 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                     {(['ALL', 'BASIC', 'ADVANCED', 'MIXED']).map(pkg => {
                                         const isActive = activePackage === pkg;
                                         
-                                        const colorClass = isActive ? 'text-white' : (
-                                                           pkg === 'BASIC' ? 'text-primary-600' : 
-                                                           pkg === 'ADVANCED' ? 'text-primary-800' : 
-                                                           pkg === 'MIXED' ? 'text-secondary-600' : 
-                                                           'text-slate-700');
+                                        const colorClass = isActive ? 'text-white' : 'text-slate-600 dark:text-slate-400';
                                         
-                                        const activeBg = pkg === 'BASIC' ? 'bg-linear-to-r from-primary-600 to-primary-500 shadow-md shadow-primary-500/20 ring-1 ring-primary-500' :
-                                                         pkg === 'ADVANCED' ? 'bg-linear-to-r from-primary-800 to-primary-700 shadow-md shadow-primary-800/20 ring-1 ring-primary-700' :
-                                                         pkg === 'MIXED' ? 'bg-linear-to-r from-secondary-500 to-orange-500 shadow-md shadow-secondary-500/20 ring-1 ring-secondary-500' :
-                                                         'bg-slate-800 shadow-md shadow-slate-800/20 ring-1 ring-slate-700';
+                                        const activeBg = 'bg-linear-to-r from-primary-600 to-primary-500 shadow-md shadow-primary-500/20 ring-1 ring-primary-500';
                                                          
-                                        const inactiveBg = 'hover:bg-white/60 opacity-70 hover:opacity-100';
+                                        const inactiveBg = 'hover:bg-white/80 dark:hover:bg-slate-800 hover:text-primary-600 transition-colors';
 
                                         return (
                                             <button
