@@ -326,7 +326,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                       onClick={handleCheckDictation}
                       className="cursor-pointer text-[10px] md:text-sm font-bold text-slate-400 hover:text-secondary-400 uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
                     >
-                      Xem kết quả
+                      Check
                     </button>
                     <button 
                       onClick={() => {
