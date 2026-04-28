@@ -175,8 +175,38 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     const cleanInput = cleanText(transcript)
     const cleanTarget = cleanText(currentSentence.text)
     
-    if (cleanInput === cleanTarget || cleanTarget.includes(cleanInput)) {
-      toast.success('Tuyệt vời! Phát âm chuẩn như người bản xứ! +5 ⭐', { position: 'top-center' })
+    if (!cleanInput) {
+      toast.error('Hệ thống chưa nghe rõ. Bạn vui lòng thử lại nhé!', { position: 'top-center' })
+      return
+    }
+
+    if (cleanInput === cleanTarget) {
+      toast.success('Tuyệt đỉnh! Phát âm chuẩn 100% như người bản xứ! +5 ⭐', { position: 'top-center' })
+      return
+    }
+
+    // Fuzzy matching by words
+    const inputWords = cleanInput.split(' ')
+    const targetWordsArr = cleanTarget.split(' ')
+    const targetWords = new Set(targetWordsArr)
+    
+    let matchCount = 0
+    const matchedWords = new Set()
+    
+    inputWords.forEach(word => {
+      // Allow minor plurals/tenses mismatch by checking partial word? No, let's keep it simple for now
+      if (targetWords.has(word) && !matchedWords.has(word)) {
+        matchCount++
+        matchedWords.add(word)
+      }
+    })
+    
+    const matchPercentage = matchCount / targetWords.size
+    
+    if (matchPercentage >= 0.8) {
+      toast.success('Rất xuất sắc! Ngữ điệu của bạn cực kỳ tự nhiên! +4 ⭐', { position: 'top-center' })
+    } else if (matchPercentage >= 0.5) {
+      toast.success('Khá tốt! Cố gắng luyện thêm một chút nữa nhé! +2 ⭐', { position: 'top-center' })
     } else {
       toast.error('Chưa sát lắm. Hãy nghe lại ngữ điệu và thử lại nhé!', { position: 'top-center' })
     }
