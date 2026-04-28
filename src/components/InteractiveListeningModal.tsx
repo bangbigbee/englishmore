@@ -146,8 +146,16 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
       }
       return '___';
     })
-    setHintText(hintWords.join(' '))
-  }, [currentIndex, difficulty, revealedWordCount, currentSentence, maxReveals])
+    
+    if (contentType === 'QNA' && currentSentence.qna) {
+      const qLength = currentSentence.qna.q.split(' ').length;
+      const qHint = hintWords.slice(0, qLength).join(' ');
+      const aHint = hintWords.slice(qLength).join(' ');
+      setHintText(qHint + '\n' + aHint);
+    } else {
+      setHintText(hintWords.join(' '));
+    }
+  }, [currentIndex, difficulty, revealedWordCount, currentSentence, maxReveals, contentType])
 
   // Reset state
   useEffect(() => {
@@ -493,7 +501,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
                     {/* Hint Display */}
                     <div className="mb-4 pb-4 border-b border-slate-800 pr-12 min-h-[4rem] flex items-center justify-center">
-                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide whitespace-pre-line">
                         {hintText || <span className="text-slate-600 italic">Nhấn vào bóng đèn để nhận gợi ý</span>}
                       </p>
                     </div>
@@ -528,7 +536,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                           <p className="text-xl md:text-2xl font-bold text-slate-300 leading-relaxed">"{currentSentence.qna.a}"</p>
                         </div>
                         <div className="mt-4 pt-4 border-t border-slate-800/40">
-                          <p className="text-slate-400 font-medium text-sm md:text-base">{currentSentence.translation}</p>
+                          {currentSentence.translation.includes('Đáp:') ? (
+                            <div className="flex flex-col gap-2">
+                              <p className="text-slate-400 font-medium text-sm md:text-base">{currentSentence.translation.split('Đáp:')[0].trim()}</p>
+                              <p className="text-slate-400 font-medium text-sm md:text-base">Đáp: {currentSentence.translation.split('Đáp:')[1].trim()}</p>
+                            </div>
+                          ) : (
+                            <p className="text-slate-400 font-medium text-sm md:text-base">{currentSentence.translation}</p>
+                          )}
                         </div>
                       </div>
                     ) : (
