@@ -33,7 +33,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [speed, setSpeed] = useState(1.0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [revealedWordCount, setRevealedWordCount] = useState(0)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   
   const currentSentence = PRACTICE_SENTENCES[currentIndex]
   const targetWords = currentSentence.text.split(' ')
@@ -238,76 +238,64 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-300/30 blur-[120px]" />
         </div>
 
-        {/* Left Sidebar */}
-        <div className="w-full md:w-[320px] lg:w-[380px] bg-white border-r border-slate-200 p-4 md:p-6 lg:p-8 flex flex-col backdrop-blur-xl z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center justify-between mb-6 md:mb-12">
+        {/* Left Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div 
+            className="absolute inset-0 bg-slate-900/20 z-40 backdrop-blur-sm transition-opacity" 
+            onClick={() => setIsSidebarOpen(false)} 
+          />
+        )}
+
+        {/* Left Sidebar Drawer */}
+        <div className={`absolute top-0 left-0 h-full w-[300px] sm:w-[340px] bg-white border-r border-slate-200 p-6 flex flex-col z-50 shadow-[4px_0_24px_rgba(0,0,0,0.1)] transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="flex items-center justify-between mb-10">
             <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
-              <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-900 flex items-center justify-center shadow-lg shadow-indigo-900/30">
                 <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                 </svg>
               </span>
-              Master<br/><span className="text-blue-600">Listening</span>
+              Master<br/><span className="text-indigo-800">Listening</span>
             </h2>
-            <div className="flex items-center gap-2 md:hidden">
-              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="w-10 h-10 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-colors cursor-pointer text-slate-700">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
-              </button>
-              <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-colors cursor-pointer text-slate-700 text-sm">✕</button>
-            </div>
+            <button onClick={() => setIsSidebarOpen(false)} className="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-colors cursor-pointer text-slate-700 text-sm">✕</button>
           </div>
           
-          <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex space-y-4 flex-1 flex-col`}>
+          <div className="flex space-y-4 flex-1 flex-col">
             <button 
-              onClick={() => { setMethod('DICTATION'); setIsMobileMenuOpen(false); }}
-              className={`w-full cursor-pointer text-left p-4 md:p-5 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'DICTATION' ? 'bg-blue-50 border border-blue-200 shadow-sm' : 'bg-white border border-slate-100 hover:bg-slate-50'}`}
+              onClick={() => { setMethod('DICTATION'); setIsSidebarOpen(false); }}
+              className={`w-full cursor-pointer text-left p-4 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'DICTATION' ? 'bg-indigo-50 border border-indigo-200 shadow-sm' : 'bg-white border border-slate-100 hover:bg-slate-50'}`}
             >
-              {method === 'DICTATION' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500 rounded-l-2xl" />}
-              <h3 className={`text-lg font-bold ${method === 'DICTATION' ? 'text-blue-700' : 'text-slate-700'}`}>Nghe Chép Chính Tả</h3>
-              <p className="text-[13px] text-slate-500 mt-2 font-medium">Luyện bắt từ khóa & gõ lại toàn bộ câu với các độ khó khác nhau.</p>
+              {method === 'DICTATION' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-600 rounded-l-2xl" />}
+              <h3 className={`text-lg font-bold ${method === 'DICTATION' ? 'text-indigo-800' : 'text-slate-700'}`}>Nghe Chép Chính Tả</h3>
+              <p className="text-[13px] text-slate-500 mt-1 font-medium">Luyện bắt từ khóa & gõ lại toàn bộ câu với các độ khó khác nhau.</p>
             </button>
 
             <button 
-              onClick={() => { setMethod('SHADOWING'); setIsMobileMenuOpen(false); }}
-              className={`w-full cursor-pointer text-left p-4 md:p-5 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'SHADOWING' ? 'bg-blue-50 border border-blue-200 shadow-sm' : 'bg-white border border-slate-100 hover:bg-slate-50'}`}
+              onClick={() => { setMethod('SHADOWING'); setIsSidebarOpen(false); }}
+              className={`w-full cursor-pointer text-left p-4 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'SHADOWING' ? 'bg-indigo-50 border border-indigo-200 shadow-sm' : 'bg-white border border-slate-100 hover:bg-slate-50'}`}
             >
-              {method === 'SHADOWING' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500 rounded-l-2xl" />}
-              <h3 className={`text-lg font-bold ${method === 'SHADOWING' ? 'text-blue-700' : 'text-slate-700'}`}>Luyện Ngữ Điệu</h3>
-              <p className="text-[13px] text-slate-500 mt-2 font-medium">Bắt chước ngữ điệu bản xứ. Trí tuệ nhân tạo sẽ chấm điểm bạn.</p>
-            </button>
-          </div>
-          
-          <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block mt-4 md:mt-auto pt-6 md:pt-8 border-t border-slate-200`}>
-            <button onClick={onClose} className="w-full cursor-pointer py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm transition-colors border border-slate-200 shadow-sm flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-              Thoát phòng tập
+              {method === 'SHADOWING' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-600 rounded-l-2xl" />}
+              <h3 className={`text-lg font-bold ${method === 'SHADOWING' ? 'text-indigo-800' : 'text-slate-700'}`}>Luyện Ngữ Điệu</h3>
+              <p className="text-[13px] text-slate-500 mt-1 font-medium">Bắt chước ngữ điệu bản xứ. Trí tuệ nhân tạo sẽ chấm điểm bạn.</p>
             </button>
           </div>
         </div>
 
         {/* Right Content Area */}
         <div className="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto">
-          <button onClick={onClose} className="absolute top-6 right-6 hidden md:flex w-10 h-10 items-center justify-center bg-white hover:bg-slate-50 shadow-sm rounded-full text-slate-500 transition-all border border-slate-200 hover:rotate-90 z-50 cursor-pointer">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
+          {/* Top Actions */}
+          <div className="absolute top-4 left-4 z-30">
+            <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 flex items-center justify-center bg-white hover:bg-slate-50 shadow-sm rounded-full text-slate-500 transition-all border border-slate-200 cursor-pointer">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+          </div>
+          <div className="absolute top-4 right-4 z-30 flex gap-2">
+            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white hover:bg-slate-50 shadow-sm rounded-full text-slate-500 transition-all border border-slate-200 hover:rotate-90 cursor-pointer">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
           
-          <div className="w-full min-h-full max-w-4xl mx-auto p-6 lg:p-8 flex flex-col">
-            
-            {/* Header: Progress */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-blue-500 animate-pulse' : 'bg-slate-300'}`} />
-                <span className="text-sm font-bold tracking-[0.2em] uppercase text-blue-600">Sentences</span>
-              </div>
-              <div className="flex items-center gap-4 bg-white border border-slate-200 shadow-sm rounded-full px-4 py-1.5">
-                <span className="text-sm font-bold text-slate-900">{currentIndex + 1} <span className="text-slate-400">/ {PRACTICE_SENTENCES.length}</span></span>
-                <div className="w-px h-4 bg-slate-200" />
-                <button onClick={nextSentence} className="cursor-pointer text-sm font-bold text-blue-600 hover:text-blue-500 transition-colors uppercase tracking-wider flex items-center gap-2 group">
-                  Next
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </button>
-              </div>
-            </div>
+          <div className="w-full min-h-full max-w-4xl mx-auto p-4 md:p-8 flex flex-col pt-16">
 
             {/* Audio Controls Row */}
             <div className="flex items-center justify-center gap-10 mb-6 w-full max-w-sm mx-auto">
@@ -316,14 +304,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="flex flex-col flex-1 items-start">
                 <div className="flex items-center justify-between w-full mb-2">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Speed</span>
-                  <span className="text-xs font-bold text-blue-600">{speed.toFixed(1)}x</span>
+                  <span className="text-xs font-bold text-indigo-700">{speed.toFixed(1)}x</span>
                 </div>
                 <input 
                   type="range" 
                   min="0.6" max="1.4" step="0.1" 
                   value={speed} 
                   onChange={(e) => setSpeed(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                 />
               </div>
 
@@ -331,14 +319,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
                 {isPlaying && (
                   <>
-                    <div className="absolute inset-0 bg-blue-500 rounded-full blur-xl opacity-40 animate-pulse" />
-                    <div className="absolute -inset-4 border-2 border-blue-500/30 rounded-full animate-ping" />
+                    <div className="absolute inset-0 bg-indigo-600 rounded-full blur-xl opacity-40 animate-pulse" />
+                    <div className="absolute -inset-4 border-2 border-indigo-600/30 rounded-full animate-ping" />
                   </>
                 )}
-                {!isPlaying && <div className="absolute inset-0 bg-blue-500 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
+                {!isPlaying && <div className="absolute inset-0 bg-indigo-600 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
                 
-                <button className={`relative w-20 h-20 bg-gradient-to-b from-white to-slate-50 border border-slate-200 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-blue-500/50' : ''}`}>
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-blue-600' : 'bg-blue-500'}`}>
+                <button className={`relative w-20 h-20 bg-gradient-to-b from-white to-slate-50 border border-slate-200 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-indigo-600/50' : ''}`}>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-indigo-700' : 'bg-indigo-600'}`}>
                     {isPlaying ? (
                       <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
                     ) : (
@@ -363,7 +351,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                         <button 
                           key={d.value}
                           onClick={() => setDifficulty(d.value)}
-                          className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition-all border ${difficulty === d.value ? 'bg-blue-50 border-blue-300 text-blue-700 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'}`}
+                          className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition-all border ${difficulty === d.value ? 'bg-indigo-50 border-indigo-300 text-indigo-800 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'}`}
                         >
                           {d.label} <span className="opacity-50 ml-1">{d.value}%</span>
                         </button>
@@ -372,7 +360,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   </div>
 
                   <div className="w-full bg-white border border-slate-200 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 opacity-50" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-600 to-indigo-900 opacity-50" />
                     
                     {/* Progressive Hint Lightbulb */}
                     <div className="absolute top-4 right-4 z-20">
@@ -417,7 +405,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   </div>
 
                   <div className="flex gap-4 justify-center mt-4">
-                    <button onClick={handleCheckDictation} className="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
+                    <button onClick={handleCheckDictation} className="cursor-pointer bg-indigo-700 hover:bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-indigo-900/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
                   </div>
                 </div>
               )}
@@ -438,7 +426,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                         onMouseUp={stopRecording}
                         onTouchStart={startRecording}
                         onTouchEnd={stopRecording}
-                        className={`cursor-pointer relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 border-4 ${isRecording ? 'bg-red-500 border-red-400 scale-110' : 'bg-blue-600 border-blue-500/50 hover:bg-blue-500 shadow-xl shadow-blue-500/20'}`}
+                        className={`cursor-pointer relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 border-4 ${isRecording ? 'bg-red-500 border-red-400 scale-110' : 'bg-indigo-700 border-indigo-600/50 hover:bg-indigo-600 shadow-xl shadow-indigo-900/20'}`}
                       >
                         <svg className={`w-10 h-10 text-white transition-transform ${isRecording ? 'scale-110' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
@@ -463,7 +451,34 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               )}
 
               
+            {/* Bottom Navigation */}
+            <div className="mt-auto pt-8 pb-4 flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-indigo-600 animate-pulse' : 'bg-slate-300'}`} />
+                <span className="text-xs font-bold tracking-[0.2em] uppercase text-indigo-700">SINGLE SENTENCE</span>
+              </div>
+              <div className="flex items-center justify-between w-full bg-white border border-slate-200 shadow-sm rounded-full p-1.5">
+                <button 
+                  onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                  disabled={currentIndex === 0}
+                  className="cursor-pointer text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
+                >
+                  <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                  Prev
+                </button>
+                
+                <span className="text-sm font-bold text-slate-900">{currentIndex + 1} <span className="text-slate-400">/ {PRACTICE_SENTENCES.length}</span></span>
+                
+                <button 
+                  onClick={nextSentence} 
+                  className="cursor-pointer text-sm font-bold text-white bg-indigo-700 hover:bg-indigo-600 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-indigo-900/20"
+                >
+                  Next
+                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </button>
+              </div>
             </div>
+            
           </div>
         </div>
       </motion.div>
