@@ -139,21 +139,38 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     if (contentType === 'QNA' && currentSentence.qna) {
       setIsPlaying(true)
       
-      // Using Google Translate TTS for more natural human-like voices on local testing
-      const qUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-us&client=tw-ob&q=${encodeURIComponent(currentSentence.qna.q)}`
-      const aUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-gb&client=tw-ob&q=${encodeURIComponent(currentSentence.qna.a)}`
+      // Using Google Translate API (client=gtx is more permissive for direct calls)
+      const qUrl = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-US&q=${encodeURIComponent(currentSentence.qna.q)}`
+      const aUrl = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-GB&q=${encodeURIComponent(currentSentence.qna.a)}`
       
       const qAudio = new Audio(qUrl)
       const aAudio = new Audio(aUrl)
       
-      // Note: playbackRate may distort slightly but works for simple speed changes
       qAudio.playbackRate = speed
       aAudio.playbackRate = speed
       
+      // Fallback function to use browser's built-in synthesis if API fails
+      const fallbackToBrowserTTS = () => {
+        const uQ = new SpeechSynthesisUtterance(currentSentence.qna!.q)
+        if (voiceQ) uQ.voice = voiceQ
+        uQ.rate = speed
+        
+        const uA = new SpeechSynthesisUtterance(currentSentence.qna!.a)
+        if (voiceA) uA.voice = voiceA
+        uA.rate = speed
+        
+        uQ.onend = () => setTimeout(() => window.speechSynthesis.speak(uA), 400)
+        uA.onend = () => setIsPlaying(false)
+        uQ.onerror = () => setIsPlaying(false)
+        uA.onerror = () => setIsPlaying(false)
+        
+        window.speechSynthesis.speak(uQ)
+      }
+
       qAudio.onended = () => {
         setTimeout(() => {
           if (document.visibilityState === 'visible') {
-            aAudio.play().catch(() => setIsPlaying(false))
+            aAudio.play().catch(fallbackToBrowserTTS)
           } else {
             setIsPlaying(false)
           }
@@ -161,14 +178,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
       }
       
       aAudio.onended = () => setIsPlaying(false)
-      qAudio.onerror = () => setIsPlaying(false)
-      aAudio.onerror = () => setIsPlaying(false)
+      qAudio.onerror = fallbackToBrowserTTS
+      aAudio.onerror = fallbackToBrowserTTS
       
       qAudio.play().catch(err => {
-        console.error('Audio play failed:', err)
-        // Fallback if blocked
-        setIsPlaying(false)
-        toast.error('Không thể phát âm thanh TTS.')
+        console.warn('Google TTS failed, falling back to local TTS:', err)
+        fallbackToBrowserTTS()
       })
     } else {
       const utterance = new SpeechSynthesisUtterance(currentSentence.text)
