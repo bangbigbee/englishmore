@@ -449,7 +449,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             <div className="w-full lg:w-[65%] flex flex-col justify-center items-center">
               
               {method === 'DICTATION' && (
-                <div className="w-full space-y-6 animate-in fade-in slide-in-from-right-8 duration-700 max-w-lg">
+                <div className="w-full space-y-6 animate-in fade-in slide-in-from-right-8 duration-700 max-w-3xl">
                   {/* Difficulty Selector */}
                   <div className="flex flex-col items-center gap-4">
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Độ khó</span>
@@ -458,7 +458,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                         <button 
                           key={d.value}
                           onClick={() => setDifficulty(d.value)}
-                          className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition-all border ${difficulty === d.value ? 'bg-slate-800 border-slate-700 text-secondary-400 shadow-sm' : 'bg-[#0B1120] border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-400'}`}
+                          className={`cursor-pointer px-5 py-2.5 md:px-6 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all border ${difficulty === d.value ? 'bg-slate-800 border-slate-700 text-secondary-400 shadow-sm' : 'bg-[#0B1120] border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-400'}`}
                         >
                           {d.label} <span className="opacity-50 ml-1">{d.value}%</span>
                         </button>
@@ -505,14 +505,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <textarea 
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
-                      className="w-full h-24 md:h-32 bg-transparent text-white text-lg md:text-2xl font-medium placeholder-slate-600 focus:outline-none resize-none text-center"
+                      className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-2xl lg:text-3xl font-medium placeholder-slate-600 focus:outline-none resize-none text-center"
                       placeholder="Gõ tiếng Anh vào đây..."
                       spellCheck={false}
                     />
                   </div>
 
                   <div className="flex gap-4 justify-center mt-4">
-                    <button onClick={handleCheckDictation} className="cursor-pointer bg-secondary-500 hover:bg-secondary-400 text-[#020617] px-8 py-3 rounded-xl font-bold shadow-lg shadow-secondary-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
+                    <button onClick={handleCheckDictation} className="cursor-pointer bg-secondary-500 hover:bg-secondary-400 text-[#020617] px-10 py-4 rounded-2xl text-lg md:text-xl font-bold shadow-lg shadow-secondary-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
                   </div>
                 </div>
               )}
