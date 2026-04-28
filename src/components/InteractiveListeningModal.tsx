@@ -46,6 +46,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [isPlaying, setIsPlaying] = useState(false)
   const [revealedWordCount, setRevealedWordCount] = useState(0)
   const [contentType, setContentType] = useState<'SENTENCE' | 'QNA' | 'SHORT_TALK'>('SENTENCE')
+  const audioRefs = useRef<{qAudio: HTMLAudioElement | null, aAudio: HTMLAudioElement | null, timeout: NodeJS.Timeout | null}>({ qAudio: null, aAudio: null, timeout: null })
   
   const currentData = PRACTICE_DATA[contentType]
   const currentSentence = currentData[currentIndex] || currentData[0]
@@ -123,11 +124,33 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     }
   }, [currentIndex, difficulty, revealedWordCount, currentSentence, maxReveals, contentType])
 
-  // Reset state
+  // Reset state and stop audio
   useEffect(() => {
     setUserInput('')
     setRevealedWordCount(0)
-  }, [currentIndex, difficulty])
+    
+    // Cleanup any playing audio when switching sentence
+    window.speechSynthesis.cancel()
+    if (audioRefs.current.qAudio) {
+      audioRefs.current.qAudio.pause()
+      audioRefs.current.qAudio.currentTime = 0
+    }
+    if (audioRefs.current.aAudio) {
+      audioRefs.current.aAudio.pause()
+      audioRefs.current.aAudio.currentTime = 0
+    }
+    if (audioRefs.current.timeout) {
+      clearTimeout(audioRefs.current.timeout)
+    }
+    setIsPlaying(false)
+    
+    return () => {
+      window.speechSynthesis.cancel()
+      if (audioRefs.current.qAudio) audioRefs.current.qAudio.pause()
+      if (audioRefs.current.aAudio) audioRefs.current.aAudio.pause()
+      if (audioRefs.current.timeout) clearTimeout(audioRefs.current.timeout)
+    }
+  }, [currentIndex, difficulty, contentType])
 
   const playAudio = () => {
     if (!('speechSynthesis' in window)) {
@@ -139,12 +162,28 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     if (contentType === 'QNA' && currentSentence.qna) {
       setIsPlaying(true)
       
+      // Stop previous playing instances to prevent overlapping
+      if (audioRefs.current.qAudio) {
+        audioRefs.current.qAudio.pause()
+        audioRefs.current.qAudio.currentTime = 0
+      }
+      if (audioRefs.current.aAudio) {
+        audioRefs.current.aAudio.pause()
+        audioRefs.current.aAudio.currentTime = 0
+      }
+      if (audioRefs.current.timeout) {
+        clearTimeout(audioRefs.current.timeout)
+      }
+      
       // Using Google Translate API (client=gtx is more permissive for direct calls)
       const qUrl = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-US&q=${encodeURIComponent(currentSentence.qna.q)}`
       const aUrl = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-GB&q=${encodeURIComponent(currentSentence.qna.a)}`
       
       const qAudio = new Audio(qUrl)
       const aAudio = new Audio(aUrl)
+      
+      audioRefs.current.qAudio = qAudio
+      audioRefs.current.aAudio = aAudio
       
       qAudio.playbackRate = speed
       aAudio.playbackRate = speed
@@ -168,7 +207,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
       }
 
       qAudio.onended = () => {
-        setTimeout(() => {
+        audioRefs.current.timeout = setTimeout(() => {
           if (document.visibilityState === 'visible') {
             aAudio.play().catch(fallbackToBrowserTTS)
           } else {
