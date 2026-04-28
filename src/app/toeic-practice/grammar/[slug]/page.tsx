@@ -864,7 +864,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   {(() => {
                     const match = lesson.title.match(/\s*\(\s*(Dễ|Khó|Trung bình)\s*\)/i);
                     const diff = match ? match[1] : null;
-                    const displayTitle = diff ? lesson.title.replace(match[0], '') : lesson.title;
+                    const displayTitle = match ? lesson.title.replace(match[0], '') : lesson.title;
                     return (
                       <>
                         <div className={`font-bold text-sm leading-tight flex items-center gap-2 ${selectedLessonId === lesson.id ? 'text-primary-900' : 'text-slate-800'}`}>
@@ -957,7 +957,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                       {(() => {
                         const match = currentLesson.title.match(/\s*\(\s*(Dễ|Khó|Trung bình)\s*\)/i);
                         const diff = match ? match[1] : null;
-                        const displayTitle = diff ? currentLesson.title.replace(match[0], '') : currentLesson.title;
+                        const displayTitle = match ? currentLesson.title.replace(match[0], '') : currentLesson.title;
                         return (
                           <div className="flex flex-col items-center gap-2 w-full">
                             <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center justify-center gap-2 w-full text-center">
