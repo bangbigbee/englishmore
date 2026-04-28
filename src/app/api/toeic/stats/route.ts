@@ -7,14 +7,16 @@ export async function GET() {
       grammarCount,
       vocabCount,
       usersCount,
-      readingCount,
+      testRecords,
+      speedRecords,
       vocabTopicsResult,
       detailedQuestionsCount
     ] = await Promise.all([
       prisma.toeicGrammarTopic.count({ where: { type: 'GRAMMAR' } }),
       prisma.vocabularyItem.count(),
       prisma.user.count(),
-      prisma.toeicGrammarTopic.count({ where: { type: 'READING' } }),
+      prisma.toeicTestRecord.aggregate({ _sum: { duration: true } }),
+      prisma.toeicSpeedChallengeRecord.aggregate({ _sum: { timeMs: true } }),
       prisma.vocabularyItem.findMany({ select: { topic: true }, distinct: ['topic'] }),
       prisma.toeicQuestion.count({ 
         where: { 
@@ -26,11 +28,13 @@ export async function GET() {
       })
     ])
 
+    const practiceMinutes = Math.floor((testRecords._sum.duration || 0) / 60) + Math.floor((speedRecords._sum.timeMs || 0) / 60000)
+
     return NextResponse.json({
       users: usersCount,
       grammarTopics: grammarCount,
       vocabularies: vocabCount,
-      readingTopics: readingCount,
+      practiceMinutes: practiceMinutes,
       vocabTopics: vocabTopicsResult.length,
       detailedQuestions: detailedQuestionsCount
     })
@@ -40,7 +44,7 @@ export async function GET() {
       users: 15125, 
       grammarTopics: 30, 
       vocabularies: 1540,
-      readingTopics: 10,
+      practiceMinutes: 25000,
       vocabTopics: 50,
       detailedQuestions: 1200
     })

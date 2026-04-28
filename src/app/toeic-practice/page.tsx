@@ -1058,7 +1058,7 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
 }
 
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
-	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, readingTopics: 10, vocabTopics: 50, detailedQuestions: 1200 });
+	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, practiceMinutes: 25000, vocabTopics: 50, detailedQuestions: 1200 });
 	const [activeCardIndex, setActiveCardIndex] = useState(0);
 	const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
 
@@ -1145,13 +1145,13 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 					<div className="flex animate-marquee items-center gap-x-8 text-[13px] font-medium text-slate-500 w-max hover:[animation-play-state:paused]">
 						{[
 							{ label: 'Chủ đề Ngữ pháp', value: stats.grammarTopics },
-							{ label: 'Bộ đề Reading', value: stats.readingTopics },
+							{ label: 'Số phút luyện tập', value: stats.practiceMinutes },
 							{ label: 'Chủ đề từ vựng', value: stats.vocabTopics },
 							{ label: 'Từ vựng TOEIC', value: stats.vocabularies },
 							{ label: 'Giải thích chi tiết', value: stats.detailedQuestions },
 							{ label: 'học viên đang học', value: stats.users },
 							{ label: 'Chủ đề Ngữ pháp', value: stats.grammarTopics },
-							{ label: 'Bộ đề Reading', value: stats.readingTopics },
+							{ label: 'Số phút luyện tập', value: stats.practiceMinutes },
 							{ label: 'Chủ đề từ vựng', value: stats.vocabTopics },
 							{ label: 'Từ vựng TOEIC', value: stats.vocabularies },
 							{ label: 'Giải thích chi tiết', value: stats.detailedQuestions },
@@ -2932,7 +2932,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 					</div>
 					<button 
 						onClick={() => setIsInteractiveModalOpen(true)}
-						className="w-full bg-blue-600 hover:bg-blue-500 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 relative z-10"
+						className="w-full bg-[#0B1120] hover:bg-[#111827] border border-slate-800/60 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-[#0B1120]/50 active:scale-95 flex items-center justify-center gap-2 relative z-10"
 					>
 						Vào phòng tập ngay <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
 					</button>
