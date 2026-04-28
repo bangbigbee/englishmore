@@ -5,13 +5,26 @@ import { useState, useEffect, useRef } from 'react'
 
 import { toast } from 'sonner'
 
-const PRACTICE_SENTENCES = [
-  { id: 1, text: "The new marketing campaign was very successful.", translation: "Chiến dịch tiếp thị mới đã rất thành công." },
-  { id: 2, text: "Please send the report to the manager by Friday.", translation: "Vui lòng gửi báo cáo cho người quản lý trước thứ Sáu." },
-  { id: 3, text: "Our company is looking for a new software engineer.", translation: "Công ty của chúng tôi đang tìm kiếm một kỹ sư phần mềm mới." },
-  { id: 4, text: "The meeting has been rescheduled for next Monday.", translation: "Cuộc họp đã được dời lại vào thứ Hai tuần sau." },
-  { id: 5, text: "We need to review the budget for the upcoming quarter.", translation: "Chúng ta cần xem xét ngân sách cho quý sắp tới." }
-];
+type PracticeItem = { id: number; text: string; translation: string; type: 'SENTENCE' | 'QNA' | 'SHORT_TALK' };
+
+const PRACTICE_DATA: Record<'SENTENCE' | 'QNA' | 'SHORT_TALK', PracticeItem[]> = {
+  SENTENCE: [
+    { id: 1, text: "The new marketing campaign was very successful.", translation: "Chiến dịch tiếp thị mới đã rất thành công.", type: 'SENTENCE' },
+    { id: 2, text: "Please send the report to the manager by Friday.", translation: "Vui lòng gửi báo cáo cho người quản lý trước thứ Sáu.", type: 'SENTENCE' },
+    { id: 3, text: "Our company is looking for a new software engineer.", translation: "Công ty của chúng tôi đang tìm kiếm một kỹ sư phần mềm mới.", type: 'SENTENCE' },
+    { id: 4, text: "The meeting has been rescheduled for next Monday.", translation: "Cuộc họp đã được dời lại vào thứ Hai tuần sau.", type: 'SENTENCE' },
+    { id: 5, text: "We need to review the budget for the upcoming quarter.", translation: "Chúng ta cần xem xét ngân sách cho quý sắp tới.", type: 'SENTENCE' }
+  ],
+  QNA: [
+    { id: 101, text: "Question: When is the next train to London? Response: It leaves in ten minutes.", translation: "Hỏi: Chuyến tàu tiếp theo đến London là khi nào? Đáp: Nó khởi hành trong mười phút nữa.", type: 'QNA' },
+    { id: 102, text: "Question: Who is presenting the sales report? Response: Mr. Smith will do it.", translation: "Hỏi: Ai sẽ trình bày báo cáo doanh số? Đáp: Ông Smith sẽ làm việc đó.", type: 'QNA' },
+    { id: 103, text: "Question: Are you going to the company picnic? Response: Yes, I wouldn't miss it.", translation: "Hỏi: Bạn có đi dã ngoại cùng công ty không? Đáp: Có, tôi sẽ không bỏ lỡ đâu.", type: 'QNA' }
+  ],
+  SHORT_TALK: [
+    { id: 201, text: "Welcome to the annual tech conference. We have a great lineup of speakers today. Please make sure to visit our sponsor booths during the breaks.", translation: "Chào mừng bạn đến với hội nghị công nghệ thường niên. Chúng ta có một đội ngũ diễn giả tuyệt vời ngày hôm nay. Vui lòng đảm bảo ghé thăm các gian hàng tài trợ của chúng tôi trong giờ nghỉ.", type: 'SHORT_TALK' },
+    { id: 202, text: "Attention all passengers for flight 789 to Tokyo. Your flight is delayed by two hours due to severe weather conditions. We apologize for the inconvenience.", translation: "Xin thông báo tới tất cả hành khách của chuyến bay 789 đi Tokyo. Chuyến bay của bạn bị hoãn hai giờ do điều kiện thời tiết khắc nghiệt. Chúng tôi xin lỗi vì sự bất tiện này.", type: 'SHORT_TALK' }
+  ]
+};
 
 const DIFFICULTIES = [
   { label: 'Tân binh', value: 20 },
@@ -33,11 +46,22 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [speed, setSpeed] = useState(1.0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [revealedWordCount, setRevealedWordCount] = useState(0)
+  const [contentType, setContentType] = useState<'SENTENCE' | 'QNA' | 'SHORT_TALK'>('SENTENCE')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   
-  const currentSentence = PRACTICE_SENTENCES[currentIndex]
+  const currentData = PRACTICE_DATA[contentType]
+  const currentSentence = currentData[currentIndex] || currentData[0]
   const targetWords = currentSentence.text.split(' ')
   const maxReveals = difficulty === 100 ? targetWords.length : Math.max(1, Math.floor(targetWords.length * (difficulty / 100)))
+  
+  // Reset index when content type changes
+  useEffect(() => {
+    setCurrentIndex(0)
+    setRevealedWordCount(0)
+    setHintText('')
+    setUserInput('')
+    setIsPlaying(false)
+  }, [contentType])
   
   const recognitionRef = useRef<any>(null)
 
@@ -214,7 +238,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   }
 
   const nextSentence = () => {
-    if (currentIndex < PRACTICE_SENTENCES.length - 1) {
+    if (currentIndex < currentData.length - 1) {
       setCurrentIndex(prev => prev + 1)
     } else {
       setCurrentIndex(0)
@@ -224,18 +248,18 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[200] isolate flex bg-slate-50 overflow-hidden">
+    <div className="fixed inset-0 z-[200] isolate flex bg-[#020617] overflow-hidden">
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.98 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-full flex flex-col md:flex-row text-slate-700"
+        className="relative w-full h-full flex flex-col md:flex-row text-slate-300"
       >
         {/* Background Effects */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-300/30 blur-[120px]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-300/30 blur-[120px]" />
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-900/40 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-900/40 blur-[120px]" />
         </div>
 
         {/* Left Sidebar Overlay */}
@@ -247,37 +271,74 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         )}
 
         {/* Left Sidebar Drawer */}
-        <div className={`absolute top-0 left-0 h-full w-[300px] sm:w-[340px] bg-white border-r border-slate-200 p-6 flex flex-col z-50 shadow-[4px_0_24px_rgba(0,0,0,0.1)] transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
-              <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-900 flex items-center justify-center shadow-lg shadow-indigo-900/30">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+        <div className={`absolute top-0 left-0 h-full w-[300px] sm:w-[340px] bg-[#0B1120] border-r border-slate-800 p-6 flex flex-col z-50 shadow-[4px_0_24px_rgba(0,0,0,0.5)] transition-transform duration-300 overflow-y-auto ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-black text-white flex items-center gap-3 tracking-tight">
+              <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center shadow-lg shadow-yellow-500/30">
+                <svg className="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
                 </svg>
               </span>
-              Master<br/><span className="text-indigo-800">Listening</span>
+              Master<br/><span className="text-yellow-400">Listening</span>
             </h2>
-            <button onClick={() => setIsSidebarOpen(false)} className="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full transition-colors cursor-pointer text-slate-700 text-sm">✕</button>
+            <button onClick={() => setIsSidebarOpen(false)} className="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-full transition-colors cursor-pointer text-slate-300 text-sm">✕</button>
           </div>
           
-          <div className="flex space-y-4 flex-1 flex-col">
-            <button 
-              onClick={() => { setMethod('DICTATION'); setIsSidebarOpen(false); }}
-              className={`w-full cursor-pointer text-left p-4 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'DICTATION' ? 'bg-indigo-50 border border-indigo-200 shadow-sm' : 'bg-white border border-slate-100 hover:bg-slate-50'}`}
-            >
-              {method === 'DICTATION' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-600 rounded-l-2xl" />}
-              <h3 className={`text-lg font-bold ${method === 'DICTATION' ? 'text-indigo-800' : 'text-slate-700'}`}>Nghe Chép Chính Tả</h3>
-              <p className="text-[13px] text-slate-500 mt-1 font-medium">Luyện bắt từ khóa & gõ lại toàn bộ câu với các độ khó khác nhau.</p>
-            </button>
+          <div className="flex space-y-6 flex-1 flex-col">
+            
+            {/* Content Type Selection */}
+            <div>
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Nội dung luyện tập</h3>
+              <div className="space-y-2">
+                <button 
+                  onClick={() => { setContentType('SENTENCE'); setIsSidebarOpen(false); }}
+                  className={`w-full cursor-pointer text-left p-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${contentType === 'SENTENCE' ? 'bg-slate-800/50 border border-slate-700 shadow-sm' : 'bg-transparent border border-transparent hover:bg-slate-800/30'}`}
+                >
+                  {contentType === 'SENTENCE' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400 rounded-l-xl" />}
+                  <h4 className={`text-sm font-bold ${contentType === 'SENTENCE' ? 'text-yellow-400' : 'text-slate-400'}`}>Câu đơn (Part 1, 5)</h4>
+                </button>
+                <button 
+                  onClick={() => { setContentType('QNA'); setIsSidebarOpen(false); }}
+                  className={`w-full cursor-pointer text-left p-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${contentType === 'QNA' ? 'bg-slate-800/50 border border-slate-700 shadow-sm' : 'bg-transparent border border-transparent hover:bg-slate-800/30'}`}
+                >
+                  {contentType === 'QNA' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400 rounded-l-xl" />}
+                  <h4 className={`text-sm font-bold ${contentType === 'QNA' ? 'text-yellow-400' : 'text-slate-400'}`}>Hỏi & Đáp (Part 2)</h4>
+                </button>
+                <button 
+                  onClick={() => { setContentType('SHORT_TALK'); setIsSidebarOpen(false); }}
+                  className={`w-full cursor-pointer text-left p-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${contentType === 'SHORT_TALK' ? 'bg-slate-800/50 border border-slate-700 shadow-sm' : 'bg-transparent border border-transparent hover:bg-slate-800/30'}`}
+                >
+                  {contentType === 'SHORT_TALK' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-400 rounded-l-xl" />}
+                  <h4 className={`text-sm font-bold ${contentType === 'SHORT_TALK' ? 'text-yellow-400' : 'text-slate-400'}`}>Bài nói ngắn (Part 4)</h4>
+                </button>
+              </div>
+            </div>
+            
+            <div className="w-full h-px bg-slate-800/50" />
+            
+            {/* Method Selection */}
+            <div>
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Phương pháp học</h3>
+              <div className="space-y-3">
+                <button 
+                  onClick={() => { setMethod('DICTATION'); setIsSidebarOpen(false); }}
+                  className={`w-full cursor-pointer text-left p-4 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'DICTATION' ? 'bg-slate-800/50 border border-slate-700 shadow-sm' : 'bg-[#0B1120] border border-slate-800 hover:bg-slate-800/50'}`}
+                >
+                  {method === 'DICTATION' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-yellow-400 rounded-l-2xl" />}
+                  <h3 className={`text-lg font-bold ${method === 'DICTATION' ? 'text-yellow-400' : 'text-slate-300'}`}>Nghe Chép Chính Tả</h3>
+                  <p className="text-[13px] text-slate-500 mt-1 font-medium">Luyện bắt từ khóa & gõ lại toàn bộ câu với các độ khó khác nhau.</p>
+                </button>
 
-            <button 
-              onClick={() => { setMethod('SHADOWING'); setIsSidebarOpen(false); }}
-              className={`w-full cursor-pointer text-left p-4 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'SHADOWING' ? 'bg-indigo-50 border border-indigo-200 shadow-sm' : 'bg-white border border-slate-100 hover:bg-slate-50'}`}
-            >
-              {method === 'SHADOWING' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-600 rounded-l-2xl" />}
-              <h3 className={`text-lg font-bold ${method === 'SHADOWING' ? 'text-indigo-800' : 'text-slate-700'}`}>Luyện Ngữ Điệu</h3>
-              <p className="text-[13px] text-slate-500 mt-1 font-medium">Bắt chước ngữ điệu bản xứ. Trí tuệ nhân tạo sẽ chấm điểm bạn.</p>
-            </button>
+                <button 
+                  onClick={() => { setMethod('SHADOWING'); setIsSidebarOpen(false); }}
+                  className={`w-full cursor-pointer text-left p-4 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'SHADOWING' ? 'bg-slate-800/50 border border-slate-700 shadow-sm' : 'bg-[#0B1120] border border-slate-800 hover:bg-slate-800/50'}`}
+                >
+                  {method === 'SHADOWING' && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-yellow-400 rounded-l-2xl" />}
+                  <h3 className={`text-lg font-bold ${method === 'SHADOWING' ? 'text-yellow-400' : 'text-slate-300'}`}>Luyện Ngữ Điệu</h3>
+                  <p className="text-[13px] text-slate-500 mt-1 font-medium">Bắt chước ngữ điệu bản xứ. Trí tuệ nhân tạo sẽ chấm điểm bạn.</p>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -285,12 +346,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         <div className="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto">
           {/* Top Actions */}
           <div className="absolute top-4 left-4 z-30">
-            <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 flex items-center justify-center bg-white hover:bg-slate-50 shadow-sm rounded-full text-slate-500 transition-all border border-slate-200 cursor-pointer">
+            <button onClick={() => setIsSidebarOpen(true)} className="w-10 h-10 flex items-center justify-center bg-[#0B1120] hover:bg-[#111827] shadow-sm rounded-full text-slate-400 transition-all border border-slate-800 cursor-pointer">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
           </div>
           <div className="absolute top-4 right-4 z-30 flex gap-2">
-            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white hover:bg-slate-50 shadow-sm rounded-full text-slate-500 transition-all border border-slate-200 hover:rotate-90 cursor-pointer">
+            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-[#0B1120] hover:bg-[#111827] shadow-sm rounded-full text-slate-400 transition-all border border-slate-800 hover:rotate-90 cursor-pointer">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -304,14 +365,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="flex flex-col flex-1 items-start">
                 <div className="flex items-center justify-between w-full mb-2">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Speed</span>
-                  <span className="text-xs font-bold text-indigo-700">{speed.toFixed(1)}x</span>
+                  <span className="text-xs font-bold text-yellow-400">{speed.toFixed(1)}x</span>
                 </div>
                 <input 
                   type="range" 
                   min="0.6" max="1.4" step="0.1" 
                   value={speed} 
                   onChange={(e) => setSpeed(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-yellow-400"
                 />
               </div>
 
@@ -319,18 +380,18 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
                 {isPlaying && (
                   <>
-                    <div className="absolute inset-0 bg-indigo-600 rounded-full blur-xl opacity-40 animate-pulse" />
-                    <div className="absolute -inset-4 border-2 border-indigo-600/30 rounded-full animate-ping" />
+                    <div className="absolute inset-0 bg-yellow-500 rounded-full blur-xl opacity-40 animate-pulse" />
+                    <div className="absolute -inset-4 border-2 border-yellow-500/30 rounded-full animate-ping" />
                   </>
                 )}
-                {!isPlaying && <div className="absolute inset-0 bg-indigo-600 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
+                {!isPlaying && <div className="absolute inset-0 bg-yellow-500 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
                 
-                <button className={`relative w-20 h-20 bg-gradient-to-b from-white to-slate-50 border border-slate-200 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-indigo-600/50' : ''}`}>
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-indigo-700' : 'bg-indigo-600'}`}>
+                <button className={`relative w-20 h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-yellow-500/50' : ''}`}>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-yellow-400' : 'bg-yellow-500'}`}>
                     {isPlaying ? (
-                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
+                      <svg className="w-6 h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
                     ) : (
-                      <svg className="w-8 h-8 text-white ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                      <svg className="w-8 h-8 text-[#020617] ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                     )}
                   </div>
                 </button>
@@ -351,7 +412,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                         <button 
                           key={d.value}
                           onClick={() => setDifficulty(d.value)}
-                          className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition-all border ${difficulty === d.value ? 'bg-indigo-50 border-indigo-300 text-indigo-800 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'}`}
+                          className={`cursor-pointer px-4 py-2 rounded-xl text-xs font-bold transition-all border ${difficulty === d.value ? 'bg-slate-800 border-slate-700 text-yellow-400 shadow-sm' : 'bg-[#0B1120] border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-400'}`}
                         >
                           {d.label} <span className="opacity-50 ml-1">{d.value}%</span>
                         </button>
@@ -359,8 +420,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
                   </div>
 
-                  <div className="w-full bg-white border border-slate-200 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-600 to-indigo-900 opacity-50" />
+                  <div className="w-full bg-[#111827] border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 opacity-50" />
                     
                     {/* Progressive Hint Lightbulb */}
                     <div className="absolute top-4 right-4 z-20">
@@ -389,8 +450,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
 
                     {/* Hint Display */}
-                    <div className="mb-4 pb-4 border-b border-slate-100 pr-12">
-                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-700 text-center tracking-wide">
+                    <div className="mb-4 pb-4 border-b border-slate-800 pr-12">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide">
                         {hintText}
                       </p>
                     </div>
@@ -398,14 +459,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <textarea 
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
-                      className="w-full h-24 md:h-32 bg-transparent text-slate-900 text-lg md:text-2xl font-medium placeholder-slate-300 focus:outline-none resize-none text-center"
+                      className="w-full h-24 md:h-32 bg-transparent text-white text-lg md:text-2xl font-medium placeholder-slate-600 focus:outline-none resize-none text-center"
                       placeholder="Gõ toàn bộ câu tiếng Anh vào đây..."
                       spellCheck={false}
                     />
                   </div>
 
                   <div className="flex gap-4 justify-center mt-4">
-                    <button onClick={handleCheckDictation} className="cursor-pointer bg-indigo-700 hover:bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-indigo-900/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
+                    <button onClick={handleCheckDictation} className="cursor-pointer bg-yellow-500 hover:bg-yellow-400 text-[#020617] px-8 py-3 rounded-xl font-bold shadow-lg shadow-yellow-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
                   </div>
                 </div>
               )}
@@ -414,8 +475,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 <div className="w-full space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700 flex flex-col items-center">
                   
                   <div className="text-center space-y-4 max-w-2xl">
-                    <p className="text-2xl md:text-3xl font-bold text-slate-900 leading-tight">"{currentSentence.text}"</p>
-                    <p className="text-slate-500 font-medium text-lg">{currentSentence.translation}</p>
+                    <p className="text-2xl md:text-3xl font-bold text-white leading-tight">"{currentSentence.text}"</p>
+                    <p className="text-slate-400 font-medium text-lg">{currentSentence.translation}</p>
                   </div>
                   
                   <div className="flex flex-col items-center gap-6 mt-8">
@@ -426,9 +487,9 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                         onMouseUp={stopRecording}
                         onTouchStart={startRecording}
                         onTouchEnd={stopRecording}
-                        className={`cursor-pointer relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 border-4 ${isRecording ? 'bg-red-500 border-red-400 scale-110' : 'bg-indigo-700 border-indigo-600/50 hover:bg-indigo-600 shadow-xl shadow-indigo-900/20'}`}
+                        className={`cursor-pointer relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 border-4 ${isRecording ? 'bg-red-500 border-red-400 scale-110' : 'bg-yellow-500 border-yellow-500/50 hover:bg-yellow-400 shadow-xl shadow-yellow-500/20'}`}
                       >
-                        <svg className={`w-10 h-10 text-white transition-transform ${isRecording ? 'scale-110' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg className={`w-10 h-10 ${isRecording ? 'text-white' : 'text-[#020617]'} transition-transform ${isRecording ? 'scale-110' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                         </svg>
                       </button>
@@ -441,9 +502,9 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
                     
                     {speechResult && (
-                      <div className="mt-4 p-5 bg-white border border-slate-200 shadow-sm rounded-2xl text-center max-w-md w-full backdrop-blur-sm">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">Trí tuệ nhân tạo nghe được:</span>
-                        <p className="text-lg font-medium text-slate-800">"{speechResult}"</p>
+                      <div className="mt-4 p-5 bg-[#111827] border border-slate-800 shadow-sm rounded-2xl text-center max-w-md w-full backdrop-blur-sm">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Trí tuệ nhân tạo nghe được:</span>
+                        <p className="text-lg font-medium text-slate-200">"{speechResult}"</p>
                       </div>
                     )}
                   </div>
@@ -455,24 +516,26 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             {/* Bottom Navigation */}
             <div className="mt-auto pt-8 pb-4 flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
               <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-indigo-600 animate-pulse' : 'bg-slate-300'}`} />
-                <span className="text-xs font-bold tracking-[0.2em] uppercase text-indigo-700">SINGLE SENTENCE</span>
+                <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-yellow-400 animate-pulse' : 'bg-slate-600'}`} />
+                <span className="text-xs font-bold tracking-[0.2em] uppercase text-yellow-400">
+                  {contentType === 'SENTENCE' ? 'Câu đơn' : contentType === 'QNA' ? 'Hỏi & Đáp' : 'Bài nói ngắn'}
+                </span>
               </div>
-              <div className="flex items-center justify-between w-full bg-white border border-slate-200 shadow-sm rounded-full p-1.5">
+              <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
                 <button 
                   onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
                   disabled={currentIndex === 0}
-                  className="cursor-pointer text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
+                  className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
                 >
                   <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                   Prev
                 </button>
                 
-                <span className="text-sm font-bold text-slate-900">{currentIndex + 1} <span className="text-slate-400">/ {PRACTICE_SENTENCES.length}</span></span>
+                <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
                 
                 <button 
                   onClick={nextSentence} 
-                  className="cursor-pointer text-sm font-bold text-white bg-indigo-700 hover:bg-indigo-600 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-indigo-900/20"
+                  className="cursor-pointer text-sm font-bold text-[#020617] bg-yellow-500 hover:bg-yellow-400 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-yellow-500/20"
                 >
                   Next
                   <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
