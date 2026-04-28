@@ -48,7 +48,28 @@ export async function POST(req: NextRequest) {
 		}
 
 		const body = await req.json();
-		const { vocabId, isLearned, isHard, isBookmarked, topicToMaster } = body;
+		const { vocabId, isLearned, isHard, isBookmarked, topicToMaster, topicToReset } = body;
+
+		if (topicToReset) {
+			const vocabItems = await prisma.vocabularyItem.findMany({
+				where: { topic: topicToReset },
+				select: { id: true }
+			});
+
+			if (vocabItems.length > 0) {
+				const vocabIds = vocabItems.map(v => v.id);
+				await prisma.vocabularyTag.updateMany({
+					where: { 
+                        userId: user.id,
+                        vocabId: { in: vocabIds }
+                    },
+					data: { isLearned: false }
+				});
+			}
+
+			revalidatePath('/toeic-progress');
+			return NextResponse.json({ success: true, count: vocabItems.length });
+		}
 
 		if (topicToMaster) {
 			const vocabItems = await prisma.vocabularyItem.findMany({

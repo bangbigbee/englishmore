@@ -245,7 +245,7 @@ export const getPartIcon = (partId: number) => {
     }
 }
 
-const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', progress, packageType, disableFlip, customIcon }: any) => {
+const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'grammar', progress, packageType, disableFlip, customIcon }: any) => {
 	const isCompactType = ['vocabulary', 'grammar', 'reading', 'listening', 'test'].includes(type);
     const isTestTopic = type === 'test';
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
@@ -358,16 +358,34 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 				)}
 
 				{progress && (
-					<div className={`mt-auto w-full flex items-center gap-3 ${isCompactType ? 'pt-4 border-t border-slate-100/50' : 'pt-3'}`}>
-						<div className={`flex-1 h-1.5 ${theme.progressBg} rounded-full overflow-hidden shadow-inner`}>
+					<div className={`mt-auto w-full flex flex-col gap-1.5 ${isCompactType ? 'pt-4 border-t border-slate-100/50' : 'pt-3'}`}>
+                        <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold">
+                            <div className="flex items-center gap-1.5">
+                                {isTopicMastered ? (
+                                    <>
+                                        <span className="uppercase tracking-wider text-primary-600 dark:text-primary-400">Đã hoàn thành</span>
+                                        {onReset && (
+                                            <button onClick={(e) => { e.stopPropagation(); onReset(); }} className="p-0.5 rounded-full hover:bg-primary-50 dark:hover:bg-slate-800 text-slate-400 hover:text-primary-600 transition-colors" title="Làm lại bộ từ vựng">
+                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                            </button>
+                                        )}
+                                    </>
+                                ) : (
+                                    <span className="uppercase tracking-wider text-slate-500 dark:text-slate-400">{progress.learned > 0 ? 'Đang học' : 'Chưa học'}</span>
+                                )}
+                            </div>
+                            <span className={`font-bold tabular-nums tracking-widest shrink-0 ${theme.progressText}`}>
+                                {progress.learned} <span className="opacity-60 text-[10px]">/</span> {progress.total}
+                            </span>
+                        </div>
+						<div className={`w-full h-1.5 ${theme.progressBg} rounded-full overflow-hidden shadow-inner`}>
 							<div 
 								className={`h-full transition-all duration-700 ${theme.progressFill} ${isTopicMastered ? 'animate-loading-bar' : ''}`}
 								style={isTopicMastered ? undefined : { width: `${Math.max(2, Math.min(100, Math.round((progress.learned / progress.total) * 100)))}%` }} 
 							/>
 						</div>
-                        <span className={`font-bold text-[11px] tabular-nums tracking-widest shrink-0 ${theme.progressText}`}>
-                            {progress.learned} <span className="opacity-60 text-[10px]">/</span> {progress.total}
-                        </span>
 					</div>
 				)}
 			</div>

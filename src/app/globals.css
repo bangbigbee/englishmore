@@ -647,11 +647,10 @@ body {
 :not([data-theme="classic"]) .theme-classic-show { display: none !important; }
 :not([data-theme="classic"]) .theme-classic-hide { display: block !important; }
 
-@keyframes loading-bar-fill {
-  0% { width: 0%; opacity: 0.5; }
-  80% { width: 100%; opacity: 1; }
-  100% { width: 100%; opacity: 0; }
+@keyframes fill-once {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 .animate-loading-bar {
-  animation: loading-bar-fill 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: fill-once 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
