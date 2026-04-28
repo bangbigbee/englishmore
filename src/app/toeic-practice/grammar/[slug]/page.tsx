@@ -1514,46 +1514,64 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                  </div>
                                                                  <h4 className="text-primary-900 font-bold text-[15px]">Kiến thức cần nhớ</h4>
                                                              </div>
-                                                             <div className={`text-slate-600 text-[14px] leading-relaxed pr-2 font-medium relative ${status === 'authenticated' ? 'max-h-[160px] overflow-y-auto custom-scrollbar' : 'max-h-[72px] overflow-hidden'}`}>
-                                                                 {(() => {
-                                                                     const theory = getShortTheory(topic.slug);
-                                                                     const isAuthenticated = status === 'authenticated';
-                                                                     
-                                                                     return (
-                                                                         <>
-                                                                             <div className="whitespace-pre-wrap relative pb-6">
-                                                                                 <TypewriterText text={theory} speed={12} />
-                                                                                 {!isAuthenticated && (
-                                                                                     <div 
-                                                                                         className="absolute inset-0 pointer-events-none z-10"
-                                                                                         style={{ 
-                                                                                             backdropFilter: 'blur(4px)', 
-                                                                                             WebkitBackdropFilter: 'blur(4px)',
-                                                                                             maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, black 70%, black 100%)',
-                                                                                             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, black 70%, black 100%)' 
-                                                                                         }}
-                                                                                     />
-                                                                                 )}
-                                                                             </div>
-                                                                             {!isAuthenticated && (
-                                                                                 <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-center pb-2 z-20">
-                                                                                     <button 
-                                                                                         onClick={(e) => { 
-                                                                                             e.preventDefault(); 
-                                                                                             const currentPath = window.location.pathname; 
-                                                                                             router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để xem trọn vẹn kiến thức tóm tắt nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); 
-                                                                                         }} 
-                                                                                         className="text-[13px] font-bold text-primary-600 hover:text-primary-700 hover:underline transition-all flex items-center gap-1.5 cursor-pointer"
-                                                                                     >
-                                                                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                                                                         Đăng nhập để xem thêm kiến thức
-                                                                                     </button>
-                                                                                 </div>
+                                                             {(() => {
+                                                                 const theory = getShortTheory(topic.slug);
+                                                                 const isAuthenticated = status === 'authenticated';
+                                                                 const theoryTierLevel = currentLesson.theoryAccessTier === 'ULTRA' ? 3 : currentLesson.theoryAccessTier === 'PRO' ? 2 : 1;
+                                                                 const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                                 const isLocked = theoryTierLevel > userTierLevel;
+                                                                 
+                                                                 return (
+                                                                     <div className={`text-slate-600 text-[14px] leading-relaxed pr-2 font-medium relative ${isAuthenticated && !isLocked ? 'max-h-[160px] overflow-y-auto custom-scrollbar' : 'max-h-[72px] overflow-hidden'}`}>
+                                                                         <div className="whitespace-pre-wrap relative pb-6">
+                                                                             <TypewriterText text={theory} speed={12} />
+                                                                             {(!isAuthenticated || isLocked) && (
+                                                                                 <div 
+                                                                                     className="absolute inset-0 pointer-events-none z-10"
+                                                                                     style={{ 
+                                                                                         backdropFilter: 'blur(4px)', 
+                                                                                         WebkitBackdropFilter: 'blur(4px)',
+                                                                                         maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, black 70%, black 100%)',
+                                                                                         WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, black 70%, black 100%)' 
+                                                                                     }}
+                                                                                 />
                                                                              )}
-                                                                         </>
-                                                                     );
-                                                                 })()}
-                                                             </div>
+                                                                         </div>
+                                                                         {!isAuthenticated ? (
+                                                                             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-center pb-2 z-20">
+                                                                                 <button 
+                                                                                     onClick={(e) => { 
+                                                                                         e.preventDefault(); 
+                                                                                         const currentPath = window.location.pathname; 
+                                                                                         router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để xem trọn vẹn kiến thức tóm tắt nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); 
+                                                                                     }} 
+                                                                                     className="text-[13px] font-bold text-primary-600 hover:text-primary-700 hover:underline transition-all flex items-center gap-1.5 cursor-pointer"
+                                                                                 >
+                                                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                                                                     Đăng nhập để xem thêm kiến thức
+                                                                                 </button>
+                                                                             </div>
+                                                                         ) : isLocked ? (
+                                                                             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-center pb-2 z-20">
+                                                                                 <button 
+                                                                                     onClick={(e) => { 
+                                                                                         e.preventDefault(); 
+                                                                                         setShowPricing(true);
+                                                                                     }} 
+                                                                                     className={`text-[13px] font-bold hover:underline transition-all flex items-center gap-1.5 cursor-pointer ${currentLesson.theoryAccessTier === 'ULTRA' ? 'text-primary-700 hover:text-primary-800' : 'text-secondary-600 hover:text-secondary-700'}`}
+                                                                                 >
+                                                                                     {currentLesson.theoryAccessTier === 'ULTRA' ? (
+                                                                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                                                                     ) : (
+                                                                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                                                                     )}
+                                                                                     Nâng cấp gói {currentLesson.theoryAccessTier} để xem thêm
+                                                                                 </button>
+                                                                             </div>
+                                                                         ) : null}
+                                                                     </div>
+                                                                 );
+                                                             })()}
                                                          </div>
                                                      )}
                                                  </div>
