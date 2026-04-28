@@ -2223,9 +2223,9 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                         
                                         const colorClass = isActive ? 'text-white' : 'text-slate-600 dark:text-slate-400';
                                         
-                                        const activeBg = 'bg-linear-to-r from-primary-600 to-primary-500 shadow-md shadow-primary-500/20 ring-1 ring-primary-500';
+                                        const activeBg = 'bg-linear-to-r from-primary-900 to-primary-800 shadow-md shadow-primary-900/20 ring-1 ring-primary-900';
                                                          
-                                        const inactiveBg = 'hover:bg-white/80 dark:hover:bg-slate-800 hover:text-primary-600 transition-colors';
+                                        const inactiveBg = 'hover:bg-white/80 dark:hover:bg-slate-800 hover:text-primary-900 dark:hover:text-primary-300 transition-colors';
 
                                         return (
                                             <button
