@@ -221,13 +221,13 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         <div className="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto">
           {/* Top Title & Close Button */}
           <div className="w-full flex items-center justify-between p-4 md:px-8 border-b border-slate-800/50 bg-[#0B1120]/50 backdrop-blur-md">
-            <h2 className="text-xl md:text-2xl font-black text-white flex items-center gap-3 tracking-tight">
-              <span className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-secondary-400 to-secondary-600 flex items-center justify-center shadow-lg shadow-secondary-500/30">
+            <h2 className="text-lg md:text-2xl font-black text-white flex items-center gap-3 tracking-tight">
+              <span className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-xl bg-gradient-to-br from-secondary-400 to-secondary-600 flex items-center justify-center shadow-lg shadow-secondary-500/30">
                 <svg className="w-4 h-4 md:w-5 md:h-5 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
                 </svg>
               </span>
-              Phòng Nghe Chép <span className="text-secondary-400">Chính Tả</span>
+              <span className="flex flex-wrap leading-tight gap-x-1.5">Phòng Nghe Chép <span className="text-secondary-400">Chính Tả</span></span>
             </h2>
             <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-[#0B1120] hover:bg-[#111827] shadow-sm rounded-full text-slate-400 transition-all border border-slate-800 hover:rotate-90 cursor-pointer">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -238,22 +238,22 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             
             {/* 3 Tabs Selection */}
             <div className="flex justify-center mb-8">
-              <div className="inline-flex bg-[#111827] border border-slate-800 p-1.5 rounded-2xl shadow-inner">
+              <div className="inline-flex bg-[#111827] border border-slate-800 p-1.5 rounded-2xl shadow-inner overflow-x-auto w-full md:w-auto custom-scrollbar">
                 <button 
                   onClick={() => setContentType('SENTENCE')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                   Câu đơn
                 </button>
                 <button 
                   onClick={() => setContentType('QNA')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${contentType === 'QNA' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'QNA' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                   Hỏi - Đáp
                 </button>
                 <button 
                   onClick={() => setContentType('SHORT_TALK')}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                   Bài nói ngắn
                 </button>
@@ -261,7 +261,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             </div>
 
             {/* Audio Controls Row */}
-            <div className="flex items-center justify-center gap-10 mb-8 w-full max-w-sm mx-auto">
+            <div className="flex items-center justify-center gap-6 md:gap-10 mb-8 w-full max-w-sm mx-auto px-4">
               {/* Speed Slider Control */}
               <div className="flex flex-col flex-1 items-start">
                 <div className="flex items-center justify-between w-full mb-2">
@@ -287,12 +287,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 )}
                 {!isPlaying && <div className="absolute inset-0 bg-secondary-500 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
                 
-                <button className={`relative w-20 h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-secondary-500/50' : ''}`}>
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-secondary-400' : 'bg-secondary-500'}`}>
+                <button className={`relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-secondary-500/50' : ''}`}>
+                  <div className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-secondary-400' : 'bg-secondary-500'}`}>
                     {isPlaying ? (
-                      <svg className="w-6 h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
+                      <svg className="w-5 h-5 md:w-6 md:h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
                     ) : (
-                      <svg className="w-8 h-8 text-[#020617] ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                      <svg className="w-6 h-6 md:w-8 md:h-8 text-[#020617] ml-1 md:ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                     )}
                   </div>
                 </button>
@@ -321,10 +321,10 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary-400 to-secondary-600 opacity-50" />
                   
                   {/* Progressive Hint Lightbulb & Check Result */}
-                  <div className="absolute top-4 right-4 z-20 flex items-center gap-4">
+                  <div className="absolute top-4 right-3 md:right-4 z-20 flex items-center gap-2 md:gap-4">
                     <button 
                       onClick={handleCheckDictation}
-                      className="cursor-pointer text-xs md:text-sm font-bold text-slate-400 hover:text-secondary-400 uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
+                      className="cursor-pointer text-[10px] md:text-sm font-bold text-slate-400 hover:text-secondary-400 uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
                     >
                       Xem kết quả
                     </button>
@@ -353,8 +353,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   </div>
 
                   {/* Hint Display */}
-                  <div className="mb-4 pb-4 border-b border-slate-800 pr-12 min-h-[4rem] flex items-center justify-center">
-                    <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide whitespace-pre-line">
+                  <div className="mt-12 md:mt-0 mb-4 pb-4 border-b border-slate-800 pr-0 md:pr-40 min-h-[4rem] flex items-center justify-center">
+                    <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide whitespace-pre-line px-2">
                       {hintText || <span className="text-slate-600 italic">Nhấn vào bóng đèn để nhận gợi ý</span>}
                     </p>
                   </div>
