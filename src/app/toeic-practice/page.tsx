@@ -943,7 +943,7 @@ function VocabFeatureCard({ onClick }: any) {
         if (isHovered) return;
         const interval = setInterval(() => {
             setIsFlipped(prev => !prev);
-        }, 3000);
+        }, 7000);
         return () => clearInterval(interval);
     }, [isHovered]);
 
