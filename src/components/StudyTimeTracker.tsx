@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 
+import { toast } from 'sonner';
+
 export default function StudyTimeTracker() {
   const { status } = useSession();
   const PING_INTERVAL = 60000; // 60 seconds
@@ -20,7 +22,17 @@ export default function StudyTimeTracker() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ elapsedSeconds: 60 })
-      }).catch(() => {});
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.starsRewarded) {
+          toast.success(data.rewardReason || `Chúc mừng! Bạn được thưởng ${data.starsRewarded} Stars vì chăm chỉ học hôm nay!`, {
+            duration: 6000,
+            icon: '⭐'
+          });
+        }
+      })
+      .catch(() => {});
     };
 
     const interval = setInterval(pingStudyTime, PING_INTERVAL);

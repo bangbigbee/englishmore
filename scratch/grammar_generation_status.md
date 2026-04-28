@@ -25,5 +25,7 @@ Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu
 - [x] 14. Cấu trúc Used to & Be/Get used to (Level: Trung Cấp)
 - [x] 15. Tính từ, Trạng từ và Các cấu trúc so sánh (Level: Trung Cấp)
 - [x] 16. Câu bị động - Passive Voice (Level: Trung Cấp)
+- [x] 17. Động từ gây nguyên nhân - Causative Verbs (Level: Trung Cấp)
+- [x] 18. Mệnh đề quan hệ - Relative Clauses (Level: Nâng Cao)
 
 *(Các phase tiếp theo sẽ tiếp tục áp dụng cấu trúc mới dựa trên file docx)*

@@ -18,11 +18,9 @@ interface WarriorStats {
 }
 
 const formatStudyTime = (seconds: number) => {
-  if (seconds < 60) return `${seconds}s`
-  if (seconds < 3600) return `${Math.floor(seconds / 60)} phút`
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)
-  return `${h}g ${m}p`
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
 }
 
 export default function ToeicWarriorLeaderboard() {
@@ -78,12 +76,12 @@ export default function ToeicWarriorLeaderboard() {
               <tr className="border-b-2 border-slate-100 text-primary-900/70 font-semibold">
                 <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
                 <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chiến Binh</th>
-                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Toeic Stars</th>
-                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Thời Gian Học</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Số Giờ Học</th>
                 <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Ngữ Pháp</th>
                 <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Nghe</th>
                 <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Đọc</th>
                 <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]" title="Từ Đã Thuộc">Từ Vựng</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Stars</th>
               </tr>
             </thead>
             <tbody>
@@ -116,9 +114,6 @@ export default function ToeicWarriorLeaderboard() {
                     </div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <span className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{w.toeicStars} <span className="text-[13px] opacity-80">⭐</span></span>
-                  </td>
-                  <td className="py-4 px-4 text-center">
                     <div className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{formatStudyTime(w.totalStudySeconds)}</div>
                   </td>
                   <td className="py-4 px-4 text-center">
@@ -131,9 +126,12 @@ export default function ToeicWarriorLeaderboard() {
                     <div className="text-primary-900/80 font-medium">{w.readingAnswers > 0 ? w.readingAnswers : '-'}</div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <div className={`text-primary-900 ${w.learnedVocab > 0 ? (idx < 3 ? 'font-bold' : 'font-semibold') : 'font-medium text-primary-900/80'}`}>
+                    <div className="text-primary-900/80 font-medium">
                       {w.learnedVocab > 0 ? w.learnedVocab : '-'}
                     </div>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <span className="text-primary-900/80 font-medium">{w.toeicStars} <span className="text-[13px] opacity-80">⭐</span></span>
                   </td>
                 </motion.tr>
               ))}

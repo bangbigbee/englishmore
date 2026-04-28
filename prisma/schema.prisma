@@ -105,6 +105,8 @@ model User {
   activityPoints            Int                         @default(0)
   toeicStars                Int                         @default(0)
   totalStudySeconds         Int                         @default(0)
+  dailyStudySeconds         Int                         @default(0)
+  lastStudyDate             DateTime?
   referrer                  User?                       @relation("UserReferrals", fields: [referrerId], references: [id])
   referredUsers             User[]                      @relation("UserReferrals")
   
