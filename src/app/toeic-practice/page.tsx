@@ -2327,7 +2327,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 								onClick={() => setIsFlipped(!isFlipped)}
 							>
 								{/* ── FRONT FACE ── */}
-								<div className="absolute inset-0 h-full w-full rounded-2xl overflow-hidden [backface-visibility:hidden] bg-gradient-to-br from-primary-900 via-[#4c1d95] to-[#2e1065] p-6 text-white flex flex-col items-center justify-center">
+								<div className="absolute inset-0 h-full w-full rounded-2xl overflow-hidden [backface-visibility:hidden] bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 p-6 text-white flex flex-col items-center justify-center">
 									<div className="absolute top-0 left-0 z-20 pointer-events-none flex leading-none">
 										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} className="rounded-br-[14px] rounded-tl-none border-b border-r border-white/20 text-white/90 bg-white/10 backdrop-blur-sm m-0" />
 									</div>
@@ -2624,10 +2624,10 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 						<div id="speed-challenge-section" className="mt-8 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
 							<button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-5 hover:bg-slate-50 transition-colors cursor-pointer focus:outline-none">
 								<div className="flex items-center gap-2.5">
-									<div className="text-primary-600 flex items-center justify-center">
+									<div className="text-primary-900 flex items-center justify-center">
 										<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
 									</div>
-									<h3 className="text-[14px] font-bold text-slate-700">{selectedTopic === 'GLOBAL' ? 'Speed Challenge' : 'Kiểm tra trí nhớ'}</h3>
+									<h3 className="text-[14px] font-bold text-primary-900">{selectedTopic === 'GLOBAL' ? 'Speed Challenge' : 'Kiểm tra trí nhớ'}</h3>
 								</div>
 								<svg className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${challengeExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
 							</button>
@@ -2671,7 +2671,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                     )}
 
 									<div className="block mb-5">
-										<button type="button" onClick={handleStartChallenge} className="bg-primary-600 text-white font-bold text-lg px-8 py-3.5 rounded-full md:hover:bg-primary-700 md:hover:shadow-lg transition-all active:scale-95 active:bg-primary-800 cursor-pointer focus:outline-none touch-manipulation select-none">
+										<button type="button" onClick={handleStartChallenge} className="bg-primary-900 text-white font-bold text-lg px-8 py-3.5 rounded-full md:hover:bg-primary-800 md:hover:shadow-lg transition-all active:scale-95 active:bg-primary-950 cursor-pointer focus:outline-none touch-manipulation select-none">
 											Bắt Đầu Ngay
 										</button>
 									</div>
