@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { lastStudyDate: true, dailyStudySeconds: true }
+      select: { lastStudyDate: true, dailyStudySeconds: true, currentStreak: true }
     });
 
     if (!user) {
@@ -31,16 +31,26 @@ export async function POST(req: Request) {
     const today = new Date();
     // Format date in GMT+7
     const todayStr = new Date(today.getTime() + 7 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const yesterdayStr = new Date(today.getTime() + 7 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     
     let isNewDay = false;
     let currentDailySeconds = user.dailyStudySeconds || 0;
+    let newStreak = user.currentStreak || 0;
 
     if (!user.lastStudyDate) {
       isNewDay = true;
+      newStreak = 1;
     } else {
       const lastStudyStr = new Date(user.lastStudyDate.getTime() + 7 * 60 * 60 * 1000).toISOString().split('T')[0];
       if (lastStudyStr !== todayStr) {
         isNewDay = true;
+        if (lastStudyStr === yesterdayStr) {
+          newStreak += 1;
+        } else {
+          newStreak = 1;
+        }
+      } else {
+        if (newStreak === 0) newStreak = 1;
       }
     }
 
@@ -62,6 +72,7 @@ export async function POST(req: Request) {
     const updateData: any = {
       totalStudySeconds: { increment: elapsedSeconds },
       dailyStudySeconds: isNewDay ? elapsedSeconds : { increment: elapsedSeconds },
+      currentStreak: newStreak,
       lastStudyDate: today
     };
 

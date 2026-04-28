@@ -9,12 +9,12 @@ export async function GET() {
   try {
     const topUsers = await prisma.user.findMany({
       where: { 
-        totalStudySeconds: { gt: 0 },
+        toeicStars: { gt: 0 },
         email: {
           notIn: ['bangdtbk@gmail.com', 'bigbeecoltd@gmail.com']
         }
       },
-      orderBy: { totalStudySeconds: 'desc' },
+      orderBy: { toeicStars: 'desc' },
       take: 10,
       select: {
         id: true,
@@ -22,6 +22,7 @@ export async function GET() {
         image: true,
         toeicStars: true,
         totalStudySeconds: true,
+        currentStreak: true,
         _count: {
           select: {
             vocabularyTags: { where: { isLearned: true } }
@@ -64,6 +65,7 @@ export async function GET() {
         image: user.image,
         toeicStars: user.toeicStars,
         totalStudySeconds: user.totalStudySeconds,
+        currentStreak: user.currentStreak || 0,
         learnedVocab: user._count.vocabularyTags,
         grammarAnswers: getCount('GRAMMAR'),
         listeningAnswers: getCount('LISTENING'),

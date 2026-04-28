@@ -11,6 +11,7 @@ interface WarriorStats {
   image: string | null
   toeicStars: number
   totalStudySeconds: number
+  currentStreak: number
   learnedVocab: number
   grammarAnswers: number
   listeningAnswers: number
@@ -57,7 +58,7 @@ export default function ToeicWarriorLeaderboard() {
   return (
     <div className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6 animate-in fade-in duration-500">
       <div className="flex flex-col items-center justify-center text-center gap-1 mb-8">
-        <h3 className="text-2xl font-black bg-gradient-to-r from-secondary-500 to-primary-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
+        <h3 className="text-2xl font-black bg-gradient-to-r from-primary-700 to-secondary-500 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
           Bảng Vinh Danh Chiến Binh ToeicMore
         </h3>
         <p className="text-slate-500 font-medium text-sm max-w-2xl mx-auto">
@@ -76,6 +77,7 @@ export default function ToeicWarriorLeaderboard() {
               <tr className="border-b-2 border-slate-100 text-primary-900/70 font-semibold">
                 <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
                 <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chiến Binh</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Chuỗi Ngày</th>
                 <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Số Giờ Học</th>
                 <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Ngữ Pháp</th>
                 <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Nghe</th>
@@ -110,28 +112,34 @@ export default function ToeicWarriorLeaderboard() {
                           </div>
                         )}
                       </div>
-                      <div className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{w.name}</div>
+                      <div className="text-primary-900 font-normal text-[13px]">{w.name}</div>
                     </div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <div className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{formatStudyTime(w.totalStudySeconds)}</div>
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="text-primary-900 font-normal text-[13px]">{w.currentStreak > 0 ? w.currentStreak : '-'}</span>
+                      {w.currentStreak > 0 && <span className="text-[13px]" title="Chuỗi ngày học liên tục">🔥</span>}
+                    </div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <div className="text-primary-900/80 font-medium">{w.grammarAnswers > 0 ? w.grammarAnswers : '-'}</div>
+                    <div className="text-primary-900 font-normal text-[13px]">{formatStudyTime(w.totalStudySeconds)}</div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <div className="text-primary-900/80 font-medium">{w.listeningAnswers > 0 ? w.listeningAnswers : '-'}</div>
+                    <div className="text-primary-900/80 font-normal text-[13px]">{w.grammarAnswers > 0 ? w.grammarAnswers : '-'}</div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <div className="text-primary-900/80 font-medium">{w.readingAnswers > 0 ? w.readingAnswers : '-'}</div>
+                    <div className="text-primary-900/80 font-normal text-[13px]">{w.listeningAnswers > 0 ? w.listeningAnswers : '-'}</div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <div className="text-primary-900/80 font-medium">
+                    <div className="text-primary-900/80 font-normal text-[13px]">{w.readingAnswers > 0 ? w.readingAnswers : '-'}</div>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className="text-primary-900/80 font-normal text-[13px]">
                       {w.learnedVocab > 0 ? w.learnedVocab : '-'}
                     </div>
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <span className="text-primary-900/80 font-medium">{w.toeicStars} <span className="text-[13px] opacity-80">⭐</span></span>
+                    <span className="text-primary-900/80 font-normal text-[13px]">{w.toeicStars} <span className="text-[13px] opacity-80">⭐</span></span>
                   </td>
                 </motion.tr>
               ))}

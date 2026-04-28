@@ -645,7 +645,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
     return (
         <div className="mt-16 mb-8 w-full animate-in fade-in duration-500">
             <div className="flex flex-col items-center justify-center text-center gap-1 mb-8">
-                <h3 className="text-2xl font-black bg-gradient-to-r from-secondary-500 to-primary-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
+                <h3 className="text-2xl font-black bg-gradient-to-r from-primary-700 to-secondary-500 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
                     Bảng xếp hạng Kiện Tướng Từ Vựng
                 </h3>
                 <button 
@@ -702,18 +702,18 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                                 <span className="font-semibold text-primary-900/60">#{idx + 1}</span>}
                                             </td>
                                             <td className="py-4 px-4">
-                                                <div className={`text-primary-900 ${idx < 3 ? 'font-bold text-[15px]' : 'font-medium'}`}>{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
+                                                <div className="text-primary-900 font-normal text-[13px]">{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
                                             </td>
                                             <td className="py-4 px-4 text-center text-primary-900">
-                                                <span className="font-semibold">{leader.score}</span>
+                                                <span className="font-normal text-[13px]">{leader.score}</span>
                                                 <span className="text-primary-900/40 text-xs mx-1">/</span>
-                                                <span className="font-medium text-primary-900/70 text-sm">{leader.total}</span>
+                                                <span className="font-normal text-primary-900/70 text-[13px]">{leader.total}</span>
                                             </td>
                                             <td className="py-4 px-4 text-right">
-                                                <div className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{(leader.timeMs / 1000).toFixed(2)}s</div>
+                                                <div className="text-primary-900 font-normal text-[13px]">{(leader.timeMs / 1000).toFixed(2)}s</div>
                                             </td>
                                             <td className="py-4 px-4 text-right">
-                                                <div className={`text-primary-900 font-mono tracking-tighter ${idx < 3 ? 'font-bold text-[15px]' : 'font-semibold'}`}>{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
+                                                <div className="text-primary-900 font-mono tracking-tighter font-normal text-[13px]">{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
                                             </td>
                                         </tr>
                                     ))}
@@ -735,13 +735,13 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                                         `#${idx + 1}`}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`truncate text-[15px] mb-0.5 text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>
+                                        <div className="truncate text-[13px] mb-0.5 text-primary-900 font-normal">
                                             {leader.user?.name || leader.guestName || "Ẩn danh"}
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <div className="text-[13px] font-semibold text-primary-900">{leader.score}<span className="text-[10px] text-primary-900/60 font-medium ml-0.5">/{leader.total}</span></div>
-                                        <div className="text-[12px] text-primary-900 mt-0.5">{(leader.timeMs / 1000).toFixed(2)}s ({((leader.timeMs / 1000) / Math.max(1, leader.total)).toFixed(2)}s/từ)</div>
+                                        <div className="text-[12px] font-normal text-primary-900">{leader.score}<span className="text-[10px] text-primary-900/60 font-normal ml-0.5">/{leader.total}</span></div>
+                                        <div className="text-[12px] font-normal text-primary-900 mt-0.5">{(leader.timeMs / 1000).toFixed(2)}s ({((leader.timeMs / 1000) / Math.max(1, leader.total)).toFixed(2)}s/từ)</div>
                                     </div>
                                 </div>
                             ))}
