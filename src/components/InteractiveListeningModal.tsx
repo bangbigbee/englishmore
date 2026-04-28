@@ -29,10 +29,13 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [speechResult, setSpeechResult] = useState('')
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null)
   const [hintText, setHintText] = useState('')
+  const [speed, setSpeed] = useState(1.0)
   
   const currentSentence = PRACTICE_SENTENCES[currentIndex]
   
   const recognitionRef = useRef<any>(null)
+  const knobRef = useRef<HTMLDivElement>(null)
+  const draggingRef = useRef({ isDragging: false, lastAngle: 0, accumulatedAngle: 0, startSpeed: 1.0 })
 
   useEffect(() => {
     // Initialize Web Speech Synthesis Voices
@@ -110,7 +113,62 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     setSpeechResult('')
   }, [currentIndex, method, difficulty])
 
-  const playAudio = (rate: number = 1.0) => {
+  // Knob interaction
+  useEffect(() => {
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!draggingRef.current.isDragging || !knobRef.current) return;
+      const rect = knobRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
+      
+      let deltaAngle = angle - draggingRef.current.lastAngle;
+      if (deltaAngle > 180) deltaAngle -= 360;
+      if (deltaAngle < -180) deltaAngle += 360;
+
+      draggingRef.current.accumulatedAngle += deltaAngle;
+      draggingRef.current.lastAngle = angle;
+
+      const steps = Math.floor(draggingRef.current.accumulatedAngle / 25); // 25 degrees per 0.1 step
+      if (Math.abs(steps) >= 1) {
+        setSpeed(prev => {
+          let newSpeed = prev + steps * 0.1;
+          newSpeed = Math.max(0.7, Math.min(1.5, newSpeed));
+          newSpeed = Math.round(newSpeed * 10) / 10;
+          return newSpeed;
+        });
+        draggingRef.current.accumulatedAngle -= steps * 25;
+      }
+    };
+
+    const handlePointerUp = () => {
+      draggingRef.current.isDragging = false;
+      document.body.style.userSelect = '';
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    // Attach dragging methods to ref for use in pointer down
+    (knobRef as any).currentHandlePointerDown = (e: React.PointerEvent) => {
+      if (!knobRef.current) return;
+      const rect = knobRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
+      draggingRef.current = { isDragging: true, lastAngle: angle, accumulatedAngle: 0, startSpeed: speed };
+      document.body.style.userSelect = 'none';
+      document.addEventListener('pointermove', handlePointerMove);
+      document.addEventListener('pointerup', handlePointerUp);
+    };
+
+    return () => {
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+      document.body.style.userSelect = '';
+    };
+  }, [speed]);
+
+  const playAudio = () => {
     if (!('speechSynthesis' in window)) {
       setFeedback({type: 'error', msg: 'Trình duyệt của bạn không hỗ trợ đọc văn bản.'})
       return
@@ -118,7 +176,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     window.speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(currentSentence.text)
     if (voice) utterance.voice = voice
-    utterance.rate = rate
+    utterance.rate = speed
     utterance.pitch = 1
     window.speechSynthesis.speak(utterance)
   }
@@ -239,19 +297,20 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1 flex flex-col h-full relative z-10 overflow-y-auto">
-          <button onClick={onClose} className="absolute top-8 right-8 hidden md:flex w-12 h-12 items-center justify-center bg-white/5 hover:bg-white/10 rounded-full text-slate-300 transition-all border border-white/10 hover:rotate-90">
+        <div className="flex-1 flex flex-col h-full relative z-10">
+          <button onClick={onClose} className="absolute top-6 right-6 hidden md:flex w-10 h-10 items-center justify-center bg-white/5 hover:bg-white/10 rounded-full text-slate-300 transition-all border border-white/10 hover:rotate-90 z-50">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
           
-          <div className="max-w-3xl w-full mx-auto p-8 lg:p-12 flex-1 flex flex-col justify-center">
+          <div className="w-full h-full max-w-4xl mx-auto p-6 lg:p-8 flex flex-col">
             
-            <div className="flex items-center justify-between mb-16">
+            {/* Header: Progress */}
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
                 <span className="text-sm font-bold tracking-[0.2em] uppercase text-primary-400">Sentences</span>
               </div>
-              <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-full px-5 py-2">
+              <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-full px-4 py-1.5">
                 <span className="text-sm font-bold text-white">{currentIndex + 1} <span className="text-slate-500">/ {PRACTICE_SENTENCES.length}</span></span>
                 <div className="w-px h-4 bg-white/10" />
                 <button onClick={nextSentence} className="text-sm font-bold text-primary-400 hover:text-primary-300 transition-colors uppercase tracking-wider flex items-center gap-2 group">
@@ -261,28 +320,51 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               </div>
             </div>
 
-            {/* Audio Controls */}
-            <div className="flex flex-col items-center gap-8 mb-16">
-              <div className="relative group cursor-pointer" onClick={() => playAudio(1.0)}>
+            {/* Audio Controls Row */}
+            <div className="flex items-center justify-center gap-8 mb-6">
+              {/* Play Button */}
+              <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
                 <div className="absolute inset-0 bg-primary-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-                <button className="relative w-24 h-24 bg-gradient-to-b from-white/10 to-white/5 border border-white/20 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-2xl backdrop-blur-sm">
-                  <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center shadow-inner">
-                    <svg className="w-10 h-10 text-white ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                <button className="relative w-20 h-20 bg-gradient-to-b from-white/10 to-white/5 border border-white/20 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-2xl backdrop-blur-sm">
+                  <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center shadow-inner">
+                    <svg className="w-8 h-8 text-white ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                   </div>
                 </button>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 rounded-full p-1 border border-white/10">
-                <button onClick={() => playAudio(0.7)} className="px-4 py-1.5 rounded-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-colors uppercase tracking-wider">0.7x Slow</button>
-                <div className="w-px h-3 bg-white/10" />
-                <button onClick={() => playAudio(1.0)} className="px-4 py-1.5 rounded-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-colors uppercase tracking-wider">1.0x Normal</button>
+
+              {/* Speed Knob Dial */}
+              <div className="flex flex-col items-center shrink-0">
+                <div 
+                  ref={knobRef}
+                  onPointerDown={(e) => (knobRef as any).currentHandlePointerDown?.(e)}
+                  className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center relative cursor-grab active:cursor-grabbing group shadow-inner touch-none"
+                >
+                  {/* Ticks */}
+                  <div className="absolute inset-2 rounded-full border-[3px] border-white/5 border-b-transparent border-l-transparent -rotate-45 pointer-events-none" />
+                  
+                  {/* Rotating Dial */}
+                  <div 
+                    className="w-10 h-10 rounded-full bg-gradient-to-b from-slate-700 to-slate-900 shadow-xl border border-white/20 relative"
+                    style={{ transform: `rotate(${(speed - 0.7) / (1.5 - 0.7) * 270 - 135}deg)` }}
+                  >
+                    {/* Indicator Dot */}
+                    <div className="absolute top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-primary-400 rounded-full shadow-[0_0_8px_rgba(56,189,248,0.8)]" />
+                  </div>
+                  
+                  {/* Speed display tooltip on hover */}
+                  <div className="absolute -top-8 bg-black/80 text-primary-400 text-xs font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    {speed.toFixed(1)}x
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2 select-none">Tốc độ ({speed.toFixed(1)}x)</span>
               </div>
             </div>
 
-            {/* Content Based on Method */}
-            <div className="w-full flex flex-col items-center">
+            {/* Content Based on Method - Flex-1 to push everything centrally */}
+            <div className="w-full flex-1 flex flex-col justify-center items-center pb-8">
               
               {method === 'DICTATION' && (
-                <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <div className="w-full space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
                   
                   {/* Difficulty Selector */}
                   <div className="flex flex-col items-center gap-4">
@@ -300,12 +382,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
                   </div>
 
-                  <div className="w-full bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm relative overflow-hidden">
+                  <div className="w-full bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-2xl">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-blue-500 opacity-50" />
                     
                     {/* Hint Display */}
-                    <div className="mb-6 pb-6 border-b border-white/10">
-                      <p className="text-lg md:text-xl font-medium leading-relaxed text-slate-300 text-center tracking-wide">
+                    <div className="mb-4 pb-4 border-b border-white/10">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide">
                         {hintText}
                       </p>
                     </div>
@@ -313,15 +395,15 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <textarea 
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
-                      className="w-full h-32 bg-transparent text-white text-xl md:text-2xl font-medium placeholder-white/20 focus:outline-none resize-none text-center"
+                      className="w-full h-24 md:h-32 bg-transparent text-white text-lg md:text-2xl font-medium placeholder-white/20 focus:outline-none resize-none text-center"
                       placeholder="Gõ toàn bộ câu tiếng Anh vào đây..."
                       spellCheck={false}
                     />
                   </div>
 
                   <div className="flex gap-4 justify-center">
-                    <button onClick={handleCheckDictation} className="bg-primary-500 hover:bg-primary-400 text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-primary-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
-                    <button onClick={() => setUserInput(currentSentence.text)} className="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-3.5 rounded-2xl font-bold transition-all">Gợi ý đáp án</button>
+                    <button onClick={handleCheckDictation} className="bg-primary-500 hover:bg-primary-400 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-primary-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
+                    <button onClick={() => setUserInput(currentSentence.text)} className="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-3 rounded-xl font-bold transition-all">Gợi ý đáp án</button>
                   </div>
                 </div>
               )}
@@ -367,19 +449,21 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               )}
 
               {/* Feedback Alert */}
-              <AnimatePresence>
-                {feedback.msg && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20, scale: 0.95 }} 
-                    animate={{ opacity: 1, y: 0, scale: 1 }} 
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className={`mt-10 p-5 rounded-2xl text-sm md:text-base font-bold flex items-center justify-center gap-3 w-full max-w-md mx-auto shadow-2xl backdrop-blur-md border ${feedback.type === 'success' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}
-                  >
-                    <span className="text-2xl">{feedback.type === 'success' ? '🎉' : '💡'}</span>
-                    {feedback.msg}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div className="h-16 w-full flex items-center justify-center mt-4 shrink-0">
+                <AnimatePresence>
+                  {feedback.msg && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20, scale: 0.95 }} 
+                      animate={{ opacity: 1, y: 0, scale: 1 }} 
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className={`p-4 rounded-2xl text-sm md:text-base font-bold flex items-center justify-center gap-3 w-full max-w-md shadow-2xl backdrop-blur-md border ${feedback.type === 'success' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}
+                    >
+                      <span className="text-2xl">{feedback.type === 'success' ? '🎉' : '💡'}</span>
+                      {feedback.msg}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               
             </div>
           </div>
