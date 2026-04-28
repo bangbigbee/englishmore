@@ -280,9 +280,6 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                     {displaySubtitle.replace('Thuộc bộ đề: ', '')}
                 </div>
             )}
-            {packageType && !isTestTopic && (
-                <PackageBadge pkg={packageType} className="absolute top-0 right-0 rounded-bl-[14px] rounded-tr-xl border-b border-l border-secondary-200/30 shadow-sm z-20 pointer-events-none" />
-            )}
 			<div className="relative z-10 flex-1 mt-2 flex flex-col">
                 {isCompactType ? (
 					<div className={`perspective-[1000px] mb-2 w-full flex-1 flex flex-col justify-center ${isTestTopic ? 'mt-3 sm:mt-1' : ''}`}>
@@ -360,7 +357,10 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
 				{progress && (
 					<div className={`mt-auto w-full flex flex-col gap-1.5 ${isCompactType ? 'pt-4 border-t border-slate-100/50' : 'pt-3'}`}>
                         <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                {packageType && !isTestTopic && (
+                                    <PackageBadge pkg={packageType} className="rounded" />
+                                )}
                                 {isTopicMastered ? (
                                     <>
                                         <span className="inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 text-[10px] font-medium border border-primary-100 dark:border-primary-800 rounded">Đã hoàn thành</span>
