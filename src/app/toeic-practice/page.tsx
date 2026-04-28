@@ -1356,7 +1356,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	const [topics, setTopics] = useState<{ topic: string; wordCount: number, learnedCount?: number, packageType?: string }[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [subTab, setSubTab] = useState<'practice' | 'progress'>('practice');
-	const [activePackage, setActivePackage] = useState<string>('ALL');
+	const [activePackage, setActivePackage] = useState<string>('BASIC');
 
 	const initialTopic = searchParams.get('topic');
 	const [selectedTopic, setSelectedTopic] = useState<string | null>(initialTopic);
@@ -2263,7 +2263,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 						) : (
                             <>
                                 <div className="inline-flex flex-wrap gap-1.5 sm:gap-2 mb-6 p-1.5 bg-slate-100/80 rounded-[14px]">
-                                    {(['ALL', 'BASIC', 'ADVANCED', 'MIXED']).map(pkg => {
+                                    {(['BASIC', 'ADVANCED', 'MIXED']).map(pkg => {
                                         const isActive = activePackage === pkg;
                                         
                                         const colorClass = isActive ? 'text-white' : 'text-slate-600 dark:text-slate-400';
@@ -2278,13 +2278,13 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                                 onClick={() => setActivePackage(pkg)}
                                                 className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-[10px] text-[13px] sm:text-sm font-bold transition-all duration-300 ${colorClass} ${isActive ? activeBg : inactiveBg}`}
                                             >
-                                                {pkg === 'ALL' ? 'Tất cả' : pkg === 'BASIC' ? 'Cơ bản' : pkg === 'ADVANCED' ? 'Nâng cao' : 'Hỗn hợp'}
+                                                {pkg === 'BASIC' ? 'Cơ bản' : pkg === 'ADVANCED' ? 'Nâng cao' : 'Hỗn hợp'}
                                             </button>
                                         )
                                     })}
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                    {topics.filter(t => activePackage === 'ALL' || t.packageType === activePackage).map((t) => (
+                                    {topics.filter(t => t.packageType === activePackage).map((t) => (
                                         <TopicCard
                                             key={t.topic}
                                             type="vocabulary"
