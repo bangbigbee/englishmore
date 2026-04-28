@@ -179,17 +179,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   }
 
   return (
-    <div className="fixed inset-0 z-[200] overflow-y-auto isolate flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[200] isolate flex bg-white overflow-hidden">
       <motion.div 
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="relative w-full max-w-4xl bg-white rounded-[24px] shadow-2xl overflow-hidden flex flex-col md:flex-row h-[600px] max-h-[90vh]"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        className="relative w-full h-full flex flex-col md:flex-row"
       >
         {/* Left Sidebar: Methods */}
         <div className="w-full md:w-1/3 bg-slate-50 p-6 flex flex-col border-r border-slate-200">
