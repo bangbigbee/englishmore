@@ -186,9 +186,9 @@ const translateDifficulty = (diff?: string) => {
 };
 
 const PackageBadge = ({ pkg, className = "" }: { pkg?: string, className?: string }) => {
-	if (pkg === 'BASIC' || pkg === 'FREE') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-600 text-[10px] font-medium border border-primary-100 ${className}`}>Cơ bản</span>);
-	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-800 text-[10px] font-medium border border-primary-200 ${className}`}>Nâng cao</span>);
-	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 text-primary-700 text-[10px] font-medium border border-primary-200 ${className}`}>Hỗn hợp</span>);
+	if (pkg === 'BASIC' || pkg === 'FREE') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-900/20 text-primary-900 dark:text-primary-300 text-[10px] font-medium border border-primary-200 dark:border-primary-800 ${className}`}>Cơ bản</span>);
+	if (pkg === 'ADVANCED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-900/20 text-primary-900 dark:text-primary-300 text-[10px] font-medium border border-primary-200 dark:border-primary-800 ${className}`}>Nâng cao</span>);
+	if (pkg === 'MIXED') return (<span className={`inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-900/20 text-primary-900 dark:text-primary-300 text-[10px] font-medium border border-primary-200 dark:border-primary-800 ${className}`}>Hỗn hợp</span>);
 	return null;
 }
 
@@ -259,7 +259,16 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
     const isMixed = packageType === 'MIXED';
     const isTopicMastered = progress && progress.total > 0 && progress.learned >= progress.total;
 
-    const theme = {
+    const theme = type === 'vocabulary' ? {
+        iconBg: 'bg-primary-900',
+        titleHover: 'group-hover:text-primary-800 dark:group-hover:text-white',
+        title: 'text-primary-900 dark:text-white',
+        backIconBg: 'bg-primary-800',
+        subtitle: 'text-primary-900/70 dark:text-slate-400',
+        progressBg: 'bg-primary-100/60 dark:bg-primary-900/40',
+        progressFill: 'bg-primary-900',
+        progressText: 'text-primary-900 dark:text-primary-400',
+    } : {
         iconBg: isBasic ? 'bg-primary-600' : isAdvanced ? 'bg-primary-800' : isMixed ? 'bg-primary-600' : 'bg-primary-700',
         titleHover: isBasic ? 'group-hover:text-primary-600' : isAdvanced ? 'group-hover:text-primary-900 dark:group-hover:text-white' : isMixed ? 'group-hover:text-primary-700' : 'group-hover:text-primary-700 dark:group-hover:text-white',
         title: isBasic ? 'text-primary-600 dark:text-primary-400' : isAdvanced ? 'text-primary-900 dark:text-white' : isMixed ? 'text-primary-700 dark:text-primary-300' : 'text-primary-900 dark:text-white',
@@ -363,9 +372,9 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                                 )}
                                 {isTopicMastered ? (
                                     <>
-                                        <span className="inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 text-[10px] font-medium border border-primary-100 dark:border-primary-800 rounded">Đã hoàn thành</span>
+                                        <span className="inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-900/20 text-primary-900 dark:text-primary-300 text-[10px] font-medium border border-primary-200 dark:border-primary-800 rounded">Đã hoàn thành</span>
                                         {onReset && (
-                                            <button onClick={(e) => { e.stopPropagation(); onReset(); }} className="p-0.5 rounded-full hover:bg-primary-50 dark:hover:bg-slate-800 text-slate-400 hover:text-primary-600 transition-colors" title="Làm lại bộ từ vựng">
+                                            <button onClick={(e) => { e.stopPropagation(); onReset(); }} className="p-0.5 rounded-full hover:bg-primary-50 dark:hover:bg-slate-800 text-slate-400 hover:text-primary-900 transition-colors" title="Làm lại bộ từ vựng">
                                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                                 </svg>
