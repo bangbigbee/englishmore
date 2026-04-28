@@ -131,14 +131,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     
     // Cleanup any playing audio when switching sentence
     window.speechSynthesis.cancel()
-    if (audioRefs.current.qAudio) {
-      audioRefs.current.qAudio.pause()
-      audioRefs.current.qAudio.currentTime = 0
-    }
-    if (audioRefs.current.aAudio) {
-      audioRefs.current.aAudio.pause()
-      audioRefs.current.aAudio.currentTime = 0
-    }
     if (audioRefs.current.timeout) {
       clearTimeout(audioRefs.current.timeout)
     }
@@ -146,8 +138,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     
     return () => {
       window.speechSynthesis.cancel()
-      if (audioRefs.current.qAudio) audioRefs.current.qAudio.pause()
-      if (audioRefs.current.aAudio) audioRefs.current.aAudio.pause()
       if (audioRefs.current.timeout) clearTimeout(audioRefs.current.timeout)
     }
   }, [currentIndex, difficulty, contentType])
@@ -158,72 +148,39 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
       return
     }
     window.speechSynthesis.cancel()
+    if (audioRefs.current.timeout) {
+      clearTimeout(audioRefs.current.timeout)
+    }
     
     if (contentType === 'QNA' && currentSentence.qna) {
-      setIsPlaying(true)
+      const uQ = new SpeechSynthesisUtterance(currentSentence.qna.q)
+      if (voiceQ) uQ.voice = voiceQ
+      uQ.rate = speed
+      uQ.pitch = 1
       
-      // Stop previous playing instances to prevent overlapping
-      if (audioRefs.current.qAudio) {
-        audioRefs.current.qAudio.pause()
-        audioRefs.current.qAudio.currentTime = 0
-      }
-      if (audioRefs.current.aAudio) {
-        audioRefs.current.aAudio.pause()
-        audioRefs.current.aAudio.currentTime = 0
-      }
-      if (audioRefs.current.timeout) {
-        clearTimeout(audioRefs.current.timeout)
-      }
+      const uA = new SpeechSynthesisUtterance(currentSentence.qna.a)
+      if (voiceA) uA.voice = voiceA
+      uA.rate = speed
+      uA.pitch = 1
       
-      // Using Google Translate API (client=gtx is more permissive for direct calls)
-      const qUrl = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-US&q=${encodeURIComponent(currentSentence.qna.q)}`
-      const aUrl = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=en-GB&q=${encodeURIComponent(currentSentence.qna.a)}`
+      uQ.onstart = () => setIsPlaying(true)
       
-      const qAudio = new Audio(qUrl)
-      const aAudio = new Audio(aUrl)
-      
-      audioRefs.current.qAudio = qAudio
-      audioRefs.current.aAudio = aAudio
-      
-      qAudio.playbackRate = speed
-      aAudio.playbackRate = speed
-      
-      // Fallback function to use browser's built-in synthesis if API fails
-      const fallbackToBrowserTTS = () => {
-        const uQ = new SpeechSynthesisUtterance(currentSentence.qna!.q)
-        if (voiceQ) uQ.voice = voiceQ
-        uQ.rate = speed
-        
-        const uA = new SpeechSynthesisUtterance(currentSentence.qna!.a)
-        if (voiceA) uA.voice = voiceA
-        uA.rate = speed
-        
-        uQ.onend = () => setTimeout(() => window.speechSynthesis.speak(uA), 400)
-        uA.onend = () => setIsPlaying(false)
-        uQ.onerror = () => setIsPlaying(false)
-        uA.onerror = () => setIsPlaying(false)
-        
-        window.speechSynthesis.speak(uQ)
-      }
-
-      qAudio.onended = () => {
+      // Delay response slightly
+      uQ.onend = () => {
         audioRefs.current.timeout = setTimeout(() => {
           if (document.visibilityState === 'visible') {
-            aAudio.play().catch(fallbackToBrowserTTS)
+             window.speechSynthesis.speak(uA)
           } else {
-            setIsPlaying(false)
+             setIsPlaying(false)
           }
-        }, 400) // slight delay before answer
+        }, 300)
       }
+      uA.onend = () => setIsPlaying(false)
       
-      aAudio.onended = () => setIsPlaying(false)
-      qAudio.onerror = fallbackToBrowserTTS
-      aAudio.onerror = fallbackToBrowserTTS
+      uQ.onerror = () => setIsPlaying(false)
+      uA.onerror = () => setIsPlaying(false)
       
-      qAudio.play().catch(err => {
-        console.warn('Google TTS failed, falling back to local TTS:', err)
-        fallbackToBrowserTTS()
-      })
+      window.speechSynthesis.speak(uQ)
     } else {
       const utterance = new SpeechSynthesisUtterance(currentSentence.text)
       if (voice) utterance.voice = voice
@@ -281,12 +238,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
           {/* Top Title & Close Button */}
           <div className="w-full flex items-center justify-between p-4 md:px-8 border-b border-slate-800/50 bg-[#0B1120]/50 backdrop-blur-md">
             <h2 className="text-lg md:text-2xl font-black text-white flex items-center gap-3 tracking-tight">
-              <span className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-xl bg-gradient-to-br from-secondary-400 to-secondary-600 flex items-center justify-center shadow-lg shadow-secondary-500/30">
+              <span className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-xl bg-gradient-to-br from-slate-200 to-white flex items-center justify-center shadow-lg shadow-white/20">
                 <svg className="w-4 h-4 md:w-5 md:h-5 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
                 </svg>
               </span>
-              <span className="flex flex-wrap leading-tight gap-x-1.5">Phòng Nghe Chép <span className="text-secondary-400">Chính Tả</span></span>
+              <span className="flex flex-wrap leading-tight gap-x-1.5">Phòng Nghe Chép <span className="text-white">Chính Tả</span></span>
             </h2>
             <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-[#0B1120] hover:bg-[#111827] shadow-sm rounded-full text-slate-400 transition-all border border-slate-800 hover:rotate-90 cursor-pointer">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -300,19 +257,19 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="inline-flex bg-[#111827] border border-slate-800 p-1.5 rounded-2xl shadow-inner overflow-x-auto w-full md:w-auto custom-scrollbar">
                 <button 
                   onClick={() => setContentType('SENTENCE')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                   Câu đơn
                 </button>
                 <button 
                   onClick={() => setContentType('QNA')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'QNA' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'QNA' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                   Hỏi - Đáp
                 </button>
                 <button 
                   onClick={() => setContentType('SHORT_TALK')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-secondary-500 text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
                 >
                   Bài nói ngắn
                 </button>
@@ -325,14 +282,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="flex flex-col flex-1 items-start">
                 <div className="flex items-center justify-between w-full mb-2">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Speed</span>
-                  <span className="text-xs font-bold text-secondary-400">{speed.toFixed(1)}x</span>
+                  <span className="text-xs font-bold text-white">{speed.toFixed(1)}x</span>
                 </div>
                 <input 
                   type="range" 
                   min="0.6" max="1.4" step="0.1" 
                   value={speed} 
                   onChange={(e) => setSpeed(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-secondary-400"
+                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-white"
                 />
               </div>
 
@@ -340,14 +297,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
                 {isPlaying && (
                   <>
-                    <div className="absolute inset-0 bg-secondary-500 rounded-full blur-xl opacity-40 animate-pulse" />
-                    <div className="absolute -inset-4 border-2 border-secondary-500/30 rounded-full animate-ping" />
+                    <div className="absolute inset-0 bg-white rounded-full blur-xl opacity-40 animate-pulse" />
+                    <div className="absolute -inset-4 border-2 border-white/30 rounded-full animate-ping" />
                   </>
                 )}
-                {!isPlaying && <div className="absolute inset-0 bg-secondary-500 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
+                {!isPlaying && <div className="absolute inset-0 bg-white rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" /> }
                 
-                <button className={`relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-secondary-500/50' : ''}`}>
-                  <div className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-secondary-400' : 'bg-secondary-500'}`}>
+                <button className={`relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-white/50' : ''}`}>
+                  <div className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-slate-200' : 'bg-white'}`}>
                     {isPlaying ? (
                       <svg className="w-5 h-5 md:w-6 md:h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
                     ) : (
@@ -368,7 +325,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                       <button 
                         key={d.value}
                         onClick={() => setDifficulty(d.value)}
-                        className={`cursor-pointer px-5 py-2.5 md:px-6 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all border ${difficulty === d.value ? 'bg-slate-800 border-slate-700 text-secondary-400 shadow-sm' : 'bg-[#0B1120] border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-400'}`}
+                        className={`cursor-pointer px-5 py-2.5 md:px-6 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all border ${difficulty === d.value ? 'bg-slate-800 border-slate-700 text-white shadow-sm' : 'bg-[#0B1120] border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-400'}`}
                       >
                         {d.label} <span className="opacity-50 ml-1">{d.value}%</span>
                       </button>
@@ -377,13 +334,13 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 </div>
 
                 <div className="w-full bg-[#111827] border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary-400 to-secondary-600 opacity-50" />
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-400 to-white opacity-50" />
                   
                   {/* Progressive Hint Lightbulb & Check Result */}
                   <div className="absolute top-4 right-3 md:right-4 z-20 flex items-center gap-2 md:gap-4">
                     <button 
                       onClick={handleCheckDictation}
-                      className="cursor-pointer text-[10px] md:text-sm font-bold text-slate-400 hover:text-secondary-400 uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
+                      className="cursor-pointer text-[10px] md:text-sm font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
                     >
                       Check
                     </button>
@@ -398,12 +355,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     >
                       {revealedWordCount < maxReveals && (
                         <div 
-                          className="absolute inset-0 bg-secondary-400 rounded-full blur-md transition-opacity duration-300"
+                          className="absolute inset-0 bg-white rounded-full blur-md transition-opacity duration-300"
                           style={{ opacity: 0.6 * (1 - revealedWordCount / maxReveals) }}
                         />
                       )}
                       <svg 
-                        className={`w-6 h-6 relative z-10 transition-colors duration-300 ${revealedWordCount >= maxReveals ? 'text-slate-600' : 'text-secondary-400'}`} 
+                        className={`w-6 h-6 relative z-10 transition-colors duration-300 ${revealedWordCount >= maxReveals ? 'text-slate-600' : 'text-white'}`} 
                         fill="currentColor" viewBox="0 0 24 24"
                       >
                         <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z" />
@@ -433,7 +390,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <button 
                       onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
                       disabled={currentIndex === 0}
-                      className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-secondary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
+                      className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
                     >
                       <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                       Prev
@@ -443,7 +400,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     
                     <button 
                       onClick={nextSentence} 
-                      className="cursor-pointer text-sm font-bold text-[#020617] bg-secondary-500 hover:bg-secondary-400 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-secondary-500/20"
+                      className="cursor-pointer text-sm font-bold text-[#020617] bg-white hover:bg-slate-200 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-white/20"
                     >
                       Next
                       <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
