@@ -27,5 +27,7 @@ Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu
 - [x] 16. Câu bị động - Passive Voice (Level: Trung Cấp)
 - [x] 17. Động từ gây nguyên nhân - Causative Verbs (Level: Trung Cấp)
 - [x] 18. Mệnh đề quan hệ - Relative Clauses (Level: Nâng Cao)
+- [x] 19. Liên từ - Conjunctions (Level: Trung Cấp)
+- [x] 20. Giới từ - Prepositions (Level: Trung Cấp)
 
 *(Các phase tiếp theo sẽ tiếp tục áp dụng cấu trúc mới dựa trên file docx)*

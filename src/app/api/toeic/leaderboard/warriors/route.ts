@@ -76,6 +76,6 @@ export async function GET() {
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error('Leaderboard error:', error);
-    return NextResponse.json({ success: false, message: 'Server error' }, { status: 500 });
+    return NextResponse.json({ success: false, message: error instanceof Error ? error.message : 'Server error' }, { status: 500 });
   }
 }
