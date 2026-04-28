@@ -48,7 +48,28 @@ export async function POST(req: NextRequest) {
 		}
 
 		const body = await req.json();
-		const { vocabId, isLearned, isHard, isBookmarked } = body;
+		const { vocabId, isLearned, isHard, isBookmarked, topicToMaster } = body;
+
+		if (topicToMaster) {
+			const vocabItems = await prisma.vocabularyItem.findMany({
+				where: { topic: topicToMaster },
+				select: { id: true }
+			});
+
+			if (vocabItems.length > 0) {
+				const promises = vocabItems.map(v => 
+					prisma.vocabularyTag.upsert({
+						where: { userId_vocabId: { userId: user.id, vocabId: v.id } },
+						update: { isLearned: true },
+						create: { userId: user.id, vocabId: v.id, isLearned: true }
+					})
+				);
+				await prisma.$transaction(promises);
+			}
+
+			revalidatePath('/toeic-progress');
+			return NextResponse.json({ success: true, count: vocabItems.length });
+		}
 
 		if (!vocabId) {
 			return NextResponse.json({ error: 'Missing vocabId' }, { status: 400 });

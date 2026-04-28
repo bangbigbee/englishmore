@@ -257,6 +257,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
     const isBasic = packageType === 'BASIC' || packageType === 'FREE';
     const isAdvanced = packageType === 'ADVANCED';
     const isMixed = packageType === 'MIXED';
+    const isTopicMastered = progress && progress.total > 0 && progress.learned >= progress.total;
 
     const theme = {
         iconBg: isBasic ? 'bg-primary-600' : isAdvanced ? 'bg-primary-800' : isMixed ? 'bg-primary-600' : 'bg-primary-700',
@@ -274,6 +275,11 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 			onClick={onClick}
 			className={`relative w-full group bg-white dark:bg-slate-900 rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] dark:shadow-none flex flex-col justify-start ${minHeightClass} border border-slate-200 dark:border-slate-800 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88,28,135,0.12)] dark:hover:border-slate-700`}
 		>
+            {isTopicMastered && (
+                <div className="absolute top-2 left-2 z-20 pointer-events-none origin-bottom-right rotate-[-15deg] group-hover:rotate-0 transition-transform duration-300" title="Đã thuộc trọn bộ">
+                    <span className="text-2xl drop-shadow-[0_2px_5px_rgba(234,179,8,0.5)]">🎓</span>
+                </div>
+            )}
             {isTestTopic && displaySubtitle && (
                 <div className="absolute top-0 right-0 rounded-bl-[14px] px-3 py-1 bg-primary-900/5 text-primary-900 text-[10px] sm:text-[11px] font-bold border-b border-l border-primary-900/10 shadow-sm z-20 pointer-events-none uppercase tracking-wide">
                     {displaySubtitle.replace('Thuộc bộ đề: ', '')}
@@ -1860,6 +1866,24 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 					};
 					saveRecord();
 				}
+            } else if (currentScore === wList.length && selectedTopic) {
+                if (session && session.user?.role !== 'guest') {
+                    fetch('/api/toeic/vocabulary/tags', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ topicToMaster: selectedTopic })
+                    }).then(() => {
+                        const newTags = { ...vocabTags };
+                        vocabItems.forEach(item => {
+                            newTags[item.id] = { ...newTags[item.id], learned: true };
+                        });
+                        setVocabTags(newTags);
+                        setTopics(prev => prev.map(t => t.topic === selectedTopic ? { ...t, learnedCount: t.wordCount } : t));
+                        toast.success('Xuất sắc! Chủ đề này đã được đánh dấu là Đã thuộc!', { icon: '🎓' });
+                    }).catch(() => {});
+                } else {
+                    toast.success('Đăng nhập để lưu tiến độ hoàn thành bộ từ vựng này nhé!', { icon: '🎓' });
+                }
             }
             
 			return;
