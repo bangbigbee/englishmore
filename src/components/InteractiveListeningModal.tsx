@@ -140,6 +140,10 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
       // If word was hidden but is now revealed by clicking, show it
       if (indicesToReveal.has(i)) return w;
       // Otherwise keep it hidden
+      const match = w.match(/^([^a-zA-Z0-9]*)([a-zA-Z0-9'-]+)([^a-zA-Z0-9]*)$/);
+      if (match) {
+        return match[1] + '___' + match[3];
+      }
       return '___';
     })
     setHintText(hintWords.join(' '))
@@ -497,8 +501,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <textarea 
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
-                      className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-2xl lg:text-3xl font-medium placeholder-slate-600 focus:outline-none resize-none text-center"
-                      placeholder="Gõ tiếng Anh vào đây..."
+                      className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-2xl lg:text-3xl font-medium placeholder:text-base md:placeholder:text-lg placeholder-slate-600 focus:outline-none resize-none text-center"
+                      placeholder="Gõ đầy đủ câu tiếng Anh ở đây..."
                       spellCheck={false}
                     />
                   </div>
