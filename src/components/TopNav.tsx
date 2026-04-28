@@ -164,7 +164,6 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                 </span>
                 <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-[#4c1d95]/10 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
               </Link>
-              </Link>
             </div>
           ) : (
             <button
@@ -305,9 +304,8 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                             </span>
                             <span className="flex-1 truncate text-[14px]">Sổ tay</span>
                         </Link>
-    
-                        </Link>
                         
+
                         <div className="w-[calc(100%-2rem)] mx-auto h-[1px] bg-primary-600/10 my-3" />
                       </>
                     ) : (
