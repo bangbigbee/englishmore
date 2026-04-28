@@ -356,100 +356,52 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             </button>
           </div>
           
-          <div className="w-full min-h-full w-full max-w-[100vw] mx-auto p-4 md:px-12 flex flex-col lg:flex-row gap-8 lg:gap-16 pt-24 pb-8 items-center justify-center">
-            
-            {/* Left Column: Audio & Context */}
-            <div className="w-full lg:w-[35%] flex flex-col justify-center items-center space-y-12">
-              
-              {/* Audio Controls */}
-              <div className="flex items-center justify-center gap-8 w-full max-w-sm">
-                {/* Speed Slider Control */}
-                <div className="flex flex-col flex-1 items-start">
-                  <div className="flex items-center justify-between w-full mb-2">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Speed</span>
-                    <span className="text-xs font-bold text-secondary-400">{speed.toFixed(1)}x</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="0.6" max="1.4" step="0.1" 
-                    value={speed} 
-                    onChange={(e) => setSpeed(Number(e.target.value))}
-                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-secondary-400"
-                  />
-                </div>
+          <div className="w-full min-h-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col pt-16">
 
-                {/* Play Button */}
-                <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
-                  {isPlaying && (
-                    <>
-                      <div className="absolute inset-0 bg-secondary-500 rounded-full blur-xl opacity-40 animate-pulse" />
-                      <div className="absolute -inset-4 border-2 border-secondary-500/30 rounded-full animate-ping" />
-                    </>
-                  )}
-                  {!isPlaying && <div className="absolute inset-0 bg-secondary-500 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
-                  
-                  <button className={`relative w-20 h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-secondary-500/50' : ''}`}>
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-secondary-400' : 'bg-secondary-500'}`}>
-                      {isPlaying ? (
-                        <svg className="w-6 h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
-                      ) : (
-                        <svg className="w-8 h-8 text-[#020617] ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                      )}
-                    </div>
-                  </button>
+            {/* Audio Controls Row */}
+            <div className="flex items-center justify-center gap-10 mb-8 w-full max-w-sm mx-auto">
+              {/* Speed Slider Control */}
+              <div className="flex flex-col flex-1 items-start">
+                <div className="flex items-center justify-between w-full mb-2">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Speed</span>
+                  <span className="text-xs font-bold text-secondary-400">{speed.toFixed(1)}x</span>
                 </div>
+                <input 
+                  type="range" 
+                  min="0.6" max="1.4" step="0.1" 
+                  value={speed} 
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-secondary-400"
+                />
               </div>
 
-              {/* Context Display */}
-              <div className="text-center space-y-4 max-w-md w-full min-h-[120px] flex flex-col justify-center">
-                {method === 'SHADOWING' ? (
+              {/* Play Button */}
+              <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
+                {isPlaying && (
                   <>
-                    <p className="text-2xl md:text-3xl font-bold text-white leading-tight">"{currentSentence.text}"</p>
-                    <p className="text-slate-400 font-medium text-lg">{currentSentence.translation}</p>
+                    <div className="absolute inset-0 bg-secondary-500 rounded-full blur-xl opacity-40 animate-pulse" />
+                    <div className="absolute -inset-4 border-2 border-secondary-500/30 rounded-full animate-ping" />
                   </>
-                ) : (
-                  <div className="p-6 bg-slate-800/30 border border-slate-800 rounded-2xl shadow-inner">
-                    <p className="text-slate-400 text-sm font-medium leading-relaxed">Hãy tập trung lắng nghe đoạn audio và nhập lại chính xác những gì bạn nghe được vào ô bên phải. Có thể sử dụng biểu tượng bóng đèn để nhận gợi ý nếu gặp khó khăn.</p>
-                  </div>
                 )}
-              </div>
-
-              {/* Bottom Navigation */}
-              <div className="flex flex-col items-center gap-4 w-full max-w-sm pt-4">
-                <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-secondary-400 animate-pulse' : 'bg-slate-600'}`} />
-                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-secondary-400">
-                    {contentType === 'SENTENCE' ? 'Câu đơn' : contentType === 'QNA' ? 'Hỏi & Đáp' : 'Bài nói ngắn'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
-                  <button 
-                    onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                    disabled={currentIndex === 0}
-                    className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-secondary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
-                  >
-                    <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                    Prev
-                  </button>
-                  
-                  <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
-                  
-                  <button 
-                    onClick={nextSentence} 
-                    className="cursor-pointer text-sm font-bold text-[#020617] bg-secondary-500 hover:bg-secondary-400 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-secondary-500/20"
-                  >
-                    Next
-                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                  </button>
-                </div>
+                {!isPlaying && <div className="absolute inset-0 bg-secondary-500 rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" />}
+                
+                <button className={`relative w-20 h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-secondary-500/50' : ''}`}>
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-secondary-400' : 'bg-secondary-500'}`}>
+                    {isPlaying ? (
+                      <svg className="w-6 h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
+                    ) : (
+                      <svg className="w-8 h-8 text-[#020617] ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                    )}
+                  </div>
+                </button>
               </div>
             </div>
 
-            {/* Right Column: Interaction Area */}
-            <div className="w-full lg:w-[65%] flex flex-col justify-center items-center">
+            {/* Content Based on Method - Flex-1 to push everything centrally */}
+            <div className="w-full flex-1 flex flex-col justify-center items-center pb-8">
               
               {method === 'DICTATION' && (
-                <div className="w-full space-y-6 animate-in fade-in slide-in-from-right-8 duration-700 max-w-3xl">
+                <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 max-w-4xl">
                   {/* Difficulty Selector */}
                   <div className="flex flex-col items-center gap-4">
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Độ khó</span>
@@ -518,7 +470,12 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               )}
 
               {method === 'SHADOWING' && (
-                <div className="w-full space-y-10 animate-in fade-in slide-in-from-right-8 duration-700 flex flex-col items-center">
+                <div className="w-full space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700 flex flex-col items-center">
+                  <div className="text-center space-y-4 max-w-2xl">
+                    <p className="text-2xl md:text-3xl font-bold text-white leading-tight">"{currentSentence.text}"</p>
+                    <p className="text-slate-400 font-medium text-lg">{currentSentence.translation}</p>
+                  </div>
+
                   <div className="flex flex-col items-center gap-6">
                     <div className="relative group">
                       {isRecording && <div className="absolute inset-0 bg-red-500 rounded-full blur-2xl opacity-40 animate-pulse" />}
@@ -551,7 +508,36 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 </div>
               )}
             </div>
-            
+
+            {/* Bottom Navigation */}
+            <div className="mt-auto pt-8 pb-4 flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-secondary-400 animate-pulse' : 'bg-slate-600'}`} />
+                <span className="text-xs font-bold tracking-[0.2em] uppercase text-secondary-400">
+                  {contentType === 'SENTENCE' ? 'Câu đơn' : contentType === 'QNA' ? 'Hỏi & Đáp' : 'Bài nói ngắn'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
+                <button 
+                  onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                  disabled={currentIndex === 0}
+                  className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-secondary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
+                >
+                  <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                  Prev
+                </button>
+                
+                <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
+                
+                <button 
+                  onClick={nextSentence} 
+                  className="cursor-pointer text-sm font-bold text-[#020617] bg-secondary-500 hover:bg-secondary-400 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-secondary-500/20"
+                >
+                  Next
+                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>
