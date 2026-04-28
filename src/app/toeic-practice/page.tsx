@@ -572,7 +572,7 @@ function ToeicPracticeContent() {
                     <div className="flex flex-col">
                         <h4 className="font-bold text-primary-900 mb-4 text-[14px]">Sản phẩm</h4>
                         <ul className="space-y-3 text-[13px] text-slate-500 font-medium whitespace-nowrap">
-                            <li><button onClick={() => handleTabChange('vocabulary')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Học từ vựng</button></li>
+                            <li><button onClick={() => handleTabChange('vocabulary')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Từ vựng</button></li>
                             <li><button onClick={() => handleTabChange('grammar')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Luyện ngữ pháp</button></li>
                             <li><button onClick={() => handleTabChange('listening')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Luyện Listening</button></li>
                             <li><button onClick={() => handleTabChange('reading')} className="hover:text-primary-900 hover:translate-x-1 transition-all duration-200 block text-left">Luyện Reading</button></li>
@@ -967,7 +967,7 @@ function VocabFeatureCard({ onClick }: any) {
                     </div>
                     
                     <button className="bg-secondary-500 text-primary-900 px-3.5 sm:px-4 py-2 flex items-center gap-1 shrink-0 rounded-full text-[13px] font-black shadow-md hover:scale-105 transition-transform focus:outline-none relative z-10 overflow-hidden whitespace-nowrap">
-                        <span className="relative z-10">Học từ vựng</span>
+                        <span className="relative z-10">Từ vựng</span>
                         <svg className="w-3.5 h-3.5 ml-0.5 relative z-10 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         {/* Button Shimmer */}
                         <div className="absolute top-0 -inset-full h-full w-[150%] block bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none animate-shimmer-sweep" />

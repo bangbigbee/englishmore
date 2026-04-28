@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { toast } from 'sonner'
 import { UpgradeContent } from '@/app/toeic-practice/upgrade/page'
 import LinkifiedText from '@/components/LinkifiedText'
+import Link from 'next/link'
 
 interface BadgeItem {
   id: string
@@ -266,9 +267,15 @@ export default function ProfilePage() {
           >
             Thông tin cá nhân
           </button>
+          <Link
+            href="/toeic-progress?tab=reports-vocabulary"
+            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 flex items-center whitespace-nowrap`}
+          >
+            Tiến độ
+          </Link>
           <button
             onClick={() => setActiveTab('upgrade')}
-            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center gap-2 ${activeTab === 'upgrade' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'upgrade' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
           >
             <span className="text-secondary-500 text-lg">⚡</span> Nâng cấp tài khoản
           </button>
