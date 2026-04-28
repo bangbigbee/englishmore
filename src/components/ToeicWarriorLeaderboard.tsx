@@ -57,82 +57,83 @@ export default function ToeicWarriorLeaderboard() {
   if (warriors.length === 0) return null
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6 relative bg-primary-950/40 rounded-3xl my-8">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-primary-300 to-primary-100 tracking-tight mb-3 inline-block">
+    <div className="w-full max-w-6xl mx-auto py-12 px-4 sm:px-6 animate-in fade-in duration-500">
+      <div className="flex flex-col items-center justify-center text-center gap-1 mb-8">
+        <h3 className="text-2xl font-black bg-gradient-to-r from-secondary-500 to-primary-600 bg-clip-text text-transparent flex items-center justify-center gap-3 mb-1.5">
           Bảng Vinh Danh Chiến Binh ToeicMore
-        </h2>
-        <p className="text-primary-200/80 max-w-2xl mx-auto text-sm sm:text-base">
+        </h3>
+        <p className="text-slate-500 font-medium text-sm max-w-2xl mx-auto">
           Những học viên kiên trì và bền bỉ nhất trên hành trình chinh phục TOEIC.
         </p>
       </div>
 
-      <div className="bg-primary-900/60 md:rounded-3xl shadow-xl shadow-primary-900/20 border border-primary-800 overflow-hidden backdrop-blur-sm">
-        {/* Desktop / Tablet View */}
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-sm text-left min-w-[800px]">
-            <thead className="text-xs text-primary-200 uppercase bg-primary-950/60 border-b border-primary-800 font-semibold">
-              <tr>
-                <th scope="col" className="px-6 py-5 rounded-tl-3xl">Hạng</th>
-                <th scope="col" className="px-6 py-5">Chiến Binh</th>
-                <th scope="col" className="px-6 py-5 text-center">Toeic Stars</th>
-                <th scope="col" className="px-6 py-5 text-center">Thời Gian Học</th>
-                <th scope="col" className="px-6 py-5 text-center">Ngữ Pháp</th>
-                <th scope="col" className="px-6 py-5 text-center">Nghe</th>
-                <th scope="col" className="px-6 py-5 text-center">Đọc</th>
-                <th scope="col" className="px-6 py-5 text-center rounded-tr-3xl">Từ Đã Thuộc</th>
+      <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-secondary-200 overflow-hidden relative">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-100 rounded-bl-full opacity-50 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-50 rounded-tr-full opacity-50 pointer-events-none"></div>
+
+        <div className="overflow-x-auto relative z-10 custom-scrollbar">
+          <table className="w-full text-left min-w-[800px]">
+            <thead>
+              <tr className="border-b-2 border-slate-100 text-primary-900/70 font-semibold">
+                <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
+                <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Chiến Binh</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Toeic Stars</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Thời Gian Học</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Ngữ Pháp</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Nghe</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Đọc</th>
+                <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]" title="Từ Đã Thuộc">Từ Vựng</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-primary-800/50">
+            <tbody>
               {warriors.map((w, idx) => (
                 <motion.tr 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   key={w.id} 
-                  className="hover:bg-primary-800/40 transition-colors group"
+                  className={`border-b border-slate-50 transition-colors ${idx === 0 ? 'bg-secondary-50/30' : 'hover:bg-slate-50/50'}`}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm bg-primary-800 text-primary-200 group-hover:bg-primary-700 group-hover:text-white transition-all shadow-sm">
-                      {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
-                    </div>
+                  <td className="py-4 px-4 text-center">
+                    {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
+                     idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
+                     idx === 2 ? <span className="text-2xl drop-shadow-sm" title="Top 3">🥉</span> : 
+                     <span className="font-semibold text-primary-900/60">#{idx + 1}</span>}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-primary-800 border-2 border-primary-700 shadow-sm ring-2 ring-transparent group-hover:ring-primary-300 transition-all">
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
                         {w.image ? (
                           <img src={w.image} alt={w.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-primary-300 font-bold">
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 font-semibold text-xs">
                             {w.name.charAt(0)}
                           </div>
                         )}
                       </div>
-                      <div className="font-bold text-primary-50">{w.name}</div>
+                      <div className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{w.name}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap">
-                    <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/20">
-                      <span>{w.toeicStars}</span>
-                      <span className="text-xs">⭐</span>
+                  <td className="py-4 px-4 text-center">
+                    <span className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{w.toeicStars} <span className="text-[13px] opacity-80">⭐</span></span>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className={`text-primary-900 ${idx < 3 ? 'font-bold' : 'font-medium'}`}>{formatStudyTime(w.totalStudySeconds)}</div>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className="text-primary-900/80 font-medium">{w.grammarAnswers > 0 ? w.grammarAnswers : '-'}</div>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className="text-primary-900/80 font-medium">{w.listeningAnswers > 0 ? w.listeningAnswers : '-'}</div>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className="text-primary-900/80 font-medium">{w.readingAnswers > 0 ? w.readingAnswers : '-'}</div>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className={`text-primary-900 ${w.learnedVocab > 0 ? (idx < 3 ? 'font-bold' : 'font-semibold') : 'font-medium text-primary-900/80'}`}>
+                      {w.learnedVocab > 0 ? w.learnedVocab : '-'}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap">
-                    <span className="font-semibold text-primary-100 bg-primary-800 px-2.5 py-1 rounded-md text-xs border border-primary-700/50">{formatStudyTime(w.totalStudySeconds)}</span>
-                  </td>
-                  <td className="px-6 py-4 text-center text-primary-200 font-medium whitespace-nowrap">
-                    {w.grammarAnswers > 0 ? w.grammarAnswers : '-'}
-                  </td>
-                  <td className="px-6 py-4 text-center text-primary-200 font-medium whitespace-nowrap">
-                    {w.listeningAnswers > 0 ? w.listeningAnswers : '-'}
-                  </td>
-                  <td className="px-6 py-4 text-center text-primary-200 font-medium whitespace-nowrap">
-                    {w.readingAnswers > 0 ? w.readingAnswers : '-'}
-                  </td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap">
-                    <span className="font-bold text-primary-50 bg-primary-700 px-2.5 py-1 rounded-md text-xs border border-primary-600">
-                      {w.learnedVocab}
-                    </span>
                   </td>
                 </motion.tr>
               ))}
