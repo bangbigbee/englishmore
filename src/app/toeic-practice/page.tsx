@@ -2223,7 +2223,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                         <TopicCard
                                             key={t.topic}
                                             type="vocabulary"
-                                            title={t.topic}
+                                            title={t.topic.replace(/\s*-\s*(Cơ bản|Nâng cao|Hỗn hợp)\s*$/i, '').replace(/\s*\(\s*(Cơ bản|Nâng cao|Hỗn hợp)\s*\)\s*$/i, '')}
                                             badgeText={`${t.wordCount} từ`}
                                             onClick={() => openTopic(t.topic)}
                                             progress={{ learned: t.learnedCount || 0, total: t.wordCount }}
