@@ -1,0 +1,278 @@
+[
+  {
+    _count: { id: 27 },
+    topic: 'Logistics & Transportation - Hậu cần & Vận tải',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 25 },
+    topic: 'Skills & Technology - Kỹ năng & Công nghệ',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 28 },
+    topic: 'Finance & Accounting - Tài chính & Kế toán',
+    category: 'TOEIC'
+  },
+  { _count: { id: 11 }, topic: 'Dining - Ăn uống', category: 'TOEIC' },
+  {
+    _count: { id: 30 },
+    topic: 'Office Administration - Quản trị văn phòng',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 19 },
+    topic: 'Event & Conference - Sự kiện & Hội nghị',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 15 },
+    topic: 'Shopping - Mua sắm',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 30 },
+    topic: 'Customer Service - Dịch vụ khách hàng',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 20 },
+    topic: 'Marketing & Consumer - Tiếp thị & Người tiêu dùng',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 30 },
+    topic: 'Personnel & Recruitment - Nhân sự & Tuyển dụng',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 19 },
+    topic: 'Corporate legal & Contracts - Pháp lý doanh nghiệp & Hợp đồng',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 29 },
+    topic: 'Dining & Restaurant - Ăn uống & Nhà hàng',
+    category: 'TOEIC'
+  },
+  { _count: { id: 13 }, topic: 'Hotel - Khách sạn', category: 'TOEIC' },
+  {
+    _count: { id: 18 },
+    topic: 'Finance & Investment - Tài chính & Đầu tư',
+    category: 'TOEIC'
+  },
+  {
+    _count: { id: 30 },
+    topic: 'Purchasing & Sales - Mua hàng & Bán hàng',
+    category: 'TOEIC'
+  },
+  { _count: { id: 48 }, topic: 'REVIEW 1', category: 'GENERAL' },
+  {
+    _count: { id: 10 },
+    topic: 'Travel & Transportation - Du lịch & Vận tải',
+    category: 'TOEIC'
+  },
+  { _count: { id: 45 }, topic: 'WarmUp', category: 'GENERAL' },
+  {
+    _count: { id: 13 },
+    topic: 'Office Life - Đời sống văn phòng',
+    category: 'TOEIC'
+  },
+  { _count: { id: 20 }, topic: 'Travelling', category: 'GENERAL' },
+  {
+    _count: { id: 29 },
+    topic: 'Travel & Event - Công tác & Sự kiện',
+    category: 'TOEIC'
+  }
+]
+[
+  {
+    id: 'cmo06dnip0000le04l7bzdlt1',
+    topic: 'CUSTOMER SERVICE & COMMUNICATION',
+    packageType: 'ADVANCED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-15T14:58:20.881Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmnzv8jc80000l50441jaf09q',
+    topic: 'OFFICE ADMINISTRATION',
+    packageType: 'ADVANCED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-15T09:46:26.408Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ilbth0001l4044uehixqf',
+    topic: 'Dining & Restaurant - Ăn uống & Nhà hàng',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:15:46.709Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ilfwv0003l404x5e56x9y',
+    topic: 'Logistics & Transportation - Hậu cần & Vận tải',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:15:52.016Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ilhzq0004l4047qh018e9',
+    topic: 'Office Administration - Quản trị văn phòng',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:15:54.711Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmnzw3opn0000l704olvo8gfx',
+    topic: 'Personnel & Recruitment - Nhân sự & Tuyển dụng',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-15T10:10:39.707Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ilnq10007l4042avosaa5',
+    topic: 'Skills & Technology - Kỹ năng & Công nghệ',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:16:02.137Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ilq4e0008l404erwiku3m',
+    topic: 'Travel & Event - Công tác & Sự kiện',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:16:05.246Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2mymgf000kl70438dvqoui',
+    topic: 'Shopping - Mua sắm',
+    packageType: 'BASIC',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T08:18:05.487Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmod6vps10000uuho6z3yr2ai',
+    topic: 'Office',
+    packageType: 'ADVANCED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-24T17:33:23.905Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2mxlpk0004l7041zj58i00',
+    topic: 'Dining - Ăn uống',
+    packageType: 'BASIC',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T08:17:17.865Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ms3ur000djs0478z8ivmr',
+    topic: 'Office Life - Đời sống văn phòng',
+    packageType: 'BASIC',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T08:13:01.444Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2msx6x000ojs04rm2gescv',
+    topic: 'Travel & Transportation - Du lịch & Vận tải',
+    packageType: 'BASIC',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T08:13:39.465Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2qmdpb000djl04u2otahay',
+    topic: 'Hotel - Khách sạn',
+    packageType: 'BASIC',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T10:00:32.735Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2illy70006l4049opb1mib',
+    topic: 'Purchasing & Sales - Mua hàng & Bán hàng',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:15:59.839Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ila350000l404ppv3qvv4',
+    topic: 'Customer Service - Dịch vụ khách hàng',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:15:44.465Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmo2ilduy0002l404gqh9xjyi',
+    topic: 'Finance & Accounting - Tài chính & Kế toán',
+    packageType: 'MIXED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-17T06:15:49.354Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmod6vw0x0007uuhohyqydjsx',
+    topic: 'Personnel',
+    packageType: 'ADVANCED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-24T17:33:32.002Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmod6w6at000nuuhopgt48dow',
+    topic: 'Purchasing',
+    packageType: 'ADVANCED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-24T17:33:45.317Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmod6w91o000ruuhoywegnpcy',
+    topic: 'Marketing and Sales',
+    packageType: 'ADVANCED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-24T17:33:48.876Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  },
+  {
+    id: 'cmod6wjaj0017uuhod4kuhz1v',
+    topic: 'Advanced Traps',
+    packageType: 'ADVANCED',
+    proFields: '[]',
+    ultraFields: '[]',
+    createdAt: 2026-04-24T17:34:02.155Z,
+    updatedAt: 2026-04-28T02:14:36.662Z
+  }
+]

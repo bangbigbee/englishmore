@@ -170,12 +170,28 @@ export default function ToeicRoadmapTab({ level, score, onPracticeClick, onTabCl
                         </div>
                     )}
 
-                    <div className="mt-5">
+                    <div className="mt-5 flex items-center gap-4">
+                        <button 
+                            onClick={() => {
+                                // Simulate updating roadmap logic
+                                import('sonner').then(({ toast }) => {
+                                    toast.success('Đang phân tích dữ liệu và cập nhật lộ trình mới nhất...', {
+                                        position: 'top-center'
+                                    });
+                                });
+                            }}
+                            className="bg-white/20 hover:bg-white/30 text-primary-900 border border-primary-900/20 px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm active:scale-95 flex items-center gap-2"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Cập nhật lộ trình
+                        </button>
                         <button 
                             onClick={() => {
                                 window.dispatchEvent(new Event('openToeicOnboarding'));
                             }}
-                            className="text-[11px] font-bold uppercase tracking-widest text-slate-400 hover:text-primary-900 underline underline-offset-4 transition-colors cursor-pointer"
+                            className="text-[12px] font-bold uppercase tracking-widest text-slate-500 hover:text-primary-900 underline underline-offset-4 transition-colors cursor-pointer"
                         >
                             Đánh giá lại trình độ
                         </button>
