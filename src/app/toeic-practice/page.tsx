@@ -275,11 +275,6 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 			onClick={onClick}
 			className={`relative w-full group bg-white dark:bg-slate-900 rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] dark:shadow-none flex flex-col justify-start ${minHeightClass} border border-slate-200 dark:border-slate-800 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88,28,135,0.12)] dark:hover:border-slate-700`}
 		>
-            {isTopicMastered && (
-                <div className="absolute top-2 left-2 z-20 pointer-events-none origin-bottom-right rotate-[-15deg] group-hover:rotate-0 transition-transform duration-300" title="Đã thuộc trọn bộ">
-                    <span className="text-2xl drop-shadow-[0_2px_5px_rgba(234,179,8,0.5)]">🎓</span>
-                </div>
-            )}
             {isTestTopic && displaySubtitle && (
                 <div className="absolute top-0 right-0 rounded-bl-[14px] px-3 py-1 bg-primary-900/5 text-primary-900 text-[10px] sm:text-[11px] font-bold border-b border-l border-primary-900/10 shadow-sm z-20 pointer-events-none uppercase tracking-wide">
                     {displaySubtitle.replace('Thuộc bộ đề: ', '')}
@@ -366,8 +361,8 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, type = 'grammar', prog
 					<div className={`mt-auto w-full flex items-center gap-3 ${isCompactType ? 'pt-4 border-t border-slate-100/50' : 'pt-3'}`}>
 						<div className={`flex-1 h-1.5 ${theme.progressBg} rounded-full overflow-hidden shadow-inner`}>
 							<div 
-								className={`h-full transition-all duration-700 ${theme.progressFill}`}
-								style={{ width: `${Math.max(2, Math.min(100, Math.round((progress.learned / progress.total) * 100)))}%` }} 
+								className={`h-full transition-all duration-700 ${theme.progressFill} ${isTopicMastered ? 'animate-loading-bar' : ''}`}
+								style={isTopicMastered ? undefined : { width: `${Math.max(2, Math.min(100, Math.round((progress.learned / progress.total) * 100)))}%` }} 
 							/>
 						</div>
                         <span className={`font-bold text-[11px] tabular-nums tracking-widest shrink-0 ${theme.progressText}`}>
