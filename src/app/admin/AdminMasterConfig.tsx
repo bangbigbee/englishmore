@@ -159,7 +159,7 @@ export default function AdminMasterConfig() {
           
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền xem Lý thuyết</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Quyền xem Kiến thức cần nhớ</label>
               <select
                 className="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-900 focus:border-primary-900"
                 value={config.grammar.theoryAccessTier}
