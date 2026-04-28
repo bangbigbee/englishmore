@@ -450,7 +450,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 </div>
               )}
 
-              
+            </div>
+            
             {/* Bottom Navigation */}
             <div className="mt-auto pt-8 pb-4 flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
               <div className="flex items-center gap-2">
