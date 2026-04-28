@@ -363,7 +363,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                             <div className="flex items-center gap-1.5">
                                 {isTopicMastered ? (
                                     <>
-                                        <span className="uppercase tracking-wider text-primary-600 dark:text-primary-400">Đã hoàn thành</span>
+                                        <span className="inline-flex items-center px-2 py-[3px] bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 text-[10px] font-medium border border-primary-100 dark:border-primary-800 rounded">Đã hoàn thành</span>
                                         {onReset && (
                                             <button onClick={(e) => { e.stopPropagation(); onReset(); }} className="p-0.5 rounded-full hover:bg-primary-50 dark:hover:bg-slate-800 text-slate-400 hover:text-primary-600 transition-colors" title="Làm lại bộ từ vựng">
                                                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -373,7 +373,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                                         )}
                                     </>
                                 ) : (
-                                    <span className="uppercase tracking-wider text-slate-500 dark:text-slate-400">{progress.learned > 0 ? 'Đang học' : 'Chưa học'}</span>
+                                    <span className="inline-flex items-center px-2 py-[3px] bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-medium border border-slate-200 dark:border-slate-700 rounded">{progress.learned > 0 ? 'Đang học' : 'Chưa học'}</span>
                                 )}
                             </div>
                             <span className={`font-bold tabular-nums tracking-widest shrink-0 ${theme.progressText}`}>
@@ -2208,13 +2208,6 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                     )}
                 </div>
 
-				<div className="flex justify-between items-center mb-5 sm:mb-6 border-b border-slate-200 pb-3">
-					<h2 className="text-xl sm:text-[22px] font-black text-primary-900 flex items-center gap-2.5 tracking-tight px-1">
-						<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
-						Các Chủ Đề Luyện Tập
-					</h2>
-				</div>
-
 				<>
 						{loading ? (
 							<div className="py-12 text-center text-slate-400 italic font-medium">Đang tải chủ đề...</div>
@@ -2227,15 +2220,17 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
                                 <div className="inline-flex flex-wrap gap-1.5 sm:gap-2 mb-6 p-1.5 bg-slate-100/80 rounded-[14px]">
                                     {(['ALL', 'BASIC', 'ADVANCED', 'MIXED']).map(pkg => {
                                         const isActive = activePackage === pkg;
-                                        const colorClass = pkg === 'BASIC' ? 'text-primary-600' : 
-                                                           pkg === 'ADVANCED' ? 'text-primary-800' : 
-                                                           pkg === 'MIXED' ? 'text-primary-600' : 
-                                                           'text-primary-900';
                                         
-                                        const activeBg = pkg === 'BASIC' ? 'bg-white shadow-sm ring-1 ring-primary-100' :
-                                                         pkg === 'ADVANCED' ? 'bg-white shadow-sm ring-1 ring-primary-200' :
-                                                         pkg === 'MIXED' ? 'bg-white shadow-sm ring-1 ring-primary-100' :
-                                                         'bg-white shadow-sm ring-1 ring-slate-200';
+                                        const colorClass = isActive ? 'text-white' : (
+                                                           pkg === 'BASIC' ? 'text-primary-600' : 
+                                                           pkg === 'ADVANCED' ? 'text-primary-800' : 
+                                                           pkg === 'MIXED' ? 'text-secondary-600' : 
+                                                           'text-slate-700');
+                                        
+                                        const activeBg = pkg === 'BASIC' ? 'bg-linear-to-r from-primary-600 to-primary-500 shadow-md shadow-primary-500/20 ring-1 ring-primary-500' :
+                                                         pkg === 'ADVANCED' ? 'bg-linear-to-r from-primary-800 to-primary-700 shadow-md shadow-primary-800/20 ring-1 ring-primary-700' :
+                                                         pkg === 'MIXED' ? 'bg-linear-to-r from-secondary-500 to-orange-500 shadow-md shadow-secondary-500/20 ring-1 ring-secondary-500' :
+                                                         'bg-slate-800 shadow-md shadow-slate-800/20 ring-1 ring-slate-700';
                                                          
                                         const inactiveBg = 'hover:bg-white/60 opacity-70 hover:opacity-100';
 
