@@ -33,6 +33,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [speed, setSpeed] = useState(1.0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [revealedWordCount, setRevealedWordCount] = useState(0)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
   const currentSentence = PRACTICE_SENTENCES[currentIndex]
   const targetWords = currentSentence.text.split(' ')
@@ -248,12 +249,17 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               </span>
               Master<br/><span className="text-blue-500">Listening</span>
             </h2>
-            <button onClick={onClose} className="md:hidden w-8 h-8 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer text-sm">✕</button>
+            <div className="flex items-center gap-2 md:hidden">
+              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer text-white">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
+              </button>
+              <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer text-sm">✕</button>
+            </div>
           </div>
           
-          <div className="space-y-4 flex-1">
+          <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex space-y-4 flex-1 flex-col`}>
             <button 
-              onClick={() => setMethod('DICTATION')}
+              onClick={() => { setMethod('DICTATION'); setIsMobileMenuOpen(false); }}
               className={`w-full cursor-pointer text-left p-4 md:p-5 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'DICTATION' ? 'bg-blue-500/15 border border-blue-500/40' : 'bg-white/5 border border-white/5 hover:bg-white/10'}`}
             >
               {method === 'DICTATION' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-l-2xl" />}
@@ -262,7 +268,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             </button>
 
             <button 
-              onClick={() => setMethod('SHADOWING')}
+              onClick={() => { setMethod('SHADOWING'); setIsMobileMenuOpen(false); }}
               className={`w-full cursor-pointer text-left p-4 md:p-5 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'SHADOWING' ? 'bg-blue-500/15 border border-blue-500/40' : 'bg-white/5 border border-white/5 hover:bg-white/10'}`}
             >
               {method === 'SHADOWING' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-l-2xl" />}
@@ -271,7 +277,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             </button>
           </div>
           
-          <div className="mt-4 md:mt-auto pt-6 md:pt-8 border-t border-white/10">
+          <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block mt-4 md:mt-auto pt-6 md:pt-8 border-t border-white/10`}>
             <button onClick={onClose} className="w-full cursor-pointer py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm transition-colors border border-white/10 flex items-center justify-center gap-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
               Thoát phòng tập
