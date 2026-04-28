@@ -73,7 +73,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         recognitionRef.current.onerror = (event: any) => {
           console.error('Speech recognition error', event.error)
           setIsRecording(false)
-          setFeedback({ type: 'error', msg: 'Không thể nhận diện giọng nói. Vui lòng thử lại.' })
+          toast.error('Không thể nhận diện giọng nói. Vui lòng thử lại.', { position: 'top-center' })
         }
         
         recognitionRef.current.onend = () => {
