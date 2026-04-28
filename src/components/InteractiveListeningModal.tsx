@@ -368,33 +368,29 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   />
                 </div>
 
-                <div className="flex gap-4 justify-center mt-4">
-                  {/* The check result button was moved to the top right next to the hint bulb */}
+                {/* Bottom Navigation */}
+                <div className="flex justify-center mt-6 w-full max-w-sm mx-auto">
+                  <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
+                    <button 
+                      onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                      disabled={currentIndex === 0}
+                      className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-secondary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
+                    >
+                      <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                      Prev
+                    </button>
+                    
+                    <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
+                    
+                    <button 
+                      onClick={nextSentence} 
+                      className="cursor-pointer text-sm font-bold text-[#020617] bg-secondary-500 hover:bg-secondary-400 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-secondary-500/20"
+                    >
+                      Next
+                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Bottom Navigation */}
-            <div className="mt-auto pt-8 pb-4 flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
-              <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
-                <button 
-                  onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                  disabled={currentIndex === 0}
-                  className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-secondary-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
-                >
-                  <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                  Prev
-                </button>
-                
-                <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
-                
-                <button 
-                  onClick={nextSentence} 
-                  className="cursor-pointer text-sm font-bold text-[#020617] bg-secondary-500 hover:bg-secondary-400 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-secondary-500/20"
-                >
-                  Next
-                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </button>
               </div>
             </div>
           </div>
