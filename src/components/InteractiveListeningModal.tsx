@@ -4,21 +4,31 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 
 const PRACTICE_SENTENCES = [
-  { id: 1, text: "The new marketing campaign was very successful.", translation: "Chiến dịch tiếp thị mới đã rất thành công.", missingWord: "marketing" },
-  { id: 2, text: "Please send the report to the manager by Friday.", translation: "Vui lòng gửi báo cáo cho người quản lý trước thứ Sáu.", missingWord: "report" },
-  { id: 3, text: "Our company is looking for a new software engineer.", translation: "Công ty của chúng tôi đang tìm kiếm một kỹ sư phần mềm mới.", missingWord: "software" },
-  { id: 4, text: "The meeting has been rescheduled for next Monday.", translation: "Cuộc họp đã được dời lại vào thứ Hai tuần sau.", missingWord: "rescheduled" },
-  { id: 5, text: "We need to review the budget for the upcoming quarter.", translation: "Chúng ta cần xem xét ngân sách cho quý sắp tới.", missingWord: "budget" }
+  { id: 1, text: "The new marketing campaign was very successful.", translation: "Chiến dịch tiếp thị mới đã rất thành công." },
+  { id: 2, text: "Please send the report to the manager by Friday.", translation: "Vui lòng gửi báo cáo cho người quản lý trước thứ Sáu." },
+  { id: 3, text: "Our company is looking for a new software engineer.", translation: "Công ty của chúng tôi đang tìm kiếm một kỹ sư phần mềm mới." },
+  { id: 4, text: "The meeting has been rescheduled for next Monday.", translation: "Cuộc họp đã được dời lại vào thứ Hai tuần sau." },
+  { id: 5, text: "We need to review the budget for the upcoming quarter.", translation: "Chúng ta cần xem xét ngân sách cho quý sắp tới." }
 ];
 
+const DIFFICULTIES = [
+  { label: 'Tân binh', value: 20 },
+  { label: 'Cơ bản', value: 40 },
+  { label: 'Trung cấp', value: 60 },
+  { label: 'Nâng cao', value: 80 },
+  { label: 'Hardcore', value: 100 }
+]
+
 export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-  const [method, setMethod] = useState<'DICTATION' | 'GAP_FILL' | 'SHADOWING'>('DICTATION')
+  const [method, setMethod] = useState<'DICTATION' | 'SHADOWING'>('DICTATION')
+  const [difficulty, setDifficulty] = useState(100)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userInput, setUserInput] = useState('')
   const [feedback, setFeedback] = useState<{type: 'success' | 'error' | '', msg: string}>({type: '', msg: ''})
   const [isRecording, setIsRecording] = useState(false)
   const [speechResult, setSpeechResult] = useState('')
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null)
+  const [hintText, setHintText] = useState('')
   
   const currentSentence = PRACTICE_SENTENCES[currentIndex]
   
@@ -29,7 +39,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices()
       const englishVoices = voices.filter(v => v.lang.startsWith('en-US') || v.lang.startsWith('en-GB'))
-      // Prefer Google US English or standard en-US
       const preferred = englishVoices.find(v => v.name.includes('Google US English')) || englishVoices[0]
       if (preferred) setVoice(preferred)
     }
@@ -68,19 +77,45 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     }
   }, [])
 
-  // Reset state when changing sentence or method
+  // Generate Hint
+  useEffect(() => {
+    if (difficulty === 100) {
+      setHintText('___ '.repeat(currentSentence.text.split(' ').length).trim())
+      return
+    }
+    const words = currentSentence.text.split(' ')
+    const numToHide = Math.max(1, Math.floor(words.length * (difficulty / 100)))
+    
+    // Create consistent random blanks based on sentence id so it doesn't jump around
+    // Simple deterministic random
+    let seed = currentSentence.id + difficulty
+    const random = () => {
+      const x = Math.sin(seed++) * 10000
+      return x - Math.floor(x)
+    }
+
+    const hiddenIndices = new Set<number>()
+    while(hiddenIndices.size < numToHide && hiddenIndices.size < words.length) {
+      hiddenIndices.add(Math.floor(random() * words.length))
+    }
+    
+    const hint = words.map((w, i) => hiddenIndices.has(i) ? '___' : w).join(' ')
+    setHintText(hint)
+  }, [currentIndex, difficulty])
+
+  // Reset state
   useEffect(() => {
     setUserInput('')
     setFeedback({type: '', msg: ''})
     setSpeechResult('')
-  }, [currentIndex, method])
+  }, [currentIndex, method, difficulty])
 
   const playAudio = (rate: number = 1.0) => {
     if (!('speechSynthesis' in window)) {
       setFeedback({type: 'error', msg: 'Trình duyệt của bạn không hỗ trợ đọc văn bản.'})
       return
     }
-    window.speechSynthesis.cancel() // Stop any current speech
+    window.speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(currentSentence.text)
     if (voice) utterance.voice = voice
     utterance.rate = rate
@@ -121,16 +156,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     if (cleanInput === cleanTarget) {
       setFeedback({ type: 'success', msg: 'Chính xác hoàn toàn! Bạn nghe rất tốt. 🎉' })
     } else {
-      // Basic diff could be added, but for now simple check
       setFeedback({ type: 'error', msg: 'Chưa chính xác. Hãy nghe kỹ lại nhé!' })
-    }
-  }
-
-  const handleCheckGapFill = () => {
-    if (cleanText(userInput) === cleanText(currentSentence.missingWord)) {
-      setFeedback({ type: 'success', msg: 'Chính xác! 🎉' })
-    } else {
-      setFeedback({ type: 'error', msg: 'Sai rồi. Từ này khá quan trọng đấy!' })
     }
   }
 
@@ -138,7 +164,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     const cleanInput = cleanText(transcript)
     const cleanTarget = cleanText(currentSentence.text)
     
-    // Simple similarity check (could be Levenshtein in real app)
     if (cleanInput === cleanTarget || cleanTarget.includes(cleanInput)) {
       setFeedback({ type: 'success', msg: 'Tuyệt vời! Phát âm chuẩn như người bản xứ! 🌟' })
     } else {
@@ -156,160 +181,185 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
   if (!isOpen) return null
 
-  // Helper to render gap fill text
-  const renderGapFillText = () => {
-    const parts = currentSentence.text.split(new RegExp(`\\b${currentSentence.missingWord}\\b`, 'i'))
-    if (parts.length < 2) return currentSentence.text // Fallback
-    
-    return (
-      <div className="text-xl font-medium leading-relaxed text-slate-800 flex flex-wrap items-center justify-center gap-2">
-        <span>{parts[0]}</span>
-        <input 
-          type="text"
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleCheckGapFill()}
-          className="w-32 border-b-2 border-slate-400 bg-slate-50 text-center text-primary-900 font-bold focus:outline-none focus:border-primary-600 px-2 py-1 transition-colors"
-          placeholder="..."
-          autoFocus
-        />
-        <span>{parts[1]}</span>
-      </div>
-    )
-  }
-
   return (
-    <div className="fixed inset-0 z-[200] isolate flex bg-white overflow-hidden">
+    <div className="fixed inset-0 z-[200] isolate flex bg-[#0B0F19] overflow-hidden">
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-        className="relative w-full h-full flex flex-col md:flex-row"
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.98 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full h-full flex flex-col md:flex-row text-slate-200"
       >
-        {/* Left Sidebar: Methods */}
-        <div className="w-full md:w-1/3 bg-slate-50 p-6 flex flex-col border-r border-slate-200">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-black text-primary-900 flex items-center gap-2">
-              <span className="bg-primary-100 text-primary-700 p-2 rounded-xl">🎧</span>
-              Interactive<br/>Listening
+        {/* Background Effects */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-600/10 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px]" />
+        </div>
+
+        {/* Left Sidebar */}
+        <div className="w-full md:w-[320px] lg:w-[380px] bg-white/5 border-r border-white/10 p-6 lg:p-8 flex flex-col backdrop-blur-xl z-10">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-2xl font-black text-white flex items-center gap-3 tracking-tight">
+              <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/30">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </span>
+              Master<br/><span className="text-primary-400">Listening</span>
             </h2>
-            <button onClick={onClose} className="md:hidden w-8 h-8 flex items-center justify-center bg-slate-200 rounded-full text-slate-600">✕</button>
+            <button onClick={onClose} className="md:hidden w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors">✕</button>
           </div>
           
-          <p className="text-sm font-medium text-slate-500 mb-4">Chọn phương pháp luyện tập:</p>
-          
-          <div className="space-y-3 flex-1">
+          <div className="space-y-4 flex-1">
             <button 
               onClick={() => setMethod('DICTATION')}
-              className={`w-full text-left p-4 rounded-2xl transition-all border-2 ${method === 'DICTATION' ? 'border-primary-500 bg-white shadow-md' : 'border-transparent hover:bg-slate-100'}`}
+              className={`w-full text-left p-5 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'DICTATION' ? 'bg-primary-500/20 border border-primary-500/50' : 'bg-white/5 border border-white/5 hover:bg-white/10'}`}
             >
-              <h3 className={`font-bold ${method === 'DICTATION' ? 'text-primary-900' : 'text-slate-700'}`}>1. Nghe chép chính tả</h3>
-              <p className="text-[12px] text-slate-500 mt-1">Luyện nghe chi tiết từng từ một. Rất tốt cho Beginner.</p>
-            </button>
-
-            <button 
-              onClick={() => setMethod('GAP_FILL')}
-              className={`w-full text-left p-4 rounded-2xl transition-all border-2 ${method === 'GAP_FILL' ? 'border-secondary-500 bg-white shadow-md' : 'border-transparent hover:bg-slate-100'}`}
-            >
-              <h3 className={`font-bold ${method === 'GAP_FILL' ? 'text-secondary-600' : 'text-slate-700'}`}>2. Điền từ (Gap Fill)</h3>
-              <p className="text-[12px] text-slate-500 mt-1">Luyện phản xạ bắt Keyword (từ khóa chính).</p>
+              {method === 'DICTATION' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 rounded-l-2xl" />}
+              <h3 className={`text-lg font-bold ${method === 'DICTATION' ? 'text-white' : 'text-slate-300'}`}>Nghe Chép Chính Tả</h3>
+              <p className="text-[13px] text-slate-400 mt-2 font-medium">Luyện bắt từ khóa & gõ lại toàn bộ câu với các độ khó khác nhau.</p>
             </button>
 
             <button 
               onClick={() => setMethod('SHADOWING')}
-              className={`w-full text-left p-4 rounded-2xl transition-all border-2 ${method === 'SHADOWING' ? 'border-blue-500 bg-white shadow-md' : 'border-transparent hover:bg-slate-100'}`}
+              className={`w-full text-left p-5 rounded-2xl transition-all duration-300 relative overflow-hidden group ${method === 'SHADOWING' ? 'bg-blue-500/20 border border-blue-500/50' : 'bg-white/5 border border-white/5 hover:bg-white/10'}`}
             >
-              <h3 className={`font-bold ${method === 'SHADOWING' ? 'text-blue-600' : 'text-slate-700'}`}>3. Nghe & Nhại lại</h3>
-              <p className="text-[12px] text-slate-500 mt-1">Shadowing giúp cải thiện ngữ điệu và phát âm chuẩn xác.</p>
+              {method === 'SHADOWING' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-l-2xl" />}
+              <h3 className={`text-lg font-bold ${method === 'SHADOWING' ? 'text-white' : 'text-slate-300'}`}>Luyện Ngữ Điệu</h3>
+              <p className="text-[13px] text-slate-400 mt-2 font-medium">Bắt chước ngữ điệu bản xứ. Trí tuệ nhân tạo sẽ chấm điểm bạn.</p>
+            </button>
+          </div>
+          
+          <div className="mt-auto pt-8 border-t border-white/10">
+            <button onClick={onClose} className="w-full py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm transition-colors border border-white/10 flex items-center justify-center gap-2">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+              Thoát phòng tập
             </button>
           </div>
         </div>
 
         {/* Right Content Area */}
-        <div className="w-full md:w-2/3 p-8 flex flex-col h-full bg-white relative">
-          <button onClick={onClose} className="absolute top-6 right-6 hidden md:flex w-8 h-8 items-center justify-center bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 transition-colors">✕</button>
+        <div className="flex-1 flex flex-col h-full relative z-10 overflow-y-auto">
+          <button onClick={onClose} className="absolute top-8 right-8 hidden md:flex w-12 h-12 items-center justify-center bg-white/5 hover:bg-white/10 rounded-full text-slate-300 transition-all border border-white/10 hover:rotate-90">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
           
-          <div className="flex items-center justify-between mb-8">
-            <span className="text-xs font-bold tracking-widest uppercase text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg">Câu {currentIndex + 1} / {PRACTICE_SENTENCES.length}</span>
-            <button onClick={nextSentence} className="text-sm font-bold text-primary-600 hover:text-primary-800 flex items-center gap-1">Chuyển câu <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg></button>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center relative">
+          <div className="max-w-3xl w-full mx-auto p-8 lg:p-12 flex-1 flex flex-col justify-center">
             
+            <div className="flex items-center justify-between mb-16">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
+                <span className="text-sm font-bold tracking-[0.2em] uppercase text-primary-400">Sentences</span>
+              </div>
+              <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-full px-5 py-2">
+                <span className="text-sm font-bold text-white">{currentIndex + 1} <span className="text-slate-500">/ {PRACTICE_SENTENCES.length}</span></span>
+                <div className="w-px h-4 bg-white/10" />
+                <button onClick={nextSentence} className="text-sm font-bold text-primary-400 hover:text-primary-300 transition-colors uppercase tracking-wider flex items-center gap-2 group">
+                  Next
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </button>
+              </div>
+            </div>
+
             {/* Audio Controls */}
-            <div className="flex items-center gap-4 mb-10">
-              <button 
-                onClick={() => playAudio(1.0)}
-                className="w-16 h-16 bg-primary-900 text-white rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-primary-900/30"
-              >
-                <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-              </button>
-              <button 
-                onClick={() => playAudio(0.7)}
-                className="w-12 h-12 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-full flex items-center justify-center hover:scale-105 transition-all text-xs font-bold"
-                title="Nghe chậm"
-              >
-                0.7x
-              </button>
+            <div className="flex flex-col items-center gap-8 mb-16">
+              <div className="relative group cursor-pointer" onClick={() => playAudio(1.0)}>
+                <div className="absolute inset-0 bg-primary-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+                <button className="relative w-24 h-24 bg-gradient-to-b from-white/10 to-white/5 border border-white/20 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-2xl backdrop-blur-sm">
+                  <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center shadow-inner">
+                    <svg className="w-10 h-10 text-white ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                  </div>
+                </button>
+              </div>
+              <div className="flex items-center gap-2 bg-white/5 rounded-full p-1 border border-white/10">
+                <button onClick={() => playAudio(0.7)} className="px-4 py-1.5 rounded-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-colors uppercase tracking-wider">0.7x Slow</button>
+                <div className="w-px h-3 bg-white/10" />
+                <button onClick={() => playAudio(1.0)} className="px-4 py-1.5 rounded-full text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-colors uppercase tracking-wider">1.0x Normal</button>
+              </div>
             </div>
 
             {/* Content Based on Method */}
-            <div className="w-full max-w-lg text-center space-y-6">
+            <div className="w-full flex flex-col items-center">
               
               {method === 'DICTATION' && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <p className="text-sm text-slate-500 font-medium">Lắng nghe và gõ lại chính xác câu bạn vừa nghe:</p>
-                  <textarea 
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    className="w-full h-32 p-4 border-2 border-slate-200 rounded-2xl focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all resize-none text-lg text-slate-800"
-                    placeholder="Type what you hear..."
-                  />
-                  <div className="flex gap-3 justify-center">
-                    <button onClick={handleCheckDictation} className="bg-primary-900 text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-primary-800 transition-colors">Kiểm tra</button>
-                    <button onClick={() => setUserInput(currentSentence.text)} className="bg-slate-100 text-slate-600 px-6 py-2.5 rounded-xl font-bold hover:bg-slate-200 transition-colors">Xem đáp án</button>
+                <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                  
+                  {/* Difficulty Selector */}
+                  <div className="flex flex-col items-center gap-4">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Độ khó</span>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {DIFFICULTIES.map(d => (
+                        <button 
+                          key={d.value}
+                          onClick={() => setDifficulty(d.value)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${difficulty === d.value ? 'bg-primary-500/20 border-primary-500 text-primary-400' : 'bg-transparent border-white/10 text-slate-400 hover:border-white/30 hover:text-white'}`}
+                        >
+                          {d.label} <span className="opacity-50 ml-1">{d.value}%</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
 
-              {method === 'GAP_FILL' && (
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <p className="text-sm text-slate-500 font-medium">Lắng nghe và điền từ còn thiếu vào chỗ trống:</p>
-                  <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-inner">
-                    {renderGapFillText()}
+                  <div className="w-full bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-blue-500 opacity-50" />
+                    
+                    {/* Hint Display */}
+                    <div className="mb-6 pb-6 border-b border-white/10">
+                      <p className="text-lg md:text-xl font-medium leading-relaxed text-slate-300 text-center tracking-wide">
+                        {hintText}
+                      </p>
+                    </div>
+
+                    <textarea 
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      className="w-full h-32 bg-transparent text-white text-xl md:text-2xl font-medium placeholder-white/20 focus:outline-none resize-none text-center"
+                      placeholder="Gõ toàn bộ câu tiếng Anh vào đây..."
+                      spellCheck={false}
+                    />
                   </div>
-                  <div className="flex gap-3 justify-center">
-                    <button onClick={handleCheckGapFill} className="bg-secondary-500 text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-secondary-600 transition-colors">Kiểm tra</button>
-                    <button onClick={() => setUserInput(currentSentence.missingWord)} className="bg-slate-100 text-slate-600 px-6 py-2.5 rounded-xl font-bold hover:bg-slate-200 transition-colors">Gợi ý</button>
+
+                  <div className="flex gap-4 justify-center">
+                    <button onClick={handleCheckDictation} className="bg-primary-500 hover:bg-primary-400 text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-primary-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
+                    <button onClick={() => setUserInput(currentSentence.text)} className="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-3.5 rounded-2xl font-bold transition-all">Gợi ý đáp án</button>
                   </div>
                 </div>
               )}
 
               {method === 'SHADOWING' && (
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <p className="text-sm text-slate-500 font-medium">Nghe câu sau đó nhấn giữ Micro để nhại lại ngữ điệu:</p>
-                  <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
-                    <p className="text-xl font-medium text-slate-800">{currentSentence.text}</p>
-                    <p className="text-sm text-slate-500 mt-2">{currentSentence.translation}</p>
+                <div className="w-full space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700 flex flex-col items-center">
+                  
+                  <div className="text-center space-y-4 max-w-2xl">
+                    <p className="text-2xl md:text-3xl font-bold text-white leading-tight">"{currentSentence.text}"</p>
+                    <p className="text-slate-400 font-medium text-lg">{currentSentence.translation}</p>
                   </div>
                   
-                  <div className="flex flex-col items-center gap-3">
-                    <button 
-                      onMouseDown={startRecording}
-                      onMouseUp={stopRecording}
-                      onTouchStart={startRecording}
-                      onTouchEnd={stopRecording}
-                      className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${isRecording ? 'bg-red-500 scale-110 shadow-[0_0_20px_rgba(239,68,68,0.5)] animate-pulse' : 'bg-blue-600 hover:bg-blue-700 shadow-lg'}`}
-                    >
-                      <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                      </svg>
-                    </button>
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{isRecording ? 'Đang nghe...' : 'Nhấn giữ để nói'}</span>
+                  <div className="flex flex-col items-center gap-6 mt-8">
+                    <div className="relative group">
+                      {isRecording && <div className="absolute inset-0 bg-red-500 rounded-full blur-2xl opacity-40 animate-pulse" />}
+                      <button 
+                        onMouseDown={startRecording}
+                        onMouseUp={stopRecording}
+                        onTouchStart={startRecording}
+                        onTouchEnd={stopRecording}
+                        className={`relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 border-4 ${isRecording ? 'bg-red-500 border-red-400 scale-110' : 'bg-blue-600 border-blue-500/50 hover:bg-blue-500 shadow-xl shadow-blue-500/20'}`}
+                      >
+                        <svg className={`w-10 h-10 text-white transition-transform ${isRecording ? 'scale-110' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        </svg>
+                      </button>
+                    </div>
+                    
+                    <div className="text-center">
+                      <span className={`text-sm font-bold uppercase tracking-widest ${isRecording ? 'text-red-400 animate-pulse' : 'text-slate-500'}`}>
+                        {isRecording ? 'Hệ thống đang nghe...' : 'Nhấn giữ để phát âm'}
+                      </span>
+                    </div>
                     
                     {speechResult && (
-                      <div className="mt-4 p-3 bg-slate-50 rounded-lg text-sm text-slate-600 w-full">
-                        <span className="font-semibold">Bạn nói: </span>"{speechResult}"
+                      <div className="mt-4 p-5 bg-white/5 border border-white/10 rounded-2xl text-center max-w-md w-full backdrop-blur-sm">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Trí tuệ nhân tạo nghe được:</span>
+                        <p className="text-lg font-medium text-white">"{speechResult}"</p>
                       </div>
                     )}
                   </div>
@@ -320,10 +370,13 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <AnimatePresence>
                 {feedback.msg && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    className={`p-4 rounded-xl text-sm font-bold flex items-center gap-2 text-left ${feedback.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }} 
+                    animate={{ opacity: 1, y: 0, scale: 1 }} 
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className={`mt-10 p-5 rounded-2xl text-sm md:text-base font-bold flex items-center justify-center gap-3 w-full max-w-md mx-auto shadow-2xl backdrop-blur-md border ${feedback.type === 'success' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/20'}`}
                   >
-                    {feedback.type === 'success' ? '✅' : '❌'} {feedback.msg}
+                    <span className="text-2xl">{feedback.type === 'success' ? '🎉' : '💡'}</span>
+                    {feedback.msg}
                   </motion.div>
                 )}
               </AnimatePresence>
