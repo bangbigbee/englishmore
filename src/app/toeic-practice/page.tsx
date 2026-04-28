@@ -1512,37 +1512,32 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 					
 					setPronunciationStatus('Chúc mừng bạn đã phát âm rất tốt.');
 					
-					setPronunciationStreak(prev => {
-						const newStreak = prev + 1;
-						setCorrectlyPronouncedIds(prevIds => {
-							const newIds = prevIds.includes(wordId) ? prevIds : [...prevIds, wordId];
-							
-							const isTopicComplete = newIds.length > 0 && newIds.length === vocabItems.length;
-							
-							fetch('/api/toeic/vocabulary/pronunciation-reward', {
-								method: 'POST',
-								headers: { 'Content-Type': 'application/json' },
-								body: JSON.stringify({ wordId, streak: newStreak, isTopicComplete })
-							}).then(res => res.json()).then(data => {
-								if (data.awardReason) {
-									playPronunciationRewardChime();
-									toast.success(data.awardReason, { icon: '⭐' });
-									if (session && data.awardedStars > 0) update?.();
-								} else if (!session && (newStreak === 1 || newStreak === 3 || newStreak === 10 || isTopicComplete)) {
-									playPronunciationRewardChime();
-									toast.success('Bạn phát âm tốt lắm!', { icon: '⭐' });
-								}
+					const newStreak = pronunciationStreak + 1;
+					const newIds = correctlyPronouncedIds.includes(wordId) ? correctlyPronouncedIds : [...correctlyPronouncedIds, wordId];
+					const isTopicComplete = newIds.length > 0 && newIds.length === vocabItems.length;
 
-								if (!session && (newStreak === 2 || newStreak === 5)) {
-									toast.success(newStreak === 2 ? 'Hay lắm! 2 từ liên tiếp rồi, đăng nhập để lưu tiến độ nhé!' : 'Bạn đang làm rất tốt! Đăng nhập để lưu tiến độ nhé!');
-									openLoginModal?.(`${pathname}?${searchParams.toString()}`);
-								}
-							}).catch(() => {});
-							
-							return newIds;
-						});
-						return newStreak;
-					});
+					setPronunciationStreak(newStreak);
+					setCorrectlyPronouncedIds(newIds);
+					
+					fetch('/api/toeic/vocabulary/pronunciation-reward', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ wordId, streak: newStreak, isTopicComplete })
+					}).then(res => res.json()).then(data => {
+						if (data.awardReason) {
+							playPronunciationRewardChime();
+							toast.success(data.awardReason, { id: 'pronunciation-reward', icon: '⭐' });
+							if (session && data.awardedStars > 0) update?.();
+						} else if (!session && (newStreak === 1 || newStreak === 3 || newStreak === 10 || isTopicComplete)) {
+							playPronunciationRewardChime();
+							toast.success('Bạn phát âm tốt lắm!', { id: 'pronunciation-good', icon: '⭐' });
+						}
+
+						if (!session && (newStreak === 2 || newStreak === 5)) {
+							toast.success(newStreak === 2 ? 'Hay lắm! 2 từ liên tiếp rồi, đăng nhập để lưu tiến độ nhé!' : 'Bạn đang làm rất tốt! Đăng nhập để lưu tiến độ nhé!', { id: `streak-toast-${newStreak}` });
+							openLoginModal?.(`${pathname}?${searchParams.toString()}`);
+						}
+					}).catch(() => {});
 				} else {
 					setPronunciationStreak(0);
 					setPronunciationStatus(score >= 80 ? 'Rất tốt! Hãy tiếp tục phát huy.' : 'Hãy thử lại một lần nữa nhé.');
