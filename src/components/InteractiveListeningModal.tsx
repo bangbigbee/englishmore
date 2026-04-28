@@ -36,6 +36,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   
   const currentSentence = PRACTICE_SENTENCES[currentIndex]
   const targetWords = currentSentence.text.split(' ')
+  const maxReveals = difficulty === 100 ? targetWords.length : Math.max(1, Math.floor(targetWords.length * (difficulty / 100)))
   
   const recognitionRef = useRef<any>(null)
 
@@ -84,9 +85,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
   // Generate Hint
   useEffect(() => {
-    const words = currentSentence.text.split(' ')
-    const numToHide = difficulty === 100 ? words.length : Math.max(1, Math.floor(words.length * (difficulty / 100)))
-    
     // Create consistent random blanks based on sentence id so it doesn't jump around
     // Simple deterministic random
     let seed = currentSentence.id + difficulty
@@ -96,17 +94,23 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     }
 
     const hiddenIndices = new Set<number>()
-    while(hiddenIndices.size < numToHide && hiddenIndices.size < words.length) {
-      hiddenIndices.add(Math.floor(random() * words.length))
+    while(hiddenIndices.size < maxReveals && hiddenIndices.size < targetWords.length) {
+      hiddenIndices.add(Math.floor(random() * targetWords.length))
     }
     
-    const hintWords = words.map((w, i) => {
-      // If word is within revealed count, always show it
-      if (i < revealedWordCount) return w;
-      return hiddenIndices.has(i) ? '___' : w;
+    const hiddenIndicesArray = Array.from(hiddenIndices).sort((a, b) => a - b);
+    const indicesToReveal = new Set(hiddenIndicesArray.slice(0, revealedWordCount));
+
+    const hintWords = targetWords.map((w, i) => {
+      // If word wasn't hidden to begin with, show it
+      if (!hiddenIndices.has(i)) return w;
+      // If word was hidden but is now revealed by clicking, show it
+      if (indicesToReveal.has(i)) return w;
+      // Otherwise keep it hidden
+      return '___';
     })
     setHintText(hintWords.join(' '))
-  }, [currentIndex, difficulty, revealedWordCount, currentSentence])
+  }, [currentIndex, difficulty, revealedWordCount, currentSentence, maxReveals])
 
   // Reset state
   useEffect(() => {
@@ -338,21 +342,21 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <div className="absolute top-4 right-4 z-20">
                       <button 
                         onClick={() => {
-                          if (revealedWordCount < targetWords.length) {
+                          if (revealedWordCount < maxReveals) {
                             setRevealedWordCount(prev => prev + 1);
                           }
                         }}
-                        disabled={revealedWordCount >= targetWords.length}
+                        disabled={revealedWordCount >= maxReveals}
                         className="group cursor-pointer disabled:cursor-not-allowed relative flex items-center justify-center p-2 rounded-full transition-all"
                       >
-                        {revealedWordCount < targetWords.length && (
+                        {revealedWordCount < maxReveals && (
                           <div 
                             className="absolute inset-0 bg-yellow-400 rounded-full blur-md transition-opacity duration-300"
-                            style={{ opacity: 0.6 * (1 - revealedWordCount / targetWords.length) }}
+                            style={{ opacity: 0.6 * (1 - revealedWordCount / maxReveals) }}
                           />
                         )}
                         <svg 
-                          className={`w-6 h-6 relative z-10 transition-colors duration-300 ${revealedWordCount >= targetWords.length ? 'text-slate-600' : 'text-yellow-400'}`} 
+                          className={`w-6 h-6 relative z-10 transition-colors duration-300 ${revealedWordCount >= maxReveals ? 'text-slate-600' : 'text-yellow-400'}`} 
                           fill="currentColor" viewBox="0 0 24 24"
                         >
                           <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z" />
