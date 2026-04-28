@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { getShortTheory } from '../short-theory'
 import UpgradeModal from '@/components/UpgradeModal'
 import ZoomableImage from '@/components/ZoomableImage'
 
@@ -50,6 +51,24 @@ interface ToeicTopic {
   slug: string
   lessons: ToeicLesson[]
 }
+
+const TypewriterText = ({ text, speed = 15, className = "" }: { text: string, speed?: number, className?: string }) => {
+  const [displayedText, setDisplayedText] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    setDisplayedText("");
+    const intervalId = setInterval(() => {
+      setDisplayedText(text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) clearInterval(intervalId);
+    }, speed);
+
+    return () => clearInterval(intervalId);
+  }, [text, speed]);
+
+  return <span className={className}>{displayedText}</span>;
+};
 
 export default function ToeicGrammarPracticePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
@@ -919,8 +938,8 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                   {/* Compact Lesson Header & Toggle */}
                   <div className={`bg-white rounded-[2rem] border border-slate-200 shadow-sm flex h-full w-full`}>
                     <div className={`w-full p-4 lg:p-5 xl:sticky xl:top-24 flex flex-col gap-4`}>
-                      <div className="flex flex-wrap items-center gap-3 w-full">
-                      <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center gap-2">
+                      <div className="flex flex-col items-center gap-3 w-full">
+                      <h2 className="text-xl font-black text-slate-900 leading-tight flex items-center justify-center gap-2 w-full text-center">
                         <span>{currentLesson.title}</span>
                         {currentLesson.accessTier === 'PRO' && <svg className="w-6 h-6 text-secondary-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="PRO"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
                         {currentLesson.accessTier === 'ULTRA' && <svg className="w-6 h-6 text-primary-700 drop-shadow-sm" fill="currentColor" viewBox="0 0 24 24" aria-label="ULTRA"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
@@ -1102,7 +1121,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                  } else {
                                      return (
                                         <div className="flex flex-col gap-4 mt-2">
-                                           <p className="text-[13px] font-bold text-secondary-600 bg-secondary-50 px-4 py-2.5 rounded-xl border border-secondary-200 w-full text-center shadow-sm">Bạn chưa làm bài tập này</p>
+                                           <p className="text-[14px] font-medium text-primary-600 w-full text-center mb-1">Bạn chưa làm bài tập này</p>
                                            <button 
                                               onClick={() => {
                                                   setLessonStarted(true);
@@ -1456,6 +1475,58 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                              Nếu thấy câu hay và cần xem sau, bấm <strong className="text-primary-700 font-bold">Lưu lại</strong> để lưu vào Sổ tay học tập.
                                                          </p>
                                                      </div>
+
+                                                     {/* Theory Box (Only for Grammar) */}
+                                                     {topic.type === 'GRAMMAR' && (
+                                                         <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-primary-100 shadow-sm p-5 flex flex-col gap-3 transform transition-all hover:scale-[1.02] duration-300 mt-2 relative overflow-hidden group/theory">
+                                                             <div className="flex items-center gap-3">
+                                                                 <div className="w-10 h-10 bg-primary-600/10 rounded-xl flex items-center justify-center text-primary-600 shrink-0 border border-primary-100/50">
+                                                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                                                 </div>
+                                                                 <h4 className="text-primary-900 font-bold text-[15px]">Kiến thức cần nhớ</h4>
+                                                             </div>
+                                                             <div className={`text-slate-600 text-[14px] leading-relaxed pr-2 font-medium relative ${status === 'authenticated' ? 'max-h-[160px] overflow-y-auto custom-scrollbar' : 'max-h-[72px] overflow-hidden'}`}>
+                                                                 {(() => {
+                                                                     const theory = getShortTheory(topic.slug);
+                                                                     const isAuthenticated = status === 'authenticated';
+                                                                     
+                                                                     return (
+                                                                         <>
+                                                                             <div className="whitespace-pre-wrap relative pb-6">
+                                                                                 <TypewriterText text={theory} speed={12} />
+                                                                                 {!isAuthenticated && (
+                                                                                     <div 
+                                                                                         className="absolute inset-0 pointer-events-none z-10"
+                                                                                         style={{ 
+                                                                                             backdropFilter: 'blur(4px)', 
+                                                                                             WebkitBackdropFilter: 'blur(4px)',
+                                                                                             maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, black 70%, black 100%)',
+                                                                                             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, black 70%, black 100%)' 
+                                                                                         }}
+                                                                                     />
+                                                                                 )}
+                                                                             </div>
+                                                                             {!isAuthenticated && (
+                                                                                 <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/80 to-transparent flex items-end justify-center pb-2 z-20">
+                                                                                     <button 
+                                                                                         onClick={(e) => { 
+                                                                                             e.preventDefault(); 
+                                                                                             const currentPath = window.location.pathname; 
+                                                                                             router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để xem trọn vẹn kiến thức tóm tắt nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); 
+                                                                                         }} 
+                                                                                         className="text-[13px] font-bold text-primary-600 hover:text-primary-700 hover:underline transition-all flex items-center gap-1.5 cursor-pointer"
+                                                                                     >
+                                                                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                                                                         Đăng nhập để xem thêm kiến thức
+                                                                                     </button>
+                                                                                 </div>
+                                                                             )}
+                                                                         </>
+                                                                     );
+                                                                 })()}
+                                                             </div>
+                                                         </div>
+                                                     )}
                                                  </div>
                                                  
 
@@ -1771,10 +1842,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                 {isCorrect ? (
                                                                   <svg className="w-3.5 h-3.5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>
                                                                 ) : (
-                                                                  <svg className="w-3.5 h-3.5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                                                                  <div className="w-[7px] h-[7px] rounded-full bg-rose-500" />
                                                                 )}
                                                             </div>
-                                                            <span className="font-bold text-sm">{isCorrect ? 'Chính xác' : 'Sai'}</span>
+                                                            <span className="font-bold text-sm">{isCorrect ? 'Chính xác' : 'Chưa chính xác'}</span>
                                                           </div>
                                                           
                                                           <div className="flex items-center gap-2 shrink-0">
