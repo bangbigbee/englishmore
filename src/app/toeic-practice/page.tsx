@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import ToeicOnboardingModal from "@/components/ToeicOnboardingModal";
 import ToeicRoadmapTab from "./ToeicRoadmapTab";
+import InteractiveListeningModal from "@/components/InteractiveListeningModal";
 
 const playSound = (soundFileName: string) => {
 	try {
@@ -2835,6 +2836,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [selectedPart, setSelectedPart] = useState<number>(initialPart);
+	const [isInteractiveModalOpen, setIsInteractiveModalOpen] = useState(false);
 
 	useEffect(() => {
 		const fetchTopics = async () => {
@@ -2908,6 +2910,30 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 
 	return (
 		<div>
+			<InteractiveListeningModal isOpen={isInteractiveModalOpen} onClose={() => setIsInteractiveModalOpen(false)} />
+			
+			<div className="bg-gradient-to-r from-primary-900 to-[#ea980c] rounded-3xl p-6 sm:p-8 mb-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+				<div className="absolute -right-10 -top-10 opacity-10 pointer-events-none">
+					<svg className="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+				</div>
+				<div className="relative z-10 flex-1">
+					<h3 className="text-2xl font-black mb-2 flex items-center gap-2">
+						<span className="text-3xl">🎧</span> Phòng Luyện Nghe Tương Tác
+					</h3>
+					<p className="text-primary-100 font-medium text-sm md:text-base leading-relaxed max-w-2xl">
+						Phương pháp luyện nghe đỉnh cao cho Beginner: Nghe chép chính tả (Dictation), Điền từ (Gap Fill), và Shadowing. Không cần tải Audio, hệ thống tự động phát âm chuẩn bản xứ!
+					</p>
+				</div>
+				<div className="relative z-10 shrink-0 w-full md:w-auto">
+					<button 
+						onClick={() => setIsInteractiveModalOpen(true)}
+						className="w-full md:w-auto bg-white text-primary-900 hover:bg-slate-50 px-8 py-3.5 rounded-xl font-black transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+					>
+						Vào phòng luyện tập <span className="text-xl">🚀</span>
+					</button>
+				</div>
+			</div>
+
 			<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
 				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
 				Các Phần Thi Listening
