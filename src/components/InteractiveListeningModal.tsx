@@ -304,7 +304,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 max-w-4xl">
                 {/* Difficulty Selector */}
                 <div className="flex flex-col items-center gap-4">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Độ khó</span>
                   <div className="flex flex-wrap justify-center gap-2">
                     {DIFFICULTIES.map(d => (
                       <button 
@@ -321,8 +320,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 <div className="w-full bg-[#111827] border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary-400 to-secondary-600 opacity-50" />
                   
-                  {/* Progressive Hint Lightbulb */}
-                  <div className="absolute top-4 right-4 z-20">
+                  {/* Progressive Hint Lightbulb & Check Result */}
+                  <div className="absolute top-4 right-4 z-20 flex items-center gap-4">
+                    <button 
+                      onClick={handleCheckDictation}
+                      className="cursor-pointer text-xs md:text-sm font-bold text-slate-400 hover:text-secondary-400 uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
+                    >
+                      Xem kết quả
+                    </button>
                     <button 
                       onClick={() => {
                         if (revealedWordCount < maxReveals) {
@@ -364,19 +369,13 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 </div>
 
                 <div className="flex gap-4 justify-center mt-4">
-                  <button onClick={handleCheckDictation} className="cursor-pointer bg-secondary-500 hover:bg-secondary-400 text-[#020617] px-10 py-4 rounded-2xl text-lg md:text-xl font-bold shadow-lg shadow-secondary-500/20 transition-all hover:-translate-y-1">Kiểm tra kết quả</button>
+                  {/* The check result button was moved to the top right next to the hint bulb */}
                 </div>
               </div>
             </div>
 
             {/* Bottom Navigation */}
             <div className="mt-auto pt-8 pb-4 flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-secondary-400 animate-pulse' : 'bg-slate-600'}`} />
-                <span className="text-xs font-bold tracking-[0.2em] uppercase text-secondary-400">
-                  {contentType === 'SENTENCE' ? 'Câu đơn' : contentType === 'QNA' ? 'Hỏi & Đáp' : 'Bài nói ngắn'}
-                </span>
-              </div>
               <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
                 <button 
                   onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
