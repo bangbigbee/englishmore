@@ -10,11 +10,11 @@ export const ROADMAP_TEMPLATES: any = {
                 expectedScoreUp: 50,
                 tasks: [
                     { dayNumber: 1, taskType: "GRAMMAR", title: "Khởi động: Thì Hiện tại đơn", referencePath: "/toeic-practice?tab=grammar", rewardStars: 10 },
-                    { dayNumber: 1, taskType: "VOCAB", title: "Học 20 từ vựng chủ đề Contracts", referencePath: "/toeic-practice?tab=vocabulary&topic=Contracts", rewardStars: 15 },
+                    { dayNumber: 1, taskType: "VOCAB", title: "Học 20 từ vựng chủ đề Hợp đồng", referencePath: "/toeic-practice?tab=vocabulary&topic=Corporate legal & Contracts - Pháp lý doanh nghiệp & Hợp đồng", rewardStars: 15 },
                     { dayNumber: 2, taskType: "PRONUNCIATION", title: "Nền tảng Nghe: Bảng phiên âm IPA", referencePath: "/toeic-practice?tab=listening", rewardStars: 10 },
                     { dayNumber: 2, taskType: "LISTENING", title: "Luyện Nghe Part 1: Tranh Tả Người", referencePath: "/toeic-practice?tab=listening", rewardStars: 20 },
                     { dayNumber: 3, taskType: "GRAMMAR", title: "Thì Quá khứ đơn & Tương lai đơn", referencePath: "/toeic-practice?tab=grammar", rewardStars: 15 },
-                    { dayNumber: 4, taskType: "VOCAB", title: "Học 20 từ vựng chủ đề Marketing", referencePath: "/toeic-practice?tab=vocabulary&topic=Marketing", rewardStars: 15 },
+                    { dayNumber: 4, taskType: "VOCAB", title: "Học 20 từ vựng chủ đề Marketing", referencePath: "/toeic-practice?tab=vocabulary&topic=Marketing & Consumer - Tiếp thị & Người tiêu dùng", rewardStars: 15 },
                     { dayNumber: 5, taskType: "READING", title: "Đọc hiểu cơ bản Part 5", referencePath: "/toeic-practice?tab=reading", rewardStars: 20 },
                 ]
             },
@@ -44,7 +44,7 @@ export const ROADMAP_TEMPLATES: any = {
                 expectedScoreUp: 100,
                 tasks: [
                     { dayNumber: 22, taskType: "READING", title: "Part 7: Đọc hiểu đoạn kép", referencePath: "/toeic-practice?tab=reading", rewardStars: 30 },
-                    { dayNumber: 23, taskType: "VOCAB", title: "Từ vựng chuyên ngành Computers", referencePath: "/toeic-practice?tab=vocabulary&topic=Computers", rewardStars: 15 },
+                    { dayNumber: 23, taskType: "VOCAB", title: "Từ vựng chuyên ngành Computers", referencePath: "/toeic-practice?tab=vocabulary&topic=IT & Computers - Công nghệ thông tin", rewardStars: 15 },
                 ]
             },
             {
@@ -70,7 +70,7 @@ export const ROADMAP_TEMPLATES: any = {
                 expectedScoreUp: 60,
                 tasks: [
                     { dayNumber: 1, taskType: "LISTENING", title: "Part 3: Luyện nghe suy luận", referencePath: "/toeic-practice?tab=listening", rewardStars: 20 },
-                    { dayNumber: 1, taskType: "VOCAB", title: "Từ vựng Marketing & Sales", referencePath: "/toeic-practice?tab=vocabulary&topic=Marketing", rewardStars: 15 },
+                    { dayNumber: 1, taskType: "VOCAB", title: "Từ vựng Marketing & Sales", referencePath: "/toeic-practice?tab=vocabulary&topic=Marketing & Consumer - Tiếp thị & Người tiêu dùng", rewardStars: 15 },
                     { dayNumber: 2, taskType: "PRONUNCIATION", title: "Sửa lỗi phát âm: Nối âm & Trọng âm", referencePath: "/toeic-practice?tab=listening", rewardStars: 15 },
                     { dayNumber: 2, taskType: "GRAMMAR", title: "Mệnh đề quan hệ", referencePath: "/toeic-practice?tab=grammar", rewardStars: 15 },
                     { dayNumber: 3, taskType: "READING", title: "Đọc hiểu Part 6: Điền từ vào đoạn văn", referencePath: "/toeic-practice?tab=reading", rewardStars: 20 },
@@ -127,7 +127,7 @@ export const ROADMAP_TEMPLATES: any = {
                     { dayNumber: 1, taskType: "TEST", title: "Thi Thử ETS 2024 - Test 1", referencePath: "/toeic-practice?tab=actual-test", rewardStars: 50 },
                     { dayNumber: 2, taskType: "REVIEW", title: "Phân tích lỗi sai Test 1", referencePath: "/toeic-practice?tab=actual-test", rewardStars: 20 },
                     { dayNumber: 3, taskType: "PRONUNCIATION", title: "Shadowing: Bắt chước ngữ điệu bản xứ", referencePath: "/toeic-practice?tab=listening", rewardStars: 20 },
-                    { dayNumber: 3, taskType: "VOCAB", title: "Học từ vựng nâng cao", referencePath: "/toeic-practice?tab=vocabulary&topic=Banking", rewardStars: 15 },
+                    { dayNumber: 3, taskType: "VOCAB", title: "Từ vựng Tài chính", referencePath: "/toeic-practice?tab=vocabulary&topic=Finance & Investment - Tài chính & Đầu tư", rewardStars: 15 },
                 ]
             },
             {
