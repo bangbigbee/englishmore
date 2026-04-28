@@ -2912,32 +2912,65 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 		<div>
 			<InteractiveListeningModal isOpen={isInteractiveModalOpen} onClose={() => setIsInteractiveModalOpen(false)} />
 			
-			<div className="bg-gradient-to-r from-primary-900 to-[#ea980c] rounded-3xl p-6 sm:p-8 mb-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
-				<div className="absolute -right-10 -top-10 opacity-10 pointer-events-none">
-					<svg className="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-				</div>
-				<div className="relative z-10 flex-1">
-					<h3 className="text-2xl font-black mb-2 flex items-center gap-2">
-						<span className="text-3xl">🎧</span> Phòng Luyện Nghe Tương Tác
-					</h3>
-					<p className="text-primary-100 font-medium text-sm md:text-base leading-relaxed max-w-2xl">
-						Phương pháp luyện nghe đỉnh cao cho Beginner: Nghe chép chính tả (Dictation), Điền từ (Gap Fill), và Shadowing. Không cần tải Audio, hệ thống tự động phát âm chuẩn bản xứ!
-					</p>
-				</div>
-				<div className="relative z-10 shrink-0 w-full md:w-auto">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+				{/* Lựa chọn 1: Phòng Luyện Nghe Tương Tác */}
+				<div className="bg-gradient-to-br from-emerald-800 to-slate-900 rounded-3xl p-6 md:p-8 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group border border-emerald-500/20">
+					<div className="absolute -right-8 -top-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+						<svg className="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+					</div>
+					<div className="relative z-10 mb-8">
+						<div className="flex items-center gap-3 mb-5">
+							<span className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+								<svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+							</span>
+							<span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded-full border border-emerald-500/30 uppercase tracking-widest">Dành cho Beginner</span>
+						</div>
+						<h3 className="text-2xl font-black mb-3">Phòng Luyện Nghe Tương Tác</h3>
+						<p className="text-slate-300 font-medium text-sm leading-relaxed">
+							Luyện nghe theo phương pháp nghe chép chính tả theo nhiều cấp độ, phù hợp cho người mới bắt đầu luyện nghe.
+						</p>
+					</div>
 					<button 
 						onClick={() => setIsInteractiveModalOpen(true)}
-						className="w-full md:w-auto bg-white text-primary-900 hover:bg-slate-50 px-8 py-3.5 rounded-xl font-black transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+						className="w-full bg-emerald-500 hover:bg-emerald-400 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 relative z-10"
 					>
-						Vào phòng luyện tập <span className="text-xl">🚀</span>
+						Vào phòng tập ngay <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+					</button>
+				</div>
+
+				{/* Lựa chọn 2: Phòng Luyện Nghe Thực Chiến */}
+				<div className="bg-gradient-to-br from-primary-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group border border-primary-500/20">
+					<div className="absolute -right-8 -bottom-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+						<svg className="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+					</div>
+					<div className="relative z-10 mb-8">
+						<div className="flex items-center gap-3 mb-5">
+							<span className="w-10 h-10 rounded-xl bg-primary-500/20 flex items-center justify-center border border-primary-500/30">
+								<svg className="w-5 h-5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+							</span>
+							<span className="px-3 py-1 bg-primary-500/20 text-primary-300 text-[10px] font-bold rounded-full border border-primary-500/30 uppercase tracking-widest">Sát đề thi TOEIC</span>
+						</div>
+						<h3 className="text-2xl font-black mb-3">Phòng Luyện Nghe Thực Chiến</h3>
+						<p className="text-slate-300 font-medium text-sm leading-relaxed">
+							Thử sức với các chủ đề sát với đề thi TOEIC thực tế. Rèn luyện kỹ năng nghe và phản xạ đề thi từ Part 1 đến Part 4.
+						</p>
+					</div>
+					<button 
+						onClick={() => {
+							document.getElementById('thuc-chien-section')?.scrollIntoView({ behavior: 'smooth' })
+						}}
+						className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 relative z-10 backdrop-blur-sm"
+					>
+						Chọn bài thi bên dưới <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
 					</button>
 				</div>
 			</div>
 
-			<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
-				<span className="w-1.5 h-6 rounded-full bg-[#ea980c] block shadow-sm"></span>
-				Các Phần Thi Listening
-			</h2>
+			<div id="thuc-chien-section" className="pt-4 scroll-mt-24">
+				<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
+					<span className="w-1.5 h-6 rounded-full bg-primary-600 block shadow-sm"></span>
+					Danh sách Bài luyện thực chiến
+				</h2>
 
 			<div className="flex w-full overflow-x-auto gap-2.5 md:gap-3 mb-8 pb-3 hide-scrollbar snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				{parts.map((p) => {
@@ -3020,6 +3053,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
                     ))
                 )}
 			</div>
+            </div>
 		</div>
 	);
 }
