@@ -980,7 +980,7 @@ function VocabFeatureCard({ onClick }: any) {
                     </div>
                     <div className="relative z-10 text-center w-full flex flex-col items-center">
                         <div className="font-black text-[12px] sm:text-[13px] tracking-wide mb-1 text-[#ea980c] drop-shadow-sm flex items-center justify-center gap-1 uppercase">
-                            <span>🔥</span> Master 5000+ từ vựng
+                            <span>🔥</span> Master 1000+ từ vựng
                         </div>
                         <div className="text-[10px] sm:text-[11px] font-medium text-white/90 leading-tight max-w-[220px]">
                             Vượt Speed Challenge,<br />Ghi danh Bảng Vàng ngay!
