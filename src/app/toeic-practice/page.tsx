@@ -595,7 +595,7 @@ function ToeicPracticeContent() {
 						) : (
 							<button 
 								onClick={() => openLoginModal()}
-								className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#272e5c] text-white hover:bg-[#1a1f3d] transition-colors shadow-md ${isSidebarCollapsed ? 'px-0' : 'px-4'}`}
+								className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary-900 text-white hover:bg-primary-800 transition-colors shadow-md ${isSidebarCollapsed ? 'px-0' : 'px-4'}`}
 								title={isSidebarCollapsed ? "Đăng nhập" : undefined}
 							>
 								{isSidebarCollapsed ? (
