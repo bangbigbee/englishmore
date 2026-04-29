@@ -500,8 +500,18 @@ function ToeicPracticeContent() {
 	// Fallback helper for search params
 	const newSearchParams = (sp: any) => new URLSearchParams(sp.toString());
 
+	const SIDEBAR_ITEMS = [
+		{ id: 'roadmap', label: 'Lộ trình', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> },
+		{ id: 'vocabulary', label: 'Từ vựng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
+		{ id: 'grammar', label: 'Ngữ pháp', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 15h4.498" /></svg> },
+		{ id: 'listening', label: 'Listening', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> },
+		{ id: 'reading', label: 'Reading', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
+		{ id: 'actual-test', label: 'Luyện đề', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+		{ id: 'leaderboard', label: 'Bảng xếp hạng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg> },
+	];
+
 	return (
-		<div className="min-h-screen bg-background">
+		<div className={`min-h-screen bg-background ${tab === 'home' ? '' : 'flex flex-col md:flex-row'}`}>
 			<ToeicOnboardingModal onComplete={(level) => {
 				setToeicLevel(level);
 				if (level === 'MOCK_TEST_ONLY') {
@@ -510,8 +520,56 @@ function ToeicPracticeContent() {
 					handleTabChange('roadmap');
 				}
 			}} />
-			<div className={`${tab === 'home' ? 'w-full' : 'max-w-6xl px-4 sm:px-6'} mx-auto pt-4 pb-8`}>
-			<div className={`${tab === 'home' ? 'mt-0' : 'mt-2 md:mt-4'}`}>
+			
+			{tab !== 'home' && (
+				<>
+				{/* Mobile Horizontal Menu */}
+				<div className="md:hidden w-full bg-white border-b border-slate-200 sticky top-[60px] z-30 overflow-x-auto hide-scrollbar">
+					<div className="flex px-4 py-2 gap-2">
+						{SIDEBAR_ITEMS.map((item) => {
+							const isActive = tab === item.id;
+							return (
+								<button
+									key={item.id}
+									onClick={() => handleTabChange(item.id)}
+									className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-lg font-bold transition-all ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50'}`}
+								>
+									<span className="text-[13px] whitespace-nowrap">{item.label}</span>
+								</button>
+							);
+						})}
+					</div>
+				</div>
+
+				{/* Desktop Sidebar */}
+				<aside className="w-64 shrink-0 bg-white border-r border-slate-200 hidden md:block min-h-[calc(100vh-80px)]">
+					<div className="p-4 sticky top-[80px] space-y-1">
+						<div className="mb-6 px-4">
+							<h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">ToeicMore Menu</h3>
+						</div>
+						{SIDEBAR_ITEMS.map((item) => {
+							const isActive = tab === item.id;
+							return (
+								<button
+									key={item.id}
+									onClick={() => handleTabChange(item.id)}
+									className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+								>
+									<div className={`${isActive ? 'text-primary-600' : 'text-slate-400'}`}>
+										{item.icon}
+									</div>
+									<span className="text-[14px]">{item.label}</span>
+								</button>
+							);
+						})}
+					</div>
+				</aside>
+				</>
+			)}
+
+			<div className={`flex-1 flex flex-col w-full ${tab === 'home' ? '' : 'max-w-none'}`}>
+				<div className={`${tab === 'home' ? 'w-full' : 'w-full max-w-7xl px-4 sm:px-6 mx-auto'} flex-1 pt-4 pb-8`}>
+					<div className={`${tab === 'home' ? 'mt-0' : 'mt-2 md:mt-4'}`}>
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
 				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} score={toeicScore} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
@@ -551,6 +609,8 @@ function ToeicPracticeContent() {
 				{tab === "actual-test" && <ToeicActualTestTab onPracticeClick={() => {
 					 if (!session) openLoginModal(`${pathname}?tab=actual-test`);
 				 }} />}
+				 {tab === "leaderboard" && <LeaderboardsTab onTabChange={handleTabChange} />}
+			</div>
 			</div>
 
             {/* {tab === "home" && <SpeedChallengeLeaderboard onPlayClick={() => handleTabChange('vocabulary')} />} */}
@@ -626,8 +686,8 @@ function ToeicPracticeContent() {
 				    <p>Powered by <a href="https://englishmore.bigbee.ltd" target="_blank" rel="noopener noreferrer" className="font-bold hover:underline transition-colors text-primary-900">Tiếng Anh giao tiếp <span className="text-primary-900">English</span><span className="text-[#ea980c]">More</span></a></p>
                 </div>
 			</footer>
+			</div>
 		</div>
-	</div>
 	);
 }
 
@@ -3312,6 +3372,19 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
 					Chưa có bộ đề thi nào được tạo.
 				</div>
 			)}
+		</div>
+	);
+}
+
+function LeaderboardsTab({ onTabChange }: { onTabChange: (tab: string) => void }) {
+	return (
+		<div className="flex flex-col gap-12 w-full animate-in fade-in duration-500 pb-12">
+			<div>
+				<ToeicWarriorLeaderboard />
+			</div>
+			<div className="pt-8 border-t border-slate-200/60 max-w-6xl mx-auto w-full">
+				<SpeedChallengeLeaderboard onPlayClick={() => onTabChange('vocabulary')} />
+			</div>
 		</div>
 	);
 }
