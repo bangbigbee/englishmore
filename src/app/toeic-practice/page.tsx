@@ -622,7 +622,7 @@ function ToeicPracticeContent() {
 						openLoginModal(`${pathname}?${params.toString()}`, allowGuest);
 					 }
 				 }} />}
-				{tab === "listening" && <ToeicListeningTab onPracticeClick={(slug) => {
+				{tab === "listening" && <ToeicListeningTab isSidebarCollapsed={isSidebarCollapsed} onPracticeClick={(slug) => {
 					 if (!session) {
 						 openLoginModal(slug ? `/toeic-practice/grammar/${slug}` : undefined);
 					 } else if (slug) {
@@ -2900,7 +2900,7 @@ function getPartColors(partId: number) {
     return { baseHex: 'var(--primary-900)' };
 }
 
-function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPracticeClick: (slug?: string) => void, isSidebarCollapsed?: boolean }) {
 	const searchParams = useSearchParams();
 	const partParam = searchParams.get('part');
 	const initialPart = partParam ? parseInt(partParam) : 1;
@@ -2982,7 +2982,7 @@ function ToeicListeningTab({ onPracticeClick }: { onPracticeClick: (slug?: strin
 
 	return (
 		<div>
-			<InteractiveListeningModal isOpen={isInteractiveModalOpen} onClose={() => setIsInteractiveModalOpen(false)} />
+			<InteractiveListeningModal isOpen={isInteractiveModalOpen} onClose={() => setIsInteractiveModalOpen(false)} isSidebarCollapsed={isSidebarCollapsed} />
 			
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
 				{/* Lựa chọn 1: Phòng Luyện Nghe Tương Tác */}

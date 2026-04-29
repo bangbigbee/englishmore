@@ -98,7 +98,7 @@ const DIFFICULTIES = [
 
 type HintWord = { word: string; highlighted: boolean; isQnaBreak?: boolean };
 
-export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCollapsed }: { isOpen: boolean, onClose: () => void, isSidebarCollapsed?: boolean }) {
   const [difficulty, setDifficulty] = useState(40)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userInputs, setUserInputs] = useState<Record<string, string>>({})
@@ -355,15 +355,18 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
   return (
     <div 
-      className="fixed inset-0 z-[200] isolate flex bg-white overflow-hidden overscroll-none touch-none bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0.85)), url(/images/dictation-bg-light.png)' }}
+      className={`fixed inset-y-0 right-0 z-[200] isolate flex overflow-hidden overscroll-none touch-none bg-cover bg-center bg-no-repeat transition-all duration-300 ${isSidebarCollapsed ? 'md:left-[84px]' : 'md:left-[256px]'} left-0`}
+      style={{ backgroundImage: 'url(/images/dictation-bg-light.png)' }}
     >
+      {/* Light glass overlay for better readability of dark text */}
+      <div className="absolute inset-0 bg-white/70 backdrop-blur-[6px] z-0" />
+      
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.98 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-full flex flex-col text-slate-600"
+        className="relative w-full h-full flex flex-col text-slate-600 z-10"
       >
         {/* Background Effects */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
