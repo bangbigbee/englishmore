@@ -14,6 +14,15 @@ interface UserItem {
   enrollments: Array<{
     course: { title: string }
   }>
+  totalStudySeconds: number
+  toeicStars: number
+  currentStreak: number
+}
+
+const formatStudyTime = (seconds: number) => {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
 }
 
 export default function AdminUserManagement() {
@@ -357,6 +366,7 @@ export default function AdminUserManagement() {
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">User Info</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Subscription Tier</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Course Enrollments</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">TOEIC Stats</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Joined</th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Actions</th>
             </tr>
@@ -404,6 +414,13 @@ export default function AdminUserManagement() {
                     ) : (
                       <span className="text-xs text-slate-400 italic">No courses</span>
                     )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1 text-xs">
+                      <div className="flex justify-between w-32"><span className="text-slate-500">Giờ học:</span> <span className="font-bold text-primary-700">{formatStudyTime(user.totalStudySeconds || 0)}</span></div>
+                      <div className="flex justify-between w-32"><span className="text-slate-500">Stars:</span> <span className="font-bold text-[#ea980c]">{user.toeicStars || 0} ⭐</span></div>
+                      <div className="flex justify-between w-32"><span className="text-slate-500">Chuỗi:</span> <span className="font-bold text-rose-500">{user.currentStreak || 0} 🔥</span></div>
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-500">
                     {new Date(user.createdAt).toLocaleDateString('en-GB')}

@@ -134,6 +134,7 @@ model User {
   vocabularyTags            VocabularyTag[]
   tier                      AccessTier                  @default(FREE)
   tierExpiresAt             DateTime?
+  isAnonymousLeaderboard    Boolean                     @default(false)
   upgradeOrders             UpgradeOrder[]
   ToeicSpeedChallengeRecord ToeicSpeedChallengeRecord[]
   toeicTestRecords          ToeicTestRecord[]

@@ -42,6 +42,9 @@ export async function GET(request: NextRequest) {
         tier: true,
         tierExpiresAt: true,
         createdAt: true,
+        totalStudySeconds: true,
+        toeicStars: true,
+        currentStreak: true,
         enrollments: {
           include: {
             course: {

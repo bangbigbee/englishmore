@@ -23,6 +23,7 @@ export async function GET() {
         toeicStars: true,
         totalStudySeconds: true,
         currentStreak: true,
+        isAnonymousLeaderboard: true,
         _count: {
           select: {
             vocabularyTags: { where: { isLearned: true } }
@@ -66,6 +67,7 @@ export async function GET() {
         toeicStars: user.toeicStars,
         totalStudySeconds: user.totalStudySeconds,
         currentStreak: user.currentStreak || 0,
+        isAnonymousLeaderboard: user.isAnonymousLeaderboard,
         learnedVocab: user._count.vocabularyTags,
         grammarAnswers: getCount('GRAMMAR'),
         listeningAnswers: getCount('LISTENING'),

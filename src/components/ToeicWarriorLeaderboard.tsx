@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
+import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 
@@ -16,6 +16,7 @@ interface WarriorStats {
   grammarAnswers: number
   listeningAnswers: number
   readingAnswers: number
+  isAnonymousLeaderboard: boolean
 }
 
 const formatStudyTime = (seconds: number) => {
@@ -25,8 +26,26 @@ const formatStudyTime = (seconds: number) => {
 }
 
 export default function ToeicWarriorLeaderboard() {
+  const { data: session } = useSession()
   const [warriors, setWarriors] = useState<WarriorStats[]>([])
   const [loading, setLoading] = useState(true)
+
+  const togglePrivacy = async (warriorId: string) => {
+    if (session?.user?.id !== warriorId) return;
+    const loadingToast = toast.loading('Đang cập nhật...');
+    try {
+      const res = await fetch('/api/user/toggle-leaderboard-privacy', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setWarriors(prev => prev.map(w => w.id === warriorId ? { ...w, isAnonymousLeaderboard: data.isAnonymousLeaderboard } : w));
+        toast.success(data.isAnonymousLeaderboard ? 'Đã bật chế độ ẩn danh' : 'Đã tắt chế độ ẩn danh', { id: loadingToast });
+      } else {
+        toast.error('Có lỗi xảy ra', { id: loadingToast });
+      }
+    } catch (error) {
+      toast.error('Lỗi kết nối', { id: loadingToast });
+    }
+  }
 
   useEffect(() => {
     fetch('/api/toeic/leaderboard/warriors', { cache: 'no-store' })
@@ -102,17 +121,32 @@ export default function ToeicWarriorLeaderboard() {
                      <span className="font-semibold text-primary-900/60">#{idx + 1}</span>}
                   </td>
                   <td className="py-4 px-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                        {w.image ? (
+                    <div 
+                      onClick={() => togglePrivacy(w.id)}
+                      className={`flex items-center gap-3 ${session?.user?.id === w.id ? 'cursor-pointer hover:opacity-80 group relative' : ''}`}
+                      title={session?.user?.id === w.id ? (w.isAnonymousLeaderboard ? 'Nhấn để công khai danh tính' : 'Nhấn để ẩn danh tính') : ''}
+                    >
+                      <div className={`relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0 transition-all ${session?.user?.id === w.id ? 'group-hover:ring-2 group-hover:ring-primary-500' : ''}`}>
+                        {!w.isAnonymousLeaderboard && w.image ? (
                           <img src={w.image} alt={w.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400 font-semibold text-xs">
-                            {w.name.charAt(0)}
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 font-semibold text-xs uppercase">
+                            {w.isAnonymousLeaderboard ? w.name.split(' ')[0].charAt(0) : w.name.charAt(0)}
+                          </div>
+                        )}
+                        {session?.user?.id === w.id && (
+                          <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm border border-slate-200 z-10 scale-75">
+                            {w.isAnonymousLeaderboard ? (
+                              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+                            ) : (
+                              <svg className="w-3.5 h-3.5 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            )}
                           </div>
                         )}
                       </div>
-                      <div className="text-primary-900 font-normal text-[13px]">{w.name}</div>
+                      <div className="text-primary-900 font-normal text-[13px]">
+                        {w.isAnonymousLeaderboard ? w.name.split(' ')[0] + ' ***' : w.name}
+                      </div>
                     </div>
                   </td>
                   <td className="py-4 px-4 text-center">
