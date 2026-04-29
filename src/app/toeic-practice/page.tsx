@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, useSession, signOut } from 'next-auth/react';
 
 import UpgradeModal from "@/components/UpgradeModal";
 import Link from "next/link";
@@ -417,6 +417,26 @@ function ToeicPracticeContent() {
 	const [toeicLevel, setToeicLevel] = useState<string | null>(null);
 	const [toeicScore, setToeicScore] = useState<string | null>(null);
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!isDropdownOpen) return;
+		const handleClickOutside = (event: MouseEvent) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+				setIsDropdownOpen(false);
+			}
+		};
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') setIsDropdownOpen(false);
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		window.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+			window.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [isDropdownOpen]);
 
 	useEffect(() => {
 		const level = localStorage.getItem('toeicLevel');
@@ -562,16 +582,50 @@ function ToeicPracticeContent() {
 					
 					<div className="p-4 mt-auto border-t border-slate-200/60 bg-white/40 backdrop-blur-md">
 						{session ? (
-							<div className={`w-full flex items-center gap-3 px-2 py-2 rounded-xl bg-slate-50 border border-slate-100 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
-								<div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0 shadow-sm">
-									{session.user?.name?.charAt(0).toUpperCase() || 'U'}
-								</div>
-								{!isSidebarCollapsed && (
-									<div className="flex-1 min-w-0">
-										<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
-										<p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+							<div ref={dropdownRef} className="relative w-full">
+								<button 
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                    className={`w-full flex items-center gap-3 px-2 py-2 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors ${isSidebarCollapsed ? 'justify-center' : 'text-left'}`}
+                                >
+									<div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0 shadow-sm">
+										{session.user?.name?.charAt(0).toUpperCase() || 'U'}
 									</div>
-								)}
+									{!isSidebarCollapsed && (
+										<div className="flex-1 min-w-0">
+											<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+											<p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+										</div>
+									)}
+								</button>
+                                {isDropdownOpen && (
+                                    <div className="absolute left-0 bottom-[calc(100%+8px)] z-50 w-[240px] rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 p-1.5 flex flex-col gap-1 origin-bottom-left animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                        <Link href="/user/profile" className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer">
+                                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-indigo-50 text-indigo-500">
+                                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                            </span>
+                                            Thông tin cá nhân
+                                        </Link>
+                                        <Link href="/toeic-progress?tab=vocabulary-bank" className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer">
+                                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-emerald-50 text-emerald-500">
+                                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                            </span>
+                                            Sổ tay của tôi
+                                        </Link>
+                                        <Link href="/toeic-progress" className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer">
+                                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-blue-50 text-blue-500">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                            </span>
+                                            Lộ trình của tôi
+                                        </Link>
+                                        <div className="h-[1px] w-full bg-slate-100 my-1"></div>
+                                        <button onClick={() => signOut({ callbackUrl: '/' })} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all cursor-pointer">
+                                            <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-50 text-rose-500">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                            </span>
+                                            Đăng xuất
+                                        </button>
+                                    </div>
+                                )}
 							</div>
 						) : (
 							<button 
