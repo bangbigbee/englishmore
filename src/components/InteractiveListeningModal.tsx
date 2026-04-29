@@ -6,22 +6,85 @@ import { toast } from 'sonner'
 
 type PracticeItem = { id: number; text: string; translation: string; type: 'SENTENCE' | 'QNA' | 'SHORT_TALK'; qna?: { q: string, a: string } };
 
-const PRACTICE_DATA: Record<'SENTENCE' | 'QNA' | 'SHORT_TALK', PracticeItem[]> = {
+type PracticeSet = { id: string; name: string; items: PracticeItem[] };
+
+const PRACTICE_DATA: Record<'SENTENCE' | 'QNA' | 'SHORT_TALK', PracticeSet[]> = {
   SENTENCE: [
-    { id: 1, text: "The new marketing campaign was very successful.", translation: "Chiến dịch tiếp thị mới đã rất thành công.", type: 'SENTENCE' },
-    { id: 2, text: "Please send the report to the manager by Friday.", translation: "Vui lòng gửi báo cáo cho người quản lý trước thứ Sáu.", type: 'SENTENCE' },
-    { id: 3, text: "Our company is looking for a new software engineer.", translation: "Công ty của chúng tôi đang tìm kiếm một kỹ sư phần mềm mới.", type: 'SENTENCE' },
-    { id: 4, text: "The meeting has been rescheduled for next Monday.", translation: "Cuộc họp đã được dời lại vào thứ Hai tuần sau.", type: 'SENTENCE' },
-    { id: 5, text: "We need to review the budget for the upcoming quarter.", translation: "Chúng ta cần xem xét ngân sách cho quý sắp tới.", type: 'SENTENCE' }
+    {
+      id: 'set-s1',
+      name: 'Bộ 1: Giao tiếp Văn phòng',
+      items: [
+        { id: 1, text: "The new marketing campaign was very successful.", translation: "Chiến dịch tiếp thị mới đã rất thành công.", type: 'SENTENCE' },
+        { id: 2, text: "Please send the report to the manager by Friday.", translation: "Vui lòng gửi báo cáo cho người quản lý trước thứ Sáu.", type: 'SENTENCE' },
+        { id: 3, text: "Our company is looking for a new software engineer.", translation: "Công ty của chúng tôi đang tìm kiếm một kỹ sư phần mềm mới.", type: 'SENTENCE' },
+        { id: 4, text: "The meeting has been rescheduled for next Monday.", translation: "Cuộc họp đã được dời lại vào thứ Hai tuần sau.", type: 'SENTENCE' },
+        { id: 5, text: "We need to review the budget for the upcoming quarter.", translation: "Chúng ta cần xem xét ngân sách cho quý sắp tới.", type: 'SENTENCE' }
+      ]
+    },
+    {
+      id: 'set-s2',
+      name: 'Bộ 2: Dịch vụ Khách hàng',
+      items: [
+        { id: 6, text: "Your order will be shipped within two business days.", translation: "Đơn hàng của bạn sẽ được giao trong vòng hai ngày làm việc.", type: 'SENTENCE' },
+        { id: 7, text: "We apologize for the delay in processing your request.", translation: "Chúng tôi xin lỗi vì sự chậm trễ trong việc xử lý yêu cầu của bạn.", type: 'SENTENCE' },
+        { id: 8, text: "Please contact our support team if you have any questions.", translation: "Vui lòng liên hệ nhóm hỗ trợ của chúng tôi nếu bạn có bất kỳ câu hỏi nào.", type: 'SENTENCE' },
+        { id: 9, text: "The warranty covers parts and labor for one year.", translation: "Bảo hành bao gồm các bộ phận và nhân công trong một năm.", type: 'SENTENCE' },
+        { id: 10, text: "Thank you for choosing our services.", translation: "Cảm ơn bạn đã lựa chọn dịch vụ của chúng tôi.", type: 'SENTENCE' }
+      ]
+    },
+    {
+      id: 'set-s3',
+      name: 'Bộ 3: Du lịch & Khách sạn',
+      items: [
+        { id: 11, text: "I would like to book a double room for three nights.", translation: "Tôi muốn đặt một phòng đôi trong ba đêm.", type: 'SENTENCE' },
+        { id: 12, text: "Is breakfast included in the price of the room?", translation: "Bữa sáng có được bao gồm trong giá phòng không?", type: 'SENTENCE' },
+        { id: 13, text: "The flight to Paris will depart from gate number four.", translation: "Chuyến bay tới Paris sẽ khởi hành từ cổng số bốn.", type: 'SENTENCE' },
+        { id: 14, text: "Please fasten your seatbelt and return your seat to the upright position.", translation: "Vui lòng thắt dây an toàn và đưa ghế về vị trí thẳng đứng.", type: 'SENTENCE' },
+        { id: 15, text: "Can you recommend a good restaurant near the hotel?", translation: "Bạn có thể giới thiệu một nhà hàng tốt gần khách sạn không?", type: 'SENTENCE' }
+      ]
+    }
   ],
   QNA: [
-    { id: 101, text: "When is the next train to London? It leaves in ten minutes.", qna: { q: "When is the next train to London?", a: "It leaves in ten minutes." }, translation: "Hỏi: Chuyến tàu tiếp theo đến London là khi nào? Đáp: Nó khởi hành trong mười phút nữa.", type: 'QNA' },
-    { id: 102, text: "Who is presenting the sales report? Mr. Smith will do it.", qna: { q: "Who is presenting the sales report?", a: "Mr. Smith will do it." }, translation: "Hỏi: Ai sẽ trình bày báo cáo doanh số? Đáp: Ông Smith sẽ làm việc đó.", type: 'QNA' },
-    { id: 103, text: "Are you going to the company picnic? Yes, I wouldn't miss it.", qna: { q: "Are you going to the company picnic?", a: "Yes, I wouldn't miss it." }, translation: "Hỏi: Bạn có đi dã ngoại cùng công ty không? Đáp: Có, tôi sẽ không bỏ lỡ đâu.", type: 'QNA' }
+    {
+      id: 'set-q1',
+      name: 'Bộ 1: Lịch trình & Thời gian',
+      items: [
+        { id: 101, text: "When is the next train to London? It leaves in ten minutes.", qna: { q: "When is the next train to London?", a: "It leaves in ten minutes." }, translation: "Hỏi: Chuyến tàu tiếp theo đến London là khi nào? Đáp: Nó khởi hành trong mười phút nữa.", type: 'QNA' },
+        { id: 102, text: "Who is presenting the sales report? Mr. Smith will do it.", qna: { q: "Who is presenting the sales report?", a: "Mr. Smith will do it." }, translation: "Hỏi: Ai sẽ trình bày báo cáo doanh số? Đáp: Ông Smith sẽ làm việc đó.", type: 'QNA' },
+        { id: 103, text: "Are you going to the company picnic? Yes, I wouldn't miss it.", qna: { q: "Are you going to the company picnic?", a: "Yes, I wouldn't miss it." }, translation: "Hỏi: Bạn có đi dã ngoại cùng công ty không? Đáp: Có, tôi sẽ không bỏ lỡ đâu.", type: 'QNA' },
+        { id: 104, text: "When will the repairs be finished? By tomorrow afternoon.", qna: { q: "When will the repairs be finished?", a: "By tomorrow afternoon." }, translation: "Hỏi: Khi nào việc sửa chữa sẽ hoàn tất? Đáp: Vào chiều ngày mai.", type: 'QNA' },
+        { id: 105, text: "How long does the flight take? About three hours.", qna: { q: "How long does the flight take?", a: "About three hours." }, translation: "Hỏi: Chuyến bay kéo dài bao lâu? Đáp: Khoảng ba giờ.", type: 'QNA' }
+      ]
+    },
+    {
+      id: 'set-q2',
+      name: 'Bộ 2: Trao đổi Công việc',
+      items: [
+        { id: 106, text: "Where did you put the file? It is on your desk.", qna: { q: "Where did you put the file?", a: "It is on your desk." }, translation: "Hỏi: Bạn đã để tập tin ở đâu? Đáp: Nó ở trên bàn của bạn.", type: 'QNA' },
+        { id: 107, text: "Why is the office so cold? The heater is broken.", qna: { q: "Why is the office so cold?", a: "The heater is broken." }, translation: "Hỏi: Tại sao văn phòng lại lạnh như vậy? Đáp: Lò sưởi bị hỏng.", type: 'QNA' },
+        { id: 108, text: "Can you help me with this project? Sure, I have some free time.", qna: { q: "Can you help me with this project?", a: "Sure, I have some free time." }, translation: "Hỏi: Bạn có thể giúp tôi dự án này không? Đáp: Chắc chắn rồi, tôi có thời gian rảnh.", type: 'QNA' },
+        { id: 109, text: "Did you talk to the client? Yes, I called them this morning.", qna: { q: "Did you talk to the client?", a: "Yes, I called them this morning." }, translation: "Hỏi: Bạn đã nói chuyện với khách hàng chưa? Đáp: Rồi, tôi đã gọi cho họ sáng nay.", type: 'QNA' },
+        { id: 110, text: "How much does this laptop cost? It is around eight hundred dollars.", qna: { q: "How much does this laptop cost?", a: "It is around eight hundred dollars." }, translation: "Hỏi: Chiếc máy tính xách tay này giá bao nhiêu? Đáp: Nó khoảng tám trăm đô la.", type: 'QNA' }
+      ]
+    }
   ],
   SHORT_TALK: [
-    { id: 201, text: "Welcome to the annual tech conference. We have a great lineup of speakers today. Please make sure to visit our sponsor booths during the breaks.", translation: "Chào mừng bạn đến với hội nghị công nghệ thường niên. Chúng ta có một đội ngũ diễn giả tuyệt vời ngày hôm nay. Vui lòng đảm bảo ghé thăm các gian hàng tài trợ của chúng tôi trong giờ nghỉ.", type: 'SHORT_TALK' },
-    { id: 202, text: "Attention all passengers for flight 789 to Tokyo. Your flight is delayed by two hours due to severe weather conditions. We apologize for the inconvenience.", translation: "Xin thông báo tới tất cả hành khách của chuyến bay 789 đi Tokyo. Chuyến bay của bạn bị hoãn hai giờ do điều kiện thời tiết khắc nghiệt. Chúng tôi xin lỗi vì sự bất tiện này.", type: 'SHORT_TALK' }
+    {
+      id: 'set-st1',
+      name: 'Bộ 1: Thông báo & Sự kiện',
+      items: [
+        { id: 201, text: "Welcome to the annual tech conference. We have a great lineup of speakers today. Please make sure to visit our sponsor booths during the breaks.", translation: "Chào mừng bạn đến với hội nghị công nghệ thường niên. Chúng ta có một đội ngũ diễn giả tuyệt vời ngày hôm nay. Vui lòng đảm bảo ghé thăm các gian hàng tài trợ của chúng tôi trong giờ nghỉ.", type: 'SHORT_TALK' },
+        { id: 202, text: "Attention all passengers for flight 789 to Tokyo. Your flight is delayed by two hours due to severe weather conditions. We apologize for the inconvenience.", translation: "Xin thông báo tới tất cả hành khách của chuyến bay 789 đi Tokyo. Chuyến bay của bạn bị hoãn hai giờ do điều kiện thời tiết khắc nghiệt. Chúng tôi xin lỗi vì sự bất tiện này.", type: 'SHORT_TALK' }
+      ]
+    },
+    {
+      id: 'set-st2',
+      name: 'Bộ 2: Tin tức & Báo cáo',
+      items: [
+        { id: 203, text: "Good morning and welcome to the local news. Today, city officials will open the new public library downtown. The opening ceremony begins at noon.", translation: "Chào buổi sáng và chào mừng đến với bản tin địa phương. Hôm nay, các quan chức thành phố sẽ khai trương thư viện công cộng mới ở trung tâm. Lễ khai trương bắt đầu vào buổi trưa.", type: 'SHORT_TALK' },
+        { id: 204, text: "This is a reminder for all employees. The fire alarm testing will take place tomorrow at ten o'clock. You do not need to evacuate the building.", translation: "Đây là lời nhắc nhở đối với tất cả nhân viên. Việc kiểm tra báo cháy sẽ diễn ra vào ngày mai lúc mười giờ. Bạn không cần phải sơ tán khỏi tòa nhà.", type: 'SHORT_TALK' }
+      ]
+    }
   ]
 };
 
@@ -51,11 +114,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [showHintModal, setShowHintModal] = useState(false)
   const [completedSentences, setCompletedSentences] = useState<Set<string>>(new Set())
   const [contentType, setContentType] = useState<'SENTENCE' | 'QNA' | 'SHORT_TALK'>('SENTENCE')
+  const [selectedSetId, setSelectedSetId] = useState<string>('set-s1')
   const audioRefs = useRef<{qAudio: HTMLAudioElement | null, aAudio: HTMLAudioElement | null, timeout: NodeJS.Timeout | null}>({ qAudio: null, aAudio: null, timeout: null })
   
-  const currentData = PRACTICE_DATA[contentType]
+  const currentCategorySets = PRACTICE_DATA[contentType]
+  const currentSet = currentCategorySets.find(s => s.id === selectedSetId) || currentCategorySets[0]
+  const currentData = currentSet.items
   const currentSentence = currentData[currentIndex] || currentData[0]
-  const currentInputKey = `${contentType}-${currentIndex}`
+  const currentInputKey = `${selectedSetId}-${currentIndex}`
   const userInput = userInputs[currentInputKey] || ''
   const setUserInput = (val: string) => setUserInputs(prev => ({ ...prev, [currentInputKey]: val }))
   
@@ -69,6 +135,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     setHintWordsList([])
     setIsPlaying(false)
     setIsReady(false)
+    setSelectedSetId(PRACTICE_DATA[contentType][0].id)
   }, [contentType])
 
   useEffect(() => {
@@ -221,7 +288,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         await fetch('/api/toeic/dictation/reward', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'sentence', referenceId: `${contentType}-${currentSentence.id}` })
+          body: JSON.stringify({ type: 'sentence', referenceId: `${selectedSetId}-${currentSentence.id}` })
         })
       } catch (err) {}
     } else {
@@ -233,7 +300,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     if (currentIndex < currentData.length - 1) {
       setCurrentIndex(prev => prev + 1)
     } else {
-      const finishKey = `${contentType}-${difficulty}`
+      const finishKey = `${selectedSetId}-${difficulty}`
       if (!completedSentences.has(finishKey)) {
         setCompletedSentences(prev => new Set(prev).add(finishKey))
         toast.success('Tuyệt vời! Bạn đã hoàn thành bài nghe chép +5 ⭐', { position: 'top-center' })
@@ -316,8 +383,23 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 <div className="text-center w-full max-w-sm">
                   <h3 className="text-white text-xl md:text-2xl font-black mb-6 md:mb-8 tracking-wide">Cài đặt bài nghe</h3>
                   
-                  {/* Speed Picker (Vertical iOS style) */}
-                  <div className="flex flex-col items-center mb-6 md:mb-10 w-full">
+                  {/* Set Selector */}
+                  <div className="w-full flex flex-col items-center mb-6 md:mb-8">
+                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Bộ Đề (Tập)</span>
+                    <select 
+                      value={selectedSetId}
+                      onChange={(e) => setSelectedSetId(e.target.value)}
+                      className="w-full md:w-3/4 bg-[#0B1120] border border-slate-700 text-white font-bold text-sm md:text-base px-4 py-3.5 rounded-xl shadow-inner focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 appearance-none text-center cursor-pointer transition-colors hover:border-slate-600"
+                    >
+                      {currentCategorySets.map(s => (
+                        <option key={s.id} value={s.id}>{s.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="flex flex-col md:flex-row items-center justify-center md:gap-12 w-full mb-6 md:mb-10">
+                    {/* Speed Picker (Vertical iOS style) */}
+                    <div className="flex flex-col items-center mb-6 md:mb-0">
                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Tốc độ (Speed)</span>
                     <div className="relative w-40 h-36 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-12 before:bg-gradient-to-b before:from-[#020617] before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-12 after:bg-gradient-to-t after:from-[#020617] after:to-transparent after:z-10 rounded-xl bg-[#0B1120] border border-slate-800 shadow-inner">
                       <div className="absolute top-1/2 -mt-6 h-12 inset-x-2 rounded-lg border-y-2 border-primary-500/50 bg-primary-900/10 pointer-events-none shadow-[0_0_15px_rgba(59,130,246,0.1)]" />
@@ -360,47 +442,48 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
                   </div>
 
-                  {/* Difficulty Picker (Horizontal Swipe) */}
-                  <div className="flex flex-col items-center w-full mb-4">
-                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
-                    <div className="w-full relative flex justify-center overflow-hidden max-w-[100vw] md:max-w-md">
-                       <div 
-                         className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain w-full h-32 items-center touch-pan-x"
-                         onScroll={(e) => {
-                           const el = e.currentTarget;
-                           const center = el.scrollLeft + el.clientWidth / 2;
-                           const children = Array.from(el.children);
-                           children.forEach((child: any) => {
-                             if (child.dataset.value) {
-                               const childCenter = child.offsetLeft + child.clientWidth / 2 - el.offsetLeft;
-                               if (Math.abs(childCenter - center) < 40) { 
-                                 const val = parseInt(child.dataset.value);
-                                 if (difficulty !== val) {
-                                   setDifficulty(val);
-                                   if (gearSoundRef.current) {
-                                     gearSoundRef.current.currentTime = 0;
-                                     gearSoundRef.current.play().catch(() => {});
+                    {/* Difficulty Picker (Horizontal Swipe) */}
+                    <div className="flex flex-col items-center w-full max-w-[200px]">
+                      <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
+                      <div className="w-full relative flex justify-center overflow-hidden">
+                         <div 
+                           className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain w-full h-32 items-center touch-pan-x"
+                           onScroll={(e) => {
+                             const el = e.currentTarget;
+                             const center = el.scrollLeft + el.clientWidth / 2;
+                             const children = Array.from(el.children);
+                             children.forEach((child: any) => {
+                               if (child.dataset.value) {
+                                 const childCenter = child.offsetLeft + child.clientWidth / 2 - el.offsetLeft;
+                                 if (Math.abs(childCenter - center) < 40) { 
+                                   const val = parseInt(child.dataset.value);
+                                   if (difficulty !== val) {
+                                     setDifficulty(val);
+                                     if (gearSoundRef.current) {
+                                       gearSoundRef.current.currentTime = 0;
+                                       gearSoundRef.current.play().catch(() => {});
+                                     }
                                    }
                                  }
                                }
-                             }
-                           });
-                         }}
-                       >
-                         <div className="w-[calc(50vw-4.5rem)] md:w-[calc(224px-4.5rem)] shrink-0" />
-                         {DIFFICULTIES.map(d => (
-                           <div 
-                             key={d.value}
-                             data-value={d.value}
-                             onClick={(e) => { setDifficulty(d.value); e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }}
-                             className={`snap-center shrink-0 w-36 h-24 mx-2 flex flex-col items-center justify-center rounded-2xl cursor-pointer transition-all duration-300 ${difficulty === d.value ? 'bg-slate-800 border border-slate-500 text-white shadow-xl scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]' : 'bg-[#0B1120] border border-slate-800 text-slate-600 scale-90 opacity-60 hover:opacity-80 hover:bg-[#111827]'}`}
-                           >
-                             <span className="text-[16px] font-bold">{d.label}</span>
-                             <span className="opacity-70 text-[11px] bg-black/20 px-3 py-0.5 rounded-full mt-2 font-bold">{d.value}%</span>
-                           </div>
-                         ))}
-                         <div className="w-[calc(50vw-4.5rem)] md:w-[calc(224px-4.5rem)] shrink-0" />
-                       </div>
+                             });
+                           }}
+                         >
+                           <div className="w-[calc(50%-4.5rem)] shrink-0" />
+                           {DIFFICULTIES.map(d => (
+                             <div 
+                               key={d.value}
+                               data-value={d.value}
+                               onClick={(e) => { setDifficulty(d.value); e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }}
+                               className={`snap-center shrink-0 w-36 h-24 mx-2 flex flex-col items-center justify-center rounded-2xl cursor-pointer transition-all duration-300 ${difficulty === d.value ? 'bg-slate-800 border border-slate-500 text-white shadow-xl scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]' : 'bg-[#0B1120] border border-slate-800 text-slate-600 scale-90 opacity-60 hover:opacity-80 hover:bg-[#111827]'}`}
+                             >
+                               <span className="text-[16px] font-bold">{d.label}</span>
+                               <span className="opacity-70 text-[11px] bg-black/20 px-3 py-0.5 rounded-full mt-2 font-bold">{d.value}%</span>
+                             </div>
+                           ))}
+                           <div className="w-[calc(50%-4.5rem)] shrink-0" />
+                         </div>
+                      </div>
                     </div>
                   </div>
                 </div>
