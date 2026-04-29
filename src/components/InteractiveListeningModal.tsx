@@ -355,15 +355,15 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
   return (
     <div 
-      className="fixed inset-0 z-[200] isolate flex bg-[#020617] overflow-hidden overscroll-none touch-none bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: 'linear-gradient(to bottom, rgba(2,6,23,0.7), rgba(2,6,23,0.95)), url(/images/dictation-bg.png)' }}
+      className="fixed inset-0 z-[200] isolate flex bg-white overflow-hidden overscroll-none touch-none bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.95)), url(/images/dictation-bg-light.png)' }}
     >
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.98 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-full flex flex-col text-slate-300"
+        className="relative w-full h-full flex flex-col text-slate-600"
       >
         {/* Background Effects */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -374,16 +374,16 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         {/* Right Content Area */}
         <div className={`flex-1 min-h-0 flex flex-col relative z-10 overscroll-none touch-pan-y ${isReady ? 'overflow-y-auto' : 'overflow-hidden'}`}>
           {/* Top Title & Close Button */}
-          <div className="w-full flex items-center justify-between p-4 md:px-8 border-b border-slate-800/50 bg-[#0B1120]/50 backdrop-blur-md">
-            <h2 className="text-lg md:text-2xl font-black text-white flex items-center gap-3 tracking-tight">
+          <div className="w-full flex items-center justify-between p-4 md:px-8 border-b border-slate-200/50 bg-white/50 backdrop-blur-md">
+            <h2 className="text-lg md:text-2xl font-black text-primary-900 flex items-center gap-3 tracking-tight">
               <span className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-xl bg-gradient-to-br from-slate-200 to-white flex items-center justify-center shadow-lg shadow-white/20">
                 <svg className="w-4 h-4 md:w-5 md:h-5 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
                 </svg>
               </span>
-              <span className="flex flex-wrap leading-tight gap-x-1.5">Phòng Nghe Chép <span className="text-white">Chính Tả</span></span>
+              <span className="flex flex-wrap leading-tight gap-x-1.5">Phòng Nghe Chép <span className="text-primary-900">Chính Tả</span></span>
             </h2>
-            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-[#0B1120] hover:bg-[#111827] shadow-sm rounded-full text-slate-400 transition-all border border-slate-800 hover:rotate-90 cursor-pointer">
+            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center bg-white hover:bg-slate-50 shadow-sm rounded-full text-slate-400 transition-all border border-slate-200 hover:rotate-90 cursor-pointer">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -392,22 +392,22 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             
             {/* 3 Tabs Selection */}
             <div className={`flex justify-center shrink-0 ${isReady ? 'mb-8' : 'mb-4'}`}>
-              <div className="inline-flex bg-[#111827] border border-slate-800 p-1.5 rounded-2xl shadow-inner overflow-x-auto w-full md:w-auto custom-scrollbar">
+              <div className="inline-flex bg-slate-50 border border-slate-200 p-1.5 rounded-2xl shadow-inner overflow-x-auto w-full md:w-auto custom-scrollbar">
                 <button 
                   onClick={() => setContentType('SENTENCE')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-800'}`}
                 >
                   Câu đơn
                 </button>
                 <button 
                   onClick={() => setContentType('QNA')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'QNA' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'QNA' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-800'}`}
                 >
                   Hỏi - Đáp
                 </button>
                 <button 
                   onClick={() => setContentType('SHORT_TALK')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-white text-[#020617] shadow-md' : 'text-slate-400 hover:text-slate-800'}`}
                 >
                   Bài nói ngắn
                 </button>
@@ -417,15 +417,15 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             {!isReady ? (
               <div className="w-full flex-1 flex flex-col items-center justify-center space-y-6 md:space-y-10 animate-in fade-in zoom-in-95 duration-500">
                 <div className="text-center w-full max-w-sm">
-                  <h3 className="text-white text-xl md:text-2xl font-black mb-6 md:mb-8 tracking-wide">Cài đặt bài nghe</h3>
+                  <h3 className="text-primary-900 text-xl md:text-2xl font-black mb-6 md:mb-8 tracking-wide">Cài đặt bài nghe</h3>
                   
                   {/* Set Selector */}
                   <div className="w-full flex flex-col items-center mb-6 md:mb-8">
-                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3">Bộ Đề (Tập)</span>
+                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Bộ Đề (Tập)</span>
                     <select 
                       value={selectedSetId}
                       onChange={(e) => setSelectedSetId(e.target.value)}
-                      className="w-full md:w-3/4 bg-[#0B1120] border border-slate-700 text-white font-bold text-sm md:text-base px-4 py-3.5 rounded-xl shadow-inner focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 appearance-none text-center cursor-pointer transition-colors hover:border-slate-600"
+                      className="w-full md:w-3/4 bg-white border border-slate-200 text-primary-900 font-bold text-sm md:text-base px-4 py-3.5 rounded-xl shadow-inner focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 appearance-none text-center cursor-pointer transition-colors hover:border-slate-600"
                     >
                       {currentCategorySets.map(s => (
                         <option key={s.id} value={s.id}>{s.name}</option>
@@ -436,8 +436,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   <div className="flex flex-col md:flex-row items-center justify-center md:gap-12 w-full mb-6 md:mb-10">
                     {/* Speed Picker (Vertical iOS style) */}
                     <div className="flex flex-col items-center mb-6 md:mb-0">
-                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Tốc độ (Speed)</span>
-                    <div className="relative w-40 h-36 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-12 before:bg-gradient-to-b before:from-[#020617] before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-12 after:bg-gradient-to-t after:from-[#020617] after:to-transparent after:z-10 rounded-xl bg-[#0B1120] border border-slate-800 shadow-inner">
+                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4">Tốc độ (Speed)</span>
+                    <div className="relative w-40 h-36 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-12 before:bg-gradient-to-b before:from-white before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-12 after:bg-gradient-to-t after:from-white after:to-transparent after:z-10 rounded-xl bg-white border border-slate-200 shadow-inner">
                       <div className="absolute top-1/2 -mt-6 h-12 inset-x-2 rounded-lg border-y-2 border-primary-500/50 bg-primary-900/10 pointer-events-none shadow-[0_0_15px_rgba(59,130,246,0.1)]" />
                       <div 
                         ref={speedScrollRef}
@@ -469,7 +469,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                             key={s} 
                             data-value={s} 
                             onClick={(e) => { setSpeed(s); e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'center' }); }} 
-                            className={`h-[48px] flex items-center justify-center snap-center cursor-pointer transition-all duration-300 ${speed === s ? 'text-white font-black text-2xl scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-slate-600 font-bold text-lg'}`}
+                            className={`h-[48px] flex items-center justify-center snap-center cursor-pointer transition-all duration-300 ${speed === s ? 'text-primary-900 font-black text-2xl scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-slate-400 font-bold text-lg'}`}
                           >
                             {s.toFixed(1)}x
                           </div>
@@ -481,7 +481,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
                     {/* Difficulty Picker (Horizontal Swipe) */}
                     <div className="flex flex-col items-center w-full max-w-[280px]">
-                      <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
+                      <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4">Độ khó</span>
                       <div className="w-full relative flex justify-center overflow-hidden">
                          <div 
                            ref={difficultyScrollRef}
@@ -513,7 +513,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                                key={d.value}
                                data-value={d.value}
                                onClick={(e) => { setDifficulty(d.value); e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }}
-                               className={`snap-center shrink-0 w-36 h-24 mx-2 flex flex-col items-center justify-center rounded-2xl cursor-pointer transition-all duration-300 ${difficulty === d.value ? 'bg-slate-800 border border-slate-500 text-white shadow-xl scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]' : 'bg-[#0B1120] border border-slate-800 text-slate-600 scale-90 opacity-60 hover:opacity-80 hover:bg-[#111827]'}`}
+                               className={`snap-center shrink-0 w-36 h-24 mx-2 flex flex-col items-center justify-center rounded-2xl cursor-pointer transition-all duration-300 ${difficulty === d.value ? 'bg-slate-100 border border-slate-500 text-primary-900 shadow-xl scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]' : 'bg-white border border-slate-200 text-slate-600 scale-90 opacity-60 hover:opacity-80 hover:bg-slate-50'}`}
                              >
                                <span className="text-[16px] font-bold">{d.label}</span>
                                <span className="opacity-70 text-[11px] bg-black/20 px-3 py-0.5 rounded-full mt-2 font-bold">{d.value}%</span>
@@ -538,9 +538,9 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 {/* Audio Controls Row */}
                 <div className="flex items-center justify-center gap-6 md:gap-10 mb-8 w-full max-w-sm mx-auto px-4">
                   {/* Speed Badge */}
-                  <div className="flex flex-col items-center bg-[#0B1120] px-4 py-2 rounded-xl border border-slate-800 cursor-pointer hover:bg-slate-800 transition-colors" onClick={() => setIsReady(false)}>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Speed</span>
-                    <span className="text-sm font-black text-white">{speed.toFixed(1)}x</span>
+                  <div className="flex flex-col items-center bg-white px-4 py-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => setIsReady(false)}>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Speed</span>
+                    <span className="text-sm font-black text-primary-900">{speed.toFixed(1)}x</span>
                   </div>
 
                   {/* Play Button */}
@@ -553,7 +553,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     )}
                     {!isPlaying && <div className="absolute inset-0 bg-white rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" /> }
                     
-                    <button className={`relative w-20 h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-white/50' : ''}`}>
+                    <button className={`relative w-20 h-20 bg-gradient-to-b from-white to-slate-50 border border-slate-200 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-primary-500/50' : ''}`}>
                       <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-slate-200' : 'bg-white'}`}>
                         {isPlaying ? (
                           <svg className="w-6 h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
@@ -565,14 +565,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   </div>
                   
                   {/* Difficulty Badge */}
-                  <div className="flex flex-col items-center bg-[#0B1120] px-4 py-2 rounded-xl border border-slate-800 cursor-pointer hover:bg-slate-800 transition-colors" onClick={() => setIsReady(false)}>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Level</span>
-                    <span className="text-sm font-black text-white">{DIFFICULTIES.find(d => d.value === difficulty)?.label}</span>
+                  <div className="flex flex-col items-center bg-white px-4 py-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => setIsReady(false)}>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Level</span>
+                    <span className="text-sm font-black text-primary-900">{DIFFICULTIES.find(d => d.value === difficulty)?.label}</span>
                   </div>
                 </div>
 
                 <div className="w-full space-y-8 max-w-4xl">
-                  <div className="w-full bg-[#111827] border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
+                  <div className="w-full bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-400 to-white opacity-50" />
                     
                     {/* Progressive Hint Lightbulb & Check Result */}
@@ -590,7 +590,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                           }
                         }}
                         disabled={revealedWordCount >= maxReveals}
-                        className="group cursor-pointer disabled:cursor-not-allowed relative flex items-center justify-center p-2 rounded-full transition-all bg-[#0B1120] border border-slate-800 hover:bg-slate-800"
+                        className="group cursor-pointer disabled:cursor-not-allowed relative flex items-center justify-center p-2 rounded-full transition-all bg-white border border-slate-200 hover:bg-slate-100"
                       >
                         {revealedWordCount < maxReveals && (
                           <div 
@@ -608,8 +608,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
 
                     {/* Hint Display */}
-                    <div className="mt-12 md:mt-0 mb-4 pb-4 border-b border-slate-800 pr-0 md:pr-40 min-h-[4rem] flex items-center justify-center">
-                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide px-2">
+                    <div className="mt-12 md:mt-0 mb-4 pb-4 border-b border-slate-200 pr-0 md:pr-40 min-h-[4rem] flex items-center justify-center">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-600 text-center tracking-wide px-2">
                         {hintWordsList.length > 0 ? hintWordsList.map((hw, i) => (
                           hw.isQnaBreak ? <br key={`br-${i}`} className="my-2 block" /> : 
                           <span key={i} className={hw.highlighted ? "text-amber-400 font-bold drop-shadow-[0_0_10px_rgba(251,191,36,0.4)] transition-colors duration-500" : ""}>
@@ -622,7 +622,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <textarea 
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
-                      className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-xl lg:text-2xl font-medium placeholder:text-sm md:placeholder:text-base placeholder-slate-600 focus:outline-none resize-none text-center custom-scrollbar"
+                      className="w-full h-24 md:h-40 bg-transparent text-primary-900 text-lg md:text-xl lg:text-2xl font-medium placeholder:text-sm md:placeholder:text-base placeholder-slate-600 focus:outline-none resize-none text-center custom-scrollbar"
                       placeholder="Gõ đầy đủ câu tiếng Anh ở đây. Phương pháp này đòi hỏi bạn phải gõ đầy đủ câu mới có hiệu quả. Cố gắng lên bạn nhé"
                       spellCheck={false}
                     />
@@ -630,17 +630,17 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
                   {/* Bottom Navigation */}
                   <div className="flex justify-center mt-6 w-full max-w-sm mx-auto">
-                    <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
+                    <div className="flex items-center justify-between w-full bg-slate-50 border border-slate-200 shadow-sm rounded-full p-1.5">
                       <button 
                         onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
                         disabled={currentIndex === 0}
-                        className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
+                        className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-100 hover:text-primary-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
                       >
                         <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                         Prev
                       </button>
                       
-                      <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
+                      <span className="text-sm font-bold text-slate-800">{currentIndex + 1} <span className="text-slate-400">/ {currentData.length}</span></span>
                       
                       <button 
                         onClick={nextSentence} 
@@ -660,18 +660,18 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         <AnimatePresence>
           {showHintModal && (
             <div className="fixed inset-0 z-[400] flex items-center justify-center p-4">
-              <div className="absolute inset-0 bg-[#020617]/80 backdrop-blur-md" onClick={() => setShowHintModal(false)} />
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-md" onClick={() => setShowHintModal(false)} />
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative bg-[#111827] border border-slate-700 rounded-3xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl"
+                className="relative bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl"
               >
                 {revealedWordCount === 0 ? (
                   <>
                     <div className="text-5xl mb-4">💡</div>
-                    <h3 className="text-xl md:text-2xl font-black text-white mb-3">Gợi ý từ đầu tiên</h3>
-                    <p className="text-slate-300 text-sm md:text-base mb-8 leading-relaxed">
+                    <h3 className="text-xl md:text-2xl font-black text-primary-900 mb-3">Gợi ý từ đầu tiên</h3>
+                    <p className="text-slate-600 text-sm md:text-base mb-8 leading-relaxed">
                       Mình sẽ giúp bạn mở từ đầu tiên! Cố gắng tập trung nghe ở lần tiếp theo nha!
                     </p>
                     <button 
@@ -684,14 +684,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 ) : (
                   <>
                     <div className="text-5xl mb-4">🥺</div>
-                    <h3 className="text-xl md:text-2xl font-black text-white mb-3">Đừng bỏ cuộc nhé!</h3>
-                    <p className="text-slate-300 text-sm md:text-base mb-8 leading-relaxed">
+                    <h3 className="text-xl md:text-2xl font-black text-primary-900 mb-3">Đừng bỏ cuộc nhé!</h3>
+                    <p className="text-slate-600 text-sm md:text-base mb-8 leading-relaxed">
                       Bạn cố gắng nghe thêm vài lần nữa rồi hãy nhờ trợ giúp nhé?
                     </p>
                     <div className="flex flex-col gap-3">
                       <button 
                         onClick={() => { playAudio(); setShowHintModal(false); }}
-                        className="w-full bg-[#0B1120] border border-slate-700 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95"
+                        className="w-full bg-white border border-slate-200 hover:bg-slate-100 text-primary-900 font-bold py-3.5 rounded-xl transition-all active:scale-95"
                       >
                         🔊 Nghe lại
                       </button>
@@ -713,16 +713,16 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         <AnimatePresence>
           {showResultModal && (
             <div className="fixed inset-0 z-[400] flex items-center justify-center p-4">
-              <div className="absolute inset-0 bg-[#020617]/80 backdrop-blur-md" onClick={() => setShowResultModal(false)} />
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-md" onClick={() => setShowResultModal(false)} />
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative bg-[#111827] border border-slate-700 rounded-3xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl overflow-hidden"
+                className="relative bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl overflow-hidden"
               >
                 <button 
                   onClick={() => setShowResultModal(false)}
-                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+                  className="absolute top-4 right-4 text-slate-400 hover:text-primary-900 transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
@@ -730,16 +730,16 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                 <div className="text-6xl mb-4">
                   {setScore.correct / setScore.total >= 0.6 ? '🏆' : '💪'}
                 </div>
-                <h3 className="text-xl md:text-2xl font-black text-white mb-2">
+                <h3 className="text-xl md:text-2xl font-black text-primary-900 mb-2">
                   {setScore.correct / setScore.total >= 0.6 ? 'Hoàn thành xuất sắc!' : 'Hãy cố gắng hơn nhé!'}
                 </h3>
                 
-                <div className="bg-[#0B1120] border border-slate-800 rounded-2xl p-4 mb-6 mt-4">
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6 mt-4">
                   <p className="text-slate-400 text-sm mb-1 uppercase tracking-wider font-bold">Kết quả của bạn</p>
                   <p className="text-4xl font-black text-amber-400">
-                    {setScore.correct} <span className="text-xl text-slate-500">/ {setScore.total}</span>
+                    {setScore.correct} <span className="text-xl text-slate-400">/ {setScore.total}</span>
                   </p>
-                  <p className="text-xs text-slate-500 mt-2 px-2">
+                  <p className="text-xs text-slate-400 mt-2 px-2">
                     {setScore.correct / setScore.total >= 0.6 
                       ? 'Bạn đã đạt đủ điều kiện nhận thưởng sao (≥ 60%)!' 
                       : 'Cần đúng ít nhất 60% để nhận phần thưởng sao.'}
@@ -762,7 +762,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   </button>
                   <button 
                     onClick={() => { setIsReady(false); setShowResultModal(false); }}
-                    className="w-full bg-[#0B1120] border border-slate-700 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95"
+                    className="w-full bg-white border border-slate-200 hover:bg-slate-100 text-primary-900 font-bold py-3.5 rounded-xl transition-all active:scale-95"
                   >
                     📚 Chọn chủ đề khác
                   </button>
