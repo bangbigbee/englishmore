@@ -335,36 +335,47 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
                   </div>
 
-                  {/* Difficulty Picker (Left/Right Arrows) */}
+                  {/* Difficulty Picker (Horizontal Swipe) */}
                   <div className="flex flex-col items-center w-full mb-4">
                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
-                    <div className="flex items-center gap-4 md:gap-6">
-                      <button 
-                        onClick={() => {
-                          const idx = DIFFICULTIES.findIndex(d => d.value === difficulty);
-                          if (idx > 0) setDifficulty(DIFFICULTIES[idx - 1].value);
-                        }}
-                        disabled={difficulty === DIFFICULTIES[0].value}
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0B1120] border border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors cursor-pointer"
-                      >
-                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                      </button>
-                      
-                      <div className="w-36 h-24 flex flex-col items-center justify-center bg-slate-800 border border-slate-600 text-white rounded-2xl shadow-xl transition-all">
-                        <span className="text-[16px] font-bold">{DIFFICULTIES.find(d => d.value === difficulty)?.label}</span>
-                        <span className="opacity-70 text-[11px] bg-black/20 px-3 py-0.5 rounded-full mt-2 font-bold">{difficulty}%</span>
-                      </div>
-                      
-                      <button 
-                        onClick={() => {
-                          const idx = DIFFICULTIES.findIndex(d => d.value === difficulty);
-                          if (idx < DIFFICULTIES.length - 1) setDifficulty(DIFFICULTIES[idx + 1].value);
-                        }}
-                        disabled={difficulty === DIFFICULTIES[DIFFICULTIES.length - 1].value}
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0B1120] border border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors cursor-pointer"
-                      >
-                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                      </button>
+                    <div className="w-full relative flex justify-center overflow-hidden max-w-[100vw] md:max-w-md">
+                       <div 
+                         className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain w-full h-32 items-center"
+                         onScroll={(e) => {
+                           const el = e.currentTarget;
+                           const center = el.scrollLeft + el.clientWidth / 2;
+                           const children = Array.from(el.children);
+                           children.forEach((child: any) => {
+                             if (child.dataset.value) {
+                               const childCenter = child.offsetLeft + child.clientWidth / 2 - el.offsetLeft;
+                               if (Math.abs(childCenter - center) < 40) { 
+                                 const val = parseInt(child.dataset.value);
+                                 if (difficulty !== val) {
+                                   setDifficulty(val);
+                                   if (gearSoundRef.current) {
+                                     gearSoundRef.current.currentTime = 0;
+                                     gearSoundRef.current.play().catch(() => {});
+                                   }
+                                 }
+                               }
+                             }
+                           });
+                         }}
+                       >
+                         <div className="w-[calc(50vw-4.5rem)] md:w-[calc(224px-4.5rem)] shrink-0" />
+                         {DIFFICULTIES.map(d => (
+                           <div 
+                             key={d.value}
+                             data-value={d.value}
+                             onClick={(e) => { setDifficulty(d.value); e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }}
+                             className={`snap-center shrink-0 w-36 h-24 mx-2 flex flex-col items-center justify-center rounded-2xl cursor-pointer transition-all duration-300 ${difficulty === d.value ? 'bg-slate-800 border border-slate-500 text-white shadow-xl scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]' : 'bg-[#0B1120] border border-slate-800 text-slate-600 scale-90 opacity-60 hover:opacity-80 hover:bg-[#111827]'}`}
+                           >
+                             <span className="text-[16px] font-bold">{d.label}</span>
+                             <span className="opacity-70 text-[11px] bg-black/20 px-3 py-0.5 rounded-full mt-2 font-bold">{d.value}%</span>
+                           </div>
+                         ))}
+                         <div className="w-[calc(50vw-4.5rem)] md:w-[calc(224px-4.5rem)] shrink-0" />
+                       </div>
                     </div>
                   </div>
                 </div>
