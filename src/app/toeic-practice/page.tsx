@@ -1130,7 +1130,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							{ label: 'học viên đang học', value: stats.users },
 						].map((stat, idx) => (
 							<div key={idx} className="flex items-center shrink-0">
-								<span><strong className="text-primary-900 text-[15px]">{stat.value.toLocaleString()}+</strong> <span className="ml-[2px]">{stat.label}</span></span>
+								<span suppressHydrationWarning><strong suppressHydrationWarning className="text-primary-900 text-[15px]">{stat.value.toLocaleString('vi-VN')}+</strong> <span className="ml-[2px]">{stat.label}</span></span>
 							</div>
 						))}
 					</div>
