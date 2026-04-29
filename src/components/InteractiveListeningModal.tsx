@@ -101,7 +101,7 @@ type HintWord = { word: string; highlighted: boolean; isQnaBreak?: boolean; orig
 export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCollapsed }: { isOpen: boolean, onClose: () => void, isSidebarCollapsed?: boolean }) {
   const [difficulty, setDifficulty] = useState(40)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [userInputs, setUserInputs] = useState<Record<string, string>>({})
+  const [correctSentences, setCorrectSentences] = useState<Set<number>>(new Set())
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceQ, setVoiceQ] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceA, setVoiceA] = useState<SpeechSynthesisVoice | null>(null)
@@ -159,6 +159,8 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
     setIsPlaying(false)
     setIsReady(false)
     setSelectedSetId(PRACTICE_DATA[contentType][0].id)
+    setCorrectSentences(new Set())
+    setBlankInputs({})
   }, [contentType])
 
   useEffect(() => {
@@ -318,6 +320,7 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
     }
     
     if (allCorrect) {
+      setCorrectSentences(prev => new Set(prev).add(currentIndex))
       toast.success('Chính xác hoàn toàn! +2 ⭐', { position: 'top-center' })
       try {
         await fetch('/api/toeic/dictation/reward', {
@@ -332,14 +335,10 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
   }
 
   const handleFinishSet = async () => {
-    // In fill-in-the-blanks mode, we'll just check if they filled it out right
-    let correctCount = currentData.length; // Simplified for now since they can't submit partial sets easily without refactoring the whole validation logic
-    // Actually we can just show completion.
-    
-    setSetScore({ correct: correctCount, total: currentData.length });
+    setSetScore({ correct: correctSentences.size, total: currentData.length });
     setShowResultModal(true);
 
-    const percent = correctCount / currentData.length;
+    const percent = correctSentences.size / currentData.length;
     if (percent >= 0.6) {
       const finishKey = `${selectedSetId}-${difficulty}`
       if (!completedSentences.has(finishKey)) {
@@ -768,21 +767,15 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
                   <p className="text-4xl font-black text-secondary-500">
                     {setScore.correct} <span className="text-xl text-slate-400">/ {setScore.total}</span>
                   </p>
-                  <p className="text-xs text-slate-400 mt-2 px-2">
-                    {setScore.correct / setScore.total >= 0.6 
-                      ? 'Bạn đã đạt đủ điều kiện nhận thưởng sao (≥ 60%)!' 
-                      : 'Cần đúng ít nhất 60% để nhận phần thưởng sao.'}
-                  </p>
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <button 
                     onClick={() => { 
                       setCurrentIndex(0); 
-                      // Clear inputs for this set
-                      const newInputs = { ...userInputs };
-                      for (let i = 0; i < currentData.length; i++) delete newInputs[`${selectedSetId}-${i}`];
-                      setUserInputs(newInputs);
+                      // Clear inputs and score for this set
+                      setBlankInputs({});
+                      setCorrectSentences(new Set());
                       setShowResultModal(false); 
                     }}
                     className="w-full bg-secondary-500 hover:bg-secondary-400 text-primary-900 font-black py-3.5 rounded-xl shadow-lg transition-all active:scale-95"
