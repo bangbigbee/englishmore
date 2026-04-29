@@ -2985,32 +2985,7 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
 			<InteractiveListeningModal isOpen={isInteractiveModalOpen} onClose={() => setIsInteractiveModalOpen(false)} isSidebarCollapsed={isSidebarCollapsed} />
 			
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-				{/* Lựa chọn 1: Phòng Luyện Nghe Tương Tác */}
-				<div className="bg-gradient-to-br from-blue-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group border border-blue-500/20">
-					<div className="absolute -right-8 -top-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-						<svg className="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-					</div>
-					<div className="relative z-10 mb-8">
-						<div className="flex items-center gap-3 mb-5">
-							<span className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
-								<svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-							</span>
-							<span className="px-3 py-1 bg-blue-500/20 text-blue-300 text-[10px] font-bold rounded-full border border-blue-500/30 uppercase tracking-widest">Dành cho Beginner</span>
-						</div>
-						<h3 className="text-2xl font-black mb-3">Phòng Luyện Nghe Tương Tác</h3>
-						<p className="text-slate-300 font-medium text-sm leading-relaxed">
-							Luyện nghe theo phương pháp nghe chép chính tả theo nhiều cấp độ, phù hợp cho người mới bắt đầu luyện nghe.
-						</p>
-					</div>
-					<button 
-						onClick={() => setIsInteractiveModalOpen(true)}
-						className="w-full bg-blue-950 hover:bg-blue-900 border border-blue-800/60 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-blue-950/50 active:scale-95 flex items-center justify-center gap-2 relative z-10"
-					>
-						Vào phòng tập ngay <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-					</button>
-				</div>
-
-				{/* Lựa chọn 2: Phòng Luyện Nghe Thực Chiến */}
+				{/* Lựa chọn 1: Phòng Luyện Nghe Thực Chiến */}
 				<div className="bg-gradient-to-br from-primary-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group border border-primary-500/20">
 					<div className="absolute -right-8 -bottom-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
 						<svg className="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
@@ -3020,7 +2995,7 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
 							<span className="w-10 h-10 rounded-xl bg-primary-500/20 flex items-center justify-center border border-primary-500/30">
 								<svg className="w-5 h-5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
 							</span>
-							<span className="px-3 py-1 bg-primary-500/20 text-primary-300 text-[10px] font-bold rounded-full border border-primary-500/30 uppercase tracking-widest">Sát đề thi TOEIC</span>
+							<span className="h-10 flex items-center px-4 bg-primary-500/20 text-primary-300 text-[11px] font-black rounded-xl border border-primary-500/30 uppercase tracking-widest">Sát đề thi TOEIC</span>
 						</div>
 						<h3 className="text-2xl font-black mb-3">Phòng Luyện Nghe Thực Chiến</h3>
 						<p className="text-slate-300 font-medium text-sm leading-relaxed">
@@ -3034,6 +3009,31 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
 						className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 relative z-10 backdrop-blur-sm"
 					>
 						Chọn bài thi bên dưới <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+					</button>
+				</div>
+
+				{/* Lựa chọn 2: Phòng Luyện Nghe Tương Tác */}
+				<div className="bg-gradient-to-br from-blue-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white flex flex-col justify-between shadow-xl relative overflow-hidden group border border-blue-500/20">
+					<div className="absolute -right-8 -top-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+						<svg className="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+					</div>
+					<div className="relative z-10 mb-8">
+						<div className="flex items-center gap-3 mb-5">
+							<span className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
+								<svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+							</span>
+							<span className="h-10 flex items-center px-4 bg-blue-500/20 text-blue-300 text-[11px] font-black rounded-xl border border-blue-500/30 uppercase tracking-widest">Dành cho Beginner</span>
+						</div>
+						<h3 className="text-2xl font-black mb-3">Phòng Nghe Chép Chính Tả</h3>
+						<p className="text-slate-300 font-medium text-sm leading-relaxed">
+							Luyện nghe theo phương pháp nghe chép chính tả theo nhiều cấp độ, phù hợp cho người mới bắt đầu luyện nghe.
+						</p>
+					</div>
+					<button 
+						onClick={() => setIsInteractiveModalOpen(true)}
+						className="w-full bg-blue-950 hover:bg-blue-900 border border-blue-800/60 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg shadow-blue-950/50 active:scale-95 flex items-center justify-center gap-2 relative z-10"
+					>
+						Vào phòng tập ngay <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
 					</button>
 				</div>
 			</div>
