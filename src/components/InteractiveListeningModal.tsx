@@ -118,6 +118,24 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [contentType, setContentType] = useState<'SENTENCE' | 'QNA' | 'SHORT_TALK'>('SENTENCE')
   const [selectedSetId, setSelectedSetId] = useState<string>('set-s1')
   const audioRefs = useRef<{qAudio: HTMLAudioElement | null, aAudio: HTMLAudioElement | null, timeout: NodeJS.Timeout | null}>({ qAudio: null, aAudio: null, timeout: null })
+  const speedScrollRef = useRef<HTMLDivElement>(null)
+  const difficultyScrollRef = useRef<HTMLDivElement>(null)
+  
+  // Scroll to active values on render
+  useEffect(() => {
+    if (isOpen && !isReady) {
+      setTimeout(() => {
+        if (speedScrollRef.current) {
+          const activeSpeed = speedScrollRef.current.querySelector(`[data-value="${speed}"]`);
+          if (activeSpeed) activeSpeed.scrollIntoView({ behavior: 'auto', block: 'center' });
+        }
+        if (difficultyScrollRef.current) {
+          const activeDifficulty = difficultyScrollRef.current.querySelector(`[data-value="${difficulty}"]`);
+          if (activeDifficulty) activeDifficulty.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+        }
+      }, 50);
+    }
+  }, [isOpen, isReady])
   
   const currentCategorySets = PRACTICE_DATA[contentType]
   const currentSet = currentCategorySets.find(s => s.id === selectedSetId) || currentCategorySets[0]
@@ -419,6 +437,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <div className="relative w-40 h-36 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-12 before:bg-gradient-to-b before:from-[#020617] before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-12 after:bg-gradient-to-t after:from-[#020617] after:to-transparent after:z-10 rounded-xl bg-[#0B1120] border border-slate-800 shadow-inner">
                       <div className="absolute top-1/2 -mt-6 h-12 inset-x-2 rounded-lg border-y-2 border-primary-500/50 bg-primary-900/10 pointer-events-none shadow-[0_0_15px_rgba(59,130,246,0.1)]" />
                       <div 
+                        ref={speedScrollRef}
                         className="overflow-y-auto snap-y snap-mandatory h-full w-full scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain touch-pan-y"
                         onScroll={(e) => {
                           const el = e.currentTarget;
@@ -462,6 +481,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                       <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
                       <div className="w-full relative flex justify-center overflow-hidden">
                          <div 
+                           ref={difficultyScrollRef}
                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain w-full h-32 items-center touch-pan-x"
                            onScroll={(e) => {
                              const el = e.currentTarget;
