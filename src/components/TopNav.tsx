@@ -525,6 +525,63 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
     }
   }, [isDropdownOpen])
 
+  if (isToeicDomain) {
+    return (
+      <>
+        {/* DESKTOP: Only floating elements */}
+        <div className="hidden lg:flex fixed top-4 right-4 sm:right-6 z-[100] items-center gap-3">
+            {session && (
+                 <button 
+                    onClick={() => setIsStarModalOpen(true)}
+                    className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80 bg-white/50 backdrop-blur-md px-2 py-1 rounded-full border border-slate-200 shadow-sm" 
+                    title="Tìm hiểu về Toeic Stars"
+                 >
+                    <span className="text-[14px] mt-[-2px]">⭐</span>
+                    <span className="text-[12px] font-black text-secondary-600">
+                        {(session.user as any)?.toeicStars || 0}
+                    </span>
+                 </button>
+            )}
+            <ThemeToggle />
+        </div>
+        
+        {/* MOBILE: Standard TopNav but without TOEIC tabs */}
+        <header className="lg:hidden sticky top-0 z-40 backdrop-blur-xl transition-all px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 bg-white/80 border-b border-primary-900/10">
+          <div className="mx-auto flex items-center justify-between gap-2 relative">
+            <Link href="/" className="flex shrink-0 items-center gap-2 leading-none z-10">
+              <span className="shrink-0">
+                <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain drop-shadow-sm theme-classic-hide" />
+                <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain drop-shadow-sm theme-classic-show" />
+              </span>
+            </Link>
+            
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              {session && (
+                 <button 
+                    onClick={() => setIsStarModalOpen(true)}
+                    className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80" 
+                 >
+                    <span className="text-[14px] mt-[-2px]">⭐</span>
+                    <span className="text-[12px] font-black text-secondary-600">
+                        {(session.user as any)?.toeicStars || 0}
+                    </span>
+                 </button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <ToeicStarInfoModal 
+            isOpen={isStarModalOpen} 
+            onClose={() => setIsStarModalOpen(false)} 
+            currentStars={(session?.user as any)?.toeicStars || 0}
+            userId={session?.user?.id}
+        />
+      </>
+    )
+  }
+
   return (
     <>
       <header className={`sticky top-0 z-40 backdrop-blur-xl transition-all px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 ${pathname === '/' || pathname === '/toeic-practice' ? 'bg-transparent border-b border-transparent' : 'bg-background/80 border-b border-primary-900/10'}`}>
@@ -532,17 +589,8 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         <div className="flex flex-1 items-center min-w-0 pr-4">
           <Link href="/" className="lg:static absolute left-1/2 -translate-x-1/2 lg:transform-none flex shrink-0 items-center gap-2 leading-none sm:gap-3 z-10">
             <span className="shrink-0 text-[1.45rem] font-extrabold tracking-tight sm:text-[1.8rem]">
-              {isToeicDomain ? (
-                  <>
-                    <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] sm:h-[42px] object-contain drop-shadow-sm mt-1 theme-classic-hide" />
-                    <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] sm:h-[42px] object-contain drop-shadow-sm mt-1 theme-classic-show" />
-                  </>
-              ) : (
-                  <>
-                  <span className="text-primary-900">English</span>
-                  <span className="text-secondary-500">More</span>
-                  </>
-              )}
+              <span className="text-primary-900">English</span>
+              <span className="text-secondary-500">More</span>
             </span>
           </Link>
           <Suspense fallback={<div className="w-[100px]" />}>
@@ -611,18 +659,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
 
           {session && (
             <div className="flex items-center gap-2">
-              {isToeicDomain && (
-                 <button 
-                    onClick={() => setIsStarModalOpen(true)}
-                    className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80" 
-                    title="Tìm hiểu về Toeic Stars"
-                 >
-                    <span className="text-[14px] mt-[-2px] drop-shadow-sm">⭐</span>
-                    <span className="text-[12px] font-black text-secondary-600">
-                        {(session.user as any)?.toeicStars || 0}
-                    </span>
-                 </button>
-              )}
               {session.user?.tier === 'PRO' && (
                 <Link 
                   href="/user/profile"

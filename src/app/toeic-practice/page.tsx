@@ -512,7 +512,10 @@ function ToeicPracticeContent() {
 	];
 
 	return (
-		<div className={`min-h-screen bg-background ${tab === 'home' ? '' : 'flex flex-col md:flex-row'}`}>
+		<div className="min-h-screen flex flex-col md:flex-row relative z-0">
+			{/* Global Theme Gradient Background */}
+			<div className="fixed inset-0 bg-gradient-to-br from-primary-50 to-background -z-10" />
+
 			<ToeicOnboardingModal onComplete={(level) => {
 				setToeicLevel(level);
 				if (level === 'MOCK_TEST_ONLY') {
@@ -522,10 +525,8 @@ function ToeicPracticeContent() {
 				}
 			}} />
 			
-			{tab !== 'home' && (
-				<>
-				{/* Mobile Horizontal Menu */}
-				<div className="md:hidden w-full bg-white border-b border-slate-200 sticky top-[60px] z-30 overflow-x-auto hide-scrollbar">
+			{/* Mobile Horizontal Menu */}
+			<div className="md:hidden w-full bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 overflow-x-auto hide-scrollbar">
 					<div className="flex px-4 py-2 gap-2">
 						{SIDEBAR_ITEMS.map((item) => {
 							const isActive = tab === item.id;
@@ -543,11 +544,16 @@ function ToeicPracticeContent() {
 				</div>
 
 				{/* Desktop Sidebar */}
-				<aside className="w-64 shrink-0 bg-white border-r border-slate-200 hidden md:block min-h-[calc(100vh-80px)]">
-					<div className="p-4 sticky top-[80px] space-y-1">
+				<aside className="w-64 shrink-0 bg-white/60 backdrop-blur-md border-r border-slate-200/60 hidden md:flex flex-col min-h-screen relative z-10">
+					<div className="p-4 flex-1 flex flex-col">
 						<div className="mb-6 px-4">
+							<Link href="/" className="flex items-center gap-2 leading-none mb-6 mt-2">
+                                <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-hide" />
+                                <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-show" />
+                            </Link>
 							<h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">ToeicMore Menu</h3>
 						</div>
+						<div className="space-y-1">
 						{SIDEBAR_ITEMS.map((item) => {
 							const isActive = tab === item.id;
 							return (
@@ -563,14 +569,35 @@ function ToeicPracticeContent() {
 								</button>
 							);
 						})}
+						</div>
+					</div>
+					
+					<div className="p-4 mt-auto border-t border-slate-200/60">
+						{session ? (
+							<div className="w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100">
+								<div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0">
+									{session.user?.name?.charAt(0).toUpperCase() || 'U'}
+								</div>
+								<div className="flex-1 truncate">
+									<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+									<p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+								</div>
+							</div>
+						) : (
+							<button 
+								onClick={() => openLoginModal()}
+								className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary-900 text-white font-bold hover:bg-primary-800 transition-colors"
+							>
+								<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+								Đăng nhập
+							</button>
+						)}
 					</div>
 				</aside>
-				</>
-			)}
 
-			<div className={`flex-1 flex flex-col w-full ${tab === 'home' ? '' : 'max-w-none'}`}>
-				<div className={`${tab === 'home' ? 'w-full' : 'w-full max-w-7xl px-4 sm:px-6 mx-auto'} flex-1 pt-4 pb-8`}>
-					<div className={`${tab === 'home' ? 'mt-0' : 'mt-2 md:mt-4'}`}>
+			<div className="flex-1 flex flex-col w-full min-h-screen relative z-10">
+				<div className="w-full max-w-7xl px-4 sm:px-6 mx-auto flex-1 pt-4 pb-8">
+					<div className="mt-2 md:mt-4">
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
 				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} score={toeicScore} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
@@ -1092,12 +1119,6 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 
 	return (
 		<div className="py-8 pb-20 relative min-h-screen">
-			{/* Seamless Gradient Background */}
-			{isOcean && (
-				<div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[40px] -top-[100px]">
-					<div className="absolute inset-0 bg-gradient-to-b from-[#D1EAF5] to-[#f4fbfc]"></div>
-				</div>
-			)}
 
 			{/* Hero Section */}
 			<section className="flex flex-col items-center text-center mt-8 mb-24 w-full mx-auto px-4 sm:px-8 relative z-10">
