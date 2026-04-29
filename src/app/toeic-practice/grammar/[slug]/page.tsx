@@ -1876,6 +1876,104 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                               </div>
                                               </div>
                                               
+                                              {/* Action Tags directly under ABCD */}
+                                              {isShowingResult && (
+                                                <div className="flex flex-wrap items-center gap-2 mt-5 mb-2">
+                                                    {explanationText && (
+                                                        <button 
+                                                            onClick={() => setShowExplanation(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
+                                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-semibold transition-all border shadow-sm ${showExplanation[q.id] ? 'bg-primary-100 text-primary-700 border-primary-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                                                        >
+                                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                            Giải thích
+                                                        </button>
+                                                    )}
+
+                                                    {q.translation && (() => {
+                                                        const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
+                                                        const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                        const isLocked = translationTierLevel > userTierLevel;
+                                                        return (
+                                                            <button 
+                                                                onClick={() => isLocked ? setShowPricing(true) : setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
+                                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-semibold transition-all border shadow-sm relative ${showTranslation[q.id] ? 'bg-primary-100 text-primary-700 border-primary-300' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                                                            >
+                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 17.438l4.498 0" /></svg>
+                                                                Dịch nghĩa
+                                                                {isLocked && (
+                                                                    <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.translationAccessTier === 'ULTRA' ? 'text-primary-600' : 'text-secondary-500'}`}>
+                                                                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.translationAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                                                    </div>
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })()}
+                                                    
+                                                    {q.tips && (() => {
+                                                        const tipsTierLevel = currentLesson.tipsAccessTier === 'ULTRA' ? 3 : currentLesson.tipsAccessTier === 'PRO' ? 2 : 1;
+                                                        const tipsLocked = tipsTierLevel > (session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1);
+                                                        return (
+                                                            <button 
+                                                                onClick={() => tipsLocked ? setShowPricing(true) : setShowTips(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
+                                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-semibold transition-all border shadow-sm relative ${showTips[q.id] ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                                                            >
+                                                                <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                                                Xem Tip
+                                                                {tipsLocked && (
+                                                                    <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.tipsAccessTier === 'ULTRA' ? 'text-primary-600' : 'text-secondary-500'}`}>
+                                                                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.tipsAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                                                    </div>
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })()}
+                                                    
+                                                    {(() => {
+                                                        const bookmarkTierLevel = currentLesson.bookmarkAccessTier === 'ULTRA' ? 3 : currentLesson.bookmarkAccessTier === 'PRO' ? 2 : 1;
+                                                        const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
+                                                        const isLocked = bookmarkTierLevel > userTierLevel;
+                                                        return (
+                                                            <button 
+                                                                onClick={(e) => isLocked ? setShowPricing(true) : toggleBookmark(q.id, e)}
+                                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-semibold transition-all border shadow-sm relative ${bookmarkedQuestions[q.id] ? 'bg-secondary-100 text-secondary-700 border-secondary-300' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                                                            >
+                                                                <svg className="w-4 h-4" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                                                Lưu lại
+                                                                {isLocked && (
+                                                                    <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-primary-600' : 'text-secondary-500'}`}>
+                                                                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
+                                                                    </div>
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })()}
+                                                    
+                                                    {activeGroupStartIndex + questionsPerView < currentLesson.questions.length && (
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (topic.type === 'LISTENING' && topic.part && topic.part <= 4 && listeningMode === 'actual' && !isTestCompleted) {
+                                                                    toast('Đang ở chế độ thi thử. Câu hỏi sẽ tự chuyển khi hết đoạn Audio. Nếu muốn chủ động, hãy chọn chế độ Luyện tập', { icon: '⚠️', duration: 4000, style: { border: '1px solid #ef4444', color: '#7f1d1d', background: '#fef2f2', fontWeight: 600 } });
+                                                                    return;
+                                                                }
+                                                                setActiveQuestionIndex(prev => Math.min(currentLesson.questions.length - 1, prev + questionsPerView));
+                                                                const container = document.getElementById('quiz-container');
+                                                                if (container) {
+                                                                    const y = container.getBoundingClientRect().top + window.scrollY - 100;
+                                                                    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+                                                                } else {
+                                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                                }
+                                                            }}
+                                                            className="ml-auto flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[13px] font-bold transition-all border shadow-sm bg-primary-900 text-white border-primary-900 hover:bg-primary-800 hover:-translate-y-0.5 active:translate-y-0"
+                                                        >
+                                                            Câu Tiếp
+                                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                              )}
+                                              </div>
+                                              
 
                                               
                                               <div className={`flex flex-col ${isGrammarLayout ? 'flex-1 min-w-0' : 'w-full'}`}>
@@ -1893,53 +1991,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                 )}
                                                             </div>
                                                             <span className="font-bold text-sm">{isCorrect ? 'Chính xác' : 'Chưa chính xác'}</span>
-                                                          </div>
-                                                          
-                                                          <div className="flex items-center gap-2 shrink-0">
-                                                            {explanationText && (
-                                                                <button
-                                                                    onClick={() => setShowExplanation(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
-                                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm ${showExplanation[q.id] ? 'bg-primary-100 text-primary-700 border-primary-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
-                                                                >
-                                                                    Giải thích
-                                                                </button>
-                                                            )}
-                                                            {q.translation && (
-                                                                <button onClick={() => {
-                                                                    const translationTierLevel = currentLesson.translationAccessTier === 'ULTRA' ? 3 : currentLesson.translationAccessTier === 'PRO' ? 2 : 1;
-                                                                    const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                                                    if (translationTierLevel > userTierLevel) {
-                                                                        setShowPricing(true);
-                                                                        return;
-                                                                    }
-                                                                    setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))
-                                                                }} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none relative ${showTranslation[q.id] ? 'bg-primary-100 border-primary-300 text-primary-700' : 'bg-white border-slate-200 text-slate-400 hover:border-primary-400 hover:text-primary-700'}`} title={showTranslation[q.id] ? 'Tắt dịch' : 'Dịch nghĩa'}>
-                                                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 17.438l4.498 0" /></svg>
-                                                                  {currentLesson.translationAccessTier === 'PRO' && session?.user?.tier !== 'ULTRA' && session?.user?.tier !== 'PRO' && session?.user?.role !== 'admin' && <div className="absolute -top-1 -right-1 filter drop-shadow-md text-secondary-500"><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>}
-                                                                  {currentLesson.translationAccessTier === 'ULTRA' && session?.user?.tier !== 'ULTRA' && session?.user?.role !== 'admin' && <div className="absolute -top-1 -right-1 filter drop-shadow-md text-primary-600"><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>}
-                                                                </button>
-                                                            )}
-                                                            {(() => {
-                                                              const bookmarkTierLevel = currentLesson.bookmarkAccessTier === 'ULTRA' ? 3 : currentLesson.bookmarkAccessTier === 'PRO' ? 2 : 1;
-                                                              const userTierLevel = session?.user?.role === 'admin' ? 10 : session?.user?.tier === 'ULTRA' ? 3 : (session?.user?.tier === 'PRO' || session?.user?.role === 'member') ? 2 : 1;
-                                                              const isLocked = bookmarkTierLevel > userTierLevel;
-
-                                                              if (isLocked) {
-                                                                return (
-                                                                  <div className="relative group">
-                                                                    <button onClick={() => setShowPricing(true)} className={`h-8 w-8 rounded-lg border bg-white border-slate-200 text-slate-400 hover:border-secondary-400 hover:text-secondary-500 transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none`} aria-label="Lưu tay">
-                                                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                                                      <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.bookmarkAccessTier === 'ULTRA' ? 'text-primary-600' : 'text-secondary-500'}`}><svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.bookmarkAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg></div>
-                                                                    </button>
-                                                                  </div>
-                                                                )
-                                                              }
-                                                              return (
-                                                                <button onClick={(e) => toggleBookmark(q.id, e)} className={`h-8 w-8 rounded-lg border transition-all flex items-center justify-center cursor-pointer shadow-sm shrink-0 flex-none ${bookmarkedQuestions[q.id] ? 'bg-secondary-100 border-secondary-300 text-secondary-600' : 'bg-white border-slate-200 text-slate-400 hover:border-secondary-400 hover:text-secondary-500'}`} title={bookmarkedQuestions[q.id] ? 'Đã lưu' : 'Lưu vào sổ tay'}>
-                                                                  <svg className="w-4 h-4" fill={bookmarkedQuestions[q.id] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                                                                </button>
-                                                              )
-                                                            })()}
                                                           </div>
                                                       </div>
                                                       
