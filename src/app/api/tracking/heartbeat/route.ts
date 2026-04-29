@@ -9,6 +9,10 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { guestId, currentPath, section, userAgent, domain, isPageLoad } = body;
 
+    if (session?.user?.email === 'bangdtbk@gmail.com') {
+      return NextResponse.json({ success: true, ignored: true });
+    }
+
     const userId = session?.user?.id || null;
     const gId = userId ? null : (guestId || 'unknown');
     const safeDomain = domain || 'toeicmore.com';

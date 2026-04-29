@@ -129,8 +129,8 @@ export const awardToeicStars = async ({
 
     const currentUser = await txWithUser.user.findUnique({
       where: { id: userId },
-      select: { toeicStars: true, tier: true, role: true }
-    }) as { toeicStars: number; tier: string; role: string } | null
+      select: { toeicStars: true, tier: true, role: true, email: true }
+    }) as { toeicStars: number; tier: string; role: string; email: string } | null
 
     if (!currentUser || !rule || !rule.isActive || rule.points <= 0) {
       return {
@@ -152,7 +152,8 @@ export const awardToeicStars = async ({
     }
 
     let multiplier = 1
-    if (currentUser.role === 'admin') multiplier = 10
+    if (currentUser.tier === 'SUPER' || currentUser.email === 'bangdtbk@gmail.com') multiplier = 2
+    else if (currentUser.role === 'admin') multiplier = 10
     else if (currentUser.tier === 'ULTRA') multiplier = 3
     else if (currentUser.tier === 'PRO' || currentUser.role === 'member') multiplier = 2
 

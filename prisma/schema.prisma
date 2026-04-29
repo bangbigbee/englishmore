@@ -53,6 +53,7 @@ enum AccessTier {
   FREE
   PRO
   ULTRA
+  SUPER
 }
 
 enum UpgradeOrderStatus {
