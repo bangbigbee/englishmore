@@ -1961,7 +1961,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                             className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto flex justify-center items-center gap-1.5 px-4 py-2 sm:py-1.5 rounded-xl text-[13px] sm:text-[14px] font-bold transition-all bg-primary-900 text-white hover:bg-primary-800 hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-primary-900/20"
                                                         >
                                                             Câu tiếp theo
-                                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+                                                            <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                                                         </button>
                                                     )}
                                                 </div>

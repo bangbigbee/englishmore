@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
-
 import { toast } from 'sonner'
 
 type PracticeItem = { id: number; text: string; translation: string; type: 'SENTENCE' | 'QNA' | 'SHORT_TALK'; qna?: { q: string, a: string } };
@@ -34,6 +33,8 @@ const DIFFICULTIES = [
   { label: 'Hardcore', value: 100 }
 ]
 
+type HintWord = { word: string; highlighted: boolean; isQnaBreak?: boolean };
+
 export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const [difficulty, setDifficulty] = useState(100)
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -41,9 +42,10 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceQ, setVoiceQ] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceA, setVoiceA] = useState<SpeechSynthesisVoice | null>(null)
-  const [hintText, setHintText] = useState('')
+  const [hintWordsList, setHintWordsList] = useState<HintWord[]>([])
   const [speed, setSpeed] = useState(1.0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isReady, setIsReady] = useState(false)
   const [revealedWordCount, setRevealedWordCount] = useState(0)
   const [contentType, setContentType] = useState<'SENTENCE' | 'QNA' | 'SHORT_TALK'>('SENTENCE')
   const audioRefs = useRef<{qAudio: HTMLAudioElement | null, aAudio: HTMLAudioElement | null, timeout: NodeJS.Timeout | null}>({ qAudio: null, aAudio: null, timeout: null })
@@ -57,9 +59,10 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   useEffect(() => {
     setCurrentIndex(0)
     setRevealedWordCount(0)
-    setHintText('')
+    setHintWordsList([])
     setUserInput('')
     setIsPlaying(false)
+    setIsReady(false)
   }, [contentType])
 
   useEffect(() => {
@@ -103,24 +106,26 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
     const hintWords = targetWords.map((w, i) => {
       // If word wasn't hidden to begin with, show it
-      if (!hiddenIndices.has(i)) return w;
+      if (!hiddenIndices.has(i)) return { word: w, highlighted: false };
       // If word was hidden but is now revealed by clicking, show it
-      if (indicesToReveal.has(i)) return w;
+      if (indicesToReveal.has(i)) return { word: w, highlighted: true };
       // Otherwise keep it hidden
       const match = w.match(/^([^a-zA-Z0-9]*)([a-zA-Z0-9'-]+)([^a-zA-Z0-9]*)$/);
       if (match) {
-        return match[1] + '___' + match[3];
+        return { word: match[1] + '___' + match[3], highlighted: false };
       }
-      return '___';
+      return { word: '___', highlighted: false };
     })
     
     if (contentType === 'QNA' && currentSentence.qna) {
       const qLength = currentSentence.qna.q.split(' ').length;
-      const qHint = hintWords.slice(0, qLength).join(' ');
-      const aHint = hintWords.slice(qLength).join(' ');
-      setHintText(qHint + '\n' + aHint);
+      setHintWordsList([
+        ...hintWords.slice(0, qLength),
+        { word: '', highlighted: false, isQnaBreak: true },
+        ...hintWords.slice(qLength)
+      ]);
     } else {
-      setHintText(hintWords.join(' '));
+      setHintWordsList(hintWords);
     }
   }, [currentIndex, difficulty, revealedWordCount, currentSentence, maxReveals, contentType])
 
@@ -276,139 +281,198 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
               </div>
             </div>
 
-            {/* Audio Controls Row */}
-            <div className="flex items-center justify-center gap-6 md:gap-10 mb-8 w-full max-w-sm mx-auto px-4">
-              {/* Speed Slider Control */}
-              <div className="flex flex-col flex-1 items-start">
-                <div className="flex items-center justify-between w-full mb-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Speed</span>
-                  <span className="text-xs font-bold text-white">{speed.toFixed(1)}x</span>
-                </div>
-                <input 
-                  type="range" 
-                  min="0.6" max="1.4" step="0.1" 
-                  value={speed} 
-                  onChange={(e) => setSpeed(Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-white"
-                />
-              </div>
-
-              {/* Play Button */}
-              <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
-                {isPlaying && (
-                  <>
-                    <div className="absolute inset-0 bg-white rounded-full blur-xl opacity-40 animate-pulse" />
-                    <div className="absolute -inset-4 border-2 border-white/30 rounded-full animate-ping" />
-                  </>
-                )}
-                {!isPlaying && <div className="absolute inset-0 bg-white rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" /> }
-                
-                <button className={`relative w-16 h-16 md:w-20 md:h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-white/50' : ''}`}>
-                  <div className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-slate-200' : 'bg-white'}`}>
-                    {isPlaying ? (
-                      <svg className="w-5 h-5 md:w-6 md:h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
-                    ) : (
-                      <svg className="w-6 h-6 md:w-8 md:h-8 text-[#020617] ml-1 md:ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                    )}
+            {!isReady ? (
+              <div className="w-full flex-1 flex flex-col items-center justify-center space-y-12 animate-in fade-in zoom-in-95 duration-500">
+                <div className="text-center w-full max-w-sm">
+                  <h3 className="text-white text-2xl font-black mb-8 tracking-wide">Cài đặt bài nghe</h3>
+                  
+                  {/* Speed Picker (Vertical iOS style) */}
+                  <div className="flex flex-col items-center mb-10 w-full">
+                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Tốc độ (Speed)</span>
+                    <div className="relative w-40 h-36 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-12 before:bg-gradient-to-b before:from-[#020617] before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-12 after:bg-gradient-to-t after:from-[#020617] after:to-transparent after:z-10 rounded-xl bg-[#0B1120] border border-slate-800 shadow-inner">
+                      <div className="absolute top-1/2 -mt-6 h-12 inset-x-2 rounded-lg border-y-2 border-primary-500/50 bg-primary-900/10 pointer-events-none shadow-[0_0_15px_rgba(59,130,246,0.1)]" />
+                      <div 
+                        className="overflow-y-auto snap-y snap-mandatory h-full w-full hide-scrollbar scroll-smooth"
+                        onScroll={(e) => {
+                          const el = e.currentTarget;
+                          const center = el.scrollTop + el.clientHeight / 2;
+                          const children = Array.from(el.children);
+                          children.forEach((child: any) => {
+                            if (child.dataset.value) {
+                              const childCenter = child.offsetTop + child.clientHeight / 2 - el.offsetTop;
+                              if (Math.abs(childCenter - center) < 24) { // h-12 is 48px
+                                const val = parseFloat(child.dataset.value);
+                                if (speed !== val) setSpeed(val);
+                              }
+                            }
+                          });
+                        }}
+                      >
+                        <div className="h-[48px] shrink-0" />
+                        {[0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4].map(s => (
+                          <div 
+                            key={s} 
+                            data-value={s} 
+                            onClick={(e) => { setSpeed(s); e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'center' }); }} 
+                            className={`h-[48px] flex items-center justify-center snap-center cursor-pointer transition-all duration-300 ${speed === s ? 'text-white font-black text-2xl scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-slate-600 font-bold text-lg'}`}
+                          >
+                            {s.toFixed(1)}x
+                          </div>
+                        ))}
+                        <div className="h-[48px] shrink-0" />
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Difficulty Picker (Horizontal Swipe) */}
+                  <div className="flex flex-col items-center w-full">
+                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
+                    <div className="w-full flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-3 pb-6 px-[20%] scroll-smooth">
+                      {DIFFICULTIES.map(d => (
+                        <button 
+                          key={d.value}
+                          onClick={(e) => { setDifficulty(d.value); e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center' }); }}
+                          className={`snap-center shrink-0 w-36 px-5 py-4 rounded-2xl font-bold transition-all border-2 flex flex-col items-center justify-center gap-1.5 ${difficulty === d.value ? 'bg-slate-800 border-slate-500 text-white shadow-xl scale-105' : 'bg-[#0B1120] border-slate-800 text-slate-600 scale-95 opacity-50 hover:opacity-80'}`}
+                        >
+                          <span className="text-[15px]">{d.label}</span>
+                          <span className="opacity-70 text-[11px] bg-black/20 px-2 py-0.5 rounded-full">{d.value}%</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setIsReady(true)}
+                  className="px-12 py-4 rounded-full font-black uppercase tracking-widest text-sm text-[#020617] bg-white hover:bg-slate-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:-translate-y-1 active:translate-y-0"
+                >
+                  Sẵn sàng
                 </button>
               </div>
-            </div>
-
-            {/* Dictation Content Area */}
-            <div className="w-full flex-1 flex flex-col justify-center items-center pb-8">
-              <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 max-w-4xl">
-                {/* Difficulty Selector */}
-                <div className="flex flex-col items-center gap-4">
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {DIFFICULTIES.map(d => (
-                      <button 
-                        key={d.value}
-                        onClick={() => setDifficulty(d.value)}
-                        className={`cursor-pointer px-5 py-2.5 md:px-6 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all border ${difficulty === d.value ? 'bg-slate-800 border-slate-700 text-white shadow-sm' : 'bg-[#0B1120] border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-400'}`}
-                      >
-                        {d.label} <span className="opacity-50 ml-1">{d.value}%</span>
-                      </button>
-                    ))}
+            ) : (
+              <div className="w-full flex-1 flex flex-col justify-center items-center pb-8 animate-in fade-in duration-700">
+                {/* Audio Controls Row */}
+                <div className="flex items-center justify-center gap-6 md:gap-10 mb-8 w-full max-w-sm mx-auto px-4">
+                  {/* Speed Badge */}
+                  <div className="flex flex-col items-center bg-[#0B1120] px-4 py-2 rounded-xl border border-slate-800 cursor-pointer hover:bg-slate-800 transition-colors" onClick={() => setIsReady(false)}>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Speed</span>
+                    <span className="text-sm font-black text-white">{speed.toFixed(1)}x</span>
                   </div>
-                </div>
 
-                <div className="w-full bg-[#111827] border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-400 to-white opacity-50" />
+                  {/* Play Button */}
+                  <div className="relative group cursor-pointer shrink-0" onClick={playAudio}>
+                    {isPlaying && (
+                      <>
+                        <div className="absolute inset-0 bg-white rounded-full blur-xl opacity-40 animate-pulse" />
+                        <div className="absolute -inset-4 border-2 border-white/30 rounded-full animate-ping" />
+                      </>
+                    )}
+                    {!isPlaying && <div className="absolute inset-0 bg-white rounded-full blur-xl opacity-10 group-hover:opacity-20 transition-opacity duration-500" /> }
+                    
+                    <button className={`relative w-20 h-20 bg-gradient-to-b from-[#111827] to-[#0B1120] border border-slate-800 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl backdrop-blur-sm ${isPlaying ? 'scale-105 border-white/50' : ''}`}>
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-inner transition-colors ${isPlaying ? 'bg-slate-200' : 'bg-white'}`}>
+                        {isPlaying ? (
+                          <svg className="w-6 h-6 text-[#020617]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
+                        ) : (
+                          <svg className="w-8 h-8 text-[#020617] ml-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                        )}
+                      </div>
+                    </button>
+                  </div>
                   
-                  {/* Progressive Hint Lightbulb & Check Result */}
-                  <div className="absolute top-4 right-3 md:right-4 z-20 flex items-center gap-2 md:gap-4">
-                    <button 
-                      onClick={handleCheckDictation}
-                      className="cursor-pointer text-[10px] md:text-sm font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
-                    >
-                      Check
-                    </button>
-                    <button 
-                      onClick={() => {
-                        if (revealedWordCount < maxReveals) {
-                          setRevealedWordCount(prev => prev + 1);
-                        }
-                      }}
-                      disabled={revealedWordCount >= maxReveals}
-                      className="group cursor-pointer disabled:cursor-not-allowed relative flex items-center justify-center p-2 rounded-full transition-all"
-                    >
-                      {revealedWordCount < maxReveals && (
-                        <div 
-                          className="absolute inset-0 bg-white rounded-full blur-md transition-opacity duration-300"
-                          style={{ opacity: 0.6 * (1 - revealedWordCount / maxReveals) }}
-                        />
-                      )}
-                      <svg 
-                        className={`w-6 h-6 relative z-10 transition-colors duration-300 ${revealedWordCount >= maxReveals ? 'text-slate-600' : 'text-white'}`} 
-                        fill="currentColor" viewBox="0 0 24 24"
-                      >
-                        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z" />
-                      </svg>
-                    </button>
+                  {/* Difficulty Badge */}
+                  <div className="flex flex-col items-center bg-[#0B1120] px-4 py-2 rounded-xl border border-slate-800 cursor-pointer hover:bg-slate-800 transition-colors" onClick={() => setIsReady(false)}>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Level</span>
+                    <span className="text-sm font-black text-white">{DIFFICULTIES.find(d => d.value === difficulty)?.label}</span>
                   </div>
-
-                  {/* Hint Display */}
-                  <div className="mt-12 md:mt-0 mb-4 pb-4 border-b border-slate-800 pr-0 md:pr-40 min-h-[4rem] flex items-center justify-center">
-                    <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide whitespace-pre-line px-2">
-                      {hintText || <span className="text-slate-600 italic">Nhấn vào bóng đèn để nhận gợi ý</span>}
-                    </p>
-                  </div>
-
-                  <textarea 
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-2xl lg:text-3xl font-medium placeholder:text-base md:placeholder:text-lg placeholder-slate-600 focus:outline-none resize-none text-center"
-                    placeholder="Gõ đầy đủ câu tiếng Anh ở đây..."
-                    spellCheck={false}
-                  />
                 </div>
 
-                {/* Bottom Navigation */}
-                <div className="flex justify-center mt-6 w-full max-w-sm mx-auto">
-                  <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
-                    <button 
-                      onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
-                      disabled={currentIndex === 0}
-                      className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
-                    >
-                      <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                      Prev
-                    </button>
+                <div className="w-full space-y-8 max-w-4xl">
+                  <div className="w-full bg-[#111827] border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-sm relative overflow-hidden shadow-xl">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-400 to-white opacity-50" />
                     
-                    <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
-                    
-                    <button 
-                      onClick={nextSentence} 
-                      className="cursor-pointer text-sm font-bold text-[#020617] bg-white hover:bg-slate-200 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-white/20"
-                    >
-                      Next
-                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                    </button>
+                    {/* Progressive Hint Lightbulb & Check Result */}
+                    <div className="absolute top-4 right-3 md:right-4 z-20 flex items-center gap-2 md:gap-4">
+                      <button 
+                        onClick={handleCheckDictation}
+                        className="cursor-pointer text-[10px] md:text-sm font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
+                      >
+                        Check
+                      </button>
+                      <button 
+                        onClick={() => {
+                          if (revealedWordCount === 0) {
+                             toast('Mình sẽ giúp bạn mở từ đầu tiên. Cố gắng tập trung nghe ở lần tiếp theo nhé!', { icon: '💡', duration: 4000 });
+                          }
+                          if (revealedWordCount < maxReveals) {
+                            setRevealedWordCount(prev => prev + 1);
+                          }
+                        }}
+                        disabled={revealedWordCount >= maxReveals}
+                        className="group cursor-pointer disabled:cursor-not-allowed relative flex items-center justify-center p-2 rounded-full transition-all bg-[#0B1120] border border-slate-800 hover:bg-slate-800"
+                      >
+                        {revealedWordCount < maxReveals && (
+                          <div 
+                            className="absolute inset-0 bg-white rounded-full blur-md transition-opacity duration-300"
+                            style={{ opacity: 0.6 * (1 - revealedWordCount / maxReveals) }}
+                          />
+                        )}
+                        <svg 
+                          className={`w-6 h-6 relative z-10 transition-colors duration-300 ${revealedWordCount >= maxReveals ? 'text-slate-600' : 'text-amber-400 group-hover:text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]'}`} 
+                          fill="currentColor" viewBox="0 0 24 24"
+                        >
+                          <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Hint Display */}
+                    <div className="mt-12 md:mt-0 mb-4 pb-4 border-b border-slate-800 pr-0 md:pr-40 min-h-[4rem] flex items-center justify-center">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-slate-300 text-center tracking-wide px-2">
+                        {hintWordsList.length > 0 ? hintWordsList.map((hw, i) => (
+                          hw.isQnaBreak ? <br key={`br-${i}`} className="my-2 block" /> : 
+                          <span key={i} className={hw.highlighted ? "text-amber-400 font-bold drop-shadow-[0_0_10px_rgba(251,191,36,0.4)] transition-colors duration-500" : ""}>
+                            {hw.word}{' '}
+                          </span>
+                        )) : <span className="text-slate-600 italic">Nhấn vào bóng đèn để nhận gợi ý</span>}
+                      </p>
+                    </div>
+
+                    <textarea 
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-2xl lg:text-3xl font-medium placeholder:text-base md:placeholder:text-lg placeholder-slate-600 focus:outline-none resize-none text-center custom-scrollbar"
+                      placeholder="Gõ đầy đủ câu tiếng Anh ở đây..."
+                      spellCheck={false}
+                    />
+                  </div>
+
+                  {/* Bottom Navigation */}
+                  <div className="flex justify-center mt-6 w-full max-w-sm mx-auto">
+                    <div className="flex items-center justify-between w-full bg-[#111827] border border-slate-800 shadow-sm rounded-full p-1.5">
+                      <button 
+                        onClick={() => setCurrentIndex(prev => Math.max(0, prev - 1))}
+                        disabled={currentIndex === 0}
+                        className="cursor-pointer text-sm font-bold text-slate-400 hover:bg-slate-800 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group"
+                      >
+                        <svg className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                        Prev
+                      </button>
+                      
+                      <span className="text-sm font-bold text-slate-200">{currentIndex + 1} <span className="text-slate-500">/ {currentData.length}</span></span>
+                      
+                      <button 
+                        onClick={nextSentence} 
+                        className="cursor-pointer text-sm font-bold text-[#020617] bg-white hover:bg-slate-200 transition-all uppercase tracking-wider flex items-center justify-center w-24 h-10 rounded-full group shadow-md shadow-white/20"
+                      >
+                        Next
+                        <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </motion.div>
