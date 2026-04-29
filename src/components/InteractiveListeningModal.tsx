@@ -89,7 +89,7 @@ const PRACTICE_DATA: Record<'SENTENCE' | 'QNA' | 'SHORT_TALK', PracticeSet[]> = 
 };
 
 const DIFFICULTIES = [
-  { label: 'Tân binh', value: 20 },
+  { label: 'Beginner', value: 20 },
   { label: 'Cơ bản', value: 40 },
   { label: 'Trung cấp', value: 60 },
   { label: 'Nâng cao', value: 80 },
@@ -99,7 +99,7 @@ const DIFFICULTIES = [
 type HintWord = { word: string; highlighted: boolean; isQnaBreak?: boolean };
 
 export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-  const [difficulty, setDifficulty] = useState(60)
+  const [difficulty, setDifficulty] = useState(40)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userInputs, setUserInputs] = useState<Record<string, string>>({})
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null)
@@ -458,7 +458,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                   </div>
 
                     {/* Difficulty Picker (Horizontal Swipe) */}
-                    <div className="flex flex-col items-center w-full max-w-[200px]">
+                    <div className="flex flex-col items-center w-full max-w-[280px]">
                       <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
                       <div className="w-full relative flex justify-center overflow-hidden">
                          <div 
