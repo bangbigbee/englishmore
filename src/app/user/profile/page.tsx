@@ -258,8 +258,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="w-full h-full pb-12">
+      <div className="mx-auto max-w-5xl px-0 py-4 sm:px-6 lg:px-8">
         <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto custom-scrollbar mb-6 border border-slate-200 w-full md:w-max">
           <button
             onClick={() => setActiveTab('info')}

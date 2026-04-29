@@ -8,6 +8,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import ToeicOnboardingModal from "@/components/ToeicOnboardingModal";
+import NotebookTab from "./NotebookTab";
+import ProfilePage from "@/app/user/profile/page";
 import ToeicRoadmapTab from "./ToeicRoadmapTab";
 import InteractiveListeningModal from "@/components/InteractiveListeningModal";
 import { useTheme } from "next-themes";
@@ -510,20 +512,19 @@ function ToeicPracticeContent() {
 	const newSearchParams = (sp: any) => new URLSearchParams(sp.toString());
 
 	const SIDEBAR_ITEMS = [
-		{ id: 'roadmap', label: 'Lộ trình', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7l6-3 5.447 2.724A1 1 0 0121 7.618v10.764a1 1 0 01-1.447.894L15 17l-6 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7v13M15 4v13" /></svg> },
 		{ id: 'vocabulary', label: 'Từ vựng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
 		{ id: 'grammar', label: 'Ngữ pháp', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 15h4.498" /></svg> },
 		{ id: 'listening', label: 'Listening', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> },
 		{ id: 'reading', label: 'Reading', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
 		{ id: 'actual-test', label: 'Luyện đề', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+		{ id: 'roadmap', label: 'Lộ trình', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7l6-3 5.447 2.724A1 1 0 0121 7.618v10.764a1 1 0 01-1.447.894L15 17l-6 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7v13M15 4v13" /></svg> },
 		{ id: 'leaderboard', label: 'Bảng xếp hạng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg> },
 	];
 
 	let DISPLAY_SIDEBAR_ITEMS: any[] = [...SIDEBAR_ITEMS];
 	if (session) {
-		DISPLAY_SIDEBAR_ITEMS.splice(6, 0, 
-			{ id: 'notebook', label: 'Sổ tay của tôi', externalHref: '/toeic-progress?tab=vocabulary-bank', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
-			{ id: 'my-progress', label: 'Lộ trình của tôi', externalHref: '/toeic-progress', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> }
+		DISPLAY_SIDEBAR_ITEMS.splice(5, 0, 
+			{ id: 'notebook', label: 'Sổ tay của tôi', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> }
 		);
 	}
 
@@ -616,7 +617,7 @@ function ToeicPracticeContent() {
                                 {!isSidebarCollapsed && (
                                     <button 
                                         onClick={() => signOut({ callbackUrl: '/' })}
-                                        className="shrink-0 p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
+                                        className="w-full flex items-center justify-center p-2 rounded-lg text-primary-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
                                         title="Đăng xuất"
                                     >
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
@@ -692,6 +693,12 @@ function ToeicPracticeContent() {
 					 if (!session) openLoginModal(`${pathname}?tab=actual-test`);
 				 }} />}
 				 {tab === "leaderboard" && <LeaderboardsTab onTabChange={handleTabChange} />}
+				 {tab === "notebook" && <NotebookTab topic={searchParams.get('topic') || undefined} tagFilter={searchParams.get('tag') || undefined} query={searchParams.get('q') || undefined} />}
+				 {tab === "profile" && (
+					 <div className="profile-wrapper">
+						 <ProfilePage />
+					 </div>
+				 )}
 			</div>
 			</div>
 

@@ -176,8 +176,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
               let DISPLAY_ENGLISH_TABS: any[] = [...ENGLISHMORE_TABS];
               if (session && !isToeicDomain) {
                   DISPLAY_ENGLISH_TABS.splice(3, 0,
-                      { key: 'notebook', label: 'Sổ tay của tôi', href: '/toeic-progress?tab=vocabulary-bank', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, color: "text-emerald-500" },
-                      { key: 'my-progress', label: 'Lộ trình của tôi', href: '/toeic-progress', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>, color: "text-blue-500" }
+                      { key: 'notebook', label: 'Sổ tay của tôi', href: '/toeic-practice?tab=notebook', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, color: "text-emerald-500" }
                   );
               }
               return DISPLAY_ENGLISH_TABS.map((t) => {
@@ -568,9 +567,8 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                         {(() => {
                             let DISPLAY_ITEMS: any[] = [...TOEIC_SIDEBAR_ITEMS];
                             if (session) {
-                                DISPLAY_ITEMS.splice(6, 0, 
-                                    { id: 'notebook', label: 'Sổ tay của tôi', externalHref: '/toeic-progress?tab=vocabulary-bank', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
-                                    { id: 'my-progress', label: 'Lộ trình của tôi', externalHref: '/toeic-progress', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> }
+                                DISPLAY_ITEMS.splice(4, 0, 
+                                    { id: 'notebook', label: 'Sổ tay của tôi', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> }
                                 );
                             }
                             return DISPLAY_ITEMS.map((item) => {
@@ -714,7 +712,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
             {session && (
                 <div className="flex items-center gap-2">
                     <Link
-                      href="/user/profile"
+                      href={isToeicDomain ? "/toeic-practice?tab=profile" : "/user/profile"}
                       className={`flex items-center justify-center transition-colors focus:outline-none border ${session ? 'gap-2 px-2 py-1.5 rounded-full hover:bg-slate-100 border-transparent hover:border-slate-200' : 'w-8 h-8 rounded-full hover:bg-slate-100 border-transparent'}`}
                    >
                        {session ? (
@@ -730,22 +728,21 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                            <svg className="w-5 h-5 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
                        )}
                    </Link>
-                   <button
-                       onClick={() => signOut({ callbackUrl: '/' })}
-                       className="flex items-center justify-center w-8 h-8 rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors focus:outline-none"
-                       title="Đăng xuất"
-                   >
+                    <button
+                        onClick={() => signOut({ callbackUrl: '/' })}
+                        className="flex items-center justify-center w-8 h-8 rounded-full text-primary-500 hover:bg-primary-50 transition-colors focus:outline-none"
+                        title="Đăng xuất"
+                    >
                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                    </button>
                 </div>
             )}
           </div>
-
           {session && (
             <div className="flex items-center gap-2">
               {session.user?.tier === 'PRO' && (
                 <Link 
-                  href="/user/profile"
+                  href={isToeicDomain ? "/toeic-practice?tab=profile" : "/user/profile"}
                   className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-pointer border border-[#FDB931]/50 hover:opacity-90 transition-opacity"
                 >
                   <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -755,7 +752,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
               )}
               {session.user?.tier === 'ULTRA' && (
                 <Link 
-                  href="/user/profile"
+                  href={isToeicDomain ? "/toeic-practice?tab=profile" : "/user/profile"}
                   className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-primary-700 to-primary-950 text-white font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-pointer border border-primary-600/30 hover:opacity-90 transition-opacity"
                 >
                   <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
