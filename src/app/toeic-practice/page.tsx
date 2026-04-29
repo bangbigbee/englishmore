@@ -3026,7 +3026,7 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
 						</div>
 						<h3 className="text-2xl font-black mb-3">Phòng Nghe Chép Chính Tả</h3>
 						<p className="text-slate-300 font-medium text-sm leading-relaxed">
-							Luyện nghe theo phương pháp nghe chép chính tả theo nhiều cấp độ, phù hợp cho người mới bắt đầu luyện nghe.
+							Tính năng đang được phát triển và hoàn thiện sớm.
 						</p>
 					</div>
 					<button 
