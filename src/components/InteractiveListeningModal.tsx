@@ -634,7 +634,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <div className="text-5xl mb-4">💡</div>
                     <h3 className="text-xl md:text-2xl font-black text-white mb-3">Gợi ý từ đầu tiên</h3>
                     <p className="text-slate-300 text-sm md:text-base mb-8 leading-relaxed">
-                      Mình sẽ giúp bạn mở từ đầu tiên một cách vui vẻ nhé! Cố gắng tập trung nghe ở lần tiếp theo nha!
+                      Mình sẽ giúp bạn mở từ đầu tiên! Cố gắng tập trung nghe ở lần tiếp theo nha!
                     </p>
                     <button 
                       onClick={() => { setRevealedWordCount(prev => prev + 1); setShowHintModal(false); }}
