@@ -58,6 +58,27 @@ export async function POST(req: NextRequest) {
 
         const userId = session!.user.id;
 
+        // Mark word as learned automatically
+        if (wordId) {
+            try {
+                await prisma.vocabularyTag.upsert({
+                    where: {
+                        userId_vocabId: { userId, vocabId: wordId }
+                    },
+                    create: {
+                        userId,
+                        vocabId: wordId,
+                        isLearned: true
+                    },
+                    update: {
+                        isLearned: true
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to mark vocab as learned:', err);
+            }
+        }
+
         // 1. Base rule: 1 correct pronunciation = 1 star
         const baseResult = await awardToeicStars({
             userId,
