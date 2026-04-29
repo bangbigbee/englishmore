@@ -44,13 +44,13 @@ export async function GET(request: NextRequest) {
     }
 
     const whereCondition = buildWhere(
-      tier === 'FREE' ? { OR: [{ tier: 'FREE' }, { tier: null }] } : tier ? { tier } : undefined
+      tier ? { tier } : undefined
     )
 
     // Compute stats independent of the `tier` filter
     const [totalCount, freeCount, proCount, ultraCount] = await Promise.all([
       prisma.user.count({ where: buildWhere() }),
-      prisma.user.count({ where: buildWhere({ OR: [{ tier: 'FREE' }, { tier: null }] }) }),
+      prisma.user.count({ where: buildWhere({ tier: 'FREE' }) }),
       prisma.user.count({ where: buildWhere({ tier: 'PRO' }) }),
       prisma.user.count({ where: buildWhere({ tier: 'ULTRA' }) })
     ])
