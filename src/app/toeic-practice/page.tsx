@@ -1034,7 +1034,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Seamless Gradient Background */}
 			{isOcean && (
 				<div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[40px] -top-[100px]">
-					<div className="absolute inset-0 bg-gradient-to-b from-primary-100/70 to-background"></div>
+					<div className="absolute inset-0 bg-gradient-to-b from-[#D1EAF5] to-[#f4fbfc]"></div>
 				</div>
 			)}
 
