@@ -1031,25 +1031,24 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 
 	return (
 		<div className="py-8 pb-20 relative min-h-screen">
-			{/* Ocean Background Image */}
+			{/* Seamless Gradient Background */}
 			{isOcean && (
-				<div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[40px]">
-					<div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518022525094-71c4f1f20051?q=80&w=2500&auto=format&fit=crop')] bg-cover bg-center opacity-90 mix-blend-multiply"></div>
-					<div className="absolute inset-0 bg-gradient-to-b from-primary-600/40 via-transparent to-background"></div>
+				<div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-b-[40px] -top-[100px]">
+					<div className="absolute inset-0 bg-gradient-to-b from-[#D1EAF5] to-[#f4fbfc]"></div>
 				</div>
 			)}
 
 			{/* Hero Section */}
 			<section className="flex flex-col items-center text-center mt-8 mb-24 w-full mx-auto px-4 sm:px-8 relative z-10">
 				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-					<span className={`text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] ${isOcean ? 'text-white' : 'text-primary-900'} block break-words`}>
-					Chinh phục <span className={isOcean ? "text-white" : "text-transparent bg-clip-text bg-gradient-to-r from-primary-900 to-secondary-500"}>TOEIC</span>
+					<span className={`text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] block break-words ${isOcean ? 'text-transparent bg-clip-text bg-gradient-to-b from-primary-500 to-primary-900 drop-shadow-sm' : 'text-primary-900'}`}>
+					Chinh phục <span className={isOcean ? "text-transparent bg-clip-text bg-gradient-to-b from-primary-500 to-primary-900" : "text-transparent bg-clip-text bg-gradient-to-r from-primary-900 to-secondary-500"}>TOEIC</span>
 				</span>
-					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2">
-						<span className={isOcean ? "text-white/90" : "text-secondary-500"}>dễ dàng</span> <span className={isOcean ? "text-white" : "text-primary-900"}>và hiệu quả hơn</span>
+					<span className={`text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2 ${isOcean ? 'text-transparent bg-clip-text bg-gradient-to-b from-primary-500 to-primary-900 drop-shadow-sm' : ''}`}>
+						<span className={isOcean ? "" : "text-secondary-500"}>dễ dàng</span> <span className={isOcean ? "" : "text-primary-900"}>và hiệu quả hơn</span>
 					</span>
 				</h1>
-				<p className={`mt-3 max-w-2xl text-base sm:text-lg font-medium ${isOcean ? 'text-slate-900 drop-shadow-sm font-semibold bg-white/40 backdrop-blur-md px-6 py-3 rounded-2xl' : 'text-primary-900'} leading-relaxed mx-auto opacity-90`}>
+				<p className={`mt-3 max-w-2xl text-base sm:text-lg font-medium ${isOcean ? 'text-slate-800 font-semibold drop-shadow-sm' : 'text-primary-900'} leading-relaxed mx-auto`}>
 					Học từ vựng siêu hiệu quả và nhớ lâu. Giải thích ngữ pháp và mẹo làm bài chi tiết. Giúp bạn nâng cao điểm số TOEIC và hơn thế nữa
 				</p>
 
