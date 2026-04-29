@@ -36,13 +36,14 @@ const DIFFICULTIES = [
 type HintWord = { word: string; highlighted: boolean; isQnaBreak?: boolean };
 
 export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-  const [difficulty, setDifficulty] = useState(100)
+  const [difficulty, setDifficulty] = useState(60)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userInput, setUserInput] = useState('')
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceQ, setVoiceQ] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceA, setVoiceA] = useState<SpeechSynthesisVoice | null>(null)
   const [hintWordsList, setHintWordsList] = useState<HintWord[]>([])
+  const gearSoundRef = useRef<HTMLAudioElement | null>(null)
   const [speed, setSpeed] = useState(1.0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isReady, setIsReady] = useState(false)
@@ -83,6 +84,10 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     loadVoices()
     if (typeof window !== 'undefined' && window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = loadVoices
+    }
+    if (typeof Audio !== 'undefined') {
+      gearSoundRef.current = new Audio('/audio/gear-click.wav');
+      gearSoundRef.current.volume = 0.4;
     }
   }, [])
 
@@ -224,7 +229,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[200] isolate flex bg-[#020617] overflow-hidden">
+    <div className="fixed inset-0 z-[200] isolate flex bg-[#020617] overflow-hidden overscroll-none touch-none">
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -239,7 +244,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto">
+        <div className="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto overscroll-none touch-pan-y">
           {/* Top Title & Close Button */}
           <div className="w-full flex items-center justify-between p-4 md:px-8 border-b border-slate-800/50 bg-[#0B1120]/50 backdrop-blur-md">
             <h2 className="text-lg md:text-2xl font-black text-white flex items-center gap-3 tracking-tight">
@@ -292,7 +297,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <div className="relative w-40 h-36 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-12 before:bg-gradient-to-b before:from-[#020617] before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-12 after:bg-gradient-to-t after:from-[#020617] after:to-transparent after:z-10 rounded-xl bg-[#0B1120] border border-slate-800 shadow-inner">
                       <div className="absolute top-1/2 -mt-6 h-12 inset-x-2 rounded-lg border-y-2 border-primary-500/50 bg-primary-900/10 pointer-events-none shadow-[0_0_15px_rgba(59,130,246,0.1)]" />
                       <div 
-                        className="overflow-y-auto snap-y snap-mandatory h-full w-full hide-scrollbar scroll-smooth"
+                        className="overflow-y-auto snap-y snap-mandatory h-full w-full scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain"
                         onScroll={(e) => {
                           const el = e.currentTarget;
                           const center = el.scrollTop + el.clientHeight / 2;
@@ -302,7 +307,13 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                               const childCenter = child.offsetTop + child.clientHeight / 2 - el.offsetTop;
                               if (Math.abs(childCenter - center) < 24) { // h-12 is 48px
                                 const val = parseFloat(child.dataset.value);
-                                if (speed !== val) setSpeed(val);
+                                if (speed !== val) {
+                                  setSpeed(val);
+                                  if (gearSoundRef.current) {
+                                    gearSoundRef.current.currentTime = 0;
+                                    gearSoundRef.current.play().catch(() => {});
+                                  }
+                                }
                               }
                             }
                           });
@@ -324,20 +335,36 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
                   </div>
 
-                  {/* Difficulty Picker (Horizontal Swipe) */}
-                  <div className="flex flex-col items-center w-full">
+                  {/* Difficulty Picker (Left/Right Arrows) */}
+                  <div className="flex flex-col items-center w-full mb-4">
                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
-                    <div className="w-full flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-3 pb-6 px-[20%] scroll-smooth">
-                      {DIFFICULTIES.map(d => (
-                        <button 
-                          key={d.value}
-                          onClick={(e) => { setDifficulty(d.value); e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center' }); }}
-                          className={`snap-center shrink-0 w-36 px-5 py-4 rounded-2xl font-bold transition-all border-2 flex flex-col items-center justify-center gap-1.5 ${difficulty === d.value ? 'bg-slate-800 border-slate-500 text-white shadow-xl scale-105' : 'bg-[#0B1120] border-slate-800 text-slate-600 scale-95 opacity-50 hover:opacity-80'}`}
-                        >
-                          <span className="text-[15px]">{d.label}</span>
-                          <span className="opacity-70 text-[11px] bg-black/20 px-2 py-0.5 rounded-full">{d.value}%</span>
-                        </button>
-                      ))}
+                    <div className="flex items-center gap-4 md:gap-6">
+                      <button 
+                        onClick={() => {
+                          const idx = DIFFICULTIES.findIndex(d => d.value === difficulty);
+                          if (idx > 0) setDifficulty(DIFFICULTIES[idx - 1].value);
+                        }}
+                        disabled={difficulty === DIFFICULTIES[0].value}
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0B1120] border border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+                      </button>
+                      
+                      <div className="w-36 h-24 flex flex-col items-center justify-center bg-slate-800 border border-slate-600 text-white rounded-2xl shadow-xl transition-all">
+                        <span className="text-[16px] font-bold">{DIFFICULTIES.find(d => d.value === difficulty)?.label}</span>
+                        <span className="opacity-70 text-[11px] bg-black/20 px-3 py-0.5 rounded-full mt-2 font-bold">{difficulty}%</span>
+                      </div>
+                      
+                      <button 
+                        onClick={() => {
+                          const idx = DIFFICULTIES.findIndex(d => d.value === difficulty);
+                          if (idx < DIFFICULTIES.length - 1) setDifficulty(DIFFICULTIES[idx + 1].value);
+                        }}
+                        disabled={difficulty === DIFFICULTIES[DIFFICULTIES.length - 1].value}
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0B1120] border border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                      </button>
                     </div>
                   </div>
                 </div>
