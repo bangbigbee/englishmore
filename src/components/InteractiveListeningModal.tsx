@@ -375,17 +375,19 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
         <div className={`flex-1 min-h-0 flex flex-col relative z-10 overscroll-none touch-pan-y ${isReady ? 'overflow-y-auto' : 'overflow-hidden'}`}>
           {/* Top Title & Close Button */}
           <div className="w-full flex items-center justify-center p-4 md:px-8 relative pt-6 md:pt-8">
+            <button onClick={onClose} className="absolute left-4 md:left-8 flex items-center gap-2 hover:bg-slate-500/10 px-3 py-2 rounded-xl text-slate-500 transition-all cursor-pointer font-bold text-sm md:text-base">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+              <span className="hidden sm:inline">Thoát phòng tập</span>
+            </button>
             <h2 className="text-lg md:text-2xl font-black text-primary-900 flex items-center justify-center gap-3 tracking-tight">
               <span className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-xl bg-gradient-to-br from-primary-100 to-white flex items-center justify-center shadow-sm">
-                <svg className="w-4 h-4 md:w-5 md:h-5 text-primary-900" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
+                <svg className="w-4 h-4 md:w-5 md:h-5 text-primary-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a3 3 0 003 3h12a3 3 0 003-3v-2a3 3 0 00-3-3H6a3 3 0 00-3 3v2z" />
                 </svg>
               </span>
               <span className="flex flex-wrap leading-tight gap-x-1.5">Phòng Nghe Chép <span className="text-primary-900">Chính Tả</span></span>
             </h2>
-            <button onClick={onClose} className="absolute right-4 md:right-8 w-10 h-10 flex items-center justify-center hover:bg-slate-500/10 rounded-full text-slate-500 transition-all hover:rotate-90 cursor-pointer">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
           </div>
           
           <div className={`w-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col ${isReady ? 'min-h-full pt-8' : 'h-full justify-center pt-2'}`}>
@@ -395,19 +397,19 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
               <div className="inline-flex bg-white/50 backdrop-blur-md border border-white/50 p-1.5 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-x-auto w-full md:w-auto custom-scrollbar">
                 <button 
                   onClick={() => setContentType('SENTENCE')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-primary-500 text-white shadow-md' : 'text-slate-500 hover:text-primary-900'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SENTENCE' ? 'bg-primary-900 text-white shadow-md' : 'text-slate-500 hover:text-primary-900'}`}
                 >
                   Câu đơn
                 </button>
                 <button 
                   onClick={() => setContentType('QNA')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'QNA' ? 'bg-primary-500 text-white shadow-md' : 'text-slate-500 hover:text-primary-900'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'QNA' ? 'bg-primary-900 text-white shadow-md' : 'text-slate-500 hover:text-primary-900'}`}
                 >
                   Hỏi - Đáp
                 </button>
                 <button 
                   onClick={() => setContentType('SHORT_TALK')}
-                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-primary-500 text-white shadow-md' : 'text-slate-500 hover:text-primary-900'}`}
+                  className={`flex-1 md:flex-none whitespace-nowrap px-3 md:px-6 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${contentType === 'SHORT_TALK' ? 'bg-primary-900 text-white shadow-md' : 'text-slate-500 hover:text-primary-900'}`}
                 >
                   Bài nói ngắn
                 </button>
@@ -421,7 +423,7 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
                   
                   {/* Set Selector */}
                   <div className="w-full flex flex-col items-center mb-6 md:mb-8">
-                    <span className="text-[11px] font-black text-slate-500/70 uppercase tracking-widest mb-3">Bộ Đề (Tập)</span>
+                    <span className="text-[11px] font-black text-slate-500/70 uppercase tracking-widest mb-3">BỘ ĐỀ</span>
                     <select 
                       value={selectedSetId}
                       onChange={(e) => setSelectedSetId(e.target.value)}
@@ -436,7 +438,7 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
                   <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 w-full mt-2">
                     {/* Speed Picker (Vertical iOS style) */}
                     <div className="flex flex-col items-center">
-                    <span className="text-[11px] font-black text-slate-500/70 uppercase tracking-widest mb-4">Tốc độ (Speed)</span>
+                    <span className="text-[11px] font-black text-slate-500/70 uppercase tracking-widest mb-4">TỐC ĐỘ</span>
                     <div className="relative w-28 h-28 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-10 before:bg-gradient-to-b before:from-[rgba(255,255,255,0.2)] before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-10 after:bg-gradient-to-t after:from-[rgba(255,255,255,0.2)] after:to-transparent after:z-10 rounded-2xl bg-primary-50/40 border border-primary-200/50 shadow-inner">
                       <div className="absolute top-1/2 -mt-5 h-10 inset-x-2 rounded-xl bg-white shadow-sm pointer-events-none border border-primary-100/50" />
                       <div 
@@ -513,7 +515,7 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
                                key={d.value}
                                data-value={d.value}
                                onClick={(e) => { setDifficulty(d.value); e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }}
-                               className={`snap-center shrink-0 w-28 h-20 mx-2 flex flex-col items-center justify-center rounded-[1.25rem] cursor-pointer transition-all duration-300 ${difficulty === d.value ? 'bg-primary-500 text-white shadow-[0_8px_20px_rgba(var(--primary-rgb),0.3)] scale-110' : 'bg-primary-50/40 border border-primary-200/50 text-primary-900/60 scale-90 opacity-60 hover:opacity-100 hover:bg-primary-50'}`}
+                               className={`snap-center shrink-0 w-28 h-20 mx-2 flex flex-col items-center justify-center rounded-[1.25rem] cursor-pointer transition-all duration-300 ${difficulty === d.value ? 'bg-primary-900 text-white shadow-[0_8px_20px_rgba(var(--primary-rgb),0.3)] scale-110' : 'bg-primary-50/40 border border-primary-200/50 text-primary-900/60 scale-90 opacity-60 hover:opacity-100 hover:bg-primary-50'}`}
                              >
                                <span className="text-[15px] font-bold">{d.label}</span>
                                <span className={`opacity-80 text-[10px] px-2.5 py-0.5 rounded-full mt-1.5 font-bold ${difficulty === d.value ? 'bg-black/20' : 'bg-primary-900/10'}`}>{d.value}%</span>
