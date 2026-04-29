@@ -10,12 +10,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { type } = await req.json();
+    const { type, referenceId } = await req.json();
 
     if (type === 'sentence') {
       const result = await awardToeicStars({
         userId: session.user.id,
         activityKey: TOEIC_STAR_KEYS.dictationSentenceCorrect,
+        referenceKey: `dictation_sentence_${referenceId || Date.now()}`
       });
       return NextResponse.json(result);
     } 
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
       const result = await awardToeicStars({
         userId: session.user.id,
         activityKey: TOEIC_STAR_KEYS.dictationComplete,
+        referenceKey: `dictation_complete_${referenceId || Date.now()}`
       });
       return NextResponse.json(result);
     }

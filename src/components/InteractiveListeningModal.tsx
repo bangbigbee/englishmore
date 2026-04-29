@@ -221,7 +221,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         await fetch('/api/toeic/dictation/reward', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'sentence' })
+          body: JSON.stringify({ type: 'sentence', referenceId: `${contentType}-${currentSentence.id}` })
         })
       } catch (err) {}
     } else {
@@ -241,7 +241,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
           await fetch('/api/toeic/dictation/reward', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'complete' })
+            body: JSON.stringify({ type: 'complete', referenceId: finishKey })
           })
         } catch (err) {}
       } else {
