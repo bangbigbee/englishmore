@@ -784,12 +784,6 @@ function GrammarFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 				</div>
 			</div>
 
-			{/* Overlay Button on Hover */}
-			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
-					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-				</div>
-			</div>
 		</div>
 	);
 }
@@ -872,11 +866,7 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 				</div>
 			</div>
 
-			<div className={`absolute top-4 right-4 transition-opacity z-50 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
-					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-				</div>
-			</div>
+
 		</div>
 	);
 }
@@ -928,11 +918,6 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 					</div>
 				</div>
 			</div>
-			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md">
-					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-				</div>
-			</div>
 		</div>
 	);
 }
@@ -940,6 +925,15 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
 		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                @keyframes flashcardFlip {
+                    0%, 35% { transform: rotateX(0deg); }
+                    50%, 85% { transform: rotateX(180deg); }
+                    100% { transform: rotateX(360deg); }
+                }
+                `
+            }} />
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -952,17 +946,19 @@ function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive 
 						Học từ vựng siêu hiệu quả và nhớ lâu qua thẻ flashcard.
 					</p>
 					<div className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="flex flex-col items-start gap-1.5 mt-1">
-                            <span className="px-2.5 py-1 bg-secondary-100/50 text-secondary-600 rounded-md text-xs font-bold tracking-tight">Spaced Repetition</span>
-                            <span className="px-2.5 py-1 bg-primary-50/50 text-primary-600 rounded-md text-xs font-bold tracking-tight">Ví dụ thực tế</span>
+                        <div className="perspective-[1000px] w-full max-w-[140px] h-8 mt-1">
+                            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] animate-[flashcardFlip_3s_infinite_ease-in-out]">
+                                {/* Front */}
+                                <div className="absolute inset-0 w-full h-full bg-primary-900 text-white rounded-lg flex items-center justify-center font-bold text-xs backface-hidden [-webkit-backface-visibility:hidden] shadow-sm">
+                                    vocabulary
+                                </div>
+                                {/* Back */}
+                                <div className="absolute inset-0 w-full h-full bg-secondary-500 text-primary-900 rounded-lg flex items-center justify-center font-bold text-xs backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateX(180deg)] shadow-sm">
+                                    từ vựng
+                                </div>
+                            </div>
                         </div>
 					</div>
-				</div>
-			</div>
-
-			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
-					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
 				</div>
 			</div>
 		</div>
@@ -986,65 +982,48 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
         return () => clearInterval(int);
     }, [isActive]);
 
-    return (
-		<div className="perspective-[1000px] w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`}>
-                {/* Front side */}
-                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/50 rounded-[20px] p-6 flex flex-col backface-hidden [-webkit-backface-visibility:hidden]">
-                    <div className="w-full flex items-center gap-4 pb-1">
-                        <div className="w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center">
-                            {icon}
+	return (
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+						{icon}
+					</div>
+					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Listening</h3>
+				</div>
+				<div className="relative flex-1 mt-2">
+					<p className={`text-slate-500 dark:text-slate-400 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
+						Luyện nghe với audio sắc nét và transcript chi tiết.
+					</p>
+					<div className={`absolute inset-0 transition-opacity duration-300 pointer-events-none mt-2 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="flex gap-2 z-10 w-full">
+                            {['A', 'B', 'C', 'D'].map((letter) => (
+                                <span 
+                                    key={letter} 
+                                    className={`flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-black shadow-sm transition-all duration-300 ${
+                                        selectedLetter === letter 
+                                        ? 'bg-primary-900 text-white border-transparent scale-110 ring-2 ring-primary-900/30 ring-offset-1' 
+                                        : 'bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-primary-900 dark:text-white'
+                                    }`}
+                                >
+                                    {letter}
+                                </span>
+                            ))}
                         </div>
-                        <h3 className="text-xl font-bold text-primary-900 dark:text-white">Listening</h3>
-                    </div>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium text-sm text-left w-full mt-2">
-                        Luyện nghe với audio sắc nét và transcript chi tiết.
-                    </p>
-                </div>
-                {/* Back side */}
-                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border-2 border-primary-900/20 dark:border-slate-700 rounded-[20px] flex items-center justify-center backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 dark:bg-slate-800 p-6 relative">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="text-primary-900 dark:text-primary-100 bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm border border-slate-100 dark:border-slate-600 flex-shrink-0">
-                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-                            </div>
-                            <div className="flex gap-2 z-10 w-full justify-center">
-                                {['A', 'B', 'C', 'D'].map((letter) => (
-                                    <span 
-                                        key={letter} 
-                                        className={`flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-black shadow-sm transition-all duration-300 ${
-                                            selectedLetter === letter 
-                                            ? 'bg-primary-900 text-white border-transparent scale-110 ring-2 ring-primary-900/30 ring-offset-1' 
-                                            : 'bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-primary-900 dark:text-white'
-                                        }`}
-                                    >
-                                        {letter}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                        <button className="bg-primary-900 text-white px-6 py-2 rounded-full text-sm font-black shadow-md hover:scale-105 transition-transform flex items-center gap-2 z-10 mt-1">
-                            Luyện nghe <svg className="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, practiceMinutes: 25000, vocabTopics: 50, detailedQuestions: 1200 });
-	const [activeCardIndex, setActiveCardIndex] = useState(0);
+
 	const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
-		
-		const int = setInterval(() => {
-			setActiveCardIndex((prev) => (prev + 1) % 5);
-		}, 5000);
-		return () => clearInterval(int);
 	}, []);
 
 	return (
@@ -1151,11 +1130,11 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 
 			<div className="w-full mx-auto mb-4 px-4 mt-3 pb-2">
 				<div className="flex flex-col lg:flex-row lg:flex-nowrap justify-center items-center lg:items-stretch gap-4 lg:gap-6 py-2 px-2 hide-scrollbar overflow-hidden lg:overflow-x-auto">
-					<VocabFeatureCard onMouseEnter={() => setHoveredCardIndex(0)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 0 || (hoveredCardIndex === null && activeCardIndex === 0)} onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>} />
-					<GrammarFeatureCard onMouseEnter={() => setHoveredCardIndex(1)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 1 || (hoveredCardIndex === null && activeCardIndex === 1)} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
-					<ListeningFeatureCard onMouseEnter={() => setHoveredCardIndex(2)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 2 || (hoveredCardIndex === null && activeCardIndex === 2)} onClick={() => onTabClick('listening')} icon={<svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>} />
-					<ReadingFeatureCard onMouseEnter={() => setHoveredCardIndex(3)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 3 || (hoveredCardIndex === null && activeCardIndex === 3)} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
-					<ActualTestFeatureCard onMouseEnter={() => setHoveredCardIndex(4)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 4 || (hoveredCardIndex === null && activeCardIndex === 4)} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
+					<VocabFeatureCard onMouseEnter={() => setHoveredCardIndex(0)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 0} onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>} />
+					<GrammarFeatureCard onMouseEnter={() => setHoveredCardIndex(1)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 1} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
+					<ListeningFeatureCard onMouseEnter={() => setHoveredCardIndex(2)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 2} onClick={() => onTabClick('listening')} icon={<svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>} />
+					<ReadingFeatureCard onMouseEnter={() => setHoveredCardIndex(3)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 3} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
+					<ActualTestFeatureCard onMouseEnter={() => setHoveredCardIndex(4)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 4} onClick={() => onTabClick('actual-test')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>} />
 				</div>
 			</div>
 
