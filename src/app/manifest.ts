@@ -14,7 +14,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
       start_url: '/',
       display: 'standalone',
       background_color: '#ffffff',
-      theme_color: 'var(--primary-900)',
+      theme_color: '#4c1d95',
       icons: [
         {
           src: '/toeicmoreicon.svg',

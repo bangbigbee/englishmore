@@ -97,8 +97,17 @@ export default function PwaInstallPrompt() {
         localStorage.setItem('pwa_install_dismissed', 'true');
     };
 
+    const [isToeicDomain, setIsToeicDomain] = useState(true);
+
+    useEffect(() => {
+        setIsToeicDomain(window.location.hostname.includes('toeicmore'));
+    }, []);
+
     // We want to show this when prompt is available (Chrome Desktop/Mobile) OR on iOS/Mac Safari
     if (!showPopup || (!deferredPrompt && !isIos && !isMacSafari)) return null;
+
+    const appName = isToeicDomain ? 'ToeicMore' : 'EnglishMore';
+    const appIcon = isToeicDomain ? '/toeicmoreicon.svg?v=2' : '/favicon.svg';
 
     if (showIosInstruction) {
         return (
@@ -108,9 +117,9 @@ export default function PwaInstallPrompt() {
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                     <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
-                        <img src="/toeicmoreicon.svg?v=2" alt="App Icon" className="w-12 h-12 object-cover rounded-xl shadow-sm" />
+                        <img src={appIcon} alt="App Icon" className="w-12 h-12 object-cover rounded-xl shadow-sm" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-2">Cài đặt ToeicMore</h3>
+                    <h3 className="text-xl font-bold text-slate-800 mb-2">Cài đặt {appName}</h3>
                     <p className="text-sm text-slate-600 mb-6">Làm theo 2 bước sau để đưa ứng dụng ra màn hình chính:</p>
                     
                     <div className="flex flex-col gap-4 text-left w-full mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
@@ -155,10 +164,10 @@ export default function PwaInstallPrompt() {
             <div className="bg-white rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] border border-primary-900/10 p-4 sm:p-5 flex flex-col sm:flex-row gap-4 items-center max-w-md mx-auto">
                 
                 <div className="flex items-center gap-4 w-full sm:w-auto">
-                    <img src="/toeicmoreicon.svg?v=2" alt="App Icon" className="w-14 h-14 object-cover rounded-[14px] shadow-sm bg-slate-50 border border-slate-100" />
+                    <img src={appIcon} alt="App Icon" className="w-14 h-14 object-cover rounded-[14px] shadow-sm bg-slate-50 border border-slate-100" />
                     <div className="flex-1 text-left">
-                        <h4 className="font-bold text-slate-800 text-[15px]">ToeicMore</h4>
-                        <p className="text-[12px] text-slate-500 mt-0.5">Cài đặt ToeicMore để học tiếng Anh mỗi ngày</p>
+                        <h4 className="font-bold text-slate-800 text-[15px]">{appName}</h4>
+                        <p className="text-[12px] text-slate-500 mt-0.5">Cài đặt {appName} để học tiếng Anh mỗi ngày</p>
                     </div>
                 </div>
 
