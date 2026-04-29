@@ -458,10 +458,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-700">Mở khóa Giải thích Ngoại lệ & Ngữ pháp chi tiết</span>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
-                    <span className="text-slate-700">Nhân đôi Activity Points (x2)</span>
-                  </li>
+
                   <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-secondary-500 shrink-0 mt-0.5" />
                     <span className="text-slate-700 border-b border-secondary-200 border-dashed pb-0.5">Mở khoá Sổ Tay Ngữ Pháp & Luyện Đọc</span>
@@ -538,10 +535,7 @@ export default function UpgradeModal({ isOpen, onClose }: { isOpen: boolean, onC
                     <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
                     <span className="text-primary-100/90">Truy cập bộ Đề Thi TOEIC Độc Quyền (Khó)</span>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
-                    <span className="text-primary-100/90">Nhân ba Activity Points (x3)</span>
-                  </li>
+
                   <li className="flex items-start gap-3">
                     <IconCheck className="w-4 h-4 text-primary-600 shrink-0 mt-0.5" />
                     <span className="text-primary-100/90">Ưu tiên hỗ trợ từ Admin</span>

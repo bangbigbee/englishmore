@@ -151,12 +151,7 @@ export const awardToeicStars = async ({
       }
     }
 
-    let multiplier = 1
-    if (currentUser.tier === 'SUPER' || currentUser.email === 'bangdtbk@gmail.com') multiplier = 2
-    else if (currentUser.role === 'admin') multiplier = 10
-    else if (currentUser.tier === 'ULTRA') multiplier = 3
-    else if (currentUser.tier === 'PRO' || currentUser.role === 'member') multiplier = 2
-
+    const multiplier = 1
     const finalPoints = rule.points * multiplier
 
     await txWithStars.toeicStarLog.create({
