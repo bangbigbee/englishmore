@@ -217,8 +217,10 @@ function HomeContent() {
   const canUseDailyActivity = session?.user?.role === 'member' || session?.user?.role === 'admin'
   const isPendingMemberRegistration = session?.user?.role === 'user'
   const [availableCourses, setAvailableCourses] = useState<AvailableCourse[]>([])
-  const [activeNews, setActiveNews] = useState<Record<string, unknown>[]>([])
-  const [courseReviews, setCourseReviews] = useState<Record<string, unknown>[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [activeNews, setActiveNews] = useState<any[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [courseReviews, setCourseReviews] = useState<any[]>([])
   const [hasNewLectureSlide, setHasNewLectureSlide] = useState(false)
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
