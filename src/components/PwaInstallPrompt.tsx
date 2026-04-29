@@ -8,6 +8,7 @@ export default function PwaInstallPrompt() {
     const [showPopup, setShowPopup] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [isIos, setIsIos] = useState(false);
+    const [isMacSafari, setIsMacSafari] = useState(false);
     const [showIosInstruction, setShowIosInstruction] = useState(false);
     const pathname = usePathname();
 
@@ -31,12 +32,19 @@ export default function PwaInstallPrompt() {
         const ios = checkIos();
         setIsIos(ios);
 
+        const checkMacSafari = () => {
+            const userAgent = navigator.userAgent;
+            return /^((?!chrome|android).)*safari/i.test(userAgent) && /Macintosh/i.test(userAgent);
+        };
+        const macSafari = checkMacSafari();
+        setIsMacSafari(macSafari);
+
         // Check if already installed
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone;
         const hasDismissed = localStorage.getItem('pwa_install_dismissed');
 
-        // iOS doesn't support beforeinstallprompt, so we just show the popup if not installed
-        if (ios && !isStandalone && !hasDismissed) {
+        // iOS and Mac Safari don't support beforeinstallprompt, so we just show the popup if not installed
+        if ((ios || macSafari) && !isStandalone && !hasDismissed) {
             setTimeout(() => setShowPopup(true), 2500);
         }
 
@@ -66,7 +74,7 @@ export default function PwaInstallPrompt() {
     }, []);
 
     const handleInstallClick = async () => {
-        if (isIos) {
+        if (isIos || isMacSafari) {
             setShowIosInstruction(true);
             return;
         }
@@ -89,8 +97,8 @@ export default function PwaInstallPrompt() {
         localStorage.setItem('pwa_install_dismissed', 'true');
     };
 
-    // We only want to show this on mobile devices when the prompt is available (or on iOS)
-    if (!showPopup || !isMobile || (!deferredPrompt && !isIos)) return null;
+    // We want to show this when prompt is available (Chrome Desktop/Mobile) OR on iOS/Mac Safari
+    if (!showPopup || (!deferredPrompt && !isIos && !isMacSafari)) return null;
 
     if (showIosInstruction) {
         return (
@@ -106,14 +114,29 @@ export default function PwaInstallPrompt() {
                     <p className="text-sm text-slate-600 mb-6">Làm theo 2 bước sau để đưa ứng dụng ra màn hình chính:</p>
                     
                     <div className="flex flex-col gap-4 text-left w-full mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</div>
-                            <p className="text-sm text-slate-700">Nhấn vào biểu tượng <span className="inline-block bg-white shadow-sm border border-slate-200 px-1.5 py-0.5 rounded text-primary-600 mx-1"><svg className="w-4 h-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg> Chia sẻ</span> ở dưới thanh công cụ Safari.</p>
-                        </div>
-                        <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</div>
-                            <p className="text-sm text-slate-700">Chọn <span className="font-semibold text-slate-900 mx-1">Thêm vào MH chính</span> (Add to Home Screen).</p>
-                        </div>
+                        {isMacSafari ? (
+                            <>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</div>
+                                    <p className="text-sm text-slate-700">Nhấn vào biểu tượng <span className="inline-block bg-white shadow-sm border border-slate-200 px-1.5 py-0.5 rounded text-primary-600 mx-1"><svg className="w-4 h-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg> Chia sẻ</span> ở góc phải trên cùng của Safari.</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</div>
+                                    <p className="text-sm text-slate-700">Chọn <span className="font-semibold text-slate-900 mx-1">Thêm vào Dock</span> (Add to Dock).</p>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</div>
+                                    <p className="text-sm text-slate-700">Nhấn vào biểu tượng <span className="inline-block bg-white shadow-sm border border-slate-200 px-1.5 py-0.5 rounded text-primary-600 mx-1"><svg className="w-4 h-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg> Chia sẻ</span> ở dưới thanh công cụ Safari.</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-900 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</div>
+                                    <p className="text-sm text-slate-700">Chọn <span className="font-semibold text-slate-900 mx-1">Thêm vào MH chính</span> (Add to Home Screen).</p>
+                                </div>
+                            </>
+                        )}
                     </div>
                     
                     <button 
