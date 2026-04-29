@@ -520,7 +520,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </div>
         
         {/* MOBILE: Standard TopNav but without TOEIC tabs */}
-        <header className={`sticky top-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm' : 'bg-transparent border-transparent'} h-[60px] flex items-center`}>
+        <header className={`lg:hidden sticky top-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm' : 'bg-transparent border-transparent'} h-[60px] flex items-center`}>
             <div className="w-full grid grid-cols-3 items-center">
                 {/* Left: Hamburger Menu */}
                 <div className="flex justify-start">
