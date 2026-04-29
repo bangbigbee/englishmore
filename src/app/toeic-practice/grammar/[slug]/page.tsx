@@ -1207,7 +1207,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                   }
                               }
                           }}
-                          className="w-full flex items-center justify-center gap-1.5 text-slate-500 hover:text-primary-700 transition-colors text-[13px] font-medium cursor-pointer"
+                          className="w-full flex items-center justify-center gap-1.5 text-primary-600 hover:text-primary-800 transition-colors text-[13px] font-medium cursor-pointer"
                           title="Khám phá sổ tay học tập của bạn"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
@@ -1979,7 +1979,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                                                                   <div className="pt-3 pb-1 border-t border-slate-200/50 mt-1">
                                                                     {explanationText === 'Đăng nhập để xem phần giải thích.' ? (
-                                                                        <button onClick={(e) => { e.preventDefault(); const currentPath = window.location.pathname; router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); }} className="text-sm font-bold italic text-primary-600 hover:text-primary-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full">
+                                                                        <button onClick={(e) => { e.preventDefault(); const currentPath = window.location.pathname; router.push(`${currentPath}?login=true&allowGuest=true&subtitle=${encodeURIComponent('Đăng nhập để lưu giữ tiến độ và nhận điểm thưởng học tập nhé.')}&callbackUrl=${encodeURIComponent(currentPath)}`, { scroll: false }); }} className="text-sm text-primary-600 hover:text-primary-800 hover:underline cursor-pointer text-left leading-relaxed outline-none w-full">
                                                                           {explanationText}
                                                                         </button>
                                                                     ) : (() => {
