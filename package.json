@@ -50,6 +50,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
+    "jimp": "^1.6.1",
+    "jpeg-js": "^0.4.4",
+    "pngjs": "^7.0.0",
     "tailwindcss": "^4",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5"

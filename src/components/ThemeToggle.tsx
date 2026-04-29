@@ -15,8 +15,7 @@ export default function ThemeToggle() {
 
   const cycleTheme = () => {
     if (theme === "light") setTheme("classic");
-    else if (theme === "classic") setTheme("true-classic");
-    else if (theme === "true-classic") setTheme("ocean-blue");
+    else if (theme === "classic") setTheme("ocean-blue");
     else setTheme("light");
   };
 
@@ -30,9 +29,7 @@ export default function ThemeToggle() {
           ? "Purple Theme"
           : theme === "classic"
           ? "Classic Theme (Green)"
-          : theme === "true-classic"
-          ? "True Classic (Grayscale)"
-          : "Ocean Blue Theme"
+          : "Navy Blue Theme"
       }
     >
       <span className="w-4 h-4 rounded-full bg-primary-900 block transition-colors duration-300" />

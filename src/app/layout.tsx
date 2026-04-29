@@ -114,7 +114,7 @@ export default async function RootLayout({
           attribute="data-theme"
           defaultTheme="ocean-blue"
           enableSystem={false}
-          themes={["light", "classic", "true-classic", "ocean-blue"]}
+          themes={["light", "classic", "ocean-blue"]}
         >
           <AuthProvider>
             <ClientTracking />
