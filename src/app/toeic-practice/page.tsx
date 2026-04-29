@@ -938,27 +938,13 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 }
 
 function VocabFeatureCard({ onClick }: any) {
-    const [isFlipped, setIsFlipped] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
-
-    useEffect(() => {
-        if (isHovered) return;
-        const interval = setInterval(() => {
-            setIsFlipped(prev => !prev);
-        }, 7000);
-        return () => clearInterval(interval);
-    }, [isHovered]);
-
     return (
 		<div 
-            className="perspective-[1000px] w-full max-w-[260px] sm:max-w-[280px] h-[90px] cursor-pointer shrink-0 group focus:outline-none" 
+            className="w-full max-w-[260px] sm:max-w-[280px] h-[90px] cursor-pointer shrink-0 group focus:outline-none" 
             onClick={onClick}
-            onMouseEnter={() => { setIsHovered(true); setIsFlipped(true); }}
-            onMouseLeave={() => { setIsHovered(false); setIsFlipped(false); }}
         >
-            <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] shadow-sm group-hover:shadow-md ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
-                {/* Front side */}
-                <div className="absolute inset-0 w-full h-full bg-white border border-primary-900/20 rounded-[20px] flex items-center justify-between px-4 sm:px-5 backface-hidden [-webkit-backface-visibility:hidden]">
+            <div className="relative w-full h-full rounded-[20px] shadow-sm group-hover:shadow-md transition-shadow">
+                <div className="absolute inset-0 w-full h-full bg-white border border-primary-900/20 rounded-[20px] flex items-center justify-between px-4 sm:px-5">
                     {/* Background Pattern */}
                     <div className="absolute inset-0 bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none rounded-[20px]" />
                     
@@ -973,21 +959,6 @@ function VocabFeatureCard({ onClick }: any) {
                         {/* Button Shimmer */}
                         <div className="absolute top-0 -inset-full h-full w-[150%] block bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none animate-shimmer-sweep" />
                     </button>
-                </div>
-                
-                {/* Back side */}
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white rounded-[20px] p-3 flex flex-col justify-center items-center backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] shadow-inner overflow-hidden border border-primary-700/50">
-                    <div className="absolute -left-3 -bottom-4 text-secondary-500/10 transform -rotate-12 pointer-events-none">
-                        <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                    </div>
-                    <div className="relative z-10 text-center w-full flex flex-col items-center">
-                        <div className="font-black text-[12px] sm:text-[13px] tracking-wide mb-1 text-[#ea980c] drop-shadow-sm flex items-center justify-center gap-1 uppercase">
-                            <span>🔥</span> Master 1000+ từ vựng
-                        </div>
-                        <div className="text-[10px] sm:text-[11px] font-medium text-white/90 leading-tight max-w-[220px]">
-                            Vượt Speed Challenge,<br />Ghi danh Bảng Vàng ngay!
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
