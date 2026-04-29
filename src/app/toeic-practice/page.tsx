@@ -509,8 +509,8 @@ function ToeicPracticeContent() {
 					handleTabChange('roadmap');
 				}
 			}} />
-			<div className="max-w-6xl mx-auto pt-4 pb-8 px-4 sm:px-6">
-			<div className="mt-2 md:mt-4">
+			<div className={`${tab === 'home' ? 'w-full' : 'max-w-6xl px-4 sm:px-6'} mx-auto pt-4 pb-8`}>
+			<div className={`${tab === 'home' ? 'mt-0' : 'mt-2 md:mt-4'}`}>
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
 				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} score={toeicScore} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
 				 {tab === "grammar" && <ToeicGrammarTab onPracticeClick={(slug) => {
