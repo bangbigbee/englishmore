@@ -21,6 +21,16 @@ const TOEIC_TABS = [
   { key: "actual-test", label: "Luyện Đề", icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="4" width="12" height="18" rx="2" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="2"/><path d="M9 4V3C9 2.44772 9.44772 2 10 2H14C14.5523 2 15 2.44772 15 3V4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> },
 ]
 
+const TOEIC_SIDEBAR_ITEMS = [
+    { id: 'roadmap', label: 'Lộ trình', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7l6-3 5.447 2.724A1 1 0 0121 7.618v10.764a1 1 0 01-1.447.894L15 17l-6 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7v13M15 4v13" /></svg> },
+    { id: 'vocabulary', label: 'Từ vựng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
+    { id: 'grammar', label: 'Ngữ pháp', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 15h4.498" /></svg> },
+    { id: 'listening', label: 'Listening', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> },
+    { id: 'reading', label: 'Reading', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
+    { id: 'actual-test', label: 'Luyện đề', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+    { id: 'leaderboard', label: 'Bảng xếp hạng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg> },
+]
+
 const TAB_COLORS: Record<string, string> = {
   home: "text-primary-900",
   grammar: "text-primary-600",
@@ -457,9 +467,10 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   const [isStarModalOpen, setIsStarModalOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const userInitial = (session?.user?.name || session?.user?.email || 'U').trim().charAt(0).toUpperCase()
 
@@ -546,31 +557,125 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </div>
         
         {/* MOBILE: Standard TopNav but without TOEIC tabs */}
-        <header className="lg:hidden sticky top-0 z-40 backdrop-blur-xl transition-all px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 bg-white/80 border-b border-primary-900/10">
-          <div className="mx-auto flex items-center justify-between gap-2 relative">
-            <Link href="/" className="flex shrink-0 items-center gap-2 leading-none z-10">
-              <span className="shrink-0">
-                <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain drop-shadow-sm theme-classic-hide" />
-                <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain drop-shadow-sm theme-classic-show" />
-              </span>
-            </Link>
-            
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              {session && (
-                 <button 
-                    onClick={() => setIsStarModalOpen(true)}
-                    className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80" 
-                 >
-                    <span className="text-[14px] mt-[-2px]">⭐</span>
-                    <span className="text-[12px] font-black text-secondary-600">
-                        {(session.user as any)?.toeicStars || 0}
-                    </span>
-                 </button>
-              )}
+        <header className="lg:hidden sticky top-0 z-40 backdrop-blur-xl transition-all px-3 py-2.5 text-slate-900 sm:px-6 sm:py-3 bg-white/80 border-b border-primary-900/10 h-[60px] flex items-center">
+            <div className="w-full grid grid-cols-3 items-center">
+                {/* Left: Hamburger Menu */}
+                <div className="flex justify-start">
+                    <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -ml-2 text-primary-900 hover:text-primary-700 focus:outline-none transition-colors">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
+                {/* Center: Logo */}
+                <div className="flex justify-center">
+                    <Link href="/" className="flex shrink-0 items-center leading-none z-10">
+                        <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[26px] object-contain drop-shadow-sm theme-classic-hide" />
+                        <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[26px] object-contain drop-shadow-sm theme-classic-show" />
+                    </Link>
+                </div>
+                {/* Right: ThemeToggle */}
+                <div className="flex justify-end items-center gap-2">
+                    {session && (
+                        <button onClick={() => setIsStarModalOpen(true)} className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80">
+                            <span className="text-[14px] mt-[-2px]">⭐</span>
+                            <span className="text-[12px] font-black text-secondary-600">
+                                {(session.user as any)?.toeicStars || 0}
+                            </span>
+                        </button>
+                    )}
+                    <ThemeToggle />
+                </div>
             </div>
-          </div>
         </header>
+
+        {/* Mobile Left Drawer Menu for ToeicDomain */}
+        <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isMobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMobileMenuOpen}>
+            {/* Backdrop */}
+            <div 
+                className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} 
+                onClick={() => setIsMobileMenuOpen(false)}
+            />
+            {/* Drawer */}
+            <aside 
+                className={`fixed inset-y-0 left-0 w-[280px] bg-white shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+            >
+                <div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
+                    <div className="mb-6 px-2 flex justify-between items-center">
+                        <div>
+                            <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain theme-classic-hide" />
+                            <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain theme-classic-show" />
+                        </div>
+                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 rounded-full">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    
+                    <div className="space-y-1">
+                        {TOEIC_SIDEBAR_ITEMS.map((item) => {
+                            const currentTab = searchParams.get('tab') || 'home';
+                            const isActive = currentTab === item.id;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => {
+                                        setIsMobileMenuOpen(false);
+                                        if (pathname.startsWith('/toeic-practice') || pathname === '/') {
+                                            const params = new URLSearchParams(searchParams.toString());
+                                            params.set('tab', item.id);
+                                            params.delete('topic');
+                                            router.push(`/toeic-practice?${params.toString()}`);
+                                            window.scrollTo({ top: 0, behavior: 'instant' });
+                                        } else {
+                                            router.push(`/toeic-practice?tab=${item.id}`);
+                                        }
+                                    }}
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+                                >
+                                    <div className={`${isActive ? 'text-primary-600' : 'text-slate-400'}`}>
+                                        {item.icon}
+                                    </div>
+                                    <span className="text-[14px]">{item.label}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+                <div className="p-4 mt-auto border-t border-slate-200/60 bg-white">
+                    {session ? (
+                        <div className="w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100">
+                            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0">
+                                {session.user?.name?.charAt(0).toUpperCase() || 'U'}
+                            </div>
+                            <div className="flex-1 truncate">
+                                <p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+                                <p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+                            </div>
+                            <button
+                                onClick={() => signOut({ callbackUrl: '/' })}
+                                className="p-2 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-50 ml-1 transition-colors"
+                                title="Đăng xuất"
+                            >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                            </button>
+                        </div>
+                    ) : (
+                        <button 
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                const params = new URLSearchParams(window.location.search);
+                                params.set('login', 'true');
+                                params.set('subtitle', 'Đăng nhập để lưu và theo dõi tiến độ học tập');
+                                params.set('callbackUrl', pathname);
+                                router.push(`${pathname}?${params.toString()}`, { scroll: false });
+                            }}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary-900 text-white font-bold hover:bg-primary-800 transition-colors shadow-sm"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                            Đăng nhập
+                        </button>
+                    )}
+                </div>
+            </aside>
+        </div>
 
         <ToeicStarInfoModal 
             isOpen={isStarModalOpen} 
