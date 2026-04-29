@@ -16,7 +16,9 @@ export async function GET(request: NextRequest) {
     const tier = searchParams.get('tier')
     
     const buildWhere = (tierCondition?: any) => {
-      const conditions: any[] = []
+      const conditions: any[] = [
+        { email: { not: 'bangdtbk@gmail.com' } }
+      ]
       
       if (search) {
         conditions.push({

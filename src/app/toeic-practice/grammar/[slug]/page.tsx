@@ -94,6 +94,18 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isTestCompleted, setIsTestCompleted] = useState(false)
   const [lessonStarted, setLessonStarted] = useState(false)
+
+  useEffect(() => {
+    if (lessonStarted) {
+      setTimeout(() => {
+        const container = document.getElementById('quiz-container');
+        if (container) {
+          const y = container.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [lessonStarted]);
   const [isPlayingDirections, setIsPlayingDirections] = useState(false)
   const [showGroupTranscriptEng, setShowGroupTranscriptEng] = useState<Record<number, boolean>>({});
   const [showGroupTranscriptViet, setShowGroupTranscriptViet] = useState<Record<number, boolean>>({});
@@ -1947,9 +1959,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                                 }
                                                             }}
-                                                            className="ml-auto flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[13px] font-bold transition-all bg-slate-100 text-primary-900 hover:bg-slate-200 hover:-translate-y-0.5 active:translate-y-0"
+                                                            className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto flex justify-center items-center gap-1.5 px-4 py-2 sm:py-1.5 rounded-xl text-[13px] sm:text-[14px] font-bold transition-all bg-slate-100 text-primary-900 hover:bg-slate-200 hover:-translate-y-0.5 active:translate-y-0"
                                                         >
-                                                            Next
+                                                            Câu tiếp
                                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
                                                         </button>
                                                     )}
