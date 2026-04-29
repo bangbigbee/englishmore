@@ -552,7 +552,7 @@ function ToeicPracticeContent() {
 				 }} />}
 			</div>
 
-            {tab === "home" && <SpeedChallengeLeaderboard onPlayClick={() => handleTabChange('vocabulary')} />}
+            {/* {tab === "home" && <SpeedChallengeLeaderboard onPlayClick={() => handleTabChange('vocabulary')} />} */}
 
 			<footer className="mt-20 pt-10 pb-6 border-t border-slate-200">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 mb-10 text-left">
@@ -1161,7 +1161,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 
             {/* Quick Links Section */}
             <div className="w-full mx-auto mt-8 mb-4 px-4">
-                <div className="flex flex-wrap justify-center items-center gap-4 py-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 py-3">
                     {[
                         { title: 'Review Đề TOEIC', href: '/toeic-practice/reviews', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> },
                         { title: 'Kinh nghiệm Học & Thi', href: '/toeic-practice/experience', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg> },
@@ -1173,7 +1173,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
                         <Link 
                             key={idx} 
                             href={item.href}
-                            className="bg-white/90 dark:bg-slate-900 backdrop-blur-sm border border-primary-900/10 dark:border-slate-700/80 px-6 py-3.5 rounded-[16px] shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-900/20 dark:hover:border-slate-600 transition-all duration-300 flex items-center gap-3 group shrink-0 min-w-[200px]"
+                            className="bg-white/90 dark:bg-slate-900 backdrop-blur-sm border border-primary-900/10 dark:border-slate-700/80 px-4 xl:px-6 py-3.5 rounded-[16px] shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-900/20 dark:hover:border-slate-600 transition-all duration-300 flex items-center justify-center lg:justify-start gap-2 xl:gap-3 group w-full"
                         >
                             <span className="text-[#ea980c] dark:text-secondary-500 group-hover:scale-110 transition-transform">{item.icon}</span>
                             <span className="text-[13px] font-bold text-slate-700 dark:text-white group-hover:text-primary-900 dark:group-hover:text-primary-100 transition-colors">{item.title}</span>
