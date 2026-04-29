@@ -542,7 +542,7 @@ function ToeicPracticeContent() {
 				}
 			}} />
 				{/* Desktop Sidebar */}
-				<aside className={`${isSidebarCollapsed ? 'w-[84px]' : 'w-64'} shrink-0 bg-white/60 backdrop-blur-md border-r border-slate-200/60 hidden md:flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 ease-in-out`}>
+				<aside className={`${isSidebarCollapsed ? 'w-[84px]' : 'w-64'} shrink-0 bg-transparent hidden md:flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 ease-in-out`}>
 					<div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
 						<div className="mb-6">
 							<Link href="/" className={`flex items-center justify-center h-10 mb-2 mt-2 ${isSidebarCollapsed ? '' : 'px-4 justify-start'}`}>
@@ -595,8 +595,7 @@ function ToeicPracticeContent() {
 						})}
 						</div>
 					</div>
-					
-					<div className="p-4 mt-auto border-t border-slate-200/60 bg-white/40 backdrop-blur-md">
+					<div className="p-4 mt-auto border-t border-primary-900/10 bg-transparent">
 						{session ? (
 							<div className="flex items-center gap-2">
 								<button 
