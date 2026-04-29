@@ -1111,7 +1111,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							100% { left: calc(100% - 20px); transform: rotate(0deg); opacity: 0; }
 						}
 						.animate-marquee {
-							animation: marquee 25s linear infinite;
+							animation: marquee 45s linear infinite;
 						}
 						`
 					}} />
