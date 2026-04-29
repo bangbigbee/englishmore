@@ -11,6 +11,7 @@ import ToeicOnboardingModal from "@/components/ToeicOnboardingModal";
 import ToeicRoadmapTab from "./ToeicRoadmapTab";
 import InteractiveListeningModal from "@/components/InteractiveListeningModal";
 import { useTheme } from "next-themes";
+import ToeicWarriorLeaderboard from "@/components/ToeicWarriorLeaderboard";
 
 const playSound = (soundFileName: string) => {
 	try {
