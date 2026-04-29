@@ -296,7 +296,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
 					<div className={`perspective-[1000px] mb-2 w-full flex-1 flex flex-col justify-center ${isTestTopic ? 'mt-3 sm:mt-1' : ''}`}>
 						<div className={`relative w-full transition-transform duration-700 [transform-style:preserve-3d] ${(displaySubtitle && !disableFlip) ? 'group-hover:[transform:rotateX(-180deg)]' : ''}`}>
                             {/* Front side (English/Main) */}
-							<div className="flex flex-col gap-2 [backface-visibility:hidden]">
+							<div className="flex flex-col gap-2 backface-hidden [-webkit-backface-visibility:hidden]">
 								<div className="flex items-center gap-2.5">
                                     {customIcon ? (
                                         <span className={`w-[28px] sm:w-[32px] shrink-0 h-[28px] sm:h-[32px] rounded-[6px] sm:rounded-[8px] text-white flex items-center justify-center text-[12px] shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-3' : 'rotate-3'}`}>
@@ -320,7 +320,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
 
                             {/* Back side (Vietnamese/Subtitle) */}
 							{displaySubtitle && !disableFlip && (
-								<div className="absolute inset-0 flex items-center gap-2.5 [backface-visibility:hidden] [transform:rotateX(180deg)] text-black dark:text-white">
+								<div className="absolute inset-0 flex items-center gap-2.5 backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateX(180deg)] text-black dark:text-white">
 									<span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] ${theme.backIconBg} text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-transform duration-300 group-hover:rotate-0 leading-none pb-[1px] ${title.charCodeAt(0) % 2 === 0 ? 'rotate-6' : '-rotate-6'}`}>
 										{displaySubtitle.charAt(0).toLowerCase()}
 									</span>
@@ -858,10 +858,10 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
                                 className="absolute inset-0 bg-white dark:bg-slate-800 border-l border-slate-100 dark:border-slate-700 shadow-[2px_0_10px_rgba(0,0,0,0.05)] dark:shadow-[2px_0_10px_rgba(0,0,0,0.3)] [transform-style:preserve-3d]"
                             >
                                 {/* Front face (starts on the right edge) */}
-                                <div className="absolute inset-0 flex items-center justify-center p-3 [backface-visibility:hidden] bg-slate-50 dark:bg-slate-800 border-r border-primary-900/10 dark:border-slate-700 rounded-r-[20px]">
+                                <div className="absolute inset-0 flex items-center justify-center p-3 backface-hidden [-webkit-backface-visibility:hidden] bg-slate-50 dark:bg-slate-800 border-r border-primary-900/10 dark:border-slate-700 rounded-r-[20px]">
                                 </div>
                                 {/* Back face (when flipped to the left) */}
-                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white dark:bg-slate-800/90 shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] bg-white dark:bg-slate-800/90 shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
                                     <span className="font-bold text-primary-900 dark:text-white text-sm uppercase tracking-wider text-center drop-shadow-sm leading-tight">
                                         {pages[activePage]}
                                     </span>
@@ -958,7 +958,7 @@ function VocabFeatureCard({ onClick }: any) {
         >
             <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] shadow-sm group-hover:shadow-md ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
                 {/* Front side */}
-                <div className="absolute inset-0 w-full h-full bg-white border border-primary-900/20 rounded-[20px] flex items-center justify-between px-4 sm:px-5 [backface-visibility:hidden]">
+                <div className="absolute inset-0 w-full h-full bg-white border border-primary-900/20 rounded-[20px] flex items-center justify-between px-4 sm:px-5 backface-hidden [-webkit-backface-visibility:hidden]">
                     {/* Background Pattern */}
                     <div className="absolute inset-0 bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none rounded-[20px]" />
                     
@@ -976,7 +976,7 @@ function VocabFeatureCard({ onClick }: any) {
                 </div>
                 
                 {/* Back side */}
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white rounded-[20px] p-3 flex flex-col justify-center items-center [backface-visibility:hidden] [transform:rotateY(180deg)] shadow-inner overflow-hidden border border-primary-700/50">
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white rounded-[20px] p-3 flex flex-col justify-center items-center backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] shadow-inner overflow-hidden border border-primary-700/50">
                     <div className="absolute -left-3 -bottom-4 text-secondary-500/10 transform -rotate-12 pointer-events-none">
                         <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                     </div>
@@ -1015,7 +1015,7 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
 		<div className="perspective-[1000px] w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] rounded-[20px] ${isActive ? '[transform:rotateY(180deg)] shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`}>
                 {/* Front side */}
-                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/50 rounded-[20px] p-6 flex flex-col [backface-visibility:hidden]">
+                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/50 rounded-[20px] p-6 flex flex-col backface-hidden [-webkit-backface-visibility:hidden]">
                     <div className="w-full flex items-center gap-4 pb-1">
                         <div className="w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center">
                             {icon}
@@ -1027,7 +1027,7 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
                     </p>
                 </div>
                 {/* Back side */}
-                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border-2 border-primary-900/20 dark:border-slate-700 rounded-[20px] flex items-center justify-center [backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
+                <div className="absolute inset-0 w-full h-full bg-white dark:bg-slate-900 border-2 border-primary-900/20 dark:border-slate-700 rounded-[20px] flex items-center justify-center backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] overflow-hidden">
                     <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50/80 dark:bg-slate-800 p-6 relative">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="text-primary-900 dark:text-primary-100 bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm border border-slate-100 dark:border-slate-600 flex-shrink-0">
@@ -2365,7 +2365,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 								onClick={() => setIsFlipped(!isFlipped)}
 							>
 								{/* ── FRONT FACE ── */}
-								<div className="absolute inset-0 h-full w-full rounded-2xl overflow-hidden [backface-visibility:hidden] bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 p-6 text-white flex flex-col items-center justify-center">
+								<div className="absolute inset-0 h-full w-full rounded-2xl overflow-hidden backface-hidden [-webkit-backface-visibility:hidden] bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 p-6 text-white flex flex-col items-center justify-center">
 									<div className="absolute top-0 left-0 z-20 pointer-events-none flex leading-none">
 										<PackageBadge pkg={topics.find(t=>t.topic === selectedTopic)?.packageType} className="rounded-br-[14px] rounded-tl-none border-b border-r border-white/20 text-white/90 bg-white/10 backdrop-blur-sm m-0" />
 									</div>
@@ -2475,7 +2475,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 								</div>
 
 								{/* ── BACK FACE ── */}
-								<div className="absolute inset-0 h-full w-full rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-primary-900/20 py-5 sm:py-7 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(88, 28, 135,0.02)] overflow-hidden">
+								<div className="absolute inset-0 h-full w-full rounded-2xl backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] bg-white border-2 border-primary-900/20 py-5 sm:py-7 text-slate-800 flex flex-col shadow-[inset_0_0_20px_rgba(88, 28, 135,0.02)] overflow-hidden">
 									
 									<div className="flex-1 overflow-y-auto px-5 sm:px-7 pb-20">
 										<span className="absolute top-4 right-5 text-primary-900/50 bg-primary-900/5 p-1.5 rounded-full pointer-events-none">
