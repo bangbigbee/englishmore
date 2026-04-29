@@ -149,47 +149,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
           ref={scrollContainerRef}
           className="flex items-center gap-3 xl:gap-5 overflow-x-auto pt-1 w-full justify-start ml-2 mr-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
         >
-          {session ? (
-            <div className="flex items-center gap-2 xl:gap-3 shrink-0">
-              <Link
-                href="/user/profile"
-                className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/user/profile' ? "border-primary-900" : "border-transparent hover:border-primary-900/20"}`}
-              >
-                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]`}>
-                   <ModernUserIcon className="w-[18px] h-[18px]" />
-                </span>
-                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] ${pathname === '/user/profile' ? "opacity-100" : "opacity-80 group-hover:opacity-100"} max-w-[120px] truncate`} title={session.user?.name || "Cá Nhân"}>
-                   {session.user?.name?.split(' ').pop() || "Cá Nhân"}
-                </span>
-              </Link>
-              <Link
-                href="/toeic-progress?tab=vocabulary-bank"
-                className={`relative overflow-hidden flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "border-primary-900" : "border-transparent hover:border-primary-900/20"}`}
-              >
-                <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 text-primary-500`}>
-                   <BookIcon className="w-[18px] h-[18px] mt-[-2px]" />
-                </span>
-                <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#4c1d95] relative z-10 ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                   Sổ tay
-                </span>
-                <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-[#4c1d95]/10 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-              </Link>
-            </div>
-          ) : (
-            <button
-              onClick={handleLoginClick}
-              className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] border-transparent hover:border-[#ea980c]/20"
-            >
-              <span className="transition-transform duration-300 scale-100 group-hover:scale-110 mb-[-2px]">
-                 <ModernUserIcon className="w-[18px] h-[18px]" />
-              </span>
-              <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#ea980c] opacity-90 group-hover:opacity-100">
-                 Đăng Nhập
-              </span>
-            </button>
-          )}
-          
-          <div className="w-[1px] h-5 bg-primary-900/20 mx-1 shrink-0"></div>
+
           
           {isToeicDomain ? (
             <>
@@ -537,6 +497,14 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
     }
   }, [isDropdownOpen])
 
+  const handleLoginClick = () => {
+    const params = new URLSearchParams(window.location.search)
+    params.set('login', 'true')
+    params.set('subtitle', 'Đăng nhập để lưu và theo dõi tiến độ học tập')
+    params.set('callbackUrl', pathname)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
   if (isToeicDomain) {
     return (
       <>
@@ -707,18 +675,79 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         <div className="shrink-0 flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
           {/* Desktop More Menu */}
-          {(isToeicDomain || session) && (
+          <div className="hidden lg:flex items-center gap-2">
+            {!session && (
+                <button
+                  onClick={handleLoginClick}
+                  className="flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap px-3 py-1.5 rounded-xl border border-transparent hover:bg-[#ea980c]/10 hover:border-[#ea980c]/20"
+                >
+                  <span className="transition-transform duration-300 scale-100 group-hover:scale-110">
+                     <ModernUserIcon className="w-4 h-4 text-[#ea980c]" />
+                  </span>
+                  <span className="text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-[#ea980c] opacity-90 group-hover:opacity-100">
+                     Đăng Nhập
+                  </span>
+                </button>
+            )}
+
+            {(isToeicDomain || session) && (
               <div ref={dropdownRef} className="relative isolate hidden lg:flex items-center">
                    <button
                       type="button"
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-100 transition-colors focus:outline-none"
+                      className={`flex items-center justify-center transition-colors focus:outline-none border ${session ? 'gap-2 px-2 py-1.5 rounded-full hover:bg-slate-100 border-transparent hover:border-slate-200' : 'w-8 h-8 rounded-full hover:bg-slate-100 border-transparent'}`}
                    >
-                       <svg className="w-5 h-5 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                       {session ? (
+                           <>
+                             <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold text-[11px] shrink-0">
+                                {session.user?.name?.charAt(0).toUpperCase() || 'U'}
+                             </div>
+                             <span className="text-[13px] font-bold text-slate-700 max-w-[100px] truncate">
+                                {session.user?.name?.split(' ').pop() || "Cá Nhân"}
+                             </span>
+                           </>
+                       ) : (
+                           <svg className="w-5 h-5 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                       )}
                    </button>
                    {isDropdownOpen && (
                        <>
                            <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[200px] rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5 flex flex-col gap-1">
+                               {session && (
+                                   <>
+                                       <Link
+                                           href="/user/profile"
+                                           onClick={() => setIsDropdownOpen(false)}
+                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
+                                       >
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-indigo-50 text-indigo-500">
+                                               <ModernUserIcon className="w-4 h-4" />
+                                           </span>
+                                           Thông tin cá nhân
+                                       </Link>
+                                       <Link
+                                           href="/toeic-progress?tab=vocabulary-bank"
+                                           onClick={() => setIsDropdownOpen(false)}
+                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
+                                       >
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-emerald-50 text-emerald-500">
+                                               <BookIcon className="w-4 h-4" />
+                                           </span>
+                                           Sổ tay của tôi
+                                       </Link>
+                                       <Link
+                                           href="/toeic-progress"
+                                           onClick={() => setIsDropdownOpen(false)}
+                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
+                                       >
+                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-blue-50 text-blue-500">
+                                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                           </span>
+                                           Lộ trình của tôi
+                                       </Link>
+                                       <div className="h-[1px] w-full bg-slate-100 my-1"></div>
+                                   </>
+                               )}
                                {isToeicDomain && (
                                    <>
                                        <a
@@ -762,6 +791,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                    )}
                </div>
           )}
+          </div>
 
           {session && (
             <div className="flex items-center gap-2">
