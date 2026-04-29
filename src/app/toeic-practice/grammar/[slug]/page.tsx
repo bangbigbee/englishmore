@@ -1944,7 +1944,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                                 }
                                                             }}
-                                                            className="ml-auto flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[13px] font-bold transition-all bg-primary-900 text-white hover:bg-primary-800 hover:-translate-y-0.5 active:translate-y-0"
+                                                            className="ml-auto flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[13px] font-bold transition-all bg-slate-100 text-primary-900 hover:bg-slate-200 hover:-translate-y-0.5 active:translate-y-0"
                                                         >
                                                             Câu Tiếp
                                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
