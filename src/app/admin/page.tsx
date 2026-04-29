@@ -707,7 +707,7 @@ export default function AdminDashboard() {
   const [newExerciseDescription, setNewExerciseDescription] = useState('')
   const [editExerciseTitle, setEditExerciseTitle] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
-  const [activeSection, setActiveSection] = useState<AdminSection>('course')
+  const [activeSection, setActiveSection] = useState<AdminSection>('users')
   const [isEnglishMoreOpen, setIsEnglishMoreOpen] = useState(true)
   const [isToeicMoreOpen, setIsToeicMoreOpen] = useState(true)
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
