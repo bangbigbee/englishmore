@@ -599,8 +599,8 @@ function ToeicPracticeContent() {
 					<div className="p-4 mt-auto border-t border-slate-200/60 bg-white/40 backdrop-blur-md">
 						{session ? (
 							<div className="flex items-center gap-2">
-								<Link 
-                                    href="/user/profile"
+								<button 
+                                    onClick={() => handleTabChange('profile')}
                                     className={`flex-1 flex items-center gap-3 px-2 py-2 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors min-w-0 ${isSidebarCollapsed ? 'justify-center' : 'text-left'}`}
                                     title={isSidebarCollapsed ? "Thông tin cá nhân" : undefined}
                                 >
@@ -613,11 +613,11 @@ function ToeicPracticeContent() {
 											<p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
 										</div>
 									)}
-								</Link>
+								</button>
                                 {!isSidebarCollapsed && (
                                     <button 
                                         onClick={() => signOut({ callbackUrl: '/' })}
-                                        className="w-full flex items-center justify-center p-2 rounded-lg text-primary-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                                        className="shrink-0 flex items-center justify-center p-2 rounded-lg text-primary-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
                                         title="Đăng xuất"
                                     >
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
