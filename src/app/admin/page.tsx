@@ -708,6 +708,8 @@ export default function AdminDashboard() {
   const [editExerciseTitle, setEditExerciseTitle] = useState('')
   const [editExerciseDescription, setEditExerciseDescription] = useState('')
   const [activeSection, setActiveSection] = useState<AdminSection>('course')
+  const [isEnglishMoreOpen, setIsEnglishMoreOpen] = useState(true)
+  const [isToeicMoreOpen, setIsToeicMoreOpen] = useState(true)
   const [newExerciseSourceFormUrl, setNewExerciseSourceFormUrl] = useState('')
   const [importingForm, setImportingForm] = useState(false)
   const [importingDocx, setImportingDocx] = useState(false)
@@ -3793,27 +3795,41 @@ export default function AdminDashboard() {
              <button onClick={() => setActiveSection('masterConfig')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'masterConfig' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Master Settings</button>
 
              {/* ENGLISHMORE */}
-             <div className="mt-6 mb-2 text-[10px] font-black text-primary-600 uppercase tracking-widest pl-2">EnglishMore</div>
-             <button onClick={() => setActiveSection('course')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'course' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Courses</button>
-             <button onClick={() => setActiveSection('homework')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'homework' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Homework</button>
-             <button onClick={() => setActiveSection('exercise')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'exercise' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Exercises</button>
-             <button onClick={() => setActiveSection('lectureNote')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'lectureNote' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Lecture Notes</button>
-             <button onClick={() => setActiveSection('activityPoints')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'activityPoints' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Activity Points</button>
-             <button onClick={() => setActiveSection('vocabulary')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'vocabulary' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Vocabulary</button>
-             <button onClick={() => setActiveSection('referral')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'referral' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Referrals</button>
-             <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>News</button>
-             <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Gallery</button>
+             <button onClick={() => setIsEnglishMoreOpen(!isEnglishMoreOpen)} className="mt-6 mb-2 flex items-center justify-between w-full text-left text-[10px] font-black text-primary-600 uppercase tracking-widest pl-2 pr-2 hover:opacity-80 transition-opacity">
+                <span>EnglishMore</span>
+                <svg className={`w-3.5 h-3.5 transition-transform ${isEnglishMoreOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
+             </button>
+             {isEnglishMoreOpen && (
+               <div className="space-y-1">
+                 <button onClick={() => setActiveSection('course')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'course' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Courses</button>
+                 <button onClick={() => setActiveSection('homework')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'homework' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Homework</button>
+                 <button onClick={() => setActiveSection('exercise')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'exercise' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Exercises</button>
+                 <button onClick={() => setActiveSection('lectureNote')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'lectureNote' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Lecture Notes</button>
+                 <button onClick={() => setActiveSection('activityPoints')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'activityPoints' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Activity Points</button>
+                 <button onClick={() => setActiveSection('vocabulary')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'vocabulary' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Vocabulary</button>
+                 <button onClick={() => setActiveSection('referral')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'referral' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Referrals</button>
+                 <button onClick={() => setActiveSection('news')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'news' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>News</button>
+                 <button onClick={() => setActiveSection('gallery')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'gallery' ? 'bg-primary-900/10 text-primary-900' : 'text-slate-600 hover:bg-slate-50'}`}>Gallery</button>
+               </div>
+             )}
 
              {/* TOEICMORE */}
-             <div className="mt-6 mb-2 text-[10px] font-black text-[#ea980c] uppercase tracking-widest pl-2">ToeicMore</div>
-             <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Toeic Questions</button>
-             <button onClick={() => setActiveSection('roadmap')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'roadmap' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Roadmap Config</button>
-             <button onClick={() => setActiveSection('placementTest')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'placementTest' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Placement Test</button>
-             <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Subscriptions</button>
-             <button onClick={() => setActiveSection('starConfig')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'starConfig' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Star Config</button>
-             <button onClick={() => setActiveSection('about_toeicmore')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'about_toeicmore' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>About Page</button>
-             <button onClick={() => setActiveSection('footer')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'footer' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Footer</button>
-             <button onClick={() => setActiveSection('floatingNoti')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'floatingNoti' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Floating Noti</button>
+             <button onClick={() => setIsToeicMoreOpen(!isToeicMoreOpen)} className="mt-6 mb-2 flex items-center justify-between w-full text-left text-[10px] font-black text-[#ea980c] uppercase tracking-widest pl-2 pr-2 hover:opacity-80 transition-opacity">
+                <span>ToeicMore</span>
+                <svg className={`w-3.5 h-3.5 transition-transform ${isToeicMoreOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
+             </button>
+             {isToeicMoreOpen && (
+               <div className="space-y-1">
+                 <button onClick={() => setActiveSection('toeic')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'toeic' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Toeic Questions</button>
+                 <button onClick={() => setActiveSection('roadmap')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'roadmap' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Roadmap Config</button>
+                 <button onClick={() => setActiveSection('placementTest')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'placementTest' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Placement Test</button>
+                 <button onClick={() => setActiveSection('pricing')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'pricing' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Subscriptions</button>
+                 <button onClick={() => setActiveSection('starConfig')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'starConfig' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Star Config</button>
+                 <button onClick={() => setActiveSection('about_toeicmore')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'about_toeicmore' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>About Page</button>
+                 <button onClick={() => setActiveSection('footer')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'footer' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Footer</button>
+                 <button onClick={() => setActiveSection('floatingNoti')} className={`flex w-full text-left px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${activeSection === 'floatingNoti' ? 'bg-[#ea980c]/10 text-[#ea980c]' : 'text-slate-600 hover:bg-slate-50'}`}>Floating Noti</button>
+               </div>
+             )}
           </nav>
         </aside>
 
