@@ -479,6 +479,14 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   }, [session])
 
   useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
     setAvatarLoadFailed(false)
   }, [session?.user?.image])
 
@@ -508,7 +516,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                     {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
                         <span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none ${
                             (session.user as any)?.tier === 'ULTRA' 
-                            ? 'bg-gradient-to-r from-primary-600 to-secondary-500 text-white' 
+                            ? 'bg-gradient-to-r from-primary-600 to-primary-800 text-white' 
                             : 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
                         }`}>
                             {(session.user as any)?.tier}
@@ -546,7 +554,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                             {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
                                 <span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none ${
                                     (session.user as any)?.tier === 'ULTRA' 
-                                    ? 'bg-gradient-to-r from-primary-600 to-secondary-500 text-white' 
+                                    ? 'bg-gradient-to-r from-primary-600 to-primary-800 text-white' 
                                     : 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
                                 }`}>
                                     {(session.user as any)?.tier}
