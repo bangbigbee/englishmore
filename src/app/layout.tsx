@@ -112,9 +112,9 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
         <ThemeProvider
           attribute="data-theme"
-          defaultTheme="classic"
+          defaultTheme="ocean-blue"
           enableSystem={false}
-          themes={["light", "classic", "true-classic"]}
+          themes={["light", "classic", "true-classic", "ocean-blue"]}
         >
           <AuthProvider>
             <ClientTracking />
