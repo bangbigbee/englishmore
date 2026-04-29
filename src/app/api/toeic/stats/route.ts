@@ -13,8 +13,11 @@ export async function GET() {
     ] = await Promise.all([
       prisma.toeicGrammarTopic.count({ where: { type: 'GRAMMAR' } }),
       prisma.vocabularyItem.count(),
-      prisma.user.count(),
-      prisma.user.aggregate({ _sum: { totalStudySeconds: true } }),
+      prisma.user.count({ where: { email: { not: 'bangdtbk@gmail.com' } } }),
+      prisma.user.aggregate({ 
+        where: { email: { not: 'bangdtbk@gmail.com' } },
+        _sum: { totalStudySeconds: true } 
+      }),
       prisma.vocabularyItem.findMany({ select: { topic: true }, distinct: ['topic'] }),
       prisma.toeicQuestion.count({ 
         where: { 
