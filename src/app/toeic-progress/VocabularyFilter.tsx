@@ -74,7 +74,7 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
     };
 
 	return (
-		<div className="space-y-4 className=mb-8">
+		<div className="space-y-4 mb-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 {/* Search Bar & Topic Dropdown Wrap */}
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:max-w-2xl">
@@ -182,6 +182,26 @@ export default function VocabularyFilter({ topics }: { topics: string[] }) {
                     </AnimatePresence>
                 </div>
             </div>
+
+			{/* Tag Chips */}
+			<div>
+				<div className="flex flex-nowrap overflow-x-auto gap-2 pb-1 custom-scrollbar">
+					{[
+						{ id: 'all', label: 'Tất cả trạng thái', icon: '🌈', activeClass: 'bg-slate-800 text-white border-slate-800' },
+						{ id: 'bookmarked', label: '⭐ Câu đã lưu', icon: '⭐', activeClass: 'bg-secondary-50 text-secondary-600 border-secondary-200' },
+						{ id: 'hard', label: '❌ Từ khó', icon: '❌', activeClass: 'bg-rose-50 text-rose-600 border-rose-200' },
+						{ id: 'learned', label: '✓ Đã thuộc', icon: '✓', activeClass: 'bg-primary-50 text-primary-700 border-primary-200' }
+					].map(tag => (
+						<button 
+							key={tag.id}
+							onClick={() => updateFilters(currentTopic, tag.id, searchQuery)}
+							className={`px-4 py-1.5 rounded-full text-[12px] font-bold transition-all shrink-0 whitespace-nowrap border ${currentTag === tag.id ? tag.activeClass + ' shadow-sm' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}
+						>
+							{tag.label}
+						</button>
+					))}
+				</div>
+			</div>
 
 		</div>
 	);
