@@ -1874,7 +1874,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                   )
                                                 })}
                                               </div>
-                                              </div>
                                               
                                               {/* Action Tags directly under ABCD */}
                                               {isShowingResult && (
