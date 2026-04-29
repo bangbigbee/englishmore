@@ -44,6 +44,7 @@ export default function AdminUserManagement() {
   })
   const [courseFilter, setCourseFilter] = useState('')
   const [tierFilter, setTierFilter] = useState('')
+  const [isOnlineStatsOpen, setIsOnlineStatsOpen] = useState(false)
 
   useEffect(() => {
     fetchCourses()
@@ -191,6 +192,126 @@ export default function AdminUserManagement() {
 
   return (
     <div>
+      {/* Online Stats Dropdown */}
+      <div className="mb-6">
+        <button 
+          onClick={() => setIsOnlineStatsOpen(!isOnlineStatsOpen)}
+          className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors w-full"
+        >
+          <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
+          Thống kê tình trạng online
+          <svg className={`w-4 h-4 ml-auto transition-transform ${isOnlineStatsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        
+        {isOnlineStatsOpen && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4 mb-4">
+            {/* Real-time Online Breakdown */}
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 relative">
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-primary-500 rounded-full animate-ping"></span>
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-primary-500 rounded-full"></span>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg flex font-black items-center gap-1.5 text-slate-800"><span className="text-primary-600 text-xl">{onlineStats.online}</span> Đang online học bài ở ToeicMore</h3>
+                    <p className="text-sm font-medium text-slate-500">Phân bố người dùng theo nội dung</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 mb-5">
+                {Object.entries((onlineStats as any).sectionCounts || {})
+                  .sort((a: any, b: any) => b[1] - a[1])
+                  .map(([sectionName, count]: any, idx) => (
+                    <div key={idx} className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
+                       <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate w-full px-1">{sectionName}</span>
+                       <span className="text-xl font-black text-slate-700">{count}</span>
+                    </div>
+                  ))}
+                {Object.keys((onlineStats as any).sectionCounts || {}).length === 0 && (
+                   <div className="col-span-full py-4 text-center text-slate-400 text-sm italic">Chưa có dữ liệu phân bố</div>
+                )}
+              </div>
+
+              {/* Detailed Lists */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t border-slate-100 pt-6">
+                <div>
+                  <h4 className="font-bold text-sm text-primary-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-primary-500"></div>Thành viên đang học ({(onlineStats as any).users})</h4>
+                  <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                    {(onlineStats as any).usersDetails?.length === 0 && <p className="text-xs text-slate-400 italic">Không có thành viên nào online</p>}
+                    {(onlineStats as any).usersDetails?.map((u: any, i: number) => (
+                      <div key={i} className="flex justify-between items-center p-2 rounded-lg border border-slate-100 bg-slate-50">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-bold shrink-0">{u.user?.name?.charAt(0) || '?'}</div>
+                          <div className="flex flex-col"><span className="text-xs font-bold text-slate-700 truncate w-24" title={u.user?.name || u.user?.email || 'No Name'}>{u.user?.name || u.user?.email?.split('@')[0] || 'No Name'}</span><span className="text-[10px] text-slate-500">{u.user?.tier}</span></div>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 truncate max-w-[100px]" title={u.section}>{u.section}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-slate-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div>Khách vãng lai ({(onlineStats as any).guests})</h4>
+                  <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                    {(onlineStats as any).guestsDetails?.length === 0 && <p className="text-xs text-slate-400 italic">Không có khách nào online</p>}
+                    {(onlineStats as any).guestsDetails?.map((g: any, i: number) => (
+                      <div key={i} className="flex justify-between items-center p-2 rounded-lg border border-slate-100 bg-slate-50">
+                        <div className="flex flex-col w-32 shrink-0">
+                          <span className="text-[10px] font-mono text-slate-500 truncate" title={g.guestId}>{g.guestId}</span>
+                          <span className="text-[9px] text-slate-400 truncate" title={g.userAgent}>{g.userAgent?.split(' ')[0] || 'Unknown OS'}</span>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 truncate max-w-[100px]" title={g.section}>{g.section}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-center items-center text-center relative group min-h-[200px]">
+              <div className="w-12 h-12 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 mb-4 cursor-help">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+              </div>
+              
+              {/* Tooltip */}
+              <div className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-help group/tooltip">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div className="absolute opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none bg-slate-800 text-white text-xs rounded-lg p-3 w-64 right-0 top-full mt-2 shadow-xl z-50 text-left font-medium">
+                  Chỉ số <strong className="text-primary-300">Lượt truy cập</strong> (Unique Visitors) được tính dựa trên số lượng người dùng độc nhất (theo ID Tài khoản hoặc Mã Thiết bị ẩn danh) truy cập vào hệ thống. Mỗi người dùng dù có mở bao nhiêu tab hay tải lại trang bao nhiêu lần trong cùng 1 ngày cũng chỉ tính là 1 lượt truy cập.
+                </div>
+              </div>
+
+              <div className="w-full">
+                <div className="flex justify-between items-end border-b border-slate-100 pb-3 mb-3">
+                  <div className="text-left">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hôm nay</p>
+                    <h3 className="text-3xl font-black text-primary-600 tracking-tight">{onlineStats.dailyVisitors}</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lượt tải trang</p>
+                    <p className="text-sm font-bold text-slate-500">{onlineStats.dailyViews}</p>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between">
+                  <div className="text-left">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tuần này (7 ngày)</p>
+                    <p className="text-xl font-bold text-slate-700">{onlineStats.weeklyVisitors}</p>
+                  </div>
+                  <div className="text-right border-l border-slate-100 pl-4">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tháng này (30 ngày)</p>
+                    <p className="text-xl font-bold text-slate-700">{onlineStats.monthlyVisitors}</p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs font-semibold text-slate-400 mt-4 uppercase tracking-wide bg-slate-50 px-3 py-1 rounded-full">Người dùng độc nhất (Unique Visitors)</p>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div 
           onClick={() => setTierFilter('')}
@@ -219,115 +340,6 @@ export default function AdminUserManagement() {
         >
           <p className="text-xs font-bold text-primary-800 uppercase tracking-wider">ULTRA Tier</p>
           <p className="text-2xl font-black text-primary-800 mt-1">{stats.ultra}</p>
-        </div>
-      </div>
-
-      {/* Overview Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-        {/* Real-time Online Breakdown */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 relative">
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-primary-500 rounded-full animate-ping"></span>
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-primary-500 rounded-full"></span>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-              </div>
-              <div>
-                <h3 className="text-lg flex font-black items-center gap-1.5 text-slate-800"><span className="text-primary-600 text-xl">{onlineStats.online}</span> Đang online học bài ở ToeicMore</h3>
-                <p className="text-sm font-medium text-slate-500">Phân bố người dùng theo nội dung</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 mb-5">
-            {Object.entries((onlineStats as any).sectionCounts || {})
-              .sort((a: any, b: any) => b[1] - a[1])
-              .map(([sectionName, count]: any, idx) => (
-                <div key={idx} className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center items-center text-center">
-                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1 truncate w-full px-1">{sectionName}</span>
-                   <span className="text-xl font-black text-slate-700">{count}</span>
-                </div>
-              ))}
-            {Object.keys((onlineStats as any).sectionCounts || {}).length === 0 && (
-               <div className="col-span-full py-4 text-center text-slate-400 text-sm italic">Chưa có dữ liệu phân bố</div>
-            )}
-          </div>
-
-
-
-          {/* Detailed Lists */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t border-slate-100 pt-6">
-            <div>
-              <h4 className="font-bold text-sm text-primary-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-primary-500"></div>Thành viên đang học ({(onlineStats as any).users})</h4>
-              <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-                {(onlineStats as any).usersDetails?.length === 0 && <p className="text-xs text-slate-400 italic">Không có thành viên nào online</p>}
-                {(onlineStats as any).usersDetails?.map((u: any, i: number) => (
-                  <div key={i} className="flex justify-between items-center p-2 rounded-lg border border-slate-100 bg-slate-50">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-bold shrink-0">{u.user?.name?.charAt(0) || '?'}</div>
-                      <div className="flex flex-col"><span className="text-xs font-bold text-slate-700 truncate w-24" title={u.user?.name || u.user?.email || 'No Name'}>{u.user?.name || u.user?.email?.split('@')[0] || 'No Name'}</span><span className="text-[10px] text-slate-500">{u.user?.tier}</span></div>
-                    </div>
-                    <span className="text-[10px] font-bold px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 truncate max-w-[100px]" title={u.section}>{u.section}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-slate-700 mb-3 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div>Khách vãng lai ({(onlineStats as any).guests})</h4>
-              <div className="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-                {(onlineStats as any).guestsDetails?.length === 0 && <p className="text-xs text-slate-400 italic">Không có khách nào online</p>}
-                {(onlineStats as any).guestsDetails?.map((g: any, i: number) => (
-                  <div key={i} className="flex justify-between items-center p-2 rounded-lg border border-slate-100 bg-slate-50">
-                    <div className="flex flex-col w-32 shrink-0">
-                      <span className="text-[10px] font-mono text-slate-500 truncate" title={g.guestId}>{g.guestId}</span>
-                      <span className="text-[9px] text-slate-400 truncate" title={g.userAgent}>{g.userAgent?.split(' ')[0] || 'Unknown OS'}</span>
-                    </div>
-                    <span className="text-[10px] font-bold px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 truncate max-w-[100px]" title={g.section}>{g.section}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-center items-center text-center relative group min-h-[200px]">
-          <div className="w-12 h-12 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 mb-4 cursor-help">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-          </div>
-          
-          {/* Tooltip */}
-          <div className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-help group/tooltip">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <div className="absolute opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none bg-slate-800 text-white text-xs rounded-lg p-3 w-64 right-0 top-full mt-2 shadow-xl z-50 text-left font-medium">
-              Chỉ số <strong className="text-primary-300">Lượt truy cập</strong> (Unique Visitors) được tính dựa trên số lượng người dùng độc nhất (theo ID Tài khoản hoặc Mã Thiết bị ẩn danh) truy cập vào hệ thống. Mỗi người dùng dù có mở bao nhiêu tab hay tải lại trang bao nhiêu lần trong cùng 1 ngày cũng chỉ tính là 1 lượt truy cập.
-            </div>
-          </div>
-
-          <div className="w-full">
-            <div className="flex justify-between items-end border-b border-slate-100 pb-3 mb-3">
-              <div className="text-left">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hôm nay</p>
-                <h3 className="text-3xl font-black text-primary-600 tracking-tight">{onlineStats.dailyVisitors}</h3>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lượt tải trang</p>
-                <p className="text-sm font-bold text-slate-500">{onlineStats.dailyViews}</p>
-              </div>
-            </div>
-            
-            <div className="flex justify-between">
-              <div className="text-left">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tuần này (7 ngày)</p>
-                <p className="text-xl font-bold text-slate-700">{onlineStats.weeklyVisitors}</p>
-              </div>
-              <div className="text-right border-l border-slate-100 pl-4">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tháng này (30 ngày)</p>
-                <p className="text-xl font-bold text-slate-700">{onlineStats.monthlyVisitors}</p>
-              </div>
-            </div>
-          </div>
-          <p className="text-xs font-semibold text-slate-400 mt-4 uppercase tracking-wide bg-slate-50 px-3 py-1 rounded-full">Người dùng độc nhất (Unique Visitors)</p>
         </div>
       </div>
 
