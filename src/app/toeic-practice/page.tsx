@@ -650,7 +650,7 @@ function ToeicPracticeContent() {
 				</aside>
 
 			<div className="flex-1 flex flex-col w-full min-h-screen relative z-10 overflow-x-hidden">
-				<div className="w-full px-4 sm:px-6 md:px-8 flex-1 pt-4 pb-8">
+				<div className="w-full px-4 sm:px-6 md:px-8 flex-1 pt-4 pb-8 lg:pt-16">
 					<div className="mt-2 md:mt-4">
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
 				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} score={toeicScore} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
@@ -2344,7 +2344,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 	if (!selectedTopic) {
 		return (
 			<div>
-				<div className="mb-6 bg-gradient-to-br from-[#4a044e] to-[#2e1065] rounded-2xl overflow-hidden shadow-md border border-[#701a75]/40 transition-all duration-300">
+				<div className="mb-6 bg-gradient-to-br from-primary-800 to-primary-950 rounded-2xl overflow-hidden shadow-md border border-primary-700/50 transition-all duration-300">
                     <button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-4 sm:px-5 bg-transparent hover:bg-white/5 transition-colors cursor-pointer focus:outline-none group">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-secondary-500/10 text-secondary-500 rounded-lg flex items-center justify-center border border-secondary-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)] group-hover:scale-110 transition-transform">

@@ -502,9 +502,18 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                     title="Tìm hiểu về Toeic Stars"
                  >
                     <span className="text-[14px] mt-[-2px]">⭐</span>
-                    <span className="text-[12px] font-black text-secondary-600">
+                    <span className="text-[12px] font-black text-secondary-600 mr-1">
                         {(session.user as any)?.toeicStars || 0}
                     </span>
+                    {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
+                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none ${
+                            (session.user as any)?.tier === 'ULTRA' 
+                            ? 'bg-gradient-to-r from-primary-600 to-secondary-500 text-white' 
+                            : 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
+                        }`}>
+                            {(session.user as any)?.tier}
+                        </span>
+                    )}
                  </button>
             )}
             <ThemeToggle />
@@ -531,9 +540,18 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                     {session && (
                         <button onClick={() => setIsStarModalOpen(true)} className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80">
                             <span className="text-[14px] mt-[-2px]">⭐</span>
-                            <span className="text-[12px] font-black text-secondary-600">
+                            <span className="text-[12px] font-black text-secondary-600 mr-1">
                                 {(session.user as any)?.toeicStars || 0}
                             </span>
+                            {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
+                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none ${
+                                    (session.user as any)?.tier === 'ULTRA' 
+                                    ? 'bg-gradient-to-r from-primary-600 to-secondary-500 text-white' 
+                                    : 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
+                                }`}>
+                                    {(session.user as any)?.tier}
+                                </span>
+                            )}
                         </button>
                     )}
                     <ThemeToggle />
