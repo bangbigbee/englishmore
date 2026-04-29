@@ -542,7 +542,7 @@ function ToeicPracticeContent() {
 				}
 			}} />
 				{/* Desktop Sidebar */}
-				<aside className={`${isSidebarCollapsed ? 'w-[84px]' : 'w-64'} shrink-0 bg-transparent hidden md:flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 ease-in-out`}>
+				<aside className={`${isSidebarCollapsed ? 'w-[84px]' : 'w-64'} shrink-0 bg-transparent hidden md:flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 ease-in-out border-r border-primary-900/10`}>
 					<div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
 						<div className="mb-6">
 							<Link href="/" className={`flex items-center justify-center h-10 mb-2 mt-2 ${isSidebarCollapsed ? '' : 'px-4 justify-start'}`}>
