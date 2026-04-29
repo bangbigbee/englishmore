@@ -416,6 +416,7 @@ function ToeicPracticeContent() {
 	const [tab, setTab] = useState(tabFromUrl);
 	const [toeicLevel, setToeicLevel] = useState<string | null>(null);
 	const [toeicScore, setToeicScore] = useState<string | null>(null);
+	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
 	useEffect(() => {
 		const level = localStorage.getItem('toeicLevel');
@@ -502,7 +503,7 @@ function ToeicPracticeContent() {
 	const newSearchParams = (sp: any) => new URLSearchParams(sp.toString());
 
 	const SIDEBAR_ITEMS = [
-		{ id: 'roadmap', label: 'Lộ trình', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> },
+		{ id: 'roadmap', label: 'Lộ trình', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7l6-3 5.447 2.724A1 1 0 0121 7.618v10.764a1 1 0 01-1.447.894L15 17l-6 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7v13M15 4v13" /></svg> },
 		{ id: 'vocabulary', label: 'Từ vựng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
 		{ id: 'grammar', label: 'Ngữ pháp', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 15h4.498" /></svg> },
 		{ id: 'listening', label: 'Listening', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> },
@@ -544,14 +545,19 @@ function ToeicPracticeContent() {
 				</div>
 
 				{/* Desktop Sidebar */}
-				<aside className="w-64 shrink-0 bg-white/60 backdrop-blur-md border-r border-slate-200/60 hidden md:flex flex-col min-h-screen relative z-10">
-					<div className="p-4 flex-1 flex flex-col">
-						<div className="mb-6 px-4">
-							<Link href="/" className="flex items-center gap-2 leading-none mb-6 mt-2">
-                                <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-hide" />
-                                <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-show" />
+				<aside className={`${isSidebarCollapsed ? 'w-[84px]' : 'w-64'} shrink-0 bg-white/60 backdrop-blur-md border-r border-slate-200/60 hidden md:flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 ease-in-out`}>
+					<div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
+						<div className="mb-6">
+							<Link href="/" className={`flex items-center justify-center h-10 mb-2 mt-2 ${isSidebarCollapsed ? '' : 'px-4 justify-start'}`}>
+                                {isSidebarCollapsed ? (
+									<span className="font-black text-2xl text-primary-900 bg-primary-50 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm">T</span>
+								) : (
+									<>
+										<img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-hide" />
+										<img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-show" />
+									</>
+								)}
                             </Link>
-							<h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">ToeicMore Menu</h3>
 						</div>
 						<div className="space-y-1">
 						{SIDEBAR_ITEMS.map((item) => {
@@ -560,43 +566,60 @@ function ToeicPracticeContent() {
 								<button
 									key={item.id}
 									onClick={() => handleTabChange(item.id)}
-									className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
+									className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center' : ''}`}
+									title={isSidebarCollapsed ? item.label : undefined}
 								>
-									<div className={`${isActive ? 'text-primary-600' : 'text-slate-400'}`}>
+									<div className={`${isActive ? 'text-primary-600' : 'text-slate-400'} shrink-0`}>
 										{item.icon}
 									</div>
-									<span className="text-[14px]">{item.label}</span>
+									{!isSidebarCollapsed && <span className="text-[14px]">{item.label}</span>}
 								</button>
 							);
 						})}
 						</div>
 					</div>
 					
-					<div className="p-4 mt-auto border-t border-slate-200/60">
+					<div className="p-4 mt-auto border-t border-slate-200/60 bg-white/40 backdrop-blur-md">
 						{session ? (
-							<div className="w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100">
-								<div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0">
+							<div className={`w-full flex items-center gap-3 px-2 py-2 rounded-xl bg-slate-50 border border-slate-100 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
+								<div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0 shadow-sm">
 									{session.user?.name?.charAt(0).toUpperCase() || 'U'}
 								</div>
-								<div className="flex-1 truncate">
-									<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
-									<p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
-								</div>
+								{!isSidebarCollapsed && (
+									<div className="flex-1 min-w-0">
+										<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+										<p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+									</div>
+								)}
 							</div>
 						) : (
 							<button 
 								onClick={() => openLoginModal()}
-								className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary-900 text-white font-bold hover:bg-primary-800 transition-colors"
+								className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#272e5c] text-white hover:bg-[#1a1f3d] transition-colors shadow-md ${isSidebarCollapsed ? 'px-0' : 'px-4'}`}
+								title={isSidebarCollapsed ? "Đăng nhập" : undefined}
 							>
-								<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
-								Đăng nhập
+								{isSidebarCollapsed ? (
+									<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+								) : (
+									<span className="text-[14px] font-bold">Đăng nhập</span>
+								)}
 							</button>
 						)}
+						
+						<button 
+							onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+							className="mt-4 flex items-center justify-center gap-1.5 w-full text-slate-400 hover:text-slate-600 transition-colors py-1.5 rounded-lg hover:bg-slate-50"
+						>
+							<svg className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isSidebarCollapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+							</svg>
+							{!isSidebarCollapsed && <span className="text-[13px] font-semibold">Thu gọn</span>}
+						</button>
 					</div>
 				</aside>
 
-			<div className="flex-1 flex flex-col w-full min-h-screen relative z-10">
-				<div className="w-full max-w-7xl px-4 sm:px-6 mx-auto flex-1 pt-4 pb-8">
+			<div className="flex-1 flex flex-col w-full min-h-screen relative z-10 overflow-x-hidden">
+				<div className="w-full px-4 sm:px-6 md:px-8 flex-1 pt-4 pb-8">
 					<div className="mt-2 md:mt-4">
 				 {tab === "home" && <ToeicHomeTab onTabClick={handleTabChange} />}
 				 {tab === "roadmap" && <ToeicRoadmapTab level={toeicLevel} score={toeicScore} onPracticeClick={(path) => router.push(path)} onTabClick={handleTabChange} />}
