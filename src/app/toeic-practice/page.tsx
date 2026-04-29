@@ -1041,11 +1041,11 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Hero Section */}
 			<section className="flex flex-col items-center text-center mt-8 mb-24 w-full mx-auto px-4 sm:px-8 relative z-10">
 				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-					<span className={`text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] block break-words ${isOcean ? 'text-transparent bg-clip-text bg-gradient-to-b from-primary-500 to-primary-900 drop-shadow-sm' : 'text-primary-900'}`}>
-					Chinh phục <span className={isOcean ? "text-transparent bg-clip-text bg-gradient-to-b from-primary-500 to-primary-900" : "text-transparent bg-clip-text bg-gradient-to-r from-primary-900 to-secondary-500"}>TOEIC</span>
+					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-primary-900 block break-words pb-1">
+					Chinh phục <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-900 to-secondary-500">TOEIC</span>
 				</span>
-					<span className={`text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2 ${isOcean ? 'text-transparent bg-clip-text bg-gradient-to-b from-primary-500 to-primary-900 drop-shadow-sm' : ''}`}>
-						<span className={isOcean ? "" : "text-secondary-500"}>dễ dàng</span> <span className={isOcean ? "" : "text-primary-900"}>và hiệu quả hơn</span>
+					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2 pb-1">
+						<span className="text-secondary-500">dễ dàng</span> <span className="text-primary-900">và hiệu quả hơn</span>
 					</span>
 				</h1>
 				<p className={`mt-3 max-w-2xl text-base sm:text-lg font-medium ${isOcean ? 'text-slate-800 font-semibold drop-shadow-sm' : 'text-primary-900'} leading-relaxed mx-auto`}>
