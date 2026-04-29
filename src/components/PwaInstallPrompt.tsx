@@ -104,7 +104,7 @@ export default function PwaInstallPrompt() {
     }, []);
 
     // We want to show this when prompt is available (Chrome Desktop/Mobile) OR on iOS/Mac Safari
-    if (!showPopup || (!deferredPrompt && !isIos && !isMacSafari)) return null;
+    if (!showPopup || (!deferredPrompt && !isIos && !isMacSafari) || !isToeicDomain) return null;
 
     const appName = isToeicDomain ? 'ToeicMore' : 'EnglishMore';
     const appIcon = isToeicDomain ? '/toeicmoreicon.svg?v=2' : '/favicon.svg';
