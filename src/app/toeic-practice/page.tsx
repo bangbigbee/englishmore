@@ -555,7 +555,7 @@ function ToeicPracticeContent() {
 
             {/* {tab === "home" && <SpeedChallengeLeaderboard onPlayClick={() => handleTabChange('vocabulary')} />} */}
 
-			<footer className="mt-20 pt-10 pb-6 border-t border-slate-200">
+			<footer className="mt-20 pt-10 pb-6 border-t border-slate-200 px-4 sm:px-8 lg:px-12 w-full mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 mb-10 text-left">
                     {/* Brand Column */}
                     <div className="flex flex-col">
