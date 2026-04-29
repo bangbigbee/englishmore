@@ -244,7 +244,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
         </div>
 
         {/* Right Content Area */}
-        <div className="flex-1 min-h-0 flex flex-col relative z-10 overflow-y-auto overscroll-none touch-pan-y">
+        <div className={`flex-1 min-h-0 flex flex-col relative z-10 overscroll-none touch-pan-y ${isReady ? 'overflow-y-auto' : 'overflow-hidden'}`}>
           {/* Top Title & Close Button */}
           <div className="w-full flex items-center justify-between p-4 md:px-8 border-b border-slate-800/50 bg-[#0B1120]/50 backdrop-blur-md">
             <h2 className="text-lg md:text-2xl font-black text-white flex items-center gap-3 tracking-tight">
@@ -260,10 +260,10 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             </button>
           </div>
           
-          <div className="w-full min-h-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col pt-8">
+          <div className={`w-full max-w-5xl mx-auto p-4 md:p-8 flex flex-col ${isReady ? 'min-h-full pt-8' : 'h-full justify-center pt-2'}`}>
             
             {/* 3 Tabs Selection */}
-            <div className="flex justify-center mb-8">
+            <div className={`flex justify-center shrink-0 ${isReady ? 'mb-8' : 'mb-4'}`}>
               <div className="inline-flex bg-[#111827] border border-slate-800 p-1.5 rounded-2xl shadow-inner overflow-x-auto w-full md:w-auto custom-scrollbar">
                 <button 
                   onClick={() => setContentType('SENTENCE')}
@@ -287,17 +287,17 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             </div>
 
             {!isReady ? (
-              <div className="w-full flex-1 flex flex-col items-center justify-center space-y-12 animate-in fade-in zoom-in-95 duration-500">
+              <div className="w-full flex-1 flex flex-col items-center justify-center space-y-6 md:space-y-10 animate-in fade-in zoom-in-95 duration-500">
                 <div className="text-center w-full max-w-sm">
-                  <h3 className="text-white text-2xl font-black mb-8 tracking-wide">Cài đặt bài nghe</h3>
+                  <h3 className="text-white text-xl md:text-2xl font-black mb-6 md:mb-8 tracking-wide">Cài đặt bài nghe</h3>
                   
                   {/* Speed Picker (Vertical iOS style) */}
-                  <div className="flex flex-col items-center mb-10 w-full">
+                  <div className="flex flex-col items-center mb-6 md:mb-10 w-full">
                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Tốc độ (Speed)</span>
                     <div className="relative w-40 h-36 overflow-hidden flex justify-center before:absolute before:inset-x-0 before:top-0 before:h-12 before:bg-gradient-to-b before:from-[#020617] before:to-transparent before:z-10 after:absolute after:inset-x-0 after:bottom-0 after:h-12 after:bg-gradient-to-t after:from-[#020617] after:to-transparent after:z-10 rounded-xl bg-[#0B1120] border border-slate-800 shadow-inner">
                       <div className="absolute top-1/2 -mt-6 h-12 inset-x-2 rounded-lg border-y-2 border-primary-500/50 bg-primary-900/10 pointer-events-none shadow-[0_0_15px_rgba(59,130,246,0.1)]" />
                       <div 
-                        className="overflow-y-auto snap-y snap-mandatory h-full w-full scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain"
+                        className="overflow-y-auto snap-y snap-mandatory h-full w-full scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain touch-pan-y"
                         onScroll={(e) => {
                           const el = e.currentTarget;
                           const center = el.scrollTop + el.clientHeight / 2;
@@ -340,7 +340,7 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-4">Độ khó</span>
                     <div className="w-full relative flex justify-center overflow-hidden max-w-[100vw] md:max-w-md">
                        <div 
-                         className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain w-full h-32 items-center"
+                         className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] overscroll-contain w-full h-32 items-center touch-pan-x"
                          onScroll={(e) => {
                            const el = e.currentTarget;
                            const center = el.scrollLeft + el.clientWidth / 2;
