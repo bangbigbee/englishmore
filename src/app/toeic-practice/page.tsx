@@ -693,7 +693,7 @@ function ToeicPracticeContent() {
 					 if (!session) openLoginModal(`${pathname}?tab=actual-test`);
 				 }} />}
 				 {tab === "leaderboard" && <LeaderboardsTab onTabChange={handleTabChange} />}
-				 {tab === "notebook" && <NotebookTab topic={searchParams.get('topic') || undefined} tagFilter={searchParams.get('tag') || undefined} query={searchParams.get('q') || undefined} />}
+				 {tab === "notebook" && <NotebookTab subtab={searchParams.get('subtab') || 'vocabulary-bank'} topic={searchParams.get('topic') || undefined} tagFilter={searchParams.get('tag') || undefined} query={searchParams.get('q') || undefined} partFilter={searchParams.get('part') || undefined} />}
 				 {tab === "profile" && (
 					 <div className="profile-wrapper">
 						 <ProfilePage />

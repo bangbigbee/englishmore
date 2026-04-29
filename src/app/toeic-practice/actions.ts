@@ -50,3 +50,81 @@ export async function getVocabularyBank(topic?: string, tagFilter?: string, quer
 
     return { tags, uniqueTopics };
 }
+
+export async function getNotebookBank(type: string, filter: string, partFilter?: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { items: [], records: [] };
+
+    const isMistakes = filter === 'mistakes';
+    const isHistory = filter === 'history';
+
+    if (type === 'ACTUAL_TEST' && isHistory) {
+        const records = await prisma.toeicTestRecord.findMany({
+            where: { userId: session.user.id },
+            orderBy: { createdAt: 'desc' },
+            take: 100
+        });
+        return { items: [], records };
+    }
+
+    let items = [];
+
+    if (isMistakes) {
+        items = await prisma.toeicAnswer.findMany({
+            where: { 
+                userId: session.user.id,
+                isCorrect: false,
+                question: {
+                    lesson: {
+                        topic: {
+                            ...(type === 'ACTUAL_TEST' ? { title: { contains: 'ETS' } } : { type: type as any }),
+                            ...(partFilter ? { part: { in: partFilter.split(',').map(Number).filter(n => !isNaN(n)) } } : {})
+                        }
+                    }
+                }
+            },
+            include: {
+                question: {
+                    include: {
+                        lesson: {
+                            include: {
+                                topic: true
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { updatedAt: 'desc' },
+            take: 200
+        });
+    } else {
+        items = await prisma.toeicQuestionBookmark.findMany({
+            where: { 
+                userId: session.user.id,
+                question: {
+                    lesson: {
+                        topic: {
+                            ...(type === 'ACTUAL_TEST' ? { title: { contains: 'ETS' } } : { type: type as any }),
+                            ...(partFilter ? { part: { in: partFilter.split(',').map(Number).filter(n => !isNaN(n)) } } : {})
+                        }
+                    }
+                }
+            },
+            include: {
+                question: {
+                    include: {
+                        lesson: {
+                            include: {
+                                topic: true
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 200
+        });
+    }
+
+    return { items, records: [] };
+}

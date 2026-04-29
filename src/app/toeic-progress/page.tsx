@@ -162,6 +162,7 @@ export default async function ToeicProgressPage(props: any) {
     try {
 	const resolvedParams = await props.searchParams;
 	const activeTab = resolvedParams.tab || 'reports';
+	const hideSidebar = resolvedParams.hideSidebar === 'true';
 	const topicFilter = resolvedParams.topic;
 	const tagFilter = resolvedParams.tag;
 	const qbFilter = resolvedParams.filter || 'mistakes';
@@ -175,14 +176,25 @@ export default async function ToeicProgressPage(props: any) {
 	}
 
 	return (
-		<main className="min-h-screen bg-slate-50/50">
-			<div className="w-full mx-auto pt-6 pb-12 px-4 sm:px-6 xl:px-8 2xl:px-12 flex flex-col md:flex-row gap-6 lg:gap-8">
+		<main className={`min-h-screen ${hideSidebar ? 'bg-transparent' : 'bg-slate-50/50'}`}>
+            {hideSidebar && (
+                <script dangerouslySetInnerHTML={{__html: `
+                    (function() {
+                        var base = document.createElement('base');
+                        base.target = '_parent';
+                        document.head.appendChild(base);
+                    })();
+                `}} />
+            )}
+			<div className={`w-full mx-auto ${hideSidebar ? 'p-0' : 'pt-6 pb-12 px-4 sm:px-6 xl:px-8 2xl:px-12'} flex flex-col md:flex-row gap-6 lg:gap-8`}>
                 {/* Sidebar */}
-                <div className="w-full md:w-64 lg:w-72 shrink-0">
-                    <Suspense fallback={<div className="h-64 w-full animate-pulse bg-white border border-slate-200 rounded-2xl mb-8 shadow-sm"></div>}>
-                        <ProgressNavigation activeTab={activeTab} />
-                    </Suspense>
-                </div>
+                {!hideSidebar && (
+                    <div className="w-full md:w-64 lg:w-72 shrink-0">
+                        <Suspense fallback={<div className="h-64 w-full animate-pulse bg-white border border-slate-200 rounded-2xl mb-8 shadow-sm"></div>}>
+                            <ProgressNavigation activeTab={activeTab} />
+                        </Suspense>
+                    </div>
+                )}
 
                 {/* Main Content Area */}
                 <div className="flex-1 min-w-0">
