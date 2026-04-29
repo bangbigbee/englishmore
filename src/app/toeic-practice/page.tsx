@@ -1056,7 +1056,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				<div className="mt-8 flex justify-center w-full px-4 relative z-20">
 					<button
 						onClick={() => onTabClick('grammar')}
-						className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-primary-900 px-8 py-4 sm:px-12 sm:py-5 font-extrabold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-primary-800 hover:shadow-2xl ring-4 ring-primary-900/20"
+						className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-primary-900 px-8 py-4 sm:px-12 sm:py-5 font-extrabold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-primary-800 hover:shadow-2xl"
 					>
 						<div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
 							<div className="relative h-full w-10 bg-white/30" />
