@@ -120,18 +120,18 @@
 }
 
 [data-theme="ocean-blue"] {
-  /* Ocean Blue Theme (Cyan/Teal) */
-  --primary-50: #ecfeff;
-  --primary-100: #cffafe;
-  --primary-200: #a5f3fc;
-  --primary-300: #67e8f9;
-  --primary-400: #22d3ee;
-  --primary-500: #06b6d4;
-  --primary-600: #0891b2;
-  --primary-700: #0e7490;
-  --primary-800: #06b6d4;
-  --primary-900: #0891b2;
-  --primary-950: #0e7490;
+  /* Tiffany Blue Theme */
+  --primary-50: #f0fdfc;
+  --primary-100: #ccfbf9;
+  --primary-200: #99f6f3;
+  --primary-300: #5cece8;
+  --primary-400: #2ddcd7;
+  --primary-500: #14c8c3;
+  --primary-600: #0da39f;
+  --primary-700: #0f827f;
+  --primary-800: #20d8d3; /* Hover color - bright */
+  --primary-900: #0abab5; /* Tiffany Blue */
+  --primary-950: #066664;
 
   /* Sandy Gold / Sun Yellow Theme */
   --secondary-50: #fffbeb;
