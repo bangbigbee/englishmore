@@ -29,7 +29,7 @@ export default function ThemeToggle() {
           ? "Purple Theme"
           : theme === "classic"
           ? "Classic Theme (Green)"
-          : "Navy Blue Theme"
+          : "Air Force Blue Theme"
       }
     >
       <span className="w-4 h-4 rounded-full bg-primary-900 block transition-colors duration-300" />

@@ -93,18 +93,18 @@
 }
 
 [data-theme="ocean-blue"] {
-  /* Navy Blue Theme */
-  --primary-50: #f0f0fe;
-  --primary-100: #e0e0fc;
-  --primary-200: #c2c2f8;
-  --primary-300: #9696f0;
-  --primary-400: #6a6ae0;
-  --primary-500: #4747cc;
-  --primary-600: #3333a3;
-  --primary-700: #24247a;
-  --primary-800: #141452;
-  --primary-900: #010127;
-  --primary-950: #000014;
+  /* Air Force Blue Theme */
+  --primary-50: #f5f8ff;
+  --primary-100: #ecf2ff;
+  --primary-200: #d9e6ff;
+  --primary-300: #b3ccff;
+  --primary-400: #80aaff;
+  --primary-500: #4d88ff;
+  --primary-600: #1a66ff;
+  --primary-700: #0050d6;
+  --primary-800: #0040b3;
+  --primary-900: #00308f;
+  --primary-950: #001a4d;
 
   /* Sandy Gold / Sun Yellow Theme */
   --secondary-50: #fffbeb;
