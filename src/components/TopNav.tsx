@@ -467,6 +467,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   const [isStarModalOpen, setIsStarModalOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
