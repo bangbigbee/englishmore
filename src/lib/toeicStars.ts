@@ -26,7 +26,10 @@ export const TOEIC_STAR_KEYS = {
   pronunciationStreak10: 'pronunciation_streak_10',
   pronunciationTopicComplete: 'pronunciation_topic_complete',
   study1h: 'study_1h',
-  study2h: 'study_2h'
+  study2h: 'study_2h',
+  // Dictation rules
+  dictationSentenceCorrect: 'dictation_sentence_correct',
+  dictationComplete: 'dictation_complete'
 } as const
 
 export type ToeicStarKey = (typeof TOEIC_STAR_KEYS)[keyof typeof TOEIC_STAR_KEYS]
@@ -58,6 +61,8 @@ const DEFAULT_STAR_RULES: Record<ToeicStarKey, { label: string; points: number; 
   [TOEIC_STAR_KEYS.pronunciationTopicComplete]: { label: 'Hoàn thành xuất sắc toàn bộ chủ đề', points: 50, toastMessage: 'Tuyệt đỉnh! Hoàn thành xuất sắc toàn bộ chủ đề!' },
   [TOEIC_STAR_KEYS.study1h]: { label: 'Học liên tục 1 tiếng trong ngày', points: 50, toastMessage: 'Siêng năng quá! Bạn được thưởng Stars vì học 1 tiếng hôm nay!' },
   [TOEIC_STAR_KEYS.study2h]: { label: 'Học liên tục 2 tiếng trong ngày', points: 100, toastMessage: 'Đáng nể! Bạn được thưởng Stars vì học tận 2 tiếng hôm nay!' },
+  [TOEIC_STAR_KEYS.dictationSentenceCorrect]: { label: 'Nghe chép đúng 1 câu', points: 2, toastMessage: 'Chính xác! Bạn được +2 Stars ⭐' },
+  [TOEIC_STAR_KEYS.dictationComplete]: { label: 'Hoàn thành 1 bài nghe chép', points: 5, toastMessage: 'Tuyệt vời! Bạn đã hoàn thành bài nghe chép +5 Stars ⭐' }
 }
 
 const prismaWithToeicStars = prisma as typeof prisma & {

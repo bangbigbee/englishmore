@@ -38,7 +38,7 @@ type HintWord = { word: string; highlighted: boolean; isQnaBreak?: boolean };
 export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const [difficulty, setDifficulty] = useState(60)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [userInput, setUserInput] = useState('')
+  const [userInputs, setUserInputs] = useState<Record<string, string>>({})
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceQ, setVoiceQ] = useState<SpeechSynthesisVoice | null>(null)
   const [voiceA, setVoiceA] = useState<SpeechSynthesisVoice | null>(null)
@@ -48,11 +48,17 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [isPlaying, setIsPlaying] = useState(false)
   const [isReady, setIsReady] = useState(false)
   const [revealedWordCount, setRevealedWordCount] = useState(0)
+  const [showHintModal, setShowHintModal] = useState(false)
+  const [completedSentences, setCompletedSentences] = useState<Set<string>>(new Set())
   const [contentType, setContentType] = useState<'SENTENCE' | 'QNA' | 'SHORT_TALK'>('SENTENCE')
   const audioRefs = useRef<{qAudio: HTMLAudioElement | null, aAudio: HTMLAudioElement | null, timeout: NodeJS.Timeout | null}>({ qAudio: null, aAudio: null, timeout: null })
   
   const currentData = PRACTICE_DATA[contentType]
   const currentSentence = currentData[currentIndex] || currentData[0]
+  const currentInputKey = `${contentType}-${currentIndex}`
+  const userInput = userInputs[currentInputKey] || ''
+  const setUserInput = (val: string) => setUserInputs(prev => ({ ...prev, [currentInputKey]: val }))
+  
   const targetWords = currentSentence.text.split(' ')
   const maxReveals = difficulty === 100 ? targetWords.length : Math.max(1, Math.floor(targetWords.length * (difficulty / 100)))
   
@@ -61,7 +67,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     setCurrentIndex(0)
     setRevealedWordCount(0)
     setHintWordsList([])
-    setUserInput('')
     setIsPlaying(false)
     setIsReady(false)
   }, [contentType])
@@ -136,7 +141,6 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
 
   // Reset state and stop audio
   useEffect(() => {
-    setUserInput('')
     setRevealedWordCount(0)
     
     // Cleanup any playing audio when switching sentence
@@ -207,21 +211,42 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim()
   }
 
-  const handleCheckDictation = () => {
+  const handleCheckDictation = async () => {
     const cleanInput = cleanText(userInput)
     const cleanTarget = cleanText(currentSentence.text)
     
     if (cleanInput === cleanTarget) {
       toast.success('Chính xác hoàn toàn! +2 ⭐', { position: 'top-center' })
+      try {
+        await fetch('/api/toeic/dictation/reward', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'sentence' })
+        })
+      } catch (err) {}
     } else {
       toast.error('Chưa chính xác. Hãy nghe kỹ lại nhé!', { position: 'top-center' })
     }
   }
 
-  const nextSentence = () => {
+  const nextSentence = async () => {
     if (currentIndex < currentData.length - 1) {
       setCurrentIndex(prev => prev + 1)
     } else {
+      const finishKey = `${contentType}-${difficulty}`
+      if (!completedSentences.has(finishKey)) {
+        setCompletedSentences(prev => new Set(prev).add(finishKey))
+        toast.success('Tuyệt vời! Bạn đã hoàn thành bài nghe chép +5 ⭐', { position: 'top-center' })
+        try {
+          await fetch('/api/toeic/dictation/reward', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'complete' })
+          })
+        } catch (err) {}
+      } else {
+        toast.success('Hoàn thành trọn vẹn!', { position: 'top-center' })
+      }
       setCurrentIndex(0)
     }
   }
@@ -433,17 +458,14 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <div className="absolute top-4 right-3 md:right-4 z-20 flex items-center gap-2 md:gap-4">
                       <button 
                         onClick={handleCheckDictation}
-                        className="cursor-pointer text-[10px] md:text-sm font-bold text-slate-400 hover:text-white uppercase tracking-widest transition-colors bg-[#0B1120] hover:bg-[#111827] px-2 md:px-3 py-1 md:py-1.5 rounded-lg border border-slate-800 hover:border-slate-700"
+                        className="cursor-pointer text-xs md:text-sm font-black text-[#020617] uppercase tracking-widest transition-all bg-amber-400 hover:bg-amber-300 px-4 md:px-6 py-2 rounded-xl shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:scale-105 active:scale-95"
                       >
-                        Check
+                        Kiểm tra
                       </button>
                       <button 
                         onClick={() => {
-                          if (revealedWordCount === 0) {
-                             toast('Mình sẽ giúp bạn mở từ đầu tiên. Cố gắng tập trung nghe ở lần tiếp theo nhé!', { icon: '💡', duration: 4000 });
-                          }
                           if (revealedWordCount < maxReveals) {
-                            setRevealedWordCount(prev => prev + 1);
+                            setShowHintModal(true);
                           }
                         }}
                         disabled={revealedWordCount >= maxReveals}
@@ -479,8 +501,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     <textarea 
                       value={userInput}
                       onChange={(e) => setUserInput(e.target.value)}
-                      className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-2xl lg:text-3xl font-medium placeholder:text-base md:placeholder:text-lg placeholder-slate-600 focus:outline-none resize-none text-center custom-scrollbar"
-                      placeholder="Gõ đầy đủ câu tiếng Anh ở đây..."
+                      className="w-full h-24 md:h-40 bg-transparent text-white text-lg md:text-xl lg:text-2xl font-medium placeholder:text-sm md:placeholder:text-base placeholder-slate-600 focus:outline-none resize-none text-center custom-scrollbar"
+                      placeholder="Gõ đầy đủ câu tiếng Anh ở đây. Phương pháp này đòi hỏi bạn phải gõ đầy đủ câu mới có hiệu quả. Cố gắng lên bạn nhé"
                       spellCheck={false}
                     />
                   </div>
@@ -513,6 +535,58 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             )}
           </div>
         </div>
+        {/* Hint Modal */}
+        <AnimatePresence>
+          {showHintModal && (
+            <div className="fixed inset-0 z-[400] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-[#020617]/80 backdrop-blur-md" onClick={() => setShowHintModal(false)} />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative bg-[#111827] border border-slate-700 rounded-3xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl"
+              >
+                {revealedWordCount === 0 ? (
+                  <>
+                    <div className="text-5xl mb-4">💡</div>
+                    <h3 className="text-xl md:text-2xl font-black text-white mb-3">Gợi ý từ đầu tiên</h3>
+                    <p className="text-slate-300 text-sm md:text-base mb-8 leading-relaxed">
+                      Mình sẽ giúp bạn mở từ đầu tiên một cách vui vẻ nhé! Cố gắng tập trung nghe ở lần tiếp theo nha!
+                    </p>
+                    <button 
+                      onClick={() => { setRevealedWordCount(prev => prev + 1); setShowHintModal(false); }}
+                      className="w-full bg-amber-400 hover:bg-amber-300 text-[#020617] font-black py-4 rounded-xl shadow-lg transition-all active:scale-95 text-lg"
+                    >
+                      Lật từ
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-5xl mb-4">🥺</div>
+                    <h3 className="text-xl md:text-2xl font-black text-white mb-3">Đừng bỏ cuộc nhé!</h3>
+                    <p className="text-slate-300 text-sm md:text-base mb-8 leading-relaxed">
+                      Bạn cố gắng nghe thêm vài lần nữa rồi hãy nhờ trợ giúp nhé?
+                    </p>
+                    <div className="flex flex-col gap-3">
+                      <button 
+                        onClick={() => { playAudio(); setShowHintModal(false); }}
+                        className="w-full bg-[#0B1120] border border-slate-700 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95"
+                      >
+                        🔊 Nghe lại
+                      </button>
+                      <button 
+                        onClick={() => { setRevealedWordCount(prev => prev + 1); setShowHintModal(false); }}
+                        className="w-full bg-amber-400 hover:bg-amber-300 text-[#020617] font-black py-3.5 rounded-xl shadow-lg transition-all active:scale-95"
+                      >
+                        Lật từ
+                      </button>
+                    </div>
+                  </>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   )
