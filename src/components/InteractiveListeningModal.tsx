@@ -605,7 +605,7 @@ export default function InteractiveListeningModal({ isOpen, onClose, isSidebarCo
                                <input 
                                  type="text"
                                  value={inputVal}
-                                 onChange={(e) => handleBlankChange(hw.originalIndex, e.target.value)}
+                                 onChange={(e) => handleBlankChange(hw.originalIndex as number, e.target.value)}
                                  className="border-b-2 border-primary-300 focus:border-primary-600 bg-primary-50/50 rounded-t-md text-primary-900 text-center font-bold outline-none px-1 py-1 transition-colors"
                                  style={{ width: `${Math.max(3, targetWordLength) * 1.2}ch` }}
                                  spellCheck={false}
