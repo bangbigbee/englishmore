@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const search = searchParams.get('search') || ''
     const courseId = searchParams.get('courseId')
+    const tier = searchParams.get('tier')
     
     const whereCondition: any = {}
     
@@ -27,6 +28,20 @@ export async function GET(request: NextRequest) {
     if (courseId) {
       whereCondition.enrollments = {
         some: { courseId }
+      }
+    }
+
+    if (tier) {
+      if (tier === 'FREE') {
+        // FREE tier could be 'FREE' or null
+        const currentSearchOR = whereCondition.OR
+        whereCondition.OR = undefined
+        whereCondition.AND = [
+          currentSearchOR ? { OR: currentSearchOR } : {},
+          { OR: [{ tier: 'FREE' }, { tier: null }] }
+        ]
+      } else {
+        whereCondition.tier = tier
       }
     }
 
