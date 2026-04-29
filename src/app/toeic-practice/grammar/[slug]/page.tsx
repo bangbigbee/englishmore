@@ -1909,11 +1909,10 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                 onClick={() => isLocked ? setShowPricing(true) : setShowTranslation(prev => ({ ...prev, [q.id]: !prev[q.id] }))}
                                                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold transition-all relative ${showTranslation[q.id] ? 'bg-slate-100 text-primary-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-primary-900'}`}
                                                             >
-                                                                <svg className="w-[18px] h-[13px] rounded-[2px] shrink-0 border border-black/10" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
-                                                                  <rect width="900" height="600" fill="#da251d"/>
-                                                                  <polygon fill="#ffff00" points="450,114.6 544.7,406.1 296.8,198.8 603.2,198.8 355.3,406.1"/>
+                                                                <svg className="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                                                                 </svg>
-                                                                VN
+                                                                Dịch
                                                                 {isLocked && (
                                                                     <div className={`absolute -top-1 -right-1 filter drop-shadow-md ${currentLesson.translationAccessTier === 'ULTRA' ? 'text-primary-600' : 'text-secondary-500'}`}>
                                                                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d={currentLesson.translationAccessTier === 'ULTRA' ? "M13 2L3 14h9l-1 8 10-12h-9l1-8z" : "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"} /></svg>
@@ -1959,9 +1958,9 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                                 }
                                                             }}
-                                                            className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto flex justify-center items-center gap-1.5 px-4 py-2 sm:py-1.5 rounded-xl text-[13px] sm:text-[14px] font-bold transition-all bg-slate-100 text-primary-900 hover:bg-slate-200 hover:-translate-y-0.5 active:translate-y-0"
+                                                            className="w-full sm:w-auto mt-2 sm:mt-0 sm:ml-auto flex justify-center items-center gap-1.5 px-4 py-2 sm:py-1.5 rounded-xl text-[13px] sm:text-[14px] font-bold transition-all bg-primary-900 text-white hover:bg-primary-800 hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-primary-900/20"
                                                         >
-                                                            Câu tiếp
+                                                            Câu tiếp theo
                                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
                                                         </button>
                                                     )}
@@ -2017,7 +2016,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                                                 </div>
                                                                              )
                                                                           }
-                                                                          return <div className="text-[13px] md:text-sm font-medium italic text-slate-700 opacity-90 leading-relaxed max-h-[300px] overflow-y-auto custom-scrollbar whitespace-pre-wrap">{explanationText}</div>
+                                                                          return <div className="text-[13px] md:text-sm font-medium text-slate-700 opacity-90 leading-relaxed max-h-[300px] overflow-y-auto custom-scrollbar whitespace-pre-wrap">{explanationText}</div>
                                                                     })()}
                                                                   </div>
                                                               </motion.div>
