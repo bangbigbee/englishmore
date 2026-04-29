@@ -249,8 +249,9 @@ export const getPartIcon = (partId: number) => {
 const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'grammar', progress, packageType, disableFlip, customIcon }: any) => {
 	const isCompactType = ['vocabulary', 'grammar', 'reading', 'listening', 'test'].includes(type);
     const isTestTopic = type === 'test';
+	const cleanTitle = title.replace(/^\d+\.\s*/, '');
 	const displaySubtitle = type === 'vocabulary' && !subtitle ? getTopicVietnamese(title) : subtitle;
-	const displayTitle = type === 'vocabulary' && title.includes(' - ') ? title.split(' - ')[0].trim() : title;
+	const displayTitle = type === 'vocabulary' && cleanTitle.includes(' - ') ? cleanTitle.split(' - ')[0].trim() : cleanTitle;
 	
 	const minHeightClass = isCompactType ? 'min-h-[95px] sm:min-h-[105px]' : 'min-h-[220px]';
 	const paddingClass = isCompactType ? 'p-4 sm:p-5' : 'p-8';
@@ -303,11 +304,11 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                                         </span>
                                     ) : (!isTestTopic && (
                                         <span className={`w-[24px] shrink-0 h-[24px] rounded-[6px] text-white flex items-center justify-center text-[12px] font-black shadow-sm transition-all duration-300 group-hover:rotate-0 leading-none pb-[1px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
-                                            {(type === 'vocabulary' ? displayTitle : title).charAt(0).toLowerCase()}
+                                            {displayTitle.charAt(0).toLowerCase()}
                                         </span>
                                     ))}
                                     <h3 className={`font-bold ${isTestTopic ? 'text-[15px] sm:text-[16px] text-slate-800 dark:text-white' : 'text-[14px] sm:text-[15px]'} transition-colors duration-300 ${theme.titleHover} pr-1 leading-snug shrink ${theme.title}`}>
-                                        {type === 'vocabulary' ? displayTitle : title}
+                                        {displayTitle}
                                     </h3>
                                 </div>
                                 {disableFlip && displaySubtitle && !isTestTopic && (
@@ -334,9 +335,9 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                     <>
                         <h3 className={`font-bold text-[22px] leading-snug mb-1 transition-colors duration-300 ${theme.titleHover} flex items-center gap-3 ${theme.title}`}>
                             <span className={`w-[30px] h-[30px] rounded-[8px] text-white flex items-center justify-center text-[15px] font-black shrink-0 shadow-md transition-all duration-300 group-hover:rotate-0 leading-none pb-[2px] ${theme.iconBg} ${title.charCodeAt(0) % 2 === 0 ? '-rotate-6' : 'rotate-6'}`}>
-                                {title.charAt(0).toLowerCase()}
+                                {displayTitle.charAt(0).toLowerCase()}
                             </span>
-                            <span>{title}</span>
+                            <span>{displayTitle}</span>
                         </h3>
 
                         {subtitle && (

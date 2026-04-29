@@ -133,4 +133,4 @@ async function run() {
   console.log("Created Topic 21: Reported Speech with 6 lessons (60 questions).");
 }
 
-run().catch(console.error).finally(() => prisma.$disconnect());
+run().catch(console.error).finally(() => prisma.$disconnect().then(() => process.exit(0)));

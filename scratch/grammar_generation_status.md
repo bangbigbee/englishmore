@@ -31,7 +31,8 @@ Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu
 - [x] 20. Giới từ - Prepositions (Level: Trung Cấp)
 - [x] 21. Câu trực tiếp và câu gián tiếp - Reported Speech (Level: Trung Cấp)
 - [x] 22. Từ chỉ số lượng và Mạo từ - Quantifiers & Articles (Level: Cơ Bản)
-- [x] 23. Phân từ và Cụm phân từ - Participles (Level: Nâng Cao)
-- [x] 24. Cấu trúc đảo ngữ - Inversion (Level: Nâng Cao)
+- [x] Topic 23: Participles & Participle Clauses (Level: Nâng Cao)
+- [x] Topic 24: Inversion (Level: Nâng Cao) - Merged with old Câu Đảo Ngữ Nâng Cao into 7 lessons
 
+### Future Topics (Pending Planning)
 *(Các phase tiếp theo sẽ tiếp tục áp dụng cấu trúc mới dựa trên file docx)*

@@ -798,7 +798,7 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
               </svg>
             </Link>
             <div className="flex flex-col">
-              <h1 className="font-black text-slate-900 text-sm md:text-base leading-tight">{topic.title}</h1>
+              <h1 className="font-black text-slate-900 text-sm md:text-base leading-tight">{topic.title.replace(/^\d+\.\s*/, '')}</h1>
               <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest">{topic.subtitle || (topic.type === 'READING' ? 'TOEIC Reading' : topic.type === 'LISTENING' ? 'TOEIC Listening' : 'TOEIC Grammar')}</p>
             </div>
           </div>
@@ -1485,26 +1485,6 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                         {!lessonStarted && (
                                             <div className="absolute inset-0 z-50 bg-white/60 backdrop-blur-[6px] flex flex-col items-center justify-center p-4">
                                                  <div className="w-full max-w-lg flex flex-col gap-4">
-                                                     {/* Tip 1 */}
-                                                     <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-amber-100 shadow-sm p-4 flex flex-row items-center gap-4 transform transition-all hover:scale-[1.02] duration-300">
-                                                         <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 shrink-0 border border-amber-100/50">
-                                                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
-                                                         </div>
-                                                         <p className="text-slate-600 font-medium text-[15px] leading-snug text-left">
-                                                             Nếu gặp câu khó, bấm <strong className="text-amber-600 font-bold">Giải thích</strong> để hiểu rõ hơn.
-                                                         </p>
-                                                     </div>
-
-                                                     {/* Tip 2 */}
-                                                     <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-primary-100 shadow-sm p-4 flex flex-row items-center gap-4 transform transition-all hover:scale-[1.02] duration-300">
-                                                         <div className="w-12 h-12 bg-primary-700/10 rounded-xl flex items-center justify-center text-primary-700 shrink-0 border border-primary-100/50">
-                                                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
-                                                         </div>
-                                                         <p className="text-slate-600 font-medium text-[15px] leading-snug text-left">
-                                                             Nếu thấy câu hay và cần xem sau, bấm <strong className="text-primary-700 font-bold">Lưu lại</strong> để lưu vào Sổ tay học tập.
-                                                         </p>
-                                                     </div>
-
                                                      {/* Theory Box (Only for Grammar) */}
                                                      {topic.type === 'GRAMMAR' && (
                                                          <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-primary-100 shadow-sm p-5 flex flex-col gap-3 transform transition-all hover:scale-[1.02] duration-300 mt-2 relative overflow-hidden group/theory">
@@ -1574,7 +1554,27 @@ export default function ToeicGrammarPracticePage({ params }: { params: Promise<{
                                                              })()}
                                                          </div>
                                                      )}
-                                                 </div>
+{/* Tip 1 */}
+                                                     <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-amber-100 shadow-sm p-4 flex flex-row items-center gap-4 transform transition-all hover:scale-[1.02] duration-300">
+                                                         <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 shrink-0 border border-amber-100/50">
+                                                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                                         </div>
+                                                         <p className="text-slate-600 font-medium text-[15px] leading-snug text-left">
+                                                             Nếu gặp câu khó, bấm <strong className="text-amber-600 font-bold">Giải thích</strong> để hiểu rõ hơn.
+                                                         </p>
+                                                     </div>
+
+                                                     {/* Tip 2 */}
+                                                     <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-primary-100 shadow-sm p-4 flex flex-row items-center gap-4 transform transition-all hover:scale-[1.02] duration-300">
+                                                         <div className="w-12 h-12 bg-primary-700/10 rounded-xl flex items-center justify-center text-primary-700 shrink-0 border border-primary-100/50">
+                                                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                                         </div>
+                                                         <p className="text-slate-600 font-medium text-[15px] leading-snug text-left">
+                                                             Nếu thấy câu hay và cần xem sau, bấm <strong className="text-primary-700 font-bold">Lưu lại</strong> để lưu vào Sổ tay học tập.
+                                                         </p>
+                                                     </div>
+
+                                                                                                      </div>
                                                  
 
                                             </div>
