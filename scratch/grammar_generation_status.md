@@ -29,5 +29,7 @@ Danh sách các chủ điểm ngữ pháp từ file `Grammar.docx`. Đánh dấu
 - [x] 18. Mệnh đề quan hệ - Relative Clauses (Level: Nâng Cao)
 - [x] 19. Liên từ - Conjunctions (Level: Trung Cấp)
 - [x] 20. Giới từ - Prepositions (Level: Trung Cấp)
+- [x] 21. Câu trực tiếp và câu gián tiếp - Reported Speech (Level: Trung Cấp)
+- [x] 22. Từ chỉ số lượng và Mạo từ - Quantifiers & Articles (Level: Cơ Bản)
 
 *(Các phase tiếp theo sẽ tiếp tục áp dụng cấu trúc mới dựa trên file docx)*
