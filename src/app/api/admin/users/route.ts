@@ -15,10 +15,10 @@ export async function GET(request: NextRequest) {
     const courseId = searchParams.get('courseId')
     const tier = searchParams.get('tier')
     
-    const whereCondition: any = {}
+    const baseWhereCondition: any = {}
     
     if (search) {
-      whereCondition.OR = [
+      baseWhereCondition.OR = [
         { name: { contains: search, mode: 'insensitive' as const } },
         { email: { contains: search, mode: 'insensitive' as const } },
         { phone: { contains: search, mode: 'insensitive' as const } }
@@ -26,24 +26,32 @@ export async function GET(request: NextRequest) {
     }
 
     if (courseId) {
-      whereCondition.enrollments = {
+      baseWhereCondition.enrollments = {
         some: { courseId }
       }
     }
 
+    const whereCondition = { ...baseWhereCondition }
+
     if (tier) {
       if (tier === 'FREE') {
-        // FREE tier could be 'FREE' or null
-        const currentSearchOR = whereCondition.OR
-        whereCondition.OR = undefined
         whereCondition.AND = [
-          currentSearchOR ? { OR: currentSearchOR } : {},
+          baseWhereCondition.OR ? { OR: baseWhereCondition.OR } : {},
           { OR: [{ tier: 'FREE' }, { tier: null }] }
         ]
+        delete whereCondition.OR
       } else {
         whereCondition.tier = tier
       }
     }
+
+    // Compute stats independent of the `tier` filter
+    const [totalCount, freeCount, proCount, ultraCount] = await Promise.all([
+      prisma.user.count({ where: baseWhereCondition }),
+      prisma.user.count({ where: { AND: [baseWhereCondition, { OR: [{ tier: 'FREE' }, { tier: null }] }] } }),
+      prisma.user.count({ where: { AND: [baseWhereCondition, { tier: 'PRO' }] } }),
+      prisma.user.count({ where: { AND: [baseWhereCondition, { tier: 'ULTRA' }] } })
+    ])
 
     const users = await prisma.user.findMany({
       where: whereCondition,
@@ -70,7 +78,10 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    return NextResponse.json({ users })
+    return NextResponse.json({ 
+      users,
+      stats: { total: totalCount, free: freeCount, pro: proCount, ultra: ultraCount }
+    })
   } catch (error) {
     console.error('Error fetching users:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

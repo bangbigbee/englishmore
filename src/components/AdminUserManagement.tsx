@@ -45,6 +45,7 @@ export default function AdminUserManagement() {
   const [courseFilter, setCourseFilter] = useState('')
   const [tierFilter, setTierFilter] = useState('')
   const [isOnlineStatsOpen, setIsOnlineStatsOpen] = useState(false)
+  const [stats, setStats] = useState({ total: 0, free: 0, pro: 0, ultra: 0 })
 
   useEffect(() => {
     fetchCourses()
@@ -104,6 +105,9 @@ export default function AdminUserManagement() {
       if (!res.ok) throw new Error('Failed to fetch')
       const data = await res.json()
       setUsers(data.users || [])
+      if (data.stats) {
+        setStats(data.stats)
+      }
     } catch (e) {
       console.error(e)
     } finally {
@@ -183,12 +187,7 @@ export default function AdminUserManagement() {
     )
   }
 
-  const stats = {
-    total: users.length,
-    free: users.filter(u => u.tier === 'FREE' || !u.tier).length,
-    pro: users.filter(u => u.tier === 'PRO').length,
-    ultra: users.filter(u => u.tier === 'ULTRA').length,
-  }
+
 
   return (
     <div>
