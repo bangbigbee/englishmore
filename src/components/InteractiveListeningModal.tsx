@@ -112,6 +112,8 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   const [isReady, setIsReady] = useState(false)
   const [revealedWordCount, setRevealedWordCount] = useState(0)
   const [showHintModal, setShowHintModal] = useState(false)
+  const [showResultModal, setShowResultModal] = useState(false)
+  const [setScore, setSetScore] = useState({ correct: 0, total: 0 })
   const [completedSentences, setCompletedSentences] = useState<Set<string>>(new Set())
   const [contentType, setContentType] = useState<'SENTENCE' | 'QNA' | 'SHORT_TALK'>('SENTENCE')
   const [selectedSetId, setSelectedSetId] = useState<string>('set-s1')
@@ -296,14 +298,22 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
     }
   }
 
-  const nextSentence = async () => {
-    if (currentIndex < currentData.length - 1) {
-      setCurrentIndex(prev => prev + 1)
-    } else {
+  const handleFinishSet = async () => {
+    let correctCount = 0;
+    currentData.forEach((item, index) => {
+       const inputKey = `${selectedSetId}-${index}`
+       const input = userInputs[inputKey] || ''
+       if (cleanText(input) === cleanText(item.text)) correctCount++;
+    });
+    
+    setSetScore({ correct: correctCount, total: currentData.length });
+    setShowResultModal(true);
+
+    const percent = correctCount / currentData.length;
+    if (percent >= 0.6) {
       const finishKey = `${selectedSetId}-${difficulty}`
       if (!completedSentences.has(finishKey)) {
         setCompletedSentences(prev => new Set(prev).add(finishKey))
-        toast.success('Tuyệt vời! Bạn đã hoàn thành bài nghe chép +5 ⭐', { position: 'top-center' })
         try {
           await fetch('/api/toeic/dictation/reward', {
             method: 'POST',
@@ -311,10 +321,15 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
             body: JSON.stringify({ type: 'complete', referenceId: finishKey })
           })
         } catch (err) {}
-      } else {
-        toast.success('Hoàn thành trọn vẹn!', { position: 'top-center' })
       }
-      setCurrentIndex(0)
+    }
+  }
+
+  const nextSentence = async () => {
+    if (currentIndex < currentData.length - 1) {
+      setCurrentIndex(prev => prev + 1)
+    } else {
+      await handleFinishSet()
     }
   }
 
@@ -666,6 +681,69 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
                     </div>
                   </>
                 )}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Result Modal */}
+        <AnimatePresence>
+          {showResultModal && (
+            <div className="fixed inset-0 z-[400] flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-[#020617]/80 backdrop-blur-md" onClick={() => setShowResultModal(false)} />
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="relative bg-[#111827] border border-slate-700 rounded-3xl p-6 md:p-8 w-full max-w-sm text-center shadow-2xl overflow-hidden"
+              >
+                <button 
+                  onClick={() => setShowResultModal(false)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+                
+                <div className="text-6xl mb-4">
+                  {setScore.correct / setScore.total >= 0.6 ? '🏆' : '💪'}
+                </div>
+                <h3 className="text-xl md:text-2xl font-black text-white mb-2">
+                  {setScore.correct / setScore.total >= 0.6 ? 'Hoàn thành xuất sắc!' : 'Hãy cố gắng hơn nhé!'}
+                </h3>
+                
+                <div className="bg-[#0B1120] border border-slate-800 rounded-2xl p-4 mb-6 mt-4">
+                  <p className="text-slate-400 text-sm mb-1 uppercase tracking-wider font-bold">Kết quả của bạn</p>
+                  <p className="text-4xl font-black text-amber-400">
+                    {setScore.correct} <span className="text-xl text-slate-500">/ {setScore.total}</span>
+                  </p>
+                  <p className="text-xs text-slate-500 mt-2 px-2">
+                    {setScore.correct / setScore.total >= 0.6 
+                      ? 'Bạn đã đạt đủ điều kiện nhận thưởng sao (≥ 60%)!' 
+                      : 'Cần đúng ít nhất 60% để nhận phần thưởng sao.'}
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <button 
+                    onClick={() => { 
+                      setCurrentIndex(0); 
+                      // Clear inputs for this set
+                      const newInputs = { ...userInputs };
+                      for (let i = 0; i < currentData.length; i++) delete newInputs[`${selectedSetId}-${i}`];
+                      setUserInputs(newInputs);
+                      setShowResultModal(false); 
+                    }}
+                    className="w-full bg-amber-400 hover:bg-amber-300 text-[#020617] font-black py-3.5 rounded-xl shadow-lg transition-all active:scale-95"
+                  >
+                    🔄 Làm lại từ đầu
+                  </button>
+                  <button 
+                    onClick={() => { setIsReady(false); setShowResultModal(false); }}
+                    className="w-full bg-[#0B1120] border border-slate-700 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95"
+                  >
+                    📚 Chọn chủ đề khác
+                  </button>
+                </div>
               </motion.div>
             </div>
           )}
