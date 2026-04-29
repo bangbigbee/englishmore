@@ -172,24 +172,33 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
             })}
             </>
           ) : (
-            ENGLISHMORE_TABS.map((t) => {
-              const isActive = pathname === t.href;
-              return (
-                <Link
-                  key={t.key}
-                  href={t.href}
-                  target={t.external ? "_blank" : undefined}
-                  className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-primary-900" : "border-transparent hover:border-primary-900/20"}`}
-                >
-                  <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${t.color}`}>
-                    <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
-                  </span>
-                  <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-primary-900 ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
-                    {t.label}
-                  </span>
-                </Link>
-              )
-            })
+            (() => {
+              let DISPLAY_ENGLISH_TABS: any[] = [...ENGLISHMORE_TABS];
+              if (session && !isToeicDomain) {
+                  DISPLAY_ENGLISH_TABS.splice(3, 0,
+                      { key: 'notebook', label: 'Sổ tay của tôi', href: '/toeic-progress?tab=vocabulary-bank', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, color: "text-emerald-500" },
+                      { key: 'my-progress', label: 'Lộ trình của tôi', href: '/toeic-progress', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>, color: "text-blue-500" }
+                  );
+              }
+              return DISPLAY_ENGLISH_TABS.map((t) => {
+                const isActive = pathname === t.href;
+                return (
+                  <Link
+                    key={t.key}
+                    href={t.href}
+                    target={t.external ? "_blank" : undefined}
+                    className={`flex items-center gap-1.5 group transition-all duration-300 focus:outline-none cursor-pointer whitespace-nowrap pb-[6px] mt-1 border-b-[2px] ${isActive ? "border-primary-900" : "border-transparent hover:border-primary-900/20"}`}
+                  >
+                    <span className={`transition-transform duration-300 scale-100 group-hover:scale-110 ${t.color}`}>
+                      <div className="scale-[0.85] mt-[-2px]">{t.icon}</div>
+                    </span>
+                    <span className={`text-[13px] xl:text-[14px] font-bold tracking-tight transition-all text-primary-900 ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+                      {t.label}
+                    </span>
+                  </Link>
+                )
+              });
+            })()
           )}
         </div>
         {showLeftArrow && (
@@ -426,7 +435,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false)
   const [isStarModalOpen, setIsStarModalOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -474,28 +482,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   useEffect(() => {
     setAvatarLoadFailed(false)
   }, [session?.user?.image])
-
-  // Optional: close dropdown on escape key and click outside
-  const dropdownRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!isDropdownOpen) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsDropdownOpen(false)
-    }
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isDropdownOpen])
 
   const handleLoginClick = () => {
     const params = new URLSearchParams(window.location.search)
@@ -579,45 +565,80 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                     </div>
                     
                     <div className="space-y-1">
-                        {TOEIC_SIDEBAR_ITEMS.map((item) => {
-                            const currentTab = searchParams.get('tab') || 'home';
-                            const isActive = currentTab === item.id;
-                            return (
-                                <button
-                                    key={item.id}
-                                    onClick={() => {
-                                        setIsMobileMenuOpen(false);
-                                        if (pathname.startsWith('/toeic-practice') || pathname === '/') {
-                                            const params = new URLSearchParams(searchParams.toString());
-                                            params.set('tab', item.id);
-                                            params.delete('topic');
-                                            router.push(`/toeic-practice?${params.toString()}`);
-                                            window.scrollTo({ top: 0, behavior: 'instant' });
-                                        } else {
-                                            router.push(`/toeic-practice?tab=${item.id}`);
-                                        }
-                                    }}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
-                                >
-                                    <div className={`${isActive ? 'text-primary-600' : 'text-slate-400'}`}>
-                                        {item.icon}
-                                    </div>
-                                    <span className="text-[14px]">{item.label}</span>
-                                </button>
-                            );
-                        })}
+                        {(() => {
+                            let DISPLAY_ITEMS: any[] = [...TOEIC_SIDEBAR_ITEMS];
+                            if (session) {
+                                DISPLAY_ITEMS.splice(6, 0, 
+                                    { id: 'notebook', label: 'Sổ tay của tôi', externalHref: '/toeic-progress?tab=vocabulary-bank', icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
+                                    { id: 'my-progress', label: 'Lộ trình của tôi', externalHref: '/toeic-progress', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> }
+                                );
+                            }
+                            return DISPLAY_ITEMS.map((item) => {
+                                const currentTab = searchParams.get('tab') || 'home';
+                                const isActive = currentTab === item.id;
+                                const itemContent = (
+                                    <>
+                                        <div className={`${isActive ? 'text-primary-600' : 'text-slate-400'}`}>
+                                            {item.icon}
+                                        </div>
+                                        <span className="text-[14px]">{item.label}</span>
+                                    </>
+                                );
+                                const className = `w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`;
+                                
+                                if (item.externalHref) {
+                                    return (
+                                        <Link
+                                            key={item.id}
+                                            href={item.externalHref}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className={className}
+                                        >
+                                            {itemContent}
+                                        </Link>
+                                    );
+                                }
+
+                                return (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            if (pathname.startsWith('/toeic-practice') || pathname === '/') {
+                                                const params = new URLSearchParams(searchParams.toString());
+                                                params.set('tab', item.id);
+                                                params.delete('topic');
+                                                router.push(`/toeic-practice?${params.toString()}`);
+                                                window.scrollTo({ top: 0, behavior: 'instant' });
+                                            } else {
+                                                router.push(`/toeic-practice?tab=${item.id}`);
+                                            }
+                                        }}
+                                        className={className}
+                                    >
+                                        {itemContent}
+                                    </button>
+                                );
+                            });
+                        })()}
                     </div>
                 </div>
                 <div className="p-4 mt-auto border-t border-slate-200/60 bg-white">
                     {session ? (
-                        <div className="w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100">
-                            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0">
-                                {session.user?.name?.charAt(0).toUpperCase() || 'U'}
-                            </div>
-                            <div className="flex-1 truncate">
-                                <p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
-                                <p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
-                            </div>
+                        <div className="w-full flex items-center gap-2">
+                            <Link 
+                                href="/user/profile"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="flex-1 flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors min-w-0"
+                            >
+                                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0">
+                                    {session.user?.name?.charAt(0).toUpperCase() || 'U'}
+                                </div>
+                                <div className="flex-1 truncate">
+                                    <p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+                                    <p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+                                </div>
+                            </Link>
                             <button
                                 onClick={() => signOut({ callbackUrl: '/' })}
                                 className="p-2 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-50 ml-1 transition-colors"
@@ -690,11 +711,10 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                 </button>
             )}
 
-            {(isToeicDomain || session) && (
-              <div ref={dropdownRef} className="relative isolate hidden lg:flex items-center">
-                   <button
-                      type="button"
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            {session && (
+                <div className="flex items-center gap-2">
+                    <Link
+                      href="/user/profile"
                       className={`flex items-center justify-center transition-colors focus:outline-none border ${session ? 'gap-2 px-2 py-1.5 rounded-full hover:bg-slate-100 border-transparent hover:border-slate-200' : 'w-8 h-8 rounded-full hover:bg-slate-100 border-transparent'}`}
                    >
                        {session ? (
@@ -709,88 +729,16 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                        ) : (
                            <svg className="w-5 h-5 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
                        )}
+                   </Link>
+                   <button
+                       onClick={() => signOut({ callbackUrl: '/' })}
+                       className="flex items-center justify-center w-8 h-8 rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors focus:outline-none"
+                       title="Đăng xuất"
+                   >
+                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                    </button>
-                   {isDropdownOpen && (
-                       <>
-                           <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[200px] rounded-2xl bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 focus:outline-none overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ease-out border border-slate-100 p-1.5 flex flex-col gap-1">
-                               {session && (
-                                   <>
-                                       <Link
-                                           href="/user/profile"
-                                           onClick={() => setIsDropdownOpen(false)}
-                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
-                                       >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-indigo-50 text-indigo-500">
-                                               <ModernUserIcon className="w-4 h-4" />
-                                           </span>
-                                           Thông tin cá nhân
-                                       </Link>
-                                       <Link
-                                           href="/toeic-progress?tab=vocabulary-bank"
-                                           onClick={() => setIsDropdownOpen(false)}
-                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
-                                       >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-emerald-50 text-emerald-500">
-                                               <BookIcon className="w-4 h-4" />
-                                           </span>
-                                           Sổ tay của tôi
-                                       </Link>
-                                       <Link
-                                           href="/toeic-progress"
-                                           onClick={() => setIsDropdownOpen(false)}
-                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
-                                       >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-blue-50 text-blue-500">
-                                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                           </span>
-                                           Lộ trình của tôi
-                                       </Link>
-                                       <div className="h-[1px] w-full bg-slate-100 my-1"></div>
-                                   </>
-                               )}
-                               {isToeicDomain && (
-                                   <>
-                                       <a
-                                           href="https://englishmore.bigbee.ltd"
-                                           target="_blank"
-                                           rel="noopener noreferrer"
-                                           onClick={() => setIsDropdownOpen(false)}
-                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
-                                       >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-fuchsia-50 text-fuchsia-500">
-                                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
-                                           </span>
-                                           Luyện Speaking
-                                       </a>
-                                       <Link
-                                           href="/about"
-                                           onClick={() => setIsDropdownOpen(false)}
-                                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer"
-                                       >
-                                           <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-primary-50 text-primary-500">
-                                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
-                                           </span>
-                                           <span>About <span className="text-primary-900">Toeic</span><span className="text-secondary-500">More</span></span>
-                                       </Link>
-                                   </>
-                               )}
-                               {session && (
-                                   <button
-                                       type="button"
-                                       onClick={() => { setIsDropdownOpen(false); signOut({ callbackUrl: '/' }) }}
-                                       className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-bold text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
-                                   >
-                                       <span className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-rose-50 text-rose-500">
-                                           <LogoutIcon />
-                                       </span>
-                                       Đăng Xuất
-                                   </button>
-                               )}
-                           </div>
-                       </>
-                   )}
-               </div>
-          )}
+                </div>
+            )}
           </div>
 
           {session && (
