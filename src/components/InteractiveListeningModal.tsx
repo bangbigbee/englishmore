@@ -354,7 +354,10 @@ export default function InteractiveListeningModal({ isOpen, onClose }: { isOpen:
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[200] isolate flex bg-[#020617] overflow-hidden overscroll-none touch-none">
+    <div 
+      className="fixed inset-0 z-[200] isolate flex bg-[#020617] overflow-hidden overscroll-none touch-none bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: 'linear-gradient(to bottom, rgba(2,6,23,0.7), rgba(2,6,23,0.95)), url(/images/dictation-bg.png)' }}
+    >
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
