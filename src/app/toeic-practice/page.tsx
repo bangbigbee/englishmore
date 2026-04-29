@@ -2,7 +2,7 @@
 import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { signIn, useSession } from 'next-auth/react';
-import ToeicWarriorLeaderboard from '@/components/ToeicWarriorLeaderboard';
+
 import UpgradeModal from "@/components/UpgradeModal";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -937,32 +937,36 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 	);
 }
 
-function VocabFeatureCard({ onClick }: any) {
-    return (
-		<div 
-            className="w-full max-w-[260px] sm:max-w-[280px] h-[90px] cursor-pointer shrink-0 group focus:outline-none" 
-            onClick={onClick}
-        >
-            <div className="relative w-full h-full rounded-[20px] shadow-sm group-hover:shadow-md transition-shadow">
-                <div className="absolute inset-0 w-full h-full bg-white border border-primary-900/20 rounded-[20px] flex items-center justify-between px-4 sm:px-5">
-                    {/* Background Pattern */}
-                    <div className="absolute inset-0 bg-[#f8fafc]/50 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none rounded-[20px]" />
-                    
-                    <div className="relative z-10 flex flex-col text-left">
-                        <div className="text-primary-900 font-bold text-[15px] sm:text-[17px] leading-none tracking-tight">vocabulary</div>
-                        <div className="opacity-80 text-[11px] sm:text-xs text-slate-500 font-medium mt-1">/vəˈkæbjələri/</div>
-                    </div>
-                    
-                    <button className="bg-secondary-500 text-primary-900 px-3.5 sm:px-4 py-2 flex items-center gap-1 shrink-0 rounded-full text-[13px] font-black shadow-md hover:scale-105 transition-transform focus:outline-none relative z-10 overflow-hidden whitespace-nowrap">
-                        <span className="relative z-10">Từ vựng</span>
-                        <svg className="w-3.5 h-3.5 ml-0.5 relative z-10 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        {/* Button Shimmer */}
-                        <div className="absolute top-0 -inset-full h-full w-[150%] block bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none animate-shimmer-sweep" />
-                    </button>
-                </div>
-            </div>
-        </div>
-    )
+function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
+	return (
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+						{icon}
+					</div>
+					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Từ vựng</h3>
+				</div>
+				<div className="relative flex-1 mt-2">
+					<p className={`text-slate-500 dark:text-slate-400 font-medium text-sm text-left w-full absolute inset-0 transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
+						Học từ vựng siêu hiệu quả và nhớ lâu qua thẻ flashcard.
+					</p>
+					<div className={`absolute inset-0 transition-opacity duration-300 pointer-events-none ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="flex flex-col items-start gap-1.5 mt-1">
+                            <span className="px-2.5 py-1 bg-secondary-100/50 text-secondary-600 rounded-md text-xs font-bold tracking-tight">Spaced Repetition</span>
+                            <span className="px-2.5 py-1 bg-primary-50/50 text-primary-600 rounded-md text-xs font-bold tracking-tight">Ví dụ thực tế</span>
+                        </div>
+					</div>
+				</div>
+			</div>
+
+			<div className={`absolute top-4 right-4 transition-opacity z-30 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+				<div className="bg-primary-900 text-secondary-400 p-2 rounded-full shadow-md pointer-events-auto hover:scale-105 transition-transform">
+					<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
@@ -1046,7 +1050,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	return (
 		<div className="py-8 pb-20">
 			{/* Hero Section */}
-			<section className="flex flex-col items-center text-center mt-8 mb-24 max-w-5xl mx-auto px-4 sm:px-6">
+			<section className="flex flex-col items-center text-center mt-8 mb-24 w-full mx-auto px-4 sm:px-8">
 				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
 					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-primary-900 block break-words">
 					Chinh phục <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-900 to-secondary-500">TOEIC</span>
@@ -1060,11 +1064,19 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				</p>
 
 				<div className="mt-8 flex justify-center w-full px-4 relative z-20">
-					<VocabFeatureCard onClick={() => onTabClick('vocabulary')} />
+					<button
+						onClick={() => onTabClick('grammar')}
+						className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-primary-900 px-10 py-5 sm:px-16 sm:py-6 font-extrabold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-primary-800 hover:shadow-2xl ring-4 ring-primary-900/20"
+					>
+						<div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
+							<div className="relative h-full w-10 bg-white/30" />
+						</div>
+						<span className="relative text-xl sm:text-3xl tracking-wide uppercase">Bắt Đầu Học Ngay</span>
+					</button>
 				</div>
 
 				<div 
-					className="w-full max-w-4xl mx-auto mt-7 overflow-hidden relative"
+					className="w-full mx-auto mt-7 overflow-hidden relative"
 					style={{
 						WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
 						maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
@@ -1137,8 +1149,9 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				</div>
 			</section>
 
-			<div className="w-full max-w-6xl mx-auto mb-4 px-4 mt-3 pb-2">
+			<div className="w-full mx-auto mb-4 px-4 mt-3 pb-2">
 				<div className="flex flex-col lg:flex-row lg:flex-nowrap justify-center items-center lg:items-stretch gap-4 lg:gap-6 py-2 px-2 hide-scrollbar overflow-hidden lg:overflow-x-auto">
+					<VocabFeatureCard onMouseEnter={() => setHoveredCardIndex(0)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 0 || (hoveredCardIndex === null && activeCardIndex === 0)} onClick={() => onTabClick('vocabulary')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>} />
 					<GrammarFeatureCard onMouseEnter={() => setHoveredCardIndex(1)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 1 || (hoveredCardIndex === null && activeCardIndex === 1)} onClick={() => onTabClick('grammar')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>} />
 					<ListeningFeatureCard onMouseEnter={() => setHoveredCardIndex(2)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 2 || (hoveredCardIndex === null && activeCardIndex === 2)} onClick={() => onTabClick('listening')} icon={<svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>} />
 					<ReadingFeatureCard onMouseEnter={() => setHoveredCardIndex(3)} onMouseLeave={() => setHoveredCardIndex(null)} isActive={hoveredCardIndex === 3 || (hoveredCardIndex === null && activeCardIndex === 3)} onClick={() => onTabClick('reading')} icon={<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>} />
@@ -1147,7 +1160,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			</div>
 
             {/* Quick Links Section */}
-            <div className="w-full max-w-6xl mx-auto mt-8 mb-4 px-4">
+            <div className="w-full mx-auto mt-8 mb-4 px-4">
                 <div className="flex flex-wrap justify-center items-center gap-4 py-3">
                     {[
                         { title: 'Review Đề TOEIC', href: '/toeic-practice/reviews', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> },
@@ -1169,7 +1182,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
                 </div>
             </div>
 
-			<ToeicWarriorLeaderboard />
+			{/* <ToeicWarriorLeaderboard /> removed as per request */}
 		</div>
 	);
 }
