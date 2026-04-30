@@ -562,7 +562,7 @@ function HomeContent() {
     }
 
     const fetchProgressStats = async () => {
-      if (session.user?.role !== 'member') {
+      if (session.user?.role !== 'member' && session.user?.role !== 'admin') {
         setProgressStats(null)
         return
       }

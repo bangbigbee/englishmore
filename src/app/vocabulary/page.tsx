@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
 import GallerySection from '@/components/GallerySection'
 import TeacherVideosOverlay from '@/components/TeacherVideosOverlay'
+import VocabularyHeatmap from '@/components/VocabularyHeatmap'
 
 
 interface AvailableCourse {
@@ -223,6 +224,7 @@ function VocabularyContent() {
   const [courseReviews, setCourseReviews] = useState<any[]>([])
   const [hasNewLectureSlide, setHasNewLectureSlide] = useState(false)
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
+  const [progressStats, setProgressStats] = useState<any>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
   const [greetingMessage, setGreetingMessage] = useState('')
@@ -559,6 +561,25 @@ function VocabularyContent() {
       }
     }
 
+    const fetchProgressStats = async () => {
+      if (session.user?.role !== 'member' && session.user?.role !== 'admin') {
+        setProgressStats(null)
+        return
+      }
+
+      try {
+        const res = await fetch('/api/user/progress-stats')
+        if (!res.ok) {
+          setProgressStats(null)
+          return
+        }
+        const data = await res.json()
+        setProgressStats(data)
+      } catch {
+        setProgressStats(null)
+      }
+    }
+
     const fetchAdminHomeworkReview = async () => {
       if (session.user?.role !== 'admin') {
         setAdminHomeworkReview(null)
@@ -681,6 +702,7 @@ function VocabularyContent() {
     fetchAvailableCourses()
     fetchGreetingResponse()
     fetchMemberHomework()
+    fetchProgressStats()
     fetchAdminHomeworkReview()
     fetchMemberVocabulary()
     fetchReflection()
@@ -1878,6 +1900,13 @@ function VocabularyContent() {
                   </div>
                 )}
               </div>
+
+              {/* Progress Stats Heatmap */}
+              {progressStats?.vocabulary?.heatmap && (
+                <div className="mt-8">
+                  <VocabularyHeatmap heatmap={progressStats.vocabulary.heatmap} />
+                </div>
+              )}
             </section>
           </main>
     </div>
