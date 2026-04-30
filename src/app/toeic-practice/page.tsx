@@ -288,7 +288,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
         title: isBasic ? 'text-primary-600 dark:text-primary-400' : isAdvanced ? 'text-primary-900 dark:text-white' : isMixed ? 'text-primary-700 dark:text-primary-300' : 'text-primary-900 dark:text-white',
         backIconBg: isBasic ? 'bg-primary-500' : isAdvanced ? 'bg-primary-700' : isMixed ? 'bg-primary-500' : 'bg-secondary-500',
         subtitle: isBasic ? 'text-primary-500 dark:text-primary-400' : isAdvanced ? 'text-primary-700 dark:text-primary-300' : isMixed ? 'text-primary-600 dark:text-primary-300' : 'text-primary-900/70 dark:text-slate-400',
-        progressBg: isBasic ? 'bg-primary-100/60 dark:bg-primary-900/40' : isAdvanced ? 'bg-primary-100/60 dark:bg-primary-900/40' : isMixed ? 'bg-primary-100/60 dark:bg-primary-900/40' : 'bg-slate-100 dark:bg-slate-800',
+        progressBg: isBasic ? 'bg-primary-100/60 dark:bg-primary-900/40' : isAdvanced ? 'bg-primary-100/60 dark:bg-primary-900/40' : isMixed ? 'bg-primary-100/60 dark:bg-primary-900/40' : 'bg-slate-100 dark:bg-primary-900/40',
         progressFill: isBasic ? 'bg-primary-500' : isAdvanced ? 'bg-primary-600' : isMixed ? 'bg-primary-500' : (progress?.learned >= progress?.total ? 'bg-primary-500' : 'bg-linear-to-r from-[#ea980c] to-secondary-500'),
         progressText: isBasic ? 'text-primary-600 dark:text-primary-400' : isAdvanced ? 'text-primary-700 dark:text-primary-300' : isMixed ? 'text-primary-600 dark:text-primary-400' : (progress?.learned >= progress?.total ? 'text-primary-600 dark:text-primary-400' : 'text-[#ea980c]'),
     };
@@ -296,7 +296,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
 	return (
 		<div
 			onClick={onClick}
-			className={`relative w-full group bg-white dark:bg-slate-900 rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] dark:shadow-none flex flex-col justify-start ${minHeightClass} border border-slate-200 dark:border-slate-800 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88,28,135,0.12)] dark:hover:border-slate-700`}
+			className={`relative w-full group bg-white dark:bg-primary-950/40 backdrop-blur-sm rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] dark:shadow-none flex flex-col justify-start ${minHeightClass} border border-slate-200 dark:border-primary-500/20 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88,28,135,0.12)] dark:hover:border-slate-700`}
 		>
             {isTestTopic && displaySubtitle && (
                 <div className="absolute top-0 right-0 rounded-bl-[14px] px-3 py-1 bg-primary-900/5 text-primary-900 text-[10px] sm:text-[11px] font-bold border-b border-l border-primary-900/10 shadow-sm z-20 pointer-events-none uppercase tracking-wide">
@@ -361,7 +361,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                 )}
 
 				{badgeText && !progress && (
-					<div className={`mt-auto w-full flex items-center justify-between gap-3 text-[12px] font-medium text-primary-900/80 dark:text-primary-100/80 ${isCompactType ? 'pt-3 md:pt-4 border-t border-slate-100/60 dark:border-slate-800' : 'mt-2 pt-3 border-t border-slate-100/60 dark:border-slate-800'}`}>
+					<div className={`mt-auto w-full flex items-center justify-between gap-3 text-[12px] font-medium text-primary-900/80 dark:text-primary-100/80 ${isCompactType ? 'pt-3 md:pt-4 border-t border-slate-100/60 dark:border-primary-500/20' : 'mt-2 pt-3 border-t border-slate-100/60 dark:border-primary-500/20'}`}>
 						<span className="flex items-center gap-1.5 font-bold text-slate-500 dark:text-slate-400">
                             {isTestTopic ? (
                                 <svg className="w-3.5 h-3.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -396,7 +396,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                                         )}
                                     </>
                                 ) : (
-                                    <span className="inline-flex items-center px-2 py-[3px] bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-medium border border-slate-200 dark:border-slate-700 rounded">{progress.learned > 0 ? 'Đang học' : 'Chưa học'}</span>
+                                    <span className="inline-flex items-center px-2 py-[3px] bg-slate-50 dark:bg-primary-900/40 text-slate-500 dark:text-slate-400 text-[10px] font-medium border border-slate-200 dark:border-primary-500/20 rounded">{progress.learned > 0 ? 'Đang học' : 'Chưa học'}</span>
                                 )}
                             </div>
                             <span className={`font-bold tabular-nums tracking-widest shrink-0 ${theme.progressText}`}>
@@ -916,10 +916,10 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
 
 function GrammarFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/40 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
-				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
-					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-primary-950/40 backdrop-blur-sm relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Ngữ pháp</h3>
@@ -965,11 +965,11 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 	}, [isActive]);
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-primary-900/10 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-primary-900/10 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/40 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			{/* Front/Default view */}
 			<div className={`p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}>
-				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
-					<div className="w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center">
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-primary-950/40 backdrop-blur-sm relative pb-1">
+					<div className="w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center">
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Reading</h3>
@@ -982,15 +982,15 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 			</div>
 
 			{/* Full Card Book Flip View */}
-			<div className={`absolute inset-0 z-20 pointer-events-none perspective-[1200px] flex ${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 bg-[#f8fafc] dark:bg-slate-900`}>
+			<div className={`absolute inset-0 z-20 pointer-events-none perspective-[1200px] flex ${isActive ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 bg-[#f8fafc] dark:bg-primary-950/40 backdrop-blur-sm`}>
 				{/* Book Spine Center line */}
-				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-primary-900/10 dark:border-slate-800" />
+				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-primary-900/10 dark:border-primary-500/20" />
 
 				{/* Left half (static background under flipped page) */}
-				<div className="w-1/2 h-full bg-white dark:bg-slate-800/80 flex flex-col items-center justify-center border-r-[1px] border-slate-100 dark:border-slate-700 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2" />
+				<div className="w-1/2 h-full bg-white dark:bg-primary-900/40/80 flex flex-col items-center justify-center border-r-[1px] border-slate-100 dark:border-primary-500/20 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2" />
 
 				{/* Right half (background of upcoming page side) */}
-				<div className="w-1/2 h-full bg-slate-50 dark:bg-slate-800 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center pl-4 pr-2">
+				<div className="w-1/2 h-full bg-slate-50 dark:bg-primary-900/40 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center pl-4 pr-2">
 					<div className="w-10 h-10 text-primary-900/30 dark:text-primary-100/30 mb-1">
 						{icon}
 					</div>
@@ -1009,13 +1009,13 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
                                 exit={{ opacity: 0, transition: {duration: 0} }}
                                 transition={{ duration: 0.8, ease: "easeInOut" }}
                                 style={{ transformOrigin: 'left center' }}
-                                className="absolute inset-0 bg-white dark:bg-slate-800 border-l border-slate-100 dark:border-slate-700 shadow-[2px_0_10px_rgba(0,0,0,0.05)] dark:shadow-[2px_0_10px_rgba(0,0,0,0.3)] [transform-style:preserve-3d]"
+                                className="absolute inset-0 bg-white dark:bg-primary-900/40 border-l border-slate-100 dark:border-primary-500/20 shadow-[2px_0_10px_rgba(0,0,0,0.05)] dark:shadow-[2px_0_10px_rgba(0,0,0,0.3)] [transform-style:preserve-3d]"
                             >
                                 {/* Front face (starts on the right edge) */}
-                                <div className="absolute inset-0 flex items-center justify-center p-3 backface-hidden [-webkit-backface-visibility:hidden] bg-slate-50 dark:bg-slate-800 border-r border-primary-900/10 dark:border-slate-700 rounded-r-[20px]">
+                                <div className="absolute inset-0 flex items-center justify-center p-3 backface-hidden [-webkit-backface-visibility:hidden] bg-slate-50 dark:bg-primary-900/40 border-r border-primary-900/10 dark:border-primary-500/20 rounded-r-[20px]">
                                 </div>
                                 {/* Back face (when flipped to the left) */}
-                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] bg-white dark:bg-slate-800/90 shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] bg-white dark:bg-primary-900/40/90 shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
                                     <span className="font-bold text-primary-900 dark:text-white text-sm uppercase tracking-wider text-center drop-shadow-sm leading-tight">
                                         {pages[activePage]}
                                     </span>
@@ -1054,10 +1054,10 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 	};
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/40 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full">
-				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
-					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-primary-950/40 backdrop-blur-sm relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Luyện đề</h3>
@@ -1084,7 +1084,7 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 
 function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/40 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <style dangerouslySetInnerHTML={{
                 __html: `
                 @keyframes flashcardFlip {
@@ -1095,8 +1095,8 @@ function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive 
                 `
             }} />
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
-				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
-					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-primary-950/40 backdrop-blur-sm relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Từ vựng</h3>
@@ -1143,10 +1143,10 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
     }, [isActive]);
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-slate-700/50 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-slate-900 ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/40 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
-				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-slate-900 relative pb-1">
-					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-slate-800 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
+				<div className="w-full flex items-center gap-4 z-20 bg-white dark:bg-primary-950/40 backdrop-blur-sm relative pb-1">
+					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
 						{icon}
 					</div>
 					<h3 className="text-xl font-bold text-primary-900 dark:text-white">Listening</h3>
@@ -1207,14 +1207,14 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 			{/* Hero Section */}
 			<section className="flex flex-col items-center text-center mt-8 mb-24 w-full mx-auto px-4 sm:px-8 relative z-10">
 				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-primary-900 block break-words pb-1">
-						Chinh phục <span className="text-primary-900">TOEIC</span>
+					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-primary-900 dark:text-white block break-words pb-1">
+						Chinh phục <span className="text-primary-900 dark:text-primary-400">TOEIC</span>
 					</span>
-					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2 pb-1 text-primary-900">
+					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2 pb-1 text-primary-900 dark:text-white">
 						dễ dàng và hiệu quả hơn
 					</span>
 				</h1>
-				<p className={`mt-3 max-w-2xl text-base sm:text-lg font-medium ${isOcean ? 'text-slate-800 font-semibold drop-shadow-sm' : 'text-primary-900'} leading-relaxed mx-auto`}>
+				<p className={`mt-3 max-w-2xl text-base sm:text-lg font-medium ${isOcean ? 'text-slate-800 font-semibold drop-shadow-sm' : 'text-primary-900'} dark:text-slate-300 leading-relaxed mx-auto`}>
 					Học từ vựng siêu hiệu quả và nhớ lâu. Giải thích ngữ pháp và mẹo làm bài chi tiết. Giúp bạn nâng cao điểm số TOEIC và hơn thế nữa
 				</p>
 
@@ -1309,7 +1309,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 							{ label: 'học viên đang học', value: stats.users },
 						].map((stat, idx) => (
 							<div key={idx} className="flex items-center shrink-0">
-								<span suppressHydrationWarning><strong suppressHydrationWarning className="text-primary-900 text-[15px]">{stat.value.toLocaleString('vi-VN')}+</strong> <span className="ml-[2px]">{stat.label}</span></span>
+								<span suppressHydrationWarning><strong suppressHydrationWarning className="text-primary-900 dark:text-primary-400 text-[15px]">{stat.value.toLocaleString('vi-VN')}+</strong> <span className="ml-[2px] dark:text-slate-300">{stat.label}</span></span>
 							</div>
 						))}
 					</div>
@@ -1340,7 +1340,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
                         <Link 
                             key={idx} 
                             href={item.href}
-                            className="bg-white/90 dark:bg-slate-900 backdrop-blur-sm border border-primary-900/10 dark:border-slate-700/80 px-4 xl:px-6 py-3.5 rounded-[16px] shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-900/20 dark:hover:border-slate-600 transition-all duration-300 flex items-center justify-center lg:justify-start gap-2 xl:gap-3 group w-full"
+                            className="bg-white/90 dark:bg-primary-950/40 backdrop-blur-sm backdrop-blur-sm border border-primary-900/10 dark:border-primary-500/20 px-4 xl:px-6 py-3.5 rounded-[16px] shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-900/20 dark:hover:border-slate-600 transition-all duration-300 flex items-center justify-center lg:justify-start gap-2 xl:gap-3 group w-full"
                         >
                             <span className="text-[#ea980c] dark:text-secondary-500 group-hover:scale-110 transition-transform">{item.icon}</span>
                             <span className="text-[13px] font-bold text-slate-700 dark:text-white group-hover:text-primary-900 dark:group-hover:text-primary-100 transition-colors">{item.title}</span>

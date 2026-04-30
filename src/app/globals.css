@@ -145,8 +145,8 @@
   --secondary-900: #78350f;
   --secondary-950: #451a03;
 
-  --background: #171717;
-  --foreground: #ededed;
+  --background: #0f0a17;
+  --foreground: #f3e8ff;
 }
 
 [data-theme="classic-dark"] {
@@ -176,8 +176,8 @@
   --secondary-900: #78350f;
   --secondary-950: #451a03;
 
-  --background: #171717;
-  --foreground: #ededed;
+  --background: #07160d;
+  --foreground: #ffffff;
 }
 
 [data-theme="ocean-blue-dark"] {
@@ -207,8 +207,8 @@
   --secondary-900: #78350f;
   --secondary-950: #451a03;
 
-  --background: #171717;
-  --foreground: #ededed;
+  --background: #0a0e1c;
+  --foreground: #ffffff;
 }
 
 
