@@ -648,7 +648,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                         })()}
                     </div>
                 </div>
-                <div className="p-4 mt-auto border-t border-slate-200/60 dark:border-primary-500/20 bg-white dark:bg-transparent">
+                <div className="p-4 pr-16 pb-6 mt-auto border-t border-slate-200/60 dark:border-primary-500/20 bg-white dark:bg-transparent">
                     {session ? (
                         <div className="w-full flex items-center gap-2">
                             <Link 
