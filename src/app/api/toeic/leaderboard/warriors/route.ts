@@ -15,7 +15,7 @@ export async function GET() {
         }
       },
       orderBy: { toeicStars: 'desc' },
-      take: 10,
+      take: 15,
       select: {
         id: true,
         name: true,
@@ -42,23 +42,26 @@ export async function GET() {
     const stats: any[] = await prisma.$queryRaw`
       SELECT 
         a."userId",
-        t."type",
         COUNT(a.id)::int as count
       FROM "ToeicAnswer" a
-      JOIN "ToeicQuestion" q ON a."questionId" = q.id
-      JOIN "ToeicGrammarLesson" l ON q."lessonId" = l.id
-      JOIN "ToeicGrammarTopic" t ON l."topicId" = t.id
       WHERE a."userId" IN (${Prisma.join(userIds)})
-      GROUP BY a."userId", t."type"
+      GROUP BY a."userId"
+    `;
+
+    const testStats: any[] = await prisma.$queryRaw`
+      SELECT 
+        "userId",
+        SUM("totalQuestions")::int as count
+      FROM "ToeicTestRecord"
+      WHERE "userId" IN (${Prisma.join(userIds)})
+      GROUP BY "userId"
     `;
 
     const data = topUsers.map(user => {
-      const userStats = stats.filter((s: any) => s.userId === user.id);
+      const userStats = stats.find((s: any) => s.userId === user.id);
+      const userTestStats = testStats.find((s: any) => s.userId === user.id);
       
-      const getCount = (type: string) => {
-        const row = userStats.find((s: any) => s.type === type);
-        return row ? Number(row.count) : 0;
-      };
+      const practiceCount = (userStats ? Number(userStats.count) : 0) + (userTestStats ? Number(userTestStats.count) : 0);
 
       return {
         id: user.id,
@@ -69,9 +72,7 @@ export async function GET() {
         currentStreak: user.currentStreak || 0,
         isAnonymousLeaderboard: user.isAnonymousLeaderboard,
         learnedVocab: user._count.vocabularyTags,
-        grammarAnswers: getCount('GRAMMAR'),
-        listeningAnswers: getCount('LISTENING'),
-        readingAnswers: getCount('READING'),
+        practiceAnswers: practiceCount,
       };
     });
 
