@@ -99,12 +99,12 @@
   --primary-200: #9bd6ff;
   --primary-300: #69c3ff;
   --primary-400: #3db2ff;
-  --primary-500: #17a4ff;
+  --primary-500: #4cb2ff;
   --primary-600: #219aff;
-  --primary-700: #157ecc;
-  --primary-800: #1165a3;
-  --primary-900: #0c4875;
-  --primary-950: #08314f;
+  --primary-700: #219aff;
+  --primary-800: #1a8ce6;
+  --primary-900: #219aff;
+  --primary-950: #157ecc;
 
   /* Sandy Gold / Sun Yellow Theme */
   --secondary-50: #fffbeb;
@@ -187,21 +187,21 @@ body {
 }
 
 .brand-cta-filled {
-  border: 2px solid var(--primary-600);
-  background: var(--primary-600);
+  border: 2px solid var(--primary-900);
+  background: var(--primary-900);
   color: #ffffff;
-  box-shadow: 0 8px 18px rgba(33, 154, 255, 0.25);
+  box-shadow: 0 8px 18px rgba(88, 28, 135, 0.25);
 }
 
 .brand-cta-filled:hover {
-  background: var(--primary-500);
+  background: var(--primary-800);
 }
 
 .brand-cta-outline {
-  border: 2px solid var(--primary-600);
+  border: 2px solid var(--primary-800);
   background: var(--primary-50);
-  color: var(--primary-600);
-  box-shadow: 0 2px 6px rgba(33, 154, 255, 0.08);
+  color: var(--primary-900);
+  box-shadow: 0 2px 6px rgba(88, 28, 135, 0.08);
 }
 
 .brand-cta-outline:hover {
