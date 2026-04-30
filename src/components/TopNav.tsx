@@ -501,7 +501,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   }, [session?.user?.image])
 
   useEffect(() => {
-    if (isMenuOpen || isMobileMenuOpen) {
+    if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
@@ -509,7 +509,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
     return () => {
       document.body.style.overflow = ''
     }
-  }, [isMenuOpen, isMobileMenuOpen])
+  }, [isMobileMenuOpen])
 
   const handleLoginClick = () => {
     const params = new URLSearchParams(window.location.search)
