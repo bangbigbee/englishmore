@@ -1184,14 +1184,22 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
 	const { theme } = useTheme();
 	const isOcean = theme === 'ocean-blue';
-	const { data: session } = useSession();
+	const { status } = useSession();
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
-		if (session?.user?.role === 'member' || session?.user?.role === 'admin') {
-			fetch('/api/user/progress-stats').then(res => res.json()).then(data => setProgressStats(data)).catch(console.error);
+	}, []);
+
+	useEffect(() => {
+		if (status === 'authenticated') {
+			fetch('/api/user/progress-stats')
+				.then(res => res.ok ? res.json() : null)
+				.then(data => {
+					if (data) setProgressStats(data);
+				})
+				.catch(console.error);
 		}
-	}, [session]);
+	}, [status]);
 
 	return (
 		<div className="py-8 pb-20 relative min-h-screen">
