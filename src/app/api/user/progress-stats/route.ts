@@ -15,15 +15,34 @@ export async function GET() {
     // Vocabulary stats
     const userTags = await prisma.vocabularyTag.findMany({
       where: { userId },
-      select: { isLearned: true, isHard: true, isBookmarked: true }
+      select: { isLearned: true, isHard: true, isBookmarked: true, updatedAt: true }
     })
 
     let vocabLearned = 0, vocabHard = 0, vocabBookmarked = 0
+    const activityMap: Record<string, number> = {}
+
     userTags.forEach(tag => {
       if (tag.isLearned) vocabLearned++
       if (tag.isHard) vocabHard++
       if (tag.isBookmarked) vocabBookmarked++
+
+      const day = tag.updatedAt.toISOString().split('T')[0];
+      activityMap[day] = (activityMap[day] || 0) + 1;
     })
+
+    // Generate last 14 days for Heatmap
+    const heatMapDays = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().split('T')[0];
+      heatMapDays.push({
+        date: ds,
+        dayLabel: d.toLocaleDateString('vi-VN', { weekday: 'short' }),
+        dateLabel: d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
+        count: activityMap[ds] || 0
+      });
+    }
 
     const totalWords = await (prisma as any).vocabularyItem.count({
       where: { category: 'TOEIC', isActive: true }
@@ -62,7 +81,8 @@ export async function GET() {
         hard: vocabHard,
         bookmarked: vocabBookmarked,
         total: totalWords,
-        completionRate: totalWords > 0 ? Math.round((vocabLearned / totalWords) * 100) : 0
+        completionRate: totalWords > 0 ? Math.round((vocabLearned / totalWords) * 100) : 0,
+        heatmap: heatMapDays
       },
       grammar: quizStats.grammar,
       reading: quizStats.reading,
