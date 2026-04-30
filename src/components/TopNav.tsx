@@ -527,11 +527,11 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
             {session && (
                  <button 
                     onClick={() => setIsStarModalOpen(true)}
-                    className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80 bg-white/50 backdrop-blur-md px-2 py-1 rounded-full border border-slate-200 shadow-sm" 
+                    className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80" 
                     title="Tìm hiểu về Toeic Stars"
                  >
                     <span className="text-[14px] mt-[-2px]">⭐</span>
-                    <span className="text-[12px] font-black text-secondary-600 mr-1">
+                    <span className="text-[13px] font-bold text-secondary-600 dark:text-secondary-400">
                         {(session.user as any)?.toeicStars || 0}
                     </span>
                  </button>

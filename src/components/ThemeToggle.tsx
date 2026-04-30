@@ -34,10 +34,10 @@ export default function ThemeToggle() {
   };
 
   return (
-    <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 p-0.5 shadow-sm">
+    <div className="flex items-center gap-2">
       <button
         onClick={cycleColor}
-        className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center justify-center"
+        className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center"
         aria-label="Toggle theme color"
         title={
           baseTheme === "light"
@@ -50,16 +50,14 @@ export default function ThemeToggle() {
         <span className={`w-3.5 h-3.5 rounded-full block transition-colors duration-300 ${baseTheme === "light" ? "bg-[#9333ea]" : baseTheme === "classic" ? "bg-[#16a34a]" : "bg-[#000080]"}`} />
       </button>
 
-      <div className="w-[1px] h-4 bg-slate-200 dark:bg-slate-600" />
-
       <button
         onClick={toggleDark}
-        className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center justify-center text-slate-500 dark:text-slate-400"
+        className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center text-slate-500 dark:text-slate-400"
         aria-label="Toggle dark mode"
         title="Toggle Dark Mode"
       >
         {isDark ? (
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
         ) : (
