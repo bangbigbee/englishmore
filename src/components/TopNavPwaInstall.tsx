@@ -126,22 +126,15 @@ export default function TopNavPwaInstall() {
                                     <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                                         <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">1</div>
                                         <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Mở trang web ToeicMore trên trình duyệt Chrome hoặc Safari (trên máy Mac)</p>
+                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                            <p className="text-sm sm:text-base text-slate-300">Nhấn biểu tượng <strong>"Cài đặt"</strong> trên thanh địa chỉ hoặc menu trình duyệt</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                                         <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">2</div>
                                         <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Nhấn vào biểu tượng <strong>"Cài đặt"</strong> trên thanh địa chỉ hoặc menu của trình duyệt</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                                        <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">3</div>
-                                        <div className="flex items-center gap-3">
                                             <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Xác nhận <strong>"Cài đặt"</strong> — ứng dụng sẽ xuất hiện trên màn hình chính</p>
+                                            <p className="text-sm sm:text-base text-slate-300">Xác nhận <strong>"Cài đặt"</strong> để thêm ứng dụng ra màn hình chính</p>
                                         </div>
                                     </div>
                                 </>
@@ -150,22 +143,15 @@ export default function TopNavPwaInstall() {
                                     <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                                         <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">1</div>
                                         <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Mở trang web ToeicMore bằng trình duyệt <strong>Safari</strong> trên iPhone/iPad</p>
+                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                            <p className="text-sm sm:text-base text-slate-300">Nhấn biểu tượng <strong>"Chia sẻ"</strong> trên thanh công cụ Safari</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                                         <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">2</div>
                                         <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Nhấn vào biểu tượng <strong>"Chia sẻ"</strong> ở cạnh dưới màn hình (hoặc trên cùng bên phải đối với iPad)</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                                        <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">3</div>
-                                        <div className="flex items-center gap-3">
                                             <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Cuộn xuống và chọn <strong>"Thêm vào MH chính"</strong> (Add to Home Screen)</p>
+                                            <p className="text-sm sm:text-base text-slate-300">Chọn <strong>"Thêm vào MH chính"</strong> (Add to Home Screen)</p>
                                         </div>
                                     </div>
                                 </>
