@@ -536,7 +536,7 @@ function ToeicPracticeContent() {
 	return (
 		<div className="min-h-screen flex flex-col md:flex-row relative z-0">
 			{/* Global Theme Gradient Background */}
-			<div className="fixed inset-0 bg-gradient-to-br from-primary-50 dark:from-primary-950/10 to-background dark:to-background -z-10" />
+			<div className="fixed inset-0 bg-gradient-to-br from-primary-50 to-background dark:bg-none dark:bg-background -z-10" />
 
 			<ToeicOnboardingModal onComplete={(level) => {
 				setToeicLevel(level);
