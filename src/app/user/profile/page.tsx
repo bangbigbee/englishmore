@@ -625,18 +625,19 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-        ) : (
+        ) : activeTab === 'upgrade' ? (
           <div className="w-full">
             <Suspense fallback={<div className="h-40 flex items-center justify-center">Đang tải...</div>}>
               <UpgradeContent />
             </Suspense>
           </div>
-        )}
+        ) : null}
         {activeTab === 'progress' && (
           <div className="mt-8">
             <ProgressView />
           </div>
         )}
+        </div>
       </div>
     </div>
   )
