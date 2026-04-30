@@ -157,7 +157,7 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
           {/* Floating Action Button */}
           <div className="relative pointer-events-auto">
               {isInstallable && (
-                  <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white z-10 animate-pulse"></div>
+                  <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-[1.5px] border-white z-10 animate-pulse shadow-sm"></div>
               )}
               <button
                 onClick={handleClick}
