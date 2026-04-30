@@ -86,72 +86,64 @@ export default function TopNavPwaInstall() {
             </button>
 
             {showModal && (
-                <div className="fixed inset-0 z-[1000] p-4 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-[#111827] text-white rounded-[24px] shadow-2xl p-6 sm:p-8 w-full max-w-lg flex flex-col relative animate-in zoom-in-95 duration-500 border border-slate-800">
-                        <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors bg-slate-800/50 hover:bg-slate-800 p-2 rounded-full">
+                <div className="fixed inset-0 z-[1000] p-4 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white text-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-md flex flex-col relative animate-in zoom-in-95 duration-500 border border-slate-100">
+                        <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors bg-slate-100 hover:bg-slate-200 p-2 rounded-full">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                         
                         <div className="flex flex-col items-center text-center mb-6 mt-2">
-                            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-full text-xs font-bold text-sky-400 mb-4 border border-slate-700">
-                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                Cài đặt miễn phí
-                            </div>
-                            <h3 className="text-2xl sm:text-3xl font-black mb-3 text-white tracking-tight">Cài đặt ứng dụng <span className="text-sky-400">ToeicMore</span></h3>
-                            <p className="text-slate-400 text-sm sm:text-base leading-relaxed px-4">
-                                Học mọi lúc mọi nơi — cài ứng dụng miễn phí trực tiếp từ trình duyệt, không cần App Store
+                            <h3 className="text-xl sm:text-2xl font-black mb-2 text-primary-900 tracking-tight">Cài đặt ứng dụng ToeicMore</h3>
+                            <p className="text-slate-500 text-sm leading-relaxed px-2">
+                                Học miễn phí mọi lúc mọi nơi không cần tải app từ Store
                             </p>
                         </div>
 
-                        <div className="flex bg-slate-800/80 rounded-xl p-1 mb-6 border border-slate-700">
+                        <div className="flex bg-slate-100 rounded-xl p-1 mb-6 border border-slate-200">
                             <button 
                                 onClick={() => setActiveTab('chrome')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'chrome' ? 'bg-[#1f2937] text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'chrome' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                Android / Chrome
+                                Chrome
                             </button>
                             <button 
                                 onClick={() => setActiveTab('ios')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'ios' ? 'bg-[#1f2937] text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'ios' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                iPhone / iPad
+                                iOS/macOS
                             </button>
                         </div>
 
                         <div className="flex flex-col gap-3 mb-6">
                             {activeTab === 'chrome' ? (
                                 <>
-                                    <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                                        <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">1</div>
-                                        <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Nhấn biểu tượng <strong>"Cài đặt"</strong> trên thanh địa chỉ hoặc menu trình duyệt</p>
+                                    <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                        <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">1</div>
+                                        <div className="flex items-center gap-2.5">
+                                            <p className="text-sm text-slate-600 leading-tight">Từ menu cài đặt có dấu 3 chấm, chọn <strong>"Thêm vào màn hình chính"</strong></p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                                        <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">2</div>
-                                        <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Xác nhận <strong>"Cài đặt"</strong> để thêm ứng dụng ra màn hình chính</p>
+                                    <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                        <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">2</div>
+                                        <div className="flex items-center gap-2.5">
+                                            <p className="text-sm text-slate-600 leading-tight">Xác nhận <strong>"Cài đặt"</strong> để thêm ứng dụng ra màn hình chính</p>
                                         </div>
                                     </div>
                                 </>
                             ) : (
                                 <>
-                                    <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                                        <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">1</div>
-                                        <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Nhấn biểu tượng <strong>"Chia sẻ"</strong> trên thanh công cụ Safari</p>
+                                    <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                        <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">1</div>
+                                        <div className="flex items-center gap-2.5">
+                                            <p className="text-sm text-slate-600 leading-tight">Nhấn biểu tượng <strong>"Chia sẻ"</strong> trên thanh công cụ Safari</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                                        <div className="w-8 h-8 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold shrink-0 shadow-lg shadow-sky-500/20">2</div>
-                                        <div className="flex items-center gap-3">
-                                            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            <p className="text-sm sm:text-base text-slate-300">Chọn <strong>"Thêm vào MH chính"</strong> (Add to Home Screen)</p>
+                                    <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                        <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">2</div>
+                                        <div className="flex items-center gap-2.5">
+                                            <p className="text-sm text-slate-600 leading-tight">Chọn <strong>"Thêm vào MH chính"</strong> (Add to Home Screen)</p>
                                         </div>
                                     </div>
                                 </>
@@ -169,7 +161,7 @@ export default function TopNavPwaInstall() {
                                     }
                                     setDeferredPrompt(null);
                                 }}
-                                className="w-full flex items-center justify-center gap-2 py-3.5 bg-sky-500 hover:bg-sky-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-sky-500/25"
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-bold transition-all shadow-md shadow-primary-500/20"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                                 Cài đặt ngay
@@ -178,7 +170,7 @@ export default function TopNavPwaInstall() {
                         {(activeTab === 'ios' || !deferredPrompt) && (
                             <button 
                                 onClick={() => setShowModal(false)}
-                                className="w-full flex items-center justify-center gap-2 py-3.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition-all border border-slate-700"
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition-all"
                             >
                                 Đã hiểu, đóng lại
                             </button>
