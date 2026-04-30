@@ -103,10 +103,19 @@ export default function ToeicWarriorLeaderboard() {
             {/* User Info */}
             <div className="flex-1 min-w-0">
               <div 
-                className="flex items-center gap-2 mb-1 cursor-pointer"
+                className="flex items-center gap-3 mb-1 cursor-pointer"
                 onClick={() => togglePrivacy(w.id)}
                 title={session?.user?.id === w.id ? (w.isAnonymousLeaderboard ? 'Nhấn để công khai danh tính' : 'Nhấn để ẩn danh tính') : ''}
               >
+                <div className={`relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0 transition-all ${session?.user?.id === w.id ? 'group-hover:ring-2 group-hover:ring-primary-500' : ''}`}>
+                  {!w.isAnonymousLeaderboard && w.image ? (
+                    <img src={w.image} alt={w.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold text-[13px] uppercase">
+                      {w.isAnonymousLeaderboard ? w.name.split(' ')[0].charAt(0) : w.name.charAt(0)}
+                    </div>
+                  )}
+                </div>
                 <h4 className="text-[16px] sm:text-[17px] font-bold text-primary-900 dark:text-white truncate">
                   {w.isAnonymousLeaderboard ? w.name.split(' ')[0] + ' ***' : w.name}
                 </h4>
@@ -123,7 +132,7 @@ export default function ToeicWarriorLeaderboard() {
               
               <div className="flex items-center gap-1.5 text-primary-600/80 dark:text-primary-300/70 text-[13px] mb-2.5">
                 <span className="text-orange-500">🔥</span>
-                <span>{w.currentStreak > 0 ? `chuỗi ${w.currentStreak} ngày chuyên cần` : 'Chưa có chuỗi ngày'}</span>
+                <span>{w.currentStreak > 0 ? `Chuỗi ${w.currentStreak} ngày chuyên cần` : 'Chưa có chuỗi ngày'}</span>
               </div>
 
               {/* Combined Stats */}

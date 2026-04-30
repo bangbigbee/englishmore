@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         timeMs,
       },
       include: {
-        user: { select: { name: true } }
+        user: { select: { name: true, image: true } }
       }
     });
 
@@ -40,7 +40,7 @@ export async function GET(req: Request) {
                 topicSlug: 'GLOBAL'
             },
             include: {
-                user: { select: { name: true } }
+                user: { select: { name: true, image: true } }
             }
         });
         

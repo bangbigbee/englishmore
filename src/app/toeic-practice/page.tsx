@@ -838,76 +838,69 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                         )}
                     </div>
                 ) : (
-                    <>
-                        <div className="overflow-x-auto relative z-10 hidden md:block">
-                            <table className="w-full text-left">
-                                <thead>
-                                    <tr className="border-b-2 border-slate-100 text-primary-900/70 font-semibold">
-                                        <th className="pb-4 px-4 text-center w-16 uppercase tracking-wider text-[11px]">Hạng</th>
-                                        <th className="pb-4 px-4 uppercase tracking-wider text-[11px]">Họ tên</th>
-                                        <th className="pb-4 px-4 text-center uppercase tracking-wider text-[11px]">Điểm số</th>
-                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]">Thời gian hoàn thành</th>
-                                        <th className="pb-4 px-4 text-right uppercase tracking-wider text-[11px]" title="Trung bình giây / 1 từ">Tốc độ (s/từ)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {leaders.map((leader, idx) => (
-                                        <tr 
-                                            key={leader.id || idx}
-                                            className={`border-b border-slate-50 transition-colors group ${idx === 0 ? 'bg-secondary-50/30' : 'hover:bg-slate-50/50'}`}
-                                        >
-                                            <td className="py-4 px-4 text-center">
-                                                {idx === 0 ? <span className="text-2xl drop-shadow-sm" title="Top 1">🥇</span> : 
-                                                idx === 1 ? <span className="text-2xl drop-shadow-sm" title="Top 2">🥈</span> : 
-                                                idx === 2 ? <span className="text-2xl drop-shadow-sm" title="Top 3">🥉</span> : 
-                                                <span className="font-semibold text-primary-900/60">#{idx + 1}</span>}
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <div className="text-primary-900 font-normal text-[13px]">{leader.user?.name || leader.guestName || "Ẩn danh"}</div>
-                                            </td>
-                                            <td className="py-4 px-4 text-center text-primary-900">
-                                                <span className="font-normal text-[13px]">{leader.score}</span>
-                                                <span className="text-primary-900/40 text-xs mx-1">/</span>
-                                                <span className="font-normal text-primary-900/70 text-[13px]">{leader.total}</span>
-                                            </td>
-                                            <td className="py-4 px-4 text-right">
-                                                <div className="text-primary-900 font-normal text-[13px]">{(leader.timeMs / 1000).toFixed(2)}s</div>
-                                            </td>
-                                            <td className="py-4 px-4 text-right">
-                                                <div className="text-primary-900 font-mono tracking-tighter font-normal text-[13px]">{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s</div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div className="flex flex-col gap-4 relative z-10">
+                        {leaders.map((leader, idx) => (
+                            <motion.div 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                key={leader.id || idx}
+                                className="flex items-center gap-4 bg-primary-50/40 dark:bg-primary-900/10 border border-primary-100/50 dark:border-primary-800/30 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all group"
+                            >
+                                {/* Rank Icon */}
+                                <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center">
+                                    {idx === 0 ? <span className="text-[34px] drop-shadow-md" title="Top 1">🥇</span> : 
+                                        idx === 1 ? <span className="text-[34px] drop-shadow-md" title="Top 2">🥈</span> : 
+                                        idx === 2 ? <span className="text-[34px] drop-shadow-md" title="Top 3">🥉</span> : 
+                                        <span className="font-semibold text-primary-900/40 dark:text-primary-100/30 text-lg">#{idx + 1}</span>}
+                                </div>
 
-                        {/* Mobile View */}
-                        <div className="md:hidden space-y-3 relative z-10 mt-2">
-                            {leaders.map((leader, idx) => (
-                                <div 
-                                    key={leader.id || idx}
-                                    className={`flex items-center gap-3 border p-3 rounded-2xl ${idx === 0 ? 'bg-secondary-50/50 border-secondary-200 shadow-sm relative' : 'bg-slate-50 border-slate-100'}`}
-                                >
-                                    <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white rounded-full shadow-sm font-black text-slate-400">
-                                        {idx === 0 ? <span className="text-2xl">🥇</span> : 
-                                        idx === 1 ? <span className="text-2xl">🥈</span> : 
-                                        idx === 2 ? <span className="text-2xl">🥉</span> : 
-                                        `#${idx + 1}`}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="truncate text-[13px] mb-0.5 text-primary-900 font-normal">
+                                {/* User Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <div className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0">
+                                            {leader.user?.image ? (
+                                                <img src={leader.user.image} alt={leader.user?.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold text-[13px] uppercase">
+                                                    {(leader.user?.name || leader.guestName || "A").charAt(0)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h4 className="text-[16px] sm:text-[17px] font-bold text-primary-900 dark:text-white truncate">
                                             {leader.user?.name || leader.guestName || "Ẩn danh"}
+                                        </h4>
+                                    </div>
+                                    
+                                    {/* Combined Stats */}
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] mt-2.5">
+                                        <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300" title="Thời gian">
+                                            <svg className="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <strong className="font-bold text-primary-900 dark:text-white">{(leader.timeMs / 1000).toFixed(2)}s</strong>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300" title="Tốc độ">
+                                            <svg className="w-4 h-4 text-secondary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                            <strong className="font-bold text-primary-900 dark:text-white">{(leader.total > 0 ? (leader.timeMs / 1000) / leader.total : 0).toFixed(2)}s/từ</strong>
                                         </div>
                                     </div>
-                                    <div className="text-right shrink-0">
-                                        <div className="text-[12px] font-normal text-primary-900">{leader.score}<span className="text-[10px] text-primary-900/60 font-normal ml-0.5">/{leader.total}</span></div>
-                                        <div className="text-[12px] font-normal text-primary-900 mt-0.5">{(leader.timeMs / 1000).toFixed(2)}s ({((leader.timeMs / 1000) / Math.max(1, leader.total)).toFixed(2)}s/từ)</div>
-                                    </div>
                                 </div>
-                            ))}
-                        </div>
-                    </>
+
+                                {/* Score */}
+                                <div className="shrink-0 flex items-center gap-1.5 pr-2">
+                                    <span className="text-[19px] sm:text-[22px] font-black text-emerald-500 drop-shadow-sm leading-none mt-0.5">
+                                        {leader.score}
+                                    </span>
+                                    <span className="text-[14px] sm:text-[16px] font-bold text-slate-400 dark:text-slate-500 leading-none mt-1.5">
+                                        / {leader.total}
+                                    </span>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
                 )}
             </div>
         </div>
