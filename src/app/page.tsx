@@ -2097,7 +2097,7 @@ function HomeContent() {
               <h2 className="mb-8 text-3xl sm:text-4xl font-extrabold text-primary-900 drop-shadow-sm">Sẵn sàng để tiến bộ mỗi ngày?</h2>
               <Link
                 href="/dashboard"
-                className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-primary-900 px-10 py-5 sm:px-16 sm:py-6 font-extrabold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-primary-800 hover:shadow-2xl ring-4 ring-primary-900/20"
+                className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-primary-900 to-primary-500 px-10 py-5 sm:px-16 sm:py-6 font-extrabold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:brightness-110 hover:shadow-2xl ring-4 ring-primary-900/20"
               >
                 <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
                   <div className="relative h-full w-10 bg-white/30" />
