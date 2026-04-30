@@ -631,6 +631,11 @@ export default function ProfilePage() {
             </Suspense>
           </div>
         )}
+        {activeTab === 'progress' && (
+          <div className="mt-8">
+            <ProgressView />
+          </div>
+        )}
       </div>
     </div>
   )
