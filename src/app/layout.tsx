@@ -40,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
         siteName: "ToeicMore",
         images: [
           {
-            url: "/toeicmorelogo.svg?v=2",
+            url: "/toeicmorelogoGreen.svg?v=2",
             width: 800,
             height: 600,
             alt: "ToeicMore Logo",
@@ -50,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
         type: "website",
       },
       icons: {
-        icon: '/toeicmoreicon.svg?v=2',
+        icon: '/toeicmoreiconGreen.svg?v=2',
       },
       metadataBase: new URL('https://toeicmore.com'),
     };
@@ -112,9 +112,9 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
         <ThemeProvider
           attribute="data-theme"
-          defaultTheme="ocean-blue"
+          defaultTheme="classic"
           enableSystem={false}
-          themes={["light", "classic", "ocean-blue"]}
+          themes={["light", "classic", "ocean-blue", "dark", "classic-dark", "ocean-blue-dark"]}
         >
           <AuthProvider>
             <ClientTracking />

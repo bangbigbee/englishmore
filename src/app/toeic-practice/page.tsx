@@ -551,8 +551,7 @@ function ToeicPracticeContent() {
 									<span className="font-black text-2xl text-primary-900 bg-primary-50 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm">T</span>
 								) : (
 									<>
-										<img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-hide" />
-										<img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-show" />
+										<img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain" />
 									</>
 								)}
                             </Link>

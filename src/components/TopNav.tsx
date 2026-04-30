@@ -244,8 +244,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                     <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
                         {isToeicDomain ? (
                             <>
-                                <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[32px] object-contain drop-shadow-sm theme-classic-hide" />
-                                <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[32px] object-contain drop-shadow-sm theme-classic-show" />
+                                <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[32px] object-contain drop-shadow-sm" />
                             </>
                         ) : (
                             <>
@@ -562,8 +561,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                 <div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
                     <div className="mb-6 px-2 flex justify-between items-center">
                         <div>
-                            <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain theme-classic-hide" />
-                            <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain theme-classic-show" />
+                            <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain" />
                         </div>
                         <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 rounded-full">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
