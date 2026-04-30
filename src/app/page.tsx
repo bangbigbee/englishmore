@@ -2096,7 +2096,7 @@ function HomeContent() {
             <section className="flex flex-col items-center justify-center py-12 sm:py-20 text-center">
               <h2 className="mb-8 text-3xl sm:text-4xl font-extrabold text-primary-900 drop-shadow-sm">Sẵn sàng để tiến bộ mỗi ngày?</h2>
               <button
-                onClick={() => window.dispatchEvent(new Event('openSidebarMenu'))}
+                onClick={() => window.dispatchEvent(new Event('openStartModal'))}
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-secondary-500 px-10 py-5 sm:px-16 sm:py-6 font-extrabold text-primary-900 shadow-xl transition-all duration-300 hover:scale-105 hover:bg-secondary-400 hover:shadow-2xl ring-4 ring-secondary-500/20"
               >
                 <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">

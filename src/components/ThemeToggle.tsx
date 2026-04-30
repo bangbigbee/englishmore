@@ -44,10 +44,10 @@ export default function ThemeToggle() {
             ? "Purple Theme"
             : baseTheme === "classic"
             ? "Green Theme"
-            : "Blue Theme"
+            : "Teal Theme"
         }
       >
-        <span className={`w-3.5 h-3.5 rounded-full block transition-colors duration-300 ${baseTheme === "light" ? "bg-[#9333ea]" : baseTheme === "classic" ? "bg-[#16a34a]" : "bg-[#000080]"}`} />
+        <span className={`w-3.5 h-3.5 rounded-full block transition-colors duration-300 ${baseTheme === "light" ? "bg-[#9333ea]" : baseTheme === "classic" ? "bg-[#16a34a]" : "bg-[#14b8a6]"}`} />
       </button>
 
       <button

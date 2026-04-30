@@ -548,10 +548,14 @@ function ToeicPracticeContent() {
 						<div className="mb-6">
 							<Link href="/" className={`flex items-center justify-center h-10 mb-2 mt-2 ${isSidebarCollapsed ? '' : 'px-4 justify-start'}`}>
                                 {isSidebarCollapsed ? (
-									<span className="font-black text-2xl text-primary-900 bg-primary-50 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm">T</span>
+									<>
+                                        <img src="/toeicmoreicon.svg?v=2" alt="ToeicMore" className="w-9 h-9 object-contain theme-classic-hide" />
+                                        <img src="/toeicmoreiconGreen.svg?v=2" alt="ToeicMore" className="w-9 h-9 object-contain theme-classic-show hidden" />
+									</>
 								) : (
 									<>
-										<img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain" />
+                                        <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-hide" />
+										<img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[34px] object-contain theme-classic-show hidden" />
 									</>
 								)}
                             </Link>
@@ -650,7 +654,7 @@ function ToeicPracticeContent() {
 						
 						<button 
 							onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-							className="mt-4 flex items-center justify-center gap-1.5 w-full text-slate-400 hover:text-slate-600 transition-colors py-1.5 rounded-lg hover:bg-slate-50"
+							className="mt-4 flex items-center justify-center gap-1.5 w-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-primary-950/40"
 						>
 							<svg className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isSidebarCollapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -1213,7 +1217,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 
 				<div className="mt-8 flex justify-center w-full px-4 relative z-20">
 					<button
-						onClick={() => window.dispatchEvent(new Event('openSidebarMenu'))}
+						onClick={() => window.dispatchEvent(new Event('openStartModal'))}
 						className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-secondary-500 px-8 py-4 sm:px-12 sm:py-5 font-extrabold text-primary-900 shadow-xl transition-all duration-300 hover:scale-105 hover:bg-secondary-400 hover:shadow-2xl ring-4 ring-secondary-500/20"
 					>
 						<div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
@@ -2416,7 +2420,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 							</div>
 						) : (
                             <>
-                                <div className="inline-flex flex-wrap gap-1.5 sm:gap-2 mb-6 p-1.5 bg-slate-100/80 rounded-[14px]">
+                                <div className="inline-flex flex-wrap gap-1.5 sm:gap-2 mb-6 p-1.5 bg-slate-100/80 dark:bg-[#1a202c]/60 rounded-[14px]">
                                     {(['BASIC', 'ADVANCED', 'MIXED']).map(pkg => {
                                         const isActive = activePackage === pkg;
                                         

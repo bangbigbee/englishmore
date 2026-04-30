@@ -4,6 +4,7 @@ import Image from 'next/image'
 import LoginModal from './LoginModal'
 import UpgradeModal from './UpgradeModal'
 import ToeicStarInfoModal from './ToeicStarInfoModal'
+import ToeicStartModal from './ToeicStartModal'
 import { motion, AnimatePresence } from 'framer-motion'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -433,9 +434,9 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false)
   const [isStarModalOpen, setIsStarModalOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isStartModalOpen, setIsStartModalOpen] = useState(false)
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -492,8 +493,15 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
 
   useEffect(() => {
     const handleOpenSidebarMenu = () => setIsMobileMenuOpen(true)
+    const handleOpenStartModal = () => setIsStartModalOpen(true)
+    
     window.addEventListener('openSidebarMenu', handleOpenSidebarMenu)
-    return () => window.removeEventListener('openSidebarMenu', handleOpenSidebarMenu)
+    window.addEventListener('openStartModal', handleOpenStartModal)
+    
+    return () => {
+        window.removeEventListener('openSidebarMenu', handleOpenSidebarMenu)
+        window.removeEventListener('openStartModal', handleOpenStartModal)
+    }
   }, [])
 
   useEffect(() => {
@@ -795,6 +803,10 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         currentStars={(session?.user as any)?.toeicStars || 0}
         userId={session?.user?.id}
       />
+      
+      <AnimatePresence>
+        {isStartModalOpen && <ToeicStartModal isOpen={isStartModalOpen} onClose={() => setIsStartModalOpen(false)} />}
+      </AnimatePresence>
     </>
   )
 }
