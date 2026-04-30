@@ -434,6 +434,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false)
   const [isStarModalOpen, setIsStarModalOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isStartModalOpen, setIsStartModalOpen] = useState(false)
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false)
