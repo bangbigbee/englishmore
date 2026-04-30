@@ -561,13 +561,13 @@ function ToeicPracticeContent() {
 							const isActive = tab === item.id;
                             const itemContent = (
                                 <>
-									<div className={`${isActive ? 'text-primary-600' : 'text-slate-400'} shrink-0`}>
+									<div className={`${isActive ? 'text-primary-600 dark:text-primary-300' : 'text-slate-400 dark:text-slate-500'} shrink-0`}>
 										{item.icon}
 									</div>
 									{!isSidebarCollapsed && <span className="text-[14px]">{item.label}</span>}
                                 </>
                             );
-                            const className = `w-full flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center' : ''}`;
+                            const className = `w-full flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${isActive ? 'bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-100 shadow-sm' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-primary-950/40 dark:hover:text-slate-300 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center' : ''}`;
 							
                             if (item.externalHref) {
                                 return (
