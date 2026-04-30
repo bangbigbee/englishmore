@@ -75,7 +75,7 @@ export default function ProfilePage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imagePreviewFailed, setImagePreviewFailed] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [activeTab, setActiveTab] = useState<'info' | 'upgrade'>('info')
+  const [activeTab, setActiveTab] = useState<'info' | 'upgrade' | 'progress'>('info')
 
   const [formData, setFormData] = useState({
     name: '',
