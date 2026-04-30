@@ -261,26 +261,26 @@ export default function ProfilePage() {
   return (
     <div className="w-full h-full pb-12">
       <div className="mx-auto max-w-5xl px-0 py-4 sm:px-6 lg:px-8">
-        <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto custom-scrollbar mb-6 border border-slate-200 w-full md:w-max">
-          <button
-            onClick={() => setActiveTab('info')}
-            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all ${activeTab === 'info' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-          >
-            Thông tin cá nhân
-          </button>
-          <Link
-            href="/toeic-progress?tab=reports-vocabulary"
-            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50 flex items-center whitespace-nowrap`}
-          >
-            Tiến độ
-          </Link>
-          <button
-            onClick={() => setActiveTab('upgrade')}
-            className={`px-5 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'upgrade' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-          >
-            <span className="text-secondary-500 text-lg">⚡</span> Nâng cấp tài khoản
-          </button>
-        </div>
+          <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto custom-scrollbar mb-6 border border-slate-200 w-full md:w-max">
+            <button
+              onClick={() => setActiveTab('info')}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${activeTab === 'info' ? 'bg-primary-100 text-primary-900' : 'bg-gray-100 text-gray-700'}`}
+            >
+              Thông tin cá nhân
+            </button>
+            <button
+              onClick={() => setActiveTab('progress')}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${activeTab === 'progress' ? 'bg-primary-100 text-primary-900' : 'bg-gray-100 text-gray-700'}`}
+            >
+              Tiến độ
+            </button>
+            <button
+              onClick={() => setActiveTab('upgrade')}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full flex items-center gap-1 transition-all ${activeTab === 'upgrade' ? 'bg-primary-100 text-primary-900' : 'bg-gray-100 text-gray-700'}`}
+            >
+              <span className="text-secondary-500">⚡</span> Nâng cấp tài khoản
+            </button>
+          </div>
 
         {activeTab === 'info' ? (
           <div className="flex flex-col gap-8">
