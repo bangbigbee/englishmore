@@ -607,9 +607,20 @@ function ToeicPracticeContent() {
 										{session.user?.name?.charAt(0).toUpperCase() || 'U'}
 									</div>
 									{!isSidebarCollapsed && (
-										<div className="flex-1 min-w-0">
-											<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
-											<p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+										<div className="flex-1 min-w-0 flex flex-col justify-center">
+											<div className="flex items-center gap-1.5">
+												<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+												{((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
+													<span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none shrink-0 ${
+														(session.user as any)?.tier === 'ULTRA' 
+														? 'bg-gradient-to-r from-primary-600 to-primary-800 text-white' 
+														: 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
+													}`}>
+														{(session.user as any)?.tier}
+													</span>
+												)}
+											</div>
+											<p className="text-[11px] font-medium text-slate-500 truncate mt-0.5">{session.user?.email}</p>
 										</div>
 									)}
 								</button>

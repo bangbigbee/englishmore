@@ -4,7 +4,6 @@ import Image from 'next/image'
 import LoginModal from './LoginModal'
 import UpgradeModal from './UpgradeModal'
 import ToeicStarInfoModal from './ToeicStarInfoModal'
-import TopNavPwaInstall from './TopNavPwaInstall'
 import { motion, AnimatePresence } from 'framer-motion'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -514,18 +513,8 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                     <span className="text-[12px] font-black text-secondary-600 mr-1">
                         {(session.user as any)?.toeicStars || 0}
                     </span>
-                    {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
-                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none ${
-                            (session.user as any)?.tier === 'ULTRA' 
-                            ? 'bg-gradient-to-r from-primary-600 to-primary-800 text-white' 
-                            : 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
-                        }`}>
-                            {(session.user as any)?.tier}
-                        </span>
-                    )}
                  </button>
             )}
-            <TopNavPwaInstall />
             <ThemeToggle />
         </div>
         
@@ -552,18 +541,8 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                             <span className="text-[11px] font-medium text-secondary-600 mr-0.5">
                                 {(session.user as any)?.toeicStars || 0}
                             </span>
-                            {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
-                                <span className={`text-[8px] font-bold px-1 py-0.5 rounded shadow-sm leading-none ${
-                                    (session.user as any)?.tier === 'ULTRA' 
-                                    ? 'bg-gradient-to-r from-primary-600 to-primary-800 text-white' 
-                                    : 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
-                                }`}>
-                                    {(session.user as any)?.tier}
-                                </span>
-                            )}
                         </button>
                     )}
-                    <TopNavPwaInstall />
                     <ThemeToggle />
                 </div>
             </div>
@@ -720,7 +699,6 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </div>
 
         <div className="shrink-0 flex items-center gap-2 sm:gap-3">
-          <TopNavPwaInstall />
           <ThemeToggle />
           {/* Desktop More Menu */}
           <div className="hidden lg:flex items-center gap-2">
@@ -749,9 +727,20 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                              <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold text-[11px] shrink-0">
                                 {session.user?.name?.charAt(0).toUpperCase() || 'U'}
                              </div>
-                             <span className="text-[13px] font-bold text-slate-700 max-w-[100px] truncate">
-                                {session.user?.name?.split(' ').pop() || "Cá Nhân"}
-                             </span>
+                             <div className="flex items-center gap-1.5">
+                               <span className="text-[13px] font-bold text-slate-700 max-w-[100px] truncate">
+                                  {session.user?.name?.split(' ').pop() || "Cá Nhân"}
+                               </span>
+                               {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
+                                 <span className={`text-[8px] font-bold px-1 py-0.5 rounded shadow-sm leading-none shrink-0 ${
+                                     (session.user as any)?.tier === 'ULTRA' 
+                                     ? 'bg-gradient-to-r from-primary-600 to-primary-800 text-white' 
+                                     : 'bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300]'
+                                 }`}>
+                                     {(session.user as any)?.tier}
+                                 </span>
+                               )}
+                             </div>
                            </>
                        ) : (
                            <svg className="w-5 h-5 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
@@ -767,30 +756,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                 </div>
             )}
           </div>
-          {session && (
-            <div className="flex items-center gap-2">
-              {session.user?.tier === 'PRO' && (
-                <Link 
-                  href={isToeicDomain ? "/toeic-practice?tab=profile" : "/user/profile"}
-                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-[#FFD700] to-[#FDB931] text-[#594300] font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-pointer border border-[#FDB931]/50 hover:opacity-90 transition-opacity"
-                >
-                  <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  PRO
-                  <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/80 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                </Link>
-              )}
-              {session.user?.tier === 'ULTRA' && (
-                <Link 
-                  href={isToeicDomain ? "/toeic-practice?tab=profile" : "/user/profile"}
-                  className="relative hidden sm:flex overflow-hidden items-center justify-center gap-0.5 bg-gradient-to-r from-primary-700 to-primary-950 text-white font-black uppercase tracking-widest px-1.5 h-5 rounded-[4px] text-[9px] shadow-sm cursor-pointer border border-primary-600/30 hover:opacity-90 transition-opacity"
-                >
-                  <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                  ULTRA
-                  <span className="absolute top-0 w-[150%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 pointer-events-none" style={{ animation: 'metallic-shine-sweep 4s ease-in-out infinite' }} />
-                </Link>
-              )}
-            </div>
-          )}
+          {/* End session info */}
         </div>
       </div>
 
