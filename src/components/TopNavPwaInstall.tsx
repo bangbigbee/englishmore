@@ -76,7 +76,7 @@ export default function TopNavPwaInstall() {
         <>
             <button
                 onClick={handleClick}
-                className="relative flex items-center justify-center p-1.5 sm:p-2 bg-gradient-to-br from-primary-50 to-primary-100 text-primary-700 rounded-full hover:bg-primary-100 transition-all border border-primary-200 shadow-sm overflow-hidden group"
+                className="relative flex shrink-0 items-center justify-center p-1.5 sm:p-2 bg-gradient-to-br from-primary-50 to-primary-100 text-primary-700 rounded-full hover:bg-primary-100 transition-all border border-primary-200 shadow-sm overflow-hidden group"
                 title="Cài đặt ứng dụng"
             >
                 <div className="absolute inset-0 bg-primary-400/20 w-full h-full animate-ping opacity-75 rounded-full"></div>

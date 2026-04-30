@@ -538,23 +538,22 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                 </div>
-                {/* Center: Logo */}
                 <div className="flex justify-center">
                     <Link href="/" className="flex shrink-0 items-center leading-none z-10">
-                        <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[26px] object-contain drop-shadow-sm theme-classic-hide" />
-                        <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[26px] object-contain drop-shadow-sm theme-classic-show" />
+                        <img src="/toeicmoreicon.svg?v=2" alt="ToeicMore" className="w-auto h-[28px] object-contain drop-shadow-sm theme-classic-hide" />
+                        <img src="/toeicmoreiconGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[28px] object-contain drop-shadow-sm theme-classic-show" />
                     </Link>
                 </div>
                 {/* Right: ThemeToggle */}
-                <div className="flex justify-end items-center gap-2">
+                <div className="flex justify-end items-center gap-1.5 sm:gap-2 pr-1">
                     {session && (
-                        <button onClick={() => setIsStarModalOpen(true)} className="flex items-center gap-1 cursor-pointer select-none transition-opacity hover:opacity-80">
-                            <span className="text-[14px] mt-[-2px]">⭐</span>
-                            <span className="text-[12px] font-black text-secondary-600 mr-1">
+                        <button onClick={() => setIsStarModalOpen(true)} className="flex items-center gap-0.5 cursor-pointer select-none transition-opacity hover:opacity-80 shrink-0">
+                            <span className="text-[12px] mt-[-2px]">⭐</span>
+                            <span className="text-[11px] font-medium text-secondary-600 mr-0.5">
                                 {(session.user as any)?.toeicStars || 0}
                             </span>
                             {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
-                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none ${
+                                <span className={`text-[8px] font-bold px-1 py-0.5 rounded shadow-sm leading-none ${
                                     (session.user as any)?.tier === 'ULTRA' 
                                     ? 'bg-gradient-to-r from-primary-600 to-primary-800 text-white' 
                                     : 'bg-gradient-to-r from-secondary-400 to-secondary-600 text-white'
