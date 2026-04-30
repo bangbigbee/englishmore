@@ -239,8 +239,8 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
         {/* Mobile Left Drawer Menu */}
         <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMenuOpen}>
             <div onClick={() => setIsMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 cursor-pointer ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
-            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 bg-white shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
+            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 dark:border-primary-500/20 bg-white dark:bg-[#07160d] shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-primary-500/20 bg-slate-50/80 dark:bg-transparent shrink-0">
                     <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
                         {isToeicDomain ? (
                             <>
@@ -264,7 +264,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                         <Link 
                           href="/user/profile" 
                           onClick={() => setIsMenuOpen(false)} 
-                          className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${pathname === '/user/profile' ? 'bg-slate-50 text-slate-900 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
+                          className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${pathname === '/user/profile' ? 'bg-slate-50 text-slate-900 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] relative z-10' : 'text-slate-700 dark:text-white border border-transparent hover:border-slate-100 dark:hover:border-primary-500/20 hover:bg-slate-50 dark:hover:bg-primary-950/40 hover:text-slate-900 dark:hover:text-white'}`}
                         >
                             <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${pathname === '/user/profile' ? 'bg-white shadow-sm' : 'bg-slate-50'}`}>
                                 <ModernUserIcon />
@@ -274,7 +274,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                         <Link
                           href="/toeic-progress?tab=vocabulary-bank" 
                           onClick={() => setIsMenuOpen(false)} 
-                          className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-primary-50 text-primary-700 border border-primary-200 shadow-[0_4px_12px_rgba(16,185,129,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:border-slate-100 hover:bg-slate-50 hover:text-slate-900'}`}
+                          className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-primary-50 dark:bg-primary-600/30 text-primary-700 dark:text-primary-100 border border-primary-200 dark:border-primary-500/20 shadow-[0_4px_12px_rgba(16,185,129,0.05)] relative z-10' : 'text-slate-700 dark:text-white border border-transparent hover:border-slate-100 dark:hover:border-primary-500/20 hover:bg-slate-50 dark:hover:bg-primary-950/40 hover:text-slate-900 dark:hover:text-white'}`}
                         >
                             <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${pathname === '/toeic-progress' && (searchParams.get('tab')?.endsWith('-bank') || searchParams.get('tab') === 'vocabulary-bank') ? 'bg-white shadow-sm text-primary-500' : 'bg-slate-50 text-primary-500/60'}`}>
                                 <BookIcon className="w-5 h-5 scale-[0.9]" />
@@ -305,13 +305,13 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                           return (
                               <button
                                   key={t.key}
-                                  className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-primary-50 text-primary-700 border border-primary-200 shadow-[0_4px_12px_rgba(88, 28, 135,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                  className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-primary-50 dark:bg-primary-600/30 text-primary-700 dark:text-primary-100 border border-primary-200 dark:border-primary-500/20 shadow-[0_4px_12px_rgba(88, 28, 135,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
                                   onClick={() => {
                                       handleToeicTabClick(t.key)
                                       setIsMenuOpen(false)
                                   }}
                               >
-                                  <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + tabColorClass : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100'}`}>
+                                  <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + tabColorClass : 'bg-slate-50 dark:bg-primary-900/40 text-slate-400 dark:text-slate-300 group-hover:bg-slate-100 dark:group-hover:bg-primary-800/40'}`}>
                                       <div className={`scale-[0.8] ${!isActive ? tabColorClass + ' opacity-60' : ''}`}>{t.icon}</div>
                                   </span>
                                   <span className="flex-1 truncate text-[14px]">{t.label}</span>
@@ -356,10 +356,10 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                                   key={t.key}
                                   href={t.href}
                                   target={t.external ? "_blank" : undefined}
-                                  className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-primary-50 text-primary-700 border border-primary-200 shadow-[0_4px_12px_rgba(88, 28, 135,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
+                                  className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer ${isActive ? 'bg-primary-50 dark:bg-primary-600/30 text-primary-700 dark:text-primary-100 border border-primary-200 dark:border-primary-500/20 shadow-[0_4px_12px_rgba(88, 28, 135,0.05)] relative z-10' : 'text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100'}`}
                                   onClick={() => setIsMenuOpen(false)}
                               >
-                                  <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + t.color : 'bg-slate-50 text-slate-400 group-hover:bg-slate-100'}`}>
+                                  <span className={`w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors ${isActive ? 'bg-white shadow-sm ' + t.color : 'bg-slate-50 dark:bg-primary-900/40 text-slate-400 dark:text-slate-300 group-hover:bg-slate-100 dark:group-hover:bg-primary-800/40'}`}>
                                       <div className={`scale-[0.8] ${!isActive ? t.color + ' opacity-60' : ''}`}>{t.icon}</div>
                                   </span>
                                   <span className="flex-1 truncate text-[14px]">{t.label}</span>
@@ -556,14 +556,14 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
             />
             {/* Drawer */}
             <aside 
-                className={`fixed inset-y-0 left-0 w-[280px] bg-white shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed inset-y-0 left-0 w-[280px] bg-white dark:bg-[#07160d] dark:border-r dark:border-primary-500/20 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
                     <div className="mb-6 px-2 flex justify-between items-center">
                         <div>
                             <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain" />
                         </div>
-                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 rounded-full">
+                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 dark:bg-primary-950/20 dark:hover:bg-primary-900/30 rounded-full">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                     </div>
@@ -581,13 +581,13 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                                 const isActive = currentTab === item.id;
                                 const itemContent = (
                                     <>
-                                        <div className={`${isActive ? 'text-primary-600' : 'text-slate-400'}`}>
+                                        <div className={`${isActive ? 'text-primary-600 dark:text-primary-300' : 'text-slate-400 dark:text-white'}`}>
                                             {item.icon}
                                         </div>
                                         <span className="text-[14px]">{item.label}</span>
                                     </>
                                 );
-                                const className = `w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left ${isActive ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`;
+                                const className = `w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left ${isActive ? 'bg-primary-50 dark:bg-primary-600/30 text-primary-700 dark:text-primary-100 shadow-sm' : 'text-slate-500 dark:text-white hover:bg-slate-50 dark:hover:bg-primary-950/40 hover:text-slate-900 dark:hover:text-white'}`;
                                 
                                 if (item.externalHref) {
                                     return (
@@ -626,13 +626,13 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                         })()}
                     </div>
                 </div>
-                <div className="p-4 mt-auto border-t border-slate-200/60 bg-white">
+                <div className="p-4 mt-auto border-t border-slate-200/60 dark:border-primary-500/20 bg-white dark:bg-transparent">
                     {session ? (
                         <div className="w-full flex items-center gap-2">
                             <Link 
                                 href="/user/profile"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="flex-1 flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors min-w-0"
+                                className="flex-1 flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 dark:bg-primary-950/20 border border-slate-100 dark:border-primary-500/20 hover:bg-slate-100 dark:hover:bg-primary-900/30 transition-colors min-w-0"
                             >
                                 <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0">
                                     {session.user?.name?.charAt(0).toUpperCase() || 'U'}

@@ -296,7 +296,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
 	return (
 		<div
 			onClick={onClick}
-			className={`relative w-full group bg-white dark:bg-primary-950/20 backdrop-blur-sm rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] dark:shadow-none flex flex-col justify-start ${minHeightClass} border border-slate-200 dark:border-primary-500/20 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88,28,135,0.12)] dark:hover:border-slate-700`}
+			className={`relative w-full group bg-white dark:bg-primary-950/20 backdrop-blur-sm rounded-xl ${paddingClass} transition-transform duration-500 cursor-pointer overflow-hidden shadow-[10px_20px_60px_rgba(0,0,0,0.08)] sm:shadow-[10px_30px_70px_rgba(0,0,0,0.12)] dark:shadow-none flex flex-col justify-start ${minHeightClass} border border-slate-200 dark:border-white/20 hover:-translate-y-2 hover:shadow-[10px_30px_80px_rgba(88,28,135,0.12)] dark:hover:border-slate-700`}
 		>
             {isTestTopic && displaySubtitle && (
                 <div className="absolute top-0 right-0 rounded-bl-[14px] px-3 py-1 bg-primary-900/5 text-primary-900 text-[10px] sm:text-[11px] font-bold border-b border-l border-primary-900/10 shadow-sm z-20 pointer-events-none uppercase tracking-wide">
@@ -396,7 +396,7 @@ const TopicCard = ({ title, subtitle, badgeText, onClick, onReset, type = 'gramm
                                         )}
                                     </>
                                 ) : (
-                                    <span className="inline-flex items-center px-2 py-[3px] bg-slate-50 dark:bg-primary-950/30 text-slate-500 dark:text-slate-400 text-[10px] font-medium border border-slate-200 dark:border-primary-500/20 rounded">{progress.learned > 0 ? 'Đang học' : 'Chưa học'}</span>
+                                    <span className="inline-flex items-center px-2 py-[3px] bg-slate-50 dark:bg-primary-950/30 text-slate-500 dark:text-slate-400 text-[10px] font-medium border border-slate-200 dark:border-white/20 rounded">{progress.learned > 0 ? 'Đang học' : 'Chưa học'}</span>
                                 )}
                             </div>
                             <span className={`font-bold tabular-nums tracking-widest shrink-0 ${theme.progressText}`}>
@@ -561,13 +561,13 @@ function ToeicPracticeContent() {
 							const isActive = tab === item.id;
                             const itemContent = (
                                 <>
-									<div className={`${isActive ? 'text-primary-600 dark:text-primary-300' : 'text-slate-400 dark:text-slate-500'} shrink-0`}>
+									<div className={`${isActive ? 'text-primary-600 dark:text-primary-300' : 'text-slate-400 dark:text-white'} shrink-0`}>
 										{item.icon}
 									</div>
 									{!isSidebarCollapsed && <span className="text-[14px]">{item.label}</span>}
                                 </>
                             );
-                            const className = `w-full flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${isActive ? 'bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-100 shadow-sm' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-primary-950/40 dark:hover:text-slate-300 hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center' : ''}`;
+                            const className = `w-full flex items-center gap-3 px-3 py-3 rounded-xl font-bold transition-all ${isActive ? 'bg-primary-50 dark:bg-primary-600/30 text-primary-700 dark:text-primary-100 shadow-sm' : 'text-slate-500 dark:text-white hover:bg-slate-50 dark:hover:bg-primary-950/40 dark:hover:text-white hover:text-slate-900'} ${isSidebarCollapsed ? 'justify-center' : ''}`;
 							
                             if (item.externalHref) {
                                 return (
@@ -916,7 +916,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
 
 function GrammarFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-white/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-transparent relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-950/30 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -1054,7 +1054,7 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 	};
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-white/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full">
 				<div className="w-full flex items-center gap-4 z-20 bg-transparent relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-950/30 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -1084,7 +1084,7 @@ function ActualTestFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAc
 
 function VocabFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActive }: any) {
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-white/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <style dangerouslySetInnerHTML={{
                 __html: `
                 @keyframes flashcardFlip {
@@ -1143,7 +1143,7 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
     }, [isActive]);
 
 	return (
-		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-primary-500/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+		<div className={`w-[260px] sm:w-[280px] lg:w-full lg:flex-1 shrink-0 lg:shrink h-[160px] cursor-pointer border border-slate-200 dark:border-white/20 rounded-[20px] transition-all relative overflow-hidden bg-white dark:bg-primary-950/20 backdrop-blur-sm ${isActive ? 'shadow-xl dark:shadow-primary-900/10' : 'shadow-sm hover:shadow-md dark:shadow-none'}`} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 			<div className="p-6 h-full flex flex-col relative z-10 w-full transition-opacity duration-300">
 				<div className="w-full flex items-center gap-4 z-20 bg-transparent relative pb-1">
 					<div className={`w-12 h-12 shrink-0 bg-slate-50 dark:bg-primary-950/30 text-primary-900 dark:text-primary-100 rounded-xl flex items-center justify-center transition-transform ${isActive ? 'scale-110' : ''}`}>
@@ -2816,7 +2816,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 					{/* Speed Challenge Intro Section */}
 					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && challengePreCtd === null && (
-						<div id="speed-challenge-section" className="mt-8 bg-white dark:bg-primary-950/20 border border-slate-200 dark:border-primary-500/20 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
+						<div id="speed-challenge-section" className="mt-8 bg-white dark:bg-primary-950/20 border border-slate-200 dark:border-white/20 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
 							<button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-5 hover:bg-slate-50 transition-colors cursor-pointer focus:outline-none">
 								<div className="flex items-center gap-2.5">
 									<div className="text-primary-900 flex items-center justify-center">
@@ -3172,7 +3172,7 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
                                     <div
                                         key={lesson.id}
                                         onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-                                        className="group relative bg-white dark:bg-primary-950/20 rounded-xl border border-slate-200 dark:border-primary-500/20 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
+                                        className="group relative bg-white dark:bg-primary-950/20 rounded-xl border border-slate-200 dark:border-white/20 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 dark:to-transparent group-hover:to-slate-100 dark:group-hover:to-primary-900/10 transition-colors pointer-events-none"></div>
                                         <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
@@ -3183,20 +3183,20 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
                                                 <h3 className="text-[17px] font-black text-primary-900 dark:text-[#f8fafc] transition-colors">{lesson.title}</h3>
                                             </div>
                                             <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-500">
-                                                <div className="flex items-center gap-1.5 text-slate-500 transition-colors">
+                                                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-300 transition-colors">
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                                                     {lesson._count?.questions || 0} Câu hỏi
                                                 </div>
                                                 {lesson.progress ? (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
-                                                     <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center transition-colors duration-300 group-hover:bg-primary-900 group-hover:text-white" title="Làm lại">
+                                                     <span className="text-xs font-bold text-primary-600 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/40 px-2 py-0.5 rounded-full border border-primary-100 dark:border-primary-700/50">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
+                                                     <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 flex items-center justify-center transition-colors duration-300 group-hover:bg-primary-900 group-hover:text-white" title="Làm lại">
                                                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                                      </div>
                                                    </div>
                                                 ) : (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">Chưa làm</span>
+                                                     <span className="text-[11px] font-bold text-slate-400 dark:text-white">Chưa làm</span>
                                                      <div className="w-7 h-7 rounded-full bg-primary-900 text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
                                                          <svg className="w-3.5 h-3.5 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                                      </div>
@@ -3343,7 +3343,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
                                     <div
                                         key={lesson.id}
                                         onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-                                        className="group relative bg-white dark:bg-primary-950/20 rounded-xl border border-slate-200 dark:border-primary-500/20 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
+                                        className="group relative bg-white dark:bg-primary-950/20 rounded-xl border border-slate-200 dark:border-white/20 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 dark:to-transparent group-hover:to-slate-100 dark:group-hover:to-primary-900/10 transition-colors pointer-events-none"></div>
                                         <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
@@ -3354,20 +3354,20 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
                                                 <h3 className="text-[17px] font-black text-primary-900 dark:text-[#f8fafc] transition-colors">{lesson.title}</h3>
                                             </div>
                                             <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-400">
-                                                <div className="flex items-center gap-1.5 text-primary-900 transition-colors">
+                                                <div className="flex items-center gap-1.5 text-primary-900 dark:text-slate-300 transition-colors">
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                                                     {lesson._count?.questions || 0} Câu hỏi
                                                 </div>
                                                 {lesson.progress ? (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
-                                                     <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center transition-colors duration-300 group-hover:bg-primary-900 group-hover:text-white" title="Làm lại">
+                                                     <span className="text-xs font-bold text-primary-600 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/40 px-2 py-0.5 rounded-full border border-primary-100 dark:border-primary-700/50">{lesson.progress.correct}/{lesson._count?.questions || 0} đúng</span>
+                                                     <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 flex items-center justify-center transition-colors duration-300 group-hover:bg-primary-900 group-hover:text-white" title="Làm lại">
                                                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                                      </div>
                                                    </div>
                                                 ) : (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">Chưa làm</span>
+                                                     <span className="text-[11px] font-bold text-slate-400 dark:text-white">Chưa làm</span>
                                                      <div className="w-7 h-7 rounded-full bg-primary-900 text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
                                                          <svg className="w-3.5 h-3.5 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                                      </div>
@@ -3429,27 +3429,27 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                             return (
 							<div
 								key={test.id}
-								className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer hover:border-primary-200"
+								className="group relative bg-white dark:bg-primary-950/20 rounded-xl border border-slate-200 dark:border-white/20 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer hover:border-primary-200 dark:hover:border-primary-500/30"
                                 onClick={() => router.push(`/toeic-practice/actual-test/${test.id}`)}
 							>
-                                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary-50/40 group-hover:to-primary-100/50 transition-colors pointer-events-none"></div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary-50/40 dark:to-transparent group-hover:to-primary-100/50 dark:group-hover:to-primary-900/10 transition-colors pointer-events-none"></div>
                                 <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                     <div className="flex justify-between items-start mb-3">
-                                        <h3 className="text-xl font-black text-primary-900 transition-colors">{test.title}</h3>
+                                        <h3 className="text-xl font-black text-primary-900 dark:text-white transition-colors">{test.title}</h3>
                                         <div className="w-7 h-7 rounded-lg bg-primary-100/50 group-hover:bg-primary-100 flex items-center justify-center text-primary-700 transition-colors flex-shrink-0 group-hover:shadow-sm">
                                             <svg className="w-3.5 h-3.5 translate-x-px group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                         </div>
                                     </div>
                                     
                                     <div className="flex flex-col gap-2 mb-4 flex-1">
-                                        <div className="text-[12px] font-bold text-slate-500">Các phần thi có sẵn</div>
+                                        <div className="text-[12px] font-bold text-slate-500 dark:text-slate-300">Các phần thi có sẵn</div>
                                         <div className="flex gap-1.5">
                                             {[1, 2, 3, 4, 5, 6, 7].map((pNum) => {
                                                 const isActive = testParts.includes(pNum);
                                                 return (
                                                     <div 
                                                         key={pNum} 
-                                                        className={`w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] transition-colors ${isActive ? 'bg-primary-50 text-primary-600 border border-primary-200 shadow-sm' : 'bg-slate-50 text-slate-300 border border-slate-100'}`}
+                                                        className={`w-6 h-6 rounded flex items-center justify-center font-bold text-[11px] transition-colors ${isActive ? 'bg-primary-50 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 border border-primary-200 dark:border-primary-700/50 shadow-sm' : 'bg-slate-50 dark:bg-primary-950/20 text-slate-300 dark:text-slate-500 border border-slate-100 dark:border-primary-500/20'}`}
                                                     >
                                                         {pNum}
                                                     </div>
@@ -3461,13 +3461,13 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                     <div className="flex items-center gap-2.5 mt-auto pt-4 border-t border-slate-100">
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}`); }}
-                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-primary-200 bg-primary-50/50 text-primary-700 font-bold text-xs hover:bg-primary-100 hover:border-primary-300 transition-colors shadow-sm cursor-pointer"
+                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-primary-200 dark:border-primary-700/50 bg-primary-50/50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 font-bold text-xs hover:bg-primary-100 dark:hover:bg-primary-800/60 hover:border-primary-300 transition-colors shadow-sm cursor-pointer"
                                         >
                                             Luyện tập
                                         </button>
                                         <button 
                                             onClick={(e) => { e.stopPropagation(); router.push(`/toeic-practice/actual-test/${test.id}/take?mode=actual&parts=${partsParam}&time=${computedTime}`); }}
-                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-slate-200 bg-white text-slate-600 font-bold text-xs hover:bg-slate-100 hover:border-slate-300 hover:text-slate-800 transition-colors cursor-pointer"
+                                            className="flex-1 py-2.5 rounded-xl focus:outline-none border border-slate-200 dark:border-primary-500/20 bg-white dark:bg-primary-950/20 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-primary-900/40 hover:border-slate-300 dark:hover:border-primary-500/40 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
                                         >
                                             Thi thử
                                         </button>
