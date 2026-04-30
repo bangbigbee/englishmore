@@ -1213,7 +1213,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 
 				<div className="mt-8 flex justify-center w-full px-4 relative z-20">
 					<button
-						onClick={() => onTabClick('grammar')}
+						onClick={() => window.dispatchEvent(new Event('openSidebarMenu'))}
 						className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-secondary-500 px-8 py-4 sm:px-12 sm:py-5 font-extrabold text-primary-900 shadow-xl transition-all duration-300 hover:scale-105 hover:bg-secondary-400 hover:shadow-2xl ring-4 ring-secondary-500/20"
 					>
 						<div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">

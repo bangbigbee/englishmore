@@ -22,13 +22,17 @@ const TOEIC_TABS = [
 ]
 
 const TOEIC_SIDEBAR_ITEMS = [
-    { id: 'roadmap', label: 'Lộ trình', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7l6-3 5.447 2.724A1 1 0 0121 7.618v10.764a1 1 0 01-1.447.894L15 17l-6 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7v13M15 4v13" /></svg> },
-    { id: 'vocabulary', label: 'Từ vựng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
-    { id: 'grammar', label: 'Ngữ pháp', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 15h4.498" /></svg> },
-    { id: 'listening', label: 'Listening', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> },
-    { id: 'reading', label: 'Reading', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
-    { id: 'actual-test', label: 'Luyện đề', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
-    { id: 'leaderboard', label: 'Bảng xếp hạng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg> },
+    { id: 'roadmap', label: 'Lộ Trình Học Của Tôi', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7l6-3 5.447 2.724A1 1 0 0121 7.618v10.764a1 1 0 01-1.447.894L15 17l-6 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7v13M15 4v13" /></svg> },
+    { id: 'vocabulary', label: 'Học từ vựng', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg> },
+    { id: 'grammar', label: 'Học ngữ pháp', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 15h4.498" /></svg> },
+    { id: 'listening', label: 'Luyện Nghe', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> },
+    { id: 'reading', label: 'Luyện Đọc', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
+    { id: 'actual-test', label: 'Luyện Đề Thi Toeic', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+    { id: 'leaderboard', label: 'Bảng Xếp Hạng Học Tập', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg> },
+    { id: 'speaking', label: 'Luyện Speaking', externalHref: 'https://englishmore.bigbee.ltd', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg> },
+    { id: 'writing', label: 'Luyện Writing', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg> },
+    { id: 'arena', label: 'Đấu Trường Từ Vựng', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> },
+    { id: 'community', label: 'Cộng Đồng', externalHref: 'https://www.facebook.com/groups/toemicmore', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-1.11 9-5.54 9-10.95 0-5.52-4.48-10-10-10z"/></svg> },
 ]
 
 const TAB_COLORS: Record<string, string> = {
@@ -330,20 +334,6 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
                               </button>
                           );
                       })}
-                      <a
-                          href="https://englishmore.bigbee.ltd"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
-                          onClick={() => setIsMenuOpen(false)}
-                      >
-                          <span className="w-[32px] h-[32px] shrink-0 rounded-[10px] flex items-center justify-center transition-colors bg-fuchsia-50 text-fuchsia-500 group-hover:bg-fuchsia-100">
-                              <div className="scale-[0.8] opacity-90">
-                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg>
-                              </div>
-                          </span>
-                          <span className="flex-1 truncate text-[14px]">Luyện Speaking</span>
-                      </a>
                       <Link
                           href="/about"
                           className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-[14px] font-bold transition-all text-left cursor-pointer text-slate-700 border border-transparent hover:bg-slate-50 hover:text-slate-900 border-slate-100"
@@ -501,6 +491,12 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
   }, [session?.user?.image])
 
   useEffect(() => {
+    const handleOpenSidebarMenu = () => setIsMobileMenuOpen(true)
+    window.addEventListener('openSidebarMenu', handleOpenSidebarMenu)
+    return () => window.removeEventListener('openSidebarMenu', handleOpenSidebarMenu)
+  }, [])
+
+  useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
     } else {
@@ -570,7 +566,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </header>
 
         {/* Mobile Left Drawer Menu for ToeicDomain */}
-        <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isMobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMobileMenuOpen}>
+        <div className={`fixed inset-0 z-[100] isolate transition ${isMobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMobileMenuOpen}>
             {/* Backdrop */}
             <div 
                 className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} 
@@ -578,7 +574,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
             />
             {/* Drawer */}
             <aside 
-                className={`fixed inset-y-0 left-0 w-full bg-white dark:bg-[#07160d] dark:border-r dark:border-primary-500/20 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed inset-y-0 left-0 w-[85vw] sm:w-[360px] bg-white dark:bg-[#07160d] dark:border-r dark:border-primary-500/20 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
                     <div className="mb-6 px-2 flex justify-between items-center">
