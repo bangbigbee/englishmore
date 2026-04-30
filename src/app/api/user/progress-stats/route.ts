@@ -30,29 +30,13 @@ export async function GET() {
       activityMap[day] = (activityMap[day] || 0) + 1;
     })
 
-    // Generate last 14 days for Heatmap
-    const heatMapDays = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const ds = d.toISOString().split('T')[0];
-      heatMapDays.push({
-        date: ds,
-        dayLabel: d.toLocaleDateString('vi-VN', { weekday: 'short' }),
-        dateLabel: d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
-        count: activityMap[ds] || 0
-      });
-    }
-
-    const totalWords = await (prisma as any).vocabularyItem.count({
-      where: { category: 'TOEIC', isActive: true }
-    })
-
     // Quiz answers for grammar, reading, listening, actual-test
     const answers = await prisma.toeicAnswer.findMany({
       where: { userId },
       include: { question: { include: { lesson: { include: { topic: true } } } } }
     })
+
+    const quizActivityMap: Record<string, number> = {}
 
     const quizStats = {
       grammar: { correct: 0, incorrect: 0, total: 0 },
@@ -62,6 +46,9 @@ export async function GET() {
     }
 
     answers.forEach(a => {
+      const day = a.updatedAt.toISOString().split('T')[0];
+      quizActivityMap[day] = (quizActivityMap[day] || 0) + 1;
+
       const type = a.question?.lesson?.topic?.type
       let key = 'grammar'
       if (type === 'READING') key = 'reading'
@@ -73,6 +60,36 @@ export async function GET() {
       bucket.total++
       if (a.isCorrect) bucket.correct++
       else bucket.incorrect++
+    })
+
+    const testRecords = await prisma.toeicTestRecord.findMany({
+      where: { userId },
+      select: { totalQuestions: true, createdAt: true }
+    });
+    
+    testRecords.forEach(r => {
+      const day = r.createdAt.toISOString().split('T')[0];
+      quizActivityMap[day] = (quizActivityMap[day] || 0) + r.totalQuestions;
+    })
+
+    // Generate last 14 days for Heatmap
+    const heatMapDays = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().split('T')[0];
+      heatMapDays.push({
+        date: ds,
+        dayLabel: d.toLocaleDateString('vi-VN', { weekday: 'short' }),
+        dateLabel: d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
+        vocabCount: activityMap[ds] || 0,
+        quizCount: quizActivityMap[ds] || 0,
+        count: (activityMap[ds] || 0) + (quizActivityMap[ds] || 0)
+      });
+    }
+
+    const totalWords = await (prisma as any).vocabularyItem.count({
+      where: { category: 'TOEIC', isActive: true }
     })
 
     return NextResponse.json({
