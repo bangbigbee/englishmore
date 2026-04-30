@@ -1193,11 +1193,11 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 
 			{/* Hero Section */}
 			<section className="flex flex-col items-center text-center mt-8 mb-24 w-full mx-auto px-4 sm:px-8 relative z-10">
-				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary-900 to-primary-500" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
-					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] block break-words pb-1">
-						Chinh phục TOEIC
+				<h1 className="font-extrabold leading-[1.1] tracking-tight mb-4" style={{fontFamily: 'var(--font-inter, sans-serif)'}}>
+					<span className="text-[2.5rem] sm:text-[3.5rem] md:text-6xl lg:text-[68px] text-primary-900 block break-words pb-1">
+						Chinh phục <span className="text-primary-900">TOEIC</span>
 					</span>
-					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2 pb-1">
+					<span className="text-[1.75rem] sm:text-[2.25rem] md:text-4xl lg:text-[48px] block break-words mt-1 lg:mt-2 pb-1 text-primary-900">
 						dễ dàng và hiệu quả hơn
 					</span>
 				</h1>
