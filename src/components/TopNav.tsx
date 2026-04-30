@@ -28,10 +28,10 @@ const TOEIC_SIDEBAR_ITEMS = [
     { id: 'grammar', label: 'Học ngữ pháp', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 15h4.498" /></svg> },
     { id: 'listening', label: 'Luyện Nghe', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> },
     { id: 'reading', label: 'Luyện Đọc', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg> },
+    { id: 'speaking', label: 'Luyện Nói', externalHref: 'https://englishmore.bigbee.ltd', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg> },
+    { id: 'writing', label: 'Luyện Viết', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg> },
     { id: 'actual-test', label: 'Luyện Đề Thi Toeic', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
     { id: 'leaderboard', label: 'Bảng Xếp Hạng Học Tập', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg> },
-    { id: 'speaking', label: 'Luyện Speaking', externalHref: 'https://englishmore.bigbee.ltd', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"/></svg> },
-    { id: 'writing', label: 'Luyện Writing', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg> },
     { id: 'arena', label: 'Đấu Trường Từ Vựng', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> },
     { id: 'community', label: 'Cộng Đồng', externalHref: 'https://www.facebook.com/groups/toemicmore', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-1.11 9-5.54 9-10.95 0-5.52-4.48-10-10-10z"/></svg> },
 ]
@@ -583,14 +583,14 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
             />
             {/* Drawer */}
             <aside 
-                className={`fixed inset-y-0 left-0 w-[85vw] sm:w-[360px] bg-white dark:bg-[#07160d] dark:border-r dark:border-primary-500/20 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed inset-y-0 left-0 w-full sm:w-[360px] bg-primary-900 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
                     <div className="mb-6 px-2 flex justify-between items-center">
                         <div>
-                            <img src="/toeicmorelogoGreen.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain" />
+                            <img src="/toeicmorelogo.svg?v=2" alt="ToeicMore" className="w-auto h-[30px] object-contain" />
                         </div>
-                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 dark:bg-primary-950/20 dark:hover:bg-primary-900/30 rounded-full">
+                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                     </div>
@@ -608,13 +608,13 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                                 const isActive = currentTab === item.id;
                                 const itemContent = (
                                     <>
-                                        <div className={`${isActive ? 'text-primary-600 dark:text-primary-300' : 'text-slate-400 dark:text-white'}`}>
+                                        <div className={`${isActive ? 'text-primary-900' : 'text-white/70'}`}>
                                             {item.icon}
                                         </div>
                                         <span className="text-[14px]">{item.label}</span>
                                     </>
                                 );
-                                const className = `w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left ${isActive ? 'bg-primary-50 dark:bg-primary-600/30 text-primary-700 dark:text-primary-100 shadow-sm' : 'text-slate-500 dark:text-white hover:bg-slate-50 dark:hover:bg-primary-950/40 hover:text-slate-900 dark:hover:text-white'}`;
+                                const className = `w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left ${isActive ? 'bg-white text-primary-900 shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white'}`;
                                 
                                 if (item.externalHref) {
                                     return (
@@ -653,20 +653,20 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                         })()}
                     </div>
                 </div>
-                <div className="p-4 pr-16 pb-6 mt-auto border-t border-slate-200/60 dark:border-primary-500/20 bg-white dark:bg-transparent">
+                <div className="p-4 pr-16 pb-6 mt-auto border-t border-white/20 bg-primary-900">
                     {session ? (
                         <div className="w-full flex items-center gap-2">
                             <Link 
                                 href="/user/profile"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="flex-1 flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-50 dark:bg-primary-950/20 border border-slate-100 dark:border-primary-500/20 hover:bg-slate-100 dark:hover:bg-primary-900/30 transition-colors min-w-0"
+                                className="flex-1 flex items-center gap-3 px-3 py-2 rounded-xl bg-white/10 border border-white/10 hover:bg-white/20 transition-colors min-w-0"
                             >
-                                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary-900 font-bold shrink-0">
                                     {session.user?.name?.charAt(0).toUpperCase() || 'U'}
                                 </div>
                                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                                     <div className="flex items-center gap-1.5">
-                                        <p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+                                        <p className="text-[13px] font-bold text-white truncate">{session.user?.name}</p>
                                         {((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
                                             <span className={`text-[8px] font-bold px-1 py-0.5 rounded shadow-sm leading-none shrink-0 ${
                                                 (session.user as any)?.tier === 'ULTRA' 
@@ -677,12 +677,12 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-[11px] font-medium text-slate-500 truncate">{session.user?.email}</p>
+                                    <p className="text-[11px] font-medium text-white/70 truncate">{session.user?.email}</p>
                                 </div>
                             </Link>
                             <button
                                 onClick={() => signOut({ callbackUrl: '/' })}
-                                className="p-2 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-50 ml-1 transition-colors"
+                                className="shrink-0 flex items-center justify-center p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors"
                                 title="Đăng xuất"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
