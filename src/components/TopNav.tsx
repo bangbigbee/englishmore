@@ -4,6 +4,7 @@ import Image from 'next/image'
 import LoginModal from './LoginModal'
 import UpgradeModal from './UpgradeModal'
 import ToeicStarInfoModal from './ToeicStarInfoModal'
+import TopNavPwaInstall from './TopNavPwaInstall'
 import { motion, AnimatePresence } from 'framer-motion'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -524,6 +525,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                     )}
                  </button>
             )}
+            <TopNavPwaInstall />
             <ThemeToggle />
         </div>
         
@@ -562,6 +564,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                             )}
                         </button>
                     )}
+                    <TopNavPwaInstall />
                     <ThemeToggle />
                 </div>
             </div>
@@ -718,6 +721,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </div>
 
         <div className="shrink-0 flex items-center gap-2 sm:gap-3">
+          <TopNavPwaInstall />
           <ThemeToggle />
           {/* Desktop More Menu */}
           <div className="hidden lg:flex items-center gap-2">
