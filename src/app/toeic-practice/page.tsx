@@ -14,6 +14,7 @@ import ToeicRoadmapTab from "./ToeicRoadmapTab";
 import InteractiveListeningModal from "@/components/InteractiveListeningModal";
 import { useTheme } from "next-themes";
 import ToeicWarriorLeaderboard from "@/components/ToeicWarriorLeaderboard";
+import VocabularyHeatmap from "@/components/VocabularyHeatmap";
 
 const playSound = (soundFileName: string) => {
 	try {
@@ -1179,14 +1180,19 @@ function ListeningFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isAct
 
 function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 	const [stats, setStats] = useState({ users: 24, grammarTopics: 30, vocabularies: 1540, practiceMinutes: 25000, vocabTopics: 50, detailedQuestions: 1200 });
+	const [progressStats, setProgressStats] = useState<any>(null);
 
 	const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
 	const { theme } = useTheme();
 	const isOcean = theme === 'ocean-blue';
+	const { data: session } = useSession();
 
 	useEffect(() => {
 		fetch('/api/toeic/stats').then(res => res.json()).then(data => setStats(data)).catch(console.error);
-	}, []);
+		if (session?.user?.role === 'member' || session?.user?.role === 'admin') {
+			fetch('/api/user/progress-stats').then(res => res.json()).then(data => setProgressStats(data)).catch(console.error);
+		}
+	}, [session]);
 
 	return (
 		<div className="py-8 pb-20 relative min-h-screen">
@@ -1335,6 +1341,12 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
                     ))}
                 </div>
             </div>
+
+			{progressStats?.vocabulary?.heatmap && (
+				<div className="w-full mx-auto px-4 mt-6">
+					<VocabularyHeatmap heatmap={progressStats.vocabulary.heatmap} />
+				</div>
+			)}
 
 			{/* <ToeicWarriorLeaderboard /> removed as per request */}
 		</div>

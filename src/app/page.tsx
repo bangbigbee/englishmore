@@ -10,7 +10,6 @@ import { toast } from 'sonner'
 import { showApToast } from '@/lib/showApToast'
 import GallerySection from '@/components/GallerySection'
 import TeacherVideosOverlay from '@/components/TeacherVideosOverlay'
-import VocabularyHeatmap from '@/components/VocabularyHeatmap'
 
 
 interface AvailableCourse {
@@ -224,7 +223,6 @@ function HomeContent() {
   const [courseReviews, setCourseReviews] = useState<any[]>([])
   const [hasNewLectureSlide, setHasNewLectureSlide] = useState(false)
   const [memberHomework, setMemberHomework] = useState<MemberHomeworkSummary | null>(null)
-  const [progressStats, setProgressStats] = useState<any>(null)
   const [adminHomeworkReview, setAdminHomeworkReview] = useState<AdminHomeworkReviewSummary | null>(null)
   const [greetingMethod, setGreetingMethod] = useState<GreetingInputMethod>('text')
   const [greetingMessage, setGreetingMessage] = useState('')
@@ -561,25 +559,6 @@ function HomeContent() {
       }
     }
 
-    const fetchProgressStats = async () => {
-      if (session.user?.role !== 'member' && session.user?.role !== 'admin') {
-        setProgressStats(null)
-        return
-      }
-
-      try {
-        const res = await fetch('/api/user/progress-stats')
-        if (!res.ok) {
-          setProgressStats(null)
-          return
-        }
-        const data = await res.json()
-        setProgressStats(data)
-      } catch {
-        setProgressStats(null)
-      }
-    }
-
     const fetchAdminHomeworkReview = async () => {
       if (session.user?.role !== 'admin') {
         setAdminHomeworkReview(null)
@@ -702,7 +681,6 @@ function HomeContent() {
     fetchAvailableCourses()
     fetchGreetingResponse()
     fetchMemberHomework()
-    fetchProgressStats()
     fetchAdminHomeworkReview()
     fetchMemberVocabulary()
     fetchReflection()
@@ -2155,28 +2133,22 @@ function HomeContent() {
                 </div>
               )}
             </section>
-            <section className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-              <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Weekly Activity</h2>
-                <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
-                  {weeklyActivityRows.map((item) => (
-                    <div key={item.day} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3 md:gap-4">
-                      <span className="text-xs sm:text-sm lg:text-base text-slate-600 w-16 sm:w-20">{item.day}</span>
-                      <div className="h-3 sm:h-4 overflow-hidden rounded-full bg-slate-200">
-                        <div
-                          className={`h-full rounded-full ${item.barClass} transition-all duration-500`}
-                          style={{ width: `${item.widthPercent}%` }}
-                        />
-                      </div>
-                      <span className="w-12 sm:w-14 text-right text-lg sm:text-xl font-medium text-slate-700">{item.minutes}m</span>
+            <section className="mt-6 sm:mt-8 rounded-lg border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Weekly Activity</h2>
+              <div className="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
+                {weeklyActivityRows.map((item) => (
+                  <div key={item.day} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3 md:gap-4">
+                    <span className="text-xs sm:text-sm lg:text-base text-slate-600 w-16 sm:w-20">{item.day}</span>
+                    <div className="h-3 sm:h-4 overflow-hidden rounded-full bg-slate-200">
+                      <div
+                        className={`h-full rounded-full ${item.barClass} transition-all duration-500`}
+                        style={{ width: `${item.widthPercent}%` }}
+                      />
                     </div>
-                  ))}
-                </div>
+                    <span className="w-12 sm:w-14 text-right text-lg sm:text-xl font-medium text-slate-700">{item.minutes}m</span>
+                  </div>
+                ))}
               </div>
-
-              {progressStats?.vocabulary?.heatmap && (
-                <VocabularyHeatmap heatmap={progressStats.vocabulary.heatmap} />
-              )}
             </section>
           </>
         ) : (
