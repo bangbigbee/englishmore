@@ -188,18 +188,18 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
 
                     <div className="flex bg-slate-100 rounded-xl p-1 mb-6 border border-slate-200">
                         <button 
-                            onClick={() => setActiveTab('chrome')}
-                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'chrome' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                        >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                            Chrome
-                        </button>
-                        <button 
                             onClick={() => setActiveTab('ios')}
                             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'ios' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                             iOS/macOS
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('chrome')}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'chrome' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            Chrome
                         </button>
                     </div>
 
@@ -207,13 +207,17 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
                         {activeTab === 'chrome' ? (
                             <>
                                 <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                                    <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">1</div>
+                                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 shadow-inner">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
+                                    </div>
                                     <div className="flex items-center gap-2.5">
                                         <p className="text-sm text-slate-600 leading-tight">Từ menu cài đặt có dấu 3 chấm, chọn <strong>"Thêm vào màn hình chính"</strong></p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                                    <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">2</div>
+                                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 shadow-inner">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                    </div>
                                     <div className="flex items-center gap-2.5">
                                         <p className="text-sm text-slate-600 leading-tight">Xác nhận <strong>"Cài đặt"</strong> để thêm ứng dụng ra màn hình chính</p>
                                     </div>
@@ -222,13 +226,17 @@ export default function ToeicMoreNotice({ config }: { config: { title: string, m
                         ) : (
                             <>
                                 <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                                    <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">1</div>
+                                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 shadow-inner">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M12 3v13m0-13l-4 4m4-4l4 4" /></svg>
+                                    </div>
                                     <div className="flex items-center gap-2.5">
                                         <p className="text-sm text-slate-600 leading-tight">Nhấn biểu tượng <strong>"Chia sẻ"</strong> trên thanh công cụ Safari</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                                    <div className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">2</div>
+                                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 shadow-inner">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" /></svg>
+                                    </div>
                                     <div className="flex items-center gap-2.5">
                                         <p className="text-sm text-slate-600 leading-tight">Chọn <strong>"Thêm vào MH chính"</strong> (Add to Home Screen)</p>
                                     </div>

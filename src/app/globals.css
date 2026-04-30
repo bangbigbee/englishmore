@@ -94,17 +94,17 @@
 
 [data-theme="ocean-blue"] {
   /* Air Force Blue Theme -> Updated to Sky Blue / #007acc */
-  --primary-50: #ebf5ff;
-  --primary-100: #d1e8ff;
-  --primary-200: #a3d4ff;
-  --primary-300: #6bbcff;
-  --primary-400: #38a5ff;
-  --primary-500: #148eff;
-  --primary-600: #007acc;
-  --primary-700: #0062a3;
-  --primary-800: #005085;
-  --primary-900: #004270;
-  --primary-950: #002b4d;
+  --primary-50: #eef6ff;
+  --primary-100: #d9ebff;
+  --primary-200: #bcdaff;
+  --primary-300: #8ec3ff;
+  --primary-400: #5aa4ff;
+  --primary-500: #2985ff;
+  --primary-600: #007aff;
+  --primary-700: #0062cc;
+  --primary-800: #004d9e;
+  --primary-900: #003f80;
+  --primary-950: #002852;
 
   /* Sandy Gold / Sun Yellow Theme */
   --secondary-50: #fffbeb;
