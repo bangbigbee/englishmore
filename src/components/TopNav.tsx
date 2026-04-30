@@ -76,6 +76,17 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
     }
   }, [session, isToeicDomain])
 
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMenuOpen])
+
   const scrollRight = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: 150, behavior: 'smooth' })
@@ -239,7 +250,7 @@ function MenuNavTabs({ isToeicDomain }: { isToeicDomain: boolean }) {
         {/* Mobile Left Drawer Menu */}
         <div className={`fixed inset-0 z-[100] isolate transition lg:hidden ${isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'}`} aria-hidden={!isMenuOpen}>
             <div onClick={() => setIsMenuOpen(false)} className={`absolute inset-0 z-0 bg-slate-950/40 transition-opacity duration-300 cursor-pointer ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
-            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-[min(20rem,85vw)] flex-col border-r border-slate-200 dark:border-primary-500/20 bg-white dark:bg-[#07160d] shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`absolute left-0 top-0 z-10 flex h-screen w-full flex-col border-r border-slate-200 dark:border-primary-500/20 bg-white dark:bg-[#07160d] shadow-2xl transition-transform duration-300 ease-in-out touch-pan-y overscroll-y-contain overscroll-x-none ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-primary-500/20 bg-slate-50/80 dark:bg-transparent shrink-0">
                     <Link href="/" onClick={() => setIsMenuOpen(false)} className="font-black text-slate-800 text-lg flex items-center gap-2 tracking-tight hover:opacity-80 transition-opacity">
                         {isToeicDomain ? (
@@ -489,6 +500,17 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
     setAvatarLoadFailed(false)
   }, [session?.user?.image])
 
+  useEffect(() => {
+    if (isMenuOpen || isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMenuOpen, isMobileMenuOpen])
+
   const handleLoginClick = () => {
     const params = new URLSearchParams(window.location.search)
     params.set('login', 'true')
@@ -518,7 +540,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
         </div>
         
         {/* MOBILE: Standard TopNav but without TOEIC tabs */}
-        <header className={`lg:hidden sticky top-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm' : 'bg-transparent border-transparent'} h-[60px] flex items-center`}>
+        <header className={`lg:hidden sticky top-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-white/90 dark:bg-primary-950/95 backdrop-blur-md border-b border-slate-200 dark:border-primary-500/20 shadow-sm' : 'bg-transparent border-transparent'} h-[60px] flex items-center`}>
             <div className="w-full grid grid-cols-3 items-center">
                 {/* Left: Hamburger Menu */}
                 <div className="flex justify-start">
@@ -556,7 +578,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
             />
             {/* Drawer */}
             <aside 
-                className={`fixed inset-y-0 left-0 w-[280px] bg-white dark:bg-[#07160d] dark:border-r dark:border-primary-500/20 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed inset-y-0 left-0 w-full bg-white dark:bg-[#07160d] dark:border-r dark:border-primary-500/20 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
                     <div className="mb-6 px-2 flex justify-between items-center">
