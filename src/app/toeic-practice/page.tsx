@@ -1361,6 +1361,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 }
 
 function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+	const { theme } = useTheme();
 	const [topics, setTopics] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 	const { data: session } = useSession();
@@ -1404,7 +1405,7 @@ function ToeicGrammarTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 					if (levelTopics.length === 0) return null;
 					return (
 						<div key={level.id} className="relative">
-							<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
+							<h2 className="text-xl sm:text-[22px] font-black text-primary-900 dark:text-[#ea980c] mb-6 flex items-center gap-2.5 tracking-tight px-1">
 								<span className={`w-1.5 h-6 rounded-full ${level.id === 'Cơ Bản' ? 'bg-[#ea980c]' : level.id === 'Trung Cấp' ? 'bg-primary-500' : 'bg-secondary-500'} block shadow-sm`}></span>
 								{level.title}
 							</h2>
@@ -1507,6 +1508,7 @@ const ProTag = () => (
 );
 
 function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeClick: (topic?: string, allowGuest?: boolean) => void, openLoginModal?: (destination?: string, allowGuest?: boolean) => void }) {
+	const { theme } = useTheme();
 	const { data: session, update } = useSession();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -2987,6 +2989,7 @@ function getPartColors(partId: number) {
 }
 
 function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPracticeClick: (slug?: string) => void, isSidebarCollapsed?: boolean }) {
+	const { theme } = useTheme();
 	const searchParams = useSearchParams();
 	const partParam = searchParams.get('part');
 	const initialPart = partParam ? parseInt(partParam) : 1;
@@ -3125,7 +3128,7 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
 			</div>
 
 			<div id="thuc-chien-section" className="pt-4 scroll-mt-24">
-				<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
+				<h2 className="text-xl sm:text-[22px] font-black text-primary-900 dark:text-[#ea980c] mb-6 flex items-center gap-2.5 tracking-tight px-1">
 					<span className="w-1.5 h-6 rounded-full bg-primary-600 block shadow-sm"></span>
 					Danh sách Bài luyện thực chiến
 				</h2>
@@ -3141,8 +3144,8 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
 							onClick={() => setSelectedPart(p.id)}
 							className={`group flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-[14px] transition-all duration-300 font-bold text-[13px] md:text-[14px] whitespace-nowrap shrink-0 snap-center border ${isActive ? 'scale-[1.02] border-transparent shadow-md ring-2' : 'border-current/10 hover:border-current/30'}`}
                             style={{
-                                backgroundColor: isActive ? colors.baseHex : `${colors.baseHex}10`,
-                                color: isActive ? '#ffffff' : colors.baseHex,
+                                backgroundColor: isActive ? (theme === 'dark' ? '#ea980c' : colors.baseHex) : (theme === 'dark' ? 'rgba(255,255,255,0.05)' : `${colors.baseHex}10`),
+                                color: isActive ? '#ffffff' : (theme === 'dark' ? '#cbd5e1' : colors.baseHex),
                                 boxShadow: isActive ? `0 4px 14px -4px ${colors.baseHex}66` : 'none',
                                 '--tw-ring-color': `${colors.baseHex}40`
                             } as any}
@@ -3217,6 +3220,7 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
 }
 
 function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string) => void }) {
+	const { theme } = useTheme();
 	const searchParams = useSearchParams();
 	const partParam = searchParams.get('part');
 	const initialPart = partParam ? parseInt(partParam) : 5;
@@ -3296,7 +3300,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 
 	return (
 		<div>
-			<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
+			<h2 className="text-xl sm:text-[22px] font-black text-primary-900 dark:text-[#ea980c] mb-6 flex items-center gap-2.5 tracking-tight px-1">
 				<span className="w-1.5 h-6 rounded-full bg-primary-900 block shadow-sm"></span>
 				Các Phần Thi Reading
 			</h2>
@@ -3312,8 +3316,8 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
 							onClick={() => setSelectedPart(p.id)}
 							className={`group flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-[14px] transition-all duration-300 font-bold text-[13px] md:text-[14px] whitespace-nowrap shrink-0 snap-center border ${isActive ? 'scale-[1.02] border-transparent shadow-md ring-2' : 'border-current/10 hover:border-current/30'}`}
                             style={{
-                                backgroundColor: isActive ? colors.baseHex : `${colors.baseHex}10`,
-                                color: isActive ? '#ffffff' : colors.baseHex,
+                                backgroundColor: isActive ? (theme === 'dark' ? '#ea980c' : colors.baseHex) : (theme === 'dark' ? 'rgba(255,255,255,0.05)' : `${colors.baseHex}10`),
+                                color: isActive ? '#ffffff' : (theme === 'dark' ? '#cbd5e1' : colors.baseHex),
                                 boxShadow: isActive ? `0 4px 14px -4px ${colors.baseHex}66` : 'none',
                                 '--tw-ring-color': `${colors.baseHex}40`
                             } as any}
@@ -3416,7 +3420,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
 		<div className="flex flex-col gap-10">
 			{collections.map((col, cIdx) => (
 				<div key={cIdx}>
-					<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
+					<h2 className="text-xl sm:text-[22px] font-black text-primary-900 dark:text-[#ea980c] mb-6 flex items-center gap-2.5 tracking-tight px-1">
 						<span className="w-1.5 h-6 rounded-full bg-primary-500 block shadow-sm"></span>
 						Bộ Đề {col.collection}
 					</h2>
