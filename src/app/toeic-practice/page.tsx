@@ -600,16 +600,16 @@ function ToeicPracticeContent() {
 							<div className="flex items-center gap-2">
 								<button 
                                     onClick={() => handleTabChange('profile')}
-                                    className={`flex-1 flex items-center gap-3 px-2 py-2 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors min-w-0 ${isSidebarCollapsed ? 'justify-center' : 'text-left'}`}
+                                    className={`flex-1 flex items-center gap-3 px-2 py-2 rounded-xl bg-slate-50 dark:bg-primary-950/20 border border-slate-100 dark:border-primary-500/20 hover:bg-slate-100 dark:hover:bg-primary-900/30 transition-colors min-w-0 ${isSidebarCollapsed ? 'justify-center' : 'text-left'}`}
                                     title={isSidebarCollapsed ? "Thông tin cá nhân" : undefined}
                                 >
-									<div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-900 font-bold shrink-0 shadow-sm">
+									<div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-900 dark:text-primary-100 font-bold shrink-0 shadow-sm">
 										{session.user?.name?.charAt(0).toUpperCase() || 'U'}
 									</div>
 									{!isSidebarCollapsed && (
 										<div className="flex-1 min-w-0 flex flex-col justify-center">
 											<div className="flex items-center gap-1.5">
-												<p className="text-[13px] font-bold text-slate-900 truncate">{session.user?.name}</p>
+												<p className="text-[13px] font-bold text-slate-900 dark:text-[#f8fafc] truncate">{session.user?.name}</p>
 												{((session.user as any)?.tier === 'PRO' || (session.user as any)?.tier === 'ULTRA') && (
 													<span className={`text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm leading-none shrink-0 ${
 														(session.user as any)?.tier === 'ULTRA' 
@@ -620,7 +620,7 @@ function ToeicPracticeContent() {
 													</span>
 												)}
 											</div>
-											<p className="text-[11px] font-medium text-slate-500 truncate mt-0.5">{session.user?.email}</p>
+											<p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate mt-0.5">{session.user?.email}</p>
 										</div>
 									)}
 								</button>
@@ -818,7 +818,7 @@ function SpeedChallengeLeaderboard({ onPlayClick }: { onPlayClick?: () => void }
                     </span>
                 </button>
             </div>
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-secondary-200 overflow-hidden relative">
+            <div className="bg-white dark:bg-primary-950/20 rounded-3xl p-6 md:p-8 shadow-xl border border-secondary-200 dark:border-primary-500/20 overflow-hidden relative">
                 {/* Decorative background elements matching the gold/green theme */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-100 rounded-bl-full opacity-50 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary-50 rounded-tr-full opacity-50 pointer-events-none"></div>
@@ -987,7 +987,7 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
 				<div className="absolute left-1/2 top-0 bottom-0 w-[2px] -ml-[1px] bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 z-30 shadow-[0_0_5px_rgba(0,0,0,0.1)] border-x border-primary-900/10 dark:border-primary-500/20" />
 
 				{/* Left half (static background under flipped page) */}
-				<div className="w-1/2 h-full bg-white dark:bg-primary-950/30/80 flex flex-col items-center justify-center border-r-[1px] border-slate-100 dark:border-primary-500/20 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2" />
+				<div className="w-1/2 h-full bg-white dark:bg-primary-950/30 flex flex-col items-center justify-center border-r-[1px] border-slate-100 dark:border-primary-500/20 shadow-[inset_-8px_0_15px_rgba(0,0,0,0.03)] pr-4 pl-2" />
 
 				{/* Right half (background of upcoming page side) */}
 				<div className="w-1/2 h-full bg-slate-50 dark:bg-primary-950/30 shadow-[inset_8px_0_15px_rgba(0,0,0,0.03)] flex flex-col items-center justify-center pl-4 pr-2">
@@ -1015,7 +1015,7 @@ function ReadingFeatureCard({ onClick, onMouseEnter, onMouseLeave, icon, isActiv
                                 <div className="absolute inset-0 flex items-center justify-center p-3 backface-hidden [-webkit-backface-visibility:hidden] bg-slate-50 dark:bg-primary-950/30 border-r border-primary-900/10 dark:border-primary-500/20 rounded-r-[20px]">
                                 </div>
                                 {/* Back face (when flipped to the left) */}
-                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] bg-white dark:bg-primary-950/30/90 shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 backface-hidden [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] bg-white dark:bg-primary-950/30 shadow-[inset_-8px_0_20px_rgba(88, 28, 135,0.03)] rounded-l-[10px]">
                                     <span className="font-bold text-primary-900 dark:text-white text-sm uppercase tracking-wider text-center drop-shadow-sm leading-tight">
                                         {pages[activePage]}
                                     </span>
@@ -2735,7 +2735,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 													</div>
 												)}
 												{currentItem.toeicTrap && (
-													<div className="rounded-md bg-secondary-50 border border-secondary-200 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1 transition-colors">
+													<div className="rounded-md bg-secondary-50 border border-secondary-200 dark:border-primary-500/20 p-2 w-full text-left flex flex-col sm:flex-row sm:items-start gap-1 mt-1 transition-colors">
 														<span className="font-bold text-secondary-600 flex items-center gap-1 text-[12px] shrink-0 mt-[1px]">
 															<svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
 															TOEIC Tip:
@@ -2816,7 +2816,7 @@ function ToeicVocabularyTab({ onPracticeClick, openLoginModal }: { onPracticeCli
 
 					{/* Speed Challenge Intro Section */}
 					{vocabItems.length >= 3 && !challengeActive && !challengeResult.show && challengePreCtd === null && (
-						<div id="speed-challenge-section" className="mt-8 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
+						<div id="speed-challenge-section" className="mt-8 bg-white dark:bg-primary-950/20 border border-slate-200 dark:border-primary-500/20 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
 							<button onClick={() => setChallengeExpanded(!challengeExpanded)} className="w-full flex items-center justify-between py-3 px-5 hover:bg-slate-50 transition-colors cursor-pointer focus:outline-none">
 								<div className="flex items-center gap-2.5">
 									<div className="text-primary-900 flex items-center justify-center">
@@ -3172,15 +3172,15 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
                                     <div
                                         key={lesson.id}
                                         onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-                                        className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
+                                        className="group relative bg-white dark:bg-primary-950/20 rounded-xl border border-slate-200 dark:border-primary-500/20 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                                     >
-                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 group-hover:to-slate-100 transition-colors pointer-events-none"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 dark:to-transparent group-hover:to-slate-100 dark:group-hover:to-primary-900/10 transition-colors pointer-events-none"></div>
                                         <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                             <div className="flex items-center gap-3 mb-6">
                                                 <div className="w-10 h-10 rounded-lg bg-primary-900/10 group-hover:bg-primary-900/20 flex flex-shrink-0 items-center justify-center text-primary-900 transition-colors shadow-sm">
                                                     {getPartIcon(selectedPart)}
                                                 </div>
-                                                <h3 className="text-[17px] font-black text-primary-900 transition-colors">{lesson.title}</h3>
+                                                <h3 className="text-[17px] font-black text-primary-900 dark:text-[#f8fafc] transition-colors">{lesson.title}</h3>
                                             </div>
                                             <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-500">
                                                 <div className="flex items-center gap-1.5 text-slate-500 transition-colors">
@@ -3196,7 +3196,7 @@ function ToeicListeningTab({ onPracticeClick, isSidebarCollapsed }: { onPractice
                                                    </div>
                                                 ) : (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-[11px] font-bold text-slate-400">Chưa làm</span>
+                                                     <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">Chưa làm</span>
                                                      <div className="w-7 h-7 rounded-full bg-primary-900 text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
                                                          <svg className="w-3.5 h-3.5 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                                      </div>
@@ -3343,15 +3343,15 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
                                     <div
                                         key={lesson.id}
                                         onClick={() => onPracticeClick(`${lesson.topicSlug}?lessonId=${lesson.id}`)}
-                                        className="group relative bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
+                                        className="group relative bg-white dark:bg-primary-950/20 rounded-xl border border-slate-200 dark:border-primary-500/20 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                                     >
-                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 group-hover:to-slate-100 transition-colors pointer-events-none"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-slate-50 dark:to-transparent group-hover:to-slate-100 dark:group-hover:to-primary-900/10 transition-colors pointer-events-none"></div>
                                         <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                             <div className="flex items-center gap-3 mb-6">
                                                 <div className="w-10 h-10 rounded-lg bg-primary-900/10 group-hover:bg-primary-900/20 flex flex-shrink-0 items-center justify-center text-primary-900 transition-colors shadow-sm">
                                                     {getPartIcon(selectedPart)}
                                                 </div>
-                                                <h3 className="text-[17px] font-black text-primary-900 transition-colors">{lesson.title}</h3>
+                                                <h3 className="text-[17px] font-black text-primary-900 dark:text-[#f8fafc] transition-colors">{lesson.title}</h3>
                                             </div>
                                             <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2 text-[13px] font-bold text-slate-400">
                                                 <div className="flex items-center gap-1.5 text-primary-900 transition-colors">
@@ -3367,7 +3367,7 @@ function ToeicReadingTab({ onPracticeClick }: { onPracticeClick: (slug?: string)
                                                    </div>
                                                 ) : (
                                                    <div className="flex items-center gap-2">
-                                                     <span className="text-[11px] font-bold text-slate-400">Chưa làm</span>
+                                                     <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500">Chưa làm</span>
                                                      <div className="w-7 h-7 rounded-full bg-primary-900 text-white flex items-center justify-center transition-colors duration-300" title="Làm ngay">
                                                          <svg className="w-3.5 h-3.5 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                                      </div>
