@@ -15,7 +15,7 @@ import InteractiveListeningModal from "@/components/InteractiveListeningModal";
 import { useTheme } from "next-themes";
 import ToeicWarriorLeaderboard from "@/components/ToeicWarriorLeaderboard";
 import VocabularyHeatmap from "@/components/VocabularyHeatmap";
-
+import StartLearningAction from "@/components/StartLearningAction";
 const playSound = (soundFileName: string) => {
 	try {
 		const audio = new Audio(`/audio/${soundFileName}`);
@@ -1235,15 +1235,7 @@ function ToeicHomeTab({ onTabClick }: { onTabClick: (tab: string) => void }) {
 				</p>
 
 				<div className="mt-8 flex justify-center w-full px-4 relative z-20">
-					<button
-						onClick={() => window.dispatchEvent(new Event('openStartModal'))}
-						className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-secondary-500 px-8 py-4 sm:px-12 sm:py-5 font-extrabold text-primary-900 shadow-xl transition-all duration-300 hover:scale-105 hover:bg-secondary-400 hover:shadow-2xl ring-4 ring-secondary-500/20"
-					>
-						<div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
-							<div className="relative h-full w-10 bg-white/30" />
-						</div>
-						<span className="relative text-lg sm:text-2xl tracking-wide uppercase">Bắt Đầu Học Ngay</span>
-					</button>
+					<StartLearningAction />
 				</div>
 
 				<div 
