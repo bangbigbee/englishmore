@@ -3387,7 +3387,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
 			{collections.map((col, cIdx) => (
 				<div key={cIdx}>
 					<h2 className="text-xl sm:text-[22px] font-black text-primary-900 mb-6 flex items-center gap-2.5 tracking-tight px-1">
-						<span className="w-1.5 h-6 rounded-full bg-[#8B5CF6] block shadow-sm"></span>
+						<span className="w-1.5 h-6 rounded-full bg-primary-500 block shadow-sm"></span>
 						Bộ Đề {col.collection}
 					</h2>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -3405,7 +3405,7 @@ function ToeicActualTestTab({ onPracticeClick }: { onPracticeClick: (route: stri
                                 <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary-50/40 group-hover:to-primary-100/50 transition-colors pointer-events-none"></div>
                                 <div className="p-4 sm:p-5 flex-1 flex flex-col relative z-10">
                                     <div className="flex justify-between items-start mb-3">
-                                        <h3 className="text-xl font-black text-[#4c1d95] transition-colors">{test.title}</h3>
+                                        <h3 className="text-xl font-black text-primary-900 transition-colors">{test.title}</h3>
                                         <div className="w-7 h-7 rounded-lg bg-primary-100/50 group-hover:bg-primary-100 flex items-center justify-center text-primary-700 transition-colors flex-shrink-0 group-hover:shadow-sm">
                                             <svg className="w-3.5 h-3.5 translate-x-px group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7" /></svg>
                                         </div>
