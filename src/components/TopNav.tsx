@@ -583,7 +583,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
             />
             {/* Drawer */}
             <aside 
-                className={`fixed inset-y-0 left-0 w-full sm:w-[360px] bg-primary-900 shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed inset-y-0 left-0 w-full sm:w-[360px] bg-primary-900 dark:bg-background shadow-2xl transition-transform duration-300 ease-in-out flex flex-col ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} dark:border-r dark:border-white/10`}
             >
                 <div className="p-4 flex-1 flex flex-col overflow-y-auto hide-scrollbar">
                     <div className="mb-6 px-2 flex justify-between items-center">
@@ -653,7 +653,7 @@ export default function TopNav({ isToeicDomain = false }: { isToeicDomain?: bool
                         })()}
                     </div>
                 </div>
-                <div className="p-4 pr-16 pb-6 mt-auto border-t border-white/20 bg-primary-900">
+                <div className="p-4 pr-16 pb-6 mt-auto border-t border-white/20 bg-primary-900 dark:bg-transparent">
                     {session ? (
                         <div className="w-full flex items-center gap-2">
                             <Link 
